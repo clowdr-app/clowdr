@@ -1,0 +1,1 @@
+DELETE FROM "conference"."ConfigurationKey" WHERE "name" = 'ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS';

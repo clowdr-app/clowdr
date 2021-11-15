@@ -6,6 +6,7 @@ import { assertType } from "typescript-is";
 import type { FlagInserted_GetModeratorsQuery, FlagInserted_GetModeratorsQueryVariables } from "../generated/graphql";
 import { FlagInserted_GetModeratorsDocument } from "../generated/graphql";
 import { generateChatPinsChangedRoomName, generateChatSubscriptionsChangedRoomName } from "../lib/chat";
+import { logger } from "../lib/logger";
 import { sendNotifications } from "../lib/notifications";
 import { emitter } from "../socket-emitter/socket-emitter";
 import type { Flag, Payload, Pin, Subscription } from "../types/hasura";
@@ -28,8 +29,8 @@ export async function subscriptionChanged(req: Request, res: Response, _next?: N
         }
 
         res.status(200).send("OK");
-    } catch (e) {
-        console.error("Chat subscription changed: Received incorrect payload", e);
+    } catch (error: any) {
+        logger.error({ error }, "Chat subscription changed: Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -51,8 +52,8 @@ export async function pinChanged(req: Request, res: Response, _next?: NextFuncti
         }
 
         res.status(200).send("OK");
-    } catch (e) {
-        console.error("Chat pin changed: Received incorrect payload", e);
+    } catch (error: any) {
+        logger.error({ error }, "Chat pin changed: Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -105,8 +106,8 @@ export async function flagInserted(req: Request, res: Response, _next?: NextFunc
         }
 
         res.status(200).send("OK");
-    } catch (e) {
-        console.error("Chat flag inserted: Received incorrect payload", e);
+    } catch (error: any) {
+        logger.error({ error }, "Chat flag inserted: Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }

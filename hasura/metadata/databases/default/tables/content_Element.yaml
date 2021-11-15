@@ -31,9 +31,11 @@ object_relationships:
 array_relationships:
 - name: stats
   using:
-    foreign_key_constraint_on:
-      column: elementId
-      table:
+    manual_configuration:
+      column_mapping:
+        id: elementId
+      insertion_order: null
+      remote_table:
         name: ContentElementStats
         schema: analytics
 - name: youTubeUploads

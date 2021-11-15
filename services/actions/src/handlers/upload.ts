@@ -22,24 +22,23 @@ import { compile } from "handlebars";
 import type { P } from "pino";
 import R from "ramda";
 import { is } from "typescript-is";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import type { Email_Insert_Input, UploadableElementFieldsFragment } from "../generated/graphql";
 import {
+    CompleteSubmissionRequestEmailJobsDocument,
     Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
     GetUploadersDocument,
     InsertSubmissionRequestEmailsDocument,
-    MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
+    SelectUnprocessedSubmissionRequestEmailJobsDocument,
     SetUploadableElementUploadsRemainingDocument,
-    UnmarkSubmissionRequestEmailJobsDocument,
     UploadableElementDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
-import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
+import { getConferenceConfiguration, getSubmissionNotificationRoles } from "../lib/conferenceConfiguration";
 import { extractLatestVersion } from "../lib/element";
-import { callWithRetry } from "../utils";
-import { insertEmails } from "./email";
+import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
 gql`
     query UploadableElement($accessToken: String!) {
@@ -253,21 +252,20 @@ gql`
         content_Element_by_pk(id: $elementId) {
             id
             conferenceId
+            conference {
+                ...Configuration_SubmissionNotificationRoles
+            }
             typeName
             item {
                 id
-                itemPeople(
-                    where: {
-                        person: { _and: [{ email: { _is_null: false } }, { email: { _neq: "" } }] }
-                        roleName: { _in: ["AUTHOR", "PRESENTER", "DISCUSSANT"] }
-                    }
-                ) {
+                itemPeople(where: { person: { _and: [{ email: { _is_null: false } }, { email: { _neq: "" } }] } }) {
                     id
                     person {
                         id
                         name
                         email
                     }
+                    roleName
                 }
             }
         }
@@ -289,6 +287,9 @@ async function sendSubmittedEmail(
     });
 
     if (uploaders.data.content_Element_by_pk?.item.itemPeople.length) {
+        const submissionNotificationRoles = getSubmissionNotificationRoles(
+            uploaders.data.content_Element_by_pk.conference
+        );
         let emails: Email_Insert_Input[];
         if (
             uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoBroadcast ||
@@ -299,8 +300,10 @@ async function sendSubmittedEmail(
             uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoPrepublish ||
             uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoSponsorsFiller
         ) {
-            emails = uploaders.data.content_Element_by_pk.item.itemPeople.map(({ person }) => {
-                const htmlContents = `<p>Dear ${person.name},</p>
+            emails = uploaders.data.content_Element_by_pk.item.itemPeople
+                .filter((p) => submissionNotificationRoles.includes(p.roleName))
+                .map(({ person }) => {
+                    const htmlContents = `<p>Dear ${person.name},</p>
         <p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName}.</p>
         <p>Our systems will now start processing your video and then auto-generate subtitles.</p>
         <ol>
@@ -310,14 +313,14 @@ async function sendSubmittedEmail(
             <li>If you don't receive an update within 4 hours, please contact us for technical support.</li>
         </ol>`;
 
-                return {
-                    recipientName: person.name,
-                    emailAddress: person.email,
-                    reason: "item_submitted",
-                    subject: `Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
-                    htmlContents,
-                };
-            });
+                    return {
+                        recipientName: person.name,
+                        emailAddress: person.email,
+                        reason: "item_submitted",
+                        subject: `Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
+                        htmlContents,
+                    };
+                });
         } else {
             emails = uploaders.data.content_Element_by_pk.item.itemPeople.map(({ person }) => {
                 const htmlContents = `<p>Dear ${person.name},</p>
@@ -333,7 +336,7 @@ async function sendSubmittedEmail(
             });
         }
 
-        await insertEmails(logger, emails, uploaders.data.content_Element_by_pk.conferenceId);
+        await insertEmails(logger, emails, uploaders.data.content_Element_by_pk.conferenceId, undefined);
     }
 }
 
@@ -534,28 +537,26 @@ gql`
 `;
 
 gql`
-    mutation MarkAndSelectUnprocessedSubmissionRequestEmailJobs {
-        update_job_queues_SubmissionRequestEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
-            returning {
+    query SelectUnprocessedSubmissionRequestEmailJobs {
+        job_queues_SubmissionRequestEmailJob(where: { processed: { _eq: false } }) {
+            id
+            emailTemplate
+            person {
                 id
-                emailTemplate
-                person {
+                name
+                email
+                accessToken
+                conference {
                     id
                     name
-                    email
-                    accessToken
-                    conference {
-                        id
-                        name
-                        shortName
-                    }
+                    shortName
                 }
             }
         }
     }
 
-    mutation UnmarkSubmissionRequestEmailJobs($ids: [uuid!]!) {
-        update_job_queues_SubmissionRequestEmailJob(where: { id: { _in: $ids } }, _set: { processed: false }) {
+    mutation CompleteSubmissionRequestEmailJobs($ids: [uuid!]!) {
+        update_job_queues_SubmissionRequestEmailJob(where: { id: { _in: $ids } }, _set: { processed: true }) {
             affected_rows
         }
     }
@@ -573,15 +574,20 @@ type SubmissionRequestEmail = { email: Email_Insert_Input; jobId: string } & (
     | { personId: string }
 );
 
+/** @summary Generate an idempotency key that uniquely identifies each email in a submission request job. */
+function generateIdempotencyKey(jobId: string): string {
+    return uuidv5(`invite-email,${jobId}`, EMAIL_IDEMPOTENCY_NAMESPACE);
+}
+
 export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): Promise<void> {
     const jobsToProcess = await apolloClient.mutate({
-        mutation: MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
+        mutation: SelectUnprocessedSubmissionRequestEmailJobsDocument,
         variables: {},
     });
-    assert(jobsToProcess.data?.update_job_queues_SubmissionRequestEmailJob, "Failed to fetch jobs to process.");
+    assert(jobsToProcess.data?.job_queues_SubmissionRequestEmailJob, "Failed to fetch jobs to process.");
 
     const emails = new Map<string, SubmissionRequestEmail[]>();
-    for (const job of jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning) {
+    for (const job of jobsToProcess.data.job_queues_SubmissionRequestEmailJob) {
         let result: SubmissionRequestEmail | undefined;
         let conferenceId: string | undefined;
 
@@ -622,6 +628,7 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
                 htmlContents: htmlBody,
                 reason: "upload-request",
                 subject,
+                idempotencyKey: generateIdempotencyKey(job.id),
             };
             conferenceId = job.person.conference.id;
 
@@ -642,7 +649,7 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
         try {
             const emailsToInsert = emailsRecords.map((x) => x.email).filter(isNotUndefined);
             if (emailsToInsert.length > 0) {
-                await insertEmails(logger, emailsToInsert, conferenceId);
+                await insertEmails(logger, emailsToInsert, conferenceId, undefined);
             }
 
             await apolloClient.mutate({
@@ -656,22 +663,14 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
                         .filter(isNotUndefined),
                 },
             });
-        } catch (e: any) {
-            logger.error({ jobIds: emailsRecords.map((x) => x.jobId), err: e }, "Could not process jobs");
-
-            try {
-                const jobIds = emailsRecords.map((x) => x.jobId);
-                await callWithRetry(async () => {
-                    await apolloClient.mutate({
-                        mutation: UnmarkSubmissionRequestEmailJobsDocument,
-                        variables: {
-                            ids: jobIds,
-                        },
-                    });
-                });
-            } catch (e: any) {
-                logger.error({ err: e }, "Could not unmark failed emails");
-            }
+            await apolloClient.mutate({
+                mutation: CompleteSubmissionRequestEmailJobsDocument,
+                variables: {
+                    ids: emailsRecords.map((x) => x.jobId),
+                },
+            });
+        } catch (error: any) {
+            logger.error({ jobIds: emailsRecords.map((x) => x.jobId), error }, "Could not process jobs");
         }
     });
 }

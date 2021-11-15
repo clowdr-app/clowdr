@@ -58,6 +58,7 @@ export function VonageRoomControlBar({
     isRecordingActive,
     isBackstage,
     canControlRecording,
+    roomId,
     eventId,
 }: {
     onJoinRoom: () => Promise<void>;
@@ -71,6 +72,7 @@ export function VonageRoomControlBar({
     isBackstage: boolean;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
+    roomId?: string;
     eventId?: string;
 }): JSX.Element {
     const { state, dispatch, settings } = useVonageRoom();
@@ -595,8 +597,8 @@ export function VonageRoomControlBar({
                         </Tag>
                     )
                 ) : undefined}
-                {vonage.state.type === StateType.Connected && eventId && canControlRecording && !isBackstage ? (
-                    <PlayVideoMenuButton eventId={eventId} />
+                {vonage.state.type === StateType.Connected && canControlRecording && !isBackstage ? (
+                    <PlayVideoMenuButton roomId={roomId} eventId={eventId} />
                 ) : undefined}
                 {/* TODO: Permissions */}
                 {vonage.state.type === StateType.Connected && (isBackstage || canControlRecording) ? (

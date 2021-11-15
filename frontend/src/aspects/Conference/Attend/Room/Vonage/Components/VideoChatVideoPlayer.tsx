@@ -90,7 +90,6 @@ export default function VideoChatVideoPlayer({ elementId }: { elementId: string 
                 "The presenter would like to play a video. Please click play on the video player to join in. (Midspace cannot auto-play due to browser restrictions).",
             isClosable: true,
             duration: 15000,
-            variant: "subtle",
         });
     }, [toast]);
 

@@ -57,8 +57,8 @@ export async function summary(req: Request, res: Response, _next?: NextFunction)
                             {}
                         ),
                     });
-                } catch (e) {
-                    res.status(500).send(e);
+                } catch (error: any) {
+                    res.status(500).send(error);
                 }
             } finally {
                 redisClientPool.release("http-handlers/summary/summary", redisClient);

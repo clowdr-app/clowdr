@@ -3,6 +3,7 @@ import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { chatListenersKeyName, generateChatRoomName, socketChatsKeyName } from "../../lib/chat";
+import { logger } from "../../lib/logger";
 import { canSelectChat } from "../../lib/permissions";
 
 export function onSubscribe(userId: string, socketId: string, socket: Socket): (chatId: any) => Promise<void> {
@@ -14,19 +15,19 @@ export function onSubscribe(userId: string, socketId: string, socket: Socket): (
                 if (await canSelectChat(userId, chatId)) {
                     const client = await redisClientPool.acquire("socket-handlers/chat/chat/onSubscribe");
                     try {
-                        const existingChats = await redisClientP.smembers(client)(socketChatsKeyName(socketId));
-                        if (!existingChats.includes(chatId)) {
-                            socket.join(generateChatRoomName(chatId));
+                        // Always call join - a websocket re-establishing its connection to chat needs to rejoin the session
+                        socket.join(generateChatRoomName(chatId));
+                        socket.emit("chat.subscribe.ack", chatId);
 
-                            await redisClientP.sadd(client)(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
-                            await redisClientP.sadd(client)(socketChatsKeyName(socketId), chatId);
-                        }
+                        // And these are harmless - doesn't matter if we're re-adding
+                        await redisClientP.sadd(client)(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+                        await redisClientP.sadd(client)(socketChatsKeyName(socketId), chatId);
                     } finally {
                         redisClientPool.release("socket-handlers/chat/chat/onSubscribe", client);
                     }
                 }
-            } catch (e) {
-                console.error(`Error processing chat.subscribe (socket: ${socketId}, chatId: ${chatId})`, e);
+            } catch (error: any) {
+                logger.error({ error }, `Error processing chat.subscribe (socket: ${socketId}, chatId: ${chatId})`);
             }
         }
     };
@@ -48,8 +49,8 @@ export function onUnsubscribe(userId: string, socketId: string, socket: Socket):
                         redisClientPool.release("socket-handlers/chat/chat/onUnsubscribe", client);
                     }
                 }
-            } catch (e) {
-                console.error(`Error processing chat.unsubscribe (socket: ${socketId}, chatId: ${chatId})`, e);
+            } catch (error: any) {
+                logger.error({ error }, `Error processing chat.unsubscribe (socket: ${socketId}, chatId: ${chatId})`);
             }
         }
     };

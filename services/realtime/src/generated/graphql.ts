@@ -57,10 +57,13 @@ export type CreateRoomDmOutput = {
 /** columns and relationships of "Email" */
 export type Email = {
     __typename?: "Email";
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt: Scalars["timestamptz"];
     emailAddress: Scalars["String"];
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents: Scalars["String"];
     id: Scalars["uuid"];
+    idempotencyKey: Scalars["uuid"];
     /** An object relationship */
     invitation?: Maybe<Registrant_Invitation>;
     invitationId?: Maybe<Scalars["uuid"]>;
@@ -69,6 +72,7 @@ export type Email = {
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount: Scalars["Int"];
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject: Scalars["String"];
     updatedAt: Scalars["timestamptz"];
     /** An object relationship */
@@ -143,10 +147,13 @@ export type Email_Bool_Exp = {
     _and?: Maybe<Array<Email_Bool_Exp>>;
     _not?: Maybe<Email_Bool_Exp>;
     _or?: Maybe<Array<Email_Bool_Exp>>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     emailAddress?: Maybe<String_Comparison_Exp>;
+    errorMessage?: Maybe<String_Comparison_Exp>;
     htmlContents?: Maybe<String_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
+    idempotencyKey?: Maybe<Uuid_Comparison_Exp>;
     invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
     invitationId?: Maybe<Uuid_Comparison_Exp>;
     plainTextContents?: Maybe<String_Comparison_Exp>;
@@ -154,6 +161,7 @@ export type Email_Bool_Exp = {
     recipientName?: Maybe<String_Comparison_Exp>;
     retriesCount?: Maybe<Int_Comparison_Exp>;
     sentAt?: Maybe<Timestamptz_Comparison_Exp>;
+    status?: Maybe<String_Comparison_Exp>;
     subject?: Maybe<String_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
     user?: Maybe<User_Bool_Exp>;
@@ -162,6 +170,8 @@ export type Email_Bool_Exp = {
 
 /** unique or primary key constraints on table "Email" */
 export enum Email_Constraint {
+    /** unique or primary key constraint */
+    EmailIdempotencyKeyKey = "Email_idempotencyKey_key",
     /** unique or primary key constraint */
     EmailPkey = "Email_pkey",
 }
@@ -173,10 +183,13 @@ export type Email_Inc_Input = {
 
 /** input type for inserting data into table "Email" */
 export type Email_Insert_Input = {
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     emailAddress?: Maybe<Scalars["String"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
+    idempotencyKey?: Maybe<Scalars["uuid"]>;
     invitation?: Maybe<Registrant_Invitation_Obj_Rel_Insert_Input>;
     invitationId?: Maybe<Scalars["uuid"]>;
     plainTextContents?: Maybe<Scalars["String"]>;
@@ -184,6 +197,7 @@ export type Email_Insert_Input = {
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     user?: Maybe<User_Obj_Rel_Insert_Input>;
@@ -193,16 +207,20 @@ export type Email_Insert_Input = {
 /** aggregate max on columns */
 export type Email_Max_Fields = {
     __typename?: "Email_max_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     emailAddress?: Maybe<Scalars["String"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
+    idempotencyKey?: Maybe<Scalars["uuid"]>;
     invitationId?: Maybe<Scalars["uuid"]>;
     plainTextContents?: Maybe<Scalars["String"]>;
     reason?: Maybe<Scalars["String"]>;
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     userId?: Maybe<Scalars["String"]>;
@@ -210,16 +228,20 @@ export type Email_Max_Fields = {
 
 /** order by max() on columns of table "Email" */
 export type Email_Max_Order_By = {
+    conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     emailAddress?: Maybe<Order_By>;
+    errorMessage?: Maybe<Order_By>;
     htmlContents?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    idempotencyKey?: Maybe<Order_By>;
     invitationId?: Maybe<Order_By>;
     plainTextContents?: Maybe<Order_By>;
     reason?: Maybe<Order_By>;
     recipientName?: Maybe<Order_By>;
     retriesCount?: Maybe<Order_By>;
     sentAt?: Maybe<Order_By>;
+    status?: Maybe<Order_By>;
     subject?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
     userId?: Maybe<Order_By>;
@@ -228,16 +250,20 @@ export type Email_Max_Order_By = {
 /** aggregate min on columns */
 export type Email_Min_Fields = {
     __typename?: "Email_min_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     emailAddress?: Maybe<Scalars["String"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
+    idempotencyKey?: Maybe<Scalars["uuid"]>;
     invitationId?: Maybe<Scalars["uuid"]>;
     plainTextContents?: Maybe<Scalars["String"]>;
     reason?: Maybe<Scalars["String"]>;
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     userId?: Maybe<Scalars["String"]>;
@@ -245,16 +271,20 @@ export type Email_Min_Fields = {
 
 /** order by min() on columns of table "Email" */
 export type Email_Min_Order_By = {
+    conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     emailAddress?: Maybe<Order_By>;
+    errorMessage?: Maybe<Order_By>;
     htmlContents?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    idempotencyKey?: Maybe<Order_By>;
     invitationId?: Maybe<Order_By>;
     plainTextContents?: Maybe<Order_By>;
     reason?: Maybe<Order_By>;
     recipientName?: Maybe<Order_By>;
     retriesCount?: Maybe<Order_By>;
     sentAt?: Maybe<Order_By>;
+    status?: Maybe<Order_By>;
     subject?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
     userId?: Maybe<Order_By>;
@@ -278,10 +308,13 @@ export type Email_On_Conflict = {
 
 /** Ordering options when selecting data from "Email". */
 export type Email_Order_By = {
+    conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     emailAddress?: Maybe<Order_By>;
+    errorMessage?: Maybe<Order_By>;
     htmlContents?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    idempotencyKey?: Maybe<Order_By>;
     invitation?: Maybe<Registrant_Invitation_Order_By>;
     invitationId?: Maybe<Order_By>;
     plainTextContents?: Maybe<Order_By>;
@@ -289,6 +322,7 @@ export type Email_Order_By = {
     recipientName?: Maybe<Order_By>;
     retriesCount?: Maybe<Order_By>;
     sentAt?: Maybe<Order_By>;
+    status?: Maybe<Order_By>;
     subject?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
     user?: Maybe<User_Order_By>;
@@ -303,13 +337,19 @@ export type Email_Pk_Columns_Input = {
 /** select columns of table "Email" */
 export enum Email_Select_Column {
     /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
     CreatedAt = "createdAt",
     /** column name */
     EmailAddress = "emailAddress",
     /** column name */
+    ErrorMessage = "errorMessage",
+    /** column name */
     HtmlContents = "htmlContents",
     /** column name */
     Id = "id",
+    /** column name */
+    IdempotencyKey = "idempotencyKey",
     /** column name */
     InvitationId = "invitationId",
     /** column name */
@@ -323,6 +363,8 @@ export enum Email_Select_Column {
     /** column name */
     SentAt = "sentAt",
     /** column name */
+    Status = "status",
+    /** column name */
     Subject = "subject",
     /** column name */
     UpdatedAt = "updatedAt",
@@ -332,16 +374,20 @@ export enum Email_Select_Column {
 
 /** input type for updating data in table "Email" */
 export type Email_Set_Input = {
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     emailAddress?: Maybe<Scalars["String"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
+    idempotencyKey?: Maybe<Scalars["uuid"]>;
     invitationId?: Maybe<Scalars["uuid"]>;
     plainTextContents?: Maybe<Scalars["String"]>;
     reason?: Maybe<Scalars["String"]>;
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     userId?: Maybe<Scalars["String"]>;
@@ -394,13 +440,19 @@ export type Email_Sum_Order_By = {
 /** update columns of table "Email" */
 export enum Email_Update_Column {
     /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
     CreatedAt = "createdAt",
     /** column name */
     EmailAddress = "emailAddress",
     /** column name */
+    ErrorMessage = "errorMessage",
+    /** column name */
     HtmlContents = "htmlContents",
     /** column name */
     Id = "id",
+    /** column name */
+    IdempotencyKey = "idempotencyKey",
     /** column name */
     InvitationId = "invitationId",
     /** column name */
@@ -413,6 +465,8 @@ export enum Email_Update_Column {
     RetriesCount = "retriesCount",
     /** column name */
     SentAt = "sentAt",
+    /** column name */
+    Status = "status",
     /** column name */
     Subject = "subject",
     /** column name */
@@ -2146,8 +2200,8 @@ export type Analytics_ElementTotalViews = {
     __typename?: "analytics_ElementTotalViews";
     /** An object relationship */
     element?: Maybe<Content_Element>;
-    elementId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
+    elementId: Scalars["uuid"];
+    totalViewCount: Scalars["bigint"];
 };
 
 /** aggregated selection of "analytics.ElementTotalViews" */
@@ -2195,6 +2249,17 @@ export type Analytics_ElementTotalViews_Bool_Exp = {
     totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
+/** unique or primary key constraints on table "analytics.ElementTotalViews" */
+export enum Analytics_ElementTotalViews_Constraint {
+    /** unique or primary key constraint */
+    ElementTotalViewsPkey = "ElementTotalViews_pkey",
+}
+
+/** input type for incrementing numeric columns in table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Inc_Input = {
+    totalViewCount?: Maybe<Scalars["bigint"]>;
+};
+
 /** input type for inserting data into table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Insert_Input = {
     element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
@@ -2216,9 +2281,27 @@ export type Analytics_ElementTotalViews_Min_Fields = {
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** response of any mutation on the table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Mutation_Response = {
+    __typename?: "analytics_ElementTotalViews_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Analytics_ElementTotalViews>;
+};
+
 /** input type for inserting object relation for remote table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Obj_Rel_Insert_Input = {
     data: Analytics_ElementTotalViews_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_On_Conflict = {
+    constraint: Analytics_ElementTotalViews_Constraint;
+    update_columns?: Array<Analytics_ElementTotalViews_Update_Column>;
+    where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.ElementTotalViews". */
@@ -2228,6 +2311,11 @@ export type Analytics_ElementTotalViews_Order_By = {
     totalViewCount?: Maybe<Order_By>;
 };
 
+/** primary key columns input for table: analytics_ElementTotalViews */
+export type Analytics_ElementTotalViews_Pk_Columns_Input = {
+    elementId: Scalars["uuid"];
+};
+
 /** select columns of table "analytics.ElementTotalViews" */
 export enum Analytics_ElementTotalViews_Select_Column {
     /** column name */
@@ -2235,6 +2323,12 @@ export enum Analytics_ElementTotalViews_Select_Column {
     /** column name */
     TotalViewCount = "totalViewCount",
 }
+
+/** input type for updating data in table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Set_Input = {
+    elementId?: Maybe<Scalars["uuid"]>;
+    totalViewCount?: Maybe<Scalars["bigint"]>;
+};
 
 /** aggregate stddev on columns */
 export type Analytics_ElementTotalViews_Stddev_Fields = {
@@ -2260,6 +2354,14 @@ export type Analytics_ElementTotalViews_Sum_Fields = {
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** update columns of table "analytics.ElementTotalViews" */
+export enum Analytics_ElementTotalViews_Update_Column {
+    /** column name */
+    ElementId = "elementId",
+    /** column name */
+    TotalViewCount = "totalViewCount",
+}
+
 /** aggregate var_pop on columns */
 export type Analytics_ElementTotalViews_Var_Pop_Fields = {
     __typename?: "analytics_ElementTotalViews_var_pop_fields";
@@ -2283,8 +2385,8 @@ export type Analytics_ItemTotalViews = {
     __typename?: "analytics_ItemTotalViews";
     /** An object relationship */
     item?: Maybe<Content_Item>;
-    itemId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
+    itemId: Scalars["uuid"];
+    totalViewCount: Scalars["bigint"];
 };
 
 /** aggregated selection of "analytics.ItemTotalViews" */
@@ -2332,6 +2434,17 @@ export type Analytics_ItemTotalViews_Bool_Exp = {
     totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
+/** unique or primary key constraints on table "analytics.ItemTotalViews" */
+export enum Analytics_ItemTotalViews_Constraint {
+    /** unique or primary key constraint */
+    ItemTotalViewsPkey = "ItemTotalViews_pkey",
+}
+
+/** input type for incrementing numeric columns in table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Inc_Input = {
+    totalViewCount?: Maybe<Scalars["bigint"]>;
+};
+
 /** input type for inserting data into table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Insert_Input = {
     item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
@@ -2353,9 +2466,27 @@ export type Analytics_ItemTotalViews_Min_Fields = {
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** response of any mutation on the table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Mutation_Response = {
+    __typename?: "analytics_ItemTotalViews_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Analytics_ItemTotalViews>;
+};
+
 /** input type for inserting object relation for remote table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Obj_Rel_Insert_Input = {
     data: Analytics_ItemTotalViews_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_On_Conflict = {
+    constraint: Analytics_ItemTotalViews_Constraint;
+    update_columns?: Array<Analytics_ItemTotalViews_Update_Column>;
+    where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.ItemTotalViews". */
@@ -2365,6 +2496,11 @@ export type Analytics_ItemTotalViews_Order_By = {
     totalViewCount?: Maybe<Order_By>;
 };
 
+/** primary key columns input for table: analytics_ItemTotalViews */
+export type Analytics_ItemTotalViews_Pk_Columns_Input = {
+    itemId: Scalars["uuid"];
+};
+
 /** select columns of table "analytics.ItemTotalViews" */
 export enum Analytics_ItemTotalViews_Select_Column {
     /** column name */
@@ -2372,6 +2508,12 @@ export enum Analytics_ItemTotalViews_Select_Column {
     /** column name */
     TotalViewCount = "totalViewCount",
 }
+
+/** input type for updating data in table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Set_Input = {
+    itemId?: Maybe<Scalars["uuid"]>;
+    totalViewCount?: Maybe<Scalars["bigint"]>;
+};
 
 /** aggregate stddev on columns */
 export type Analytics_ItemTotalViews_Stddev_Fields = {
@@ -2397,6 +2539,14 @@ export type Analytics_ItemTotalViews_Sum_Fields = {
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** update columns of table "analytics.ItemTotalViews" */
+export enum Analytics_ItemTotalViews_Update_Column {
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    TotalViewCount = "totalViewCount",
+}
+
 /** aggregate var_pop on columns */
 export type Analytics_ItemTotalViews_Var_Pop_Fields = {
     __typename?: "analytics_ItemTotalViews_var_pop_fields";
@@ -2418,17 +2568,12 @@ export type Analytics_ItemTotalViews_Variance_Fields = {
 /** columns and relationships of "analytics.RoomPresence" */
 export type Analytics_RoomPresence = {
     __typename?: "analytics_RoomPresence";
-    count?: Maybe<Scalars["jsonb"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
+    count: Scalars["bigint"];
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
     /** An object relationship */
-    room?: Maybe<Room_Room>;
-};
-
-/** columns and relationships of "analytics.RoomPresence" */
-export type Analytics_RoomPresenceCountArgs = {
-    path?: Maybe<Scalars["String"]>;
+    room: Room_Room;
+    roomId: Scalars["uuid"];
 };
 
 /** aggregated selection of "analytics.RoomPresence" */
@@ -2441,9 +2586,17 @@ export type Analytics_RoomPresence_Aggregate = {
 /** aggregate fields of "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Aggregate_Fields = {
     __typename?: "analytics_RoomPresence_aggregate_fields";
+    avg?: Maybe<Analytics_RoomPresence_Avg_Fields>;
     count: Scalars["Int"];
     max?: Maybe<Analytics_RoomPresence_Max_Fields>;
     min?: Maybe<Analytics_RoomPresence_Min_Fields>;
+    stddev?: Maybe<Analytics_RoomPresence_Stddev_Fields>;
+    stddev_pop?: Maybe<Analytics_RoomPresence_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Analytics_RoomPresence_Stddev_Samp_Fields>;
+    sum?: Maybe<Analytics_RoomPresence_Sum_Fields>;
+    var_pop?: Maybe<Analytics_RoomPresence_Var_Pop_Fields>;
+    var_samp?: Maybe<Analytics_RoomPresence_Var_Samp_Fields>;
+    variance?: Maybe<Analytics_RoomPresence_Variance_Fields>;
 };
 
 /** aggregate fields of "analytics.RoomPresence" */
@@ -2454,14 +2607,35 @@ export type Analytics_RoomPresence_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Aggregate_Order_By = {
+    avg?: Maybe<Analytics_RoomPresence_Avg_Order_By>;
     count?: Maybe<Order_By>;
     max?: Maybe<Analytics_RoomPresence_Max_Order_By>;
     min?: Maybe<Analytics_RoomPresence_Min_Order_By>;
+    stddev?: Maybe<Analytics_RoomPresence_Stddev_Order_By>;
+    stddev_pop?: Maybe<Analytics_RoomPresence_Stddev_Pop_Order_By>;
+    stddev_samp?: Maybe<Analytics_RoomPresence_Stddev_Samp_Order_By>;
+    sum?: Maybe<Analytics_RoomPresence_Sum_Order_By>;
+    var_pop?: Maybe<Analytics_RoomPresence_Var_Pop_Order_By>;
+    var_samp?: Maybe<Analytics_RoomPresence_Var_Samp_Order_By>;
+    variance?: Maybe<Analytics_RoomPresence_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Arr_Rel_Insert_Input = {
     data: Array<Analytics_RoomPresence_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Analytics_RoomPresence_Avg_Fields = {
+    __typename?: "analytics_RoomPresence_avg_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Avg_Order_By = {
+    count?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "analytics.RoomPresence". All fields are combined with a logical 'AND'. */
@@ -2469,50 +2643,83 @@ export type Analytics_RoomPresence_Bool_Exp = {
     _and?: Maybe<Array<Analytics_RoomPresence_Bool_Exp>>;
     _not?: Maybe<Analytics_RoomPresence_Bool_Exp>;
     _or?: Maybe<Array<Analytics_RoomPresence_Bool_Exp>>;
-    count?: Maybe<Jsonb_Comparison_Exp>;
+    count?: Maybe<Bigint_Comparison_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
-    name?: Maybe<String_Comparison_Exp>;
     room?: Maybe<Room_Room_Bool_Exp>;
+    roomId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "analytics.RoomPresence" */
+export enum Analytics_RoomPresence_Constraint {
+    /** unique or primary key constraint */
+    RoomPresencePkey = "RoomPresence_pkey",
+    /** unique or primary key constraint */
+    RoomPresenceRoomIdCreatedAtKey = "RoomPresence_roomId_created_at_key",
+}
+
+/** input type for incrementing numeric columns in table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Inc_Input = {
+    count?: Maybe<Scalars["bigint"]>;
 };
 
 /** input type for inserting data into table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Insert_Input = {
-    count?: Maybe<Scalars["jsonb"]>;
+    count?: Maybe<Scalars["bigint"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
     room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+    roomId?: Maybe<Scalars["uuid"]>;
 };
 
 /** aggregate max on columns */
 export type Analytics_RoomPresence_Max_Fields = {
     __typename?: "analytics_RoomPresence_max_fields";
+    count?: Maybe<Scalars["bigint"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
 };
 
 /** order by max() on columns of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Max_Order_By = {
+    count?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Analytics_RoomPresence_Min_Fields = {
     __typename?: "analytics_RoomPresence_min_fields";
+    count?: Maybe<Scalars["bigint"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
 };
 
 /** order by min() on columns of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Min_Order_By = {
+    count?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Mutation_Response = {
+    __typename?: "analytics_RoomPresence_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Analytics_RoomPresence>;
+};
+
+/** on conflict condition type for table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_On_Conflict = {
+    constraint: Analytics_RoomPresence_Constraint;
+    update_columns?: Array<Analytics_RoomPresence_Update_Column>;
+    where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.RoomPresence". */
@@ -2520,8 +2727,13 @@ export type Analytics_RoomPresence_Order_By = {
     count?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
     room?: Maybe<Room_Room_Order_By>;
+    roomId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: analytics_RoomPresence */
+export type Analytics_RoomPresence_Pk_Columns_Input = {
+    id: Scalars["uuid"];
 };
 
 /** select columns of table "analytics.RoomPresence" */
@@ -2533,8 +2745,105 @@ export enum Analytics_RoomPresence_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
-    Name = "name",
+    RoomId = "roomId",
 }
+
+/** input type for updating data in table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Set_Input = {
+    count?: Maybe<Scalars["bigint"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+};
+
+/** aggregate stddev on columns */
+export type Analytics_RoomPresence_Stddev_Fields = {
+    __typename?: "analytics_RoomPresence_stddev_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Analytics_RoomPresence_Stddev_Pop_Fields = {
+    __typename?: "analytics_RoomPresence_stddev_pop_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Pop_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Analytics_RoomPresence_Stddev_Samp_Fields = {
+    __typename?: "analytics_RoomPresence_stddev_samp_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Samp_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Analytics_RoomPresence_Sum_Fields = {
+    __typename?: "analytics_RoomPresence_sum_fields";
+    count?: Maybe<Scalars["bigint"]>;
+};
+
+/** order by sum() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Sum_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** update columns of table "analytics.RoomPresence" */
+export enum Analytics_RoomPresence_Update_Column {
+    /** column name */
+    Count = "count",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    RoomId = "roomId",
+}
+
+/** aggregate var_pop on columns */
+export type Analytics_RoomPresence_Var_Pop_Fields = {
+    __typename?: "analytics_RoomPresence_var_pop_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Var_Pop_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Analytics_RoomPresence_Var_Samp_Fields = {
+    __typename?: "analytics_RoomPresence_var_samp_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Var_Samp_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Analytics_RoomPresence_Variance_Fields = {
+    __typename?: "analytics_RoomPresence_variance_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Variance_Order_By = {
+    count?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "analytics.RoomStats" */
 export type Analytics_RoomStats = {
@@ -2826,330 +3135,6 @@ export type Analytics_RoomStats_Variance_Fields = {
 export type Analytics_RoomStats_Variance_Order_By = {
     hlsViewCount?: Maybe<Order_By>;
 };
-
-/** columns and relationships of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews = {
-    __typename?: "analytics_mat_ElementTotalViews";
-    elementId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregated selection of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate = {
-    __typename?: "analytics_mat_ElementTotalViews_aggregate";
-    aggregate?: Maybe<Analytics_Mat_ElementTotalViews_Aggregate_Fields>;
-    nodes: Array<Analytics_Mat_ElementTotalViews>;
-};
-
-/** aggregate fields of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_aggregate_fields";
-    avg?: Maybe<Analytics_Mat_ElementTotalViews_Avg_Fields>;
-    count: Scalars["Int"];
-    max?: Maybe<Analytics_Mat_ElementTotalViews_Max_Fields>;
-    min?: Maybe<Analytics_Mat_ElementTotalViews_Min_Fields>;
-    stddev?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Fields>;
-    stddev_pop?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields>;
-    stddev_samp?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields>;
-    sum?: Maybe<Analytics_Mat_ElementTotalViews_Sum_Fields>;
-    var_pop?: Maybe<Analytics_Mat_ElementTotalViews_Var_Pop_Fields>;
-    var_samp?: Maybe<Analytics_Mat_ElementTotalViews_Var_Samp_Fields>;
-    variance?: Maybe<Analytics_Mat_ElementTotalViews_Variance_Fields>;
-};
-
-/** aggregate fields of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** aggregate avg on columns */
-export type Analytics_Mat_ElementTotalViews_Avg_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_avg_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_ElementTotalViews". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_ElementTotalViews_Bool_Exp = {
-    _and?: Maybe<Array<Analytics_Mat_ElementTotalViews_Bool_Exp>>;
-    _not?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-    _or?: Maybe<Array<Analytics_Mat_ElementTotalViews_Bool_Exp>>;
-    elementId?: Maybe<Uuid_Comparison_Exp>;
-    totalViewCount?: Maybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_ElementTotalViews_Max_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_max_fields";
-    elementId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_ElementTotalViews_Min_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_min_fields";
-    elementId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_ElementTotalViews". */
-export type Analytics_Mat_ElementTotalViews_Order_By = {
-    elementId?: Maybe<Order_By>;
-    totalViewCount?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_ElementTotalViews" */
-export enum Analytics_Mat_ElementTotalViews_Select_Column {
-    /** column name */
-    ElementId = "elementId",
-    /** column name */
-    TotalViewCount = "totalViewCount",
-}
-
-/** aggregate stddev on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_stddev_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_stddev_pop_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_stddev_samp_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate sum on columns */
-export type Analytics_Mat_ElementTotalViews_Sum_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_sum_fields";
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate var_pop on columns */
-export type Analytics_Mat_ElementTotalViews_Var_Pop_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_var_pop_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate var_samp on columns */
-export type Analytics_Mat_ElementTotalViews_Var_Samp_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_var_samp_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate variance on columns */
-export type Analytics_Mat_ElementTotalViews_Variance_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_variance_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** columns and relationships of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews = {
-    __typename?: "analytics_mat_ItemTotalViews";
-    itemId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregated selection of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate = {
-    __typename?: "analytics_mat_ItemTotalViews_aggregate";
-    aggregate?: Maybe<Analytics_Mat_ItemTotalViews_Aggregate_Fields>;
-    nodes: Array<Analytics_Mat_ItemTotalViews>;
-};
-
-/** aggregate fields of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_aggregate_fields";
-    avg?: Maybe<Analytics_Mat_ItemTotalViews_Avg_Fields>;
-    count: Scalars["Int"];
-    max?: Maybe<Analytics_Mat_ItemTotalViews_Max_Fields>;
-    min?: Maybe<Analytics_Mat_ItemTotalViews_Min_Fields>;
-    stddev?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Fields>;
-    stddev_pop?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields>;
-    stddev_samp?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields>;
-    sum?: Maybe<Analytics_Mat_ItemTotalViews_Sum_Fields>;
-    var_pop?: Maybe<Analytics_Mat_ItemTotalViews_Var_Pop_Fields>;
-    var_samp?: Maybe<Analytics_Mat_ItemTotalViews_Var_Samp_Fields>;
-    variance?: Maybe<Analytics_Mat_ItemTotalViews_Variance_Fields>;
-};
-
-/** aggregate fields of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** aggregate avg on columns */
-export type Analytics_Mat_ItemTotalViews_Avg_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_avg_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_ItemTotalViews". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_ItemTotalViews_Bool_Exp = {
-    _and?: Maybe<Array<Analytics_Mat_ItemTotalViews_Bool_Exp>>;
-    _not?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-    _or?: Maybe<Array<Analytics_Mat_ItemTotalViews_Bool_Exp>>;
-    itemId?: Maybe<Uuid_Comparison_Exp>;
-    totalViewCount?: Maybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_ItemTotalViews_Max_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_max_fields";
-    itemId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_ItemTotalViews_Min_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_min_fields";
-    itemId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_ItemTotalViews". */
-export type Analytics_Mat_ItemTotalViews_Order_By = {
-    itemId?: Maybe<Order_By>;
-    totalViewCount?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_ItemTotalViews" */
-export enum Analytics_Mat_ItemTotalViews_Select_Column {
-    /** column name */
-    ItemId = "itemId",
-    /** column name */
-    TotalViewCount = "totalViewCount",
-}
-
-/** aggregate stddev on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_stddev_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_stddev_pop_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_stddev_samp_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate sum on columns */
-export type Analytics_Mat_ItemTotalViews_Sum_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_sum_fields";
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate var_pop on columns */
-export type Analytics_Mat_ItemTotalViews_Var_Pop_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_var_pop_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate var_samp on columns */
-export type Analytics_Mat_ItemTotalViews_Var_Samp_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_var_samp_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate variance on columns */
-export type Analytics_Mat_ItemTotalViews_Variance_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_variance_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** columns and relationships of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence = {
-    __typename?: "analytics_mat_RoomPresence";
-    count?: Maybe<Scalars["jsonb"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-};
-
-/** columns and relationships of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresenceCountArgs = {
-    path?: Maybe<Scalars["String"]>;
-};
-
-/** aggregated selection of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate = {
-    __typename?: "analytics_mat_RoomPresence_aggregate";
-    aggregate?: Maybe<Analytics_Mat_RoomPresence_Aggregate_Fields>;
-    nodes: Array<Analytics_Mat_RoomPresence>;
-};
-
-/** aggregate fields of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate_Fields = {
-    __typename?: "analytics_mat_RoomPresence_aggregate_fields";
-    count: Scalars["Int"];
-    max?: Maybe<Analytics_Mat_RoomPresence_Max_Fields>;
-    min?: Maybe<Analytics_Mat_RoomPresence_Min_Fields>;
-};
-
-/** aggregate fields of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_RoomPresence". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_RoomPresence_Bool_Exp = {
-    _and?: Maybe<Array<Analytics_Mat_RoomPresence_Bool_Exp>>;
-    _not?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-    _or?: Maybe<Array<Analytics_Mat_RoomPresence_Bool_Exp>>;
-    count?: Maybe<Jsonb_Comparison_Exp>;
-    created_at?: Maybe<Timestamptz_Comparison_Exp>;
-    id?: Maybe<Uuid_Comparison_Exp>;
-    name?: Maybe<String_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_RoomPresence_Max_Fields = {
-    __typename?: "analytics_mat_RoomPresence_max_fields";
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_RoomPresence_Min_Fields = {
-    __typename?: "analytics_mat_RoomPresence_min_fields";
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_RoomPresence". */
-export type Analytics_Mat_RoomPresence_Order_By = {
-    count?: Maybe<Order_By>;
-    created_at?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_RoomPresence" */
-export enum Analytics_Mat_RoomPresence_Select_Column {
-    /** column name */
-    Count = "count",
-    /** column name */
-    CreatedAt = "created_at",
-    /** column name */
-    Id = "id",
-    /** column name */
-    Name = "name",
-}
 
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
 export type Bigint_Comparison_Exp = {
@@ -6989,6 +6974,10 @@ export type Conference_Conference = {
     demoCode: Conference_DemoCode;
     demoCodeId: Scalars["uuid"];
     /** An array relationship */
+    events: Array<Schedule_Event>;
+    /** An aggregate relationship */
+    events_aggregate: Schedule_Event_Aggregate;
+    /** An array relationship */
     exhibitions: Array<Collection_Exhibition>;
     /** An aggregate relationship */
     exhibitions_aggregate: Collection_Exhibition_Aggregate;
@@ -7065,6 +7054,24 @@ export type Conference_ConferenceConfigurations_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Conference_Configuration_Order_By>>;
     where?: Maybe<Conference_Configuration_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEventsArgs = {
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEvents_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7279,6 +7286,7 @@ export type Conference_Conference_Bool_Exp = {
     defaultProgramVisibilityLevel?: Maybe<String_Comparison_Exp>;
     demoCode?: Maybe<Conference_DemoCode_Bool_Exp>;
     demoCodeId?: Maybe<Uuid_Comparison_Exp>;
+    events?: Maybe<Schedule_Event_Bool_Exp>;
     exhibitions?: Maybe<Collection_Exhibition_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     items?: Maybe<Content_Item_Bool_Exp>;
@@ -7321,6 +7329,7 @@ export type Conference_Conference_Insert_Input = {
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     demoCode?: Maybe<Conference_DemoCode_Obj_Rel_Insert_Input>;
     demoCodeId?: Maybe<Scalars["uuid"]>;
+    events?: Maybe<Schedule_Event_Arr_Rel_Insert_Input>;
     exhibitions?: Maybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
     id?: Maybe<Scalars["uuid"]>;
     items?: Maybe<Content_Item_Arr_Rel_Insert_Input>;
@@ -7426,6 +7435,7 @@ export type Conference_Conference_Order_By = {
     defaultProgramVisibilityLevel?: Maybe<Order_By>;
     demoCode?: Maybe<Conference_DemoCode_Order_By>;
     demoCodeId?: Maybe<Order_By>;
+    events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
     exhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
     items_aggregate?: Maybe<Content_Item_Aggregate_Order_By>;
@@ -7570,6 +7580,16 @@ export enum Conference_ConfigurationKey_Constraint {
 }
 
 export enum Conference_ConfigurationKey_Enum {
+    /** Number. Milliseconds UTC. Time from which to stop sending initial invitations automatically. */
+    AutomaticInvitationsEnd = "AUTOMATIC_INVITATIONS_END",
+    /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+    AutomaticInvitationsRepeatEnd = "AUTOMATIC_INVITATIONS_REPEAT_END",
+    /** Number. Milliseconds. Time between sending repeat emails for unaccepted invitations. */
+    AutomaticInvitationsRepeatFrequency = "AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY",
+    /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+    AutomaticInvitationsRepeatStart = "AUTOMATIC_INVITATIONS_REPEAT_START",
+    /** Number. Milliseconds UTC. Time from which to start sending initial invitations automatically. */
+    AutomaticInvitationsStart = "AUTOMATIC_INVITATIONS_START",
     /** A list of videos to be used as the background for title/sponsor slides. */
     BackgroundVideos = "BACKGROUND_VIDEOS",
     /** A string representing the app version. Changing this causes the user's browsers to refresh. */
@@ -7584,6 +7604,10 @@ export enum Conference_ConfigurationKey_Enum {
     EnableBackstageStreamPreview = "ENABLE_BACKSTAGE_STREAM_PREVIEW",
     /** Boolean. Whether to enable the External RTMP Broadcast feature. */
     EnableExternalRtmpBroadcast = "ENABLE_EXTERNAL_RTMP_BROADCAST",
+    /** Whether to enable email notifications for recordings (default: true). */
+    EnableRecordingSubtitleEmailNotifications = "ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS",
+    /** Boolean. Hide the exhibition people from the event boxes in the schedule. */
+    EventBoxHideExhibitionPeople = "EVENT_BOX_HIDE_EXHIBITION_PEOPLE",
     /** List of S3 URLs. */
     FillerVideos = "FILLER_VIDEOS",
     /** Boolean. Switches on the Sponsors menu button (even if no sponsors exist). */
@@ -7602,6 +7626,8 @@ export enum Conference_ConfigurationKey_Enum {
     ScheduleViewVersion = "SCHEDULE_VIEW_VERSION",
     /** String. Label for the "sponsors" in the sidebar for when a conference uses a different term. */
     SponsorsLabel = "SPONSORS_LABEL",
+    /** A list of strings indicating which program people roles receive notifications (e.g. subtitles) about submissions. Default: ["PRESENTER","AUTHOR"]. */
+    SubmissionNotificationRoles = "SUBMISSION_NOTIFICATION_ROLES",
     /** A string representing a valid email address for contacting the conference organisers. */
     SupportAddress = "SUPPORT_ADDRESS",
     /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
@@ -8862,6 +8888,7 @@ export type Content_Element = {
     /** An object relationship */
     originatingData?: Maybe<Conference_OriginatingData>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
+    source?: Maybe<Scalars["jsonb"]>;
     /** An array relationship */
     stats: Array<Analytics_ContentElementStats>;
     /** An aggregate relationship */
@@ -8888,6 +8915,11 @@ export type Content_ElementDataArgs = {
 
 /** columns and relationships of "content.Element" */
 export type Content_ElementLayoutDataArgs = {
+    path?: Maybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementSourceArgs = {
     path?: Maybe<Scalars["String"]>;
 };
 
@@ -9170,6 +9202,7 @@ export type Content_Element_Aggregate_Order_By = {
 export type Content_Element_Append_Input = {
     data?: Maybe<Scalars["jsonb"]>;
     layoutData?: Maybe<Scalars["jsonb"]>;
+    source?: Maybe<Scalars["jsonb"]>;
 };
 
 /** input type for inserting array relation for remote table "content.Element" */
@@ -9209,6 +9242,7 @@ export type Content_Element_Bool_Exp = {
     name?: Maybe<String_Comparison_Exp>;
     originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
     originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+    source?: Maybe<Jsonb_Comparison_Exp>;
     stats?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
     subconferenceId?: Maybe<Uuid_Comparison_Exp>;
     totalViewsStat?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
@@ -9230,18 +9264,21 @@ export enum Content_Element_Constraint {
 export type Content_Element_Delete_At_Path_Input = {
     data?: Maybe<Array<Scalars["String"]>>;
     layoutData?: Maybe<Array<Scalars["String"]>>;
+    source?: Maybe<Array<Scalars["String"]>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Content_Element_Delete_Elem_Input = {
     data?: Maybe<Scalars["Int"]>;
     layoutData?: Maybe<Scalars["Int"]>;
+    source?: Maybe<Scalars["Int"]>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Content_Element_Delete_Key_Input = {
     data?: Maybe<Scalars["String"]>;
     layoutData?: Maybe<Scalars["String"]>;
+    source?: Maybe<Scalars["String"]>;
 };
 
 /** input type for incrementing numeric columns in table "content.Element" */
@@ -9263,6 +9300,7 @@ export type Content_Element_Insert_Input = {
     name?: Maybe<Scalars["String"]>;
     originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
+    source?: Maybe<Scalars["jsonb"]>;
     stats?: Maybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     totalViewsStat?: Maybe<Analytics_ElementTotalViews_Obj_Rel_Insert_Input>;
@@ -9367,6 +9405,7 @@ export type Content_Element_Order_By = {
     name?: Maybe<Order_By>;
     originatingData?: Maybe<Conference_OriginatingData_Order_By>;
     originatingDataId?: Maybe<Order_By>;
+    source?: Maybe<Order_By>;
     stats_aggregate?: Maybe<Analytics_ContentElementStats_Aggregate_Order_By>;
     subconferenceId?: Maybe<Order_By>;
     totalViewsStat?: Maybe<Analytics_ElementTotalViews_Order_By>;
@@ -9387,6 +9426,7 @@ export type Content_Element_Pk_Columns_Input = {
 export type Content_Element_Prepend_Input = {
     data?: Maybe<Scalars["jsonb"]>;
     layoutData?: Maybe<Scalars["jsonb"]>;
+    source?: Maybe<Scalars["jsonb"]>;
 };
 
 /** select columns of table "content.Element" */
@@ -9410,6 +9450,8 @@ export enum Content_Element_Select_Column {
     /** column name */
     OriginatingDataId = "originatingDataId",
     /** column name */
+    Source = "source",
+    /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
     TypeName = "typeName",
@@ -9432,6 +9474,7 @@ export type Content_Element_Set_Input = {
     layoutData?: Maybe<Scalars["jsonb"]>;
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
+    source?: Maybe<Scalars["jsonb"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     typeName?: Maybe<Content_ElementType_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -9503,6 +9546,8 @@ export enum Content_Element_Update_Column {
     Name = "name",
     /** column name */
     OriginatingDataId = "originatingDataId",
+    /** column name */
+    Source = "source",
     /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
@@ -13634,6 +13679,18 @@ export type Mutation_Root = {
     delete_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
     /** delete single row from the table: "analytics.ContentItemStats" */
     delete_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+    /** delete data from the table: "analytics.ElementTotalViews" */
+    delete_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+    /** delete single row from the table: "analytics.ElementTotalViews" */
+    delete_analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
+    /** delete data from the table: "analytics.ItemTotalViews" */
+    delete_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+    /** delete single row from the table: "analytics.ItemTotalViews" */
+    delete_analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
+    /** delete data from the table: "analytics.RoomPresence" */
+    delete_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+    /** delete single row from the table: "analytics.RoomPresence" */
+    delete_analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** delete data from the table: "analytics.RoomStats" */
     delete_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
     /** delete single row from the table: "analytics.RoomStats" */
@@ -14000,6 +14057,18 @@ export type Mutation_Root = {
     insert_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
     /** insert a single row into the table: "analytics.ContentItemStats" */
     insert_analytics_ContentItemStats_one?: Maybe<Analytics_ContentItemStats>;
+    /** insert data into the table: "analytics.ElementTotalViews" */
+    insert_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+    /** insert a single row into the table: "analytics.ElementTotalViews" */
+    insert_analytics_ElementTotalViews_one?: Maybe<Analytics_ElementTotalViews>;
+    /** insert data into the table: "analytics.ItemTotalViews" */
+    insert_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+    /** insert a single row into the table: "analytics.ItemTotalViews" */
+    insert_analytics_ItemTotalViews_one?: Maybe<Analytics_ItemTotalViews>;
+    /** insert data into the table: "analytics.RoomPresence" */
+    insert_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+    /** insert a single row into the table: "analytics.RoomPresence" */
+    insert_analytics_RoomPresence_one?: Maybe<Analytics_RoomPresence>;
     /** insert data into the table: "analytics.RoomStats" */
     insert_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
     /** insert a single row into the table: "analytics.RoomStats" */
@@ -14377,6 +14446,18 @@ export type Mutation_Root = {
     update_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
     /** update single row of the table: "analytics.ContentItemStats" */
     update_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+    /** update data of the table: "analytics.ElementTotalViews" */
+    update_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+    /** update single row of the table: "analytics.ElementTotalViews" */
+    update_analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
+    /** update data of the table: "analytics.ItemTotalViews" */
+    update_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+    /** update single row of the table: "analytics.ItemTotalViews" */
+    update_analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
+    /** update data of the table: "analytics.RoomPresence" */
+    update_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+    /** update single row of the table: "analytics.RoomPresence" */
+    update_analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** update data of the table: "analytics.RoomStats" */
     update_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
     /** update single row of the table: "analytics.RoomStats" */
@@ -14788,6 +14869,36 @@ export type Mutation_RootDelete_Analytics_ContentItemStatsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Analytics_ContentItemStats_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ElementTotalViewsArgs = {
+    where: Analytics_ElementTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ElementTotalViews_By_PkArgs = {
+    elementId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ItemTotalViewsArgs = {
+    where: Analytics_ItemTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ItemTotalViews_By_PkArgs = {
+    itemId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomPresenceArgs = {
+    where: Analytics_RoomPresence_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomPresence_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -15721,6 +15832,42 @@ export type Mutation_RootInsert_Analytics_ContentItemStatsArgs = {
 export type Mutation_RootInsert_Analytics_ContentItemStats_OneArgs = {
     object: Analytics_ContentItemStats_Insert_Input;
     on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ElementTotalViewsArgs = {
+    objects: Array<Analytics_ElementTotalViews_Insert_Input>;
+    on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ElementTotalViews_OneArgs = {
+    object: Analytics_ElementTotalViews_Insert_Input;
+    on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ItemTotalViewsArgs = {
+    objects: Array<Analytics_ItemTotalViews_Insert_Input>;
+    on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ItemTotalViews_OneArgs = {
+    object: Analytics_ItemTotalViews_Insert_Input;
+    on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomPresenceArgs = {
+    objects: Array<Analytics_RoomPresence_Insert_Input>;
+    on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomPresence_OneArgs = {
+    object: Analytics_RoomPresence_Insert_Input;
+    on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
 };
 
 /** mutation root */
@@ -16901,6 +17048,48 @@ export type Mutation_RootUpdate_Analytics_ContentItemStats_By_PkArgs = {
     _inc?: Maybe<Analytics_ContentItemStats_Inc_Input>;
     _set?: Maybe<Analytics_ContentItemStats_Set_Input>;
     pk_columns: Analytics_ContentItemStats_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ElementTotalViewsArgs = {
+    _inc?: Maybe<Analytics_ElementTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ElementTotalViews_Set_Input>;
+    where: Analytics_ElementTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ElementTotalViews_By_PkArgs = {
+    _inc?: Maybe<Analytics_ElementTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ElementTotalViews_Set_Input>;
+    pk_columns: Analytics_ElementTotalViews_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ItemTotalViewsArgs = {
+    _inc?: Maybe<Analytics_ItemTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ItemTotalViews_Set_Input>;
+    where: Analytics_ItemTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ItemTotalViews_By_PkArgs = {
+    _inc?: Maybe<Analytics_ItemTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ItemTotalViews_Set_Input>;
+    pk_columns: Analytics_ItemTotalViews_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomPresenceArgs = {
+    _inc?: Maybe<Analytics_RoomPresence_Inc_Input>;
+    _set?: Maybe<Analytics_RoomPresence_Set_Input>;
+    where: Analytics_RoomPresence_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomPresence_By_PkArgs = {
+    _inc?: Maybe<Analytics_RoomPresence_Inc_Input>;
+    _set?: Maybe<Analytics_RoomPresence_Set_Input>;
+    pk_columns: Analytics_RoomPresence_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -18216,32 +18405,26 @@ export type Query_Root = {
     analytics_ElementTotalViews: Array<Analytics_ElementTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ElementTotalViews" */
     analytics_ElementTotalViews_aggregate: Analytics_ElementTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ElementTotalViews" using primary key columns */
+    analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
     /** fetch data from the table: "analytics.ItemTotalViews" */
     analytics_ItemTotalViews: Array<Analytics_ItemTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ItemTotalViews" */
     analytics_ItemTotalViews_aggregate: Analytics_ItemTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ItemTotalViews" using primary key columns */
+    analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
     /** fetch data from the table: "analytics.RoomPresence" */
     analytics_RoomPresence: Array<Analytics_RoomPresence>;
     /** fetch aggregated fields from the table: "analytics.RoomPresence" */
     analytics_RoomPresence_aggregate: Analytics_RoomPresence_Aggregate;
+    /** fetch data from the table: "analytics.RoomPresence" using primary key columns */
+    analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** fetch data from the table: "analytics.RoomStats" */
     analytics_RoomStats: Array<Analytics_RoomStats>;
     /** fetch aggregated fields from the table: "analytics.RoomStats" */
     analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
     /** fetch data from the table: "analytics.RoomStats" using primary key columns */
     analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-    /** fetch data from the table: "analytics.mat_ElementTotalViews" */
-    analytics_mat_ElementTotalViews: Array<Analytics_Mat_ElementTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ElementTotalViews" */
-    analytics_mat_ElementTotalViews_aggregate: Analytics_Mat_ElementTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_ItemTotalViews" */
-    analytics_mat_ItemTotalViews: Array<Analytics_Mat_ItemTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ItemTotalViews" */
-    analytics_mat_ItemTotalViews_aggregate: Analytics_Mat_ItemTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_RoomPresence" */
-    analytics_mat_RoomPresence: Array<Analytics_Mat_RoomPresence>;
-    /** fetch aggregated fields from the table: "analytics.mat_RoomPresence" */
-    analytics_mat_RoomPresence_aggregate: Analytics_Mat_RoomPresence_Aggregate;
     /** fetch data from the table: "chat.Chat" */
     chat_Chat: Array<Chat_Chat>;
     /** fetch aggregated fields from the table: "chat.Chat" */
@@ -18932,6 +19115,10 @@ export type Query_RootAnalytics_ElementTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
+export type Query_RootAnalytics_ElementTotalViews_By_PkArgs = {
+    elementId: Scalars["uuid"];
+};
+
 export type Query_RootAnalytics_ItemTotalViewsArgs = {
     distinct_on?: Maybe<Array<Analytics_ItemTotalViews_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -18948,6 +19135,10 @@ export type Query_RootAnalytics_ItemTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
+export type Query_RootAnalytics_ItemTotalViews_By_PkArgs = {
+    itemId: Scalars["uuid"];
+};
+
 export type Query_RootAnalytics_RoomPresenceArgs = {
     distinct_on?: Maybe<Array<Analytics_RoomPresence_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -18962,6 +19153,10 @@ export type Query_RootAnalytics_RoomPresence_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Analytics_RoomPresence_Order_By>>;
     where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
+};
+
+export type Query_RootAnalytics_RoomPresence_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Query_RootAnalytics_RoomStatsArgs = {
@@ -18982,54 +19177,6 @@ export type Query_RootAnalytics_RoomStats_AggregateArgs = {
 
 export type Query_RootAnalytics_RoomStats_By_PkArgs = {
     id: Scalars["uuid"];
-};
-
-export type Query_RootAnalytics_Mat_ElementTotalViewsArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_ElementTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_ItemTotalViewsArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_ItemTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_RoomPresenceArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_RoomPresence_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
 };
 
 export type Query_RootChat_ChatArgs = {
@@ -19614,10 +19761,6 @@ export type Query_RootContent_SearchItems_AggregateArgs = {
 
 export type Query_RootGetSlugArgs = {
     url: Scalars["String"];
-};
-
-export type Query_RootGetUploadAgreementArgs = {
-    magicToken: Scalars["String"];
 };
 
 export type Query_RootJob_Queues_ChannelStackCreateJobArgs = {
@@ -22285,6 +22428,8 @@ export type Registrant_Registrant = {
     id: Scalars["uuid"];
     /** An object relationship */
     invitation?: Maybe<Registrant_Invitation>;
+    /** A computed field, executes function "registrant.InvitationEmailStatus" */
+    invitationStatus?: Maybe<Scalars["jsonb"]>;
     /** A computed field, executes function "registrant.HasBeenInvited" */
     inviteSent?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
@@ -22341,6 +22486,11 @@ export type Registrant_RegistrantGroupRegistrants_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Registrant_GroupRegistrant_Order_By>>;
     where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+/** columns and relationships of "registrant.Registrant" */
+export type Registrant_RegistrantInvitationStatusArgs = {
+    path?: Maybe<Scalars["String"]>;
 };
 
 /** columns and relationships of "registrant.Registrant" */
@@ -22573,6 +22723,7 @@ export type Registrant_Registrant_Bool_Exp = {
     groupRegistrants?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
+    invitationStatus?: Maybe<Jsonb_Comparison_Exp>;
     inviteSent?: Maybe<Boolean_Comparison_Exp>;
     profile?: Maybe<Registrant_Profile_Bool_Exp>;
     programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
@@ -22687,6 +22838,7 @@ export type Registrant_Registrant_Order_By = {
     groupRegistrants_aggregate?: Maybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
     invitation?: Maybe<Registrant_Invitation_Order_By>;
+    invitationStatus?: Maybe<Order_By>;
     inviteSent?: Maybe<Order_By>;
     profile?: Maybe<Registrant_Profile_Order_By>;
     programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
@@ -28509,32 +28661,26 @@ export type Subscription_Root = {
     analytics_ElementTotalViews: Array<Analytics_ElementTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ElementTotalViews" */
     analytics_ElementTotalViews_aggregate: Analytics_ElementTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ElementTotalViews" using primary key columns */
+    analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
     /** fetch data from the table: "analytics.ItemTotalViews" */
     analytics_ItemTotalViews: Array<Analytics_ItemTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ItemTotalViews" */
     analytics_ItemTotalViews_aggregate: Analytics_ItemTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ItemTotalViews" using primary key columns */
+    analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
     /** fetch data from the table: "analytics.RoomPresence" */
     analytics_RoomPresence: Array<Analytics_RoomPresence>;
     /** fetch aggregated fields from the table: "analytics.RoomPresence" */
     analytics_RoomPresence_aggregate: Analytics_RoomPresence_Aggregate;
+    /** fetch data from the table: "analytics.RoomPresence" using primary key columns */
+    analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** fetch data from the table: "analytics.RoomStats" */
     analytics_RoomStats: Array<Analytics_RoomStats>;
     /** fetch aggregated fields from the table: "analytics.RoomStats" */
     analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
     /** fetch data from the table: "analytics.RoomStats" using primary key columns */
     analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-    /** fetch data from the table: "analytics.mat_ElementTotalViews" */
-    analytics_mat_ElementTotalViews: Array<Analytics_Mat_ElementTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ElementTotalViews" */
-    analytics_mat_ElementTotalViews_aggregate: Analytics_Mat_ElementTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_ItemTotalViews" */
-    analytics_mat_ItemTotalViews: Array<Analytics_Mat_ItemTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ItemTotalViews" */
-    analytics_mat_ItemTotalViews_aggregate: Analytics_Mat_ItemTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_RoomPresence" */
-    analytics_mat_RoomPresence: Array<Analytics_Mat_RoomPresence>;
-    /** fetch aggregated fields from the table: "analytics.mat_RoomPresence" */
-    analytics_mat_RoomPresence_aggregate: Analytics_Mat_RoomPresence_Aggregate;
     /** fetch data from the table: "chat.Chat" */
     chat_Chat: Array<Chat_Chat>;
     /** fetch aggregated fields from the table: "chat.Chat" */
@@ -29221,6 +29367,10 @@ export type Subscription_RootAnalytics_ElementTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
+export type Subscription_RootAnalytics_ElementTotalViews_By_PkArgs = {
+    elementId: Scalars["uuid"];
+};
+
 export type Subscription_RootAnalytics_ItemTotalViewsArgs = {
     distinct_on?: Maybe<Array<Analytics_ItemTotalViews_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29237,6 +29387,10 @@ export type Subscription_RootAnalytics_ItemTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
+export type Subscription_RootAnalytics_ItemTotalViews_By_PkArgs = {
+    itemId: Scalars["uuid"];
+};
+
 export type Subscription_RootAnalytics_RoomPresenceArgs = {
     distinct_on?: Maybe<Array<Analytics_RoomPresence_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29251,6 +29405,10 @@ export type Subscription_RootAnalytics_RoomPresence_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Analytics_RoomPresence_Order_By>>;
     where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
+};
+
+export type Subscription_RootAnalytics_RoomPresence_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Subscription_RootAnalytics_RoomStatsArgs = {
@@ -29271,54 +29429,6 @@ export type Subscription_RootAnalytics_RoomStats_AggregateArgs = {
 
 export type Subscription_RootAnalytics_RoomStats_By_PkArgs = {
     id: Scalars["uuid"];
-};
-
-export type Subscription_RootAnalytics_Mat_ElementTotalViewsArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_ElementTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_ItemTotalViewsArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_ItemTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_RoomPresenceArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_RoomPresence_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
 };
 
 export type Subscription_RootChat_ChatArgs = {
@@ -31232,6 +31342,7 @@ export enum System_ConfigurationKey_Enum {
     SendgridSender = "SENDGRID_SENDER",
     /** The name emails are from when sent via SendGrid. */
     SendgridSenderName = "SENDGRID_SENDER_NAME",
+    SendgridWebhookPublicKey = "SENDGRID_WEBHOOK_PUBLIC_KEY",
     /** Contact address for people to request emails never be sent to them again. */
     StopEmailsContactEmailAddress = "STOP_EMAILS_CONTACT_EMAIL_ADDRESS",
     /** The time of the latest revision of the host T&Cs. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -35444,6 +35555,14 @@ export enum Video_YouTubeUpload_Update_Column {
     VideoTitle = "videoTitle",
 }
 
+export type Analytics_ListConferencesQueryVariables = Exact<{
+    cutoff: Scalars["timestamptz"];
+}>;
+
+export type Analytics_ListConferencesQuery = { __typename?: "query_root" } & {
+    conference_Conference: Array<{ __typename?: "conference_Conference" } & Pick<Conference_Conference, "id">>;
+};
+
 export type FlagInserted_GetModeratorsQueryVariables = Exact<{
     messageSId: Scalars["uuid"];
 }>;
@@ -35525,6 +35644,113 @@ export type SetVapidKeysMutation = { __typename?: "mutation_root" } & {
             System_Configuration_Mutation_Response,
             "affected_rows"
         >
+    >;
+};
+
+export type Analytics_ListRecordsForAnalyticsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type Analytics_ListRecordsForAnalyticsQuery = { __typename?: "query_root" } & {
+    content_Item: Array<{ __typename?: "content_Item" } & Pick<Content_Item, "id">>;
+    content_Element: Array<{ __typename?: "content_Element" } & Pick<Content_Element, "id">>;
+};
+
+export type Analytics_AggregateElementTotalViewsQueryVariables = Exact<{
+    elementId: Scalars["uuid"];
+}>;
+
+export type Analytics_AggregateElementTotalViewsQuery = { __typename?: "query_root" } & {
+    analytics_ContentElementStats_aggregate: { __typename?: "analytics_ContentElementStats_aggregate" } & {
+        aggregate?: Maybe<
+            { __typename?: "analytics_ContentElementStats_aggregate_fields" } & {
+                sum?: Maybe<
+                    { __typename?: "analytics_ContentElementStats_sum_fields" } & Pick<
+                        Analytics_ContentElementStats_Sum_Fields,
+                        "viewCount"
+                    >
+                >;
+            }
+        >;
+    };
+};
+
+export type Analytics_InsertElementTotalViewStatMutationVariables = Exact<{
+    elementId: Scalars["uuid"];
+    count: Scalars["bigint"];
+}>;
+
+export type Analytics_InsertElementTotalViewStatMutation = { __typename?: "mutation_root" } & {
+    insert_analytics_ElementTotalViews_one?: Maybe<
+        { __typename?: "analytics_ElementTotalViews" } & Pick<Analytics_ElementTotalViews, "elementId">
+    >;
+};
+
+export type Analytics_AggregateItemTotalViewsQueryVariables = Exact<{
+    itemId: Scalars["uuid"];
+}>;
+
+export type Analytics_AggregateItemTotalViewsQuery = { __typename?: "query_root" } & {
+    analytics_ContentItemStats_aggregate: { __typename?: "analytics_ContentItemStats_aggregate" } & {
+        aggregate?: Maybe<
+            { __typename?: "analytics_ContentItemStats_aggregate_fields" } & {
+                sum?: Maybe<
+                    { __typename?: "analytics_ContentItemStats_sum_fields" } & Pick<
+                        Analytics_ContentItemStats_Sum_Fields,
+                        "viewCount"
+                    >
+                >;
+            }
+        >;
+    };
+};
+
+export type Analytics_InsertItemTotalViewStatMutationVariables = Exact<{
+    itemId: Scalars["uuid"];
+    count: Scalars["bigint"];
+}>;
+
+export type Analytics_InsertItemTotalViewStatMutation = { __typename?: "mutation_root" } & {
+    insert_analytics_ItemTotalViews_one?: Maybe<
+        { __typename?: "analytics_ItemTotalViews" } & Pick<Analytics_ItemTotalViews, "itemId">
+    >;
+};
+
+export type Analytics_ListRoomsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type Analytics_ListRoomsQuery = { __typename?: "query_root" } & {
+    conference_Conference_by_pk?: Maybe<
+        { __typename?: "conference_Conference" } & Pick<Conference_Conference, "id" | "slug">
+    >;
+    room_Room: Array<{ __typename?: "room_Room" } & Pick<Room_Room, "id">>;
+};
+
+export type Analytics_FetchRoomPresenceQueryVariables = Exact<{
+    offset: Scalars["Int"];
+    limit: Scalars["Int"];
+    dateCutoff: Scalars["timestamptz"];
+}>;
+
+export type Analytics_FetchRoomPresenceQuery = { __typename?: "query_root" } & {
+    analytics_AppStats: Array<
+        { __typename?: "analytics_AppStats" } & Pick<
+            Analytics_AppStats,
+            "created_at" | "total_unique_tabs" | "total_unique_user_ids" | "pages"
+        >
+    >;
+};
+
+export type Analytics_InsertRoomPresenceMutationVariables = Exact<{
+    roomId: Scalars["uuid"];
+    createdAt: Scalars["timestamptz"];
+    count: Scalars["bigint"];
+}>;
+
+export type Analytics_InsertRoomPresenceMutation = { __typename?: "mutation_root" } & {
+    insert_analytics_RoomPresence_one?: Maybe<
+        { __typename?: "analytics_RoomPresence" } & Pick<Analytics_RoomPresence, "count" | "roomId" | "id">
     >;
 };
 
@@ -35675,6 +35901,76 @@ export type InsertReadUpToIndexMutation = { __typename?: "mutation_root" } & {
     >;
 };
 
+export const Analytics_ListConferencesDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Analytics_ListConferences" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cutoff" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Conference" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "events" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "endTime" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_gte" },
+                                                                    value: {
+                                                                        kind: "Variable",
+                                                                        name: { kind: "Name", value: "cutoff" },
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
 export const FlagInserted_GetModeratorsDocument = {
     kind: "Document",
     definitions: [
@@ -36286,6 +36582,680 @@ export const SetVapidKeysDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [{ kind: "Field", name: { kind: "Name", value: "affected_rows" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const Analytics_ListRecordsForAnalyticsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Analytics_ListRecordsForAnalytics" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "content_Item" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "conferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "content_Element" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "conferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const Analytics_AggregateElementTotalViewsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Analytics_AggregateElementTotalViews" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "analytics_ContentElementStats_aggregate" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "elementId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "elementId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "aggregate" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "sum" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "viewCount" } },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const Analytics_InsertElementTotalViewStatDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "Analytics_InsertElementTotalViewStat" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "bigint" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_analytics_ElementTotalViews_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "elementId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "totalViewCount" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "on_conflict" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "constraint" },
+                                            value: { kind: "EnumValue", value: "ElementTotalViews_pkey" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "update_columns" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [{ kind: "EnumValue", value: "totalViewCount" }],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "elementId" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const Analytics_AggregateItemTotalViewsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Analytics_AggregateItemTotalViews" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "itemId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "analytics_ContentItemStats_aggregate" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "itemId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "itemId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "aggregate" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "sum" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "viewCount" } },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const Analytics_InsertItemTotalViewStatDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "Analytics_InsertItemTotalViewStat" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "itemId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "bigint" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_analytics_ItemTotalViews_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "itemId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "itemId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "totalViewCount" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "on_conflict" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "constraint" },
+                                            value: { kind: "EnumValue", value: "ItemTotalViews_pkey" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "update_columns" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [{ kind: "EnumValue", value: "totalViewCount" }],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "itemId" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const Analytics_ListRoomsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Analytics_ListRooms" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Conference_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "slug" } },
+                            ],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "conferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const Analytics_FetchRoomPresenceDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Analytics_FetchRoomPresence" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "offset" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "Int" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "limit" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "Int" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "dateCutoff" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "analytics_AppStats" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "order_by" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "created_at" },
+                                            value: { kind: "EnumValue", value: "desc" },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "offset" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "offset" } },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "limit" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "limit" } },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "created_at" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_gt" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "dateCutoff" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "created_at" } },
+                                { kind: "Field", name: { kind: "Name", value: "total_unique_tabs" } },
+                                { kind: "Field", name: { kind: "Name", value: "total_unique_user_ids" } },
+                                { kind: "Field", name: { kind: "Name", value: "pages" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const Analytics_InsertRoomPresenceDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "Analytics_InsertRoomPresence" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "createdAt" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "bigint" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_analytics_RoomPresence_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "roomId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "created_at" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "createdAt" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "count" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "on_conflict" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "constraint" },
+                                            value: { kind: "EnumValue", value: "RoomPresence_roomId_created_at_key" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "update_columns" },
+                                            value: { kind: "ListValue", values: [] },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "count" } },
+                                { kind: "Field", name: { kind: "Name", value: "roomId" } },
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                            ],
                         },
                     },
                 ],

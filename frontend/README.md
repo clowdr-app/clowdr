@@ -121,23 +121,23 @@ If you need to build a new version, run `npm run build:transcript-editor` and co
 ## Frontend Configuration
 
 **_Note:_** Snowpack (the build tool we use) will only include environment
-variables in the build which start with `SNOWPACK_PUBLIC_`.
+variables in the build which start with `VITE_`.
 
 **_Note:_** Pay attention to the _Netlify?_ column when configuring Netlify. _No_ means 'do not add to Netlify'; _Yes_ means 'add to Netlify'; _Only_ means 'only add in Netlify, not locally'.
 
-| Env Var                                      | Value                                                                                | Netlify? |
-| -------------------------------------------- | ------------------------------------------------------------------------------------ | -------- |
-| HASURA_ADMIN_SECRET                          | Admin secret (used only for GraphQL Codegen)                                         | No       |
-| _GraphQL_                                    |                                                                                      |          |
-| SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                                            | Yes      |
-| SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not.                             | Yes      |
-| _Auth0_                                      |                                                                                      |          |
-| SNOWPACK_PUBLIC_AUTH_DOMAIN                  | <auth0-domain> e.g. `something.eu.auth0.com`                                         | Yes      |
-| SNOWPACK_PUBLIC_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application                                      | Yes      |
-| _AWS_                                        |                                                                                      |          |
-| SNOWPACK_PUBLIC_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |
-| NPM_VERSION                                  | `7.3` (only required in Netlify)                                                     | Only     |
-| NODE_VERSION                                 | `15.4` (only required in Netlify)                                                    | Only     |
-| _Vonage Video API_                           |                                                                                      |
-| SNOWPACK_PUBLIC_OPENTOK_API_KEY              | API key for the Vonage Video API project                                             |          |
-| SNOWPACK_PRESENCE_SERVICE_URL                | URL to the presence service.                                                         |
+| Env Var                           | Value                                                                                | Netlify? |
+| --------------------------------- | ------------------------------------------------------------------------------------ | -------- |
+| HASURA_ADMIN_SECRET               | Admin secret (used only for GraphQL Codegen)                                         | No       |
+| _GraphQL_                         |                                                                                      |          |
+| VITE_GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                                            | Yes      |
+| VITE_GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not.                             | Yes      |
+| _Auth0_                           |                                                                                      |          |
+| VITE_AUTH_DOMAIN                  | <auth0-domain> e.g. `something.eu.auth0.com`                                         | Yes      |
+| VITE_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application                                      | Yes      |
+| _AWS_                             |                                                                                      |          |
+| VITE_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |
+| NPM_VERSION                       | `7.3` (only required in Netlify)                                                     | Only     |
+| NODE_VERSION                      | `15.4` (only required in Netlify)                                                    | Only     |
+| _Vonage Video API_                |                                                                                      |
+| VITE_OPENTOK_API_KEY              | API key for the Vonage Video API project                                             |          |
+| SNOWPACK_PRESENCE_SERVICE_URL     | URL to the presence service.                                                         |

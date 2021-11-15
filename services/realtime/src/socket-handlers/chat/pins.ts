@@ -3,6 +3,7 @@ import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { generateChatPinsChangedRoomName } from "../../lib/chat";
+import { logger } from "../../lib/logger";
 
 export function onListenForPinsChanged(
     userId: string,
@@ -18,10 +19,10 @@ export function onListenForPinsChanged(
                 if (registrants?.some((x) => x.id === registrantId)) {
                     socket.join(generateChatPinsChangedRoomName(registrantId));
                 }
-            } catch (e) {
-                console.error(
-                    `Error processing chat.pins.changed.on (socket: ${socketId}, registrantId: ${registrantId})`,
-                    e
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.pins.changed.on (socket: ${socketId}, registrantId: ${registrantId})`
                 );
             }
         }
@@ -42,10 +43,10 @@ export function onUnlistenForPinsChanged(
                 if (registrants?.some((x) => x.id === registrantId)) {
                     socket.leave(generateChatPinsChangedRoomName(registrantId));
                 }
-            } catch (e) {
-                console.error(
-                    `Error processing chat.pins.changed.on (socket: ${socketId}, registrantId: ${registrantId})`,
-                    e
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.pins.changed.on (socket: ${socketId}, registrantId: ${registrantId})`
                 );
             }
         }

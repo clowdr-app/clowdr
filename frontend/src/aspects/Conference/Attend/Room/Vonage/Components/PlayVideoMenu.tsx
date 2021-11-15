@@ -3,7 +3,7 @@ import { Button, chakra, Menu, MenuButton, MenuItem, MenuList, Portal } from "@c
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { gql } from "urql";
-import { useGetEventVideosQuery } from "../../../../../../generated/graphql";
+import { useGetEventVideosQuery, useGetRoomVideosQuery } from "../../../../../../generated/graphql";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useVonageGlobalState } from "../VonageGlobalStateProvider";
 
@@ -45,22 +45,49 @@ gql`
             }
         }
     }
+
+    query GetRoomVideos($roomId: uuid!) {
+        room_Room_by_pk(id: $roomId) {
+            id
+            originatingItem {
+                id
+                title
+                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }) {
+                    id
+                    name
+                }
+            }
+        }
+    }
 `;
 
-export default function PlayVideoMenuButton({ eventId }: { eventId: string }): JSX.Element {
+export default function PlayVideoMenuButton({
+    roomId,
+    eventId,
+}: {
+    roomId: string | undefined;
+    eventId: string | undefined;
+}): JSX.Element {
     const vonage = useVonageGlobalState();
-    const [response] = useGetEventVideosQuery({
+    const [eventResponse] = useGetEventVideosQuery({
         variables: {
             eventId,
         },
+        pause: !eventId,
+    });
+    const [roomResponse] = useGetRoomVideosQuery({
+        variables: {
+            roomId,
+        },
+        pause: !roomId,
     });
     const { videoElementIds, videoElementMenuItems } = useMemo(() => {
         const ids: string[] = [];
         const videoElementMenuItems: JSX.Element[] = [];
 
-        if (response.data?.schedule_Event_by_pk) {
-            if (response.data.schedule_Event_by_pk.item) {
-                const item = response.data.schedule_Event_by_pk.item;
+        if (eventResponse.data?.schedule_Event_by_pk) {
+            if (eventResponse.data.schedule_Event_by_pk.item) {
+                const item = eventResponse.data.schedule_Event_by_pk.item;
                 for (const element of item.elements) {
                     ids.push(element.id);
                     videoElementMenuItems.push(
@@ -76,13 +103,13 @@ export default function PlayVideoMenuButton({ eventId }: { eventId: string }): J
                 }
             }
 
-            if (response.data.schedule_Event_by_pk.exhibition) {
+            if (eventResponse.data.schedule_Event_by_pk.exhibition) {
                 const items = R.sort(
                     (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
-                    response.data.schedule_Event_by_pk.exhibition.items
+                    eventResponse.data.schedule_Event_by_pk.exhibition.items
                 );
                 for (const { item } of items) {
-                    if (item.id !== response.data.schedule_Event_by_pk.item?.id) {
+                    if (item.id !== eventResponse.data.schedule_Event_by_pk.item?.id) {
                         for (const element of item.elements) {
                             ids.push(element.id);
                             videoElementMenuItems.push(
@@ -101,11 +128,30 @@ export default function PlayVideoMenuButton({ eventId }: { eventId: string }): J
             }
         }
 
+        if (roomResponse.data?.room_Room_by_pk) {
+            if (roomResponse.data.room_Room_by_pk.originatingItem) {
+                const item = roomResponse.data.room_Room_by_pk.originatingItem;
+                for (const element of item.elements) {
+                    ids.push(element.id);
+                    videoElementMenuItems.push(
+                        <MenuItem
+                            key={element.id}
+                            onClick={() => {
+                                vonage.startPlayingVideo(element.id);
+                            }}
+                        >
+                            {item.title}: {element.name}
+                        </MenuItem>
+                    );
+                }
+            }
+        }
+
         return {
             videoElementIds: ids,
             videoElementMenuItems,
         };
-    }, [response.data?.schedule_Event_by_pk, vonage]);
+    }, [eventResponse.data?.schedule_Event_by_pk, roomResponse.data?.room_Room_by_pk, vonage]);
 
     return (
         <Menu>
@@ -117,7 +163,7 @@ export default function PlayVideoMenuButton({ eventId }: { eventId: string }): J
                 onClick={() => {
                     // TODO
                 }}
-                isLoading={response.fetching}
+                isLoading={eventResponse.fetching}
                 isDisabled={!videoElementIds.length}
             >
                 <chakra.span>Play pre-recorded video</chakra.span>
@@ -125,7 +171,7 @@ export default function PlayVideoMenuButton({ eventId }: { eventId: string }): J
             </MenuButton>
             <Portal>
                 <MenuList zIndex="1000000" overflow="auto" maxH="50vh" maxW="50vh">
-                    {videoElementMenuItems}
+                    {videoElementMenuItems?.length ? videoElementMenuItems : <MenuItem>No videos available</MenuItem>}
                 </MenuList>
             </Portal>
         </Menu>

@@ -6,14 +6,15 @@
         "preinstall": "npx -y only-allow pnpm",
         "heroku-postbuild": "node ./.scripts/heroku/build.js",
         "lint-staged": "lint-staged",
-        "prepare": "node ./prepare.js"
+        "prepare": "node ./prepare.js",
+        "hasura:console-when-ready": "cd hasura && npx wait-on http-get://localhost:8080/v1/version && hasura console --envfile ./hasura/.env.local"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/clowdr-app/clowdr.git"
     },
     "author": "Clowdr CIC",
-    "license": "BSD-3-Clause",
+    "license": "AGPL-3.0-or-later",
     "bugs": {
         "url": "https://github.com/clowdr-app/clowdr/issues"
     },

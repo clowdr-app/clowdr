@@ -1,6 +1,22 @@
+- name: BatchUpdateAnalytics
+  webhook: '{{REALTIME_BASE_URL}}/analytics/batchUpdate'
+  schedule: 7 */6 * * *
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
 - name: GatherPresenceStats
   webhook: '{{ACTION_BASE_URL}}/analytics/gatherPresenceStats'
   schedule: '*/5 * * * *'
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+- name: Invitation_SendAutomaticJob
+  webhook: '{{ACTION_BASE_URL}}/invitation/automaticRepeat'
+  schedule: 0 * * * *
   include_in_metadata: true
   payload: {}
   headers:

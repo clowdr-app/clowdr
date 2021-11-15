@@ -1,3 +1,4 @@
+import { datadogLogs } from "@datadog/browser-logs";
 import { assert } from "@midspace/assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
@@ -11,6 +12,7 @@ export class RealtimeService {
     private _onSocketAvailable: Map<number, (socket: SocketIOClient.Socket) => void> = new Map();
     private _onSocketAvailableGen = 1;
     onSocketAvailable(handler: (socket: SocketIOClient.Socket) => void): () => void {
+        datadogLogs.logger.info("Realtime service: Socket available");
         const id = this._onSocketAvailableGen++;
         this._onSocketAvailable.set(id, handler);
 
@@ -36,13 +38,18 @@ export class RealtimeService {
     }
 
     async begin(token: string): Promise<void> {
+        datadogLogs.logger.info("Connecting to realtime service");
+
         const release = await this.mutex.acquire();
         try {
+            datadogLogs.logger.info("Connecting to realtime service: Begun");
             if (this.socket) {
+                datadogLogs.logger.info("Connecting to realtime service: Tearing down an existing socket");
                 this.socket.close();
                 this.socket = undefined;
             }
 
+            datadogLogs.logger.info("Connecting to realtime service: Connecting new socket");
             const url = import.meta.env.VITE_REALTIME_SERVICE_URL;
             assert.string(url, "Expected REALTIME_SERVICE_URL to be defined.");
             this.socket = io(url, {
@@ -52,12 +59,15 @@ export class RealtimeService {
                 },
             } as any);
 
+            datadogLogs.logger.info("Connecting to realtime service: Attaching event handlers");
             this.socket.on("connect", this.onConnect.bind(this));
             this.socket.on("disconnect", this.onDisconnect.bind(this));
             this.socket.on("connect_error", this.onConnectError.bind(this));
             this.socket.on("unauthorized", this.onUnauthorized.bind(this));
+            this.socket.on("heartbeat", this.onHeartbeat.bind(this));
 
             this.socket.on("time", this.onTime.bind(this));
+            this.socket.on("server.ready", this.onServerReady.bind(this));
 
             // setTimeout(() => {
             //     this.RealTimeOffsetSync(true);
@@ -68,8 +78,10 @@ export class RealtimeService {
             //     }) as TimerHandler,
             //     5 * 60000
             // );
+
+            datadogLogs.logger.info("Connecting to realtime service: Done.");
         } catch (e) {
-            console.error("Failed to create socket for realtime service.");
+            datadogLogs.logger.error("Failed to create socket for realtime service.", { error: e });
             this.socket = undefined;
         } finally {
             release();
@@ -94,8 +106,17 @@ export class RealtimeService {
         })();
     }
 
+    private reconnect: undefined | (() => Promise<void>) = undefined;
+    setReconnect(reconnect: () => Promise<void>): void {
+        this.reconnect = reconnect;
+    }
+
     private onConnect() {
-        console.log("Connected to realtime service");
+        datadogLogs.logger.info("Connected to realtime service");
+    }
+
+    private onServerReady() {
+        datadogLogs.logger.info("Realtime service: Server side reported it's ready");
 
         if (this.socket) {
             for (const handler of this._onSocketAvailable.values()) {
@@ -105,7 +126,7 @@ export class RealtimeService {
     }
 
     private onDisconnect() {
-        console.log("Disconnected from realtime service");
+        datadogLogs.logger.info("Disconnected from realtime service");
 
         if (this.socket) {
             for (const handler of this._onSocketUnavailable.values()) {
@@ -114,17 +135,46 @@ export class RealtimeService {
         }
     }
 
-    private onConnectError(e: any) {
-        // TODO
-        console.error("Error connecting to realtime service", e);
+    private checkForTokenExpiredError(e: any): boolean {
+        if (
+            e?.data?.code === "invalid_token" ||
+            e?.data?.message?.includes?.("Unauthorized: Token is missing or invalid Bearer") ||
+            e?.message?.includes?.("Unauthorized: Token is missing or invalid Bearer") ||
+            e?.toString?.().includes?.("Unauthorized: Token is missing or invalid Bearer")
+        ) {
+            datadogLogs.logger.info("Reconnecting to realtime service (token expired)", {
+                info: e,
+            });
+            this.reconnect?.();
+            return true;
+        }
+        return false;
     }
 
-    private onUnauthorized(error: any) {
-        if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
-            // TODO
-            console.warn("User token has expired");
+    private onConnectError(e: any) {
+        if (!this.checkForTokenExpiredError(e)) {
+            datadogLogs.logger.error("Realtime service: Connection error", {
+                errorMessage: e.toString(),
+                errorInfo: e,
+            });
+        }
+    }
+
+    private onUnauthorized(e: any) {
+        if (!this.checkForTokenExpiredError(e)) {
+            datadogLogs.logger.error("Realtime service: Unauthorized error", {
+                errorMessage: e.toString(),
+                errorInfo: e,
+            });
+        }
+    }
+
+    private onHeartbeat(data: any) {
+        datadogLogs.logger.log("Heartbeat received, responding");
+        if (this.socket) {
+            this.socket.emit(data);
         } else {
-            console.error("Error connecting to realtime servie", error);
+            datadogLogs.logger.warn("Unable to respond to heartbeat");
         }
     }
 

@@ -30,7 +30,7 @@ export default function NowMarker({
         if (setScrollToNow && offsetSeconds >= 0 && offsetSeconds < timelineParams.fullTimeSpanSeconds) {
             setScrollToNow({ f: scrollToNowF });
 
-            scrollToNowF();
+            // scrollToNowF();
         }
     }, [offsetSeconds, setScrollToNow, scrollToNowF, timelineParams.fullTimeSpanSeconds]);
 

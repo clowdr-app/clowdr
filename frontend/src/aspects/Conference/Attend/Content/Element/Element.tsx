@@ -193,11 +193,7 @@ function ElementInner({
             case Content_ElementType_Enum.VideoPrepublish:
             case Content_ElementType_Enum.VideoSponsorsFiller:
             case Content_ElementType_Enum.VideoTitles:
-                return (
-                    <AspectRatio ratio={16 / 9} w="min(100%, 90vh * (16 / 9))" maxW="800px" maxH="90vh" m={2}>
-                        <VideoElement elementId={elementId} elementData={latestVersion.data} />
-                    </AspectRatio>
-                );
+                return <VideoElement elementId={elementId} elementData={latestVersion.data} aspectRatio={true} />;
 
             case Content_ElementType_Enum.PaperUrl:
                 return (

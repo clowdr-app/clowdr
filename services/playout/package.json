@@ -16,7 +16,7 @@
         "test:e2e": "jest --config ./test/jest-e2e.json"
     },
     "author": "Clowdr CIC",
-    "license": "BSD-3-Clause",
+    "license": "AGPL-3.0-or-later",
     "dependencies": {
         "@apollo/client": "^3.4.16",
         "@aws-cdk/aws-cloudfront": "^1.111.0",
@@ -42,7 +42,7 @@
         "@graphql-codegen/typescript-graphql-request": "^4.1.6",
         "@graphql-codegen/typescript-operations": "^2.1.8",
         "@graphql-typed-document-node/core": "^3.1.0",
-        "@midspace/graphql": "workspace:^0.0.0",
+        "@midspace/graphql": "workspace:*",
         "@midspace/shared-types": "workspace:*",
         "@nestjs/cli": "^8.1.4",
         "@nestjs/common": "^8.1.2",

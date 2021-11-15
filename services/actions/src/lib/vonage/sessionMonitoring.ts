@@ -202,7 +202,7 @@ export async function stopArchiveIfNoOngoingEvent(
                     "No ongoing archivable events connected to this session. Stopping archiving."
                 );
                 await stopRoomVonageArchiving(logger, ongoingMatchingEvents.data.room_Room[0].id, undefined);
-            } else {
+            } else if (ongoingMatchingEvents.data.room_Room.length > 1) {
                 logger.error(
                     { sessionId: payload.sessionId },
                     "Error: Found multiple rooms for the same public Vonage session id! Can't stop archiving."

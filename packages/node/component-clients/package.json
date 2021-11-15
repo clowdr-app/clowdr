@@ -9,7 +9,7 @@
         "prepare": "ts-patch install -s"
     },
     "author": "Clowdr CIC",
-    "license": "BSD-3-Clause",
+    "license": "AGPL-3.0-or-later",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/clowdr-app/clowdr.git",
@@ -37,6 +37,7 @@
         "@urql/exchange-retry": "^0.3.0",
         "amqplib": "^0.8.0",
         "assert": "^2.0.0",
+        "async-mutex": "^0.3.2",
         "bufferutil": "^4.0.3",
         "cors": "^2.8.5",
         "cpy-cli": "^3.1.1",

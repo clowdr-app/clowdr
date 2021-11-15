@@ -3,6 +3,7 @@ import fetch from "node-fetch";
 import { default as io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../generated/graphql";
+import { logger } from "../lib/logger";
 import type { Action, Message, Reaction } from "../types/chat";
 
 assert(process.env.SERVER_URL, "Missing SERVER_URL env var");
@@ -45,7 +46,7 @@ async function Main(
             method: "GET",
         });
         const token = await jwtResponse.text();
-        console.info("obtained.");
+        logger.info("obtained.");
 
         const client = io(serverURL, {
             auth: {
@@ -77,7 +78,7 @@ async function Main(
         if (!connected.done) {
             throw new Error("Waiting for connection timed out.");
         } else if (connected.done === true) {
-            console.log("connected.");
+            logger.info("connected.");
         } else {
             throw new Error(connected.done);
         }
@@ -95,7 +96,7 @@ async function Main(
             lastAckInfo = { msgSId, ack: false };
         });
 
-        console.info(`Sending test messages (${messagesPerSecond} msg/s)`);
+        logger.info(`Sending test messages (${messagesPerSecond} msg/s)`);
 
         let messagesSinceLastReactionsFlood = 0;
         let startedSendingAt = Date.now();
@@ -132,8 +133,8 @@ async function Main(
                 } else if (!lastAckInfo.ack) {
                     throw new Error("Message send was not acknowledged.");
                 }
-            } catch (e) {
-                console.error("Error sending message", e);
+            } catch (error: any) {
+                logger.error({ error }, "Error sending message");
             }
 
             totalMessagesSent++;
@@ -160,8 +161,8 @@ async function Main(
                         client.emit("chat.reactions.send", rct);
                         // We don't bother with an ack mechanism for reactions
                     }
-                } catch (e) {
-                    console.error("Error sending reactions", e);
+                } catch (error: any) {
+                    logger.error({ error }, "Error sending reactions");
                 }
                 messagesSinceLastReactionsFlood = 0;
             }
@@ -187,13 +188,13 @@ async function Main(
                     await wait(offset);
                 }
             } else {
-                // console.info(`Publisher can't keep up (running ${(nextSendAt - now).toFixed(2)}ms slow)`);
+                // logger.info(`Publisher can't keep up (running ${(nextSendAt - now).toFixed(2)}ms slow)`);
                 nextSendAt = now + interval;
             }
         }
-    } catch (e) {
+    } catch (error: any) {
         process.stdout.write("\n");
-        console.error("Error in main processing", e);
+        logger.error({ error }, "Error in main processing");
     }
 }
 

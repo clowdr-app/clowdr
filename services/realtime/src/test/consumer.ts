@@ -1,6 +1,7 @@
 import assert from "assert";
 import fetch from "node-fetch";
 import { default as io } from "socket.io-client";
+import { logger } from "../lib/logger";
 import type { Message } from "../types/chat";
 
 assert(process.env.SERVER_URL, "Missing SERVER_URL env var");
@@ -33,7 +34,7 @@ let historicConsumptionRates_10min: Sample[] = [];
 let currentSample: OngoingSample | undefined;
 
 async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9aff8265ed") {
-    console.info(`Configuration:
+    logger.info(`Configuration:
     Server URL: ${serverURL}
     User Id: ${userId}
     Conference slug: ${confSlug}
@@ -47,7 +48,7 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
             method: "GET",
         });
         const token = await jwtResponse.text();
-        console.info("obtained.");
+        logger.info("obtained.");
 
         const client = io(serverURL, {
             auth: {
@@ -79,7 +80,7 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
         if (!connected.done) {
             throw new Error("Waiting for connection timed out.");
         } else if (connected.done === true) {
-            console.log("connected.");
+            logger.info("connected.");
         } else {
             throw new Error(connected.done);
         }
@@ -104,7 +105,7 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
                         startAt: now,
                         count: 0,
                     };
-                    console.info(
+                    logger.info(
                         `${new Date().toISOString()}: 10s avg: ${(
                             (1000 * historicConsumptionRates_10s[historicConsumptionRates_10s.length - 1].count) /
                             (historicConsumptionRates_10s[historicConsumptionRates_10s.length - 1].endAt -
@@ -121,7 +122,7 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
                                 count: historicConsumptionRates_10s.reduce((acc, x) => acc + x.count, 0),
                                 endAt: now,
                             });
-                            console.info(
+                            logger.info(
                                 `${new Date().toISOString()}: 1m avg: ${(
                                     (1000 *
                                         historicConsumptionRates_1min[historicConsumptionRates_1min.length - 1].count) /
@@ -141,7 +142,7 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
                                         count: historicConsumptionRates_1min.reduce((acc, x) => acc + x.count, 0),
                                         endAt: now,
                                     });
-                                    console.info(
+                                    logger.info(
                                         `${new Date().toISOString()}: 10m avg: ${(
                                             (1000 *
                                                 historicConsumptionRates_10min[
@@ -168,13 +169,13 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
             }
 
             if (!silentMode) {
-                console.info("Message received", msg);
+                logger.info("Message received", msg);
             }
         });
 
         client.on("chat.reactions.receive", (msg: Message) => {
             if (!silentMode) {
-                console.info("Reaction received", msg);
+                logger.info("Reaction received", msg);
             }
         });
 
@@ -182,12 +183,12 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
 
         // eslint-disable-next-line no-constant-condition
         while (true) {
-            console.info("[Running]");
+            logger.info("[Running]");
             await wait(60000);
         }
-    } catch (e) {
+    } catch (error: any) {
         process.stdout.write("\n");
-        console.error("Error in main processing", e);
+        logger.error({ error }, "Error in main processing");
     }
 }
 

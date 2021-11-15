@@ -21,7 +21,7 @@ import type {
 } from "../../../../generated/graphql";
 import { Content_ElementType_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
-import { LinkButton } from "../../../Chakra/LinkButton";
+import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { FAIcon } from "../../../Icons/FAIcon";
@@ -105,7 +105,11 @@ function ItemTile({
     }, [item.elements]);
 
     const secondaryItems: ElementDataFragment[] = useMemo(() => {
-        const sortOrder = [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Text];
+        const sortOrder =
+            item.elements.reduce((acc, x) => (x.typeName === Content_ElementType_Enum.Abstract ? acc + 1 : acc), 0) ===
+            1
+                ? [Content_ElementType_Enum.Abstract]
+                : [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Text];
 
         return [...item.elements]
             .filter((x) => {
@@ -148,6 +152,29 @@ function ItemTile({
     const discussionRoomUrl = item.discussionRoom?.length
         ? `${conferencePath}/room/${item.discussionRoom[0].id}`
         : undefined;
+    const zoomInfo = useMemo(() => {
+        if (discussionRoomUrl) {
+            return undefined;
+        }
+
+        const element = item.elements.find((x) => {
+            if (x.typeName === Content_ElementType_Enum.Zoom) {
+                const dataBlob = x.data as ElementDataBlob;
+                if (dataBlob.length) {
+                    const latestVersion: ElementBlob = dataBlob[dataBlob.length - 1].data;
+                    switch (latestVersion.baseType) {
+                        case ElementBaseType.URL:
+                            return !!latestVersion.url?.length;
+                        default:
+                            return false;
+                    }
+                }
+                return false;
+            }
+            return false;
+        });
+        return element ? { name: element.name, url: element.data[element.data.length - 1].data.url } : undefined;
+    }, [discussionRoomUrl, item.elements]);
 
     const itemUrl = `${conferencePath}/item/${item.id}`;
 
@@ -208,10 +235,18 @@ function ItemTile({
                     <LinkButton colorScheme="PrimaryActionButton" to={discussionRoomUrl} textDecoration="none">
                         <FAIcon iconStyle="s" icon="video" mr={2} />
                         <Text as="span" ml={1} mr={2}>
-                            Video room
+                            Join in room
                         </Text>
                         <PageCountText path={discussionRoomUrl} fontSize="inherit" />
                     </LinkButton>
+                ) : undefined}
+                {zoomInfo ? (
+                    <ExternalLinkButton colorScheme="PrimaryActionButton" to={zoomInfo.url} textDecoration="none">
+                        <FAIcon iconStyle="s" icon="video" mr={2} />
+                        <Text as="span" ml={1} mr={2}>
+                            Join in {zoomInfo.name}
+                        </Text>
+                    </ExternalLinkButton>
                 ) : undefined}
                 <LinkButton colorScheme="SecondaryActionButton" to={itemUrl} textDecoration="none">
                     <FAIcon iconStyle="s" icon="link" mr={2} />

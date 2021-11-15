@@ -1,0 +1,4 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE INDEX "RoomPresence_created_at_desc" on "analytics"."RoomPresence" ("created_at" DESC);
+-- CREATE INDEX "RoomPresence_created_at_asc" on "analytics"."RoomPresence" ("created_at" ASC);

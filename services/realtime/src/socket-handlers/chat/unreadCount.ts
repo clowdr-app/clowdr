@@ -2,6 +2,7 @@ import { readUpToIndicesCache } from "@midspace/caches/readUpToIndex";
 import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
+import { logger } from "../../lib/logger";
 import { canSelectChat } from "../../lib/permissions";
 import { sendUnreadCount } from "../../lib/unreadCounts";
 
@@ -18,8 +19,11 @@ export function onRequestUnreadCount(
                 if (await canSelectChat(userId, chatId)) {
                     await sendUnreadCount(chatId, userId);
                 }
-            } catch (e) {
-                console.error(`Error processing chat.unreadCount.request (socket: ${socketId}, chatId: ${chatId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.unreadCount.request (socket: ${socketId}, chatId: ${chatId})`
+                );
             }
         }
     };
@@ -40,8 +44,11 @@ export function onSetReadUpToIndex(
                     await readUpToIndicesCache.setField(chatId, userId, messageSId);
                     await sendUnreadCount(chatId, userId);
                 }
-            } catch (e) {
-                console.error(`Error processing chat.unreadCount.request (socket: ${socketId}, chatId: ${chatId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.unreadCount.request (socket: ${socketId}, chatId: ${chatId})`
+                );
             }
         }
     };

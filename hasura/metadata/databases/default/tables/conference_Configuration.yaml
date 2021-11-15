@@ -98,6 +98,7 @@ select_permissions:
           - VISIBLE_EXHIBITIONS_LABEL
           - HIDDEN_EXHIBITIONS_LABEL
           - FORCE_MENU_SPONSORS_LINK
+          - EVENT_BOX_HIDE_EXHIBITION_PEOPLE
   role: unauthenticated
 update_permissions:
 - permission:

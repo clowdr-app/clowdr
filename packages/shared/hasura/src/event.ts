@@ -1,5 +1,6 @@
 import type { CombineVideosJobDataBlob } from "@midspace/shared-types/combineVideosJob";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
+import type { SourceBlob } from "@midspace/shared-types/content/element";
 import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import type { Credentials } from "google-auth-library/build/src/auth/credentials";
 import type {
@@ -61,6 +62,7 @@ export interface ConferenceData extends BaseData {
 export interface ElementData extends BaseData {
     isHidden: boolean;
     data: ElementDataBlob;
+    source: SourceBlob | null;
     layoutData: any | null;
     typeName: Content_ElementType_Enum;
     name: string;
@@ -195,4 +197,11 @@ export interface FlagData {
     resolved_at?: string | null;
     type: Chat_FlagType_Enum;
     updated_at: string;
+}
+
+export interface InvitationData extends BaseData {
+    id: string;
+    registrantId: string;
+    invitedEmailAddress: string;
+    conferenceId: string;
 }

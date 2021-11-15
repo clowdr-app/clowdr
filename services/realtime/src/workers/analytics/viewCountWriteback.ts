@@ -12,6 +12,7 @@ import type {
     SelectViewCountsQueryVariables,
 } from "../../generated/graphql";
 import { InsertViewCountsDocument, SelectViewCountsDocument } from "../../generated/graphql";
+import { logger } from "../../lib/logger";
 
 gql`
     query SelectViewCounts($cutoff: timestamptz!, $itemIds: [uuid!]!, $elementIds: [uuid!]!, $roomIds: [uuid!]!) {
@@ -62,7 +63,7 @@ async function Main(continueExecuting = false) {
     try {
         assert(gqlClient, "Apollo client needed for analytics view count writeback");
 
-        console.info("Writing back analytics view counts");
+        logger.info("Writing back analytics view counts");
 
         const itemResults: {
             identifier: string;
@@ -144,7 +145,7 @@ async function Main(continueExecuting = false) {
             redisClientPool.release("workers/analytics/viewCountWriteback/Main", client);
             clientReleased = true;
 
-            //         console.info(`View counts to write back:
+            //         logger.info(`View counts to write back:
             //     Item: ${JSON.stringify(itemResults, null, 2)}
 
             //     Element: ${JSON.stringify(elementResults, null, 2)}
@@ -207,8 +208,8 @@ async function Main(continueExecuting = false) {
         if (!continueExecuting) {
             process.exit(0);
         }
-    } catch (e) {
-        console.error("SEVERE ERROR: Cannot write back analytics view counts!", e);
+    } catch (error: any) {
+        logger.error({ error }, "SEVERE ERROR: Cannot write back analytics view counts!");
 
         if (!continueExecuting) {
             process.exit(-1);

@@ -1,0 +1,1 @@
+CREATE TABLE "analytics"."ElementTotalViews" ("elementId" uuid NOT NULL, "totalViewCount" bigint NOT NULL DEFAULT 0, PRIMARY KEY ("elementId") , FOREIGN KEY ("elementId") REFERENCES "content"."Element"("id") ON UPDATE cascade ON DELETE cascade, UNIQUE ("elementId"));

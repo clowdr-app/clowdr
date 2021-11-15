@@ -22,7 +22,7 @@ gql`
         typeName
         elements(
             where: {
-                isHidden: { _eq: false }
+                _or: [{ isHidden: { _eq: false } }, { typeName: { _eq: ZOOM } }]
                 typeName: {
                     _in: [
                         ABSTRACT
@@ -35,6 +35,7 @@ gql`
                         VIDEO_FILE
                         VIDEO_PREPUBLISH
                         VIDEO_URL
+                        ZOOM
                     ]
                 }
             }

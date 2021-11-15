@@ -2,23 +2,25 @@ import { gql } from "@apollo/client/core";
 import type { GetUploadAgreementOutput } from "@midspace/hasura/actionTypes";
 import type { ElementData, Payload } from "@midspace/hasura/event";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
-import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { AWSJobStatus } from "@midspace/shared-types/content";
+import { SourceType } from "@midspace/shared-types/content/element";
 import type { EmailView_SubtitlesGenerated } from "@midspace/shared-types/email";
-import { EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@midspace/shared-types/email";
 import assert from "assert";
 import { compile } from "handlebars";
 import type { P } from "pino";
 import R from "ramda";
-import type { Email_Insert_Input } from "../generated/graphql";
+import type { ElementUpdateNotification_ElementDetailsFragment, Email_Insert_Input } from "../generated/graphql";
 import {
-    Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
     GetElementDetailsDocument,
     GetUploadAgreementDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
+import {
+    getEmailTemplatesSubtitlesGenerated,
+    getRecordingEmailNotificationsEnabled,
+    getSubmissionNotificationRoles,
+} from "../lib/conferenceConfiguration";
 import { EmailReason } from "../lib/email/sendingReasons";
 import { startPreviewTranscode } from "../lib/transcode";
 import { startTranscribe } from "../lib/transcribe";
@@ -111,6 +113,12 @@ export async function handleElementUpdated(logger: P.Logger, payload: Payload<El
                 currentVersion.data.transcode?.s3Url &&
                 !currentVersion.data.sourceHasEmbeddedSubtitles &&
                 oldVersion.data.transcode?.s3Url !== currentVersion.data.transcode.s3Url) ||
+            (oldVersion &&
+                oldVersion.data.baseType === "video" &&
+                currentVersion.data.transcode?.s3Url &&
+                oldVersion.data.transcode?.s3Url === currentVersion.data.transcode.s3Url &&
+                Boolean(oldVersion.data.subtitles["en_US"]?.s3Url) &&
+                !currentVersion.data.subtitles["en_US"]?.s3Url) ||
             (!oldVersion && currentVersion.data.transcode?.s3Url && !currentVersion.data.subtitles["en_US"]?.s3Url)
         ) {
             await startTranscribe(logger, currentVersion.data.transcode.s3Url, newRow.id);
@@ -137,7 +145,7 @@ export async function handleElementUpdated(logger: P.Logger, payload: Payload<El
     ) {
         // Send email if new machine-generated subtitles have been added
         if (currentVersion.createdBy === "system") {
-            await trySendTranscriptionEmail(logger, newRow.id);
+            await trySendTranscriptionEmail(logger, newRow);
         }
     }
 
@@ -147,13 +155,7 @@ export async function handleElementUpdated(logger: P.Logger, payload: Payload<El
         oldVersion.data.subtitles["en_US"]?.status !== "FAILED" &&
         currentVersion.data.subtitles["en_US"]?.status === "FAILED"
     ) {
-        await trySendTranscriptionFailedEmail(
-            logger,
-            newRow.id,
-            newRow.name,
-            currentVersion.data.baseType,
-            currentVersion.data.subtitles["en_US"]?.message ?? null
-        );
+        await trySendTranscriptionFailedEmail(logger, newRow, currentVersion.data.subtitles["en_US"]?.message ?? null);
     }
 
     if (currentVersion.data.baseType === "video") {
@@ -166,9 +168,7 @@ export async function handleElementUpdated(logger: P.Logger, payload: Payload<El
         ) {
             await trySendTranscodeFailedEmail(
                 logger,
-                newRow.id,
-                newRow.name,
-                currentVersion.data.baseType,
+                newRow,
                 currentVersion.data.transcode.message ?? "No details available."
             );
         }
@@ -176,235 +176,234 @@ export async function handleElementUpdated(logger: P.Logger, payload: Payload<El
 }
 
 gql`
-    query GetElementDetails($elementId: uuid!) {
-        content_Element_by_pk(id: $elementId) {
+    fragment ElementUpdateNotification_ElementDetails on content_Element {
+        id
+        name
+        conference {
             id
             name
-            conference {
+            shortName
+            ...Configuration_RecordingEmailNotificationsEnabled
+            ...Configuration_SubmissionNotificationRoles
+            ...Configuration_EmailTemplateSubtitlesGenerated
+        }
+        item {
+            id
+            title
+            itemPeople(where: { person: { _and: [{ email: { _is_null: false } }, { email: { _neq: "" } }] } }) {
                 id
-                name
-                shortName
-            }
-            item {
-                id
-                title
-                itemPeople(
-                    where: {
-                        person: { _and: [{ email: { _is_null: false } }, { email: { _neq: "" } }] }
-                        roleName: { _in: ["AUTHOR", "PRESENTER", "DISCUSSANT"] }
-                    }
-                ) {
+                person {
                     id
-                    person {
-                        id
-                        name
-                        email
-                        accessToken
-                    }
+                    name
+                    email
+                    accessToken
                 }
+                roleName
             }
+        }
+        source
+    }
+
+    query GetElementDetails($elementId: uuid!) {
+        content_Element_by_pk(id: $elementId) {
+            ...ElementUpdateNotification_ElementDetails
         }
     }
 `;
 
-async function trySendTranscriptionEmail(logger: P.Logger, elementId: string) {
-    try {
-        const elementDetails = await apolloClient.query({
-            query: GetElementDetailsDocument,
-            variables: {
-                elementId,
-            },
-        });
-
-        if (!elementDetails.data.content_Element_by_pk) {
-            throw new Error("Could not find the specified element");
-        }
-
-        const element = elementDetails.data.content_Element_by_pk;
-        if (!element) {
-            throw new Error("Could not find Element while sending");
-        }
-
-        let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
-            element.conference.id,
-            Conference_ConfigurationKey_Enum.EmailTemplateSubtitlesGenerated
-        );
-
-        if (!isEmailTemplate_BaseConfig(emailTemplates)) {
-            emailTemplates = null;
-        }
-
-        const bodyTemplate = compile(
-            emailTemplates?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBTITLES_GENERATED.htmlBodyTemplate
-        );
-        const subjectTemplate = compile(
-            emailTemplates?.subjectTemplate ?? EMAIL_TEMPLATE_SUBTITLES_GENERATED.subjectTemplate
-        );
-
-        const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
-            const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}`;
-
-            const context: EmailView_SubtitlesGenerated = {
-                person: {
-                    name: person.name,
-                },
-                file: {
-                    name: element.name,
-                },
-                conference: {
-                    name: element.conference.name,
-                    shortName: element.conference.shortName,
-                },
-                item: {
-                    title: element.item.title,
-                },
-                uploadLink: magicItemLink,
-            };
-
-            const htmlBody = bodyTemplate(context);
-            const subject = subjectTemplate(context);
-
-            return {
-                recipientName: person.name,
-                emailAddress: person.email,
-                reason: EmailReason.ItemTranscriptionSucceeded,
-                subject,
-                htmlContents: htmlBody,
-            };
-        });
-
-        await insertEmails(logger, emails, element.conference.id);
-    } catch (err) {
-        logger.error({ elementId, err }, "Error while sending transcription emails");
-        return;
-    }
-}
-
-async function trySendTranscriptionFailedEmail(
-    logger: P.Logger,
-    elementId: string,
-    elementName: string,
-    elementType: "video" | "audio",
-    message: string | null
-) {
-    const elementDetails = await apolloClient.query({
+async function getElementDetails(elementId: string): Promise<{
+    submissionNotificationRoles: string[];
+    recordingNotificationsEnabled: boolean;
+    emailTemplates: EmailTemplate_BaseConfig;
+    elementDetails: ElementUpdateNotification_ElementDetailsFragment;
+}> {
+    const result = await apolloClient.query({
         query: GetElementDetailsDocument,
         variables: {
             elementId,
         },
     });
 
-    if (!elementDetails.data.content_Element_by_pk) {
-        logger.error({ elementId }, "Could not find the specified element");
+    const elementDetails = result.data.content_Element_by_pk;
+    if (!elementDetails) {
+        throw new Error("Could not find Element");
+    }
+
+    const emailTemplates = getEmailTemplatesSubtitlesGenerated(elementDetails.conference);
+    const submissionNotificationRoles = getSubmissionNotificationRoles(elementDetails.conference);
+    const recordingNotificationsEnabled = getRecordingEmailNotificationsEnabled(elementDetails.conference);
+
+    return {
+        emailTemplates,
+        submissionNotificationRoles,
+        recordingNotificationsEnabled,
+        elementDetails,
+    };
+}
+
+async function trySendTranscriptionEmail(logger: P.Logger, elementData: ElementData) {
+    try {
+        const { elementDetails, emailTemplates, submissionNotificationRoles, recordingNotificationsEnabled } =
+            await getElementDetails(elementData.id);
+
+        if (elementData.source?.source === SourceType.EventRecording && !recordingNotificationsEnabled) {
+            return;
+        }
+
+        const bodyTemplate = compile(emailTemplates.htmlBodyTemplate);
+        const subjectTemplate = compile(emailTemplates.subjectTemplate);
+
+        const emails: Email_Insert_Input[] = elementDetails.item.itemPeople
+            .filter((p) => submissionNotificationRoles.includes(p.roleName))
+            .map(({ person }) => {
+                const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}`;
+
+                const context: EmailView_SubtitlesGenerated = {
+                    person: {
+                        name: person.name,
+                    },
+                    file: {
+                        name: elementData.name,
+                    },
+                    conference: {
+                        name: elementDetails.conference.name,
+                        shortName: elementDetails.conference.shortName,
+                    },
+                    item: {
+                        title: elementDetails.item.title,
+                    },
+                    uploadLink: magicItemLink,
+                };
+
+                const htmlBody = bodyTemplate(context);
+                const subject = subjectTemplate(context);
+
+                return {
+                    recipientName: person.name,
+                    emailAddress: person.email,
+                    reason: EmailReason.ItemTranscriptionSucceeded,
+                    subject,
+                    htmlContents: htmlBody,
+                };
+            });
+
+        await insertEmails(logger, emails, elementData.conferenceId, undefined);
+    } catch (err) {
+        logger.error({ elementData, err }, "Error while sending transcription emails");
+        return;
+    }
+}
+
+async function trySendTranscriptionFailedEmail(logger: P.Logger, elementData: ElementData, message: string | null) {
+    const { elementDetails, submissionNotificationRoles, recordingNotificationsEnabled } = await getElementDetails(
+        elementData.id
+    );
+
+    if (elementData.source?.source === SourceType.EventRecording && !recordingNotificationsEnabled) {
         return;
     }
 
-    const element = elementDetails.data.content_Element_by_pk;
-    const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
-        const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
+    const elementType = R.last(elementData.data)?.data.baseType ?? "item";
 
-        const htmlContents = `<p>Dear ${person.name},</p>
-<p>Your item ${elementName} (${element.item.title}) at ${element.conference.name} <b>has successfully entered our systems</b>. Your ${elementType} will be included in the conference pre-publications and/or live streams (as appropriate).</p>
+    const emails: Email_Insert_Input[] = elementDetails.item.itemPeople
+        .filter((p) => submissionNotificationRoles.includes(p.roleName))
+        .map(({ person }) => {
+            const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${elementDetails.item.id}/element/${elementData.id}`;
+
+            const htmlContents = `<p>Dear ${person.name},</p>
+<p>Your item ${elementData.name} (${elementDetails.item.title}) at ${elementDetails.conference.name} <b>has successfully entered our systems</b>. Your ${elementType} will be included in the conference pre-publications and/or live streams (as appropriate).</p>
 <p>However, we are sorry that unfortunately an error occurred and we were unable to auto-generate subtitles. We appreciate this is a significant inconvenience but we kindly ask that you to manually enter subtitles for your ${elementType}.</p>
 <p><a href="${magicItemLink}">Please manually add subtitles on this page.</a></p>
 <p>We have also sent ourselves a notification of this failure via email and we will assist you at our earliest opportunity. If we can get automated subtitles working for your ${elementType}, we will let you know as soon as possible!</p>`;
 
-        return {
-            recipientName: person.name,
-            emailAddress: person.email,
-            reason: EmailReason.ItemTranscriptionFailed,
-            subject: `Submission ERROR: Failed to generate subtitles for ${elementName} at ${element.conference.name}`,
-            htmlContents,
-        };
-    });
+            return {
+                recipientName: person.name,
+                emailAddress: person.email,
+                reason: EmailReason.ItemTranscriptionFailed,
+                subject: `Submission ERROR: Failed to generate subtitles for ${elementData.name} at ${elementDetails.conference.name}`,
+                htmlContents,
+            };
+        });
 
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
         <pre>
 failure         Failed to generate subtitles
 message         ${message}
-itemId          ${element.item.id}
-itemTitle       ${element.item.title}
-elementId       ${elementId}
-elementName     ${elementName}
-conferenceName  ${element.conference.name}
-path            /item/${element.item.id}/element/${elementId}
+itemId          ${elementDetails.item.id}
+itemTitle       ${elementDetails.item.title}
+elementId       ${elementData.id}
+elementName     ${elementData.name}
+conferenceName  ${elementDetails.conference.name}
+path            /item/${elementDetails.item.id}/element/${elementData.id}
         </pre>
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: EmailReason.FailureNotification,
-            subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
+            subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${elementData.name} at ${elementDetails.conference.name}`,
             htmlContents,
         });
     }
 
-    await insertEmails(logger, emails, elementDetails.data.content_Element_by_pk?.conference.id);
+    await insertEmails(logger, emails, elementDetails.conference.id, undefined);
 }
 
-async function trySendTranscodeFailedEmail(
-    logger: P.Logger,
-    elementId: string,
-    elementName: string,
-    elementType: "video" | "audio",
-    message: string
-) {
-    const elementDetails = await apolloClient.query({
-        query: GetElementDetailsDocument,
-        variables: {
-            elementId,
-        },
-    });
+async function trySendTranscodeFailedEmail(logger: P.Logger, elementData: ElementData, message: string) {
+    const { elementDetails, recordingNotificationsEnabled, submissionNotificationRoles } = await getElementDetails(
+        elementData.id
+    );
 
-    if (!elementDetails.data.content_Element_by_pk) {
-        logger.error({ elementId }, "Could not find the specified element");
+    if (elementData.source?.source === SourceType.EventRecording && !recordingNotificationsEnabled) {
         return;
     }
 
-    const element = elementDetails.data.content_Element_by_pk;
+    const elementType = R.last(elementData.data)?.data.baseType ?? "item";
 
-    const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
-        const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
+    const emails: Email_Insert_Input[] = elementDetails.item.itemPeople
+        .filter((p) => submissionNotificationRoles.includes(p.roleName))
+        .map(({ person }) => {
+            const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${elementDetails.item.id}/element/${elementData.id}`;
 
-        const htmlContents = `<p>Dear ${person.name},</p>
-<p>There was a problem processing <b>${elementName}</b> (${element.item.title}) for ${element.conference.name}. Your ${elementType} is not currently accepted by Midspace's systems and currently will not be included in the conference pre-publications or live streams.</p>
+            const htmlContents = `<p>Dear ${person.name},</p>
+<p>There was a problem processing <b>${elementData.name}</b> (${elementDetails.item.title}) for ${elementDetails.conference.name}. Your ${elementType} is not currently accepted by Midspace's systems and currently will not be included in the conference pre-publications or live streams.</p>
 <p>Error details: ${message}</p>
 <p><a href="${magicItemLink}">You may try uploading a new version</a> but we recommend you forward this email to your conference's organisers and ask for technical assistance.</p>
 <p>We have also sent ourselves a notification of this failure via email and we will assist you as soon as possible. Making Midspace work for you is our top priority! We will try to understand the error and solve the issue either by fixing our software or providing you instructions for how to work around it.</p>`;
 
-        return {
-            recipientName: person.name,
-            emailAddress: person.email,
-            reason: "item_transcode_failed",
-            subject: `Submission ERROR: Failed to process ${elementName} at ${element.conference.name}`,
-            htmlContents,
-        };
-    });
+            return {
+                recipientName: person.name,
+                emailAddress: person.email,
+                reason: "item_transcode_failed",
+                subject: `Submission ERROR: Failed to process ${elementData.name} at ${elementDetails.conference.name}`,
+                htmlContents,
+            };
+        });
 
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
         <pre>
 failure         Failed to transcode video
 message         ${message}
-itemId          ${element.item.id}
-itemTitle       ${element.item.title}
-elementId       ${elementId}
-elementName     ${elementName}
-conferenceName  ${element.conference.name}
-path            /item/${element.item.id}/element/${elementId}
+itemId          ${elementDetails.item.id}
+itemTitle       ${elementDetails.item.title}
+elementId       ${elementData.id}
+elementName     ${elementData.name}
+conferenceName  ${elementDetails.conference.name}
+path            /item/${elementDetails.item.id}/element/${elementData.id}
         </pre>
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: EmailReason.ItemTranscodeFailed,
-            subject: `URGENT: SYSTEM ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
+            subject: `URGENT: SYSTEM ERROR: Failed to process ${elementData.name} at ${elementDetails.conference.name}`,
             htmlContents,
         });
     }
 
-    await insertEmails(logger, emails, elementDetails.data.content_Element_by_pk?.conference.id);
+    await insertEmails(logger, emails, elementData.conferenceId, undefined);
 }
 
 gql`

@@ -2,6 +2,7 @@ import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { validate as uuidValidate } from "uuid";
+import { logger } from "../../lib/logger";
 import { action } from "../../rabbitmq/chat/reactions";
 import type { Action, Reaction } from "../../types/chat";
 
@@ -20,8 +21,8 @@ export function onSend(userId: string, socketId: string, _socket: Socket): (reac
                 );
 
                 await action(actionData, userId);
-            } catch (e) {
-                console.error(`Error processing chat.reactions.send (socket: ${socketId})`, e, actionData);
+            } catch (error: any) {
+                logger.error({ error, actionData }, `Error processing chat.reactions.send (socket: ${socketId})`);
             }
         }
     };

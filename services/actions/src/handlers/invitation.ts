@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client/core";
 import type { ConfirmInvitationOutput, invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
-import assert from "assert";
+import type { InvitationData, Payload } from "@midspace/hasura/event";
 import type { P } from "pino";
+import { v5 as uuidv5 } from "uuid";
 import type {
     Email_Insert_Input,
     InvitationPartsFragment,
@@ -9,14 +10,18 @@ import type {
     RegistrantWithInvitePartsFragment,
 } from "../generated/graphql";
 import {
-    MarkAndSelectUnprocessedInvitationEmailJobsDocument,
+    CompleteInvitationEmailJobsDocument,
+    GetAutomaticInvitationsConfigurationDocument,
+    GetAutomaticInvitationsRepeatConfigurationsDocument,
+    GetAutomaticInvitations_ToBeRepeatedDocument,
+    InsertInvitationEmailJobDocument,
     SelectInvitationAndUserDocument,
     SelectRegistrantsWithInvitationDocument,
+    SelectUnprocessedInvitationEmailJobsDocument,
     SetRegistrantUserIdDocument,
-    UnmarkInvitationEmailJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { insertEmails } from "./email";
+import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
 gql`
     fragment InvitationParts on registrant_Invitation {
@@ -102,26 +107,30 @@ gql`
         }
     }
 
-    mutation MarkAndSelectUnprocessedInvitationEmailJobs {
-        update_job_queues_InvitationEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
-            returning {
-                id
-                registrantIds
-                sendRepeat
-            }
+    query SelectUnprocessedInvitationEmailJobs {
+        job_queues_InvitationEmailJob(where: { processed: { _eq: false } }) {
+            id
+            registrantIds
+            sendRepeat
         }
     }
 
-    mutation UnmarkInvitationEmailJobs($ids: [uuid!]!) {
-        update_job_queues_InvitationEmailJob(where: { id: { _in: $ids } }, _set: { processed: false }) {
+    mutation CompleteInvitationEmailJobs($ids: [uuid!]!) {
+        update_job_queues_InvitationEmailJob(where: { id: { _in: $ids } }, _set: { processed: true }) {
             affected_rows
         }
     }
 `;
 
+/** @summary Generate an idempotency key that uniquely identifies each email in a invite email job. */
+function generateIdempotencyKey(jobId: string, registrantId: string): string {
+    return uuidv5(`invite-email,${jobId},${registrantId}`, EMAIL_IDEMPOTENCY_NAMESPACE);
+}
+
 async function sendInviteEmails(
     logger: P.Logger,
     registrantIds: Array<string>,
+    jobId: string,
     shouldSend: (registrant: RegistrantWithInvitePartsFragment) => "INITIAL" | "REPEAT" | false
 ): Promise<void> {
     if (registrantIds.length === 0) {
@@ -134,12 +143,6 @@ async function sendInviteEmails(
             registrantIds,
         },
     });
-
-    if (registrants.error) {
-        throw new Error(registrants.error.message);
-    } else if (registrants.errors && registrants.errors.length > 0) {
-        throw new Error(registrants.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
-    }
 
     if (registrants.data.registrant_Registrant.length > 0) {
         const emailsToSend: Map<string, Email_Insert_Input> = new Map();
@@ -169,30 +172,33 @@ your account and access the conference.</p>
                             registrant.conference.shortName
                         }`,
                         htmlContents,
+                        idempotencyKey: generateIdempotencyKey(jobId, registrant.id),
                     });
                 }
             }
         }
 
-        await insertEmails(
-            logger,
-            Array.from(emailsToSend.values()),
-            registrants.data.registrant_Registrant[0].conference.id
-        );
+        if (emailsToSend.size) {
+            await insertEmails(
+                logger,
+                Array.from(emailsToSend.values()),
+                registrants.data.registrant_Registrant[0].conference.id,
+                `invitation:${jobId}`
+            );
+        }
     }
 }
 
 export async function processInvitationEmailsQueue(logger: P.Logger): Promise<void> {
-    const jobs = await apolloClient.mutate({
-        mutation: MarkAndSelectUnprocessedInvitationEmailJobsDocument,
+    const jobs = await apolloClient.query({
+        query: SelectUnprocessedInvitationEmailJobsDocument,
         variables: {},
     });
-    assert(jobs.data?.update_job_queues_InvitationEmailJob?.returning, "Unable to fetch Send Invitations jobs.");
 
-    const failedJobIds: string[] = [];
-    for (const job of jobs.data.update_job_queues_InvitationEmailJob.returning) {
+    const completedJobIds: string[] = [];
+    for (const job of jobs.data.job_queues_InvitationEmailJob) {
         try {
-            await sendInviteEmails(logger, job.registrantIds, (registrant) => {
+            await sendInviteEmails(logger, job.registrantIds, job.id, (registrant) => {
                 if (
                     !!registrant.invitation &&
                     registrant.invitation.emails.filter((x) => x.reason === "invite").length === 0
@@ -203,16 +209,16 @@ export async function processInvitationEmailsQueue(logger: P.Logger): Promise<vo
                 }
                 return false;
             });
+            completedJobIds.push(job.id);
         } catch (e: any) {
             logger.error({ jobId: job.id, err: e }, "Failed to process send invite emails job");
-            failedJobIds.push(job.id);
         }
     }
 
     await apolloClient.mutate({
-        mutation: UnmarkInvitationEmailJobsDocument,
+        mutation: CompleteInvitationEmailJobsDocument,
         variables: {
-            ids: failedJobIds,
+            ids: completedJobIds,
         },
     });
 }
@@ -300,4 +306,153 @@ export async function invitationConfirmCurrentHandler(
             ? `Invitation already used${invitation.registrant.userId === user.id ? " (same user)" : ""}`
             : true;
     });
+}
+
+gql`
+    query GetAutomaticInvitationsConfiguration($conferenceId: uuid!) {
+        initialStart: conference_Configuration_by_pk(conferenceId: $conferenceId, key: AUTOMATIC_INVITATIONS_START) {
+            value
+        }
+        initialEnd: conference_Configuration_by_pk(conferenceId: $conferenceId, key: AUTOMATIC_INVITATIONS_END) {
+            value
+        }
+    }
+
+    query GetAutomaticInvitationsRepeatConfigurations {
+        conference_Conference(
+            where: {
+                _and: [
+                    { configurations: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_START } } }
+                    { configurations: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_END } } }
+                ]
+            }
+        ) {
+            id
+            initialStart: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_START } }) {
+                value
+            }
+            initialEnd: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_END } }) {
+                value
+            }
+            repeatStart: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_START } }) {
+                value
+            }
+            repeatEnd: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_END } }) {
+                value
+            }
+            repeatFrequency: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY } }) {
+                value
+            }
+        }
+    }
+
+    mutation InsertInvitationEmailJob($registrantIds: jsonb!, $conferenceId: uuid!, $sendRepeat: Boolean!) {
+        insert_job_queues_InvitationEmailJob_one(
+            object: { registrantIds: $registrantIds, conferenceId: $conferenceId, sendRepeat: $sendRepeat }
+        ) {
+            id
+        }
+    }
+
+    query GetAutomaticInvitations_ToBeRepeated($conferenceId: uuid!) {
+        registrant_Registrant(where: { conferenceId: { _eq: $conferenceId }, userId: { _is_null: true } }) {
+            id
+            invitationStatus
+        }
+    }
+`;
+
+export async function handleInvitationInsert_AutomaticSend(payload: Payload<InvitationData>): Promise<void> {
+    if (payload.event.data.new) {
+        const conferenceId = payload.event.data.new.conferenceId;
+        const configResponse = await apolloClient.query({
+            query: GetAutomaticInvitationsConfigurationDocument,
+            variables: {
+                conferenceId,
+            },
+        });
+        const initialStartMs = configResponse.data.initialStart?.value ?? Number.POSITIVE_INFINITY;
+        const initialEndMs = configResponse.data.initialEnd?.value ?? Number.POSITIVE_INFINITY;
+        const now = Date.now();
+        if (
+            typeof initialStartMs === "number" &&
+            typeof initialEndMs === "number" &&
+            initialStartMs <= now &&
+            now < initialEndMs
+        ) {
+            await apolloClient.mutate({
+                mutation: InsertInvitationEmailJobDocument,
+                variables: {
+                    conferenceId,
+                    registrantIds: payload.event.data.new.registrantId,
+                    sendRepeat: false,
+                },
+            });
+        }
+    }
+}
+
+export async function handleInvitationInsert_AutomaticSendRepeat(): Promise<void> {
+    const conferencesResponse = await apolloClient.query({
+        query: GetAutomaticInvitationsRepeatConfigurationsDocument,
+    });
+    for (const conference of conferencesResponse.data.conference_Conference) {
+        const initialStartMs = conference.initialStart[0]?.value ?? Number.POSITIVE_INFINITY;
+        const initialEndMs = conference.initialEnd[0]?.value ?? Number.POSITIVE_INFINITY;
+        const repeatStartMs = conference.repeatStart[0]?.value ?? Number.POSITIVE_INFINITY;
+        const repeatEndMs = conference.repeatEnd[0]?.value ?? Number.POSITIVE_INFINITY;
+        const repeatFrequencyMs = conference.repeatFrequency[0]?.value ?? 2 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+        const sendInitial =
+            typeof initialStartMs === "number" &&
+            typeof initialEndMs === "number" &&
+            initialStartMs <= now &&
+            now < initialEndMs;
+        const sendRepeats =
+            typeof repeatStartMs === "number" &&
+            typeof repeatEndMs === "number" &&
+            typeof repeatFrequencyMs === "number" &&
+            repeatStartMs <= now &&
+            now < repeatEndMs;
+        if (sendInitial || sendRepeats) {
+            try {
+                const registrantsResponse = await apolloClient.query({
+                    query: GetAutomaticInvitations_ToBeRepeatedDocument,
+                    variables: {
+                        conferenceId: conference.id,
+                    },
+                });
+                const registrantIdsToInclude = registrantsResponse.data.registrant_Registrant
+                    .filter((x) => {
+                        const status = x.invitationStatus;
+                        if (!status) {
+                            return sendInitial;
+                        } else if (status.errorMessage || status.status === "delivered") {
+                            return false;
+                        } else if (status.sentAt) {
+                            const sentAtMs = Date.parse(status.sentAt);
+                            const distanceMs = now - sentAtMs;
+                            return sendRepeats && distanceMs > repeatFrequencyMs;
+                        } else {
+                            return sendInitial;
+                        }
+                    })
+                    .map((x) => x.id);
+                await apolloClient.mutate({
+                    mutation: InsertInvitationEmailJobDocument,
+                    variables: {
+                        conferenceId: conference.id,
+                        registrantIds: registrantIdsToInclude,
+                        sendRepeat: sendRepeats,
+                    },
+                });
+            } catch (e: any) {
+                console.error(
+                    `Error processing automatic repeat invitations for conference: ${
+                        conference.id
+                    }. Error: ${e?.toString()}`
+                );
+            }
+        }
+    }
 }

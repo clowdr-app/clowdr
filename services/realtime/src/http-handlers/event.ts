@@ -2,6 +2,7 @@ import { redisClientP, redisClientPool } from "@midspace/component-clients/redis
 import type { NextFunction, Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { generateEventHandsRaisedKeyName } from "../lib/handRaise";
+import { logger } from "../lib/logger";
 import type { Action, EventEndedNotification } from "../types/hasura";
 
 export async function eventEnded(req: Request, res: Response, _next?: NextFunction): Promise<void> {
@@ -19,8 +20,8 @@ export async function eventEnded(req: Request, res: Response, _next?: NextFuncti
         }
 
         res.status(200).send({ ok: true });
-    } catch (e) {
-        console.error("Event ended: Received incorrect payload", e);
+    } catch (error: any) {
+        logger.error({ error }, "Event ended: Received incorrect payload");
         res.status(500).json({ ok: false });
         return;
     }

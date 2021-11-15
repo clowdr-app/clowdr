@@ -9,7 +9,7 @@
         "prepare": "ts-patch install -s"
     },
     "author": "Clowdr CIC",
-    "license": "BSD-3-Clause",
+    "license": "AGPL-3.0-or-later",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/clowdr-app/clowdr.git",

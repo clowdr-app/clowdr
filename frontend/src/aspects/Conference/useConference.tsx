@@ -57,6 +57,13 @@ gql`
             key
             value
         }
+        scheduleEventBox_HideExhibitionPeople: configurations(
+            where: { key: { _eq: EVENT_BOX_HIDE_EXHIBITION_PEOPLE } }
+        ) {
+            conferenceId
+            key
+            value
+        }
 
         sponsorsLabel: configurations(where: { key: { _eq: SPONSORS_LABEL } }) {
             conferenceId

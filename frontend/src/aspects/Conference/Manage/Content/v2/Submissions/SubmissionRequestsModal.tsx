@@ -176,6 +176,33 @@ function SendSubmissionRequestsModalLazyInner({
     );
 }
 
+export const roleOptions: readonly { label: string; value: string }[] = [
+    {
+        label: "Presenter",
+        value: "PRESENTER",
+    },
+    {
+        label: "Author",
+        value: "AUTHOR",
+    },
+    {
+        label: "Chair",
+        value: "CHAIR",
+    },
+    {
+        label: "Session Organizer",
+        value: "SESSION ORGANIZER",
+    },
+    {
+        label: "Discussant",
+        value: "DISCUSSANT",
+    },
+    {
+        label: "Reviewer",
+        value: "REVIEWER",
+    },
+];
+
 export function SendSubmissionRequestsModalInner({
     onClose,
     items,
@@ -260,35 +287,6 @@ export function SendSubmissionRequestsModalInner({
     const toast = useToast();
 
     const [, sendSubmissionRequests] = useInsertSubmissionRequestEmailJobsMutation();
-    const roleOptions = useMemo(
-        () => [
-            {
-                label: "Presenter",
-                value: "PRESENTER",
-            },
-            {
-                label: "Author",
-                value: "AUTHOR",
-            },
-            {
-                label: "Chair",
-                value: "CHAIR",
-            },
-            {
-                label: "Session Organizer",
-                value: "SESSION ORGANIZER",
-            },
-            {
-                label: "Discussant",
-                value: "DISCUSSANT",
-            },
-            {
-                label: "Reviewer",
-                value: "REVIEWER",
-            },
-        ],
-        []
-    );
 
     return (
         <ModalContent>

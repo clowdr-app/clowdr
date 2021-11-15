@@ -203,6 +203,7 @@ const ManageRegistrants = React.lazy(() => import("./Manage/Registrants/ManageRe
 const ManageSchedule = React.lazy(() => import("./Manage/Schedule/ManageSchedule"));
 const ManageShuffle = React.lazy(() => import("./Manage/Shuffle/ManageShuffle"));
 const ManageTheme = React.lazy(() => import("./Manage/Theme/ManageTheme"));
+const ManageConfig = React.lazy(() => import("./Manage/Configuration/ManageConfig"));
 const PageNotImplemented = React.lazy(() => import("../Errors/PageNotImplemented"));
 
 function ManageConferenceRoutes(): JSX.Element {
@@ -275,6 +276,9 @@ function ManageConferenceRoutes(): JSX.Element {
                 </Route>
                 <Route path={`${path}/theme`}>
                     <ManageTheme />
+                </Route>
+                <Route path={`${path}/manage/settings`}>
+                    <ManageConfig />
                 </Route>
 
                 <Route path="/">

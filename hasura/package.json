@@ -2,7 +2,7 @@
     "name": "@midspace/service-hasura",
     "private": "true",
     "author": "Clowdr CIC",
-    "license": "BSD-3-Clause",
+    "license": "AGPL-3.0-or-later",
     "scripts": {
         "console-when-ready": "wait-on http-get://localhost:8080/v1/version && hasura console --console-port 9695 --envfile .env.local",
         "migrate": "hasura migrate apply --envfile=.env.local",

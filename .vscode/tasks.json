@@ -119,6 +119,21 @@
             "runOptions": {
                 "instanceLimit": 1
             },
+            "args": ["run", "dev"]
+        },
+        // Datadog Proxy service -- Local Development
+        {
+            "label": "DataDog Proxy Service -- Local Development",
+            "type": "shell",
+            "isBackground": true,
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/services/dd-proxy"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
             "args": ["dev"]
         },
         // Action service -- Heroku Local

@@ -59,13 +59,13 @@ export function VideoChatVonageRoom({
     eventId,
     enable,
     eventIsFuture,
-    isChairOrOrganizer,
+    isPresenterOrChairOrOrganizer,
 }: {
     room: RoomPage_RoomDetailsFragment;
     eventId: string | undefined;
     enable: boolean;
     eventIsFuture: boolean;
-    isChairOrOrganizer: boolean;
+    isPresenterOrChairOrOrganizer: boolean;
 }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
     const { id: registrantId } = useCurrentRegistrant();
@@ -191,7 +191,8 @@ export function VideoChatVonageRoom({
                 disable={!enable}
                 getAccessToken={getAccessToken}
                 isBackstageRoom={false}
-                canControlRecording={!eventId || isChairOrOrganizer}
+                canControlRecording={(!eventId && !room.originatingItem) || isPresenterOrChairOrOrganizer}
+                roomId={room.id}
                 eventId={eventId}
             />
             <AlertDialog

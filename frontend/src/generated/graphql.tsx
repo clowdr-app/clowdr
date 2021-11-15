@@ -65,10 +65,13 @@ export type CreateRoomDmOutput = {
 /** columns and relationships of "Email" */
 export type Email = {
     readonly __typename?: "Email";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt: Scalars["timestamptz"];
     readonly emailAddress: Scalars["String"];
+    readonly errorMessage?: Maybe<Scalars["String"]>;
     readonly htmlContents: Scalars["String"];
     readonly id: Scalars["uuid"];
+    readonly idempotencyKey: Scalars["uuid"];
     /** An object relationship */
     readonly invitation?: Maybe<Registrant_Invitation>;
     readonly invitationId?: Maybe<Scalars["uuid"]>;
@@ -77,6 +80,7 @@ export type Email = {
     readonly recipientName?: Maybe<Scalars["String"]>;
     readonly retriesCount: Scalars["Int"];
     readonly sentAt?: Maybe<Scalars["timestamptz"]>;
+    readonly status?: Maybe<Scalars["String"]>;
     readonly subject: Scalars["String"];
     readonly updatedAt: Scalars["timestamptz"];
     /** An object relationship */
@@ -151,10 +155,13 @@ export type Email_Bool_Exp = {
     readonly _and?: Maybe<ReadonlyArray<Email_Bool_Exp>>;
     readonly _not?: Maybe<Email_Bool_Exp>;
     readonly _or?: Maybe<ReadonlyArray<Email_Bool_Exp>>;
+    readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
     readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     readonly emailAddress?: Maybe<String_Comparison_Exp>;
+    readonly errorMessage?: Maybe<String_Comparison_Exp>;
     readonly htmlContents?: Maybe<String_Comparison_Exp>;
     readonly id?: Maybe<Uuid_Comparison_Exp>;
+    readonly idempotencyKey?: Maybe<Uuid_Comparison_Exp>;
     readonly invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
     readonly invitationId?: Maybe<Uuid_Comparison_Exp>;
     readonly plainTextContents?: Maybe<String_Comparison_Exp>;
@@ -162,6 +169,7 @@ export type Email_Bool_Exp = {
     readonly recipientName?: Maybe<String_Comparison_Exp>;
     readonly retriesCount?: Maybe<Int_Comparison_Exp>;
     readonly sentAt?: Maybe<Timestamptz_Comparison_Exp>;
+    readonly status?: Maybe<String_Comparison_Exp>;
     readonly subject?: Maybe<String_Comparison_Exp>;
     readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
     readonly user?: Maybe<User_Bool_Exp>;
@@ -170,6 +178,8 @@ export type Email_Bool_Exp = {
 
 /** unique or primary key constraints on table "Email" */
 export enum Email_Constraint {
+    /** unique or primary key constraint */
+    EmailIdempotencyKeyKey = "Email_idempotencyKey_key",
     /** unique or primary key constraint */
     EmailPkey = "Email_pkey",
 }
@@ -181,10 +191,13 @@ export type Email_Inc_Input = {
 
 /** input type for inserting data into table "Email" */
 export type Email_Insert_Input = {
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly emailAddress?: Maybe<Scalars["String"]>;
+    readonly errorMessage?: Maybe<Scalars["String"]>;
     readonly htmlContents?: Maybe<Scalars["String"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
+    readonly idempotencyKey?: Maybe<Scalars["uuid"]>;
     readonly invitation?: Maybe<Registrant_Invitation_Obj_Rel_Insert_Input>;
     readonly invitationId?: Maybe<Scalars["uuid"]>;
     readonly plainTextContents?: Maybe<Scalars["String"]>;
@@ -192,6 +205,7 @@ export type Email_Insert_Input = {
     readonly recipientName?: Maybe<Scalars["String"]>;
     readonly retriesCount?: Maybe<Scalars["Int"]>;
     readonly sentAt?: Maybe<Scalars["timestamptz"]>;
+    readonly status?: Maybe<Scalars["String"]>;
     readonly subject?: Maybe<Scalars["String"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
@@ -201,16 +215,20 @@ export type Email_Insert_Input = {
 /** aggregate max on columns */
 export type Email_Max_Fields = {
     readonly __typename?: "Email_max_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly emailAddress?: Maybe<Scalars["String"]>;
+    readonly errorMessage?: Maybe<Scalars["String"]>;
     readonly htmlContents?: Maybe<Scalars["String"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
+    readonly idempotencyKey?: Maybe<Scalars["uuid"]>;
     readonly invitationId?: Maybe<Scalars["uuid"]>;
     readonly plainTextContents?: Maybe<Scalars["String"]>;
     readonly reason?: Maybe<Scalars["String"]>;
     readonly recipientName?: Maybe<Scalars["String"]>;
     readonly retriesCount?: Maybe<Scalars["Int"]>;
     readonly sentAt?: Maybe<Scalars["timestamptz"]>;
+    readonly status?: Maybe<Scalars["String"]>;
     readonly subject?: Maybe<Scalars["String"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly userId?: Maybe<Scalars["String"]>;
@@ -218,16 +236,20 @@ export type Email_Max_Fields = {
 
 /** order by max() on columns of table "Email" */
 export type Email_Max_Order_By = {
+    readonly conferenceId?: Maybe<Order_By>;
     readonly createdAt?: Maybe<Order_By>;
     readonly emailAddress?: Maybe<Order_By>;
+    readonly errorMessage?: Maybe<Order_By>;
     readonly htmlContents?: Maybe<Order_By>;
     readonly id?: Maybe<Order_By>;
+    readonly idempotencyKey?: Maybe<Order_By>;
     readonly invitationId?: Maybe<Order_By>;
     readonly plainTextContents?: Maybe<Order_By>;
     readonly reason?: Maybe<Order_By>;
     readonly recipientName?: Maybe<Order_By>;
     readonly retriesCount?: Maybe<Order_By>;
     readonly sentAt?: Maybe<Order_By>;
+    readonly status?: Maybe<Order_By>;
     readonly subject?: Maybe<Order_By>;
     readonly updatedAt?: Maybe<Order_By>;
     readonly userId?: Maybe<Order_By>;
@@ -236,16 +258,20 @@ export type Email_Max_Order_By = {
 /** aggregate min on columns */
 export type Email_Min_Fields = {
     readonly __typename?: "Email_min_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly emailAddress?: Maybe<Scalars["String"]>;
+    readonly errorMessage?: Maybe<Scalars["String"]>;
     readonly htmlContents?: Maybe<Scalars["String"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
+    readonly idempotencyKey?: Maybe<Scalars["uuid"]>;
     readonly invitationId?: Maybe<Scalars["uuid"]>;
     readonly plainTextContents?: Maybe<Scalars["String"]>;
     readonly reason?: Maybe<Scalars["String"]>;
     readonly recipientName?: Maybe<Scalars["String"]>;
     readonly retriesCount?: Maybe<Scalars["Int"]>;
     readonly sentAt?: Maybe<Scalars["timestamptz"]>;
+    readonly status?: Maybe<Scalars["String"]>;
     readonly subject?: Maybe<Scalars["String"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly userId?: Maybe<Scalars["String"]>;
@@ -253,16 +279,20 @@ export type Email_Min_Fields = {
 
 /** order by min() on columns of table "Email" */
 export type Email_Min_Order_By = {
+    readonly conferenceId?: Maybe<Order_By>;
     readonly createdAt?: Maybe<Order_By>;
     readonly emailAddress?: Maybe<Order_By>;
+    readonly errorMessage?: Maybe<Order_By>;
     readonly htmlContents?: Maybe<Order_By>;
     readonly id?: Maybe<Order_By>;
+    readonly idempotencyKey?: Maybe<Order_By>;
     readonly invitationId?: Maybe<Order_By>;
     readonly plainTextContents?: Maybe<Order_By>;
     readonly reason?: Maybe<Order_By>;
     readonly recipientName?: Maybe<Order_By>;
     readonly retriesCount?: Maybe<Order_By>;
     readonly sentAt?: Maybe<Order_By>;
+    readonly status?: Maybe<Order_By>;
     readonly subject?: Maybe<Order_By>;
     readonly updatedAt?: Maybe<Order_By>;
     readonly userId?: Maybe<Order_By>;
@@ -286,10 +316,13 @@ export type Email_On_Conflict = {
 
 /** Ordering options when selecting data from "Email". */
 export type Email_Order_By = {
+    readonly conferenceId?: Maybe<Order_By>;
     readonly createdAt?: Maybe<Order_By>;
     readonly emailAddress?: Maybe<Order_By>;
+    readonly errorMessage?: Maybe<Order_By>;
     readonly htmlContents?: Maybe<Order_By>;
     readonly id?: Maybe<Order_By>;
+    readonly idempotencyKey?: Maybe<Order_By>;
     readonly invitation?: Maybe<Registrant_Invitation_Order_By>;
     readonly invitationId?: Maybe<Order_By>;
     readonly plainTextContents?: Maybe<Order_By>;
@@ -297,6 +330,7 @@ export type Email_Order_By = {
     readonly recipientName?: Maybe<Order_By>;
     readonly retriesCount?: Maybe<Order_By>;
     readonly sentAt?: Maybe<Order_By>;
+    readonly status?: Maybe<Order_By>;
     readonly subject?: Maybe<Order_By>;
     readonly updatedAt?: Maybe<Order_By>;
     readonly user?: Maybe<User_Order_By>;
@@ -311,13 +345,19 @@ export type Email_Pk_Columns_Input = {
 /** select columns of table "Email" */
 export enum Email_Select_Column {
     /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
     CreatedAt = "createdAt",
     /** column name */
     EmailAddress = "emailAddress",
     /** column name */
+    ErrorMessage = "errorMessage",
+    /** column name */
     HtmlContents = "htmlContents",
     /** column name */
     Id = "id",
+    /** column name */
+    IdempotencyKey = "idempotencyKey",
     /** column name */
     InvitationId = "invitationId",
     /** column name */
@@ -331,6 +371,8 @@ export enum Email_Select_Column {
     /** column name */
     SentAt = "sentAt",
     /** column name */
+    Status = "status",
+    /** column name */
     Subject = "subject",
     /** column name */
     UpdatedAt = "updatedAt",
@@ -340,16 +382,20 @@ export enum Email_Select_Column {
 
 /** input type for updating data in table "Email" */
 export type Email_Set_Input = {
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly emailAddress?: Maybe<Scalars["String"]>;
+    readonly errorMessage?: Maybe<Scalars["String"]>;
     readonly htmlContents?: Maybe<Scalars["String"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
+    readonly idempotencyKey?: Maybe<Scalars["uuid"]>;
     readonly invitationId?: Maybe<Scalars["uuid"]>;
     readonly plainTextContents?: Maybe<Scalars["String"]>;
     readonly reason?: Maybe<Scalars["String"]>;
     readonly recipientName?: Maybe<Scalars["String"]>;
     readonly retriesCount?: Maybe<Scalars["Int"]>;
     readonly sentAt?: Maybe<Scalars["timestamptz"]>;
+    readonly status?: Maybe<Scalars["String"]>;
     readonly subject?: Maybe<Scalars["String"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly userId?: Maybe<Scalars["String"]>;
@@ -402,13 +448,19 @@ export type Email_Sum_Order_By = {
 /** update columns of table "Email" */
 export enum Email_Update_Column {
     /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
     CreatedAt = "createdAt",
     /** column name */
     EmailAddress = "emailAddress",
     /** column name */
+    ErrorMessage = "errorMessage",
+    /** column name */
     HtmlContents = "htmlContents",
     /** column name */
     Id = "id",
+    /** column name */
+    IdempotencyKey = "idempotencyKey",
     /** column name */
     InvitationId = "invitationId",
     /** column name */
@@ -421,6 +473,8 @@ export enum Email_Update_Column {
     RetriesCount = "retriesCount",
     /** column name */
     SentAt = "sentAt",
+    /** column name */
+    Status = "status",
     /** column name */
     Subject = "subject",
     /** column name */
@@ -2154,8 +2208,8 @@ export type Analytics_ElementTotalViews = {
     readonly __typename?: "analytics_ElementTotalViews";
     /** An object relationship */
     readonly element?: Maybe<Content_Element>;
-    readonly elementId?: Maybe<Scalars["uuid"]>;
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
+    readonly elementId: Scalars["uuid"];
+    readonly totalViewCount: Scalars["bigint"];
 };
 
 /** aggregated selection of "analytics.ElementTotalViews" */
@@ -2203,6 +2257,17 @@ export type Analytics_ElementTotalViews_Bool_Exp = {
     readonly totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
+/** unique or primary key constraints on table "analytics.ElementTotalViews" */
+export enum Analytics_ElementTotalViews_Constraint {
+    /** unique or primary key constraint */
+    ElementTotalViewsPkey = "ElementTotalViews_pkey",
+}
+
+/** input type for incrementing numeric columns in table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Inc_Input = {
+    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
+};
+
 /** input type for inserting data into table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Insert_Input = {
     readonly element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
@@ -2224,9 +2289,27 @@ export type Analytics_ElementTotalViews_Min_Fields = {
     readonly totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** response of any mutation on the table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Mutation_Response = {
+    readonly __typename?: "analytics_ElementTotalViews_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Analytics_ElementTotalViews>;
+};
+
 /** input type for inserting object relation for remote table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Obj_Rel_Insert_Input = {
     readonly data: Analytics_ElementTotalViews_Insert_Input;
+    /** on conflict condition */
+    readonly on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_On_Conflict = {
+    readonly constraint: Analytics_ElementTotalViews_Constraint;
+    readonly update_columns?: ReadonlyArray<Analytics_ElementTotalViews_Update_Column>;
+    readonly where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.ElementTotalViews". */
@@ -2236,6 +2319,11 @@ export type Analytics_ElementTotalViews_Order_By = {
     readonly totalViewCount?: Maybe<Order_By>;
 };
 
+/** primary key columns input for table: analytics_ElementTotalViews */
+export type Analytics_ElementTotalViews_Pk_Columns_Input = {
+    readonly elementId: Scalars["uuid"];
+};
+
 /** select columns of table "analytics.ElementTotalViews" */
 export enum Analytics_ElementTotalViews_Select_Column {
     /** column name */
@@ -2243,6 +2331,12 @@ export enum Analytics_ElementTotalViews_Select_Column {
     /** column name */
     TotalViewCount = "totalViewCount",
 }
+
+/** input type for updating data in table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Set_Input = {
+    readonly elementId?: Maybe<Scalars["uuid"]>;
+    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
+};
 
 /** aggregate stddev on columns */
 export type Analytics_ElementTotalViews_Stddev_Fields = {
@@ -2268,6 +2362,14 @@ export type Analytics_ElementTotalViews_Sum_Fields = {
     readonly totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** update columns of table "analytics.ElementTotalViews" */
+export enum Analytics_ElementTotalViews_Update_Column {
+    /** column name */
+    ElementId = "elementId",
+    /** column name */
+    TotalViewCount = "totalViewCount",
+}
+
 /** aggregate var_pop on columns */
 export type Analytics_ElementTotalViews_Var_Pop_Fields = {
     readonly __typename?: "analytics_ElementTotalViews_var_pop_fields";
@@ -2291,8 +2393,8 @@ export type Analytics_ItemTotalViews = {
     readonly __typename?: "analytics_ItemTotalViews";
     /** An object relationship */
     readonly item?: Maybe<Content_Item>;
-    readonly itemId?: Maybe<Scalars["uuid"]>;
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
+    readonly itemId: Scalars["uuid"];
+    readonly totalViewCount: Scalars["bigint"];
 };
 
 /** aggregated selection of "analytics.ItemTotalViews" */
@@ -2340,6 +2442,17 @@ export type Analytics_ItemTotalViews_Bool_Exp = {
     readonly totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
+/** unique or primary key constraints on table "analytics.ItemTotalViews" */
+export enum Analytics_ItemTotalViews_Constraint {
+    /** unique or primary key constraint */
+    ItemTotalViewsPkey = "ItemTotalViews_pkey",
+}
+
+/** input type for incrementing numeric columns in table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Inc_Input = {
+    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
+};
+
 /** input type for inserting data into table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Insert_Input = {
     readonly item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
@@ -2361,9 +2474,27 @@ export type Analytics_ItemTotalViews_Min_Fields = {
     readonly totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** response of any mutation on the table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Mutation_Response = {
+    readonly __typename?: "analytics_ItemTotalViews_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Analytics_ItemTotalViews>;
+};
+
 /** input type for inserting object relation for remote table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Obj_Rel_Insert_Input = {
     readonly data: Analytics_ItemTotalViews_Insert_Input;
+    /** on conflict condition */
+    readonly on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_On_Conflict = {
+    readonly constraint: Analytics_ItemTotalViews_Constraint;
+    readonly update_columns?: ReadonlyArray<Analytics_ItemTotalViews_Update_Column>;
+    readonly where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.ItemTotalViews". */
@@ -2373,6 +2504,11 @@ export type Analytics_ItemTotalViews_Order_By = {
     readonly totalViewCount?: Maybe<Order_By>;
 };
 
+/** primary key columns input for table: analytics_ItemTotalViews */
+export type Analytics_ItemTotalViews_Pk_Columns_Input = {
+    readonly itemId: Scalars["uuid"];
+};
+
 /** select columns of table "analytics.ItemTotalViews" */
 export enum Analytics_ItemTotalViews_Select_Column {
     /** column name */
@@ -2380,6 +2516,12 @@ export enum Analytics_ItemTotalViews_Select_Column {
     /** column name */
     TotalViewCount = "totalViewCount",
 }
+
+/** input type for updating data in table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Set_Input = {
+    readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
+};
 
 /** aggregate stddev on columns */
 export type Analytics_ItemTotalViews_Stddev_Fields = {
@@ -2405,6 +2547,14 @@ export type Analytics_ItemTotalViews_Sum_Fields = {
     readonly totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** update columns of table "analytics.ItemTotalViews" */
+export enum Analytics_ItemTotalViews_Update_Column {
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    TotalViewCount = "totalViewCount",
+}
+
 /** aggregate var_pop on columns */
 export type Analytics_ItemTotalViews_Var_Pop_Fields = {
     readonly __typename?: "analytics_ItemTotalViews_var_pop_fields";
@@ -2426,17 +2576,12 @@ export type Analytics_ItemTotalViews_Variance_Fields = {
 /** columns and relationships of "analytics.RoomPresence" */
 export type Analytics_RoomPresence = {
     readonly __typename?: "analytics_RoomPresence";
-    readonly count?: Maybe<Scalars["jsonb"]>;
-    readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly id?: Maybe<Scalars["uuid"]>;
-    readonly name?: Maybe<Scalars["String"]>;
+    readonly count: Scalars["bigint"];
+    readonly created_at: Scalars["timestamptz"];
+    readonly id: Scalars["uuid"];
     /** An object relationship */
-    readonly room?: Maybe<Room_Room>;
-};
-
-/** columns and relationships of "analytics.RoomPresence" */
-export type Analytics_RoomPresenceCountArgs = {
-    path?: Maybe<Scalars["String"]>;
+    readonly room: Room_Room;
+    readonly roomId: Scalars["uuid"];
 };
 
 /** aggregated selection of "analytics.RoomPresence" */
@@ -2449,9 +2594,17 @@ export type Analytics_RoomPresence_Aggregate = {
 /** aggregate fields of "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Aggregate_Fields = {
     readonly __typename?: "analytics_RoomPresence_aggregate_fields";
+    readonly avg?: Maybe<Analytics_RoomPresence_Avg_Fields>;
     readonly count: Scalars["Int"];
     readonly max?: Maybe<Analytics_RoomPresence_Max_Fields>;
     readonly min?: Maybe<Analytics_RoomPresence_Min_Fields>;
+    readonly stddev?: Maybe<Analytics_RoomPresence_Stddev_Fields>;
+    readonly stddev_pop?: Maybe<Analytics_RoomPresence_Stddev_Pop_Fields>;
+    readonly stddev_samp?: Maybe<Analytics_RoomPresence_Stddev_Samp_Fields>;
+    readonly sum?: Maybe<Analytics_RoomPresence_Sum_Fields>;
+    readonly var_pop?: Maybe<Analytics_RoomPresence_Var_Pop_Fields>;
+    readonly var_samp?: Maybe<Analytics_RoomPresence_Var_Samp_Fields>;
+    readonly variance?: Maybe<Analytics_RoomPresence_Variance_Fields>;
 };
 
 /** aggregate fields of "analytics.RoomPresence" */
@@ -2462,14 +2615,35 @@ export type Analytics_RoomPresence_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Aggregate_Order_By = {
+    readonly avg?: Maybe<Analytics_RoomPresence_Avg_Order_By>;
     readonly count?: Maybe<Order_By>;
     readonly max?: Maybe<Analytics_RoomPresence_Max_Order_By>;
     readonly min?: Maybe<Analytics_RoomPresence_Min_Order_By>;
+    readonly stddev?: Maybe<Analytics_RoomPresence_Stddev_Order_By>;
+    readonly stddev_pop?: Maybe<Analytics_RoomPresence_Stddev_Pop_Order_By>;
+    readonly stddev_samp?: Maybe<Analytics_RoomPresence_Stddev_Samp_Order_By>;
+    readonly sum?: Maybe<Analytics_RoomPresence_Sum_Order_By>;
+    readonly var_pop?: Maybe<Analytics_RoomPresence_Var_Pop_Order_By>;
+    readonly var_samp?: Maybe<Analytics_RoomPresence_Var_Samp_Order_By>;
+    readonly variance?: Maybe<Analytics_RoomPresence_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Arr_Rel_Insert_Input = {
     readonly data: ReadonlyArray<Analytics_RoomPresence_Insert_Input>;
+    /** on conflict condition */
+    readonly on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Analytics_RoomPresence_Avg_Fields = {
+    readonly __typename?: "analytics_RoomPresence_avg_fields";
+    readonly count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Avg_Order_By = {
+    readonly count?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "analytics.RoomPresence". All fields are combined with a logical 'AND'. */
@@ -2477,50 +2651,83 @@ export type Analytics_RoomPresence_Bool_Exp = {
     readonly _and?: Maybe<ReadonlyArray<Analytics_RoomPresence_Bool_Exp>>;
     readonly _not?: Maybe<Analytics_RoomPresence_Bool_Exp>;
     readonly _or?: Maybe<ReadonlyArray<Analytics_RoomPresence_Bool_Exp>>;
-    readonly count?: Maybe<Jsonb_Comparison_Exp>;
+    readonly count?: Maybe<Bigint_Comparison_Exp>;
     readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
     readonly id?: Maybe<Uuid_Comparison_Exp>;
-    readonly name?: Maybe<String_Comparison_Exp>;
     readonly room?: Maybe<Room_Room_Bool_Exp>;
+    readonly roomId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "analytics.RoomPresence" */
+export enum Analytics_RoomPresence_Constraint {
+    /** unique or primary key constraint */
+    RoomPresencePkey = "RoomPresence_pkey",
+    /** unique or primary key constraint */
+    RoomPresenceRoomIdCreatedAtKey = "RoomPresence_roomId_created_at_key",
+}
+
+/** input type for incrementing numeric columns in table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Inc_Input = {
+    readonly count?: Maybe<Scalars["bigint"]>;
 };
 
 /** input type for inserting data into table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Insert_Input = {
-    readonly count?: Maybe<Scalars["jsonb"]>;
+    readonly count?: Maybe<Scalars["bigint"]>;
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly name?: Maybe<Scalars["String"]>;
     readonly room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
 };
 
 /** aggregate max on columns */
 export type Analytics_RoomPresence_Max_Fields = {
     readonly __typename?: "analytics_RoomPresence_max_fields";
+    readonly count?: Maybe<Scalars["bigint"]>;
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly name?: Maybe<Scalars["String"]>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
 };
 
 /** order by max() on columns of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Max_Order_By = {
+    readonly count?: Maybe<Order_By>;
     readonly created_at?: Maybe<Order_By>;
     readonly id?: Maybe<Order_By>;
-    readonly name?: Maybe<Order_By>;
+    readonly roomId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Analytics_RoomPresence_Min_Fields = {
     readonly __typename?: "analytics_RoomPresence_min_fields";
+    readonly count?: Maybe<Scalars["bigint"]>;
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly name?: Maybe<Scalars["String"]>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
 };
 
 /** order by min() on columns of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Min_Order_By = {
+    readonly count?: Maybe<Order_By>;
     readonly created_at?: Maybe<Order_By>;
     readonly id?: Maybe<Order_By>;
-    readonly name?: Maybe<Order_By>;
+    readonly roomId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Mutation_Response = {
+    readonly __typename?: "analytics_RoomPresence_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Analytics_RoomPresence>;
+};
+
+/** on conflict condition type for table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_On_Conflict = {
+    readonly constraint: Analytics_RoomPresence_Constraint;
+    readonly update_columns?: ReadonlyArray<Analytics_RoomPresence_Update_Column>;
+    readonly where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.RoomPresence". */
@@ -2528,8 +2735,13 @@ export type Analytics_RoomPresence_Order_By = {
     readonly count?: Maybe<Order_By>;
     readonly created_at?: Maybe<Order_By>;
     readonly id?: Maybe<Order_By>;
-    readonly name?: Maybe<Order_By>;
     readonly room?: Maybe<Room_Room_Order_By>;
+    readonly roomId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: analytics_RoomPresence */
+export type Analytics_RoomPresence_Pk_Columns_Input = {
+    readonly id: Scalars["uuid"];
 };
 
 /** select columns of table "analytics.RoomPresence" */
@@ -2541,8 +2753,105 @@ export enum Analytics_RoomPresence_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
-    Name = "name",
+    RoomId = "roomId",
 }
+
+/** input type for updating data in table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Set_Input = {
+    readonly count?: Maybe<Scalars["bigint"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
+};
+
+/** aggregate stddev on columns */
+export type Analytics_RoomPresence_Stddev_Fields = {
+    readonly __typename?: "analytics_RoomPresence_stddev_fields";
+    readonly count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Order_By = {
+    readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Analytics_RoomPresence_Stddev_Pop_Fields = {
+    readonly __typename?: "analytics_RoomPresence_stddev_pop_fields";
+    readonly count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Pop_Order_By = {
+    readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Analytics_RoomPresence_Stddev_Samp_Fields = {
+    readonly __typename?: "analytics_RoomPresence_stddev_samp_fields";
+    readonly count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Samp_Order_By = {
+    readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Analytics_RoomPresence_Sum_Fields = {
+    readonly __typename?: "analytics_RoomPresence_sum_fields";
+    readonly count?: Maybe<Scalars["bigint"]>;
+};
+
+/** order by sum() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Sum_Order_By = {
+    readonly count?: Maybe<Order_By>;
+};
+
+/** update columns of table "analytics.RoomPresence" */
+export enum Analytics_RoomPresence_Update_Column {
+    /** column name */
+    Count = "count",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    RoomId = "roomId",
+}
+
+/** aggregate var_pop on columns */
+export type Analytics_RoomPresence_Var_Pop_Fields = {
+    readonly __typename?: "analytics_RoomPresence_var_pop_fields";
+    readonly count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Var_Pop_Order_By = {
+    readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Analytics_RoomPresence_Var_Samp_Fields = {
+    readonly __typename?: "analytics_RoomPresence_var_samp_fields";
+    readonly count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Var_Samp_Order_By = {
+    readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Analytics_RoomPresence_Variance_Fields = {
+    readonly __typename?: "analytics_RoomPresence_variance_fields";
+    readonly count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Variance_Order_By = {
+    readonly count?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "analytics.RoomStats" */
 export type Analytics_RoomStats = {
@@ -2834,330 +3143,6 @@ export type Analytics_RoomStats_Variance_Fields = {
 export type Analytics_RoomStats_Variance_Order_By = {
     readonly hlsViewCount?: Maybe<Order_By>;
 };
-
-/** columns and relationships of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews = {
-    readonly __typename?: "analytics_mat_ElementTotalViews";
-    readonly elementId?: Maybe<Scalars["uuid"]>;
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregated selection of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_aggregate";
-    readonly aggregate?: Maybe<Analytics_Mat_ElementTotalViews_Aggregate_Fields>;
-    readonly nodes: ReadonlyArray<Analytics_Mat_ElementTotalViews>;
-};
-
-/** aggregate fields of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_aggregate_fields";
-    readonly avg?: Maybe<Analytics_Mat_ElementTotalViews_Avg_Fields>;
-    readonly count: Scalars["Int"];
-    readonly max?: Maybe<Analytics_Mat_ElementTotalViews_Max_Fields>;
-    readonly min?: Maybe<Analytics_Mat_ElementTotalViews_Min_Fields>;
-    readonly stddev?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Fields>;
-    readonly stddev_pop?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields>;
-    readonly stddev_samp?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields>;
-    readonly sum?: Maybe<Analytics_Mat_ElementTotalViews_Sum_Fields>;
-    readonly var_pop?: Maybe<Analytics_Mat_ElementTotalViews_Var_Pop_Fields>;
-    readonly var_samp?: Maybe<Analytics_Mat_ElementTotalViews_Var_Samp_Fields>;
-    readonly variance?: Maybe<Analytics_Mat_ElementTotalViews_Variance_Fields>;
-};
-
-/** aggregate fields of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** aggregate avg on columns */
-export type Analytics_Mat_ElementTotalViews_Avg_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_avg_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_ElementTotalViews". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_ElementTotalViews_Bool_Exp = {
-    readonly _and?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Bool_Exp>>;
-    readonly _not?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-    readonly _or?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Bool_Exp>>;
-    readonly elementId?: Maybe<Uuid_Comparison_Exp>;
-    readonly totalViewCount?: Maybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_ElementTotalViews_Max_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_max_fields";
-    readonly elementId?: Maybe<Scalars["uuid"]>;
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_ElementTotalViews_Min_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_min_fields";
-    readonly elementId?: Maybe<Scalars["uuid"]>;
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_ElementTotalViews". */
-export type Analytics_Mat_ElementTotalViews_Order_By = {
-    readonly elementId?: Maybe<Order_By>;
-    readonly totalViewCount?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_ElementTotalViews" */
-export enum Analytics_Mat_ElementTotalViews_Select_Column {
-    /** column name */
-    ElementId = "elementId",
-    /** column name */
-    TotalViewCount = "totalViewCount",
-}
-
-/** aggregate stddev on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_stddev_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_stddev_pop_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_stddev_samp_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate sum on columns */
-export type Analytics_Mat_ElementTotalViews_Sum_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_sum_fields";
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate var_pop on columns */
-export type Analytics_Mat_ElementTotalViews_Var_Pop_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_var_pop_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate var_samp on columns */
-export type Analytics_Mat_ElementTotalViews_Var_Samp_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_var_samp_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate variance on columns */
-export type Analytics_Mat_ElementTotalViews_Variance_Fields = {
-    readonly __typename?: "analytics_mat_ElementTotalViews_variance_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** columns and relationships of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews = {
-    readonly __typename?: "analytics_mat_ItemTotalViews";
-    readonly itemId?: Maybe<Scalars["uuid"]>;
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregated selection of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_aggregate";
-    readonly aggregate?: Maybe<Analytics_Mat_ItemTotalViews_Aggregate_Fields>;
-    readonly nodes: ReadonlyArray<Analytics_Mat_ItemTotalViews>;
-};
-
-/** aggregate fields of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_aggregate_fields";
-    readonly avg?: Maybe<Analytics_Mat_ItemTotalViews_Avg_Fields>;
-    readonly count: Scalars["Int"];
-    readonly max?: Maybe<Analytics_Mat_ItemTotalViews_Max_Fields>;
-    readonly min?: Maybe<Analytics_Mat_ItemTotalViews_Min_Fields>;
-    readonly stddev?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Fields>;
-    readonly stddev_pop?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields>;
-    readonly stddev_samp?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields>;
-    readonly sum?: Maybe<Analytics_Mat_ItemTotalViews_Sum_Fields>;
-    readonly var_pop?: Maybe<Analytics_Mat_ItemTotalViews_Var_Pop_Fields>;
-    readonly var_samp?: Maybe<Analytics_Mat_ItemTotalViews_Var_Samp_Fields>;
-    readonly variance?: Maybe<Analytics_Mat_ItemTotalViews_Variance_Fields>;
-};
-
-/** aggregate fields of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** aggregate avg on columns */
-export type Analytics_Mat_ItemTotalViews_Avg_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_avg_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_ItemTotalViews". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_ItemTotalViews_Bool_Exp = {
-    readonly _and?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Bool_Exp>>;
-    readonly _not?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-    readonly _or?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Bool_Exp>>;
-    readonly itemId?: Maybe<Uuid_Comparison_Exp>;
-    readonly totalViewCount?: Maybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_ItemTotalViews_Max_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_max_fields";
-    readonly itemId?: Maybe<Scalars["uuid"]>;
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_ItemTotalViews_Min_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_min_fields";
-    readonly itemId?: Maybe<Scalars["uuid"]>;
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_ItemTotalViews". */
-export type Analytics_Mat_ItemTotalViews_Order_By = {
-    readonly itemId?: Maybe<Order_By>;
-    readonly totalViewCount?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_ItemTotalViews" */
-export enum Analytics_Mat_ItemTotalViews_Select_Column {
-    /** column name */
-    ItemId = "itemId",
-    /** column name */
-    TotalViewCount = "totalViewCount",
-}
-
-/** aggregate stddev on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_stddev_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_stddev_pop_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_stddev_samp_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate sum on columns */
-export type Analytics_Mat_ItemTotalViews_Sum_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_sum_fields";
-    readonly totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate var_pop on columns */
-export type Analytics_Mat_ItemTotalViews_Var_Pop_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_var_pop_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate var_samp on columns */
-export type Analytics_Mat_ItemTotalViews_Var_Samp_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_var_samp_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate variance on columns */
-export type Analytics_Mat_ItemTotalViews_Variance_Fields = {
-    readonly __typename?: "analytics_mat_ItemTotalViews_variance_fields";
-    readonly totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** columns and relationships of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence = {
-    readonly __typename?: "analytics_mat_RoomPresence";
-    readonly count?: Maybe<Scalars["jsonb"]>;
-    readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly id?: Maybe<Scalars["uuid"]>;
-    readonly name?: Maybe<Scalars["String"]>;
-};
-
-/** columns and relationships of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresenceCountArgs = {
-    path?: Maybe<Scalars["String"]>;
-};
-
-/** aggregated selection of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate = {
-    readonly __typename?: "analytics_mat_RoomPresence_aggregate";
-    readonly aggregate?: Maybe<Analytics_Mat_RoomPresence_Aggregate_Fields>;
-    readonly nodes: ReadonlyArray<Analytics_Mat_RoomPresence>;
-};
-
-/** aggregate fields of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate_Fields = {
-    readonly __typename?: "analytics_mat_RoomPresence_aggregate_fields";
-    readonly count: Scalars["Int"];
-    readonly max?: Maybe<Analytics_Mat_RoomPresence_Max_Fields>;
-    readonly min?: Maybe<Analytics_Mat_RoomPresence_Min_Fields>;
-};
-
-/** aggregate fields of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_RoomPresence". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_RoomPresence_Bool_Exp = {
-    readonly _and?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Bool_Exp>>;
-    readonly _not?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-    readonly _or?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Bool_Exp>>;
-    readonly count?: Maybe<Jsonb_Comparison_Exp>;
-    readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
-    readonly id?: Maybe<Uuid_Comparison_Exp>;
-    readonly name?: Maybe<String_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_RoomPresence_Max_Fields = {
-    readonly __typename?: "analytics_mat_RoomPresence_max_fields";
-    readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly id?: Maybe<Scalars["uuid"]>;
-    readonly name?: Maybe<Scalars["String"]>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_RoomPresence_Min_Fields = {
-    readonly __typename?: "analytics_mat_RoomPresence_min_fields";
-    readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly id?: Maybe<Scalars["uuid"]>;
-    readonly name?: Maybe<Scalars["String"]>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_RoomPresence". */
-export type Analytics_Mat_RoomPresence_Order_By = {
-    readonly count?: Maybe<Order_By>;
-    readonly created_at?: Maybe<Order_By>;
-    readonly id?: Maybe<Order_By>;
-    readonly name?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_RoomPresence" */
-export enum Analytics_Mat_RoomPresence_Select_Column {
-    /** column name */
-    Count = "count",
-    /** column name */
-    CreatedAt = "created_at",
-    /** column name */
-    Id = "id",
-    /** column name */
-    Name = "name",
-}
 
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
 export type Bigint_Comparison_Exp = {
@@ -6997,6 +6982,10 @@ export type Conference_Conference = {
     readonly demoCode: Conference_DemoCode;
     readonly demoCodeId: Scalars["uuid"];
     /** An array relationship */
+    readonly events: ReadonlyArray<Schedule_Event>;
+    /** An aggregate relationship */
+    readonly events_aggregate: Schedule_Event_Aggregate;
+    /** An array relationship */
     readonly exhibitions: ReadonlyArray<Collection_Exhibition>;
     /** An aggregate relationship */
     readonly exhibitions_aggregate: Collection_Exhibition_Aggregate;
@@ -7073,6 +7062,24 @@ export type Conference_ConferenceConfigurations_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<ReadonlyArray<Conference_Configuration_Order_By>>;
     where?: Maybe<Conference_Configuration_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEventsArgs = {
+    distinct_on?: Maybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEvents_AggregateArgs = {
+    distinct_on?: Maybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7287,6 +7294,7 @@ export type Conference_Conference_Bool_Exp = {
     readonly defaultProgramVisibilityLevel?: Maybe<String_Comparison_Exp>;
     readonly demoCode?: Maybe<Conference_DemoCode_Bool_Exp>;
     readonly demoCodeId?: Maybe<Uuid_Comparison_Exp>;
+    readonly events?: Maybe<Schedule_Event_Bool_Exp>;
     readonly exhibitions?: Maybe<Collection_Exhibition_Bool_Exp>;
     readonly id?: Maybe<Uuid_Comparison_Exp>;
     readonly items?: Maybe<Content_Item_Bool_Exp>;
@@ -7329,6 +7337,7 @@ export type Conference_Conference_Insert_Input = {
     readonly defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     readonly demoCode?: Maybe<Conference_DemoCode_Obj_Rel_Insert_Input>;
     readonly demoCodeId?: Maybe<Scalars["uuid"]>;
+    readonly events?: Maybe<Schedule_Event_Arr_Rel_Insert_Input>;
     readonly exhibitions?: Maybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly items?: Maybe<Content_Item_Arr_Rel_Insert_Input>;
@@ -7434,6 +7443,7 @@ export type Conference_Conference_Order_By = {
     readonly defaultProgramVisibilityLevel?: Maybe<Order_By>;
     readonly demoCode?: Maybe<Conference_DemoCode_Order_By>;
     readonly demoCodeId?: Maybe<Order_By>;
+    readonly events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
     readonly exhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
     readonly id?: Maybe<Order_By>;
     readonly items_aggregate?: Maybe<Content_Item_Aggregate_Order_By>;
@@ -7578,6 +7588,16 @@ export enum Conference_ConfigurationKey_Constraint {
 }
 
 export enum Conference_ConfigurationKey_Enum {
+    /** Number. Milliseconds UTC. Time from which to stop sending initial invitations automatically. */
+    AutomaticInvitationsEnd = "AUTOMATIC_INVITATIONS_END",
+    /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+    AutomaticInvitationsRepeatEnd = "AUTOMATIC_INVITATIONS_REPEAT_END",
+    /** Number. Milliseconds. Time between sending repeat emails for unaccepted invitations. */
+    AutomaticInvitationsRepeatFrequency = "AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY",
+    /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+    AutomaticInvitationsRepeatStart = "AUTOMATIC_INVITATIONS_REPEAT_START",
+    /** Number. Milliseconds UTC. Time from which to start sending initial invitations automatically. */
+    AutomaticInvitationsStart = "AUTOMATIC_INVITATIONS_START",
     /** A list of videos to be used as the background for title/sponsor slides. */
     BackgroundVideos = "BACKGROUND_VIDEOS",
     /** A string representing the app version. Changing this causes the user's browsers to refresh. */
@@ -7592,6 +7612,10 @@ export enum Conference_ConfigurationKey_Enum {
     EnableBackstageStreamPreview = "ENABLE_BACKSTAGE_STREAM_PREVIEW",
     /** Boolean. Whether to enable the External RTMP Broadcast feature. */
     EnableExternalRtmpBroadcast = "ENABLE_EXTERNAL_RTMP_BROADCAST",
+    /** Whether to enable email notifications for recordings (default: true). */
+    EnableRecordingSubtitleEmailNotifications = "ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS",
+    /** Boolean. Hide the exhibition people from the event boxes in the schedule. */
+    EventBoxHideExhibitionPeople = "EVENT_BOX_HIDE_EXHIBITION_PEOPLE",
     /** List of S3 URLs. */
     FillerVideos = "FILLER_VIDEOS",
     /** Boolean. Switches on the Sponsors menu button (even if no sponsors exist). */
@@ -7610,6 +7634,8 @@ export enum Conference_ConfigurationKey_Enum {
     ScheduleViewVersion = "SCHEDULE_VIEW_VERSION",
     /** String. Label for the "sponsors" in the sidebar for when a conference uses a different term. */
     SponsorsLabel = "SPONSORS_LABEL",
+    /** A list of strings indicating which program people roles receive notifications (e.g. subtitles) about submissions. Default: ["PRESENTER","AUTHOR"]. */
+    SubmissionNotificationRoles = "SUBMISSION_NOTIFICATION_ROLES",
     /** A string representing a valid email address for contacting the conference organisers. */
     SupportAddress = "SUPPORT_ADDRESS",
     /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
@@ -8870,6 +8896,7 @@ export type Content_Element = {
     /** An object relationship */
     readonly originatingData?: Maybe<Conference_OriginatingData>;
     readonly originatingDataId?: Maybe<Scalars["uuid"]>;
+    readonly source?: Maybe<Scalars["jsonb"]>;
     /** An array relationship */
     readonly stats: ReadonlyArray<Analytics_ContentElementStats>;
     /** An aggregate relationship */
@@ -8896,6 +8923,11 @@ export type Content_ElementDataArgs = {
 
 /** columns and relationships of "content.Element" */
 export type Content_ElementLayoutDataArgs = {
+    path?: Maybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementSourceArgs = {
     path?: Maybe<Scalars["String"]>;
 };
 
@@ -9178,6 +9210,7 @@ export type Content_Element_Aggregate_Order_By = {
 export type Content_Element_Append_Input = {
     readonly data?: Maybe<Scalars["jsonb"]>;
     readonly layoutData?: Maybe<Scalars["jsonb"]>;
+    readonly source?: Maybe<Scalars["jsonb"]>;
 };
 
 /** input type for inserting array relation for remote table "content.Element" */
@@ -9217,6 +9250,7 @@ export type Content_Element_Bool_Exp = {
     readonly name?: Maybe<String_Comparison_Exp>;
     readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
     readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+    readonly source?: Maybe<Jsonb_Comparison_Exp>;
     readonly stats?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
     readonly subconferenceId?: Maybe<Uuid_Comparison_Exp>;
     readonly totalViewsStat?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
@@ -9238,18 +9272,21 @@ export enum Content_Element_Constraint {
 export type Content_Element_Delete_At_Path_Input = {
     readonly data?: Maybe<ReadonlyArray<Scalars["String"]>>;
     readonly layoutData?: Maybe<ReadonlyArray<Scalars["String"]>>;
+    readonly source?: Maybe<ReadonlyArray<Scalars["String"]>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Content_Element_Delete_Elem_Input = {
     readonly data?: Maybe<Scalars["Int"]>;
     readonly layoutData?: Maybe<Scalars["Int"]>;
+    readonly source?: Maybe<Scalars["Int"]>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Content_Element_Delete_Key_Input = {
     readonly data?: Maybe<Scalars["String"]>;
     readonly layoutData?: Maybe<Scalars["String"]>;
+    readonly source?: Maybe<Scalars["String"]>;
 };
 
 /** input type for incrementing numeric columns in table "content.Element" */
@@ -9271,6 +9308,7 @@ export type Content_Element_Insert_Input = {
     readonly name?: Maybe<Scalars["String"]>;
     readonly originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
     readonly originatingDataId?: Maybe<Scalars["uuid"]>;
+    readonly source?: Maybe<Scalars["jsonb"]>;
     readonly stats?: Maybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly totalViewsStat?: Maybe<Analytics_ElementTotalViews_Obj_Rel_Insert_Input>;
@@ -9375,6 +9413,7 @@ export type Content_Element_Order_By = {
     readonly name?: Maybe<Order_By>;
     readonly originatingData?: Maybe<Conference_OriginatingData_Order_By>;
     readonly originatingDataId?: Maybe<Order_By>;
+    readonly source?: Maybe<Order_By>;
     readonly stats_aggregate?: Maybe<Analytics_ContentElementStats_Aggregate_Order_By>;
     readonly subconferenceId?: Maybe<Order_By>;
     readonly totalViewsStat?: Maybe<Analytics_ElementTotalViews_Order_By>;
@@ -9395,6 +9434,7 @@ export type Content_Element_Pk_Columns_Input = {
 export type Content_Element_Prepend_Input = {
     readonly data?: Maybe<Scalars["jsonb"]>;
     readonly layoutData?: Maybe<Scalars["jsonb"]>;
+    readonly source?: Maybe<Scalars["jsonb"]>;
 };
 
 /** select columns of table "content.Element" */
@@ -9418,6 +9458,8 @@ export enum Content_Element_Select_Column {
     /** column name */
     OriginatingDataId = "originatingDataId",
     /** column name */
+    Source = "source",
+    /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
     TypeName = "typeName",
@@ -9440,6 +9482,7 @@ export type Content_Element_Set_Input = {
     readonly layoutData?: Maybe<Scalars["jsonb"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly originatingDataId?: Maybe<Scalars["uuid"]>;
+    readonly source?: Maybe<Scalars["jsonb"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly typeName?: Maybe<Content_ElementType_Enum>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -9511,6 +9554,8 @@ export enum Content_Element_Update_Column {
     Name = "name",
     /** column name */
     OriginatingDataId = "originatingDataId",
+    /** column name */
+    Source = "source",
     /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
@@ -13642,6 +13687,18 @@ export type Mutation_Root = {
     readonly delete_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
     /** delete single row from the table: "analytics.ContentItemStats" */
     readonly delete_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+    /** delete data from the table: "analytics.ElementTotalViews" */
+    readonly delete_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+    /** delete single row from the table: "analytics.ElementTotalViews" */
+    readonly delete_analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
+    /** delete data from the table: "analytics.ItemTotalViews" */
+    readonly delete_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+    /** delete single row from the table: "analytics.ItemTotalViews" */
+    readonly delete_analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
+    /** delete data from the table: "analytics.RoomPresence" */
+    readonly delete_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+    /** delete single row from the table: "analytics.RoomPresence" */
+    readonly delete_analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** delete data from the table: "analytics.RoomStats" */
     readonly delete_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
     /** delete single row from the table: "analytics.RoomStats" */
@@ -14008,6 +14065,18 @@ export type Mutation_Root = {
     readonly insert_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
     /** insert a single row into the table: "analytics.ContentItemStats" */
     readonly insert_analytics_ContentItemStats_one?: Maybe<Analytics_ContentItemStats>;
+    /** insert data into the table: "analytics.ElementTotalViews" */
+    readonly insert_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+    /** insert a single row into the table: "analytics.ElementTotalViews" */
+    readonly insert_analytics_ElementTotalViews_one?: Maybe<Analytics_ElementTotalViews>;
+    /** insert data into the table: "analytics.ItemTotalViews" */
+    readonly insert_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+    /** insert a single row into the table: "analytics.ItemTotalViews" */
+    readonly insert_analytics_ItemTotalViews_one?: Maybe<Analytics_ItemTotalViews>;
+    /** insert data into the table: "analytics.RoomPresence" */
+    readonly insert_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+    /** insert a single row into the table: "analytics.RoomPresence" */
+    readonly insert_analytics_RoomPresence_one?: Maybe<Analytics_RoomPresence>;
     /** insert data into the table: "analytics.RoomStats" */
     readonly insert_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
     /** insert a single row into the table: "analytics.RoomStats" */
@@ -14385,6 +14454,18 @@ export type Mutation_Root = {
     readonly update_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
     /** update single row of the table: "analytics.ContentItemStats" */
     readonly update_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+    /** update data of the table: "analytics.ElementTotalViews" */
+    readonly update_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+    /** update single row of the table: "analytics.ElementTotalViews" */
+    readonly update_analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
+    /** update data of the table: "analytics.ItemTotalViews" */
+    readonly update_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+    /** update single row of the table: "analytics.ItemTotalViews" */
+    readonly update_analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
+    /** update data of the table: "analytics.RoomPresence" */
+    readonly update_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+    /** update single row of the table: "analytics.RoomPresence" */
+    readonly update_analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** update data of the table: "analytics.RoomStats" */
     readonly update_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
     /** update single row of the table: "analytics.RoomStats" */
@@ -14796,6 +14877,36 @@ export type Mutation_RootDelete_Analytics_ContentItemStatsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Analytics_ContentItemStats_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ElementTotalViewsArgs = {
+    where: Analytics_ElementTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ElementTotalViews_By_PkArgs = {
+    elementId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ItemTotalViewsArgs = {
+    where: Analytics_ItemTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ItemTotalViews_By_PkArgs = {
+    itemId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomPresenceArgs = {
+    where: Analytics_RoomPresence_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomPresence_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -15729,6 +15840,42 @@ export type Mutation_RootInsert_Analytics_ContentItemStatsArgs = {
 export type Mutation_RootInsert_Analytics_ContentItemStats_OneArgs = {
     object: Analytics_ContentItemStats_Insert_Input;
     on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ElementTotalViewsArgs = {
+    objects: ReadonlyArray<Analytics_ElementTotalViews_Insert_Input>;
+    on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ElementTotalViews_OneArgs = {
+    object: Analytics_ElementTotalViews_Insert_Input;
+    on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ItemTotalViewsArgs = {
+    objects: ReadonlyArray<Analytics_ItemTotalViews_Insert_Input>;
+    on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ItemTotalViews_OneArgs = {
+    object: Analytics_ItemTotalViews_Insert_Input;
+    on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomPresenceArgs = {
+    objects: ReadonlyArray<Analytics_RoomPresence_Insert_Input>;
+    on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomPresence_OneArgs = {
+    object: Analytics_RoomPresence_Insert_Input;
+    on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
 };
 
 /** mutation root */
@@ -16909,6 +17056,48 @@ export type Mutation_RootUpdate_Analytics_ContentItemStats_By_PkArgs = {
     _inc?: Maybe<Analytics_ContentItemStats_Inc_Input>;
     _set?: Maybe<Analytics_ContentItemStats_Set_Input>;
     pk_columns: Analytics_ContentItemStats_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ElementTotalViewsArgs = {
+    _inc?: Maybe<Analytics_ElementTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ElementTotalViews_Set_Input>;
+    where: Analytics_ElementTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ElementTotalViews_By_PkArgs = {
+    _inc?: Maybe<Analytics_ElementTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ElementTotalViews_Set_Input>;
+    pk_columns: Analytics_ElementTotalViews_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ItemTotalViewsArgs = {
+    _inc?: Maybe<Analytics_ItemTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ItemTotalViews_Set_Input>;
+    where: Analytics_ItemTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ItemTotalViews_By_PkArgs = {
+    _inc?: Maybe<Analytics_ItemTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ItemTotalViews_Set_Input>;
+    pk_columns: Analytics_ItemTotalViews_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomPresenceArgs = {
+    _inc?: Maybe<Analytics_RoomPresence_Inc_Input>;
+    _set?: Maybe<Analytics_RoomPresence_Set_Input>;
+    where: Analytics_RoomPresence_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomPresence_By_PkArgs = {
+    _inc?: Maybe<Analytics_RoomPresence_Inc_Input>;
+    _set?: Maybe<Analytics_RoomPresence_Set_Input>;
+    pk_columns: Analytics_RoomPresence_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -18224,32 +18413,26 @@ export type Query_Root = {
     readonly analytics_ElementTotalViews: ReadonlyArray<Analytics_ElementTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ElementTotalViews" */
     readonly analytics_ElementTotalViews_aggregate: Analytics_ElementTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ElementTotalViews" using primary key columns */
+    readonly analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
     /** fetch data from the table: "analytics.ItemTotalViews" */
     readonly analytics_ItemTotalViews: ReadonlyArray<Analytics_ItemTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ItemTotalViews" */
     readonly analytics_ItemTotalViews_aggregate: Analytics_ItemTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ItemTotalViews" using primary key columns */
+    readonly analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
     /** fetch data from the table: "analytics.RoomPresence" */
     readonly analytics_RoomPresence: ReadonlyArray<Analytics_RoomPresence>;
     /** fetch aggregated fields from the table: "analytics.RoomPresence" */
     readonly analytics_RoomPresence_aggregate: Analytics_RoomPresence_Aggregate;
+    /** fetch data from the table: "analytics.RoomPresence" using primary key columns */
+    readonly analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** fetch data from the table: "analytics.RoomStats" */
     readonly analytics_RoomStats: ReadonlyArray<Analytics_RoomStats>;
     /** fetch aggregated fields from the table: "analytics.RoomStats" */
     readonly analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
     /** fetch data from the table: "analytics.RoomStats" using primary key columns */
     readonly analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-    /** fetch data from the table: "analytics.mat_ElementTotalViews" */
-    readonly analytics_mat_ElementTotalViews: ReadonlyArray<Analytics_Mat_ElementTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ElementTotalViews" */
-    readonly analytics_mat_ElementTotalViews_aggregate: Analytics_Mat_ElementTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_ItemTotalViews" */
-    readonly analytics_mat_ItemTotalViews: ReadonlyArray<Analytics_Mat_ItemTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ItemTotalViews" */
-    readonly analytics_mat_ItemTotalViews_aggregate: Analytics_Mat_ItemTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_RoomPresence" */
-    readonly analytics_mat_RoomPresence: ReadonlyArray<Analytics_Mat_RoomPresence>;
-    /** fetch aggregated fields from the table: "analytics.mat_RoomPresence" */
-    readonly analytics_mat_RoomPresence_aggregate: Analytics_Mat_RoomPresence_Aggregate;
     /** fetch data from the table: "chat.Chat" */
     readonly chat_Chat: ReadonlyArray<Chat_Chat>;
     /** fetch aggregated fields from the table: "chat.Chat" */
@@ -18940,6 +19123,10 @@ export type Query_RootAnalytics_ElementTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
+export type Query_RootAnalytics_ElementTotalViews_By_PkArgs = {
+    elementId: Scalars["uuid"];
+};
+
 export type Query_RootAnalytics_ItemTotalViewsArgs = {
     distinct_on?: Maybe<ReadonlyArray<Analytics_ItemTotalViews_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -18956,6 +19143,10 @@ export type Query_RootAnalytics_ItemTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
+export type Query_RootAnalytics_ItemTotalViews_By_PkArgs = {
+    itemId: Scalars["uuid"];
+};
+
 export type Query_RootAnalytics_RoomPresenceArgs = {
     distinct_on?: Maybe<ReadonlyArray<Analytics_RoomPresence_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -18970,6 +19161,10 @@ export type Query_RootAnalytics_RoomPresence_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<ReadonlyArray<Analytics_RoomPresence_Order_By>>;
     where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
+};
+
+export type Query_RootAnalytics_RoomPresence_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Query_RootAnalytics_RoomStatsArgs = {
@@ -18990,54 +19185,6 @@ export type Query_RootAnalytics_RoomStats_AggregateArgs = {
 
 export type Query_RootAnalytics_RoomStats_By_PkArgs = {
     id: Scalars["uuid"];
-};
-
-export type Query_RootAnalytics_Mat_ElementTotalViewsArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_ElementTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_ItemTotalViewsArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_ItemTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_RoomPresenceArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_RoomPresence_AggregateArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
 };
 
 export type Query_RootChat_ChatArgs = {
@@ -22289,6 +22436,8 @@ export type Registrant_Registrant = {
     readonly id: Scalars["uuid"];
     /** An object relationship */
     readonly invitation?: Maybe<Registrant_Invitation>;
+    /** A computed field, executes function "registrant.InvitationEmailStatus" */
+    readonly invitationStatus?: Maybe<Scalars["jsonb"]>;
     /** A computed field, executes function "registrant.HasBeenInvited" */
     readonly inviteSent?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
@@ -22345,6 +22494,11 @@ export type Registrant_RegistrantGroupRegistrants_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Order_By>>;
     where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+/** columns and relationships of "registrant.Registrant" */
+export type Registrant_RegistrantInvitationStatusArgs = {
+    path?: Maybe<Scalars["String"]>;
 };
 
 /** columns and relationships of "registrant.Registrant" */
@@ -22577,6 +22731,7 @@ export type Registrant_Registrant_Bool_Exp = {
     readonly groupRegistrants?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
     readonly id?: Maybe<Uuid_Comparison_Exp>;
     readonly invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
+    readonly invitationStatus?: Maybe<Jsonb_Comparison_Exp>;
     readonly inviteSent?: Maybe<Boolean_Comparison_Exp>;
     readonly profile?: Maybe<Registrant_Profile_Bool_Exp>;
     readonly programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
@@ -22691,6 +22846,7 @@ export type Registrant_Registrant_Order_By = {
     readonly groupRegistrants_aggregate?: Maybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
     readonly id?: Maybe<Order_By>;
     readonly invitation?: Maybe<Registrant_Invitation_Order_By>;
+    readonly invitationStatus?: Maybe<Order_By>;
     readonly inviteSent?: Maybe<Order_By>;
     readonly profile?: Maybe<Registrant_Profile_Order_By>;
     readonly programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
@@ -28513,32 +28669,26 @@ export type Subscription_Root = {
     readonly analytics_ElementTotalViews: ReadonlyArray<Analytics_ElementTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ElementTotalViews" */
     readonly analytics_ElementTotalViews_aggregate: Analytics_ElementTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ElementTotalViews" using primary key columns */
+    readonly analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
     /** fetch data from the table: "analytics.ItemTotalViews" */
     readonly analytics_ItemTotalViews: ReadonlyArray<Analytics_ItemTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ItemTotalViews" */
     readonly analytics_ItemTotalViews_aggregate: Analytics_ItemTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ItemTotalViews" using primary key columns */
+    readonly analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
     /** fetch data from the table: "analytics.RoomPresence" */
     readonly analytics_RoomPresence: ReadonlyArray<Analytics_RoomPresence>;
     /** fetch aggregated fields from the table: "analytics.RoomPresence" */
     readonly analytics_RoomPresence_aggregate: Analytics_RoomPresence_Aggregate;
+    /** fetch data from the table: "analytics.RoomPresence" using primary key columns */
+    readonly analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** fetch data from the table: "analytics.RoomStats" */
     readonly analytics_RoomStats: ReadonlyArray<Analytics_RoomStats>;
     /** fetch aggregated fields from the table: "analytics.RoomStats" */
     readonly analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
     /** fetch data from the table: "analytics.RoomStats" using primary key columns */
     readonly analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-    /** fetch data from the table: "analytics.mat_ElementTotalViews" */
-    readonly analytics_mat_ElementTotalViews: ReadonlyArray<Analytics_Mat_ElementTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ElementTotalViews" */
-    readonly analytics_mat_ElementTotalViews_aggregate: Analytics_Mat_ElementTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_ItemTotalViews" */
-    readonly analytics_mat_ItemTotalViews: ReadonlyArray<Analytics_Mat_ItemTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ItemTotalViews" */
-    readonly analytics_mat_ItemTotalViews_aggregate: Analytics_Mat_ItemTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_RoomPresence" */
-    readonly analytics_mat_RoomPresence: ReadonlyArray<Analytics_Mat_RoomPresence>;
-    /** fetch aggregated fields from the table: "analytics.mat_RoomPresence" */
-    readonly analytics_mat_RoomPresence_aggregate: Analytics_Mat_RoomPresence_Aggregate;
     /** fetch data from the table: "chat.Chat" */
     readonly chat_Chat: ReadonlyArray<Chat_Chat>;
     /** fetch aggregated fields from the table: "chat.Chat" */
@@ -29225,6 +29375,10 @@ export type Subscription_RootAnalytics_ElementTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
+export type Subscription_RootAnalytics_ElementTotalViews_By_PkArgs = {
+    elementId: Scalars["uuid"];
+};
+
 export type Subscription_RootAnalytics_ItemTotalViewsArgs = {
     distinct_on?: Maybe<ReadonlyArray<Analytics_ItemTotalViews_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29241,6 +29395,10 @@ export type Subscription_RootAnalytics_ItemTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
+export type Subscription_RootAnalytics_ItemTotalViews_By_PkArgs = {
+    itemId: Scalars["uuid"];
+};
+
 export type Subscription_RootAnalytics_RoomPresenceArgs = {
     distinct_on?: Maybe<ReadonlyArray<Analytics_RoomPresence_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29255,6 +29413,10 @@ export type Subscription_RootAnalytics_RoomPresence_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<ReadonlyArray<Analytics_RoomPresence_Order_By>>;
     where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
+};
+
+export type Subscription_RootAnalytics_RoomPresence_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Subscription_RootAnalytics_RoomStatsArgs = {
@@ -29275,54 +29437,6 @@ export type Subscription_RootAnalytics_RoomStats_AggregateArgs = {
 
 export type Subscription_RootAnalytics_RoomStats_By_PkArgs = {
     id: Scalars["uuid"];
-};
-
-export type Subscription_RootAnalytics_Mat_ElementTotalViewsArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_ElementTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_ItemTotalViewsArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_ItemTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_RoomPresenceArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_RoomPresence_AggregateArgs = {
-    distinct_on?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
 };
 
 export type Subscription_RootChat_ChatArgs = {
@@ -31236,6 +31350,7 @@ export enum System_ConfigurationKey_Enum {
     SendgridSender = "SENDGRID_SENDER",
     /** The name emails are from when sent via SendGrid. */
     SendgridSenderName = "SENDGRID_SENDER_NAME",
+    SendgridWebhookPublicKey = "SENDGRID_WEBHOOK_PUBLIC_KEY",
     /** Contact address for people to request emails never be sent to them again. */
     StopEmailsContactEmailAddress = "STOP_EMAILS_CONTACT_EMAIL_ADDRESS",
     /** The time of the latest revision of the host T&Cs. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -37558,6 +37673,7 @@ export type AddParticipantToRoomMutation = {
 
 export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
     roomId: Scalars["uuid"];
+    registrantId: Scalars["uuid"];
 }>;
 
 export type RoomPage_GetRoomDetailsQuery = {
@@ -37587,6 +37703,11 @@ export type RoomPage_GetRoomDetailsQuery = {
                             readonly layoutData?: any | null | undefined;
                             readonly typeName: Content_ElementType_Enum;
                             readonly updatedAt: any;
+                        }>;
+                        readonly selfPeople: ReadonlyArray<{
+                            readonly __typename?: "content_ItemProgramPerson";
+                            readonly id: any;
+                            readonly roleName: string;
                         }>;
                     }
                   | null
@@ -37629,6 +37750,11 @@ export type RoomPage_RoomDetailsFragment = {
                   readonly layoutData?: any | null | undefined;
                   readonly typeName: Content_ElementType_Enum;
                   readonly updatedAt: any;
+              }>;
+              readonly selfPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly roleName: string;
               }>;
           }
         | null
@@ -38096,6 +38222,34 @@ export type GetEventVideosQuery = {
                                     readonly typeName: Content_ElementType_Enum;
                                 }>;
                             };
+                        }>;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
+};
+
+export type GetRoomVideosQueryVariables = Exact<{
+    roomId: Scalars["uuid"];
+}>;
+
+export type GetRoomVideosQuery = {
+    readonly __typename?: "query_root";
+    readonly room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly originatingItem?:
+                  | {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly title: string;
+                        readonly elements: ReadonlyArray<{
+                            readonly __typename?: "content_Element";
+                            readonly id: any;
+                            readonly name: string;
                         }>;
                     }
                   | null
@@ -39710,8 +39864,8 @@ export type ConferenceStatsQuery = {
                   readonly managementModeName: Room_ManagementMode_Enum;
                   readonly presenceCounts: ReadonlyArray<{
                       readonly __typename?: "analytics_RoomPresence";
-                      readonly created_at?: any | null | undefined;
-                      readonly count?: any | null | undefined;
+                      readonly created_at: any;
+                      readonly count: any;
                   }>;
                   readonly stats: ReadonlyArray<{
                       readonly __typename?: "analytics_RoomStats";
@@ -40426,6 +40580,95 @@ export type PreshowChecklistQuery = {
             | null
             | undefined;
     }>;
+};
+
+export type MultiSettingUpdater_GetConfigurationsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    keys: ReadonlyArray<Conference_ConfigurationKey_Enum> | Conference_ConfigurationKey_Enum;
+}>;
+
+export type MultiSettingUpdater_GetConfigurationsQuery = {
+    readonly __typename?: "query_root";
+    readonly conference_Configuration: ReadonlyArray<{
+        readonly __typename?: "conference_Configuration";
+        readonly conferenceId: any;
+        readonly key: Conference_ConfigurationKey_Enum;
+        readonly value: any;
+    }>;
+};
+
+export type MultiSettingUpdater_DeleteConfigurationsMutationVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    keys: ReadonlyArray<Conference_ConfigurationKey_Enum> | Conference_ConfigurationKey_Enum;
+}>;
+
+export type MultiSettingUpdater_DeleteConfigurationsMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_conference_Configuration?:
+        | {
+              readonly __typename?: "conference_Configuration_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+              }>;
+          }
+        | null
+        | undefined;
+};
+
+export type SettingUpdater_GetConfigurationQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
+}>;
+
+export type SettingUpdater_GetConfigurationQuery = {
+    readonly __typename?: "query_root";
+    readonly conference_Configuration_by_pk?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
+};
+
+export type SettingUpdater_SetConfigurationMutationVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
+    value: Scalars["jsonb"];
+}>;
+
+export type SettingUpdater_SetConfigurationMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_conference_Configuration_one?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
+};
+
+export type SettingUpdater_DeleteConfigurationMutationVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
+}>;
+
+export type SettingUpdater_DeleteConfigurationMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_conference_Configuration_by_pk?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_ItemTagFragment = {
@@ -43375,6 +43618,21 @@ export type InsertRoomPeopleMutation = {
         | undefined;
 };
 
+export type DeleteRoomPersonMutationVariables = Exact<{
+    id: Scalars["uuid"];
+}>;
+
+export type DeleteRoomPersonMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_room_RoomMembership?:
+        | {
+              readonly __typename?: "room_RoomMembership_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "room_RoomMembership"; readonly id: any }>;
+          }
+        | null
+        | undefined;
+};
+
 export type GetIsExternalRtmpBroadcastEnabledQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
 }>;
@@ -43413,7 +43671,7 @@ export type RegistrantPartsFragment = {
     readonly updatedAt: any;
     readonly createdAt: any;
     readonly displayName: string;
-    readonly inviteSent?: boolean | null | undefined;
+    readonly invitationStatus?: any | null | undefined;
     readonly invitation?:
         | {
               readonly __typename?: "registrant_Invitation";
@@ -43469,7 +43727,7 @@ export type SelectAllRegistrantsQuery = {
         readonly updatedAt: any;
         readonly createdAt: any;
         readonly displayName: string;
-        readonly inviteSent?: boolean | null | undefined;
+        readonly invitationStatus?: any | null | undefined;
         readonly invitation?:
             | {
                   readonly __typename?: "registrant_Invitation";
@@ -43535,7 +43793,7 @@ export type InsertRegistrantMutation = {
               readonly updatedAt: any;
               readonly createdAt: any;
               readonly displayName: string;
-              readonly inviteSent?: boolean | null | undefined;
+              readonly invitationStatus?: any | null | undefined;
               readonly invitation?:
                   | {
                         readonly __typename?: "registrant_Invitation";
@@ -43591,7 +43849,7 @@ export type InsertRegistrantWithoutInviteMutation = {
               readonly updatedAt: any;
               readonly createdAt: any;
               readonly displayName: string;
-              readonly inviteSent?: boolean | null | undefined;
+              readonly invitationStatus?: any | null | undefined;
               readonly invitation?:
                   | {
                         readonly __typename?: "registrant_Invitation";
@@ -43651,7 +43909,7 @@ export type UpdateRegistrantMutation = {
               readonly updatedAt: any;
               readonly createdAt: any;
               readonly displayName: string;
-              readonly inviteSent?: boolean | null | undefined;
+              readonly invitationStatus?: any | null | undefined;
               readonly invitation?:
                   | {
                         readonly __typename?: "registrant_Invitation";
@@ -45239,6 +45497,12 @@ export type ConferenceById_WithUserQuery = {
                   readonly key: Conference_ConfigurationKey_Enum;
                   readonly value: any;
               }>;
+              readonly scheduleEventBox_HideExhibitionPeople: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
               readonly sponsorsLabel: ReadonlyArray<{
                   readonly __typename?: "conference_Configuration";
                   readonly conferenceId: any;
@@ -45351,6 +45615,12 @@ export type ConferenceById_WithoutUserQuery = {
                   readonly key: Conference_ConfigurationKey_Enum;
                   readonly value: any;
               }>;
+              readonly scheduleEventBox_HideExhibitionPeople: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
               readonly sponsorsLabel: ReadonlyArray<{
                   readonly __typename?: "conference_Configuration";
                   readonly conferenceId: any;
@@ -45455,6 +45725,12 @@ export type PublicConferenceInfoFragment = {
         readonly value: any;
     }>;
     readonly scheduleViewVersion: ReadonlyArray<{
+        readonly __typename?: "conference_Configuration";
+        readonly conferenceId: any;
+        readonly key: Conference_ConfigurationKey_Enum;
+        readonly value: any;
+    }>;
+    readonly scheduleEventBox_HideExhibitionPeople: ReadonlyArray<{
         readonly __typename?: "conference_Configuration";
         readonly conferenceId: any;
         readonly key: Conference_ConfigurationKey_Enum;
@@ -47010,7 +47286,7 @@ export const ExhibitionItemFragmentDoc = gql`
         typeName
         elements(
             where: {
-                isHidden: { _eq: false }
+                _or: [{ isHidden: { _eq: false } }, { typeName: { _eq: ZOOM } }]
                 typeName: {
                     _in: [
                         ABSTRACT
@@ -47023,6 +47299,7 @@ export const ExhibitionItemFragmentDoc = gql`
                         VIDEO_FILE
                         VIDEO_PREPUBLISH
                         VIDEO_URL
+                        ZOOM
                     ]
                 }
             }
@@ -47237,6 +47514,10 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
                 layoutData
                 typeName
                 updatedAt
+            }
+            selfPeople: itemPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
+                id
+                roleName
             }
             title
         }
@@ -48330,7 +48611,7 @@ export const RegistrantPartsFragmentDoc = gql`
         updatedAt
         createdAt
         displayName
-        inviteSent
+        invitationStatus
     }
     ${InvitationPartsFragmentDoc}
 `;
@@ -48555,6 +48836,13 @@ export const PublicConferenceInfoFragmentDoc = gql`
             value
         }
         scheduleViewVersion: configurations(where: { key: { _eq: SCHEDULE_VIEW_VERSION } }) {
+            conferenceId
+            key
+            value
+        }
+        scheduleEventBox_HideExhibitionPeople: configurations(
+            where: { key: { _eq: EVENT_BOX_HIDE_EXHIBITION_PEOPLE } }
+        ) {
             conferenceId
             key
             value
@@ -49329,7 +49617,7 @@ export function useAddParticipantToRoomMutation() {
     );
 }
 export const RoomPage_GetRoomDetailsDocument = gql`
-    query RoomPage_GetRoomDetails($roomId: uuid!) {
+    query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             ...RoomPage_RoomDetails
         }
@@ -49672,6 +49960,25 @@ export const GetEventVideosDocument = gql`
 
 export function useGetEventVideosQuery(options: Omit<Urql.UseQueryArgs<GetEventVideosQueryVariables>, "query"> = {}) {
     return Urql.useQuery<GetEventVideosQuery>({ query: GetEventVideosDocument, ...options });
+}
+export const GetRoomVideosDocument = gql`
+    query GetRoomVideos($roomId: uuid!) {
+        room_Room_by_pk(id: $roomId) {
+            id
+            originatingItem {
+                id
+                title
+                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }) {
+                    id
+                    name
+                }
+            }
+        }
+    }
+`;
+
+export function useGetRoomVideosQuery(options: Omit<Urql.UseQueryArgs<GetRoomVideosQueryVariables>, "query"> = {}) {
+    return Urql.useQuery<GetRoomVideosQuery>({ query: GetRoomVideosDocument, ...options });
 }
 export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
@@ -50841,6 +51148,99 @@ export function usePreshowChecklistQuery(
     options: Omit<Urql.UseQueryArgs<PreshowChecklistQueryVariables>, "query"> = {}
 ) {
     return Urql.useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
+}
+export const MultiSettingUpdater_GetConfigurationsDocument = gql`
+    query MultiSettingUpdater_GetConfigurations($conferenceId: uuid!, $keys: [conference_ConfigurationKey_enum!]!) {
+        conference_Configuration(where: { conferenceId: { _eq: $conferenceId }, key: { _in: $keys } }) {
+            conferenceId
+            key
+            value
+        }
+    }
+`;
+
+export function useMultiSettingUpdater_GetConfigurationsQuery(
+    options: Omit<Urql.UseQueryArgs<MultiSettingUpdater_GetConfigurationsQueryVariables>, "query"> = {}
+) {
+    return Urql.useQuery<MultiSettingUpdater_GetConfigurationsQuery>({
+        query: MultiSettingUpdater_GetConfigurationsDocument,
+        ...options,
+    });
+}
+export const MultiSettingUpdater_DeleteConfigurationsDocument = gql`
+    mutation MultiSettingUpdater_DeleteConfigurations(
+        $conferenceId: uuid!
+        $keys: [conference_ConfigurationKey_enum!]!
+    ) {
+        delete_conference_Configuration(where: { conferenceId: { _eq: $conferenceId }, key: { _in: $keys } }) {
+            returning {
+                conferenceId
+                key
+            }
+        }
+    }
+`;
+
+export function useMultiSettingUpdater_DeleteConfigurationsMutation() {
+    return Urql.useMutation<
+        MultiSettingUpdater_DeleteConfigurationsMutation,
+        MultiSettingUpdater_DeleteConfigurationsMutationVariables
+    >(MultiSettingUpdater_DeleteConfigurationsDocument);
+}
+export const SettingUpdater_GetConfigurationDocument = gql`
+    query SettingUpdater_GetConfiguration($conferenceId: uuid!, $key: conference_ConfigurationKey_enum!) {
+        conference_Configuration_by_pk(conferenceId: $conferenceId, key: $key) {
+            conferenceId
+            key
+            value
+        }
+    }
+`;
+
+export function useSettingUpdater_GetConfigurationQuery(
+    options: Omit<Urql.UseQueryArgs<SettingUpdater_GetConfigurationQueryVariables>, "query"> = {}
+) {
+    return Urql.useQuery<SettingUpdater_GetConfigurationQuery>({
+        query: SettingUpdater_GetConfigurationDocument,
+        ...options,
+    });
+}
+export const SettingUpdater_SetConfigurationDocument = gql`
+    mutation SettingUpdater_SetConfiguration(
+        $conferenceId: uuid!
+        $key: conference_ConfigurationKey_enum!
+        $value: jsonb!
+    ) {
+        insert_conference_Configuration_one(
+            object: { conferenceId: $conferenceId, key: $key, value: $value }
+            on_conflict: { constraint: Configuration_pkey, update_columns: [value] }
+        ) {
+            conferenceId
+            key
+            value
+        }
+    }
+`;
+
+export function useSettingUpdater_SetConfigurationMutation() {
+    return Urql.useMutation<SettingUpdater_SetConfigurationMutation, SettingUpdater_SetConfigurationMutationVariables>(
+        SettingUpdater_SetConfigurationDocument
+    );
+}
+export const SettingUpdater_DeleteConfigurationDocument = gql`
+    mutation SettingUpdater_DeleteConfiguration($conferenceId: uuid!, $key: conference_ConfigurationKey_enum!) {
+        delete_conference_Configuration_by_pk(conferenceId: $conferenceId, key: $key) {
+            conferenceId
+            key
+        }
+    }
+`;
+
+export function useSettingUpdater_DeleteConfigurationMutation() {
+    return Urql.useMutation<
+        SettingUpdater_DeleteConfigurationMutation,
+        SettingUpdater_DeleteConfigurationMutationVariables
+    >(SettingUpdater_DeleteConfigurationDocument);
 }
 export const ManageContent_SelectAllItemsDocument = gql`
     query ManageContent_SelectAllItems($conferenceId: uuid!) {
@@ -52561,6 +52961,19 @@ export const InsertRoomPeopleDocument = gql`
 
 export function useInsertRoomPeopleMutation() {
     return Urql.useMutation<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>(InsertRoomPeopleDocument);
+}
+export const DeleteRoomPersonDocument = gql`
+    mutation DeleteRoomPerson($id: uuid!) {
+        delete_room_RoomMembership(where: { id: { _eq: $id } }) {
+            returning {
+                id
+            }
+        }
+    }
+`;
+
+export function useDeleteRoomPersonMutation() {
+    return Urql.useMutation<DeleteRoomPersonMutation, DeleteRoomPersonMutationVariables>(DeleteRoomPersonDocument);
 }
 export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
     query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
@@ -54856,6 +55269,9 @@ export type GraphCacheKeysConfig = {
     analytics_ElementTotalViews_min_fields?: (
         data: WithTypename<Analytics_ElementTotalViews_Min_Fields>
     ) => null | string;
+    analytics_ElementTotalViews_mutation_response?: (
+        data: WithTypename<Analytics_ElementTotalViews_Mutation_Response>
+    ) => null | string;
     analytics_ElementTotalViews_stddev_fields?: (
         data: WithTypename<Analytics_ElementTotalViews_Stddev_Fields>
     ) => null | string;
@@ -54885,6 +55301,9 @@ export type GraphCacheKeysConfig = {
     analytics_ItemTotalViews_avg_fields?: (data: WithTypename<Analytics_ItemTotalViews_Avg_Fields>) => null | string;
     analytics_ItemTotalViews_max_fields?: (data: WithTypename<Analytics_ItemTotalViews_Max_Fields>) => null | string;
     analytics_ItemTotalViews_min_fields?: (data: WithTypename<Analytics_ItemTotalViews_Min_Fields>) => null | string;
+    analytics_ItemTotalViews_mutation_response?: (
+        data: WithTypename<Analytics_ItemTotalViews_Mutation_Response>
+    ) => null | string;
     analytics_ItemTotalViews_stddev_fields?: (
         data: WithTypename<Analytics_ItemTotalViews_Stddev_Fields>
     ) => null | string;
@@ -54909,8 +55328,29 @@ export type GraphCacheKeysConfig = {
     analytics_RoomPresence_aggregate_fields?: (
         data: WithTypename<Analytics_RoomPresence_Aggregate_Fields>
     ) => null | string;
+    analytics_RoomPresence_avg_fields?: (data: WithTypename<Analytics_RoomPresence_Avg_Fields>) => null | string;
     analytics_RoomPresence_max_fields?: (data: WithTypename<Analytics_RoomPresence_Max_Fields>) => null | string;
     analytics_RoomPresence_min_fields?: (data: WithTypename<Analytics_RoomPresence_Min_Fields>) => null | string;
+    analytics_RoomPresence_mutation_response?: (
+        data: WithTypename<Analytics_RoomPresence_Mutation_Response>
+    ) => null | string;
+    analytics_RoomPresence_stddev_fields?: (data: WithTypename<Analytics_RoomPresence_Stddev_Fields>) => null | string;
+    analytics_RoomPresence_stddev_pop_fields?: (
+        data: WithTypename<Analytics_RoomPresence_Stddev_Pop_Fields>
+    ) => null | string;
+    analytics_RoomPresence_stddev_samp_fields?: (
+        data: WithTypename<Analytics_RoomPresence_Stddev_Samp_Fields>
+    ) => null | string;
+    analytics_RoomPresence_sum_fields?: (data: WithTypename<Analytics_RoomPresence_Sum_Fields>) => null | string;
+    analytics_RoomPresence_var_pop_fields?: (
+        data: WithTypename<Analytics_RoomPresence_Var_Pop_Fields>
+    ) => null | string;
+    analytics_RoomPresence_var_samp_fields?: (
+        data: WithTypename<Analytics_RoomPresence_Var_Samp_Fields>
+    ) => null | string;
+    analytics_RoomPresence_variance_fields?: (
+        data: WithTypename<Analytics_RoomPresence_Variance_Fields>
+    ) => null | string;
     analytics_RoomStats?: (data: WithTypename<Analytics_RoomStats>) => null | string;
     analytics_RoomStats_aggregate?: (data: WithTypename<Analytics_RoomStats_Aggregate>) => null | string;
     analytics_RoomStats_aggregate_fields?: (data: WithTypename<Analytics_RoomStats_Aggregate_Fields>) => null | string;
@@ -54931,91 +55371,6 @@ export type GraphCacheKeysConfig = {
     analytics_RoomStats_var_pop_fields?: (data: WithTypename<Analytics_RoomStats_Var_Pop_Fields>) => null | string;
     analytics_RoomStats_var_samp_fields?: (data: WithTypename<Analytics_RoomStats_Var_Samp_Fields>) => null | string;
     analytics_RoomStats_variance_fields?: (data: WithTypename<Analytics_RoomStats_Variance_Fields>) => null | string;
-    analytics_mat_ElementTotalViews?: (data: WithTypename<Analytics_Mat_ElementTotalViews>) => null | string;
-    analytics_mat_ElementTotalViews_aggregate?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Aggregate>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_aggregate_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_avg_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Avg_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_max_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Max_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_min_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Min_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_stddev_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Stddev_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_stddev_pop_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_stddev_samp_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_sum_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Sum_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_var_pop_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Var_Pop_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_var_samp_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Var_Samp_Fields>
-    ) => null | string;
-    analytics_mat_ElementTotalViews_variance_fields?: (
-        data: WithTypename<Analytics_Mat_ElementTotalViews_Variance_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews?: (data: WithTypename<Analytics_Mat_ItemTotalViews>) => null | string;
-    analytics_mat_ItemTotalViews_aggregate?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Aggregate>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_aggregate_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_avg_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Avg_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_max_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Max_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_min_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Min_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_stddev_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Stddev_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_stddev_pop_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_stddev_samp_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_sum_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Sum_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_var_pop_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Var_Pop_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_var_samp_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Var_Samp_Fields>
-    ) => null | string;
-    analytics_mat_ItemTotalViews_variance_fields?: (
-        data: WithTypename<Analytics_Mat_ItemTotalViews_Variance_Fields>
-    ) => null | string;
-    analytics_mat_RoomPresence?: (data: WithTypename<Analytics_Mat_RoomPresence>) => null | string;
-    analytics_mat_RoomPresence_aggregate?: (data: WithTypename<Analytics_Mat_RoomPresence_Aggregate>) => null | string;
-    analytics_mat_RoomPresence_aggregate_fields?: (
-        data: WithTypename<Analytics_Mat_RoomPresence_Aggregate_Fields>
-    ) => null | string;
-    analytics_mat_RoomPresence_max_fields?: (
-        data: WithTypename<Analytics_Mat_RoomPresence_Max_Fields>
-    ) => null | string;
-    analytics_mat_RoomPresence_min_fields?: (
-        data: WithTypename<Analytics_Mat_RoomPresence_Min_Fields>
-    ) => null | string;
     chat_Chat?: (data: WithTypename<Chat_Chat>) => null | string;
     chat_Chat_aggregate?: (data: WithTypename<Chat_Chat_Aggregate>) => null | string;
     chat_Chat_aggregate_fields?: (data: WithTypename<Chat_Chat_Aggregate_Fields>) => null | string;
@@ -56252,6 +56607,11 @@ export type GraphCacheResolvers = {
             Query_RootAnalytics_ElementTotalViews_AggregateArgs,
             WithTypename<Analytics_ElementTotalViews_Aggregate> | string
         >;
+        analytics_ElementTotalViews_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootAnalytics_ElementTotalViews_By_PkArgs,
+            WithTypename<Analytics_ElementTotalViews> | string
+        >;
         analytics_ItemTotalViews?: GraphCacheResolver<
             WithTypename<Query_Root>,
             Query_RootAnalytics_ItemTotalViewsArgs,
@@ -56262,6 +56622,11 @@ export type GraphCacheResolvers = {
             Query_RootAnalytics_ItemTotalViews_AggregateArgs,
             WithTypename<Analytics_ItemTotalViews_Aggregate> | string
         >;
+        analytics_ItemTotalViews_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootAnalytics_ItemTotalViews_By_PkArgs,
+            WithTypename<Analytics_ItemTotalViews> | string
+        >;
         analytics_RoomPresence?: GraphCacheResolver<
             WithTypename<Query_Root>,
             Query_RootAnalytics_RoomPresenceArgs,
@@ -56271,6 +56636,11 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootAnalytics_RoomPresence_AggregateArgs,
             WithTypename<Analytics_RoomPresence_Aggregate> | string
+        >;
+        analytics_RoomPresence_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootAnalytics_RoomPresence_By_PkArgs,
+            WithTypename<Analytics_RoomPresence> | string
         >;
         analytics_RoomStats?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -56286,36 +56656,6 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootAnalytics_RoomStats_By_PkArgs,
             WithTypename<Analytics_RoomStats> | string
-        >;
-        analytics_mat_ElementTotalViews?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootAnalytics_Mat_ElementTotalViewsArgs,
-            Array<WithTypename<Analytics_Mat_ElementTotalViews> | string>
-        >;
-        analytics_mat_ElementTotalViews_aggregate?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootAnalytics_Mat_ElementTotalViews_AggregateArgs,
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate> | string
-        >;
-        analytics_mat_ItemTotalViews?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootAnalytics_Mat_ItemTotalViewsArgs,
-            Array<WithTypename<Analytics_Mat_ItemTotalViews> | string>
-        >;
-        analytics_mat_ItemTotalViews_aggregate?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootAnalytics_Mat_ItemTotalViews_AggregateArgs,
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate> | string
-        >;
-        analytics_mat_RoomPresence?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootAnalytics_Mat_RoomPresenceArgs,
-            Array<WithTypename<Analytics_Mat_RoomPresence> | string>
-        >;
-        analytics_mat_RoomPresence_aggregate?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootAnalytics_Mat_RoomPresence_AggregateArgs,
-            WithTypename<Analytics_Mat_RoomPresence_Aggregate> | string
         >;
         chat_Chat?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -57712,10 +58052,13 @@ export type GraphCacheResolvers = {
         roomId?: GraphCacheResolver<WithTypename<CreateRoomDmOutput>, Record<string, never>, Scalars["uuid"] | string>;
     };
     Email?: {
+        conferenceId?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["uuid"] | string>;
         createdAt?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["timestamptz"] | string>;
         emailAddress?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["String"] | string>;
+        errorMessage?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["String"] | string>;
         htmlContents?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["String"] | string>;
         id?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["uuid"] | string>;
+        idempotencyKey?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["uuid"] | string>;
         invitation?: GraphCacheResolver<
             WithTypename<Email>,
             Record<string, never>,
@@ -57727,6 +58070,7 @@ export type GraphCacheResolvers = {
         recipientName?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["String"] | string>;
         retriesCount?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["Int"] | string>;
         sentAt?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["timestamptz"] | string>;
+        status?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["String"] | string>;
         subject?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["String"] | string>;
         updatedAt?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, Scalars["timestamptz"] | string>;
         user?: GraphCacheResolver<WithTypename<Email>, Record<string, never>, WithTypename<User> | string>;
@@ -57809,6 +58153,11 @@ export type GraphCacheResolvers = {
         >;
     };
     Email_max_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Email_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         createdAt?: GraphCacheResolver<
             WithTypename<Email_Max_Fields>,
             Record<string, never>,
@@ -57819,12 +58168,22 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        errorMessage?: GraphCacheResolver<
+            WithTypename<Email_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         htmlContents?: GraphCacheResolver<
             WithTypename<Email_Max_Fields>,
             Record<string, never>,
             Scalars["String"] | string
         >;
         id?: GraphCacheResolver<WithTypename<Email_Max_Fields>, Record<string, never>, Scalars["uuid"] | string>;
+        idempotencyKey?: GraphCacheResolver<
+            WithTypename<Email_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         invitationId?: GraphCacheResolver<
             WithTypename<Email_Max_Fields>,
             Record<string, never>,
@@ -57851,6 +58210,7 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["timestamptz"] | string
         >;
+        status?: GraphCacheResolver<WithTypename<Email_Max_Fields>, Record<string, never>, Scalars["String"] | string>;
         subject?: GraphCacheResolver<WithTypename<Email_Max_Fields>, Record<string, never>, Scalars["String"] | string>;
         updatedAt?: GraphCacheResolver<
             WithTypename<Email_Max_Fields>,
@@ -57860,6 +58220,11 @@ export type GraphCacheResolvers = {
         userId?: GraphCacheResolver<WithTypename<Email_Max_Fields>, Record<string, never>, Scalars["String"] | string>;
     };
     Email_min_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Email_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         createdAt?: GraphCacheResolver<
             WithTypename<Email_Min_Fields>,
             Record<string, never>,
@@ -57870,12 +58235,22 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        errorMessage?: GraphCacheResolver<
+            WithTypename<Email_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         htmlContents?: GraphCacheResolver<
             WithTypename<Email_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
         >;
         id?: GraphCacheResolver<WithTypename<Email_Min_Fields>, Record<string, never>, Scalars["uuid"] | string>;
+        idempotencyKey?: GraphCacheResolver<
+            WithTypename<Email_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         invitationId?: GraphCacheResolver<
             WithTypename<Email_Min_Fields>,
             Record<string, never>,
@@ -57902,6 +58277,7 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["timestamptz"] | string
         >;
+        status?: GraphCacheResolver<WithTypename<Email_Min_Fields>, Record<string, never>, Scalars["String"] | string>;
         subject?: GraphCacheResolver<WithTypename<Email_Min_Fields>, Record<string, never>, Scalars["String"] | string>;
         updatedAt?: GraphCacheResolver<
             WithTypename<Email_Min_Fields>,
@@ -59507,6 +59883,18 @@ export type GraphCacheResolvers = {
             Scalars["bigint"] | string
         >;
     };
+    analytics_ElementTotalViews_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Analytics_ElementTotalViews_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Analytics_ElementTotalViews_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Analytics_ElementTotalViews> | string>
+        >;
+    };
     analytics_ElementTotalViews_stddev_fields?: {
         totalViewCount?: GraphCacheResolver<
             WithTypename<Analytics_ElementTotalViews_Stddev_Fields>,
@@ -59673,6 +60061,18 @@ export type GraphCacheResolvers = {
             Scalars["bigint"] | string
         >;
     };
+    analytics_ItemTotalViews_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Analytics_ItemTotalViews_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Analytics_ItemTotalViews_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Analytics_ItemTotalViews> | string>
+        >;
+    };
     analytics_ItemTotalViews_stddev_fields?: {
         totalViewCount?: GraphCacheResolver<
             WithTypename<Analytics_ItemTotalViews_Stddev_Fields>,
@@ -59725,8 +60125,8 @@ export type GraphCacheResolvers = {
     analytics_RoomPresence?: {
         count?: GraphCacheResolver<
             WithTypename<Analytics_RoomPresence>,
-            Analytics_RoomPresenceCountArgs,
-            Scalars["jsonb"] | string
+            Record<string, never>,
+            Scalars["bigint"] | string
         >;
         created_at?: GraphCacheResolver<
             WithTypename<Analytics_RoomPresence>,
@@ -59734,15 +60134,15 @@ export type GraphCacheResolvers = {
             Scalars["timestamptz"] | string
         >;
         id?: GraphCacheResolver<WithTypename<Analytics_RoomPresence>, Record<string, never>, Scalars["uuid"] | string>;
-        name?: GraphCacheResolver<
-            WithTypename<Analytics_RoomPresence>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
         room?: GraphCacheResolver<
             WithTypename<Analytics_RoomPresence>,
             Record<string, never>,
             WithTypename<Room_Room> | string
+        >;
+        roomId?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence>,
+            Record<string, never>,
+            Scalars["uuid"] | string
         >;
     };
     analytics_RoomPresence_aggregate?: {
@@ -59758,6 +60158,11 @@ export type GraphCacheResolvers = {
         >;
     };
     analytics_RoomPresence_aggregate_fields?: {
+        avg?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Analytics_RoomPresence_Avg_Fields> | string
+        >;
         count?: GraphCacheResolver<
             WithTypename<Analytics_RoomPresence_Aggregate_Fields>,
             Analytics_RoomPresence_Aggregate_FieldsCountArgs,
@@ -59773,8 +60178,55 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             WithTypename<Analytics_RoomPresence_Min_Fields> | string
         >;
+        stddev?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Analytics_RoomPresence_Stddev_Fields> | string
+        >;
+        stddev_pop?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Analytics_RoomPresence_Stddev_Pop_Fields> | string
+        >;
+        stddev_samp?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Analytics_RoomPresence_Stddev_Samp_Fields> | string
+        >;
+        sum?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Analytics_RoomPresence_Sum_Fields> | string
+        >;
+        var_pop?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Analytics_RoomPresence_Var_Pop_Fields> | string
+        >;
+        var_samp?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Analytics_RoomPresence_Var_Samp_Fields> | string
+        >;
+        variance?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Analytics_RoomPresence_Variance_Fields> | string
+        >;
+    };
+    analytics_RoomPresence_avg_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
     };
     analytics_RoomPresence_max_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Max_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
         created_at?: GraphCacheResolver<
             WithTypename<Analytics_RoomPresence_Max_Fields>,
             Record<string, never>,
@@ -59785,13 +60237,18 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        name?: GraphCacheResolver<
+        roomId?: GraphCacheResolver<
             WithTypename<Analytics_RoomPresence_Max_Fields>,
             Record<string, never>,
-            Scalars["String"] | string
+            Scalars["uuid"] | string
         >;
     };
     analytics_RoomPresence_min_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Min_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
         created_at?: GraphCacheResolver<
             WithTypename<Analytics_RoomPresence_Min_Fields>,
             Record<string, never>,
@@ -59802,10 +60259,71 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        name?: GraphCacheResolver<
+        roomId?: GraphCacheResolver<
             WithTypename<Analytics_RoomPresence_Min_Fields>,
             Record<string, never>,
-            Scalars["String"] | string
+            Scalars["uuid"] | string
+        >;
+    };
+    analytics_RoomPresence_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Analytics_RoomPresence> | string>
+        >;
+    };
+    analytics_RoomPresence_stddev_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    analytics_RoomPresence_stddev_pop_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    analytics_RoomPresence_stddev_samp_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    analytics_RoomPresence_sum_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Sum_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+    };
+    analytics_RoomPresence_var_pop_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    analytics_RoomPresence_var_samp_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    analytics_RoomPresence_variance_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Analytics_RoomPresence_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
         >;
     };
     analytics_RoomStats?: {
@@ -60021,413 +60539,6 @@ export type GraphCacheResolvers = {
             WithTypename<Analytics_RoomStats_Variance_Fields>,
             Record<string, never>,
             Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews?: {
-        elementId?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews>,
-            Record<string, never>,
-            Scalars["bigint"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_aggregate?: {
-        aggregate?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields> | string
-        >;
-        nodes?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate>,
-            Record<string, never>,
-            Array<WithTypename<Analytics_Mat_ElementTotalViews> | string>
-        >;
-    };
-    analytics_mat_ElementTotalViews_aggregate_fields?: {
-        avg?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Avg_Fields> | string
-        >;
-        count?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Analytics_Mat_ElementTotalViews_Aggregate_FieldsCountArgs,
-            Scalars["Int"] | string
-        >;
-        max?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Max_Fields> | string
-        >;
-        min?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Min_Fields> | string
-        >;
-        stddev?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Stddev_Fields> | string
-        >;
-        stddev_pop?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields> | string
-        >;
-        stddev_samp?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields> | string
-        >;
-        sum?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Sum_Fields> | string
-        >;
-        var_pop?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Var_Pop_Fields> | string
-        >;
-        var_samp?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Var_Samp_Fields> | string
-        >;
-        variance?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ElementTotalViews_Variance_Fields> | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_avg_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Avg_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_max_fields?: {
-        elementId?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Max_Fields>,
-            Record<string, never>,
-            Scalars["bigint"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_min_fields?: {
-        elementId?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Min_Fields>,
-            Record<string, never>,
-            Scalars["bigint"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_stddev_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Stddev_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_stddev_pop_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_stddev_samp_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_sum_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Sum_Fields>,
-            Record<string, never>,
-            Scalars["bigint"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_var_pop_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Var_Pop_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_var_samp_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Var_Samp_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ElementTotalViews_variance_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ElementTotalViews_Variance_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews?: {
-        itemId?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews>,
-            Record<string, never>,
-            Scalars["bigint"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_aggregate?: {
-        aggregate?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields> | string
-        >;
-        nodes?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate>,
-            Record<string, never>,
-            Array<WithTypename<Analytics_Mat_ItemTotalViews> | string>
-        >;
-    };
-    analytics_mat_ItemTotalViews_aggregate_fields?: {
-        avg?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Avg_Fields> | string
-        >;
-        count?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Analytics_Mat_ItemTotalViews_Aggregate_FieldsCountArgs,
-            Scalars["Int"] | string
-        >;
-        max?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Max_Fields> | string
-        >;
-        min?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Min_Fields> | string
-        >;
-        stddev?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Stddev_Fields> | string
-        >;
-        stddev_pop?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields> | string
-        >;
-        stddev_samp?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields> | string
-        >;
-        sum?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Sum_Fields> | string
-        >;
-        var_pop?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Var_Pop_Fields> | string
-        >;
-        var_samp?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Var_Samp_Fields> | string
-        >;
-        variance?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_ItemTotalViews_Variance_Fields> | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_avg_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Avg_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_max_fields?: {
-        itemId?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Max_Fields>,
-            Record<string, never>,
-            Scalars["bigint"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_min_fields?: {
-        itemId?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Min_Fields>,
-            Record<string, never>,
-            Scalars["bigint"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_stddev_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Stddev_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_stddev_pop_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_stddev_samp_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_sum_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Sum_Fields>,
-            Record<string, never>,
-            Scalars["bigint"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_var_pop_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Var_Pop_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_var_samp_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Var_Samp_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_ItemTotalViews_variance_fields?: {
-        totalViewCount?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_ItemTotalViews_Variance_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    analytics_mat_RoomPresence?: {
-        count?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence>,
-            Analytics_Mat_RoomPresenceCountArgs,
-            Scalars["jsonb"] | string
-        >;
-        created_at?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        id?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        name?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-    };
-    analytics_mat_RoomPresence_aggregate?: {
-        aggregate?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Aggregate>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_RoomPresence_Aggregate_Fields> | string
-        >;
-        nodes?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Aggregate>,
-            Record<string, never>,
-            Array<WithTypename<Analytics_Mat_RoomPresence> | string>
-        >;
-    };
-    analytics_mat_RoomPresence_aggregate_fields?: {
-        count?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Aggregate_Fields>,
-            Analytics_Mat_RoomPresence_Aggregate_FieldsCountArgs,
-            Scalars["Int"] | string
-        >;
-        max?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_RoomPresence_Max_Fields> | string
-        >;
-        min?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Analytics_Mat_RoomPresence_Min_Fields> | string
-        >;
-    };
-    analytics_mat_RoomPresence_max_fields?: {
-        created_at?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Max_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        id?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        name?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Max_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-    };
-    analytics_mat_RoomPresence_min_fields?: {
-        created_at?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Min_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        id?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        name?: GraphCacheResolver<
-            WithTypename<Analytics_Mat_RoomPresence_Min_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
         >;
     };
     chat_Chat?: {
@@ -62859,6 +62970,16 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
+        events?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Conference_ConferenceEventsArgs,
+            Array<WithTypename<Schedule_Event> | string>
+        >;
+        events_aggregate?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Conference_ConferenceEvents_AggregateArgs,
+            WithTypename<Schedule_Event_Aggregate> | string
+        >;
         exhibitions?: GraphCacheResolver<
             WithTypename<Conference_Conference>,
             Conference_ConferenceExhibitionsArgs,
@@ -63919,6 +64040,11 @@ export type GraphCacheResolvers = {
             WithTypename<Content_Element>,
             Record<string, never>,
             Scalars["uuid"] | string
+        >;
+        source?: GraphCacheResolver<
+            WithTypename<Content_Element>,
+            Content_ElementSourceArgs,
+            Scalars["jsonb"] | string
         >;
         stats?: GraphCacheResolver<
             WithTypename<Content_Element>,
@@ -68438,6 +68564,11 @@ export type GraphCacheResolvers = {
             WithTypename<Registrant_Registrant>,
             Record<string, never>,
             WithTypename<Registrant_Invitation> | string
+        >;
+        invitationStatus?: GraphCacheResolver<
+            WithTypename<Registrant_Registrant>,
+            Registrant_RegistrantInvitationStatusArgs,
+            Scalars["jsonb"] | string
         >;
         inviteSent?: GraphCacheResolver<
             WithTypename<Registrant_Registrant>,
@@ -76229,6 +76360,30 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootDelete_Analytics_ContentItemStats_By_PkArgs,
         Maybe<WithTypename<Analytics_ContentItemStats>>
     >;
+    delete_analytics_ElementTotalViews?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Analytics_ElementTotalViewsArgs,
+        Maybe<WithTypename<Analytics_ElementTotalViews_Mutation_Response>>
+    >;
+    delete_analytics_ElementTotalViews_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Analytics_ElementTotalViews_By_PkArgs,
+        Maybe<WithTypename<Analytics_ElementTotalViews>>
+    >;
+    delete_analytics_ItemTotalViews?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Analytics_ItemTotalViewsArgs,
+        Maybe<WithTypename<Analytics_ItemTotalViews_Mutation_Response>>
+    >;
+    delete_analytics_ItemTotalViews_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Analytics_ItemTotalViews_By_PkArgs,
+        Maybe<WithTypename<Analytics_ItemTotalViews>>
+    >;
+    delete_analytics_RoomPresence?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Analytics_RoomPresenceArgs,
+        Maybe<WithTypename<Analytics_RoomPresence_Mutation_Response>>
+    >;
+    delete_analytics_RoomPresence_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Analytics_RoomPresence_By_PkArgs,
+        Maybe<WithTypename<Analytics_RoomPresence>>
+    >;
     delete_analytics_RoomStats?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Analytics_RoomStatsArgs,
         Maybe<WithTypename<Analytics_RoomStats_Mutation_Response>>
@@ -76961,6 +77116,30 @@ export type GraphCacheOptimisticUpdaters = {
     insert_analytics_ContentItemStats_one?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Analytics_ContentItemStats_OneArgs,
         Maybe<WithTypename<Analytics_ContentItemStats>>
+    >;
+    insert_analytics_ElementTotalViews?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Analytics_ElementTotalViewsArgs,
+        Maybe<WithTypename<Analytics_ElementTotalViews_Mutation_Response>>
+    >;
+    insert_analytics_ElementTotalViews_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Analytics_ElementTotalViews_OneArgs,
+        Maybe<WithTypename<Analytics_ElementTotalViews>>
+    >;
+    insert_analytics_ItemTotalViews?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Analytics_ItemTotalViewsArgs,
+        Maybe<WithTypename<Analytics_ItemTotalViews_Mutation_Response>>
+    >;
+    insert_analytics_ItemTotalViews_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Analytics_ItemTotalViews_OneArgs,
+        Maybe<WithTypename<Analytics_ItemTotalViews>>
+    >;
+    insert_analytics_RoomPresence?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Analytics_RoomPresenceArgs,
+        Maybe<WithTypename<Analytics_RoomPresence_Mutation_Response>>
+    >;
+    insert_analytics_RoomPresence_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Analytics_RoomPresence_OneArgs,
+        Maybe<WithTypename<Analytics_RoomPresence>>
     >;
     insert_analytics_RoomStats?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Analytics_RoomStatsArgs,
@@ -77739,6 +77918,30 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootUpdate_Analytics_ContentItemStats_By_PkArgs,
         Maybe<WithTypename<Analytics_ContentItemStats>>
     >;
+    update_analytics_ElementTotalViews?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Analytics_ElementTotalViewsArgs,
+        Maybe<WithTypename<Analytics_ElementTotalViews_Mutation_Response>>
+    >;
+    update_analytics_ElementTotalViews_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Analytics_ElementTotalViews_By_PkArgs,
+        Maybe<WithTypename<Analytics_ElementTotalViews>>
+    >;
+    update_analytics_ItemTotalViews?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Analytics_ItemTotalViewsArgs,
+        Maybe<WithTypename<Analytics_ItemTotalViews_Mutation_Response>>
+    >;
+    update_analytics_ItemTotalViews_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Analytics_ItemTotalViews_By_PkArgs,
+        Maybe<WithTypename<Analytics_ItemTotalViews>>
+    >;
+    update_analytics_RoomPresence?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Analytics_RoomPresenceArgs,
+        Maybe<WithTypename<Analytics_RoomPresence_Mutation_Response>>
+    >;
+    update_analytics_RoomPresence_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Analytics_RoomPresence_By_PkArgs,
+        Maybe<WithTypename<Analytics_RoomPresence>>
+    >;
     update_analytics_RoomStats?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Analytics_RoomStatsArgs,
         Maybe<WithTypename<Analytics_RoomStats_Mutation_Response>>
@@ -78486,6 +78689,30 @@ export type GraphCacheUpdaters = {
         delete_analytics_ContentItemStats_by_pk?: GraphCacheUpdateResolver<
             { delete_analytics_ContentItemStats_by_pk: Maybe<WithTypename<Analytics_ContentItemStats>> },
             Mutation_RootDelete_Analytics_ContentItemStats_By_PkArgs
+        >;
+        delete_analytics_ElementTotalViews?: GraphCacheUpdateResolver<
+            { delete_analytics_ElementTotalViews: Maybe<WithTypename<Analytics_ElementTotalViews_Mutation_Response>> },
+            Mutation_RootDelete_Analytics_ElementTotalViewsArgs
+        >;
+        delete_analytics_ElementTotalViews_by_pk?: GraphCacheUpdateResolver<
+            { delete_analytics_ElementTotalViews_by_pk: Maybe<WithTypename<Analytics_ElementTotalViews>> },
+            Mutation_RootDelete_Analytics_ElementTotalViews_By_PkArgs
+        >;
+        delete_analytics_ItemTotalViews?: GraphCacheUpdateResolver<
+            { delete_analytics_ItemTotalViews: Maybe<WithTypename<Analytics_ItemTotalViews_Mutation_Response>> },
+            Mutation_RootDelete_Analytics_ItemTotalViewsArgs
+        >;
+        delete_analytics_ItemTotalViews_by_pk?: GraphCacheUpdateResolver<
+            { delete_analytics_ItemTotalViews_by_pk: Maybe<WithTypename<Analytics_ItemTotalViews>> },
+            Mutation_RootDelete_Analytics_ItemTotalViews_By_PkArgs
+        >;
+        delete_analytics_RoomPresence?: GraphCacheUpdateResolver<
+            { delete_analytics_RoomPresence: Maybe<WithTypename<Analytics_RoomPresence_Mutation_Response>> },
+            Mutation_RootDelete_Analytics_RoomPresenceArgs
+        >;
+        delete_analytics_RoomPresence_by_pk?: GraphCacheUpdateResolver<
+            { delete_analytics_RoomPresence_by_pk: Maybe<WithTypename<Analytics_RoomPresence>> },
+            Mutation_RootDelete_Analytics_RoomPresence_By_PkArgs
         >;
         delete_analytics_RoomStats?: GraphCacheUpdateResolver<
             { delete_analytics_RoomStats: Maybe<WithTypename<Analytics_RoomStats_Mutation_Response>> },
@@ -79302,6 +79529,30 @@ export type GraphCacheUpdaters = {
         insert_analytics_ContentItemStats_one?: GraphCacheUpdateResolver<
             { insert_analytics_ContentItemStats_one: Maybe<WithTypename<Analytics_ContentItemStats>> },
             Mutation_RootInsert_Analytics_ContentItemStats_OneArgs
+        >;
+        insert_analytics_ElementTotalViews?: GraphCacheUpdateResolver<
+            { insert_analytics_ElementTotalViews: Maybe<WithTypename<Analytics_ElementTotalViews_Mutation_Response>> },
+            Mutation_RootInsert_Analytics_ElementTotalViewsArgs
+        >;
+        insert_analytics_ElementTotalViews_one?: GraphCacheUpdateResolver<
+            { insert_analytics_ElementTotalViews_one: Maybe<WithTypename<Analytics_ElementTotalViews>> },
+            Mutation_RootInsert_Analytics_ElementTotalViews_OneArgs
+        >;
+        insert_analytics_ItemTotalViews?: GraphCacheUpdateResolver<
+            { insert_analytics_ItemTotalViews: Maybe<WithTypename<Analytics_ItemTotalViews_Mutation_Response>> },
+            Mutation_RootInsert_Analytics_ItemTotalViewsArgs
+        >;
+        insert_analytics_ItemTotalViews_one?: GraphCacheUpdateResolver<
+            { insert_analytics_ItemTotalViews_one: Maybe<WithTypename<Analytics_ItemTotalViews>> },
+            Mutation_RootInsert_Analytics_ItemTotalViews_OneArgs
+        >;
+        insert_analytics_RoomPresence?: GraphCacheUpdateResolver<
+            { insert_analytics_RoomPresence: Maybe<WithTypename<Analytics_RoomPresence_Mutation_Response>> },
+            Mutation_RootInsert_Analytics_RoomPresenceArgs
+        >;
+        insert_analytics_RoomPresence_one?: GraphCacheUpdateResolver<
+            { insert_analytics_RoomPresence_one: Maybe<WithTypename<Analytics_RoomPresence>> },
+            Mutation_RootInsert_Analytics_RoomPresence_OneArgs
         >;
         insert_analytics_RoomStats?: GraphCacheUpdateResolver<
             { insert_analytics_RoomStats: Maybe<WithTypename<Analytics_RoomStats_Mutation_Response>> },
@@ -80159,6 +80410,30 @@ export type GraphCacheUpdaters = {
             { update_analytics_ContentItemStats_by_pk: Maybe<WithTypename<Analytics_ContentItemStats>> },
             Mutation_RootUpdate_Analytics_ContentItemStats_By_PkArgs
         >;
+        update_analytics_ElementTotalViews?: GraphCacheUpdateResolver<
+            { update_analytics_ElementTotalViews: Maybe<WithTypename<Analytics_ElementTotalViews_Mutation_Response>> },
+            Mutation_RootUpdate_Analytics_ElementTotalViewsArgs
+        >;
+        update_analytics_ElementTotalViews_by_pk?: GraphCacheUpdateResolver<
+            { update_analytics_ElementTotalViews_by_pk: Maybe<WithTypename<Analytics_ElementTotalViews>> },
+            Mutation_RootUpdate_Analytics_ElementTotalViews_By_PkArgs
+        >;
+        update_analytics_ItemTotalViews?: GraphCacheUpdateResolver<
+            { update_analytics_ItemTotalViews: Maybe<WithTypename<Analytics_ItemTotalViews_Mutation_Response>> },
+            Mutation_RootUpdate_Analytics_ItemTotalViewsArgs
+        >;
+        update_analytics_ItemTotalViews_by_pk?: GraphCacheUpdateResolver<
+            { update_analytics_ItemTotalViews_by_pk: Maybe<WithTypename<Analytics_ItemTotalViews>> },
+            Mutation_RootUpdate_Analytics_ItemTotalViews_By_PkArgs
+        >;
+        update_analytics_RoomPresence?: GraphCacheUpdateResolver<
+            { update_analytics_RoomPresence: Maybe<WithTypename<Analytics_RoomPresence_Mutation_Response>> },
+            Mutation_RootUpdate_Analytics_RoomPresenceArgs
+        >;
+        update_analytics_RoomPresence_by_pk?: GraphCacheUpdateResolver<
+            { update_analytics_RoomPresence_by_pk: Maybe<WithTypename<Analytics_RoomPresence>> },
+            Mutation_RootUpdate_Analytics_RoomPresence_By_PkArgs
+        >;
         update_analytics_RoomStats?: GraphCacheUpdateResolver<
             { update_analytics_RoomStats: Maybe<WithTypename<Analytics_RoomStats_Mutation_Response>> },
             Mutation_RootUpdate_Analytics_RoomStatsArgs
@@ -80995,6 +81270,10 @@ export type GraphCacheUpdaters = {
             { analytics_ElementTotalViews_aggregate: WithTypename<Analytics_ElementTotalViews_Aggregate> },
             Subscription_RootAnalytics_ElementTotalViews_AggregateArgs
         >;
+        analytics_ElementTotalViews_by_pk?: GraphCacheUpdateResolver<
+            { analytics_ElementTotalViews_by_pk: Maybe<WithTypename<Analytics_ElementTotalViews>> },
+            Subscription_RootAnalytics_ElementTotalViews_By_PkArgs
+        >;
         analytics_ItemTotalViews?: GraphCacheUpdateResolver<
             { analytics_ItemTotalViews: Array<WithTypename<Analytics_ItemTotalViews>> },
             Subscription_RootAnalytics_ItemTotalViewsArgs
@@ -81003,6 +81282,10 @@ export type GraphCacheUpdaters = {
             { analytics_ItemTotalViews_aggregate: WithTypename<Analytics_ItemTotalViews_Aggregate> },
             Subscription_RootAnalytics_ItemTotalViews_AggregateArgs
         >;
+        analytics_ItemTotalViews_by_pk?: GraphCacheUpdateResolver<
+            { analytics_ItemTotalViews_by_pk: Maybe<WithTypename<Analytics_ItemTotalViews>> },
+            Subscription_RootAnalytics_ItemTotalViews_By_PkArgs
+        >;
         analytics_RoomPresence?: GraphCacheUpdateResolver<
             { analytics_RoomPresence: Array<WithTypename<Analytics_RoomPresence>> },
             Subscription_RootAnalytics_RoomPresenceArgs
@@ -81010,6 +81293,10 @@ export type GraphCacheUpdaters = {
         analytics_RoomPresence_aggregate?: GraphCacheUpdateResolver<
             { analytics_RoomPresence_aggregate: WithTypename<Analytics_RoomPresence_Aggregate> },
             Subscription_RootAnalytics_RoomPresence_AggregateArgs
+        >;
+        analytics_RoomPresence_by_pk?: GraphCacheUpdateResolver<
+            { analytics_RoomPresence_by_pk: Maybe<WithTypename<Analytics_RoomPresence>> },
+            Subscription_RootAnalytics_RoomPresence_By_PkArgs
         >;
         analytics_RoomStats?: GraphCacheUpdateResolver<
             { analytics_RoomStats: Array<WithTypename<Analytics_RoomStats>> },
@@ -81022,30 +81309,6 @@ export type GraphCacheUpdaters = {
         analytics_RoomStats_by_pk?: GraphCacheUpdateResolver<
             { analytics_RoomStats_by_pk: Maybe<WithTypename<Analytics_RoomStats>> },
             Subscription_RootAnalytics_RoomStats_By_PkArgs
-        >;
-        analytics_mat_ElementTotalViews?: GraphCacheUpdateResolver<
-            { analytics_mat_ElementTotalViews: Array<WithTypename<Analytics_Mat_ElementTotalViews>> },
-            Subscription_RootAnalytics_Mat_ElementTotalViewsArgs
-        >;
-        analytics_mat_ElementTotalViews_aggregate?: GraphCacheUpdateResolver<
-            { analytics_mat_ElementTotalViews_aggregate: WithTypename<Analytics_Mat_ElementTotalViews_Aggregate> },
-            Subscription_RootAnalytics_Mat_ElementTotalViews_AggregateArgs
-        >;
-        analytics_mat_ItemTotalViews?: GraphCacheUpdateResolver<
-            { analytics_mat_ItemTotalViews: Array<WithTypename<Analytics_Mat_ItemTotalViews>> },
-            Subscription_RootAnalytics_Mat_ItemTotalViewsArgs
-        >;
-        analytics_mat_ItemTotalViews_aggregate?: GraphCacheUpdateResolver<
-            { analytics_mat_ItemTotalViews_aggregate: WithTypename<Analytics_Mat_ItemTotalViews_Aggregate> },
-            Subscription_RootAnalytics_Mat_ItemTotalViews_AggregateArgs
-        >;
-        analytics_mat_RoomPresence?: GraphCacheUpdateResolver<
-            { analytics_mat_RoomPresence: Array<WithTypename<Analytics_Mat_RoomPresence>> },
-            Subscription_RootAnalytics_Mat_RoomPresenceArgs
-        >;
-        analytics_mat_RoomPresence_aggregate?: GraphCacheUpdateResolver<
-            { analytics_mat_RoomPresence_aggregate: WithTypename<Analytics_Mat_RoomPresence_Aggregate> },
-            Subscription_RootAnalytics_Mat_RoomPresence_AggregateArgs
         >;
         chat_Chat?: GraphCacheUpdateResolver<
             { chat_Chat: Array<WithTypename<Chat_Chat>> },

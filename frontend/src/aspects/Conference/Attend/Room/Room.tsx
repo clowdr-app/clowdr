@@ -215,6 +215,7 @@ function RoomInner({
         nonCurrentLiveEvents,
         nonCurrentLiveEventsInNext20Mins,
         withinThreeMinutesOfBroadcastEvent,
+        withinStreamLatencySinceBroadcastEvent,
         broadcastEventStartsAt,
         zoomEventStartsAt,
     } = useCurrentRoomEvent(roomEvents);
@@ -603,7 +604,9 @@ function RoomInner({
     const playerEl = useMemo(() => {
         const currentEventIsVideoPlayer = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoPlayer;
         const shouldShowLivePlayer =
-            !currentEventModeIsNone && !showDefaultVideoChatRoom && withinThreeMinutesOfBroadcastEvent;
+            !currentEventModeIsNone &&
+            (!showDefaultVideoChatRoom || withinStreamLatencySinceBroadcastEvent) &&
+            withinThreeMinutesOfBroadcastEvent;
 
         return !showBackstage ? (
             currentEventIsVideoPlayer || (selectedVideoElementId && !currentRoomEvent) ? (
@@ -662,6 +665,7 @@ function RoomInner({
         currentRoomEvent,
         currentEventModeIsNone,
         showDefaultVideoChatRoom,
+        withinStreamLatencySinceBroadcastEvent,
         withinThreeMinutesOfBroadcastEvent,
         showBackstage,
         selectedVideoElementId,
@@ -713,17 +717,30 @@ function RoomInner({
                                             : undefined)
                                     }
                                     eventIsFuture={!currentRoomEvent}
-                                    isChairOrOrganizer={
+                                    isPresenterOrChairOrOrganizer={
                                         currentRoomEvent
                                             ? currentRoomEvent.eventPeople.some(
-                                                  (person) => person.person?.registrantId === currentRegistrant.id
+                                                  (person) =>
+                                                      person.person?.registrantId === currentRegistrant.id &&
+                                                      person.roleName !==
+                                                          Schedule_EventProgramPersonRole_Enum.Participant
                                               )
                                             : nextRoomEvent &&
                                               nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat
                                             ? nextRoomEvent.eventPeople.some(
-                                                  (person) => person.person?.registrantId === currentRegistrant.id
+                                                  (person) =>
+                                                      person.person?.registrantId === currentRegistrant.id &&
+                                                      person.roleName !==
+                                                          Schedule_EventProgramPersonRole_Enum.Participant
                                               )
-                                            : false
+                                            : !!roomDetails.originatingItem?.selfPeople.some(
+                                                  (itemPerson) =>
+                                                      itemPerson.roleName.toUpperCase() === "AUTHOR" ||
+                                                      itemPerson.roleName.toUpperCase() === "PRESENTER" ||
+                                                      itemPerson.roleName.toUpperCase() === "CHAIR" ||
+                                                      itemPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
+                                                      itemPerson.roleName.toUpperCase() === "ORGANIZER"
+                                              )
                                     }
                                 />
                             </Box>

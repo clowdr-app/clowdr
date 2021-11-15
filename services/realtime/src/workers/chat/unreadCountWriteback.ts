@@ -11,6 +11,7 @@ import type {
     RegistrantIdsFromChatsAndUsersQueryVariables,
 } from "../../generated/graphql";
 import { InsertReadUpToIndexDocument, RegistrantIdsFromChatsAndUsersDocument } from "../../generated/graphql";
+import { logger } from "../../lib/logger";
 
 gql`
     query RegistrantIdsFromChatsAndUsers($chatIds: [uuid!]!, $userIds: [String!]!) {
@@ -34,7 +35,7 @@ async function Main(continueExecuting = false) {
     try {
         assert(gqlClient, "GQL client needed for read up to index writeback");
 
-        console.info("Writing back read up to indices");
+        logger.info("Writing back read up to indices");
         const indicesToWriteBack = await readUpToIndicesCache.getAndClearModified();
         const registrantIds = await gqlClient
             .query<RegistrantIdsFromChatsAndUsersQuery, RegistrantIdsFromChatsAndUsersQueryVariables>(
@@ -67,7 +68,7 @@ async function Main(continueExecuting = false) {
                                     };
                                     return r;
                                 } else {
-                                    console.warn(
+                                    logger.warn(
                                         `Unable to find registrant id for user: ${x.userId}. Cannot write back their unread index for ${x.chatId} (Read up to message sId: ${x.messageSId})`
                                     );
                                 }
@@ -83,21 +84,21 @@ async function Main(continueExecuting = false) {
         if (!continueExecuting) {
             process.exit(0);
         }
-    } catch (e: any) {
+    } catch (error: any) {
         if (
-            !e
+            !error
                 .toString()
                 .includes(
                     'Foreign key violation. insert or update on table "ReadUpToIndex" violates foreign key constraint "ReadUpToIndex_messageSId_fkey"'
                 )
         ) {
-            console.error("SEVERE ERROR: Cannot write back read up to indices!", e);
+            logger.error({ error }, "SEVERE ERROR: Cannot write back read up to indices!");
 
             if (!continueExecuting) {
                 process.exit(-1);
             }
         } else {
-            console.warn(
+            logger.warn(
                 "Warning: Ignoring read up to indices write back error (foreign key violation suggests the system attempted to store the read up to index before message has been written back.)"
             );
             if (!continueExecuting) {

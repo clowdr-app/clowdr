@@ -3,6 +3,7 @@ import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { generateChatSubscriptionsChangedRoomName } from "../../lib/chat";
+import { logger } from "../../lib/logger";
 
 export function onListenForSubscriptionsChanged(
     userId: string,
@@ -18,10 +19,10 @@ export function onListenForSubscriptionsChanged(
                 if (registrants?.some((x) => x.id === registrantId)) {
                     socket.join(generateChatSubscriptionsChangedRoomName(registrantId));
                 }
-            } catch (e) {
-                console.error(
-                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`,
-                    e
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`
                 );
             }
         }
@@ -42,10 +43,10 @@ export function onUnlistenForSubscriptionsChanged(
                 if (registrants?.some((x) => x.id === registrantId)) {
                     socket.leave(generateChatSubscriptionsChangedRoomName(registrantId));
                 }
-            } catch (e) {
-                console.error(
-                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`,
-                    e
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`
                 );
             }
         }

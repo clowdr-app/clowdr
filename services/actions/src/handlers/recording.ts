@@ -2,6 +2,8 @@ import { gql } from "@apollo/client/core";
 import type { MediaPackageHarvestJob, Payload } from "@midspace/hasura/event";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
+import type { SourceBlob } from "@midspace/shared-types/content/element";
+import { SourceType } from "@midspace/shared-types/content/element";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
 import type { P } from "pino";
@@ -136,6 +138,7 @@ gql`
                 id
                 name
                 startTime
+                durationSeconds
             }
             id
         }
@@ -145,6 +148,7 @@ gql`
         $id: uuid!
         $message: String!
         $data: jsonb!
+        $source: jsonb = null
         $itemId: uuid!
         $conferenceId: uuid!
         $subconferenceId: uuid = null
@@ -164,6 +168,7 @@ gql`
                 subconferenceId: $subconferenceId
                 typeName: VIDEO_FILE
                 name: $name
+                source: $source
             }
         ) {
             id
@@ -223,6 +228,13 @@ export async function completeMediaPackageHarvestJob(
         },
     ];
 
+    const source: SourceBlob = {
+        source: SourceType.EventRecording,
+        eventId: job.event.id,
+        startTimeMillis: Date.parse(job.event.startTime),
+        durationSeconds: job.event.durationSeconds,
+    };
+
     logger.info({ eventId: job.event.id, jobId: job.id }, "Completing MediaPackage harvest job");
     const startTime = formatRFC7231(Date.parse(job.event.startTime));
     await callWithRetry(
@@ -236,6 +248,7 @@ export async function completeMediaPackageHarvestJob(
                     subconferenceId: job.event.item?.subconferenceId ?? null,
                     itemId: job.event.item?.id,
                     data,
+                    source,
                     name: `Recording of ${job.event.name} from ${startTime}`,
                 },
             })

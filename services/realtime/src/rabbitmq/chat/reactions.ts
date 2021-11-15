@@ -1,6 +1,8 @@
 import { downlink, uplink } from "@midspace/component-clients/rabbitmq";
 import type { Channel, ConsumeMessage } from "amqplib";
+import { Mutex } from "async-mutex";
 import { is } from "typescript-is";
+import { logger } from "../../lib/logger";
 import { canIUDReaction } from "../../lib/permissions";
 import type { Action, Reaction } from "../../types/chat";
 import { ReactionDistributionQueueSize, ReactionWritebackQueueSize } from "./params";
@@ -12,11 +14,17 @@ const exchangeParams = {
 };
 
 let _uplinkChannel: Channel;
+const uplinkChannelMutex = new Mutex();
 async function uplinkChannel() {
-    if (!_uplinkChannel) {
-        const connection = await uplink();
-        _uplinkChannel = await connection.createChannel();
-        await _uplinkChannel.assertExchange(exchange, "topic", exchangeParams);
+    const release = await uplinkChannelMutex.acquire();
+    try {
+        if (!_uplinkChannel) {
+            const connection = await uplink();
+            _uplinkChannel = await connection.createChannel();
+            await _uplinkChannel.assertExchange(exchange, "topic", exchangeParams);
+        }
+    } finally {
+        release();
     }
     return _uplinkChannel;
 }
@@ -25,23 +33,35 @@ const distributionQueue = `${exchange}.distribution`;
 const writebackQueue = `${exchange}.writeback`;
 
 let _distributionDownlinkChannel: Channel;
+const distributionDownChannelMutex = new Mutex();
 async function distributionDownlinkChannel() {
-    if (!_distributionDownlinkChannel) {
-        const connection = await downlink();
-        _distributionDownlinkChannel = await connection.createChannel();
+    const release = await distributionDownChannelMutex.acquire();
+    try {
+        if (!_distributionDownlinkChannel) {
+            const connection = await downlink();
+            _distributionDownlinkChannel = await connection.createChannel();
 
-        await _distributionDownlinkChannel.assertExchange(exchange, "topic", exchangeParams);
+            await _distributionDownlinkChannel.assertExchange(exchange, "topic", exchangeParams);
+        }
+    } finally {
+        release();
     }
     return _distributionDownlinkChannel;
 }
 
 let _writebackDownlinkChannel: Channel;
+const writebackDownChannelMutex = new Mutex();
 async function writebackDownlinkChannel() {
-    if (!_writebackDownlinkChannel) {
-        const connection = await downlink();
-        _writebackDownlinkChannel = await connection.createChannel();
+    const release = await writebackDownChannelMutex.acquire();
+    try {
+        if (!_writebackDownlinkChannel) {
+            const connection = await downlink();
+            _writebackDownlinkChannel = await connection.createChannel();
 
-        await _writebackDownlinkChannel.assertExchange(exchange, "topic", exchangeParams);
+            await _writebackDownlinkChannel.assertExchange(exchange, "topic", exchangeParams);
+        }
+    } finally {
+        release();
     }
     return _writebackDownlinkChannel;
 }
@@ -119,14 +139,14 @@ export async function onDistributionReaction(handler: (reaction: Action<Reaction
                 if (is<Action<Reaction>>(reaction)) {
                     handler(reaction);
                 } else {
-                    console.warn(
+                    logger.warn(
                         "Invalid chat reaction received. Data does not match type. (Distribution queue)",
                         reaction
                     );
                 }
             }
-        } catch (e) {
-            console.error("Error processing chat reaction for distribution", e);
+        } catch (error: any) {
+            logger.error({ error }, "Error processing chat reaction for distribution");
         }
     });
 }
@@ -144,7 +164,7 @@ export async function onWritebackReaction(
                 if (is<Action<Reaction>>(reaction)) {
                     handler(rabbitMQMsg, reaction);
                 } else {
-                    console.warn(
+                    logger.warn(
                         "Invalid chat reaction received. Data does not match type. (Writeback queue)",
                         reaction
                     );
@@ -152,8 +172,8 @@ export async function onWritebackReaction(
                     channel.ack(rabbitMQMsg);
                 }
             }
-        } catch (e) {
-            console.error("Error processing chat reaction for writeback", e);
+        } catch (error: any) {
+            logger.error({ error }, "Error processing chat reaction for writeback");
         }
     });
 }

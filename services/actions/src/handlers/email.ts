@@ -13,6 +13,7 @@ import {
     MarkAndSelectUnsentEmailsDocument,
     SelectUnsentEmailIdsDocument,
     UnmarkUnsentEmailsDocument,
+    UpdateEmailStatusDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import type { EmailTemplateContext } from "../lib/email/emailTemplate";
@@ -64,16 +65,19 @@ gql`
     }
 
     mutation InsertEmails($objects: [Email_insert_input!]!) {
-        insert_Email(objects: $objects) {
+        insert_Email(objects: $objects, on_conflict: { constraint: Email_idempotencyKey_key, update_columns: [] }) {
             affected_rows
         }
     }
 `;
 
+export const EMAIL_IDEMPOTENCY_NAMESPACE = "315a82fd-feeb-4aa6-86b5-261252c290d1";
+
 export async function insertEmails(
     logger: P.Logger,
     emails: Email_Insert_Input[],
-    conferenceId: string | undefined
+    conferenceId: string | undefined,
+    jobId: string | undefined
 ): Promise<number | undefined> {
     const configResponse = await apolloClient.query({
         query: ConferenceEmailConfigurationDocument,
@@ -127,7 +131,7 @@ export async function insertEmails(
         techSupportAddress,
     };
 
-    const emailsToInsert = emails
+    const emailsToInsert: Email_Insert_Input[] = emails
         .filter(
             (email) =>
                 !!email.htmlContents &&
@@ -152,23 +156,53 @@ export async function insertEmails(
                 subject: compiledEmail.subject,
                 htmlContents: compiledEmail.body,
                 plainTextContents: htmlToText(compiledEmail.body),
+                status: "processing",
+                conferenceId,
             };
         });
-    if (emailsToInsert.length < emails.length) {
+
+    const batchSize = 100;
+    const batches = Math.ceil(emailsToInsert.length / batchSize);
+
+    logger.info(
+        {
+            totalEmails: emails.length,
+            permittedEmails: emailsToInsert.length,
+            batches: batches,
+            message:
+                emailsToInsert.length < emails.length
+                    ? "Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly."
+                    : undefined,
+            jobId,
+        },
+        "Queuing emails to send"
+    );
+
+    let insertedCount = 0;
+
+    for (let i = 0; i < batches; i++) {
+        const batch = emailsToInsert.slice(i * batchSize, (i + 1) * batchSize);
+        const r = await apolloClient.mutate({
+            mutation: InsertEmailsDocument,
+            variables: {
+                objects: batch,
+            },
+        });
+        insertedCount += r.data?.insert_Email?.affected_rows ?? 0;
         logger.info(
-            { emailsToInsert: emailsToInsert.length, totalEmails: emails.length },
-            `${emailsToInsert.length} of ${emails.length} are being sent. Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly.`
+            {
+                insertedCount: r.data?.insert_Email?.affected_rows,
+                batchSize: batch.length,
+                batchNumber: i + 1,
+                batches,
+                jobId,
+            },
+            "Queued email batch"
         );
     }
 
-    logger.info({ emailsToInsert: emailsToInsert.length }, `Queuing ${emailsToInsert.length} emails to send`);
-    const r = await apolloClient.mutate({
-        mutation: InsertEmailsDocument,
-        variables: {
-            objects: emailsToInsert,
-        },
-    });
-    return r.data?.insert_Email?.affected_rows;
+    logger.info({ jobId, batches, insertedCount }, "Finished queuing emails");
+    return insertedCount;
 }
 
 gql`
@@ -217,6 +251,9 @@ gql`
         replyTo: system_Configuration_by_pk(key: SENDGRID_REPLYTO) {
             value
         }
+        webhookPublicKey: system_Configuration_by_pk(key: SENDGRID_WEBHOOK_PUBLIC_KEY) {
+            value
+        }
     }
 `;
 
@@ -226,13 +263,15 @@ let sgMailInitialised:
           apiKey: string;
           sender: string | { name: string; email: string };
           replyTo: string;
+          webhookPublicKey: string;
       } = false;
-async function initSGMail(logger: P.Logger): Promise<
+export async function initSGMail(logger: P.Logger): Promise<
     | false
     | {
           apiKey: string;
           sender: string | { name: string; email: string };
           replyTo: string;
+          webhookPublicKey: string;
       }
 > {
     if (!sgMailInitialised) {
@@ -252,6 +291,12 @@ async function initSGMail(logger: P.Logger): Promise<
                 logger.error("Unable to initialise SendGrid email. SendGrid Reply-To not configured");
                 return false;
             }
+            if (!response.data.webhookPublicKey) {
+                logger.error(
+                    "Unable to initialise SendGrid email. SendGrid Webhook Verification Public Key not configured"
+                );
+                return false;
+            }
 
             sgMail.setApiKey(response.data.apiKey.value);
             sgMailInitialised = {
@@ -260,6 +305,7 @@ async function initSGMail(logger: P.Logger): Promise<
                     ? { email: response.data.senderEmail.value, name: response.data.senderName.value }
                     : response.data.senderEmail.value,
                 replyTo: response.data.replyTo.value,
+                webhookPublicKey: response.data.webhookPublicKey.value,
             };
         } catch (e: any) {
             logger.error({ err: e }, "Failed to initialise SendGrid mail");
@@ -300,6 +346,9 @@ export async function processEmailsJobQueue(logger: P.Logger): Promise<void> {
                             text: email.plainTextContents,
                             html: email.htmlContents,
                             replyTo: replyToAddress,
+                            customArgs: {
+                                midspaceEmailId: email.id,
+                            },
                         };
                         await callWithRetry(() => sgMail.send(msg));
                     }
@@ -327,5 +376,69 @@ export async function processEmailsJobQueue(logger: P.Logger): Promise<void> {
         logger.warn(
             "Unable to send email - could not initialise email client. Perhaps a system configuration key is missing?"
         );
+    }
+}
+
+gql`
+    mutation UpdateEmailStatus($id: uuid!, $status: String!, $errorMessage: String) {
+        update_Email_by_pk(pk_columns: { id: $id }, _set: { status: $status, errorMessage: $errorMessage }) {
+            id
+        }
+    }
+`;
+
+export async function processEmailWebhook(payloads: Record<string, any>[]): Promise<void> {
+    const completedIds = new Set<string>();
+    for (const payload of payloads) {
+        const eventName = payload.event;
+        const midspaceEmailId = payload.midspaceEmailId;
+        if (eventName && typeof eventName === "string" && midspaceEmailId && typeof midspaceEmailId === "string") {
+            let status: string;
+            let errorMessage: string | null = null;
+            switch (eventName) {
+                case "processed":
+                    status = "processed";
+                    break;
+                case "dropped":
+                    status = "dropped";
+                    errorMessage = payload.reason;
+                    completedIds.add(midspaceEmailId);
+                    break;
+                case "delivered":
+                    status = "delivered";
+                    completedIds.add(midspaceEmailId);
+                    break;
+                case "deferred":
+                    status = "deferred";
+                    errorMessage = payload.response;
+                    completedIds.add(midspaceEmailId);
+                    break;
+                case "bounce":
+                    status = "bounce";
+                    errorMessage = payload.reason;
+                    completedIds.add(midspaceEmailId);
+                    break;
+                case "blocked":
+                    status = "blocked";
+                    errorMessage = payload.reason;
+                    completedIds.add(midspaceEmailId);
+                    break;
+                default:
+                    throw new Error("Unrecognised webhook event");
+            }
+            if (status !== "processed" || !completedIds.has(midspaceEmailId)) {
+                console.log(
+                    `Email webhook: Setting email status: { "midspaceEmailId": "${midspaceEmailId}", "status": "${status}", "errorMessage": "${errorMessage}" }`
+                );
+                await apolloClient.mutate({
+                    mutation: UpdateEmailStatusDocument,
+                    variables: {
+                        id: midspaceEmailId,
+                        status,
+                        errorMessage,
+                    },
+                });
+            }
+        }
     }
 }

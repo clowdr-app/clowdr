@@ -17,6 +17,7 @@ import {
     InsertChatMessagesDocument,
     UpdateChatMessageDocument,
 } from "../../../generated/graphql";
+import { logger } from "../../../lib/logger";
 import {
     onWritebackMessage,
     onWritebackMessagesComplete,
@@ -25,7 +26,7 @@ import {
 import { MessageWritebackIntervalMs, MessageWritebackQueueSize } from "../../../rabbitmq/chat/params";
 import type { Action, Message } from "../../../types/chat";
 
-console.info("Chat messages writeback worker running");
+logger.info("Chat messages writeback worker running");
 
 type UnackedMessageInfo = {
     rabbitMQMsg: ConsumeMessage;
@@ -114,30 +115,33 @@ async function processInsertQueue() {
 
         try {
             onWritebackMessagesComplete(acks);
-        } catch (e) {
-            console.error("Error acknowleding to RabbitMQ chat messages that were successfully written into the DB", e);
+        } catch (error: any) {
+            logger.error(
+                { error },
+                "Error acknowleding to RabbitMQ chat messages that were successfully written into the DB"
+            );
         }
 
         if (nacks.length > 0) {
-            console.error(
+            logger.error(
                 "Somehow Hasura returned a partial insert failure when writing back chat messages?!",
                 nacks.length + " failures"
             );
             try {
                 onWritebackMessagesFail(nacks);
-            } catch (e) {
-                console.error(
-                    "Error not-acknowleding to RabbitMQ chat messages that could not be written into the DB",
-                    e
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    "Error not-acknowleding to RabbitMQ chat messages that could not be written into the DB"
                 );
             }
         }
-    } catch (e) {
+    } catch (error: any) {
         let wasNetworkError: boolean;
-        if (e instanceof CombinedError) {
-            if (e.networkError) {
+        if (error instanceof CombinedError) {
+            if (error.networkError) {
                 wasNetworkError = true;
-            } else if (e.graphQLErrors) {
+            } else if (error.graphQLErrors) {
                 wasNetworkError = false;
             } else {
                 wasNetworkError = false;
@@ -147,7 +151,7 @@ async function processInsertQueue() {
         }
 
         if (wasNetworkError) {
-            console.error("Writeback of chat messages failed due to network error", e);
+            logger.error({ error }, "Writeback of chat messages failed due to network error");
             insertQueue = [];
             onWritebackMessagesFail(insertQueue.map((x) => x.rabbitMQMsg));
         } else {
@@ -168,10 +172,10 @@ async function processInsertQueue() {
                             throw resp.error;
                         }
                         return { ...resp, sId: obj.sId };
-                    } catch (e) {
+                    } catch (error: any) {
                         return {
                             sId: obj.sId,
-                            errors: [e],
+                            errors: [error],
                         };
                     }
                 })
@@ -189,30 +193,30 @@ async function processInsertQueue() {
 
             try {
                 onWritebackMessagesComplete(acks.map((x) => x.rabbitMQMsg));
-            } catch (e) {
-                console.error(
-                    "Error acknowleding to RabbitMQ chat messages that were successfully written into the DB\n" +
-                        JSON.stringify(e, null, 2)
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    "Error acknowleding to RabbitMQ chat messages that were successfully written into the DB"
                 );
             }
 
             if (nacks.length > 0) {
-                console.error(
+                logger.error(
                     "Failed to write back some individual chat messages into the database",
                     nacks.length + " failures"
                 );
                 nacks.forEach((x) =>
-                    console.error("Individual chat message writeback failure\n" + JSON.stringify(x.response, null, 2))
+                    logger.error({ response: x.response }, "Individual chat message writeback failure")
                 );
                 // TODO: Send email to system alerts address
                 try {
                     // At this point, we just have to give up on them. We've logged the failure and
                     // it's time to drop these from the queue lest we end up in infinite re-attempts
                     onWritebackMessagesComplete(nacks.map((x) => x.rabbitMQMsg));
-                } catch (e) {
-                    console.error(
-                        "Error not-acknowleding to RabbitMQ chat messages that could not be written into the DB\n" +
-                            JSON.stringify(e, null, 2)
+                } catch (error: any) {
+                    logger.error(
+                        { error },
+                        "Error not-acknowleding to RabbitMQ chat messages that could not be written into the DB"
                     );
                 }
             }
@@ -280,20 +284,20 @@ async function processUpdateQueue() {
                     failedSecond.push(updateAction);
                 }
             }
-        } catch (e) {
-            console.error(`Error processing chat message update: ${JSON.stringify(e, null, 2)}`);
+        } catch (error: any) {
+            logger.error({ error }, "Error processing chat message update: ");
         }
     }
 
     try {
         await onWritebackMessagesComplete(completed.map((x) => x.rabbitMQMsg));
-    } catch (e) {
-        console.error(`Error ack'ing completed chat message updates: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error ack'ing completed chat message updates: ");
     }
     try {
         await onWritebackMessagesComplete(failedSecond.map((x) => x.rabbitMQMsg));
-    } catch (e) {
-        console.error(`Error ack'ing second-failure chat message updates: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error ack'ing second-failure chat message updates: ");
     }
 
     updateQueue = [
@@ -342,19 +346,19 @@ async function processDeleteQueue() {
                     ) && deleteAction.delayUntil !== -1
             );
         }
-    } catch (e) {
-        console.error(`Error processing chat message delete: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error processing chat message delete: ");
     }
 
     try {
         await onWritebackMessagesComplete(completed.map((x) => x.rabbitMQMsg));
-    } catch (e) {
-        console.error(`Error ack'ing completed chat message deletes: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error ack'ing completed chat message deletes: ");
     }
     try {
         await onWritebackMessagesComplete(failedSecond.map((x) => x.rabbitMQMsg));
-    } catch (e) {
-        console.error(`Error ack'ing second-failure chat message deletes: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error ack'ing second-failure chat message deletes: ");
     }
 
     deleteQueue = [
@@ -378,7 +382,7 @@ async function processQueues(proceedWithPartial: boolean) {
         const lease = await redlock.acquire(queuesLockKey, 180000);
         lastProcessQueuesTime = Date.now();
         try {
-            console.info(`Writing back messages:
+            logger.info(`Writing back messages:
     * Total queue size: ${totalQueueSize}
     * Proceed with partial: ${proceedWithPartial}
 
@@ -389,8 +393,8 @@ async function processQueues(proceedWithPartial: boolean) {
             await processInsertQueue();
             await processUpdateQueue();
             await processDeleteQueue();
-        } catch (e) {
-            console.error("Error writing back queues (some messages may now be stuck!)", e);
+        } catch (error: any) {
+            logger.error({ error }, "Error writing back queues (some messages may now be stuck!)");
         } finally {
             await lease.unlock();
         }
@@ -398,7 +402,7 @@ async function processQueues(proceedWithPartial: boolean) {
 }
 
 async function onMessage(rabbitMQMsg: ConsumeMessage, action: Action<Message>) {
-    // console.info("Message for writeback", message);
+    // logger.info("Message for writeback", message);
 
     let ok = false;
     try {
@@ -422,8 +426,8 @@ async function onMessage(rabbitMQMsg: ConsumeMessage, action: Action<Message>) {
         } finally {
             await lease.unlock();
         }
-    } catch (e) {
-        console.error("Erroring process chat message: writeback.onMessage", e);
+    } catch (error: any) {
+        logger.error({ error }, "Erroring process chat message: writeback.onMessage");
 
         await onWritebackMessagesFail([rabbitMQMsg]);
     }

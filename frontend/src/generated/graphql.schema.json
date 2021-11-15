@@ -119,6 +119,14 @@
                 "name": "Email",
                 "fields": [
                     {
+                        "name": "conferenceId",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
                         "name": "createdAt",
                         "type": {
                             "kind": "NON_NULL",
@@ -141,6 +149,14 @@
                         "args": []
                     },
                     {
+                        "name": "errorMessage",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
                         "name": "htmlContents",
                         "type": {
                             "kind": "NON_NULL",
@@ -153,6 +169,17 @@
                     },
                     {
                         "name": "id",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "idempotencyKey",
                         "type": {
                             "kind": "NON_NULL",
                             "ofType": {
@@ -222,6 +249,14 @@
                     },
                     {
                         "name": "sentAt",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "status",
                         "type": {
                             "kind": "SCALAR",
                             "name": "Any"
@@ -453,6 +488,14 @@
                 "name": "Email_max_fields",
                 "fields": [
                     {
+                        "name": "conferenceId",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
                         "name": "createdAt",
                         "type": {
                             "kind": "SCALAR",
@@ -469,6 +512,14 @@
                         "args": []
                     },
                     {
+                        "name": "errorMessage",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
                         "name": "htmlContents",
                         "type": {
                             "kind": "SCALAR",
@@ -478,6 +529,14 @@
                     },
                     {
                         "name": "id",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "idempotencyKey",
                         "type": {
                             "kind": "SCALAR",
                             "name": "Any"
@@ -526,6 +585,14 @@
                     },
                     {
                         "name": "sentAt",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "status",
                         "type": {
                             "kind": "SCALAR",
                             "name": "Any"
@@ -564,6 +631,14 @@
                 "name": "Email_min_fields",
                 "fields": [
                     {
+                        "name": "conferenceId",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
                         "name": "createdAt",
                         "type": {
                             "kind": "SCALAR",
@@ -580,6 +655,14 @@
                         "args": []
                     },
                     {
+                        "name": "errorMessage",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
                         "name": "htmlContents",
                         "type": {
                             "kind": "SCALAR",
@@ -589,6 +672,14 @@
                     },
                     {
                         "name": "id",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "idempotencyKey",
                         "type": {
                             "kind": "SCALAR",
                             "name": "Any"
@@ -637,6 +728,14 @@
                     },
                     {
                         "name": "sentAt",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "status",
                         "type": {
                             "kind": "SCALAR",
                             "name": "Any"
@@ -4740,16 +4839,22 @@
                     {
                         "name": "elementId",
                         "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
                         },
                         "args": []
                     },
                     {
                         "name": "totalViewCount",
                         "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
                         },
                         "args": []
                     }
@@ -4982,6 +5087,42 @@
             },
             {
                 "kind": "OBJECT",
+                "name": "analytics_ElementTotalViews_mutation_response",
+                "fields": [
+                    {
+                        "name": "affected_rows",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "returning",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "LIST",
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "analytics_ElementTotalViews",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
                 "name": "analytics_ElementTotalViews_stddev_fields",
                 "fields": [
                     {
@@ -5101,16 +5242,22 @@
                     {
                         "name": "itemId",
                         "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
                         },
                         "args": []
                     },
                     {
                         "name": "totalViewCount",
                         "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
                         },
                         "args": []
                     }
@@ -5343,6 +5490,42 @@
             },
             {
                 "kind": "OBJECT",
+                "name": "analytics_ItemTotalViews_mutation_response",
+                "fields": [
+                    {
+                        "name": "affected_rows",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "returning",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "LIST",
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "analytics_ItemTotalViews",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
                 "name": "analytics_ItemTotalViews_stddev_fields",
                 "fields": [
                     {
@@ -5453,49 +5636,56 @@
                     {
                         "name": "count",
                         "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": [
-                            {
-                                "name": "path",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
                             }
-                        ]
+                        },
+                        "args": []
                     },
                     {
                         "name": "created_at",
                         "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
                         },
                         "args": []
                     },
                     {
                         "name": "id",
                         "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "name",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
                         },
                         "args": []
                     },
                     {
                         "name": "room",
                         "type": {
-                            "kind": "OBJECT",
-                            "name": "room_Room",
-                            "ofType": null
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "room_Room",
+                                "ofType": null
+                            }
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "roomId",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
                         },
                         "args": []
                     }
@@ -5540,6 +5730,15 @@
                 "kind": "OBJECT",
                 "name": "analytics_RoomPresence_aggregate_fields",
                 "fields": [
+                    {
+                        "name": "avg",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_avg_fields",
+                            "ofType": null
+                        },
+                        "args": []
+                    },
                     {
                         "name": "count",
                         "type": {
@@ -5589,6 +5788,84 @@
                             "ofType": null
                         },
                         "args": []
+                    },
+                    {
+                        "name": "stddev",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_stddev_fields",
+                            "ofType": null
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "stddev_pop",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_stddev_pop_fields",
+                            "ofType": null
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "stddev_samp",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_stddev_samp_fields",
+                            "ofType": null
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "sum",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_sum_fields",
+                            "ofType": null
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "var_pop",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_var_pop_fields",
+                            "ofType": null
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "var_samp",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_var_samp_fields",
+                            "ofType": null
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "variance",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_variance_fields",
+                            "ofType": null
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence_avg_fields",
+                "fields": [
+                    {
+                        "name": "count",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
                     }
                 ],
                 "interfaces": []
@@ -5597,6 +5874,14 @@
                 "kind": "OBJECT",
                 "name": "analytics_RoomPresence_max_fields",
                 "fields": [
+                    {
+                        "name": "count",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
                     {
                         "name": "created_at",
                         "type": {
@@ -5614,7 +5899,7 @@
                         "args": []
                     },
                     {
-                        "name": "name",
+                        "name": "roomId",
                         "type": {
                             "kind": "SCALAR",
                             "name": "Any"
@@ -5629,6 +5914,14 @@
                 "name": "analytics_RoomPresence_min_fields",
                 "fields": [
                     {
+                        "name": "count",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    },
+                    {
                         "name": "created_at",
                         "type": {
                             "kind": "SCALAR",
@@ -5645,7 +5938,148 @@
                         "args": []
                     },
                     {
-                        "name": "name",
+                        "name": "roomId",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence_mutation_response",
+                "fields": [
+                    {
+                        "name": "affected_rows",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Any"
+                            }
+                        },
+                        "args": []
+                    },
+                    {
+                        "name": "returning",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "LIST",
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "analytics_RoomPresence",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence_stddev_fields",
+                "fields": [
+                    {
+                        "name": "count",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence_stddev_pop_fields",
+                "fields": [
+                    {
+                        "name": "count",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence_stddev_samp_fields",
+                "fields": [
+                    {
+                        "name": "count",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence_sum_fields",
+                "fields": [
+                    {
+                        "name": "count",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence_var_pop_fields",
+                "fields": [
+                    {
+                        "name": "count",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence_var_samp_fields",
+                "fields": [
+                    {
+                        "name": "count",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": []
+                    }
+                ],
+                "interfaces": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence_variance_fields",
+                "fields": [
+                    {
+                        "name": "count",
                         "type": {
                             "kind": "SCALAR",
                             "name": "Any"
@@ -6133,910 +6567,6 @@
                 "fields": [
                     {
                         "name": "hlsViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews",
-                "fields": [
-                    {
-                        "name": "elementId",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_aggregate",
-                "fields": [
-                    {
-                        "name": "aggregate",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_aggregate_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "nodes",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "LIST",
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "analytics_mat_ElementTotalViews",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_aggregate_fields",
-                "fields": [
-                    {
-                        "name": "avg",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_avg_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "count",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "Any"
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "columns",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "distinct",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "max",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_max_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "min",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_min_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "stddev",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_stddev_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "stddev_pop",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_stddev_pop_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "stddev_samp",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_stddev_samp_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "sum",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_sum_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "var_pop",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_var_pop_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "var_samp",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_var_samp_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "variance",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ElementTotalViews_variance_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_avg_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_max_fields",
-                "fields": [
-                    {
-                        "name": "elementId",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_min_fields",
-                "fields": [
-                    {
-                        "name": "elementId",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_stddev_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_stddev_pop_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_stddev_samp_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_sum_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_var_pop_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_var_samp_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ElementTotalViews_variance_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews",
-                "fields": [
-                    {
-                        "name": "itemId",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_aggregate",
-                "fields": [
-                    {
-                        "name": "aggregate",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_aggregate_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "nodes",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "LIST",
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "analytics_mat_ItemTotalViews",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_aggregate_fields",
-                "fields": [
-                    {
-                        "name": "avg",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_avg_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "count",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "Any"
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "columns",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "distinct",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "max",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_max_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "min",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_min_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "stddev",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_stddev_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "stddev_pop",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_stddev_pop_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "stddev_samp",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_stddev_samp_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "sum",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_sum_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "var_pop",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_var_pop_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "var_samp",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_var_samp_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "variance",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_ItemTotalViews_variance_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_avg_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_max_fields",
-                "fields": [
-                    {
-                        "name": "itemId",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_min_fields",
-                "fields": [
-                    {
-                        "name": "itemId",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_stddev_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_stddev_pop_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_stddev_samp_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_sum_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_var_pop_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_var_samp_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_ItemTotalViews_variance_fields",
-                "fields": [
-                    {
-                        "name": "totalViewCount",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_RoomPresence",
-                "fields": [
-                    {
-                        "name": "count",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": [
-                            {
-                                "name": "path",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "created_at",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "id",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "name",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_RoomPresence_aggregate",
-                "fields": [
-                    {
-                        "name": "aggregate",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_RoomPresence_aggregate_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "nodes",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "LIST",
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "analytics_mat_RoomPresence",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_RoomPresence_aggregate_fields",
-                "fields": [
-                    {
-                        "name": "count",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "Any"
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "columns",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "distinct",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "max",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_RoomPresence_max_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "min",
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "analytics_mat_RoomPresence_min_fields",
-                            "ofType": null
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_RoomPresence_max_fields",
-                "fields": [
-                    {
-                        "name": "created_at",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "id",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "name",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    }
-                ],
-                "interfaces": []
-            },
-            {
-                "kind": "OBJECT",
-                "name": "analytics_mat_RoomPresence_min_fields",
-                "fields": [
-                    {
-                        "name": "created_at",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "id",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Any"
-                        },
-                        "args": []
-                    },
-                    {
-                        "name": "name",
                         "type": {
                             "kind": "SCALAR",
                             "name": "Any"
@@ -14633,6 +14163,132 @@
                         "args": []
                     },
                     {
+                        "name": "events",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "LIST",
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "schedule_Event",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "args": [
+                            {
+                                "name": "distinct_on",
+                                "type": {
+                                    "kind": "LIST",
+                                    "ofType": {
+                                        "kind": "NON_NULL",
+                                        "ofType": {
+                                            "kind": "SCALAR",
+                                            "name": "Any"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "name": "limit",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "offset",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "order_by",
+                                "type": {
+                                    "kind": "LIST",
+                                    "ofType": {
+                                        "kind": "NON_NULL",
+                                        "ofType": {
+                                            "kind": "SCALAR",
+                                            "name": "Any"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "name": "where",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "events_aggregate",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "schedule_Event_aggregate",
+                                "ofType": null
+                            }
+                        },
+                        "args": [
+                            {
+                                "name": "distinct_on",
+                                "type": {
+                                    "kind": "LIST",
+                                    "ofType": {
+                                        "kind": "NON_NULL",
+                                        "ofType": {
+                                            "kind": "SCALAR",
+                                            "name": "Any"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "name": "limit",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "offset",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "order_by",
+                                "type": {
+                                    "kind": "LIST",
+                                    "ofType": {
+                                        "kind": "NON_NULL",
+                                        "ofType": {
+                                            "kind": "SCALAR",
+                                            "name": "Any"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "name": "where",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "name": "exhibitions",
                         "type": {
                             "kind": "NON_NULL",
@@ -18699,6 +18355,22 @@
                             "name": "Any"
                         },
                         "args": []
+                    },
+                    {
+                        "name": "source",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": [
+                            {
+                                "name": "path",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
                     },
                     {
                         "name": "stats",
@@ -27771,6 +27443,126 @@
                         ]
                     },
                     {
+                        "name": "delete_analytics_ElementTotalViews",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ElementTotalViews_mutation_response",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "where",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delete_analytics_ElementTotalViews_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ElementTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "elementId",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delete_analytics_ItemTotalViews",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ItemTotalViews_mutation_response",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "where",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delete_analytics_ItemTotalViews_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ItemTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "itemId",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delete_analytics_RoomPresence",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_mutation_response",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "where",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delete_analytics_RoomPresence_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "id",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "name": "delete_analytics_RoomStats",
                         "type": {
                             "kind": "OBJECT",
@@ -31593,6 +31385,186 @@
                         "type": {
                             "kind": "OBJECT",
                             "name": "analytics_ContentItemStats",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "object",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "on_conflict",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "insert_analytics_ElementTotalViews",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ElementTotalViews_mutation_response",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "objects",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "LIST",
+                                        "ofType": {
+                                            "kind": "NON_NULL",
+                                            "ofType": {
+                                                "kind": "SCALAR",
+                                                "name": "Any"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "name": "on_conflict",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "insert_analytics_ElementTotalViews_one",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ElementTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "object",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "on_conflict",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "insert_analytics_ItemTotalViews",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ItemTotalViews_mutation_response",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "objects",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "LIST",
+                                        "ofType": {
+                                            "kind": "NON_NULL",
+                                            "ofType": {
+                                                "kind": "SCALAR",
+                                                "name": "Any"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "name": "on_conflict",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "insert_analytics_ItemTotalViews_one",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ItemTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "object",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "on_conflict",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "insert_analytics_RoomPresence",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_mutation_response",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "objects",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "LIST",
+                                        "ofType": {
+                                            "kind": "NON_NULL",
+                                            "ofType": {
+                                                "kind": "SCALAR",
+                                                "name": "Any"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "name": "on_conflict",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "insert_analytics_RoomPresence_one",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence",
                             "ofType": null
                         },
                         "args": [
@@ -37488,6 +37460,210 @@
                         "type": {
                             "kind": "OBJECT",
                             "name": "analytics_ContentItemStats",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "_inc",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "_set",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "pk_columns",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "update_analytics_ElementTotalViews",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ElementTotalViews_mutation_response",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "_inc",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "_set",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "where",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "update_analytics_ElementTotalViews_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ElementTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "_inc",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "_set",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "pk_columns",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "update_analytics_ItemTotalViews",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ItemTotalViews_mutation_response",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "_inc",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "_set",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "where",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "update_analytics_ItemTotalViews_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ItemTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "_inc",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "_set",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "pk_columns",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "update_analytics_RoomPresence",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence_mutation_response",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "_inc",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "_set",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            },
+                            {
+                                "name": "where",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "update_analytics_RoomPresence_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence",
                             "ofType": null
                         },
                         "args": [
@@ -44769,6 +44945,26 @@
                         ]
                     },
                     {
+                        "name": "analytics_ElementTotalViews_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ElementTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "elementId",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "name": "analytics_ItemTotalViews",
                         "type": {
                             "kind": "NON_NULL",
@@ -44895,6 +45091,26 @@
                         ]
                     },
                     {
+                        "name": "analytics_ItemTotalViews_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ItemTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "itemId",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "name": "analytics_RoomPresence",
                         "type": {
                             "kind": "NON_NULL",
@@ -45016,6 +45232,26 @@
                                 "type": {
                                     "kind": "SCALAR",
                                     "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytics_RoomPresence_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "id",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
                                 }
                             }
                         ]
@@ -45162,384 +45398,6 @@
                                         "kind": "SCALAR",
                                         "name": "Any"
                                     }
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_ElementTotalViews",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "LIST",
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "analytics_mat_ElementTotalViews",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_ElementTotalViews_aggregate",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "analytics_mat_ElementTotalViews_aggregate",
-                                "ofType": null
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_ItemTotalViews",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "LIST",
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "analytics_mat_ItemTotalViews",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_ItemTotalViews_aggregate",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "analytics_mat_ItemTotalViews_aggregate",
-                                "ofType": null
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_RoomPresence",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "LIST",
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "analytics_mat_RoomPresence",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_RoomPresence_aggregate",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "analytics_mat_RoomPresence_aggregate",
-                                "ofType": null
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
                                 }
                             }
                         ]
@@ -61830,6 +61688,22 @@
                         "args": []
                     },
                     {
+                        "name": "invitationStatus",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Any"
+                        },
+                        "args": [
+                            {
+                                "name": "path",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "name": "inviteSent",
                         "type": {
                             "kind": "SCALAR",
@@ -75300,6 +75174,26 @@
                         ]
                     },
                     {
+                        "name": "analytics_ElementTotalViews_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ElementTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "elementId",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "name": "analytics_ItemTotalViews",
                         "type": {
                             "kind": "NON_NULL",
@@ -75426,6 +75320,26 @@
                         ]
                     },
                     {
+                        "name": "analytics_ItemTotalViews_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_ItemTotalViews",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "itemId",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "name": "analytics_RoomPresence",
                         "type": {
                             "kind": "NON_NULL",
@@ -75547,6 +75461,26 @@
                                 "type": {
                                     "kind": "SCALAR",
                                     "name": "Any"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytics_RoomPresence_by_pk",
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "analytics_RoomPresence",
+                            "ofType": null
+                        },
+                        "args": [
+                            {
+                                "name": "id",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
                                 }
                             }
                         ]
@@ -75693,384 +75627,6 @@
                                         "kind": "SCALAR",
                                         "name": "Any"
                                     }
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_ElementTotalViews",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "LIST",
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "analytics_mat_ElementTotalViews",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_ElementTotalViews_aggregate",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "analytics_mat_ElementTotalViews_aggregate",
-                                "ofType": null
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_ItemTotalViews",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "LIST",
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "analytics_mat_ItemTotalViews",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_ItemTotalViews_aggregate",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "analytics_mat_ItemTotalViews_aggregate",
-                                "ofType": null
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_RoomPresence",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "LIST",
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "analytics_mat_RoomPresence",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytics_mat_RoomPresence_aggregate",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "analytics_mat_RoomPresence_aggregate",
-                                "ofType": null
-                            }
-                        },
-                        "args": [
-                            {
-                                "name": "distinct_on",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "limit",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "offset",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
-                                }
-                            },
-                            {
-                                "name": "order_by",
-                                "type": {
-                                    "kind": "LIST",
-                                    "ofType": {
-                                        "kind": "NON_NULL",
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "Any"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "name": "where",
-                                "type": {
-                                    "kind": "SCALAR",
-                                    "name": "Any"
                                 }
                             }
                         ]

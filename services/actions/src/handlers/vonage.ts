@@ -24,6 +24,8 @@ import {
     Registrant_RegistrantRole_Enum,
     Room_Mode_Enum,
     SaveVonageRoomRecordingDocument,
+    Schedule_EventProgramPersonRole_Enum,
+    VonageJoinRoom_GetInfoDocument,
     Vonage_GetEventDetailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
@@ -443,12 +445,11 @@ export async function handleJoinEvent(
         });
     }
 
-    const isChairOrConferenceOrganizerOrConferenceModerator =
+    const isPresenterOrChairOrConferenceOrganizerOrConferenceModerator =
         result.data.schedule_Event_by_pk.eventPeople.some(
             (eventPerson) =>
-                eventPerson.roleName.toUpperCase() === "CHAIR" ||
-                eventPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
-                eventPerson.roleName.toUpperCase() === "ORGANIZER"
+                eventPerson.roleName === Schedule_EventProgramPersonRole_Enum.Presenter ||
+                eventPerson.roleName === Schedule_EventProgramPersonRole_Enum.Chair
         ) ||
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
@@ -460,7 +461,7 @@ export async function handleJoinEvent(
     try {
         const accessToken = Vonage.vonage.generateToken(vonageSessionId, {
             data: JSON.stringify(connectionData),
-            role: isChairOrConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
+            role: isPresenterOrChairOrConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
         });
 
         const recordingId = await addRegistrantToVonageRecording(
@@ -485,10 +486,17 @@ export async function handleJoinEvent(
 }
 
 gql`
-    query GetRoomThatUserCanJoin($roomId: uuid, $userId: String) {
-        room_Room_by_pk(id: { _eq: $roomId }) {
+    query VonageJoinRoom_GetInfo($roomId: uuid!, $registrantId: uuid!) {
+        room_Room_by_pk(id: $roomId) {
             id
-            publicVonageSessionId
+            originatingItem {
+                id
+                itemPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
+                    id
+                    roleName
+                    personId
+                }
+            }
         }
     }
 `;
@@ -532,11 +540,6 @@ export async function handleJoinRoom(
         });
     }
 
-    const connectionData: CustomConnectionData = {
-        registrantId: payload.registrantId,
-        userId,
-    };
-
     const registrant = await getRegistrantDetails(payload.registrantId);
 
     if (!registrant) {
@@ -547,13 +550,40 @@ export async function handleJoinRoom(
         });
     }
 
-    const isConferenceOrganizerOrConferenceModerator =
+    const connectionData: CustomConnectionData = {
+        registrantId: payload.registrantId,
+        userId,
+    };
+
+    const roomInfo = await apolloClient.query({
+        query: VonageJoinRoom_GetInfoDocument,
+        variables: {
+            roomId: payload.roomId,
+            registrantId: registrant.id,
+        },
+    });
+    if (!roomInfo.data?.room_Room_by_pk) {
+        console.warn("User tried to join a Vonage room, but the system could not retrieve the room information.", {
+            payload,
+            userId,
+        });
+        throw new Error("Failed to fetch room information");
+    }
+
+    const isPresenterOrChairOrConferenceOrganizerOrConferenceModerator =
+        !!roomInfo.data.room_Room_by_pk.originatingItem?.itemPeople.some(
+            (person) =>
+                person.roleName.toUpperCase() === "AUTHOR" ||
+                person.roleName.toUpperCase() === "PRESENTER" ||
+                person.roleName.toUpperCase() === "CHAIR" ||
+                person.roleName.toUpperCase() === "SESSION ORGANIZER" ||
+                person.roleName.toUpperCase() === "ORGANIZER"
+        ) ||
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
-
     const accessToken = Vonage.vonage.generateToken(sessionId, {
         data: JSON.stringify(connectionData),
-        role: isConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
+        role: isPresenterOrChairOrConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
     });
 
     const recordingId = await addRegistrantToVonageRecording(payload.roomId, sessionId, registrant.id).catch(

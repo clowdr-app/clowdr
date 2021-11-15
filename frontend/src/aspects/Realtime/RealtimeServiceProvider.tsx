@@ -11,16 +11,24 @@ export function useRealtimeService(): RealtimeService {
 export function RealtimeServiceProvider({
     children,
     token,
+    reconnect,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
-    token: string;
+    token: string | null;
+    reconnect: () => Promise<void>;
 }): JSX.Element {
     useEffect(() => {
-        realtimeService.begin(token);
+        if (token) {
+            realtimeService.begin(token);
+        }
         return () => {
             realtimeService.end();
         };
     }, [token]);
+
+    useEffect(() => {
+        realtimeService.setReconnect(reconnect);
+    }, [reconnect]);
 
     return <RealtimeServiceContext.Provider value={realtimeService}>{children}</RealtimeServiceContext.Provider>;
 }

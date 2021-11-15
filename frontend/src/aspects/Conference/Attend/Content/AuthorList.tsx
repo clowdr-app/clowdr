@@ -231,7 +231,7 @@ export function AuthorInner({
             ? "ProgramPersonTileRoleNameBadge.presenterColor"
             : programPersonData.roleName.toUpperCase() === "DISCUSSANT"
             ? "ProgramPersonTileRoleNameBadge.discussantColor"
-            : programPersonData.roleName.toUpperCase() === "SESSION_ORGANIZER"
+            : programPersonData.roleName.toUpperCase() === "SESSION ORGANIZER"
             ? "ProgramPersonTileRoleNameBadge.sessionOrganizerColor"
             : undefined) ?? "ProgramPersonTileRoleNameBadge.defaultColor"
     );
@@ -303,7 +303,7 @@ function AuthorWithProfileContent({
             ? "ProgramPersonTileRoleNameBadge.presenterColor"
             : programPersonData.roleName.toUpperCase() === "DISCUSSANT"
             ? "ProgramPersonTileRoleNameBadge.discussantColor"
-            : programPersonData.roleName.toUpperCase() === "SESSION_ORGANIZER"
+            : programPersonData.roleName.toUpperCase() === "SESSION ORGANIZER"
             ? "ProgramPersonTileRoleNameBadge.sessionOrganizerColor"
             : undefined) ?? "ProgramPersonTileRoleNameBadge.defaultColor"
     );

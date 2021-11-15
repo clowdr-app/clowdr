@@ -70,6 +70,11 @@ array_relationships:
         name: SubconferenceMembership
         schema: registrant
 computed_fields:
+- definition:
+    function:
+      name: InvitationEmailStatus
+      schema: registrant
+  name: invitationStatus
 - comment: ""
   definition:
     function:
@@ -170,6 +175,7 @@ select_permissions:
     - conferenceId
     - id
     computed_fields:
+    - invitationStatus
     - inviteSent
     filter:
       userId:

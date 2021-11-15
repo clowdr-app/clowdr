@@ -2,6 +2,7 @@ import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { validate as uuidValidate } from "uuid";
+import { logger } from "../../lib/logger";
 import { action } from "../../rabbitmq/chat/messages";
 import type { Action, Message } from "../../types/chat";
 
@@ -23,12 +24,12 @@ export function onSend(userId: string, socketId: string, socket: Socket): (messa
                 } else {
                     socket.emit("chat.messages.send.nack", actionData.data.sId);
                 }
-            } catch (e) {
-                console.error(`Error processing chat.messages.send (socket: ${socketId})`, e, actionData);
+            } catch (error: any) {
+                logger.error({ error, actionData }, `Error processing chat.messages.send (socket: ${socketId})`);
                 try {
                     socket.emit("chat.messages.send.nack", actionData.sId);
                 } catch (e2) {
-                    console.error(`Error nacking chat.messages.send (socket: ${socketId})`, e, actionData);
+                    logger.error({ error, actionData }, `Error nacking chat.messages.send (socket: ${socketId})`);
                 }
             }
         }

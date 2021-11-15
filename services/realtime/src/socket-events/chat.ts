@@ -1,6 +1,7 @@
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import type { Socket } from "socket.io";
 import { allSocketsAndUserIds, chatListenersKeyName, socketChatsKeyName, socketUserKeyName } from "../lib/chat";
+import { logger } from "../lib/logger";
 import { socketServer } from "../servers/socket-server";
 import * as chat from "../socket-handlers/chat/chat";
 import * as chat_messages from "../socket-handlers/chat/messages";
@@ -43,8 +44,8 @@ export function onConnect(socket: Socket, userId: string): void {
 export async function onDisconnect(socketId: string, userId: string): Promise<void> {
     try {
         await exitChats(socketId, userId);
-    } catch (e) {
-        console.error(`Error exiting all presences on socket ${socketId}`, e);
+    } catch (error: any) {
+        logger.error({ error }, `Error exiting all presences on socket ${socketId}`);
     }
 }
 
@@ -53,7 +54,7 @@ async function exitChats(socketId: string, userId: string, log = false) {
     try {
         const chatIds = await redisClientP.smembers(redisClient)(socketChatsKeyName(socketId));
         if (log) {
-            console.info(
+            logger.info(
                 `Exiting chats for ${socketId} / ${userId}:${chatIds.reduce(
                     (acc, chatId) => `${acc}
     - ${chatId}`,
@@ -79,7 +80,7 @@ export async function invalidateSessions(): Promise<void> {
         await Promise.all(
             deadSocketInfos.map(async (socketInfo) => exitChats(socketInfo.socketId, socketInfo.userId, true))
         );
-    } catch (e) {
-        console.warn("Could not list all sockets to try to exit chats", e);
+    } catch (error: any) {
+        logger.warn({ error }, "Could not list all sockets to try to exit chats");
     }
 }

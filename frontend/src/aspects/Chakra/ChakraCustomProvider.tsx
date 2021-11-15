@@ -87,6 +87,11 @@ const baseThemeExtensions = {
         "bottom-popup-dark": "0px -1px 4px 0px rgba(255,255,255,0.25)",
     },
     components: {
+        Toast: {
+            defaultProps: {
+                variant: "solid",
+            },
+        },
         Button,
         Heading: {
             baseStyle: {
@@ -111,7 +116,7 @@ const baseThemeExtensions = {
     },
 };
 
-export const theme = extendTheme(baseThemeExtensions);
+export let theme: any;
 
 interface ConferenceThemeContext {
     theme: Partial<ComponentMap> | undefined;
@@ -130,7 +135,7 @@ export default function ChakraCustomProvider({
     children: JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
     const [conferenceComponentMap, setConferenceComponentMap] = useState<Partial<ComponentMap> | undefined>(undefined);
-    const finalTheme = useMemo(
+    theme = useMemo(
         () =>
             conferenceComponentMap
                 ? extendTheme(baseThemeExtensions, {
@@ -151,7 +156,7 @@ export default function ChakraCustomProvider({
 
     return (
         <ConferenceThemeContext.Provider value={ctx}>
-            <ChakraProvider theme={finalTheme}>
+            <ChakraProvider theme={theme}>
                 <PortalManager>{children}</PortalManager>
             </ChakraProvider>
         </ConferenceThemeContext.Provider>

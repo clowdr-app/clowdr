@@ -17,6 +17,7 @@ import {
     Schedule_EventProgramPersonRole_Enum,
 } from "../generated/graphql";
 import { generateEventHandsRaisedKeyName, generateEventHandsRaisedRoomName } from "../lib/handRaise";
+import { logger } from "../lib/logger";
 import { canAccessEvent } from "../lib/permissions";
 import { socketServer } from "../servers/socket-server";
 
@@ -72,8 +73,11 @@ export function onRaiseHand(userId: string, socketId: string, _socket: Socket): 
                         .in(generateEventHandsRaisedRoomName(eventId))
                         .emit("event.handRaise.raised", { eventId, userId });
                 }
-            } catch (e) {
-                console.error(`Error processing event.handRaise.raise (socket: ${socketId}, eventId: ${eventId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing event.handRaise.raise (socket: ${socketId}, eventId: ${eventId})`
+                );
             }
         }
     };
@@ -97,8 +101,11 @@ export function onLowerHand(userId: string, socketId: string, _socket: Socket): 
                         .in(generateEventHandsRaisedRoomName(eventId))
                         .emit("event.handRaise.lowered", { eventId, userId });
                 }
-            } catch (e) {
-                console.error(`Error processing event.handRaise.lower (socket: ${socketId}, eventId: ${eventId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing event.handRaise.lower (socket: ${socketId}, eventId: ${eventId})`
+                );
             }
         }
     };
@@ -123,8 +130,11 @@ export function onFetchHandsRaised(userId: string, socketId: string, socket: Soc
                         redisClientPool.release("socket-handlers/handRaise/onFetchHandsRaised", redisClient);
                     }
                 }
-            } catch (e) {
-                console.error(`Error processing event.handRaise.fetch (socket: ${socketId}, eventId: ${eventId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing event.handRaise.fetch (socket: ${socketId}, eventId: ${eventId})`
+                );
             }
         }
     };
@@ -217,8 +227,11 @@ export function onAcceptHandRaised(
                         }
                     }
                 }
-            } catch (e) {
-                console.error(`Error processing event.handRaise.accept (socket: ${socketId}, eventId: ${eventId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing event.handRaise.accept (socket: ${socketId}, eventId: ${eventId})`
+                );
             }
         }
     };
@@ -249,8 +262,11 @@ export function onRejectHandRaised(
                         .in(generateEventHandsRaisedRoomName(eventId))
                         .emit("event.handRaise.rejected", { eventId, userId: targetUserId });
                 }
-            } catch (e) {
-                console.error(`Error processing event.handRaise.reject (socket: ${socketId}, eventId: ${eventId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing event.handRaise.reject (socket: ${socketId}, eventId: ${eventId})`
+                );
             }
         }
     };
@@ -268,8 +284,11 @@ export function onObserveEvent(userId: string, socketId: string, socket: Socket)
                 ) {
                     await socket.join(generateEventHandsRaisedRoomName(eventId));
                 }
-            } catch (e) {
-                console.error(`Error processing event.handRaise.observe (socket: ${socketId}, eventId: ${eventId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing event.handRaise.observe (socket: ${socketId}, eventId: ${eventId})`
+                );
             }
         }
     };
@@ -297,10 +316,10 @@ export function onUnobserveEvent(_userId: string, socketId: string, socket: Sock
                 // ) {
                 await socket.leave(generateEventHandsRaisedRoomName(eventId));
                 // }
-            } catch (e) {
-                console.error(
-                    `Error processing event.handRaise.unobserve (socket: ${socketId}, eventId: ${eventId})`,
-                    e
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing event.handRaise.unobserve (socket: ${socketId}, eventId: ${eventId})`
                 );
             }
         }

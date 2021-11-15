@@ -52,7 +52,7 @@ function UrqlProviderInner({
     getAccessTokenSilently: (options?: any) => Promise<string>;
 }): JSX.Element {
     const [client, setClient] = useState<UrqlClient | null>(null);
-    const [realtimeToken, setPresenceToken] = useState<string | null>(null);
+    const [realtimeToken, setRealtimeToken] = useState<string | null>(null);
 
     const mutex = useRef(new Mutex());
     const isReconnecting = useRef(false);
@@ -182,9 +182,9 @@ function UrqlProviderInner({
 
                     if (isAuthenticated) {
                         const newPresenceToken = await getAccessTokenSilently();
-                        setPresenceToken(newPresenceToken);
+                        setRealtimeToken(newPresenceToken);
                     } else {
-                        setPresenceToken(null);
+                        setRealtimeToken(null);
                     }
 
                     cb?.();
@@ -215,6 +215,10 @@ function UrqlProviderInner({
         }),
         [reconnect]
     );
+    const reconnectRealtime = useCallback(async () => {
+        const newToken = await getAccessTokenSilently();
+        setRealtimeToken(newToken);
+    }, [getAccessTokenSilently]);
 
     if (!client) {
         return <>Loading...</>;
@@ -222,15 +226,11 @@ function UrqlProviderInner({
 
     return (
         <UrqlContext.Provider value={ctx}>
-            {realtimeToken ? (
-                <RealtimeServiceProvider token={realtimeToken}>
-                    <PresenceStateProvider>
-                        <Provider value={client}>{children}</Provider>
-                    </PresenceStateProvider>
-                </RealtimeServiceProvider>
-            ) : (
-                <Provider value={client}>{children}</Provider>
-            )}
+            <RealtimeServiceProvider token={realtimeToken} reconnect={reconnectRealtime}>
+                <PresenceStateProvider>
+                    <Provider value={client}>{children}</Provider>
+                </PresenceStateProvider>
+            </RealtimeServiceProvider>
         </UrqlContext.Provider>
     );
 }

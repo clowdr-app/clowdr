@@ -2,6 +2,7 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import type { RenderProps } from "@chakra-ui/react";
 import { Box, Button, ButtonGroup, CloseButton, createStandaloneToast, Heading, VStack } from "@chakra-ui/react";
+import { datadogLogs } from "@datadog/browser-logs";
 import { assert } from "@midspace/assert";
 import type { Client } from "@urql/core";
 import { CombinedError, gql } from "@urql/core";
@@ -362,7 +363,7 @@ export class MessageState {
             this.reactions.push(fullRct);
             this.reactionsObs.publish([...this.reactions]);
         } catch (e) {
-            console.error(`Error adding reaction: ${this.sId} / ${rct.symbol}`, e);
+            datadogLogs.logger.error(`Error adding reaction: ${this.sId} / ${rct.symbol}`, { error: e });
         }
     }
     public async deleteReaction(reactionSId: string): Promise<void> {
@@ -379,7 +380,7 @@ export class MessageState {
             this.reactions = this.reactions.filter((x) => x.sId !== reactionSId);
             this.reactionsObs.publish([...this.reactions]);
         } catch (e) {
-            console.error(`Error adding reaction: ${this.sId} / ${reactionSId}`, e);
+            datadogLogs.logger.error(`Error deleting reaction: ${this.sId} / ${reactionSId}`, { error: e });
         }
     }
     public get Reactions(): Observable<ChatReactionDataFragment[]> {
@@ -631,7 +632,7 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            console.error(`Error toggling chat pin: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error toggling chat pin: ${this.Id}`, { error: e });
         } finally {
             this.isTogglingPinned = false;
             release();
@@ -639,9 +640,10 @@ export class ChatState {
             this.isPinnedObs.publish(this.isPinned);
         }
     }
-    public async setIsPinned(value: boolean): Promise<void> {
+    public async setIsPinned_NoMutation(value: boolean): Promise<void> {
         if (value !== this.isPinned) {
-            await this.togglePinned();
+            this.isPinned = !this.isPinned;
+            this.isPinnedObs.publish(this.isPinned);
         }
     }
 
@@ -733,7 +735,7 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            console.error(`Error toggling chat subscription: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error toggling chat subscription: ${this.Id}`, { error: e });
         } finally {
             this.isTogglingSubscribed = false;
             release();
@@ -741,9 +743,10 @@ export class ChatState {
             this.isSubscribedObs.publish(this.isSubscribed);
         }
     }
-    public async setIsSubscribed(value: boolean): Promise<void> {
+    public async setIsSubscribed_NoMutation(value: boolean): Promise<void> {
         if (value !== this.isSubscribed) {
-            await this.toggleSubscribed();
+            this.isSubscribed = !this.isSubscribed;
+            this.isSubscribedObs.publish(this.isSubscribed);
         }
     }
 
@@ -780,28 +783,29 @@ export class ChatState {
     public get IsLoadingMessages(): Observable<boolean> {
         return this.isLoadingMessagesObs;
     }
-    public async loadMoreMessages(pageSize: number = ChatState.DefaultPageSize): Promise<void> {
+    public async loadMoreMessages(
+        pageSize: number = ChatState.DefaultPageSize,
+        startAtIndex = this.lastHistoricallyFetchedMessageId
+    ): Promise<void> {
         const release = await this.messagesMutex.acquire();
         this.isLoadingMessages = true;
         this.isLoadingMessagesObs.publish(this.isLoadingMessages);
 
         let newMessageStates: MessageState[] | undefined;
+        const isNewMessages = startAtIndex === Math.pow(2, 31) - 1;
 
         try {
-            if (this.lastHistoricallyFetchedMessageId !== -1) {
+            if (startAtIndex !== -1) {
                 const result = await this.globalState.client
                     .query<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(
                         SelectMessagesPageDocument,
                         {
                             chatId: this.Id,
                             maxCount: pageSize,
-                            startAtIndex: this.lastHistoricallyFetchedMessageId,
+                            startAtIndex: startAtIndex,
                         },
                         {
-                            requestPolicy:
-                                this.lastHistoricallyFetchedMessageId === Math.pow(2, 31) - 1
-                                    ? "network-only"
-                                    : undefined,
+                            requestPolicy: startAtIndex === Math.pow(2, 31) - 1 ? "network-only" : undefined,
                             fetchOptions: {
                                 headers:
                                     this.DMRoomId || this.NonDMRoomId
@@ -860,7 +864,7 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            console.error(`Error loading more messages: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error loading more messages: ${this.Id}`, { error: e });
         } finally {
             this.isLoadingMessages = false;
             release();
@@ -869,7 +873,7 @@ export class ChatState {
 
             if (newMessageStates && newMessageStates.length > 0) {
                 this.messagesObs.publish({
-                    op: "loaded_historic",
+                    op: isNewMessages ? "loaded_new" : "loaded_historic",
                     messages: newMessageStates,
                 });
                 this.mightHaveMoreMessagesObs.publish(this.lastHistoricallyFetchedMessageId !== -1);
@@ -886,7 +890,7 @@ export class ChatState {
     }
     public set connectionCount(value: number) {
         if (value < 0) {
-            console.error(`Chat connection count < 0! ${this.Id} @ ${value}`);
+            datadogLogs.logger.error(`Chat connection count < 0! ${this.Id} @ ${value}`);
         }
         this._connectionCount = value;
     }
@@ -898,10 +902,10 @@ export class ChatState {
             this.connectionCount++;
             this.lastDisconnect = null;
             if (this.connectionCount === 1) {
-                await this.applyConnect(false);
+                await this.applyConnect(false, false);
             }
         } catch (e) {
-            console.error(`Error subscribing to chat: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error subscribing to chat: ${this.Id}`, { error: e });
         } finally {
             release();
         }
@@ -913,23 +917,34 @@ export class ChatState {
             this.lastDisconnect = Date.now();
             this.connectionCount--;
         } catch (e) {
-            console.error(`Error unsubscribing from chat: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error unsubscribing from chat: ${this.Id}`, { error: e });
         } finally {
             release();
         }
 
         this.globalState.onChatChannelDisconnect();
     }
-    public async applyConnect(takeLock = true): Promise<void> {
+    public async applyConnect(takeLock = true, isReestablishingConnection = false): Promise<void> {
         const release = takeLock ? await this.subMutex.acquire() : undefined;
 
         try {
+            datadogLogs.logger.info("Chat: Applying connect", { chatId: this.Id });
+
             if (this.connectionCount <= 0) {
-                console.warn(`Applying chat connect when connection count <= 0! ${this.Id} @ ${this.connectionCount}`);
+                datadogLogs.logger.warn(
+                    `Applying chat connect when connection count <= 0! ${this.Id} @ ${this.connectionCount}`
+                );
             }
 
             const socket = this.globalState.socket;
+            if (!socket) {
+                datadogLogs.logger.info("Cannot subscribe to chat because there is no socket instance.");
+            }
             socket?.emit("chat.subscribe", this.Id);
+
+            if (isReestablishingConnection) {
+                this.loadMoreMessages(20, Math.pow(2, 31) - 1);
+            }
         } finally {
             release?.();
         }
@@ -938,6 +953,8 @@ export class ChatState {
         const release = await this.subMutex.acquire();
 
         try {
+            datadogLogs.logger.info("Chat: Applying disconnect", { chatId: this.Id });
+
             if (this.connectionCount > 0) {
                 return false;
             }
@@ -1003,7 +1020,7 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            console.error(`Error processing new messages from remote service: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error processing new messages from remote service: ${this.Id}`, { error: e });
         } finally {
             release();
             if (newMessageStates && newMessageStates.length > 0) {
@@ -1023,7 +1040,7 @@ export class ChatState {
                 deletedSId = msg.sId;
             }
         } catch (e) {
-            console.error(`Error processing removed messages from remote service: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error processing removed messages from remote service: ${this.Id}`, { error: e });
         } finally {
             release();
             if (deletedSId) {
@@ -1043,7 +1060,7 @@ export class ChatState {
                 existingMsg.update(msg);
             }
         } catch (e) {
-            console.error(`Error processing updated messages from remote service: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error processing updated messages from remote service: ${this.Id}`, { error: e });
         } finally {
             release();
         }
@@ -1106,9 +1123,18 @@ export class ChatState {
             };
             socket.emit("chat.messages.send", action);
             const ackdSId = await new Promise<string>((resolve, reject) => {
-                this.ackSendMessage = resolve;
+                const tId = setTimeout(() => {
+                    this.ackSendMessage = undefined;
+                    this.nackSendMessage = undefined;
+                    reject("Send timed out");
+                }, 10000);
+                this.ackSendMessage = (sId: string) => {
+                    clearTimeout(tId);
+                    resolve(sId);
+                };
                 this.nackSendMessage = (nackSId) => {
                     if (nackSId === sId) {
+                        clearTimeout(tId);
                         reject("Send nack'd");
                     }
                 };
@@ -1154,7 +1180,7 @@ export class ChatState {
                 throw new Error("New message mutation returned null or undefined");
             }
         } catch (e) {
-            console.error(`Failed to send message: ${this.Id}`, e);
+            datadogLogs.logger.error(`Failed to send message: ${this.Id}`, { error: e });
         } finally {
             this.isSending = false;
             release();
@@ -1170,7 +1196,7 @@ export class ChatState {
                 messageSIds: [messageSId],
             });
         } catch (e) {
-            console.error(`Error deleting message: ${this.Id} @ ${messageSId}`, e);
+            datadogLogs.logger.error(`Error deleting message: ${this.Id} @ ${messageSId}`, { error: e });
             throw e;
         } finally {
             release();
@@ -1297,7 +1323,9 @@ export class GlobalChatState {
         };
     }
 
-    private readonly toast = createStandaloneToast({ theme });
+    private get toast() {
+        return createStandaloneToast({ theme });
+    }
 
     private mutex = new Mutex();
     private hasInitialised = false;
@@ -1306,6 +1334,8 @@ export class GlobalChatState {
     private offSocketAvailable: (() => void) | null = null;
     private offSocketUnavailable: (() => void) | null = null;
     public async init(): Promise<void> {
+        datadogLogs.logger.info("Global Chat State: Initialising");
+
         const release = await this.mutex.acquire();
 
         try {
@@ -1317,7 +1347,7 @@ export class GlobalChatState {
                     this.offSocketAvailable = realtimeService.onSocketAvailable((socket) => {
                         this.socket = socket;
 
-                        console.info("Connection to chat established.");
+                        datadogLogs.logger.info("Connection to chat established.");
 
                         socket.on("notification", (notification: Notification) => {
                             // console.info("Notification", notification);
@@ -1415,19 +1445,19 @@ export class GlobalChatState {
                         socket.on("chat.subscribed", (chatId: string) => {
                             // console.info(`Chat subscribed: ${chatId}`);
                             const existing = this.chatStates?.get(chatId);
-                            existing?.setIsSubscribed(true);
+                            existing?.setIsSubscribed_NoMutation(true);
                         });
                         socket.on("chat.unsubscribed", (chatId: string) => {
                             // console.info(`Chat unsubscribed: ${chatId}`);
                             const existing = this.chatStates?.get(chatId);
-                            existing?.setIsSubscribed(false);
+                            existing?.setIsSubscribed_NoMutation(false);
                         });
 
                         socket.on("chat.pinned", async (chatId: string) => {
                             // console.info(`Chat pinned: ${chatId}`);
                             const existing = this.chatStates?.get(chatId);
                             if (existing) {
-                                existing.setIsPinned(true);
+                                existing.setIsPinned_NoMutation(true);
                             } else {
                                 try {
                                     const newlyPinSubChats = await this.client
@@ -1470,14 +1500,16 @@ export class GlobalChatState {
                                         release();
                                     }
                                 } catch (e) {
-                                    console.error(`Error initialising newly pinned chat: ${chatId}`, e);
+                                    datadogLogs.logger.error(`Error initialising newly pinned chat: ${chatId}`, {
+                                        error: e,
+                                    });
                                 }
                             }
                         });
                         socket.on("chat.unpinned", (chatId: string) => {
                             // console.info(`Chat unpinned: ${chatId}`);
                             const existing = this.chatStates?.get(chatId);
-                            existing?.setIsPinned(false);
+                            existing?.setIsPinned_NoMutation(false);
                         });
 
                         socket.on("chat.messages.receive", (msg: Message) => {
@@ -1540,7 +1572,7 @@ export class GlobalChatState {
                         if (this.chatStates) {
                             for (const chatState of this.chatStates) {
                                 if (chatState[1].connectionCount > 0) {
-                                    chatState[1].applyConnect();
+                                    chatState[1].applyConnect(true, true);
                                 }
                             }
                         }
@@ -1574,7 +1606,7 @@ export class GlobalChatState {
                         throw new Error("Data was undefined.");
                     }
 
-                    console.info("Initial chat data", initialData);
+                    datadogLogs.logger.info("Initial chat data obtained");
 
                     if (!this.chatStates) {
                         this.chatStates = new Map();
@@ -1593,7 +1625,7 @@ export class GlobalChatState {
                 }
             }
         } catch (e) {
-            console.error("Failed to initialise chat state", e);
+            datadogLogs.logger.error("Failed to initialise chat state", { error: e });
         } finally {
             release();
         }
@@ -1603,7 +1635,10 @@ export class GlobalChatState {
         const release = await this.mutex.acquire();
 
         try {
+            datadogLogs.logger.info("Global Chat State: Tearing down");
+
             this.offSocketAvailable?.();
+            this.offSocketUnavailable?.();
 
             if (!this.hasTorndown) {
                 this.hasTorndown = true;
@@ -1702,7 +1737,7 @@ export class GlobalChatState {
                 release();
             }
         } catch (e) {
-            console.error(`Failed to fetch chat: ${chatId}`, e);
+            datadogLogs.logger.error(`Failed to fetch chat: ${chatId}`, { error: e });
         }
     }
 
@@ -1750,7 +1785,7 @@ export class GlobalChatState {
                 );
                 this.chatStatesObs.publish(states);
             } catch (e) {
-                console.error("One or more errors tearing down old chats", e);
+                datadogLogs.logger.error("One or more errors tearing down old chats", { error: e });
             } finally {
                 release();
             }

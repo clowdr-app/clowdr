@@ -63,6 +63,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
             itemId,
             accessToken,
         },
+        requestPolicy: "network-only",
         context,
     });
 

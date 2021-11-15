@@ -2,6 +2,7 @@ import { redisClientP, redisClientPool } from "@midspace/component-clients/redis
 import assert from "assert";
 import { is } from "typescript-is";
 import { validate } from "uuid";
+import { logger } from "../lib/logger";
 
 export function onConnect(_userId: string, _socketId: string): void {
     // TODO
@@ -27,8 +28,8 @@ export function onViewCount(_userId: string, _socketId: string): (info: any) => 
             } finally {
                 redisClientPool.release("socket-handlers/analytics/onViewCount", client);
             }
-        } catch (e) {
-            console.error(e);
+        } catch (error: any) {
+            logger.error({ error }, "On view count error");
         }
     };
 }

@@ -1,3 +1,5 @@
+import { logger } from "../../lib/logger";
+
 export const MessageDistributionQueueSize = Math.max(
     1,
     parseInt(process.env.MESSAGE_DISTRIBUTION_QUEUE_SIZE ?? "", 10) || 5
@@ -23,9 +25,9 @@ export const ReactionWritebackIntervalMs = Math.max(
     parseInt(process.env.REACTION_WRITEBACK_INTERVAL ?? "", 10) || 5000
 );
 
-console.info(`MessageDistributionQueueSize=${MessageDistributionQueueSize}`);
-console.info(`MessageWritebackQueueSize=${MessageWritebackQueueSize}`);
-console.info(`MessageWritebackIntervalMs=${MessageWritebackIntervalMs}`);
-console.info(`ReactionDistributionQueueSize=${ReactionDistributionQueueSize}`);
-console.info(`ReactionWritebackQueueSize=${ReactionWritebackQueueSize}`);
-console.info(`ReactionWritebackIntervalMs=${ReactionWritebackIntervalMs}`);
+logger.info(`MessageDistributionQueueSize=${MessageDistributionQueueSize}`);
+logger.info(`MessageWritebackQueueSize=${MessageWritebackQueueSize}`);
+logger.info(`MessageWritebackIntervalMs=${MessageWritebackIntervalMs}`);
+logger.info(`ReactionDistributionQueueSize=${ReactionDistributionQueueSize}`);
+logger.info(`ReactionWritebackQueueSize=${ReactionWritebackQueueSize}`);
+logger.info(`ReactionWritebackIntervalMs=${ReactionWritebackIntervalMs}`);

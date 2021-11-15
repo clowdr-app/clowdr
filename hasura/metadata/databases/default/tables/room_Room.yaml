@@ -94,7 +94,7 @@ array_relationships:
   using:
     manual_configuration:
       column_mapping:
-        id: id
+        id: roomId
       insertion_order: null
       remote_table:
         name: RoomPresence
@@ -115,9 +115,11 @@ array_relationships:
         schema: room
 - name: stats
   using:
-    foreign_key_constraint_on:
-      column: roomId
-      table:
+    manual_configuration:
+      column_mapping:
+        id: roomId
+      insertion_order: null
+      remote_table:
         name: RoomStats
         schema: analytics
 - name: vonageParticipantStreams

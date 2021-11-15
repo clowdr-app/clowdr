@@ -11,7 +11,10 @@ async function main() {
     // Not needed because each of our microservice packages run "build shared"
     // exec(npmCommand, buildCmd, path.join(rootDir, "shared"));
 
-    if (process.env.PROCFILE === "Playout.Procfile") {
+    if (process.env.PROCFILE === "DD-Proxy.Procfile") {
+        await exec(npmCommand, installCmd, path.join(rootDir, "services/dd-proxy"));
+        await exec(npmCommand, buildCmd, path.join(rootDir, "services/dd-proxy"));
+    } else if (process.env.PROCFILE === "Playout.Procfile") {
         await exec(npmCommand, installCmd, path.join(rootDir, "services/playout"));
         await exec(npmCommand, buildCmd, path.join(rootDir, "services/playout"));
     } else if (process.env.PROCFILE === "Realtime.Procfile" || process.env.PROCFILE === "Realtime.Test.Procfile") {

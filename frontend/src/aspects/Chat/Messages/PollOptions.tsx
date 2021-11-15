@@ -30,9 +30,13 @@ function PollOption({ value, count, onClick }: { value: string; count: number; o
                     w="100%"
                     justifyContent="flex-start"
                     minH="100%"
+                    h="auto"
                     m={0}
-                    py={1}
+                    py={2}
                     px={2}
+                    whiteSpace="normal"
+                    overflowWrap="normal"
+                    textAlign="left"
                 >
                     {contents}
                 </Button>

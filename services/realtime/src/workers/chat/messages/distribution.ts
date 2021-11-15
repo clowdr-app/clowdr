@@ -9,13 +9,14 @@ import { chatSubscriptionsCache } from "@midspace/caches/subscription";
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import { Chat_MessageType_Enum, Room_ManagementMode_Enum } from "../../../generated/graphql";
 import { chatListenersKeyName, generateChatRecentMessagesSetKey, generateChatRoomName } from "../../../lib/chat";
+import { logger } from "../../../lib/logger";
 import { sendNotifications } from "../../../lib/notifications";
 import { maxUnreadMessages, sendUnreadCount } from "../../../lib/unreadCounts";
 import { onDistributionMessage } from "../../../rabbitmq/chat/messages";
 import { emitter } from "../../../socket-emitter/socket-emitter";
 import type { Action, Message } from "../../../types/chat";
 
-console.info("Chat messages distribution worker running");
+logger.info("Chat messages distribution worker running");
 
 async function onMessage(action: Action<Message>) {
     const eventName =

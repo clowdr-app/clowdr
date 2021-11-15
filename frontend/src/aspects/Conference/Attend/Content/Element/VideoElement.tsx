@@ -1,4 +1,16 @@
-import { Heading, Text } from "@chakra-ui/react";
+import {
+    AspectRatio,
+    Button,
+    Flex,
+    Heading,
+    Menu,
+    MenuButton,
+    MenuItemOption,
+    MenuList,
+    MenuOptionGroup,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
 import type { AudioElementBlob, VideoElementBlob } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
@@ -10,12 +22,14 @@ import type { Config } from "react-player";
 import ReactPlayer from "react-player";
 import type { TrackProps } from "react-player/file";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
+import { FAIcon } from "../../../../Icons/FAIcon";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
 
 export function VideoElement({
     elementId,
     elementData,
     title,
+    aspectRatio,
     onPlay,
     onPause,
     onFinish,
@@ -23,11 +37,12 @@ export function VideoElement({
     elementId?: string;
     elementData: VideoElementBlob | AudioElementBlob;
     title?: string;
+    aspectRatio?: boolean;
     onPlay?: () => void;
     onPause?: () => void;
     onFinish?: () => void;
 }): JSX.Element {
-    const videoURL = useMemo(() => {
+    const { url: videoURL, isHLS } = useMemo(() => {
         let s3Url = "transcode" in elementData ? elementData.transcode?.s3Url : undefined;
 
         if (!s3Url && elementData.s3Url) {
@@ -35,11 +50,17 @@ export function VideoElement({
         }
 
         if (!s3Url) {
-            return undefined;
+            return { url: undefined, isHLS: false };
         }
         const { bucket, key } = new AmazonS3URI(s3Url);
 
-        return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+        return {
+            url:
+                key && bucket
+                    ? `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`
+                    : undefined,
+            isHLS: !!key?.endsWith(".m3u8"),
+        };
     }, [elementData]);
 
     const {
@@ -74,75 +95,133 @@ export function VideoElement({
         if (loading) {
             return null;
         }
-        if (error || !subtitlesUrl) {
-            return {};
+
+        const tracks: TrackProps[] = [];
+        if (!error && subtitlesUrl) {
+            const track: TrackProps = {
+                kind: "subtitles",
+                src: subtitlesUrl,
+                srcLang: "en",
+                default: false,
+                label: "English",
+            };
+
+            tracks.push(track);
         }
-        const track: TrackProps = {
-            kind: "subtitles",
-            src: subtitlesUrl,
-            srcLang: "en",
-            default: false,
-            label: "English",
-        };
+
         const hlsOptions: Partial<HlsConfig> = {
             maxBufferLength: 0.05,
             maxBufferSize: 500,
         };
         return {
             file: {
-                tracks: [track],
+                tracks,
                 hlsVersion: "1.0.4",
                 hlsOptions,
+                attributes: {
+                    preload: "metadata",
+                },
             },
         };
     }, [error, loading, subtitlesUrl]);
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const playerRef = useRef<ReactPlayer | null>(null);
+    const [playbackRate, setPlaybackRate] = useState<number>(1);
+
+    const innerPlayer = useMemo(
+        () =>
+            !videoURL || !config ? undefined : (
+                <ReactPlayer
+                    url={videoURL}
+                    controls={true}
+                    width="100%"
+                    height="auto"
+                    onEnded={() => {
+                        setIsPlaying(false);
+                    }}
+                    onError={() => {
+                        setIsPlaying(false);
+                    }}
+                    onPause={() => {
+                        setIsPlaying(false);
+                        onPause?.();
+                    }}
+                    onPlay={() => {
+                        setIsPlaying(true);
+                        onPlay?.();
+                        const hlsPlayer = playerRef.current?.getInternalPlayer("hls") as Hls;
+                        if (hlsPlayer) {
+                            hlsPlayer.config.maxBufferLength = 30;
+                            hlsPlayer.config.maxBufferSize = 60 * 1000 * 1000;
+                        }
+                    }}
+                    onProgress={({ played }) => {
+                        if (played >= 1) {
+                            onFinish?.();
+                        }
+                    }}
+                    config={{ ...config }}
+                    ref={playerRef}
+                    style={{ borderRadius: "10px", overflow: "hidden" }}
+                    playbackRate={playbackRate}
+                />
+            ),
+        [videoURL, config, playbackRate, onPause, onPlay, onFinish]
+    );
+
     const player = useMemo(() => {
         // Only render the player once both the video URL and the subtitles config are available
         // react-player memoizes internally and only re-renders if the url or key props change.
         return !videoURL || !config ? undefined : (
-            <ReactPlayer
-                url={videoURL}
-                controls={true}
-                width="100%"
-                height="auto"
-                onEnded={() => {
-                    setIsPlaying(false);
-                }}
-                onError={() => {
-                    setIsPlaying(false);
-                }}
-                onPause={() => {
-                    setIsPlaying(false);
-                    onPause?.();
-                }}
-                onPlay={() => {
-                    setIsPlaying(true);
-                    onPlay?.();
-                    const hlsPlayer = playerRef.current?.getInternalPlayer("hls") as Hls;
-                    if (hlsPlayer) {
-                        hlsPlayer.config.maxBufferLength = 30;
-                        hlsPlayer.config.maxBufferSize = 60 * 1000 * 1000;
-                    }
-                }}
-                onProgress={({ played }) => {
-                    if (played >= 1) {
-                        onFinish?.();
-                    }
-                }}
-                config={{ ...config }}
-                ref={playerRef}
-                style={{ borderRadius: "10px", overflow: "hidden" }}
-            />
+            <VStack w="min(100%, 90vh * (16 / 9))" maxW="800px" alignItems="center" spacing={0}>
+                {aspectRatio ? (
+                    <AspectRatio ratio={16 / 9} w="min(100%, 90vh * (16 / 9))" maxW="800px" maxH="90vh" p={2}>
+                        {innerPlayer}
+                    </AspectRatio>
+                ) : (
+                    innerPlayer
+                )}
+                {!isHLS ? (
+                    <Flex borderBottomRadius="2xl" p={1} justifyContent="flex-end" w="100%">
+                        <Menu>
+                            <MenuButton as={Button} size="xs">
+                                Speed <FAIcon iconStyle="s" icon="chevron-down" />
+                            </MenuButton>
+                            <MenuList size="xs" spacing="compact">
+                                <MenuOptionGroup
+                                    onChange={(value) => {
+                                        const v = parseFloat(value as string);
+                                        if (Number.isFinite(v)) {
+                                            setPlaybackRate(v);
+                                        } else {
+                                            setPlaybackRate(1);
+                                        }
+                                    }}
+                                    type="radio"
+                                    value={playbackRate.toFixed(2)}
+                                >
+                                    <MenuItemOption value="0.50">0.5x</MenuItemOption>
+                                    <MenuItemOption value="0.75">0.75x</MenuItemOption>
+                                    <MenuItemOption value="1.00">1x</MenuItemOption>
+                                    <MenuItemOption value="1.20">1.2x</MenuItemOption>
+                                    <MenuItemOption value="1.50">1.5x</MenuItemOption>
+                                    <MenuItemOption value="2.00">2x</MenuItemOption>
+                                </MenuOptionGroup>
+                            </MenuList>
+                        </Menu>
+                    </Flex>
+                ) : undefined}
+            </VStack>
         );
-    }, [videoURL, config, onPause, onPlay, onFinish]);
+    }, [videoURL, config, isHLS, playbackRate, setPlaybackRate, innerPlayer]);
 
     useEffect(() => {
         if (playerRef.current) {
             const hls: Hls = playerRef.current.getInternalPlayer("hls") as Hls;
-            hls.subtitleDisplay = false;
+            if (hls) {
+                hls.subtitleDisplay = false;
+            }
         }
     }, []);
 

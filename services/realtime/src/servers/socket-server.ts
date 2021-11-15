@@ -8,6 +8,7 @@ import socketIO from "socket.io";
 import { createAdapter } from "socket.io-redis";
 import { testJWKs } from "../jwks";
 import { notificationsRoomName } from "../lib/chat";
+import { logger } from "../lib/logger";
 import { onConnect as onConnectAnalytics } from "../socket-events/analytics";
 import { onConnect as onConnectChat, onDisconnect as onDisconnectChat } from "../socket-events/chat";
 import { onConnect as onConnectHandRaise } from "../socket-events/handRaise";
@@ -78,17 +79,17 @@ socketServer.on("connection", async function (socket: Socket) {
 
     // Validate the token
     if (!socket.decodedToken?.sub) {
-        console.error(`Socket ${socketId} attempted to connect with a JWT that was missing the relevant claims.`);
+        logger.error(`Socket ${socketId} attempted to connect with a JWT that was missing the relevant claims.`);
         socket.disconnect();
         return;
     }
 
     const userId: string = socket.decodedToken.sub;
     if (userId) {
-        console.log(`Authorized client connected: ${userId} / ${socketId}`);
+        logger.info(`Authorized client connected: ${userId} / ${socketId}`);
 
         socket.on("disconnect", () => {
-            console.log(`Client disconnected: ${userId} / ${socketId}`);
+            logger.info(`Client disconnected: ${userId} / ${socketId}`);
 
             onDisconnectPresence(socketId, userId);
             onDisconnectChat(socketId, userId);
@@ -105,7 +106,7 @@ socketServer.on("connection", async function (socket: Socket) {
             try {
                 socket.emit("time", { ...syncPacket, serverSendTime: Date.now() });
                 if (syncPacket?.clientSendTime && typeof syncPacket.clientSendTime === "number") {
-                    console.log("Client time sync. Time offset=" + (Date.now() - syncPacket.clientSendTime) + "ms");
+                    logger.info("Client time sync. Time offset=" + (Date.now() - syncPacket.clientSendTime) + "ms");
                 }
             } catch {
                 // Do nothing
@@ -113,5 +114,7 @@ socketServer.on("connection", async function (socket: Socket) {
         });
 
         socket.join(notificationsRoomName(userId));
+
+        socket.emit("server.ready");
     }
 });

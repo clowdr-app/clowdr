@@ -18,6 +18,7 @@ import {
     DrawerContent,
     DrawerHeader,
     DrawerOverlay,
+    Flex,
     FormLabel,
     Heading,
     Input,
@@ -40,6 +41,7 @@ import {
 } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import Papa from "papaparse";
+import * as R from "ramda";
 import type { LegacyRef } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
@@ -55,6 +57,7 @@ import {
     Room_Mode_Enum,
     Room_PersonRole_Enum,
     useCreateRoomMutation,
+    useDeleteRoomPersonMutation,
     useDeleteRoomsMutation,
     useGetIsExternalRtmpBroadcastEnabledQuery,
     useInsertRoomPeopleMutation,
@@ -239,6 +242,14 @@ gql`
         }
     }
 
+    mutation DeleteRoomPerson($id: uuid!) {
+        delete_room_RoomMembership(where: { id: { _eq: $id } }) {
+            returning {
+                id
+            }
+        }
+    }
+
     query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
         conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_BROADCAST) {
             conferenceId
@@ -274,15 +285,19 @@ function RoomSecondaryEditor({
         },
         context,
     });
-    const [people] = useManageRooms_SelectRoomPeopleQuery({
+    const [people, refetchPeople] = useManageRooms_SelectRoomPeopleQuery({
         variables: {
             roomId: room?.id,
         },
         pause: !room,
+        requestPolicy: "network-only",
         context,
     });
     const [insertRoomPeopleResponse, insertRoomPeople] = useInsertRoomPeopleMutation();
-    useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
+    const [deleteRoomPersonResponse, deleteRoomPerson] = useDeleteRoomPersonMutation();
+    useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManageConferenceRoomsPage: InsertRoomPeople (mutation)");
+    useQueryErrorToast(deleteRoomPersonResponse.error, false, "ManageConferenceRoomsPage: DeleteRoomPerson (mutation)");
+
     const [groupRegistrantsQFetching, setGroupRegistrantsQFetching] = useState<boolean>(false);
 
     const client = useClient();
@@ -311,7 +326,7 @@ function RoomSecondaryEditor({
                         .toPromise();
                     setGroupRegistrantsQFetching(false);
                     if (!result.error && result.data) {
-                        insertRoomPeople(
+                        await insertRoomPeople(
                             {
                                 people: result.data.registrant_GroupRegistrant.map((x) => ({
                                     registrantId: x.registrantId,
@@ -327,6 +342,7 @@ function RoomSecondaryEditor({
                                 },
                             }
                         );
+                        refetchPeople();
                     }
                 } catch (e) {
                     setGroupRegistrantsQFetching(false);
@@ -334,11 +350,23 @@ function RoomSecondaryEditor({
                 }
             }
         },
-        [client, insertRoomPeople, room]
+        [client, insertRoomPeople, refetchPeople, room]
     );
 
     const { onCopy: onCopyRoomId, hasCopied: hasCopiedRoomId } = useClipboard(room?.id ?? "");
     const createdAt = useMemo(() => (room ? new Date(room.created_at) : new Date()), [room]);
+
+    const sortedParticipants = useMemo(
+        () => (room?.participants ? R.sortBy((x) => x.registrant?.displayName, room.participants) : []),
+        [room?.participants]
+    );
+    const sortedMembers = useMemo(
+        () =>
+            people.data?.room_RoomMembership
+                ? R.sortBy((x) => x.registrant?.displayName, people.data.room_RoomMembership)
+                : [],
+        [people.data?.room_RoomMembership]
+    );
 
     return (
         <Drawer
@@ -409,7 +437,7 @@ function RoomSecondaryEditor({
                                                 <FAIcon iconStyle="s" icon="user-plus" mr={2} />
                                                 Add people from group
                                             </MenuButton>
-                                            <MenuList>
+                                            <MenuList maxH="max(250px, min(400px, 100vh - 25ex))" overflow="auto">
                                                 {groups.data?.registrant_Group.map((group) => (
                                                     <MenuItem
                                                         key={group.id}
@@ -431,11 +459,11 @@ function RoomSecondaryEditor({
                                             <AccordionIcon />
                                         </AccordionButton>
                                         <AccordionPanel pt={4} pb={4}>
-                                            {room.participants.length === 0 ? (
+                                            {sortedParticipants.length === 0 ? (
                                                 "Room is currently empty."
                                             ) : (
                                                 <UnorderedList>
-                                                    {room.participants.map((participant) => (
+                                                    {sortedParticipants.map((participant) => (
                                                         <ListItem key={participant.id}>
                                                             {participant.registrant.displayName}
                                                         </ListItem>
@@ -491,7 +519,7 @@ function RoomSecondaryEditor({
                                         </AccordionItem>
                                     ) : undefined}
 
-                                    {people.data && room.managementModeName !== Room_ManagementMode_Enum.Public ? (
+                                    {sortedMembers && room.managementModeName !== Room_ManagementMode_Enum.Public ? (
                                         <AccordionItem>
                                             <AccordionButton>
                                                 <Box flex="1" textAlign="left">
@@ -500,13 +528,43 @@ function RoomSecondaryEditor({
                                                 <AccordionIcon />
                                             </AccordionButton>
                                             <AccordionPanel pt={4} pb={4}>
-                                                {people.data.room_RoomMembership.length === 0 ? (
+                                                {sortedMembers.length === 0 ? (
                                                     "Room has no members."
                                                 ) : (
-                                                    <UnorderedList>
-                                                        {people.data.room_RoomMembership.map((member) => (
-                                                            <ListItem key={member.id}>
-                                                                {member.registrant.displayName}
+                                                    <UnorderedList spacing={1}>
+                                                        {sortedMembers.map((member) => (
+                                                            <ListItem
+                                                                key={member.id}
+                                                                _hover={{
+                                                                    bgColor: "rgba(0, 0, 0, 0.25)",
+                                                                }}
+                                                                p={1}
+                                                            >
+                                                                <Flex>
+                                                                    {member.registrant.displayName}
+                                                                    <Button
+                                                                        ml="auto"
+                                                                        size="xs"
+                                                                        colorScheme="DestructiveActionButton"
+                                                                        aria-label="Remove room member"
+                                                                        isDisabled={deleteRoomPersonResponse.fetching}
+                                                                        onClick={async () => {
+                                                                            try {
+                                                                                await deleteRoomPerson({
+                                                                                    id: member.id,
+                                                                                });
+                                                                                refetchPeople();
+                                                                            } catch (e) {
+                                                                                console.error(
+                                                                                    "Unable to delete room person",
+                                                                                    e
+                                                                                );
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <FAIcon iconStyle="s" icon="trash-alt" />
+                                                                    </Button>
+                                                                </Flex>
                                                             </ListItem>
                                                         ))}
                                                     </UnorderedList>

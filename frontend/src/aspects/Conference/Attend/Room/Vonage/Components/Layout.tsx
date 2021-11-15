@@ -24,11 +24,13 @@ import useVisualLayout from "./useVisualLayout";
 
 export default function Layout({
     viewports,
+    allowedToControlLayout,
     isRecordingMode,
     isBackstage,
     streamActivities,
 }: {
     viewports: Viewport[];
+    allowedToControlLayout: boolean;
     isRecordingMode: boolean;
     isBackstage: boolean;
     streamActivities: Map<
@@ -217,11 +219,13 @@ export default function Layout({
                                         framerate={30}
                                     />
                                 ) : undefined}
-                                <StreamChooser
-                                    positionKey="position1"
-                                    centered={!visualLayout.viewport}
-                                    isRecordingMode={isRecordingMode}
-                                />
+                                {allowedToControlLayout ? (
+                                    <StreamChooser
+                                        positionKey="position1"
+                                        centered={!visualLayout.viewport}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                ) : undefined}
                             </Box>
                         </AspectRatio>
                     </Center>
@@ -248,11 +252,13 @@ export default function Layout({
                                             framerate={30}
                                         />
                                     ) : undefined}
-                                    <StreamChooser
-                                        positionKey="position1"
-                                        centered={!visualLayout.leftViewport}
-                                        isRecordingMode={isRecordingMode}
-                                    />
+                                    {allowedToControlLayout ? (
+                                        <StreamChooser
+                                            positionKey="position1"
+                                            centered={!visualLayout.leftViewport}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    ) : undefined}
                                 </Box>
                                 <Box w="50%" h="100%" bgColor="gray.500" ml="1px" pos="relative">
                                     {visualLayout.rightViewport ? (
@@ -263,11 +269,13 @@ export default function Layout({
                                             framerate={30}
                                         />
                                     ) : undefined}
-                                    <StreamChooser
-                                        positionKey="position2"
-                                        centered={!visualLayout.rightViewport}
-                                        isRecordingMode={isRecordingMode}
-                                    />
+                                    {allowedToControlLayout ? (
+                                        <StreamChooser
+                                            positionKey="position2"
+                                            centered={!visualLayout.rightViewport}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    ) : undefined}
                                 </Box>
                             </Flex>
                         </AspectRatio>
@@ -295,11 +303,13 @@ export default function Layout({
                                             framerate={30}
                                         />
                                     ) : undefined}
-                                    <StreamChooser
-                                        positionKey="position1"
-                                        centered={!visualLayout.fullscreenViewport}
-                                        isRecordingMode={isRecordingMode}
-                                    />
+                                    {allowedToControlLayout ? (
+                                        <StreamChooser
+                                            positionKey="position1"
+                                            centered={!visualLayout.fullscreenViewport}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    ) : undefined}
                                 </Box>
                                 <AspectRatio
                                     ratio={1}
@@ -319,11 +329,13 @@ export default function Layout({
                                                 framerate={30}
                                             />
                                         ) : undefined}
-                                        <StreamChooser
-                                            positionKey="position2"
-                                            centered={!visualLayout.insetViewport}
-                                            isRecordingMode={isRecordingMode}
-                                        />
+                                        {allowedToControlLayout ? (
+                                            <StreamChooser
+                                                positionKey="position2"
+                                                centered={!visualLayout.insetViewport}
+                                                isRecordingMode={isRecordingMode}
+                                            />
+                                        ) : undefined}
                                     </Box>
                                 </AspectRatio>
                             </Box>
@@ -349,11 +361,13 @@ export default function Layout({
                                 resolution="high"
                                 framerate={30}
                             />
-                            <StreamChooser
-                                positionKey={"position" + (idx + 2)}
-                                centered={false}
-                                isRecordingMode={isRecordingMode}
-                            />
+                            {allowedToControlLayout ? (
+                                <StreamChooser
+                                    positionKey={"position" + (idx + 2)}
+                                    centered={false}
+                                    isRecordingMode={isRecordingMode}
+                                />
+                            ) : undefined}
                         </Box>
                     </AspectRatio>
                 ));
@@ -371,11 +385,13 @@ export default function Layout({
                         >
                             <Box>
                                 <CameraPlaceholderImage />
-                                <StreamChooser
-                                    positionKey={"position" + (visualLayout.sideAreaViewports.length + 2)}
-                                    centered={true}
-                                    isRecordingMode={isRecordingMode}
-                                />
+                                {allowedToControlLayout ? (
+                                    <StreamChooser
+                                        positionKey={"position" + (visualLayout.sideAreaViewports.length + 2)}
+                                        centered={true}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                ) : undefined}
                             </Box>
                         </AspectRatio>
                     );
@@ -401,11 +417,13 @@ export default function Layout({
                                             framerate={30}
                                         />
                                     ) : undefined}
-                                    <StreamChooser
-                                        positionKey="position1"
-                                        centered={!visualLayout.largeAreaViewport}
-                                        isRecordingMode={isRecordingMode}
-                                    />
+                                    {allowedToControlLayout ? (
+                                        <StreamChooser
+                                            positionKey="position1"
+                                            centered={!visualLayout.largeAreaViewport}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    ) : undefined}
                                 </Box>
                                 {sideBoxes}
                             </Box>
@@ -431,11 +449,13 @@ export default function Layout({
                                 resolution="high"
                                 framerate={30}
                             />
-                            <StreamChooser
-                                positionKey={"position" + (idx + 2)}
-                                centered={false}
-                                isRecordingMode={isRecordingMode}
-                            />
+                            {allowedToControlLayout ? (
+                                <StreamChooser
+                                    positionKey={"position" + (idx + 2)}
+                                    centered={false}
+                                    isRecordingMode={isRecordingMode}
+                                />
+                            ) : undefined}
                         </Box>
                     </AspectRatio>
                 ));
@@ -453,11 +473,13 @@ export default function Layout({
                         >
                             <Box>
                                 <CameraPlaceholderImage />
-                                <StreamChooser
-                                    positionKey={"position" + (visualLayout.sideAreaViewports.length + 2)}
-                                    centered={true}
-                                    isRecordingMode={isRecordingMode}
-                                />
+                                {allowedToControlLayout ? (
+                                    <StreamChooser
+                                        positionKey={"position" + (visualLayout.sideAreaViewports.length + 2)}
+                                        centered={true}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                ) : undefined}
                             </Box>
                         </AspectRatio>
                     );
@@ -483,11 +505,13 @@ export default function Layout({
                                             framerate={30}
                                         />
                                     ) : undefined}
-                                    <StreamChooser
-                                        positionKey="position1"
-                                        centered={!visualLayout.largeAreaViewport}
-                                        isRecordingMode={isRecordingMode}
-                                    />
+                                    {allowedToControlLayout ? (
+                                        <StreamChooser
+                                            positionKey="position1"
+                                            centered={!visualLayout.largeAreaViewport}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    ) : undefined}
                                 </Box>
                                 {sideBoxes}
                             </Box>
@@ -513,11 +537,13 @@ export default function Layout({
                                 resolution="high"
                                 framerate={30}
                             />
-                            <StreamChooser
-                                positionKey={"position" + (idx + 3)}
-                                centered={false}
-                                isRecordingMode={isRecordingMode}
-                            />
+                            {allowedToControlLayout ? (
+                                <StreamChooser
+                                    positionKey={"position" + (idx + 3)}
+                                    centered={false}
+                                    isRecordingMode={isRecordingMode}
+                                />
+                            ) : undefined}
                         </Box>
                     </AspectRatio>
                 ));
@@ -535,11 +561,13 @@ export default function Layout({
                         >
                             <Box>
                                 <CameraPlaceholderImage />
-                                <StreamChooser
-                                    positionKey={"position" + (visualLayout.sideAreaViewports.length + 3)}
-                                    centered={true}
-                                    isRecordingMode={isRecordingMode}
-                                />
+                                {allowedToControlLayout ? (
+                                    <StreamChooser
+                                        positionKey={"position" + (visualLayout.sideAreaViewports.length + 3)}
+                                        centered={true}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                ) : undefined}
                             </Box>
                         </AspectRatio>
                     );
@@ -572,11 +600,13 @@ export default function Layout({
                                             framerate={30}
                                         />
                                     ) : undefined}
-                                    <StreamChooser
-                                        positionKey="position1"
-                                        centered={!visualLayout.largeAreaViewport1}
-                                        isRecordingMode={isRecordingMode}
-                                    />
+                                    {allowedToControlLayout ? (
+                                        <StreamChooser
+                                            positionKey="position1"
+                                            centered={!visualLayout.largeAreaViewport1}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    ) : undefined}
                                 </Box>
                                 <Box
                                     w="86%"
@@ -594,11 +624,13 @@ export default function Layout({
                                             framerate={30}
                                         />
                                     ) : undefined}
-                                    <StreamChooser
-                                        positionKey="position2"
-                                        centered={!visualLayout.largeAreaViewport2}
-                                        isRecordingMode={isRecordingMode}
-                                    />
+                                    {allowedToControlLayout ? (
+                                        <StreamChooser
+                                            positionKey="position2"
+                                            centered={!visualLayout.largeAreaViewport2}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    ) : undefined}
                                 </Box>
                                 {sideBoxes}
                             </Box>
@@ -624,11 +656,13 @@ export default function Layout({
                                 resolution="high"
                                 framerate={30}
                             />
-                            <StreamChooser
-                                positionKey={"position" + (idx + 3)}
-                                centered={false}
-                                isRecordingMode={isRecordingMode}
-                            />
+                            {allowedToControlLayout ? (
+                                <StreamChooser
+                                    positionKey={"position" + (idx + 3)}
+                                    centered={false}
+                                    isRecordingMode={isRecordingMode}
+                                />
+                            ) : undefined}
                         </Box>
                     </AspectRatio>
                 ));
@@ -646,11 +680,13 @@ export default function Layout({
                         >
                             <Box>
                                 <CameraPlaceholderImage />
-                                <StreamChooser
-                                    positionKey={"position" + (visualLayout.sideAreaViewports.length + 3)}
-                                    centered={true}
-                                    isRecordingMode={isRecordingMode}
-                                />
+                                {allowedToControlLayout ? (
+                                    <StreamChooser
+                                        positionKey={"position" + (visualLayout.sideAreaViewports.length + 3)}
+                                        centered={true}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                ) : undefined}
                             </Box>
                         </AspectRatio>
                     );
@@ -683,11 +719,13 @@ export default function Layout({
                                             framerate={30}
                                         />
                                     ) : undefined}
-                                    <StreamChooser
-                                        positionKey="position1"
-                                        centered={!visualLayout.largeAreaViewport1}
-                                        isRecordingMode={isRecordingMode}
-                                    />
+                                    {allowedToControlLayout ? (
+                                        <StreamChooser
+                                            positionKey="position1"
+                                            centered={!visualLayout.largeAreaViewport1}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    ) : undefined}
                                 </Box>
                                 <Box
                                     w={visualLayout.narrow === 2 ? "25%" : visualLayout.narrow === 1 ? "75%" : "50%"}
@@ -705,11 +743,13 @@ export default function Layout({
                                             framerate={30}
                                         />
                                     ) : undefined}
-                                    <StreamChooser
-                                        positionKey="position2"
-                                        centered={!visualLayout.largeAreaViewport2}
-                                        isRecordingMode={isRecordingMode}
-                                    />
+                                    {allowedToControlLayout ? (
+                                        <StreamChooser
+                                            positionKey="position2"
+                                            centered={!visualLayout.largeAreaViewport2}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    ) : undefined}
                                 </Box>
                                 {sideBoxes}
                             </Box>
@@ -718,7 +758,7 @@ export default function Layout({
                 );
             }
         }
-    }, [isRecordingMode, visualLayout]);
+    }, [allowedToControlLayout, isRecordingMode, visualLayout]);
 
     const containerRef = React.useRef<HTMLDivElement>(null);
     const containerResizeObserver = useResizeObserver(containerRef);

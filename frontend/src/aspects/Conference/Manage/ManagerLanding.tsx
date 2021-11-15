@@ -163,13 +163,21 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="gray"
                 />
                 <RestrictedDashboardButton
+                    to="settings"
+                    name="Settings"
+                    icon="cog"
+                    description="Manage global configuration of your conference."
+                    organizerRole
+                    colorScheme="gray"
+                />
+                {/* <RestrictedDashboardButton
                     to="broadcasts"
                     name="Broadcasts"
                     icon="video"
                     description="Manage your livestreams and broadcasts, including post-conference archiving."
                     organizerRole
                     colorScheme="gray"
-                />
+                /> */}
                 <RestrictedDashboardButton
                     to="checklist"
                     name="Checklist"

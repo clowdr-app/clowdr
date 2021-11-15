@@ -7,6 +7,7 @@ import type {
     DeletePushNotificationSubscriptionMutationVariables,
 } from "../generated/graphql";
 import { DeletePushNotificationSubscriptionDocument } from "../generated/graphql";
+import { logger } from "../lib/logger";
 import type { Notification } from "../types/chat";
 import { getVAPIDKeys } from "./vapidKeys";
 
@@ -33,7 +34,7 @@ export async function sendNotification(
         });
     } catch (error: any) {
         if (!(error.toString().includes("unsubscribed") || error.toString().includes("expired"))) {
-            console.warn("ERROR in sending Notification.\nRemoving the endpoint record: " + subscription.endpoint, {
+            logger.warn("ERROR in sending Notification.\nRemoving the endpoint record: " + subscription.endpoint, {
                 subscription,
                 error,
             });
@@ -48,8 +49,8 @@ export async function sendNotification(
                     endpoint: subscription.endpoint,
                 })
                 .toPromise();
-        } catch (e) {
-            console.error("Unable to delete push notification subscription from the database", e);
+        } catch (error: any) {
+            logger.error({ error }, "Unable to delete push notification subscription from the database");
         }
     }
 }

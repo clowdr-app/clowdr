@@ -12,7 +12,7 @@
         "test-consumer": "node-env-run -E ./src/test/.consumer.env -e \"ts-node ./src/test/consumer.ts\""
     },
     "author": "Clowdr CIC",
-    "license": "BSD-3-Clause",
+    "license": "AGPL-3.0-or-later",
     "dependencies": {
         "@midspace/auth": "workspace:*",
         "@socket.io/redis-emitter": "^4.1.0",

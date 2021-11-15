@@ -11,7 +11,7 @@
         "test": "jest --config jest.config.ts --forceExit"
     },
     "author": "Clowdr CIC",
-    "license": "BSD-3-Clause",
+    "license": "AGPL-3.0-or-later",
     "dependencies": {
         "@aaronhayes/hasura-sdk": "^1.4.0",
         "@apollo/client": "^3.4.16",
@@ -38,6 +38,7 @@
         "@graphql-codegen/typescript-graphql-files-modules": "^2.1.0",
         "@graphql-codegen/typescript-graphql-request": "^4.3.0",
         "@graphql-codegen/typescript-operations": "^2.2.0",
+        "@sendgrid/eventwebhook": "^7.4.5",
         "@graphql-typed-document-node/core": "^3.1.0",
         "@midspace/auth": "workspace:*",
         "@midspace/graphql": "workspace:*",

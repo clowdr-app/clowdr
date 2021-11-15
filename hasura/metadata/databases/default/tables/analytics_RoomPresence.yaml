@@ -4,18 +4,11 @@ table:
 object_relationships:
 - name: room
   using:
-    manual_configuration:
-      column_mapping:
-        id: id
-      insertion_order: null
-      remote_table:
-        name: Room
-        schema: room
+    foreign_key_constraint_on: roomId
 select_permissions:
 - permission:
     columns:
     - id
-    - name
     - created_at
     - count
     filter:

@@ -10,6 +10,7 @@ import type {
     Schedule_TagFragment,
 } from "../../../../../generated/graphql";
 import { Schedule_SelectItemDocument } from "../../../../../generated/graphql";
+import { useConference } from "../../../useConference";
 import { PlainAuthorsList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";
 import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
@@ -29,6 +30,7 @@ export default function EventBox({
     scrollToEventCbs: Map<string, () => void>;
     tags: readonly Schedule_TagFragment[];
 }): JSX.Element | null {
+    const conference = useConference();
     const event = sortedEvents[0];
     const eventIds = useMemo(() => sortedEvents.map((x) => x.id), [sortedEvents]);
     const eventStartMs = useMemo(() => Date.parse(event.startTime), [event.startTime]);
@@ -99,7 +101,9 @@ export default function EventBox({
                         for {Math.round(durationSeconds / 60)} minutes
                     </Text>
                     {event.itemPeople?.length ? <PlainAuthorsList people={event.itemPeople} /> : undefined}
-                    {event.exhibitionPeople?.length ? <PlainAuthorsList people={event.exhibitionPeople} /> : undefined}
+                    {!conference.scheduleEventBox_HideExhibitionPeople[0]?.value && event.exhibitionPeople?.length ? (
+                        <PlainAuthorsList people={event.exhibitionPeople} />
+                    ) : undefined}
                     {event.item ? (
                         <>
                             <TagList
@@ -129,11 +133,12 @@ export default function EventBox({
         eventIds,
         sortedEvents,
         event.item,
+        event.name,
         event.itemPeople,
         event.exhibitionPeople,
-        event.name,
         eventStartMs,
         durationSeconds,
+        conference.scheduleEventBox_HideExhibitionPeople,
         tags,
     ]);
 

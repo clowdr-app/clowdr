@@ -7,10 +7,11 @@ import { makeContext } from "../../../GQL/make-context";
 import QueryWrapper from "../../../GQL/QueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
 import Room from "./Room";
 
 gql`
-    query RoomPage_GetRoomDetails($roomId: uuid!) {
+    query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             ...RoomPage_RoomDetails
         }
@@ -37,6 +38,10 @@ gql`
                 layoutData
                 typeName
                 updatedAt
+            }
+            selfPeople: itemPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
+                id
+                roleName
             }
             title
         }
@@ -86,6 +91,7 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
 }
 
 function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
+    const registrant = useCurrentRegistrant();
     const context = useMemo(
         () =>
             makeContext({
@@ -96,6 +102,7 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     const [roomDetailsResponse] = useRoomPage_GetRoomDetailsQuery({
         variables: {
             roomId,
+            registrantId: registrant.id,
         },
         context,
     });

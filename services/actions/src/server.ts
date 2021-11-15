@@ -23,8 +23,10 @@ import { router as conferenceRouter } from "./router/conference";
 import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
 import { router as elasticTranscoderRouter } from "./router/elasticTranscoder";
 import { router as elementRouter } from "./router/element";
+import { router as emailRouter } from "./router/email";
 import { router as eventRouter } from "./router/event";
 import { router as googleRouter } from "./router/google";
+import { router as invitationRouter } from "./router/invitation";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaPackageRouter } from "./router/mediaPackage";
 import { router as mediaPackageHarvestJobRouter } from "./router/mediaPackageHarvestJob";
@@ -107,11 +109,13 @@ app.use("/shuffle", shuffleRoomsRouter);
 app.use("/chat", chatRouter);
 
 app.use("/queues", queuesRouter);
+app.use("/email", emailRouter);
 app.use("/analytics", analyticsRouter);
 
 app.use("/su", superuserRouter);
 
 app.use("/conference", conferenceRouter);
+app.use("/invitation", invitationRouter);
 
 app.get("/", function (_req, res) {
     res.send("Midspace");
@@ -138,7 +142,7 @@ app.use(errorHandler);
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {
-    logger.info({ port: process.env.PORT }, "Actions service is listening");
+    logger.info({ port: portNumber }, "Actions service is listening");
     logger.info("Initialising AWS client");
     initialiseAwsClient(logger).then(() => {
         logger.info("Initialised AWS client");

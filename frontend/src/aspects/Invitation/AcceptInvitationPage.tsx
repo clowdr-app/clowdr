@@ -86,7 +86,7 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
                 fontWeight="thin"
                 marginBottom="2rem"
             >
-                {loading && !error ? "Accepting invitation..." : "Failed to accept invitation"}
+                {!error ? "Accepting invitation..." : "Failed to accept invitation"}
             </Heading>
             {loading && !error ? (
                 <Box>

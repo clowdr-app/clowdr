@@ -56,10 +56,13 @@ export type CreateRoomDmOutput = {
 /** columns and relationships of "Email" */
 export type Email = {
     __typename?: "Email";
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt: Scalars["timestamptz"];
     emailAddress: Scalars["String"];
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents: Scalars["String"];
     id: Scalars["uuid"];
+    idempotencyKey: Scalars["uuid"];
     /** An object relationship */
     invitation?: Maybe<Registrant_Invitation>;
     invitationId?: Maybe<Scalars["uuid"]>;
@@ -68,6 +71,7 @@ export type Email = {
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount: Scalars["Int"];
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject: Scalars["String"];
     updatedAt: Scalars["timestamptz"];
     /** An object relationship */
@@ -142,10 +146,13 @@ export type Email_Bool_Exp = {
     _and?: Maybe<Array<Email_Bool_Exp>>;
     _not?: Maybe<Email_Bool_Exp>;
     _or?: Maybe<Array<Email_Bool_Exp>>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     emailAddress?: Maybe<String_Comparison_Exp>;
+    errorMessage?: Maybe<String_Comparison_Exp>;
     htmlContents?: Maybe<String_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
+    idempotencyKey?: Maybe<Uuid_Comparison_Exp>;
     invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
     invitationId?: Maybe<Uuid_Comparison_Exp>;
     plainTextContents?: Maybe<String_Comparison_Exp>;
@@ -153,6 +160,7 @@ export type Email_Bool_Exp = {
     recipientName?: Maybe<String_Comparison_Exp>;
     retriesCount?: Maybe<Int_Comparison_Exp>;
     sentAt?: Maybe<Timestamptz_Comparison_Exp>;
+    status?: Maybe<String_Comparison_Exp>;
     subject?: Maybe<String_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
     user?: Maybe<User_Bool_Exp>;
@@ -161,6 +169,8 @@ export type Email_Bool_Exp = {
 
 /** unique or primary key constraints on table "Email" */
 export enum Email_Constraint {
+    /** unique or primary key constraint */
+    EmailIdempotencyKeyKey = "Email_idempotencyKey_key",
     /** unique or primary key constraint */
     EmailPkey = "Email_pkey",
 }
@@ -172,10 +182,13 @@ export type Email_Inc_Input = {
 
 /** input type for inserting data into table "Email" */
 export type Email_Insert_Input = {
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     emailAddress?: Maybe<Scalars["String"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
+    idempotencyKey?: Maybe<Scalars["uuid"]>;
     invitation?: Maybe<Registrant_Invitation_Obj_Rel_Insert_Input>;
     invitationId?: Maybe<Scalars["uuid"]>;
     plainTextContents?: Maybe<Scalars["String"]>;
@@ -183,6 +196,7 @@ export type Email_Insert_Input = {
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     user?: Maybe<User_Obj_Rel_Insert_Input>;
@@ -192,16 +206,20 @@ export type Email_Insert_Input = {
 /** aggregate max on columns */
 export type Email_Max_Fields = {
     __typename?: "Email_max_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     emailAddress?: Maybe<Scalars["String"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
+    idempotencyKey?: Maybe<Scalars["uuid"]>;
     invitationId?: Maybe<Scalars["uuid"]>;
     plainTextContents?: Maybe<Scalars["String"]>;
     reason?: Maybe<Scalars["String"]>;
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     userId?: Maybe<Scalars["String"]>;
@@ -209,16 +227,20 @@ export type Email_Max_Fields = {
 
 /** order by max() on columns of table "Email" */
 export type Email_Max_Order_By = {
+    conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     emailAddress?: Maybe<Order_By>;
+    errorMessage?: Maybe<Order_By>;
     htmlContents?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    idempotencyKey?: Maybe<Order_By>;
     invitationId?: Maybe<Order_By>;
     plainTextContents?: Maybe<Order_By>;
     reason?: Maybe<Order_By>;
     recipientName?: Maybe<Order_By>;
     retriesCount?: Maybe<Order_By>;
     sentAt?: Maybe<Order_By>;
+    status?: Maybe<Order_By>;
     subject?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
     userId?: Maybe<Order_By>;
@@ -227,16 +249,20 @@ export type Email_Max_Order_By = {
 /** aggregate min on columns */
 export type Email_Min_Fields = {
     __typename?: "Email_min_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     emailAddress?: Maybe<Scalars["String"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
+    idempotencyKey?: Maybe<Scalars["uuid"]>;
     invitationId?: Maybe<Scalars["uuid"]>;
     plainTextContents?: Maybe<Scalars["String"]>;
     reason?: Maybe<Scalars["String"]>;
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     userId?: Maybe<Scalars["String"]>;
@@ -244,16 +270,20 @@ export type Email_Min_Fields = {
 
 /** order by min() on columns of table "Email" */
 export type Email_Min_Order_By = {
+    conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     emailAddress?: Maybe<Order_By>;
+    errorMessage?: Maybe<Order_By>;
     htmlContents?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    idempotencyKey?: Maybe<Order_By>;
     invitationId?: Maybe<Order_By>;
     plainTextContents?: Maybe<Order_By>;
     reason?: Maybe<Order_By>;
     recipientName?: Maybe<Order_By>;
     retriesCount?: Maybe<Order_By>;
     sentAt?: Maybe<Order_By>;
+    status?: Maybe<Order_By>;
     subject?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
     userId?: Maybe<Order_By>;
@@ -277,10 +307,13 @@ export type Email_On_Conflict = {
 
 /** Ordering options when selecting data from "Email". */
 export type Email_Order_By = {
+    conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     emailAddress?: Maybe<Order_By>;
+    errorMessage?: Maybe<Order_By>;
     htmlContents?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    idempotencyKey?: Maybe<Order_By>;
     invitation?: Maybe<Registrant_Invitation_Order_By>;
     invitationId?: Maybe<Order_By>;
     plainTextContents?: Maybe<Order_By>;
@@ -288,6 +321,7 @@ export type Email_Order_By = {
     recipientName?: Maybe<Order_By>;
     retriesCount?: Maybe<Order_By>;
     sentAt?: Maybe<Order_By>;
+    status?: Maybe<Order_By>;
     subject?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
     user?: Maybe<User_Order_By>;
@@ -302,13 +336,19 @@ export type Email_Pk_Columns_Input = {
 /** select columns of table "Email" */
 export enum Email_Select_Column {
     /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
     CreatedAt = "createdAt",
     /** column name */
     EmailAddress = "emailAddress",
     /** column name */
+    ErrorMessage = "errorMessage",
+    /** column name */
     HtmlContents = "htmlContents",
     /** column name */
     Id = "id",
+    /** column name */
+    IdempotencyKey = "idempotencyKey",
     /** column name */
     InvitationId = "invitationId",
     /** column name */
@@ -322,6 +362,8 @@ export enum Email_Select_Column {
     /** column name */
     SentAt = "sentAt",
     /** column name */
+    Status = "status",
+    /** column name */
     Subject = "subject",
     /** column name */
     UpdatedAt = "updatedAt",
@@ -331,16 +373,20 @@ export enum Email_Select_Column {
 
 /** input type for updating data in table "Email" */
 export type Email_Set_Input = {
+    conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     emailAddress?: Maybe<Scalars["String"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
     htmlContents?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
+    idempotencyKey?: Maybe<Scalars["uuid"]>;
     invitationId?: Maybe<Scalars["uuid"]>;
     plainTextContents?: Maybe<Scalars["String"]>;
     reason?: Maybe<Scalars["String"]>;
     recipientName?: Maybe<Scalars["String"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
+    status?: Maybe<Scalars["String"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     userId?: Maybe<Scalars["String"]>;
@@ -393,13 +439,19 @@ export type Email_Sum_Order_By = {
 /** update columns of table "Email" */
 export enum Email_Update_Column {
     /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
     CreatedAt = "createdAt",
     /** column name */
     EmailAddress = "emailAddress",
     /** column name */
+    ErrorMessage = "errorMessage",
+    /** column name */
     HtmlContents = "htmlContents",
     /** column name */
     Id = "id",
+    /** column name */
+    IdempotencyKey = "idempotencyKey",
     /** column name */
     InvitationId = "invitationId",
     /** column name */
@@ -412,6 +464,8 @@ export enum Email_Update_Column {
     RetriesCount = "retriesCount",
     /** column name */
     SentAt = "sentAt",
+    /** column name */
+    Status = "status",
     /** column name */
     Subject = "subject",
     /** column name */
@@ -2145,8 +2199,8 @@ export type Analytics_ElementTotalViews = {
     __typename?: "analytics_ElementTotalViews";
     /** An object relationship */
     element?: Maybe<Content_Element>;
-    elementId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
+    elementId: Scalars["uuid"];
+    totalViewCount: Scalars["bigint"];
 };
 
 /** aggregated selection of "analytics.ElementTotalViews" */
@@ -2194,6 +2248,17 @@ export type Analytics_ElementTotalViews_Bool_Exp = {
     totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
+/** unique or primary key constraints on table "analytics.ElementTotalViews" */
+export enum Analytics_ElementTotalViews_Constraint {
+    /** unique or primary key constraint */
+    ElementTotalViewsPkey = "ElementTotalViews_pkey",
+}
+
+/** input type for incrementing numeric columns in table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Inc_Input = {
+    totalViewCount?: Maybe<Scalars["bigint"]>;
+};
+
 /** input type for inserting data into table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Insert_Input = {
     element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
@@ -2215,9 +2280,27 @@ export type Analytics_ElementTotalViews_Min_Fields = {
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** response of any mutation on the table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Mutation_Response = {
+    __typename?: "analytics_ElementTotalViews_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Analytics_ElementTotalViews>;
+};
+
 /** input type for inserting object relation for remote table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Obj_Rel_Insert_Input = {
     data: Analytics_ElementTotalViews_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_On_Conflict = {
+    constraint: Analytics_ElementTotalViews_Constraint;
+    update_columns?: Array<Analytics_ElementTotalViews_Update_Column>;
+    where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.ElementTotalViews". */
@@ -2227,6 +2310,11 @@ export type Analytics_ElementTotalViews_Order_By = {
     totalViewCount?: Maybe<Order_By>;
 };
 
+/** primary key columns input for table: analytics_ElementTotalViews */
+export type Analytics_ElementTotalViews_Pk_Columns_Input = {
+    elementId: Scalars["uuid"];
+};
+
 /** select columns of table "analytics.ElementTotalViews" */
 export enum Analytics_ElementTotalViews_Select_Column {
     /** column name */
@@ -2234,6 +2322,12 @@ export enum Analytics_ElementTotalViews_Select_Column {
     /** column name */
     TotalViewCount = "totalViewCount",
 }
+
+/** input type for updating data in table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Set_Input = {
+    elementId?: Maybe<Scalars["uuid"]>;
+    totalViewCount?: Maybe<Scalars["bigint"]>;
+};
 
 /** aggregate stddev on columns */
 export type Analytics_ElementTotalViews_Stddev_Fields = {
@@ -2259,6 +2353,14 @@ export type Analytics_ElementTotalViews_Sum_Fields = {
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** update columns of table "analytics.ElementTotalViews" */
+export enum Analytics_ElementTotalViews_Update_Column {
+    /** column name */
+    ElementId = "elementId",
+    /** column name */
+    TotalViewCount = "totalViewCount",
+}
+
 /** aggregate var_pop on columns */
 export type Analytics_ElementTotalViews_Var_Pop_Fields = {
     __typename?: "analytics_ElementTotalViews_var_pop_fields";
@@ -2282,8 +2384,8 @@ export type Analytics_ItemTotalViews = {
     __typename?: "analytics_ItemTotalViews";
     /** An object relationship */
     item?: Maybe<Content_Item>;
-    itemId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
+    itemId: Scalars["uuid"];
+    totalViewCount: Scalars["bigint"];
 };
 
 /** aggregated selection of "analytics.ItemTotalViews" */
@@ -2331,6 +2433,17 @@ export type Analytics_ItemTotalViews_Bool_Exp = {
     totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
+/** unique or primary key constraints on table "analytics.ItemTotalViews" */
+export enum Analytics_ItemTotalViews_Constraint {
+    /** unique or primary key constraint */
+    ItemTotalViewsPkey = "ItemTotalViews_pkey",
+}
+
+/** input type for incrementing numeric columns in table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Inc_Input = {
+    totalViewCount?: Maybe<Scalars["bigint"]>;
+};
+
 /** input type for inserting data into table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Insert_Input = {
     item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
@@ -2352,9 +2465,27 @@ export type Analytics_ItemTotalViews_Min_Fields = {
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** response of any mutation on the table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Mutation_Response = {
+    __typename?: "analytics_ItemTotalViews_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Analytics_ItemTotalViews>;
+};
+
 /** input type for inserting object relation for remote table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Obj_Rel_Insert_Input = {
     data: Analytics_ItemTotalViews_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_On_Conflict = {
+    constraint: Analytics_ItemTotalViews_Constraint;
+    update_columns?: Array<Analytics_ItemTotalViews_Update_Column>;
+    where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.ItemTotalViews". */
@@ -2364,6 +2495,11 @@ export type Analytics_ItemTotalViews_Order_By = {
     totalViewCount?: Maybe<Order_By>;
 };
 
+/** primary key columns input for table: analytics_ItemTotalViews */
+export type Analytics_ItemTotalViews_Pk_Columns_Input = {
+    itemId: Scalars["uuid"];
+};
+
 /** select columns of table "analytics.ItemTotalViews" */
 export enum Analytics_ItemTotalViews_Select_Column {
     /** column name */
@@ -2371,6 +2507,12 @@ export enum Analytics_ItemTotalViews_Select_Column {
     /** column name */
     TotalViewCount = "totalViewCount",
 }
+
+/** input type for updating data in table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Set_Input = {
+    itemId?: Maybe<Scalars["uuid"]>;
+    totalViewCount?: Maybe<Scalars["bigint"]>;
+};
 
 /** aggregate stddev on columns */
 export type Analytics_ItemTotalViews_Stddev_Fields = {
@@ -2396,6 +2538,14 @@ export type Analytics_ItemTotalViews_Sum_Fields = {
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
 
+/** update columns of table "analytics.ItemTotalViews" */
+export enum Analytics_ItemTotalViews_Update_Column {
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    TotalViewCount = "totalViewCount",
+}
+
 /** aggregate var_pop on columns */
 export type Analytics_ItemTotalViews_Var_Pop_Fields = {
     __typename?: "analytics_ItemTotalViews_var_pop_fields";
@@ -2417,17 +2567,12 @@ export type Analytics_ItemTotalViews_Variance_Fields = {
 /** columns and relationships of "analytics.RoomPresence" */
 export type Analytics_RoomPresence = {
     __typename?: "analytics_RoomPresence";
-    count?: Maybe<Scalars["jsonb"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
+    count: Scalars["bigint"];
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
     /** An object relationship */
-    room?: Maybe<Room_Room>;
-};
-
-/** columns and relationships of "analytics.RoomPresence" */
-export type Analytics_RoomPresenceCountArgs = {
-    path?: Maybe<Scalars["String"]>;
+    room: Room_Room;
+    roomId: Scalars["uuid"];
 };
 
 /** aggregated selection of "analytics.RoomPresence" */
@@ -2440,9 +2585,17 @@ export type Analytics_RoomPresence_Aggregate = {
 /** aggregate fields of "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Aggregate_Fields = {
     __typename?: "analytics_RoomPresence_aggregate_fields";
+    avg?: Maybe<Analytics_RoomPresence_Avg_Fields>;
     count: Scalars["Int"];
     max?: Maybe<Analytics_RoomPresence_Max_Fields>;
     min?: Maybe<Analytics_RoomPresence_Min_Fields>;
+    stddev?: Maybe<Analytics_RoomPresence_Stddev_Fields>;
+    stddev_pop?: Maybe<Analytics_RoomPresence_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Analytics_RoomPresence_Stddev_Samp_Fields>;
+    sum?: Maybe<Analytics_RoomPresence_Sum_Fields>;
+    var_pop?: Maybe<Analytics_RoomPresence_Var_Pop_Fields>;
+    var_samp?: Maybe<Analytics_RoomPresence_Var_Samp_Fields>;
+    variance?: Maybe<Analytics_RoomPresence_Variance_Fields>;
 };
 
 /** aggregate fields of "analytics.RoomPresence" */
@@ -2453,14 +2606,35 @@ export type Analytics_RoomPresence_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Aggregate_Order_By = {
+    avg?: Maybe<Analytics_RoomPresence_Avg_Order_By>;
     count?: Maybe<Order_By>;
     max?: Maybe<Analytics_RoomPresence_Max_Order_By>;
     min?: Maybe<Analytics_RoomPresence_Min_Order_By>;
+    stddev?: Maybe<Analytics_RoomPresence_Stddev_Order_By>;
+    stddev_pop?: Maybe<Analytics_RoomPresence_Stddev_Pop_Order_By>;
+    stddev_samp?: Maybe<Analytics_RoomPresence_Stddev_Samp_Order_By>;
+    sum?: Maybe<Analytics_RoomPresence_Sum_Order_By>;
+    var_pop?: Maybe<Analytics_RoomPresence_Var_Pop_Order_By>;
+    var_samp?: Maybe<Analytics_RoomPresence_Var_Samp_Order_By>;
+    variance?: Maybe<Analytics_RoomPresence_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Arr_Rel_Insert_Input = {
     data: Array<Analytics_RoomPresence_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Analytics_RoomPresence_Avg_Fields = {
+    __typename?: "analytics_RoomPresence_avg_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Avg_Order_By = {
+    count?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "analytics.RoomPresence". All fields are combined with a logical 'AND'. */
@@ -2468,50 +2642,83 @@ export type Analytics_RoomPresence_Bool_Exp = {
     _and?: Maybe<Array<Analytics_RoomPresence_Bool_Exp>>;
     _not?: Maybe<Analytics_RoomPresence_Bool_Exp>;
     _or?: Maybe<Array<Analytics_RoomPresence_Bool_Exp>>;
-    count?: Maybe<Jsonb_Comparison_Exp>;
+    count?: Maybe<Bigint_Comparison_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
-    name?: Maybe<String_Comparison_Exp>;
     room?: Maybe<Room_Room_Bool_Exp>;
+    roomId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "analytics.RoomPresence" */
+export enum Analytics_RoomPresence_Constraint {
+    /** unique or primary key constraint */
+    RoomPresencePkey = "RoomPresence_pkey",
+    /** unique or primary key constraint */
+    RoomPresenceRoomIdCreatedAtKey = "RoomPresence_roomId_created_at_key",
+}
+
+/** input type for incrementing numeric columns in table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Inc_Input = {
+    count?: Maybe<Scalars["bigint"]>;
 };
 
 /** input type for inserting data into table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Insert_Input = {
-    count?: Maybe<Scalars["jsonb"]>;
+    count?: Maybe<Scalars["bigint"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
     room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+    roomId?: Maybe<Scalars["uuid"]>;
 };
 
 /** aggregate max on columns */
 export type Analytics_RoomPresence_Max_Fields = {
     __typename?: "analytics_RoomPresence_max_fields";
+    count?: Maybe<Scalars["bigint"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
 };
 
 /** order by max() on columns of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Max_Order_By = {
+    count?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Analytics_RoomPresence_Min_Fields = {
     __typename?: "analytics_RoomPresence_min_fields";
+    count?: Maybe<Scalars["bigint"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
 };
 
 /** order by min() on columns of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Min_Order_By = {
+    count?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Mutation_Response = {
+    __typename?: "analytics_RoomPresence_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Analytics_RoomPresence>;
+};
+
+/** on conflict condition type for table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_On_Conflict = {
+    constraint: Analytics_RoomPresence_Constraint;
+    update_columns?: Array<Analytics_RoomPresence_Update_Column>;
+    where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.RoomPresence". */
@@ -2519,8 +2726,13 @@ export type Analytics_RoomPresence_Order_By = {
     count?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
     room?: Maybe<Room_Room_Order_By>;
+    roomId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: analytics_RoomPresence */
+export type Analytics_RoomPresence_Pk_Columns_Input = {
+    id: Scalars["uuid"];
 };
 
 /** select columns of table "analytics.RoomPresence" */
@@ -2532,8 +2744,105 @@ export enum Analytics_RoomPresence_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
-    Name = "name",
+    RoomId = "roomId",
 }
+
+/** input type for updating data in table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Set_Input = {
+    count?: Maybe<Scalars["bigint"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+};
+
+/** aggregate stddev on columns */
+export type Analytics_RoomPresence_Stddev_Fields = {
+    __typename?: "analytics_RoomPresence_stddev_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Analytics_RoomPresence_Stddev_Pop_Fields = {
+    __typename?: "analytics_RoomPresence_stddev_pop_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Pop_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Analytics_RoomPresence_Stddev_Samp_Fields = {
+    __typename?: "analytics_RoomPresence_stddev_samp_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Samp_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Analytics_RoomPresence_Sum_Fields = {
+    __typename?: "analytics_RoomPresence_sum_fields";
+    count?: Maybe<Scalars["bigint"]>;
+};
+
+/** order by sum() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Sum_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** update columns of table "analytics.RoomPresence" */
+export enum Analytics_RoomPresence_Update_Column {
+    /** column name */
+    Count = "count",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    RoomId = "roomId",
+}
+
+/** aggregate var_pop on columns */
+export type Analytics_RoomPresence_Var_Pop_Fields = {
+    __typename?: "analytics_RoomPresence_var_pop_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Var_Pop_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Analytics_RoomPresence_Var_Samp_Fields = {
+    __typename?: "analytics_RoomPresence_var_samp_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Var_Samp_Order_By = {
+    count?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Analytics_RoomPresence_Variance_Fields = {
+    __typename?: "analytics_RoomPresence_variance_fields";
+    count?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Variance_Order_By = {
+    count?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "analytics.RoomStats" */
 export type Analytics_RoomStats = {
@@ -2825,330 +3134,6 @@ export type Analytics_RoomStats_Variance_Fields = {
 export type Analytics_RoomStats_Variance_Order_By = {
     hlsViewCount?: Maybe<Order_By>;
 };
-
-/** columns and relationships of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews = {
-    __typename?: "analytics_mat_ElementTotalViews";
-    elementId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregated selection of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate = {
-    __typename?: "analytics_mat_ElementTotalViews_aggregate";
-    aggregate?: Maybe<Analytics_Mat_ElementTotalViews_Aggregate_Fields>;
-    nodes: Array<Analytics_Mat_ElementTotalViews>;
-};
-
-/** aggregate fields of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_aggregate_fields";
-    avg?: Maybe<Analytics_Mat_ElementTotalViews_Avg_Fields>;
-    count: Scalars["Int"];
-    max?: Maybe<Analytics_Mat_ElementTotalViews_Max_Fields>;
-    min?: Maybe<Analytics_Mat_ElementTotalViews_Min_Fields>;
-    stddev?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Fields>;
-    stddev_pop?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields>;
-    stddev_samp?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields>;
-    sum?: Maybe<Analytics_Mat_ElementTotalViews_Sum_Fields>;
-    var_pop?: Maybe<Analytics_Mat_ElementTotalViews_Var_Pop_Fields>;
-    var_samp?: Maybe<Analytics_Mat_ElementTotalViews_Var_Samp_Fields>;
-    variance?: Maybe<Analytics_Mat_ElementTotalViews_Variance_Fields>;
-};
-
-/** aggregate fields of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** aggregate avg on columns */
-export type Analytics_Mat_ElementTotalViews_Avg_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_avg_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_ElementTotalViews". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_ElementTotalViews_Bool_Exp = {
-    _and?: Maybe<Array<Analytics_Mat_ElementTotalViews_Bool_Exp>>;
-    _not?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-    _or?: Maybe<Array<Analytics_Mat_ElementTotalViews_Bool_Exp>>;
-    elementId?: Maybe<Uuid_Comparison_Exp>;
-    totalViewCount?: Maybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_ElementTotalViews_Max_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_max_fields";
-    elementId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_ElementTotalViews_Min_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_min_fields";
-    elementId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_ElementTotalViews". */
-export type Analytics_Mat_ElementTotalViews_Order_By = {
-    elementId?: Maybe<Order_By>;
-    totalViewCount?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_ElementTotalViews" */
-export enum Analytics_Mat_ElementTotalViews_Select_Column {
-    /** column name */
-    ElementId = "elementId",
-    /** column name */
-    TotalViewCount = "totalViewCount",
-}
-
-/** aggregate stddev on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_stddev_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_stddev_pop_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_stddev_samp_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate sum on columns */
-export type Analytics_Mat_ElementTotalViews_Sum_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_sum_fields";
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate var_pop on columns */
-export type Analytics_Mat_ElementTotalViews_Var_Pop_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_var_pop_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate var_samp on columns */
-export type Analytics_Mat_ElementTotalViews_Var_Samp_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_var_samp_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate variance on columns */
-export type Analytics_Mat_ElementTotalViews_Variance_Fields = {
-    __typename?: "analytics_mat_ElementTotalViews_variance_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** columns and relationships of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews = {
-    __typename?: "analytics_mat_ItemTotalViews";
-    itemId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregated selection of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate = {
-    __typename?: "analytics_mat_ItemTotalViews_aggregate";
-    aggregate?: Maybe<Analytics_Mat_ItemTotalViews_Aggregate_Fields>;
-    nodes: Array<Analytics_Mat_ItemTotalViews>;
-};
-
-/** aggregate fields of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_aggregate_fields";
-    avg?: Maybe<Analytics_Mat_ItemTotalViews_Avg_Fields>;
-    count: Scalars["Int"];
-    max?: Maybe<Analytics_Mat_ItemTotalViews_Max_Fields>;
-    min?: Maybe<Analytics_Mat_ItemTotalViews_Min_Fields>;
-    stddev?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Fields>;
-    stddev_pop?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields>;
-    stddev_samp?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields>;
-    sum?: Maybe<Analytics_Mat_ItemTotalViews_Sum_Fields>;
-    var_pop?: Maybe<Analytics_Mat_ItemTotalViews_Var_Pop_Fields>;
-    var_samp?: Maybe<Analytics_Mat_ItemTotalViews_Var_Samp_Fields>;
-    variance?: Maybe<Analytics_Mat_ItemTotalViews_Variance_Fields>;
-};
-
-/** aggregate fields of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** aggregate avg on columns */
-export type Analytics_Mat_ItemTotalViews_Avg_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_avg_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_ItemTotalViews". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_ItemTotalViews_Bool_Exp = {
-    _and?: Maybe<Array<Analytics_Mat_ItemTotalViews_Bool_Exp>>;
-    _not?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-    _or?: Maybe<Array<Analytics_Mat_ItemTotalViews_Bool_Exp>>;
-    itemId?: Maybe<Uuid_Comparison_Exp>;
-    totalViewCount?: Maybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_ItemTotalViews_Max_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_max_fields";
-    itemId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_ItemTotalViews_Min_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_min_fields";
-    itemId?: Maybe<Scalars["uuid"]>;
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_ItemTotalViews". */
-export type Analytics_Mat_ItemTotalViews_Order_By = {
-    itemId?: Maybe<Order_By>;
-    totalViewCount?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_ItemTotalViews" */
-export enum Analytics_Mat_ItemTotalViews_Select_Column {
-    /** column name */
-    ItemId = "itemId",
-    /** column name */
-    TotalViewCount = "totalViewCount",
-}
-
-/** aggregate stddev on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_stddev_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_stddev_pop_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_stddev_samp_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate sum on columns */
-export type Analytics_Mat_ItemTotalViews_Sum_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_sum_fields";
-    totalViewCount?: Maybe<Scalars["bigint"]>;
-};
-
-/** aggregate var_pop on columns */
-export type Analytics_Mat_ItemTotalViews_Var_Pop_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_var_pop_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate var_samp on columns */
-export type Analytics_Mat_ItemTotalViews_Var_Samp_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_var_samp_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** aggregate variance on columns */
-export type Analytics_Mat_ItemTotalViews_Variance_Fields = {
-    __typename?: "analytics_mat_ItemTotalViews_variance_fields";
-    totalViewCount?: Maybe<Scalars["Float"]>;
-};
-
-/** columns and relationships of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence = {
-    __typename?: "analytics_mat_RoomPresence";
-    count?: Maybe<Scalars["jsonb"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-};
-
-/** columns and relationships of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresenceCountArgs = {
-    path?: Maybe<Scalars["String"]>;
-};
-
-/** aggregated selection of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate = {
-    __typename?: "analytics_mat_RoomPresence_aggregate";
-    aggregate?: Maybe<Analytics_Mat_RoomPresence_Aggregate_Fields>;
-    nodes: Array<Analytics_Mat_RoomPresence>;
-};
-
-/** aggregate fields of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate_Fields = {
-    __typename?: "analytics_mat_RoomPresence_aggregate_fields";
-    count: Scalars["Int"];
-    max?: Maybe<Analytics_Mat_RoomPresence_Max_Fields>;
-    min?: Maybe<Analytics_Mat_RoomPresence_Min_Fields>;
-};
-
-/** aggregate fields of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_RoomPresence". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_RoomPresence_Bool_Exp = {
-    _and?: Maybe<Array<Analytics_Mat_RoomPresence_Bool_Exp>>;
-    _not?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-    _or?: Maybe<Array<Analytics_Mat_RoomPresence_Bool_Exp>>;
-    count?: Maybe<Jsonb_Comparison_Exp>;
-    created_at?: Maybe<Timestamptz_Comparison_Exp>;
-    id?: Maybe<Uuid_Comparison_Exp>;
-    name?: Maybe<String_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_RoomPresence_Max_Fields = {
-    __typename?: "analytics_mat_RoomPresence_max_fields";
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_RoomPresence_Min_Fields = {
-    __typename?: "analytics_mat_RoomPresence_min_fields";
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_RoomPresence". */
-export type Analytics_Mat_RoomPresence_Order_By = {
-    count?: Maybe<Order_By>;
-    created_at?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_RoomPresence" */
-export enum Analytics_Mat_RoomPresence_Select_Column {
-    /** column name */
-    Count = "count",
-    /** column name */
-    CreatedAt = "created_at",
-    /** column name */
-    Id = "id",
-    /** column name */
-    Name = "name",
-}
 
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
 export type Bigint_Comparison_Exp = {
@@ -6988,6 +6973,10 @@ export type Conference_Conference = {
     demoCode: Conference_DemoCode;
     demoCodeId: Scalars["uuid"];
     /** An array relationship */
+    events: Array<Schedule_Event>;
+    /** An aggregate relationship */
+    events_aggregate: Schedule_Event_Aggregate;
+    /** An array relationship */
     exhibitions: Array<Collection_Exhibition>;
     /** An aggregate relationship */
     exhibitions_aggregate: Collection_Exhibition_Aggregate;
@@ -7064,6 +7053,24 @@ export type Conference_ConferenceConfigurations_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Conference_Configuration_Order_By>>;
     where?: Maybe<Conference_Configuration_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEventsArgs = {
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEvents_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7278,6 +7285,7 @@ export type Conference_Conference_Bool_Exp = {
     defaultProgramVisibilityLevel?: Maybe<String_Comparison_Exp>;
     demoCode?: Maybe<Conference_DemoCode_Bool_Exp>;
     demoCodeId?: Maybe<Uuid_Comparison_Exp>;
+    events?: Maybe<Schedule_Event_Bool_Exp>;
     exhibitions?: Maybe<Collection_Exhibition_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     items?: Maybe<Content_Item_Bool_Exp>;
@@ -7320,6 +7328,7 @@ export type Conference_Conference_Insert_Input = {
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     demoCode?: Maybe<Conference_DemoCode_Obj_Rel_Insert_Input>;
     demoCodeId?: Maybe<Scalars["uuid"]>;
+    events?: Maybe<Schedule_Event_Arr_Rel_Insert_Input>;
     exhibitions?: Maybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
     id?: Maybe<Scalars["uuid"]>;
     items?: Maybe<Content_Item_Arr_Rel_Insert_Input>;
@@ -7425,6 +7434,7 @@ export type Conference_Conference_Order_By = {
     defaultProgramVisibilityLevel?: Maybe<Order_By>;
     demoCode?: Maybe<Conference_DemoCode_Order_By>;
     demoCodeId?: Maybe<Order_By>;
+    events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
     exhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
     items_aggregate?: Maybe<Content_Item_Aggregate_Order_By>;
@@ -7569,6 +7579,16 @@ export enum Conference_ConfigurationKey_Constraint {
 }
 
 export enum Conference_ConfigurationKey_Enum {
+    /** Number. Milliseconds UTC. Time from which to stop sending initial invitations automatically. */
+    AutomaticInvitationsEnd = "AUTOMATIC_INVITATIONS_END",
+    /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+    AutomaticInvitationsRepeatEnd = "AUTOMATIC_INVITATIONS_REPEAT_END",
+    /** Number. Milliseconds. Time between sending repeat emails for unaccepted invitations. */
+    AutomaticInvitationsRepeatFrequency = "AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY",
+    /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+    AutomaticInvitationsRepeatStart = "AUTOMATIC_INVITATIONS_REPEAT_START",
+    /** Number. Milliseconds UTC. Time from which to start sending initial invitations automatically. */
+    AutomaticInvitationsStart = "AUTOMATIC_INVITATIONS_START",
     /** A list of videos to be used as the background for title/sponsor slides. */
     BackgroundVideos = "BACKGROUND_VIDEOS",
     /** A string representing the app version. Changing this causes the user's browsers to refresh. */
@@ -7583,6 +7603,10 @@ export enum Conference_ConfigurationKey_Enum {
     EnableBackstageStreamPreview = "ENABLE_BACKSTAGE_STREAM_PREVIEW",
     /** Boolean. Whether to enable the External RTMP Broadcast feature. */
     EnableExternalRtmpBroadcast = "ENABLE_EXTERNAL_RTMP_BROADCAST",
+    /** Whether to enable email notifications for recordings (default: true). */
+    EnableRecordingSubtitleEmailNotifications = "ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS",
+    /** Boolean. Hide the exhibition people from the event boxes in the schedule. */
+    EventBoxHideExhibitionPeople = "EVENT_BOX_HIDE_EXHIBITION_PEOPLE",
     /** List of S3 URLs. */
     FillerVideos = "FILLER_VIDEOS",
     /** Boolean. Switches on the Sponsors menu button (even if no sponsors exist). */
@@ -7601,6 +7625,8 @@ export enum Conference_ConfigurationKey_Enum {
     ScheduleViewVersion = "SCHEDULE_VIEW_VERSION",
     /** String. Label for the "sponsors" in the sidebar for when a conference uses a different term. */
     SponsorsLabel = "SPONSORS_LABEL",
+    /** A list of strings indicating which program people roles receive notifications (e.g. subtitles) about submissions. Default: ["PRESENTER","AUTHOR"]. */
+    SubmissionNotificationRoles = "SUBMISSION_NOTIFICATION_ROLES",
     /** A string representing a valid email address for contacting the conference organisers. */
     SupportAddress = "SUPPORT_ADDRESS",
     /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
@@ -8861,6 +8887,7 @@ export type Content_Element = {
     /** An object relationship */
     originatingData?: Maybe<Conference_OriginatingData>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
+    source?: Maybe<Scalars["jsonb"]>;
     /** An array relationship */
     stats: Array<Analytics_ContentElementStats>;
     /** An aggregate relationship */
@@ -8887,6 +8914,11 @@ export type Content_ElementDataArgs = {
 
 /** columns and relationships of "content.Element" */
 export type Content_ElementLayoutDataArgs = {
+    path?: Maybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementSourceArgs = {
     path?: Maybe<Scalars["String"]>;
 };
 
@@ -9169,6 +9201,7 @@ export type Content_Element_Aggregate_Order_By = {
 export type Content_Element_Append_Input = {
     data?: Maybe<Scalars["jsonb"]>;
     layoutData?: Maybe<Scalars["jsonb"]>;
+    source?: Maybe<Scalars["jsonb"]>;
 };
 
 /** input type for inserting array relation for remote table "content.Element" */
@@ -9208,6 +9241,7 @@ export type Content_Element_Bool_Exp = {
     name?: Maybe<String_Comparison_Exp>;
     originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
     originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+    source?: Maybe<Jsonb_Comparison_Exp>;
     stats?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
     subconferenceId?: Maybe<Uuid_Comparison_Exp>;
     totalViewsStat?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
@@ -9229,18 +9263,21 @@ export enum Content_Element_Constraint {
 export type Content_Element_Delete_At_Path_Input = {
     data?: Maybe<Array<Scalars["String"]>>;
     layoutData?: Maybe<Array<Scalars["String"]>>;
+    source?: Maybe<Array<Scalars["String"]>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Content_Element_Delete_Elem_Input = {
     data?: Maybe<Scalars["Int"]>;
     layoutData?: Maybe<Scalars["Int"]>;
+    source?: Maybe<Scalars["Int"]>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Content_Element_Delete_Key_Input = {
     data?: Maybe<Scalars["String"]>;
     layoutData?: Maybe<Scalars["String"]>;
+    source?: Maybe<Scalars["String"]>;
 };
 
 /** input type for incrementing numeric columns in table "content.Element" */
@@ -9262,6 +9299,7 @@ export type Content_Element_Insert_Input = {
     name?: Maybe<Scalars["String"]>;
     originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
+    source?: Maybe<Scalars["jsonb"]>;
     stats?: Maybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     totalViewsStat?: Maybe<Analytics_ElementTotalViews_Obj_Rel_Insert_Input>;
@@ -9366,6 +9404,7 @@ export type Content_Element_Order_By = {
     name?: Maybe<Order_By>;
     originatingData?: Maybe<Conference_OriginatingData_Order_By>;
     originatingDataId?: Maybe<Order_By>;
+    source?: Maybe<Order_By>;
     stats_aggregate?: Maybe<Analytics_ContentElementStats_Aggregate_Order_By>;
     subconferenceId?: Maybe<Order_By>;
     totalViewsStat?: Maybe<Analytics_ElementTotalViews_Order_By>;
@@ -9386,6 +9425,7 @@ export type Content_Element_Pk_Columns_Input = {
 export type Content_Element_Prepend_Input = {
     data?: Maybe<Scalars["jsonb"]>;
     layoutData?: Maybe<Scalars["jsonb"]>;
+    source?: Maybe<Scalars["jsonb"]>;
 };
 
 /** select columns of table "content.Element" */
@@ -9409,6 +9449,8 @@ export enum Content_Element_Select_Column {
     /** column name */
     OriginatingDataId = "originatingDataId",
     /** column name */
+    Source = "source",
+    /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
     TypeName = "typeName",
@@ -9431,6 +9473,7 @@ export type Content_Element_Set_Input = {
     layoutData?: Maybe<Scalars["jsonb"]>;
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
+    source?: Maybe<Scalars["jsonb"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     typeName?: Maybe<Content_ElementType_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -9502,6 +9545,8 @@ export enum Content_Element_Update_Column {
     Name = "name",
     /** column name */
     OriginatingDataId = "originatingDataId",
+    /** column name */
+    Source = "source",
     /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
@@ -13633,6 +13678,18 @@ export type Mutation_Root = {
     delete_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
     /** delete single row from the table: "analytics.ContentItemStats" */
     delete_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+    /** delete data from the table: "analytics.ElementTotalViews" */
+    delete_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+    /** delete single row from the table: "analytics.ElementTotalViews" */
+    delete_analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
+    /** delete data from the table: "analytics.ItemTotalViews" */
+    delete_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+    /** delete single row from the table: "analytics.ItemTotalViews" */
+    delete_analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
+    /** delete data from the table: "analytics.RoomPresence" */
+    delete_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+    /** delete single row from the table: "analytics.RoomPresence" */
+    delete_analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** delete data from the table: "analytics.RoomStats" */
     delete_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
     /** delete single row from the table: "analytics.RoomStats" */
@@ -13999,6 +14056,18 @@ export type Mutation_Root = {
     insert_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
     /** insert a single row into the table: "analytics.ContentItemStats" */
     insert_analytics_ContentItemStats_one?: Maybe<Analytics_ContentItemStats>;
+    /** insert data into the table: "analytics.ElementTotalViews" */
+    insert_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+    /** insert a single row into the table: "analytics.ElementTotalViews" */
+    insert_analytics_ElementTotalViews_one?: Maybe<Analytics_ElementTotalViews>;
+    /** insert data into the table: "analytics.ItemTotalViews" */
+    insert_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+    /** insert a single row into the table: "analytics.ItemTotalViews" */
+    insert_analytics_ItemTotalViews_one?: Maybe<Analytics_ItemTotalViews>;
+    /** insert data into the table: "analytics.RoomPresence" */
+    insert_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+    /** insert a single row into the table: "analytics.RoomPresence" */
+    insert_analytics_RoomPresence_one?: Maybe<Analytics_RoomPresence>;
     /** insert data into the table: "analytics.RoomStats" */
     insert_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
     /** insert a single row into the table: "analytics.RoomStats" */
@@ -14376,6 +14445,18 @@ export type Mutation_Root = {
     update_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
     /** update single row of the table: "analytics.ContentItemStats" */
     update_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+    /** update data of the table: "analytics.ElementTotalViews" */
+    update_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+    /** update single row of the table: "analytics.ElementTotalViews" */
+    update_analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
+    /** update data of the table: "analytics.ItemTotalViews" */
+    update_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+    /** update single row of the table: "analytics.ItemTotalViews" */
+    update_analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
+    /** update data of the table: "analytics.RoomPresence" */
+    update_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+    /** update single row of the table: "analytics.RoomPresence" */
+    update_analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** update data of the table: "analytics.RoomStats" */
     update_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
     /** update single row of the table: "analytics.RoomStats" */
@@ -14787,6 +14868,36 @@ export type Mutation_RootDelete_Analytics_ContentItemStatsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Analytics_ContentItemStats_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ElementTotalViewsArgs = {
+    where: Analytics_ElementTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ElementTotalViews_By_PkArgs = {
+    elementId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ItemTotalViewsArgs = {
+    where: Analytics_ItemTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ItemTotalViews_By_PkArgs = {
+    itemId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomPresenceArgs = {
+    where: Analytics_RoomPresence_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomPresence_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -15720,6 +15831,42 @@ export type Mutation_RootInsert_Analytics_ContentItemStatsArgs = {
 export type Mutation_RootInsert_Analytics_ContentItemStats_OneArgs = {
     object: Analytics_ContentItemStats_Insert_Input;
     on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ElementTotalViewsArgs = {
+    objects: Array<Analytics_ElementTotalViews_Insert_Input>;
+    on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ElementTotalViews_OneArgs = {
+    object: Analytics_ElementTotalViews_Insert_Input;
+    on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ItemTotalViewsArgs = {
+    objects: Array<Analytics_ItemTotalViews_Insert_Input>;
+    on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ItemTotalViews_OneArgs = {
+    object: Analytics_ItemTotalViews_Insert_Input;
+    on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomPresenceArgs = {
+    objects: Array<Analytics_RoomPresence_Insert_Input>;
+    on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomPresence_OneArgs = {
+    object: Analytics_RoomPresence_Insert_Input;
+    on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
 };
 
 /** mutation root */
@@ -16900,6 +17047,48 @@ export type Mutation_RootUpdate_Analytics_ContentItemStats_By_PkArgs = {
     _inc?: Maybe<Analytics_ContentItemStats_Inc_Input>;
     _set?: Maybe<Analytics_ContentItemStats_Set_Input>;
     pk_columns: Analytics_ContentItemStats_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ElementTotalViewsArgs = {
+    _inc?: Maybe<Analytics_ElementTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ElementTotalViews_Set_Input>;
+    where: Analytics_ElementTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ElementTotalViews_By_PkArgs = {
+    _inc?: Maybe<Analytics_ElementTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ElementTotalViews_Set_Input>;
+    pk_columns: Analytics_ElementTotalViews_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ItemTotalViewsArgs = {
+    _inc?: Maybe<Analytics_ItemTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ItemTotalViews_Set_Input>;
+    where: Analytics_ItemTotalViews_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ItemTotalViews_By_PkArgs = {
+    _inc?: Maybe<Analytics_ItemTotalViews_Inc_Input>;
+    _set?: Maybe<Analytics_ItemTotalViews_Set_Input>;
+    pk_columns: Analytics_ItemTotalViews_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomPresenceArgs = {
+    _inc?: Maybe<Analytics_RoomPresence_Inc_Input>;
+    _set?: Maybe<Analytics_RoomPresence_Set_Input>;
+    where: Analytics_RoomPresence_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomPresence_By_PkArgs = {
+    _inc?: Maybe<Analytics_RoomPresence_Inc_Input>;
+    _set?: Maybe<Analytics_RoomPresence_Set_Input>;
+    pk_columns: Analytics_RoomPresence_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -18215,32 +18404,26 @@ export type Query_Root = {
     analytics_ElementTotalViews: Array<Analytics_ElementTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ElementTotalViews" */
     analytics_ElementTotalViews_aggregate: Analytics_ElementTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ElementTotalViews" using primary key columns */
+    analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
     /** fetch data from the table: "analytics.ItemTotalViews" */
     analytics_ItemTotalViews: Array<Analytics_ItemTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ItemTotalViews" */
     analytics_ItemTotalViews_aggregate: Analytics_ItemTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ItemTotalViews" using primary key columns */
+    analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
     /** fetch data from the table: "analytics.RoomPresence" */
     analytics_RoomPresence: Array<Analytics_RoomPresence>;
     /** fetch aggregated fields from the table: "analytics.RoomPresence" */
     analytics_RoomPresence_aggregate: Analytics_RoomPresence_Aggregate;
+    /** fetch data from the table: "analytics.RoomPresence" using primary key columns */
+    analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** fetch data from the table: "analytics.RoomStats" */
     analytics_RoomStats: Array<Analytics_RoomStats>;
     /** fetch aggregated fields from the table: "analytics.RoomStats" */
     analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
     /** fetch data from the table: "analytics.RoomStats" using primary key columns */
     analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-    /** fetch data from the table: "analytics.mat_ElementTotalViews" */
-    analytics_mat_ElementTotalViews: Array<Analytics_Mat_ElementTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ElementTotalViews" */
-    analytics_mat_ElementTotalViews_aggregate: Analytics_Mat_ElementTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_ItemTotalViews" */
-    analytics_mat_ItemTotalViews: Array<Analytics_Mat_ItemTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ItemTotalViews" */
-    analytics_mat_ItemTotalViews_aggregate: Analytics_Mat_ItemTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_RoomPresence" */
-    analytics_mat_RoomPresence: Array<Analytics_Mat_RoomPresence>;
-    /** fetch aggregated fields from the table: "analytics.mat_RoomPresence" */
-    analytics_mat_RoomPresence_aggregate: Analytics_Mat_RoomPresence_Aggregate;
     /** fetch data from the table: "chat.Chat" */
     chat_Chat: Array<Chat_Chat>;
     /** fetch aggregated fields from the table: "chat.Chat" */
@@ -18931,6 +19114,10 @@ export type Query_RootAnalytics_ElementTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
+export type Query_RootAnalytics_ElementTotalViews_By_PkArgs = {
+    elementId: Scalars["uuid"];
+};
+
 export type Query_RootAnalytics_ItemTotalViewsArgs = {
     distinct_on?: Maybe<Array<Analytics_ItemTotalViews_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -18947,6 +19134,10 @@ export type Query_RootAnalytics_ItemTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
+export type Query_RootAnalytics_ItemTotalViews_By_PkArgs = {
+    itemId: Scalars["uuid"];
+};
+
 export type Query_RootAnalytics_RoomPresenceArgs = {
     distinct_on?: Maybe<Array<Analytics_RoomPresence_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -18961,6 +19152,10 @@ export type Query_RootAnalytics_RoomPresence_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Analytics_RoomPresence_Order_By>>;
     where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
+};
+
+export type Query_RootAnalytics_RoomPresence_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Query_RootAnalytics_RoomStatsArgs = {
@@ -18981,54 +19176,6 @@ export type Query_RootAnalytics_RoomStats_AggregateArgs = {
 
 export type Query_RootAnalytics_RoomStats_By_PkArgs = {
     id: Scalars["uuid"];
-};
-
-export type Query_RootAnalytics_Mat_ElementTotalViewsArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_ElementTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_ItemTotalViewsArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_ItemTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_RoomPresenceArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-};
-
-export type Query_RootAnalytics_Mat_RoomPresence_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
 };
 
 export type Query_RootChat_ChatArgs = {
@@ -19613,10 +19760,6 @@ export type Query_RootContent_SearchItems_AggregateArgs = {
 
 export type Query_RootGetSlugArgs = {
     url: Scalars["String"];
-};
-
-export type Query_RootGetUploadAgreementArgs = {
-    magicToken: Scalars["String"];
 };
 
 export type Query_RootJob_Queues_ChannelStackCreateJobArgs = {
@@ -22284,6 +22427,8 @@ export type Registrant_Registrant = {
     id: Scalars["uuid"];
     /** An object relationship */
     invitation?: Maybe<Registrant_Invitation>;
+    /** A computed field, executes function "registrant.InvitationEmailStatus" */
+    invitationStatus?: Maybe<Scalars["jsonb"]>;
     /** A computed field, executes function "registrant.HasBeenInvited" */
     inviteSent?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
@@ -22340,6 +22485,11 @@ export type Registrant_RegistrantGroupRegistrants_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Registrant_GroupRegistrant_Order_By>>;
     where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+/** columns and relationships of "registrant.Registrant" */
+export type Registrant_RegistrantInvitationStatusArgs = {
+    path?: Maybe<Scalars["String"]>;
 };
 
 /** columns and relationships of "registrant.Registrant" */
@@ -22572,6 +22722,7 @@ export type Registrant_Registrant_Bool_Exp = {
     groupRegistrants?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
+    invitationStatus?: Maybe<Jsonb_Comparison_Exp>;
     inviteSent?: Maybe<Boolean_Comparison_Exp>;
     profile?: Maybe<Registrant_Profile_Bool_Exp>;
     programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
@@ -22686,6 +22837,7 @@ export type Registrant_Registrant_Order_By = {
     groupRegistrants_aggregate?: Maybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
     invitation?: Maybe<Registrant_Invitation_Order_By>;
+    invitationStatus?: Maybe<Order_By>;
     inviteSent?: Maybe<Order_By>;
     profile?: Maybe<Registrant_Profile_Order_By>;
     programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
@@ -28508,32 +28660,26 @@ export type Subscription_Root = {
     analytics_ElementTotalViews: Array<Analytics_ElementTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ElementTotalViews" */
     analytics_ElementTotalViews_aggregate: Analytics_ElementTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ElementTotalViews" using primary key columns */
+    analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
     /** fetch data from the table: "analytics.ItemTotalViews" */
     analytics_ItemTotalViews: Array<Analytics_ItemTotalViews>;
     /** fetch aggregated fields from the table: "analytics.ItemTotalViews" */
     analytics_ItemTotalViews_aggregate: Analytics_ItemTotalViews_Aggregate;
+    /** fetch data from the table: "analytics.ItemTotalViews" using primary key columns */
+    analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
     /** fetch data from the table: "analytics.RoomPresence" */
     analytics_RoomPresence: Array<Analytics_RoomPresence>;
     /** fetch aggregated fields from the table: "analytics.RoomPresence" */
     analytics_RoomPresence_aggregate: Analytics_RoomPresence_Aggregate;
+    /** fetch data from the table: "analytics.RoomPresence" using primary key columns */
+    analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
     /** fetch data from the table: "analytics.RoomStats" */
     analytics_RoomStats: Array<Analytics_RoomStats>;
     /** fetch aggregated fields from the table: "analytics.RoomStats" */
     analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
     /** fetch data from the table: "analytics.RoomStats" using primary key columns */
     analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-    /** fetch data from the table: "analytics.mat_ElementTotalViews" */
-    analytics_mat_ElementTotalViews: Array<Analytics_Mat_ElementTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ElementTotalViews" */
-    analytics_mat_ElementTotalViews_aggregate: Analytics_Mat_ElementTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_ItemTotalViews" */
-    analytics_mat_ItemTotalViews: Array<Analytics_Mat_ItemTotalViews>;
-    /** fetch aggregated fields from the table: "analytics.mat_ItemTotalViews" */
-    analytics_mat_ItemTotalViews_aggregate: Analytics_Mat_ItemTotalViews_Aggregate;
-    /** fetch data from the table: "analytics.mat_RoomPresence" */
-    analytics_mat_RoomPresence: Array<Analytics_Mat_RoomPresence>;
-    /** fetch aggregated fields from the table: "analytics.mat_RoomPresence" */
-    analytics_mat_RoomPresence_aggregate: Analytics_Mat_RoomPresence_Aggregate;
     /** fetch data from the table: "chat.Chat" */
     chat_Chat: Array<Chat_Chat>;
     /** fetch aggregated fields from the table: "chat.Chat" */
@@ -29220,6 +29366,10 @@ export type Subscription_RootAnalytics_ElementTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
+export type Subscription_RootAnalytics_ElementTotalViews_By_PkArgs = {
+    elementId: Scalars["uuid"];
+};
+
 export type Subscription_RootAnalytics_ItemTotalViewsArgs = {
     distinct_on?: Maybe<Array<Analytics_ItemTotalViews_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29236,6 +29386,10 @@ export type Subscription_RootAnalytics_ItemTotalViews_AggregateArgs = {
     where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
+export type Subscription_RootAnalytics_ItemTotalViews_By_PkArgs = {
+    itemId: Scalars["uuid"];
+};
+
 export type Subscription_RootAnalytics_RoomPresenceArgs = {
     distinct_on?: Maybe<Array<Analytics_RoomPresence_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29250,6 +29404,10 @@ export type Subscription_RootAnalytics_RoomPresence_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Analytics_RoomPresence_Order_By>>;
     where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
+};
+
+export type Subscription_RootAnalytics_RoomPresence_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Subscription_RootAnalytics_RoomStatsArgs = {
@@ -29270,54 +29428,6 @@ export type Subscription_RootAnalytics_RoomStats_AggregateArgs = {
 
 export type Subscription_RootAnalytics_RoomStats_By_PkArgs = {
     id: Scalars["uuid"];
-};
-
-export type Subscription_RootAnalytics_Mat_ElementTotalViewsArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_ElementTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_ItemTotalViewsArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_ItemTotalViews_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-    where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_RoomPresenceArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-};
-
-export type Subscription_RootAnalytics_Mat_RoomPresence_AggregateArgs = {
-    distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-    where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
 };
 
 export type Subscription_RootChat_ChatArgs = {
@@ -31231,6 +31341,7 @@ export enum System_ConfigurationKey_Enum {
     SendgridSender = "SENDGRID_SENDER",
     /** The name emails are from when sent via SendGrid. */
     SendgridSenderName = "SENDGRID_SENDER_NAME",
+    SendgridWebhookPublicKey = "SENDGRID_WEBHOOK_PUBLIC_KEY",
     /** Contact address for people to request emails never be sent to them again. */
     StopEmailsContactEmailAddress = "STOP_EMAILS_CONTACT_EMAIL_ADDRESS",
     /** The time of the latest revision of the host T&Cs. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -35587,6 +35698,39 @@ export type ElementAddNewVersionMutation = {
     update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null | undefined;
 };
 
+export type ElementUpdateNotification_ElementDetailsFragment = {
+    __typename?: "content_Element";
+    id: any;
+    name: string;
+    source?: any | null | undefined;
+    conference: {
+        __typename?: "conference_Conference";
+        id: any;
+        name: string;
+        shortName: string;
+        recordingNotificationsEnabled: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        emailTemplateSubtitlesGenerated: Array<{ __typename?: "conference_Configuration"; value: any }>;
+    };
+    item: {
+        __typename?: "content_Item";
+        id: any;
+        title: string;
+        itemPeople: Array<{
+            __typename?: "content_ItemProgramPerson";
+            id: any;
+            roleName: string;
+            person: {
+                __typename?: "collection_ProgramPerson";
+                id: any;
+                name: string;
+                email?: string | null | undefined;
+                accessToken: string;
+            };
+        }>;
+    };
+};
+
 export type GetElementDetailsQueryVariables = Exact<{
     elementId: Scalars["uuid"];
 }>;
@@ -35598,7 +35742,16 @@ export type GetElementDetailsQuery = {
               __typename?: "content_Element";
               id: any;
               name: string;
-              conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string };
+              source?: any | null | undefined;
+              conference: {
+                  __typename?: "conference_Conference";
+                  id: any;
+                  name: string;
+                  shortName: string;
+                  recordingNotificationsEnabled: Array<{ __typename?: "conference_Configuration"; value: any }>;
+                  submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
+                  emailTemplateSubtitlesGenerated: Array<{ __typename?: "conference_Configuration"; value: any }>;
+              };
               item: {
                   __typename?: "content_Item";
                   id: any;
@@ -35606,6 +35759,7 @@ export type GetElementDetailsQuery = {
                   itemPeople: Array<{
                       __typename?: "content_ItemProgramPerson";
                       id: any;
+                      roleName: string;
                       person: {
                           __typename?: "collection_ProgramPerson";
                           id: any;
@@ -35665,31 +35819,25 @@ export type CustomEmail_SelectRegistrantsQuery = {
     platformAddress?: { __typename?: "system_Configuration"; value: any } | null | undefined;
 };
 
-export type MarkAndSelectUnprocessedCustomEmailJobsMutationVariables = Exact<{ [key: string]: never }>;
+export type SelectUnprocessedCustomEmailJobsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type MarkAndSelectUnprocessedCustomEmailJobsMutation = {
-    __typename?: "mutation_root";
-    update_job_queues_CustomEmailJob?:
-        | {
-              __typename?: "job_queues_CustomEmailJob_mutation_response";
-              returning: Array<{
-                  __typename?: "job_queues_CustomEmailJob";
-                  id: any;
-                  registrantIds: any;
-                  conferenceId: any;
-                  subject: string;
-                  markdownBody: string;
-              }>;
-          }
-        | null
-        | undefined;
+export type SelectUnprocessedCustomEmailJobsQuery = {
+    __typename?: "query_root";
+    job_queues_CustomEmailJob: Array<{
+        __typename?: "job_queues_CustomEmailJob";
+        id: any;
+        registrantIds: any;
+        conferenceId: any;
+        subject: string;
+        markdownBody: string;
+    }>;
 };
 
-export type UnmarkCustomEmailJobsMutationVariables = Exact<{
+export type CompleteCustomEmailJobsMutationVariables = Exact<{
     ids: Array<Scalars["uuid"]> | Scalars["uuid"];
 }>;
 
-export type UnmarkCustomEmailJobsMutation = {
+export type CompleteCustomEmailJobsMutation = {
     __typename?: "mutation_root";
     update_job_queues_CustomEmailJob?:
         | {
@@ -35785,6 +35933,18 @@ export type GetSendGridConfigQuery = {
     senderEmail?: { __typename?: "system_Configuration"; value: any } | null | undefined;
     senderName?: { __typename?: "system_Configuration"; value: any } | null | undefined;
     replyTo?: { __typename?: "system_Configuration"; value: any } | null | undefined;
+    webhookPublicKey?: { __typename?: "system_Configuration"; value: any } | null | undefined;
+};
+
+export type UpdateEmailStatusMutationVariables = Exact<{
+    id: Scalars["uuid"];
+    status: Scalars["String"];
+    errorMessage?: Maybe<Scalars["String"]>;
+}>;
+
+export type UpdateEmailStatusMutation = {
+    __typename?: "mutation_root";
+    update_Email_by_pk?: { __typename?: "Email"; id: any } | null | undefined;
 };
 
 export type GetEventChatInfoQueryVariables = Exact<{
@@ -36172,34 +36332,80 @@ export type SelectRegistrantsWithInvitationQuery = {
     }>;
 };
 
-export type MarkAndSelectUnprocessedInvitationEmailJobsMutationVariables = Exact<{ [key: string]: never }>;
+export type SelectUnprocessedInvitationEmailJobsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type MarkAndSelectUnprocessedInvitationEmailJobsMutation = {
-    __typename?: "mutation_root";
-    update_job_queues_InvitationEmailJob?:
-        | {
-              __typename?: "job_queues_InvitationEmailJob_mutation_response";
-              returning: Array<{
-                  __typename?: "job_queues_InvitationEmailJob";
-                  id: any;
-                  registrantIds: any;
-                  sendRepeat: boolean;
-              }>;
-          }
-        | null
-        | undefined;
+export type SelectUnprocessedInvitationEmailJobsQuery = {
+    __typename?: "query_root";
+    job_queues_InvitationEmailJob: Array<{
+        __typename?: "job_queues_InvitationEmailJob";
+        id: any;
+        registrantIds: any;
+        sendRepeat: boolean;
+    }>;
 };
 
-export type UnmarkInvitationEmailJobsMutationVariables = Exact<{
+export type CompleteInvitationEmailJobsMutationVariables = Exact<{
     ids: Array<Scalars["uuid"]> | Scalars["uuid"];
 }>;
 
-export type UnmarkInvitationEmailJobsMutation = {
+export type CompleteInvitationEmailJobsMutation = {
     __typename?: "mutation_root";
     update_job_queues_InvitationEmailJob?:
         | { __typename?: "job_queues_InvitationEmailJob_mutation_response"; affected_rows: number }
         | null
         | undefined;
+};
+
+export type GetAutomaticInvitationsConfigurationQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type GetAutomaticInvitationsConfigurationQuery = {
+    __typename?: "query_root";
+    initialStart?: { __typename?: "conference_Configuration"; value: any } | null | undefined;
+    initialEnd?: { __typename?: "conference_Configuration"; value: any } | null | undefined;
+};
+
+export type GetAutomaticInvitationsRepeatConfigurationsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAutomaticInvitationsRepeatConfigurationsQuery = {
+    __typename?: "query_root";
+    conference_Conference: Array<{
+        __typename?: "conference_Conference";
+        id: any;
+        initialStart: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        initialEnd: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        repeatStart: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        repeatEnd: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        repeatFrequency: Array<{ __typename?: "conference_Configuration"; value: any }>;
+    }>;
+};
+
+export type InsertInvitationEmailJobMutationVariables = Exact<{
+    registrantIds: Scalars["jsonb"];
+    conferenceId: Scalars["uuid"];
+    sendRepeat: Scalars["Boolean"];
+}>;
+
+export type InsertInvitationEmailJobMutation = {
+    __typename?: "mutation_root";
+    insert_job_queues_InvitationEmailJob_one?:
+        | { __typename?: "job_queues_InvitationEmailJob"; id: any }
+        | null
+        | undefined;
+};
+
+export type GetAutomaticInvitations_ToBeRepeatedQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type GetAutomaticInvitations_ToBeRepeatedQuery = {
+    __typename?: "query_root";
+    registrant_Registrant: Array<{
+        __typename?: "registrant_Registrant";
+        id: any;
+        invitationStatus?: any | null | undefined;
+    }>;
 };
 
 export type OtherConferencePrepareJobsQueryVariables = Exact<{
@@ -36308,6 +36514,7 @@ export type Recording_GetMediaPackageHarvestJobQuery = {
             id: any;
             name: string;
             startTime: any;
+            durationSeconds: number;
             item?:
                 | { __typename?: "content_Item"; id: any; title: string; subconferenceId?: any | null | undefined }
                 | null
@@ -36320,6 +36527,7 @@ export type Recording_CompleteMediaPackageHarvestJobMutationVariables = Exact<{
     id: Scalars["uuid"];
     message: Scalars["String"];
     data: Scalars["jsonb"];
+    source?: Maybe<Scalars["jsonb"]>;
     itemId: Scalars["uuid"];
     conferenceId: Scalars["uuid"];
     subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -36767,12 +36975,17 @@ export type GetUploadersQuery = {
               id: any;
               conferenceId: any;
               typeName: Content_ElementType_Enum;
+              conference: {
+                  __typename?: "conference_Conference";
+                  submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
+              };
               item: {
                   __typename?: "content_Item";
                   id: any;
                   itemPeople: Array<{
                       __typename?: "content_ItemProgramPerson";
                       id: any;
+                      roleName: string;
                       person: {
                           __typename?: "collection_ProgramPerson";
                           id: any;
@@ -36808,36 +37021,30 @@ export type InsertSubmissionRequestEmailsMutation = {
         | undefined;
 };
 
-export type MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutationVariables = Exact<{ [key: string]: never }>;
+export type SelectUnprocessedSubmissionRequestEmailJobsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutation = {
-    __typename?: "mutation_root";
-    update_job_queues_SubmissionRequestEmailJob?:
-        | {
-              __typename?: "job_queues_SubmissionRequestEmailJob_mutation_response";
-              returning: Array<{
-                  __typename?: "job_queues_SubmissionRequestEmailJob";
-                  id: any;
-                  emailTemplate?: any | null | undefined;
-                  person: {
-                      __typename?: "collection_ProgramPerson";
-                      id: any;
-                      name: string;
-                      email?: string | null | undefined;
-                      accessToken: string;
-                      conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string };
-                  };
-              }>;
-          }
-        | null
-        | undefined;
+export type SelectUnprocessedSubmissionRequestEmailJobsQuery = {
+    __typename?: "query_root";
+    job_queues_SubmissionRequestEmailJob: Array<{
+        __typename?: "job_queues_SubmissionRequestEmailJob";
+        id: any;
+        emailTemplate?: any | null | undefined;
+        person: {
+            __typename?: "collection_ProgramPerson";
+            id: any;
+            name: string;
+            email?: string | null | undefined;
+            accessToken: string;
+            conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string };
+        };
+    }>;
 };
 
-export type UnmarkSubmissionRequestEmailJobsMutationVariables = Exact<{
+export type CompleteSubmissionRequestEmailJobsMutationVariables = Exact<{
     ids: Array<Scalars["uuid"]> | Scalars["uuid"];
 }>;
 
-export type UnmarkSubmissionRequestEmailJobsMutation = {
+export type CompleteSubmissionRequestEmailJobsMutation = {
     __typename?: "mutation_root";
     update_job_queues_SubmissionRequestEmailJob?:
         | { __typename?: "job_queues_SubmissionRequestEmailJob_mutation_response"; affected_rows: number }
@@ -37039,15 +37246,31 @@ export type Vonage_GetEventDetailsQuery = {
         | undefined;
 };
 
-export type GetRoomThatUserCanJoinQueryVariables = Exact<{
-    roomId?: Maybe<Scalars["uuid"]>;
-    userId?: Maybe<Scalars["String"]>;
+export type VonageJoinRoom_GetInfoQueryVariables = Exact<{
+    roomId: Scalars["uuid"];
+    registrantId: Scalars["uuid"];
 }>;
 
-export type GetRoomThatUserCanJoinQuery = {
+export type VonageJoinRoom_GetInfoQuery = {
     __typename?: "query_root";
     room_Room_by_pk?:
-        | { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null | undefined }
+        | {
+              __typename?: "room_Room";
+              id: any;
+              originatingItem?:
+                  | {
+                        __typename?: "content_Item";
+                        id: any;
+                        itemPeople: Array<{
+                            __typename?: "content_ItemProgramPerson";
+                            id: any;
+                            roleName: string;
+                            personId: any;
+                        }>;
+                    }
+                  | null
+                  | undefined;
+          }
         | null
         | undefined;
 };
@@ -37235,6 +37458,21 @@ export type GetConfigurationValueQuery = {
         | { __typename?: "conference_Configuration"; key: Conference_ConfigurationKey_Enum; value: any }
         | null
         | undefined;
+};
+
+export type Configuration_RecordingEmailNotificationsEnabledFragment = {
+    __typename?: "conference_Conference";
+    recordingNotificationsEnabled: Array<{ __typename?: "conference_Configuration"; value: any }>;
+};
+
+export type Configuration_SubmissionNotificationRolesFragment = {
+    __typename?: "conference_Conference";
+    submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
+};
+
+export type Configuration_EmailTemplateSubtitlesGeneratedFragment = {
+    __typename?: "conference_Conference";
+    emailTemplateSubtitlesGenerated: Array<{ __typename?: "conference_Configuration"; value: any }>;
 };
 
 export type FailConferencePrepareJobMutationVariables = Exact<{
@@ -37792,6 +38030,328 @@ export type UpdateProfilePhotoMutation = {
         | undefined;
 };
 
+export const Configuration_RecordingEmailNotificationsEnabledFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "Configuration_RecordingEmailNotificationsEnabled" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "conference_Conference" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        alias: { kind: "Name", value: "recordingNotificationsEnabled" },
+                        name: { kind: "Name", value: "configurations" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "key" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "EnumValue",
+                                                            value: "ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS",
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<Configuration_RecordingEmailNotificationsEnabledFragment, unknown>;
+export const Configuration_SubmissionNotificationRolesFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "Configuration_SubmissionNotificationRoles" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "conference_Conference" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        alias: { kind: "Name", value: "submissionNotificationRoles" },
+                        name: { kind: "Name", value: "configurations" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "key" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "EnumValue",
+                                                            value: "SUBMISSION_NOTIFICATION_ROLES",
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<Configuration_SubmissionNotificationRolesFragment, unknown>;
+export const Configuration_EmailTemplateSubtitlesGeneratedFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "Configuration_EmailTemplateSubtitlesGenerated" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "conference_Conference" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        alias: { kind: "Name", value: "emailTemplateSubtitlesGenerated" },
+                        name: { kind: "Name", value: "configurations" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "key" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "EnumValue",
+                                                            value: "EMAIL_TEMPLATE_SUBTITLES_GENERATED",
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<Configuration_EmailTemplateSubtitlesGeneratedFragment, unknown>;
+export const ElementUpdateNotification_ElementDetailsFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "ElementUpdateNotification_ElementDetails" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "content_Element" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "name" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "name" } },
+                                { kind: "Field", name: { kind: "Name", value: "shortName" } },
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Configuration_RecordingEmailNotificationsEnabled" },
+                                },
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Configuration_SubmissionNotificationRoles" },
+                                },
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Configuration_EmailTemplateSubtitlesGenerated" },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "item" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "title" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "itemPeople" },
+                                    arguments: [
+                                        {
+                                            kind: "Argument",
+                                            name: { kind: "Name", value: "where" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "person" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_and" },
+                                                                    value: {
+                                                                        kind: "ListValue",
+                                                                        values: [
+                                                                            {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "email",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "ObjectValue",
+                                                                                            fields: [
+                                                                                                {
+                                                                                                    kind: "ObjectField",
+                                                                                                    name: {
+                                                                                                        kind: "Name",
+                                                                                                        value: "_is_null",
+                                                                                                    },
+                                                                                                    value: {
+                                                                                                        kind: "BooleanValue",
+                                                                                                        value: false,
+                                                                                                    },
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "email",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "ObjectValue",
+                                                                                            fields: [
+                                                                                                {
+                                                                                                    kind: "ObjectField",
+                                                                                                    name: {
+                                                                                                        kind: "Name",
+                                                                                                        value: "_neq",
+                                                                                                    },
+                                                                                                    value: {
+                                                                                                        kind: "StringValue",
+                                                                                                        value: "",
+                                                                                                        block: false,
+                                                                                                    },
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "person" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "name" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "email" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "accessToken" } },
+                                                    ],
+                                                },
+                                            },
+                                            { kind: "Field", name: { kind: "Name", value: "roleName" } },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "source" } },
+                ],
+            },
+        },
+        ...Configuration_RecordingEmailNotificationsEnabledFragmentDoc.definitions,
+        ...Configuration_SubmissionNotificationRolesFragmentDoc.definitions,
+        ...Configuration_EmailTemplateSubtitlesGeneratedFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode<ElementUpdateNotification_ElementDetailsFragment, unknown>;
 export const UploadYouTubeVideoJobDataFragmentDoc = {
     kind: "Document",
     definitions: [
@@ -39311,184 +39871,9 @@ export const GetElementDetailsDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "name" } },
                                 {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "conference" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            { kind: "Field", name: { kind: "Name", value: "name" } },
-                                            { kind: "Field", name: { kind: "Name", value: "shortName" } },
-                                        ],
-                                    },
-                                },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "item" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            { kind: "Field", name: { kind: "Name", value: "title" } },
-                                            {
-                                                kind: "Field",
-                                                name: { kind: "Name", value: "itemPeople" },
-                                                arguments: [
-                                                    {
-                                                        kind: "Argument",
-                                                        name: { kind: "Name", value: "where" },
-                                                        value: {
-                                                            kind: "ObjectValue",
-                                                            fields: [
-                                                                {
-                                                                    kind: "ObjectField",
-                                                                    name: { kind: "Name", value: "person" },
-                                                                    value: {
-                                                                        kind: "ObjectValue",
-                                                                        fields: [
-                                                                            {
-                                                                                kind: "ObjectField",
-                                                                                name: { kind: "Name", value: "_and" },
-                                                                                value: {
-                                                                                    kind: "ListValue",
-                                                                                    values: [
-                                                                                        {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "email",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "ObjectValue",
-                                                                                                        fields: [
-                                                                                                            {
-                                                                                                                kind: "ObjectField",
-                                                                                                                name: {
-                                                                                                                    kind: "Name",
-                                                                                                                    value: "_is_null",
-                                                                                                                },
-                                                                                                                value: {
-                                                                                                                    kind: "BooleanValue",
-                                                                                                                    value: false,
-                                                                                                                },
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                        {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "email",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "ObjectValue",
-                                                                                                        fields: [
-                                                                                                            {
-                                                                                                                kind: "ObjectField",
-                                                                                                                name: {
-                                                                                                                    kind: "Name",
-                                                                                                                    value: "_neq",
-                                                                                                                },
-                                                                                                                value: {
-                                                                                                                    kind: "StringValue",
-                                                                                                                    value: "",
-                                                                                                                    block: false,
-                                                                                                                },
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
-                                                                                },
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                },
-                                                                {
-                                                                    kind: "ObjectField",
-                                                                    name: { kind: "Name", value: "roleName" },
-                                                                    value: {
-                                                                        kind: "ObjectValue",
-                                                                        fields: [
-                                                                            {
-                                                                                kind: "ObjectField",
-                                                                                name: { kind: "Name", value: "_in" },
-                                                                                value: {
-                                                                                    kind: "ListValue",
-                                                                                    values: [
-                                                                                        {
-                                                                                            kind: "StringValue",
-                                                                                            value: "AUTHOR",
-                                                                                            block: false,
-                                                                                        },
-                                                                                        {
-                                                                                            kind: "StringValue",
-                                                                                            value: "PRESENTER",
-                                                                                            block: false,
-                                                                                        },
-                                                                                        {
-                                                                                            kind: "StringValue",
-                                                                                            value: "DISCUSSANT",
-                                                                                            block: false,
-                                                                                        },
-                                                                                    ],
-                                                                                },
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                },
-                                                            ],
-                                                        },
-                                                    },
-                                                ],
-                                                selectionSet: {
-                                                    kind: "SelectionSet",
-                                                    selections: [
-                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
-                                                        {
-                                                            kind: "Field",
-                                                            name: { kind: "Name", value: "person" },
-                                                            selectionSet: {
-                                                                kind: "SelectionSet",
-                                                                selections: [
-                                                                    {
-                                                                        kind: "Field",
-                                                                        name: { kind: "Name", value: "id" },
-                                                                    },
-                                                                    {
-                                                                        kind: "Field",
-                                                                        name: { kind: "Name", value: "name" },
-                                                                    },
-                                                                    {
-                                                                        kind: "Field",
-                                                                        name: { kind: "Name", value: "email" },
-                                                                    },
-                                                                    {
-                                                                        kind: "Field",
-                                                                        name: { kind: "Name", value: "accessToken" },
-                                                                    },
-                                                                ],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
-                                            },
-                                        ],
-                                    },
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "ElementUpdateNotification_ElementDetails" },
                                 },
                             ],
                         },
@@ -39496,6 +39881,7 @@ export const GetElementDetailsDocument = {
                 ],
             },
         },
+        ...ElementUpdateNotification_ElementDetailsFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode<GetElementDetailsQuery, GetElementDetailsQueryVariables>;
 export const GetUploadAgreementDocument = {
@@ -39793,19 +40179,19 @@ export const CustomEmail_SelectRegistrantsDocument = {
         },
     ],
 } as unknown as DocumentNode<CustomEmail_SelectRegistrantsQuery, CustomEmail_SelectRegistrantsQueryVariables>;
-export const MarkAndSelectUnprocessedCustomEmailJobsDocument = {
+export const SelectUnprocessedCustomEmailJobsDocument = {
     kind: "Document",
     definitions: [
         {
             kind: "OperationDefinition",
-            operation: "mutation",
-            name: { kind: "Name", value: "MarkAndSelectUnprocessedCustomEmailJobs" },
+            operation: "query",
+            name: { kind: "Name", value: "SelectUnprocessedCustomEmailJobs" },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
                     {
                         kind: "Field",
-                        name: { kind: "Name", value: "update_job_queues_CustomEmailJob" },
+                        name: { kind: "Name", value: "job_queues_CustomEmailJob" },
                         arguments: [
                             {
                                 kind: "Argument",
@@ -39830,38 +40216,15 @@ export const MarkAndSelectUnprocessedCustomEmailJobsDocument = {
                                     ],
                                 },
                             },
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "_set" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "processed" },
-                                            value: { kind: "BooleanValue", value: true },
-                                        },
-                                    ],
-                                },
-                            },
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "returning" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            { kind: "Field", name: { kind: "Name", value: "registrantIds" } },
-                                            { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
-                                            { kind: "Field", name: { kind: "Name", value: "subject" } },
-                                            { kind: "Field", name: { kind: "Name", value: "markdownBody" } },
-                                        ],
-                                    },
-                                },
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "registrantIds" } },
+                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "subject" } },
+                                { kind: "Field", name: { kind: "Name", value: "markdownBody" } },
                             ],
                         },
                     },
@@ -39869,17 +40232,14 @@ export const MarkAndSelectUnprocessedCustomEmailJobsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<
-    MarkAndSelectUnprocessedCustomEmailJobsMutation,
-    MarkAndSelectUnprocessedCustomEmailJobsMutationVariables
->;
-export const UnmarkCustomEmailJobsDocument = {
+} as unknown as DocumentNode<SelectUnprocessedCustomEmailJobsQuery, SelectUnprocessedCustomEmailJobsQueryVariables>;
+export const CompleteCustomEmailJobsDocument = {
     kind: "Document",
     definitions: [
         {
             kind: "OperationDefinition",
             operation: "mutation",
-            name: { kind: "Name", value: "UnmarkCustomEmailJobs" },
+            name: { kind: "Name", value: "CompleteCustomEmailJobs" },
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
@@ -39938,7 +40298,7 @@ export const UnmarkCustomEmailJobsDocument = {
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "processed" },
-                                            value: { kind: "BooleanValue", value: false },
+                                            value: { kind: "BooleanValue", value: true },
                                         },
                                     ],
                                 },
@@ -39963,7 +40323,7 @@ export const UnmarkCustomEmailJobsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<UnmarkCustomEmailJobsMutation, UnmarkCustomEmailJobsMutationVariables>;
+} as unknown as DocumentNode<CompleteCustomEmailJobsMutation, CompleteCustomEmailJobsMutationVariables>;
 export const ConferenceEmailConfigurationDocument = {
     kind: "Document",
     definitions: [
@@ -40367,6 +40727,25 @@ export const InsertEmailsDocument = {
                                 name: { kind: "Name", value: "objects" },
                                 value: { kind: "Variable", name: { kind: "Name", value: "objects" } },
                             },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "on_conflict" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "constraint" },
+                                            value: { kind: "EnumValue", value: "Email_idempotencyKey_key" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "update_columns" },
+                                            value: { kind: "ListValue", values: [] },
+                                        },
+                                    ],
+                                },
+                            },
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
@@ -40720,11 +41099,102 @@ export const GetSendGridConfigDocument = {
                             selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
                         },
                     },
+                    {
+                        kind: "Field",
+                        alias: { kind: "Name", value: "webhookPublicKey" },
+                        name: { kind: "Name", value: "system_Configuration_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "key" },
+                                value: { kind: "EnumValue", value: "SENDGRID_WEBHOOK_PUBLIC_KEY" },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                        },
+                    },
                 ],
             },
         },
     ],
 } as unknown as DocumentNode<GetSendGridConfigQuery, GetSendGridConfigQueryVariables>;
+export const UpdateEmailStatusDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "UpdateEmailStatus" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "errorMessage" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_Email_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "pk_columns" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "id" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "status" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "errorMessage" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "errorMessage" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<UpdateEmailStatusMutation, UpdateEmailStatusMutationVariables>;
 export const GetEventChatInfoDocument = {
     kind: "Document",
     definitions: [
@@ -42302,19 +42772,19 @@ export const SelectRegistrantsWithInvitationDocument = {
         ...RegistrantWithInvitePartsFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode<SelectRegistrantsWithInvitationQuery, SelectRegistrantsWithInvitationQueryVariables>;
-export const MarkAndSelectUnprocessedInvitationEmailJobsDocument = {
+export const SelectUnprocessedInvitationEmailJobsDocument = {
     kind: "Document",
     definitions: [
         {
             kind: "OperationDefinition",
-            operation: "mutation",
-            name: { kind: "Name", value: "MarkAndSelectUnprocessedInvitationEmailJobs" },
+            operation: "query",
+            name: { kind: "Name", value: "SelectUnprocessedInvitationEmailJobs" },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
                     {
                         kind: "Field",
-                        name: { kind: "Name", value: "update_job_queues_InvitationEmailJob" },
+                        name: { kind: "Name", value: "job_queues_InvitationEmailJob" },
                         arguments: [
                             {
                                 kind: "Argument",
@@ -42339,36 +42809,13 @@ export const MarkAndSelectUnprocessedInvitationEmailJobsDocument = {
                                     ],
                                 },
                             },
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "_set" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "processed" },
-                                            value: { kind: "BooleanValue", value: true },
-                                        },
-                                    ],
-                                },
-                            },
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "returning" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            { kind: "Field", name: { kind: "Name", value: "registrantIds" } },
-                                            { kind: "Field", name: { kind: "Name", value: "sendRepeat" } },
-                                        ],
-                                    },
-                                },
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "registrantIds" } },
+                                { kind: "Field", name: { kind: "Name", value: "sendRepeat" } },
                             ],
                         },
                     },
@@ -42377,16 +42824,16 @@ export const MarkAndSelectUnprocessedInvitationEmailJobsDocument = {
         },
     ],
 } as unknown as DocumentNode<
-    MarkAndSelectUnprocessedInvitationEmailJobsMutation,
-    MarkAndSelectUnprocessedInvitationEmailJobsMutationVariables
+    SelectUnprocessedInvitationEmailJobsQuery,
+    SelectUnprocessedInvitationEmailJobsQueryVariables
 >;
-export const UnmarkInvitationEmailJobsDocument = {
+export const CompleteInvitationEmailJobsDocument = {
     kind: "Document",
     definitions: [
         {
             kind: "OperationDefinition",
             operation: "mutation",
-            name: { kind: "Name", value: "UnmarkInvitationEmailJobs" },
+            name: { kind: "Name", value: "CompleteInvitationEmailJobs" },
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
@@ -42445,7 +42892,7 @@ export const UnmarkInvitationEmailJobsDocument = {
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "processed" },
-                                            value: { kind: "BooleanValue", value: false },
+                                            value: { kind: "BooleanValue", value: true },
                                         },
                                     ],
                                 },
@@ -42460,7 +42907,522 @@ export const UnmarkInvitationEmailJobsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<UnmarkInvitationEmailJobsMutation, UnmarkInvitationEmailJobsMutationVariables>;
+} as unknown as DocumentNode<CompleteInvitationEmailJobsMutation, CompleteInvitationEmailJobsMutationVariables>;
+export const GetAutomaticInvitationsConfigurationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetAutomaticInvitationsConfiguration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        alias: { kind: "Name", value: "initialStart" },
+                        name: { kind: "Name", value: "conference_Configuration_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "conferenceId" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "key" },
+                                value: { kind: "EnumValue", value: "AUTOMATIC_INVITATIONS_START" },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        alias: { kind: "Name", value: "initialEnd" },
+                        name: { kind: "Name", value: "conference_Configuration_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "conferenceId" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "key" },
+                                value: { kind: "EnumValue", value: "AUTOMATIC_INVITATIONS_END" },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    GetAutomaticInvitationsConfigurationQuery,
+    GetAutomaticInvitationsConfigurationQueryVariables
+>;
+export const GetAutomaticInvitationsRepeatConfigurationsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetAutomaticInvitationsRepeatConfigurations" },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Conference" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_and" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "configurations" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "key" },
+                                                                            value: {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "_eq",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "AUTOMATIC_INVITATIONS_REPEAT_START",
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "configurations" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "key" },
+                                                                            value: {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "_eq",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "AUTOMATIC_INVITATIONS_REPEAT_END",
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                {
+                                    kind: "Field",
+                                    alias: { kind: "Name", value: "initialStart" },
+                                    name: { kind: "Name", value: "configurations" },
+                                    arguments: [
+                                        {
+                                            kind: "Argument",
+                                            name: { kind: "Name", value: "where" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "key" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_eq" },
+                                                                    value: {
+                                                                        kind: "EnumValue",
+                                                                        value: "AUTOMATIC_INVITATIONS_START",
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                                    },
+                                },
+                                {
+                                    kind: "Field",
+                                    alias: { kind: "Name", value: "initialEnd" },
+                                    name: { kind: "Name", value: "configurations" },
+                                    arguments: [
+                                        {
+                                            kind: "Argument",
+                                            name: { kind: "Name", value: "where" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "key" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_eq" },
+                                                                    value: {
+                                                                        kind: "EnumValue",
+                                                                        value: "AUTOMATIC_INVITATIONS_END",
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                                    },
+                                },
+                                {
+                                    kind: "Field",
+                                    alias: { kind: "Name", value: "repeatStart" },
+                                    name: { kind: "Name", value: "configurations" },
+                                    arguments: [
+                                        {
+                                            kind: "Argument",
+                                            name: { kind: "Name", value: "where" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "key" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_eq" },
+                                                                    value: {
+                                                                        kind: "EnumValue",
+                                                                        value: "AUTOMATIC_INVITATIONS_REPEAT_START",
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                                    },
+                                },
+                                {
+                                    kind: "Field",
+                                    alias: { kind: "Name", value: "repeatEnd" },
+                                    name: { kind: "Name", value: "configurations" },
+                                    arguments: [
+                                        {
+                                            kind: "Argument",
+                                            name: { kind: "Name", value: "where" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "key" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_eq" },
+                                                                    value: {
+                                                                        kind: "EnumValue",
+                                                                        value: "AUTOMATIC_INVITATIONS_REPEAT_END",
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                                    },
+                                },
+                                {
+                                    kind: "Field",
+                                    alias: { kind: "Name", value: "repeatFrequency" },
+                                    name: { kind: "Name", value: "configurations" },
+                                    arguments: [
+                                        {
+                                            kind: "Argument",
+                                            name: { kind: "Name", value: "where" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "key" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_eq" },
+                                                                    value: {
+                                                                        kind: "EnumValue",
+                                                                        value: "AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY",
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "value" } }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    GetAutomaticInvitationsRepeatConfigurationsQuery,
+    GetAutomaticInvitationsRepeatConfigurationsQueryVariables
+>;
+export const InsertInvitationEmailJobDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "InsertInvitationEmailJob" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "registrantIds" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "sendRepeat" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_job_queues_InvitationEmailJob_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "registrantIds" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "registrantIds" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "sendRepeat" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "sendRepeat" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<InsertInvitationEmailJobMutation, InsertInvitationEmailJobMutationVariables>;
+export const GetAutomaticInvitations_ToBeRepeatedDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetAutomaticInvitations_ToBeRepeated" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "registrant_Registrant" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "conferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "userId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_is_null" },
+                                                        value: { kind: "BooleanValue", value: true },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "invitationStatus" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    GetAutomaticInvitations_ToBeRepeatedQuery,
+    GetAutomaticInvitations_ToBeRepeatedQueryVariables
+>;
 export const OtherConferencePrepareJobsDocument = {
     kind: "Document",
     definitions: [
@@ -43070,6 +44032,7 @@ export const Recording_GetMediaPackageHarvestJobDocument = {
                                             { kind: "Field", name: { kind: "Name", value: "id" } },
                                             { kind: "Field", name: { kind: "Name", value: "name" } },
                                             { kind: "Field", name: { kind: "Name", value: "startTime" } },
+                                            { kind: "Field", name: { kind: "Name", value: "durationSeconds" } },
                                         ],
                                     },
                                 },
@@ -43107,6 +44070,12 @@ export const Recording_CompleteMediaPackageHarvestJobDocument = {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
                     type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "source" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } },
+                    defaultValue: { kind: "NullValue" },
                 },
                 {
                     kind: "VariableDefinition",
@@ -43218,6 +44187,11 @@ export const Recording_CompleteMediaPackageHarvestJobDocument = {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "name" },
                                             value: { kind: "Variable", name: { kind: "Name", value: "name" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "source" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "source" } },
                                         },
                                     ],
                                 },
@@ -45747,6 +46721,22 @@ export const GetUploadersDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "conference" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            {
+                                                kind: "FragmentSpread",
+                                                name: {
+                                                    kind: "Name",
+                                                    value: "Configuration_SubmissionNotificationRoles",
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
                                 { kind: "Field", name: { kind: "Name", value: "typeName" } },
                                 {
                                     kind: "Field",
@@ -45840,39 +46830,6 @@ export const GetUploadersDocument = {
                                                                         ],
                                                                     },
                                                                 },
-                                                                {
-                                                                    kind: "ObjectField",
-                                                                    name: { kind: "Name", value: "roleName" },
-                                                                    value: {
-                                                                        kind: "ObjectValue",
-                                                                        fields: [
-                                                                            {
-                                                                                kind: "ObjectField",
-                                                                                name: { kind: "Name", value: "_in" },
-                                                                                value: {
-                                                                                    kind: "ListValue",
-                                                                                    values: [
-                                                                                        {
-                                                                                            kind: "StringValue",
-                                                                                            value: "AUTHOR",
-                                                                                            block: false,
-                                                                                        },
-                                                                                        {
-                                                                                            kind: "StringValue",
-                                                                                            value: "PRESENTER",
-                                                                                            block: false,
-                                                                                        },
-                                                                                        {
-                                                                                            kind: "StringValue",
-                                                                                            value: "DISCUSSANT",
-                                                                                            block: false,
-                                                                                        },
-                                                                                    ],
-                                                                                },
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                },
                                                             ],
                                                         },
                                                     },
@@ -45902,6 +46859,7 @@ export const GetUploadersDocument = {
                                                                 ],
                                                             },
                                                         },
+                                                        { kind: "Field", name: { kind: "Name", value: "roleName" } },
                                                     ],
                                                 },
                                             },
@@ -45914,6 +46872,7 @@ export const GetUploadersDocument = {
                 ],
             },
         },
+        ...Configuration_SubmissionNotificationRolesFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode<GetUploadersQuery, GetUploadersQueryVariables>;
 export const SetUploadableElementUploadsRemainingDocument = {
@@ -46068,19 +47027,19 @@ export const InsertSubmissionRequestEmailsDocument = {
         },
     ],
 } as unknown as DocumentNode<InsertSubmissionRequestEmailsMutation, InsertSubmissionRequestEmailsMutationVariables>;
-export const MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument = {
+export const SelectUnprocessedSubmissionRequestEmailJobsDocument = {
     kind: "Document",
     definitions: [
         {
             kind: "OperationDefinition",
-            operation: "mutation",
-            name: { kind: "Name", value: "MarkAndSelectUnprocessedSubmissionRequestEmailJobs" },
+            operation: "query",
+            name: { kind: "Name", value: "SelectUnprocessedSubmissionRequestEmailJobs" },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
                     {
                         kind: "Field",
-                        name: { kind: "Name", value: "update_job_queues_SubmissionRequestEmailJob" },
+                        name: { kind: "Name", value: "job_queues_SubmissionRequestEmailJob" },
                         arguments: [
                             {
                                 kind: "Argument",
@@ -46105,63 +47064,31 @@ export const MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument = {
                                     ],
                                 },
                             },
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "_set" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "processed" },
-                                            value: { kind: "BooleanValue", value: true },
-                                        },
-                                    ],
-                                },
-                            },
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "emailTemplate" } },
                                 {
                                     kind: "Field",
-                                    name: { kind: "Name", value: "returning" },
+                                    name: { kind: "Name", value: "person" },
                                     selectionSet: {
                                         kind: "SelectionSet",
                                         selections: [
                                             { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            { kind: "Field", name: { kind: "Name", value: "emailTemplate" } },
+                                            { kind: "Field", name: { kind: "Name", value: "name" } },
+                                            { kind: "Field", name: { kind: "Name", value: "email" } },
+                                            { kind: "Field", name: { kind: "Name", value: "accessToken" } },
                                             {
                                                 kind: "Field",
-                                                name: { kind: "Name", value: "person" },
+                                                name: { kind: "Name", value: "conference" },
                                                 selectionSet: {
                                                     kind: "SelectionSet",
                                                     selections: [
                                                         { kind: "Field", name: { kind: "Name", value: "id" } },
                                                         { kind: "Field", name: { kind: "Name", value: "name" } },
-                                                        { kind: "Field", name: { kind: "Name", value: "email" } },
-                                                        { kind: "Field", name: { kind: "Name", value: "accessToken" } },
-                                                        {
-                                                            kind: "Field",
-                                                            name: { kind: "Name", value: "conference" },
-                                                            selectionSet: {
-                                                                kind: "SelectionSet",
-                                                                selections: [
-                                                                    {
-                                                                        kind: "Field",
-                                                                        name: { kind: "Name", value: "id" },
-                                                                    },
-                                                                    {
-                                                                        kind: "Field",
-                                                                        name: { kind: "Name", value: "name" },
-                                                                    },
-                                                                    {
-                                                                        kind: "Field",
-                                                                        name: { kind: "Name", value: "shortName" },
-                                                                    },
-                                                                ],
-                                                            },
-                                                        },
+                                                        { kind: "Field", name: { kind: "Name", value: "shortName" } },
                                                     ],
                                                 },
                                             },
@@ -46176,16 +47103,16 @@ export const MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument = {
         },
     ],
 } as unknown as DocumentNode<
-    MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutation,
-    MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutationVariables
+    SelectUnprocessedSubmissionRequestEmailJobsQuery,
+    SelectUnprocessedSubmissionRequestEmailJobsQueryVariables
 >;
-export const UnmarkSubmissionRequestEmailJobsDocument = {
+export const CompleteSubmissionRequestEmailJobsDocument = {
     kind: "Document",
     definitions: [
         {
             kind: "OperationDefinition",
             operation: "mutation",
-            name: { kind: "Name", value: "UnmarkSubmissionRequestEmailJobs" },
+            name: { kind: "Name", value: "CompleteSubmissionRequestEmailJobs" },
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
@@ -46244,7 +47171,7 @@ export const UnmarkSubmissionRequestEmailJobsDocument = {
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "processed" },
-                                            value: { kind: "BooleanValue", value: false },
+                                            value: { kind: "BooleanValue", value: true },
                                         },
                                     ],
                                 },
@@ -46260,8 +47187,8 @@ export const UnmarkSubmissionRequestEmailJobsDocument = {
         },
     ],
 } as unknown as DocumentNode<
-    UnmarkSubmissionRequestEmailJobsMutation,
-    UnmarkSubmissionRequestEmailJobsMutationVariables
+    CompleteSubmissionRequestEmailJobsMutation,
+    CompleteSubmissionRequestEmailJobsMutationVariables
 >;
 export const GetElementIdForVideoRenderJobDocument = {
     kind: "Document",
@@ -47418,23 +48345,23 @@ export const Vonage_GetEventDetailsDocument = {
         ...GetRegistrant_RegistrantFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode<Vonage_GetEventDetailsQuery, Vonage_GetEventDetailsQueryVariables>;
-export const GetRoomThatUserCanJoinDocument = {
+export const VonageJoinRoom_GetInfoDocument = {
     kind: "Document",
     definitions: [
         {
             kind: "OperationDefinition",
             operation: "query",
-            name: { kind: "Name", value: "GetRoomThatUserCanJoin" },
+            name: { kind: "Name", value: "VonageJoinRoom_GetInfo" },
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
-                    type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "userId" } },
-                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "registrantId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
                 },
             ],
             selectionSet: {
@@ -47447,23 +48374,81 @@ export const GetRoomThatUserCanJoinDocument = {
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "_eq" },
-                                            value: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
-                                        },
-                                    ],
-                                },
+                                value: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
                             },
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "publicVonageSessionId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "originatingItem" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "itemPeople" },
+                                                arguments: [
+                                                    {
+                                                        kind: "Argument",
+                                                        name: { kind: "Name", value: "where" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "person" },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: {
+                                                                                    kind: "Name",
+                                                                                    value: "registrantId",
+                                                                                },
+                                                                                value: {
+                                                                                    kind: "ObjectValue",
+                                                                                    fields: [
+                                                                                        {
+                                                                                            kind: "ObjectField",
+                                                                                            name: {
+                                                                                                kind: "Name",
+                                                                                                value: "_eq",
+                                                                                            },
+                                                                                            value: {
+                                                                                                kind: "Variable",
+                                                                                                name: {
+                                                                                                    kind: "Name",
+                                                                                                    value: "registrantId",
+                                                                                                },
+                                                                                            },
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "roleName" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "personId" } },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
                             ],
                         },
                     },
@@ -47471,7 +48456,7 @@ export const GetRoomThatUserCanJoinDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<GetRoomThatUserCanJoinQuery, GetRoomThatUserCanJoinQueryVariables>;
+} as unknown as DocumentNode<VonageJoinRoom_GetInfoQuery, VonageJoinRoom_GetInfoQueryVariables>;
 export const AddVonageRoomRecordingToUserListDocument = {
     kind: "Document",
     definitions: [

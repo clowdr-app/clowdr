@@ -59,6 +59,7 @@ gql`
 `;
 
 export function VonageRoom({
+    roomId,
     eventId,
     vonageSessionId,
     getAccessToken,
@@ -71,6 +72,7 @@ export function VonageRoom({
     onLeave,
     canControlRecording,
 }: {
+    roomId: string | null;
     eventId: string | null;
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
@@ -157,6 +159,7 @@ export function VonageRoom({
                             }
                             onPermissionsProblem={onPermissionsProblem}
                             canControlRecording={canControlRecording}
+                            roomId={roomId ?? undefined}
                             eventId={eventId ?? undefined}
                         />
                     </VonageLayoutProvider>
@@ -180,6 +183,7 @@ function VonageRoomInner({
     completeJoinRef,
     onPermissionsProblem,
     canControlRecording,
+    roomId,
     eventId,
 }: {
     vonageSessionId: string;
@@ -195,6 +199,7 @@ function VonageRoomInner({
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
+    roomId?: string;
     eventId?: string;
 }): JSX.Element {
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
@@ -614,6 +619,7 @@ function VonageRoomInner({
                     isRecordingActive={isRecordingActive}
                     isBackstage={isBackstageRoom}
                     canControlRecording={canControlRecording}
+                    roomId={roomId}
                     eventId={eventId}
                 />
             </Flex>
@@ -622,6 +628,7 @@ function VonageRoomInner({
                 <Box position="relative" width="100%">
                     <Layout
                         viewports={viewports}
+                        allowedToControlLayout={canControlRecording}
                         isRecordingMode={isBackstageRoom || isRecordingActive}
                         isBackstage={isBackstageRoom}
                         streamActivities={streamActivities}

@@ -59,10 +59,13 @@ type CreateRoomDmOutput {
 columns and relationships of "Email"
 """
 type Email {
+    conferenceId: uuid
     createdAt: timestamptz!
     emailAddress: String!
+    errorMessage: String
     htmlContents: String!
     id: uuid!
+    idempotencyKey: uuid!
     """
     An object relationship
     """
@@ -73,6 +76,7 @@ type Email {
     recipientName: String
     retriesCount: Int!
     sentAt: timestamptz
+    status: String
     subject: String!
     updatedAt: timestamptz!
     """
@@ -156,10 +160,13 @@ input Email_bool_exp {
     _and: [Email_bool_exp!]
     _not: Email_bool_exp
     _or: [Email_bool_exp!]
+    conferenceId: uuid_comparison_exp
     createdAt: timestamptz_comparison_exp
     emailAddress: String_comparison_exp
+    errorMessage: String_comparison_exp
     htmlContents: String_comparison_exp
     id: uuid_comparison_exp
+    idempotencyKey: uuid_comparison_exp
     invitation: registrant_Invitation_bool_exp
     invitationId: uuid_comparison_exp
     plainTextContents: String_comparison_exp
@@ -167,6 +174,7 @@ input Email_bool_exp {
     recipientName: String_comparison_exp
     retriesCount: Int_comparison_exp
     sentAt: timestamptz_comparison_exp
+    status: String_comparison_exp
     subject: String_comparison_exp
     updatedAt: timestamptz_comparison_exp
     user: User_bool_exp
@@ -177,6 +185,10 @@ input Email_bool_exp {
 unique or primary key constraints on table "Email"
 """
 enum Email_constraint {
+    """
+    unique or primary key constraint
+    """
+    Email_idempotencyKey_key
     """
     unique or primary key constraint
     """
@@ -194,10 +206,13 @@ input Email_inc_input {
 input type for inserting data into table "Email"
 """
 input Email_insert_input {
+    conferenceId: uuid
     createdAt: timestamptz
     emailAddress: String
+    errorMessage: String
     htmlContents: String
     id: uuid
+    idempotencyKey: uuid
     invitation: registrant_Invitation_obj_rel_insert_input
     invitationId: uuid
     plainTextContents: String
@@ -205,6 +220,7 @@ input Email_insert_input {
     recipientName: String
     retriesCount: Int
     sentAt: timestamptz
+    status: String
     subject: String
     updatedAt: timestamptz
     user: User_obj_rel_insert_input
@@ -215,16 +231,20 @@ input Email_insert_input {
 aggregate max on columns
 """
 type Email_max_fields {
+    conferenceId: uuid
     createdAt: timestamptz
     emailAddress: String
+    errorMessage: String
     htmlContents: String
     id: uuid
+    idempotencyKey: uuid
     invitationId: uuid
     plainTextContents: String
     reason: String
     recipientName: String
     retriesCount: Int
     sentAt: timestamptz
+    status: String
     subject: String
     updatedAt: timestamptz
     userId: String
@@ -234,16 +254,20 @@ type Email_max_fields {
 order by max() on columns of table "Email"
 """
 input Email_max_order_by {
+    conferenceId: order_by
     createdAt: order_by
     emailAddress: order_by
+    errorMessage: order_by
     htmlContents: order_by
     id: order_by
+    idempotencyKey: order_by
     invitationId: order_by
     plainTextContents: order_by
     reason: order_by
     recipientName: order_by
     retriesCount: order_by
     sentAt: order_by
+    status: order_by
     subject: order_by
     updatedAt: order_by
     userId: order_by
@@ -253,16 +277,20 @@ input Email_max_order_by {
 aggregate min on columns
 """
 type Email_min_fields {
+    conferenceId: uuid
     createdAt: timestamptz
     emailAddress: String
+    errorMessage: String
     htmlContents: String
     id: uuid
+    idempotencyKey: uuid
     invitationId: uuid
     plainTextContents: String
     reason: String
     recipientName: String
     retriesCount: Int
     sentAt: timestamptz
+    status: String
     subject: String
     updatedAt: timestamptz
     userId: String
@@ -272,16 +300,20 @@ type Email_min_fields {
 order by min() on columns of table "Email"
 """
 input Email_min_order_by {
+    conferenceId: order_by
     createdAt: order_by
     emailAddress: order_by
+    errorMessage: order_by
     htmlContents: order_by
     id: order_by
+    idempotencyKey: order_by
     invitationId: order_by
     plainTextContents: order_by
     reason: order_by
     recipientName: order_by
     retriesCount: order_by
     sentAt: order_by
+    status: order_by
     subject: order_by
     updatedAt: order_by
     userId: order_by
@@ -314,10 +346,13 @@ input Email_on_conflict {
 Ordering options when selecting data from "Email".
 """
 input Email_order_by {
+    conferenceId: order_by
     createdAt: order_by
     emailAddress: order_by
+    errorMessage: order_by
     htmlContents: order_by
     id: order_by
+    idempotencyKey: order_by
     invitation: registrant_Invitation_order_by
     invitationId: order_by
     plainTextContents: order_by
@@ -325,6 +360,7 @@ input Email_order_by {
     recipientName: order_by
     retriesCount: order_by
     sentAt: order_by
+    status: order_by
     subject: order_by
     updatedAt: order_by
     user: User_order_by
@@ -345,6 +381,10 @@ enum Email_select_column {
     """
     column name
     """
+    conferenceId
+    """
+    column name
+    """
     createdAt
     """
     column name
@@ -353,11 +393,19 @@ enum Email_select_column {
     """
     column name
     """
+    errorMessage
+    """
+    column name
+    """
     htmlContents
     """
     column name
     """
     id
+    """
+    column name
+    """
+    idempotencyKey
     """
     column name
     """
@@ -385,6 +433,10 @@ enum Email_select_column {
     """
     column name
     """
+    status
+    """
+    column name
+    """
     subject
     """
     column name
@@ -400,16 +452,20 @@ enum Email_select_column {
 input type for updating data in table "Email"
 """
 input Email_set_input {
+    conferenceId: uuid
     createdAt: timestamptz
     emailAddress: String
+    errorMessage: String
     htmlContents: String
     id: uuid
+    idempotencyKey: uuid
     invitationId: uuid
     plainTextContents: String
     reason: String
     recipientName: String
     retriesCount: Int
     sentAt: timestamptz
+    status: String
     subject: String
     updatedAt: timestamptz
     userId: String
@@ -478,6 +534,10 @@ enum Email_update_column {
     """
     column name
     """
+    conferenceId
+    """
+    column name
+    """
     createdAt
     """
     column name
@@ -486,11 +546,19 @@ enum Email_update_column {
     """
     column name
     """
+    errorMessage
+    """
+    column name
+    """
     htmlContents
     """
     column name
     """
     id
+    """
+    column name
+    """
+    idempotencyKey
     """
     column name
     """
@@ -515,6 +583,10 @@ enum Email_update_column {
     column name
     """
     sentAt
+    """
+    column name
+    """
+    status
     """
     column name
     """
@@ -2843,8 +2915,8 @@ type analytics_ElementTotalViews {
     An object relationship
     """
     element: content_Element
-    elementId: uuid
-    totalViewCount: bigint
+    elementId: uuid!
+    totalViewCount: bigint!
 }
 
 """
@@ -2892,6 +2964,23 @@ input analytics_ElementTotalViews_bool_exp {
 }
 
 """
+unique or primary key constraints on table "analytics.ElementTotalViews"
+"""
+enum analytics_ElementTotalViews_constraint {
+    """
+    unique or primary key constraint
+    """
+    ElementTotalViews_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "analytics.ElementTotalViews"
+"""
+input analytics_ElementTotalViews_inc_input {
+    totalViewCount: bigint
+}
+
+"""
 input type for inserting data into table "analytics.ElementTotalViews"
 """
 input analytics_ElementTotalViews_insert_input {
@@ -2917,10 +3006,37 @@ type analytics_ElementTotalViews_min_fields {
 }
 
 """
+response of any mutation on the table "analytics.ElementTotalViews"
+"""
+type analytics_ElementTotalViews_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [analytics_ElementTotalViews!]!
+}
+
+"""
 input type for inserting object relation for remote table "analytics.ElementTotalViews"
 """
 input analytics_ElementTotalViews_obj_rel_insert_input {
     data: analytics_ElementTotalViews_insert_input!
+    """
+    on conflict condition
+    """
+    on_conflict: analytics_ElementTotalViews_on_conflict
+}
+
+"""
+on conflict condition type for table "analytics.ElementTotalViews"
+"""
+input analytics_ElementTotalViews_on_conflict {
+    constraint: analytics_ElementTotalViews_constraint!
+    update_columns: [analytics_ElementTotalViews_update_column!]! = []
+    where: analytics_ElementTotalViews_bool_exp
 }
 
 """
@@ -2930,6 +3046,13 @@ input analytics_ElementTotalViews_order_by {
     element: content_Element_order_by
     elementId: order_by
     totalViewCount: order_by
+}
+
+"""
+primary key columns input for table: analytics_ElementTotalViews
+"""
+input analytics_ElementTotalViews_pk_columns_input {
+    elementId: uuid!
 }
 
 """
@@ -2944,6 +3067,14 @@ enum analytics_ElementTotalViews_select_column {
     column name
     """
     totalViewCount
+}
+
+"""
+input type for updating data in table "analytics.ElementTotalViews"
+"""
+input analytics_ElementTotalViews_set_input {
+    elementId: uuid
+    totalViewCount: bigint
 }
 
 """
@@ -2975,6 +3106,20 @@ type analytics_ElementTotalViews_sum_fields {
 }
 
 """
+update columns of table "analytics.ElementTotalViews"
+"""
+enum analytics_ElementTotalViews_update_column {
+    """
+    column name
+    """
+    elementId
+    """
+    column name
+    """
+    totalViewCount
+}
+
+"""
 aggregate var_pop on columns
 """
 type analytics_ElementTotalViews_var_pop_fields {
@@ -3003,8 +3148,8 @@ type analytics_ItemTotalViews {
     An object relationship
     """
     item: content_Item
-    itemId: uuid
-    totalViewCount: bigint
+    itemId: uuid!
+    totalViewCount: bigint!
 }
 
 """
@@ -3052,6 +3197,23 @@ input analytics_ItemTotalViews_bool_exp {
 }
 
 """
+unique or primary key constraints on table "analytics.ItemTotalViews"
+"""
+enum analytics_ItemTotalViews_constraint {
+    """
+    unique or primary key constraint
+    """
+    ItemTotalViews_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "analytics.ItemTotalViews"
+"""
+input analytics_ItemTotalViews_inc_input {
+    totalViewCount: bigint
+}
+
+"""
 input type for inserting data into table "analytics.ItemTotalViews"
 """
 input analytics_ItemTotalViews_insert_input {
@@ -3077,10 +3239,37 @@ type analytics_ItemTotalViews_min_fields {
 }
 
 """
+response of any mutation on the table "analytics.ItemTotalViews"
+"""
+type analytics_ItemTotalViews_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [analytics_ItemTotalViews!]!
+}
+
+"""
 input type for inserting object relation for remote table "analytics.ItemTotalViews"
 """
 input analytics_ItemTotalViews_obj_rel_insert_input {
     data: analytics_ItemTotalViews_insert_input!
+    """
+    on conflict condition
+    """
+    on_conflict: analytics_ItemTotalViews_on_conflict
+}
+
+"""
+on conflict condition type for table "analytics.ItemTotalViews"
+"""
+input analytics_ItemTotalViews_on_conflict {
+    constraint: analytics_ItemTotalViews_constraint!
+    update_columns: [analytics_ItemTotalViews_update_column!]! = []
+    where: analytics_ItemTotalViews_bool_exp
 }
 
 """
@@ -3090,6 +3279,13 @@ input analytics_ItemTotalViews_order_by {
     item: content_Item_order_by
     itemId: order_by
     totalViewCount: order_by
+}
+
+"""
+primary key columns input for table: analytics_ItemTotalViews
+"""
+input analytics_ItemTotalViews_pk_columns_input {
+    itemId: uuid!
 }
 
 """
@@ -3104,6 +3300,14 @@ enum analytics_ItemTotalViews_select_column {
     column name
     """
     totalViewCount
+}
+
+"""
+input type for updating data in table "analytics.ItemTotalViews"
+"""
+input analytics_ItemTotalViews_set_input {
+    itemId: uuid
+    totalViewCount: bigint
 }
 
 """
@@ -3135,6 +3339,20 @@ type analytics_ItemTotalViews_sum_fields {
 }
 
 """
+update columns of table "analytics.ItemTotalViews"
+"""
+enum analytics_ItemTotalViews_update_column {
+    """
+    column name
+    """
+    itemId
+    """
+    column name
+    """
+    totalViewCount
+}
+
+"""
 aggregate var_pop on columns
 """
 type analytics_ItemTotalViews_var_pop_fields {
@@ -3159,19 +3377,14 @@ type analytics_ItemTotalViews_variance_fields {
 columns and relationships of "analytics.RoomPresence"
 """
 type analytics_RoomPresence {
-    count(
-        """
-        JSON select path
-        """
-        path: String
-    ): jsonb
-    created_at: timestamptz
-    id: uuid
-    name: String
+    count: bigint!
+    created_at: timestamptz!
+    id: uuid!
     """
     An object relationship
     """
-    room: room_Room
+    room: room_Room!
+    roomId: uuid!
 }
 
 """
@@ -3186,18 +3399,34 @@ type analytics_RoomPresence_aggregate {
 aggregate fields of "analytics.RoomPresence"
 """
 type analytics_RoomPresence_aggregate_fields {
+    avg: analytics_RoomPresence_avg_fields
     count(columns: [analytics_RoomPresence_select_column!], distinct: Boolean): Int!
     max: analytics_RoomPresence_max_fields
     min: analytics_RoomPresence_min_fields
+    stddev: analytics_RoomPresence_stddev_fields
+    stddev_pop: analytics_RoomPresence_stddev_pop_fields
+    stddev_samp: analytics_RoomPresence_stddev_samp_fields
+    sum: analytics_RoomPresence_sum_fields
+    var_pop: analytics_RoomPresence_var_pop_fields
+    var_samp: analytics_RoomPresence_var_samp_fields
+    variance: analytics_RoomPresence_variance_fields
 }
 
 """
 order by aggregate values of table "analytics.RoomPresence"
 """
 input analytics_RoomPresence_aggregate_order_by {
+    avg: analytics_RoomPresence_avg_order_by
     count: order_by
     max: analytics_RoomPresence_max_order_by
     min: analytics_RoomPresence_min_order_by
+    stddev: analytics_RoomPresence_stddev_order_by
+    stddev_pop: analytics_RoomPresence_stddev_pop_order_by
+    stddev_samp: analytics_RoomPresence_stddev_samp_order_by
+    sum: analytics_RoomPresence_sum_order_by
+    var_pop: analytics_RoomPresence_var_pop_order_by
+    var_samp: analytics_RoomPresence_var_samp_order_by
+    variance: analytics_RoomPresence_variance_order_by
 }
 
 """
@@ -3205,6 +3434,24 @@ input type for inserting array relation for remote table "analytics.RoomPresence
 """
 input analytics_RoomPresence_arr_rel_insert_input {
     data: [analytics_RoomPresence_insert_input!]!
+    """
+    on conflict condition
+    """
+    on_conflict: analytics_RoomPresence_on_conflict
+}
+
+"""
+aggregate avg on columns
+"""
+type analytics_RoomPresence_avg_fields {
+    count: Float
+}
+
+"""
+order by avg() on columns of table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_avg_order_by {
+    count: order_by
 }
 
 """
@@ -3214,58 +3461,106 @@ input analytics_RoomPresence_bool_exp {
     _and: [analytics_RoomPresence_bool_exp!]
     _not: analytics_RoomPresence_bool_exp
     _or: [analytics_RoomPresence_bool_exp!]
-    count: jsonb_comparison_exp
+    count: bigint_comparison_exp
     created_at: timestamptz_comparison_exp
     id: uuid_comparison_exp
-    name: String_comparison_exp
     room: room_Room_bool_exp
+    roomId: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "analytics.RoomPresence"
+"""
+enum analytics_RoomPresence_constraint {
+    """
+    unique or primary key constraint
+    """
+    RoomPresence_pkey
+    """
+    unique or primary key constraint
+    """
+    RoomPresence_roomId_created_at_key
+}
+
+"""
+input type for incrementing numeric columns in table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_inc_input {
+    count: bigint
 }
 
 """
 input type for inserting data into table "analytics.RoomPresence"
 """
 input analytics_RoomPresence_insert_input {
-    count: jsonb
+    count: bigint
     created_at: timestamptz
     id: uuid
-    name: String
     room: room_Room_obj_rel_insert_input
+    roomId: uuid
 }
 
 """
 aggregate max on columns
 """
 type analytics_RoomPresence_max_fields {
+    count: bigint
     created_at: timestamptz
     id: uuid
-    name: String
+    roomId: uuid
 }
 
 """
 order by max() on columns of table "analytics.RoomPresence"
 """
 input analytics_RoomPresence_max_order_by {
+    count: order_by
     created_at: order_by
     id: order_by
-    name: order_by
+    roomId: order_by
 }
 
 """
 aggregate min on columns
 """
 type analytics_RoomPresence_min_fields {
+    count: bigint
     created_at: timestamptz
     id: uuid
-    name: String
+    roomId: uuid
 }
 
 """
 order by min() on columns of table "analytics.RoomPresence"
 """
 input analytics_RoomPresence_min_order_by {
+    count: order_by
     created_at: order_by
     id: order_by
-    name: order_by
+    roomId: order_by
+}
+
+"""
+response of any mutation on the table "analytics.RoomPresence"
+"""
+type analytics_RoomPresence_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [analytics_RoomPresence!]!
+}
+
+"""
+on conflict condition type for table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_on_conflict {
+    constraint: analytics_RoomPresence_constraint!
+    update_columns: [analytics_RoomPresence_update_column!]! = []
+    where: analytics_RoomPresence_bool_exp
 }
 
 """
@@ -3275,8 +3570,15 @@ input analytics_RoomPresence_order_by {
     count: order_by
     created_at: order_by
     id: order_by
-    name: order_by
     room: room_Room_order_by
+    roomId: order_by
+}
+
+"""
+primary key columns input for table: analytics_RoomPresence
+"""
+input analytics_RoomPresence_pk_columns_input {
+    id: uuid!
 }
 
 """
@@ -3298,7 +3600,137 @@ enum analytics_RoomPresence_select_column {
     """
     column name
     """
-    name
+    roomId
+}
+
+"""
+input type for updating data in table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_set_input {
+    count: bigint
+    created_at: timestamptz
+    id: uuid
+    roomId: uuid
+}
+
+"""
+aggregate stddev on columns
+"""
+type analytics_RoomPresence_stddev_fields {
+    count: Float
+}
+
+"""
+order by stddev() on columns of table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_stddev_order_by {
+    count: order_by
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type analytics_RoomPresence_stddev_pop_fields {
+    count: Float
+}
+
+"""
+order by stddev_pop() on columns of table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_stddev_pop_order_by {
+    count: order_by
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type analytics_RoomPresence_stddev_samp_fields {
+    count: Float
+}
+
+"""
+order by stddev_samp() on columns of table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_stddev_samp_order_by {
+    count: order_by
+}
+
+"""
+aggregate sum on columns
+"""
+type analytics_RoomPresence_sum_fields {
+    count: bigint
+}
+
+"""
+order by sum() on columns of table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_sum_order_by {
+    count: order_by
+}
+
+"""
+update columns of table "analytics.RoomPresence"
+"""
+enum analytics_RoomPresence_update_column {
+    """
+    column name
+    """
+    count
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    roomId
+}
+
+"""
+aggregate var_pop on columns
+"""
+type analytics_RoomPresence_var_pop_fields {
+    count: Float
+}
+
+"""
+order by var_pop() on columns of table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_var_pop_order_by {
+    count: order_by
+}
+
+"""
+aggregate var_samp on columns
+"""
+type analytics_RoomPresence_var_samp_fields {
+    count: Float
+}
+
+"""
+order by var_samp() on columns of table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_var_samp_order_by {
+    count: order_by
+}
+
+"""
+aggregate variance on columns
+"""
+type analytics_RoomPresence_variance_fields {
+    count: Float
+}
+
+"""
+order by variance() on columns of table "analytics.RoomPresence"
+"""
+input analytics_RoomPresence_variance_order_by {
+    count: order_by
 }
 
 """
@@ -3672,377 +4104,6 @@ order by variance() on columns of table "analytics.RoomStats"
 """
 input analytics_RoomStats_variance_order_by {
     hlsViewCount: order_by
-}
-
-"""
-columns and relationships of "analytics.mat_ElementTotalViews"
-"""
-type analytics_mat_ElementTotalViews {
-    elementId: uuid
-    totalViewCount: bigint
-}
-
-"""
-aggregated selection of "analytics.mat_ElementTotalViews"
-"""
-type analytics_mat_ElementTotalViews_aggregate {
-    aggregate: analytics_mat_ElementTotalViews_aggregate_fields
-    nodes: [analytics_mat_ElementTotalViews!]!
-}
-
-"""
-aggregate fields of "analytics.mat_ElementTotalViews"
-"""
-type analytics_mat_ElementTotalViews_aggregate_fields {
-    avg: analytics_mat_ElementTotalViews_avg_fields
-    count(columns: [analytics_mat_ElementTotalViews_select_column!], distinct: Boolean): Int!
-    max: analytics_mat_ElementTotalViews_max_fields
-    min: analytics_mat_ElementTotalViews_min_fields
-    stddev: analytics_mat_ElementTotalViews_stddev_fields
-    stddev_pop: analytics_mat_ElementTotalViews_stddev_pop_fields
-    stddev_samp: analytics_mat_ElementTotalViews_stddev_samp_fields
-    sum: analytics_mat_ElementTotalViews_sum_fields
-    var_pop: analytics_mat_ElementTotalViews_var_pop_fields
-    var_samp: analytics_mat_ElementTotalViews_var_samp_fields
-    variance: analytics_mat_ElementTotalViews_variance_fields
-}
-
-"""
-aggregate avg on columns
-"""
-type analytics_mat_ElementTotalViews_avg_fields {
-    totalViewCount: Float
-}
-
-"""
-Boolean expression to filter rows from the table "analytics.mat_ElementTotalViews". All fields are combined with a logical 'AND'.
-"""
-input analytics_mat_ElementTotalViews_bool_exp {
-    _and: [analytics_mat_ElementTotalViews_bool_exp!]
-    _not: analytics_mat_ElementTotalViews_bool_exp
-    _or: [analytics_mat_ElementTotalViews_bool_exp!]
-    elementId: uuid_comparison_exp
-    totalViewCount: bigint_comparison_exp
-}
-
-"""
-aggregate max on columns
-"""
-type analytics_mat_ElementTotalViews_max_fields {
-    elementId: uuid
-    totalViewCount: bigint
-}
-
-"""
-aggregate min on columns
-"""
-type analytics_mat_ElementTotalViews_min_fields {
-    elementId: uuid
-    totalViewCount: bigint
-}
-
-"""
-Ordering options when selecting data from "analytics.mat_ElementTotalViews".
-"""
-input analytics_mat_ElementTotalViews_order_by {
-    elementId: order_by
-    totalViewCount: order_by
-}
-
-"""
-select columns of table "analytics.mat_ElementTotalViews"
-"""
-enum analytics_mat_ElementTotalViews_select_column {
-    """
-    column name
-    """
-    elementId
-    """
-    column name
-    """
-    totalViewCount
-}
-
-"""
-aggregate stddev on columns
-"""
-type analytics_mat_ElementTotalViews_stddev_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate stddev_pop on columns
-"""
-type analytics_mat_ElementTotalViews_stddev_pop_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate stddev_samp on columns
-"""
-type analytics_mat_ElementTotalViews_stddev_samp_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate sum on columns
-"""
-type analytics_mat_ElementTotalViews_sum_fields {
-    totalViewCount: bigint
-}
-
-"""
-aggregate var_pop on columns
-"""
-type analytics_mat_ElementTotalViews_var_pop_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate var_samp on columns
-"""
-type analytics_mat_ElementTotalViews_var_samp_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate variance on columns
-"""
-type analytics_mat_ElementTotalViews_variance_fields {
-    totalViewCount: Float
-}
-
-"""
-columns and relationships of "analytics.mat_ItemTotalViews"
-"""
-type analytics_mat_ItemTotalViews {
-    itemId: uuid
-    totalViewCount: bigint
-}
-
-"""
-aggregated selection of "analytics.mat_ItemTotalViews"
-"""
-type analytics_mat_ItemTotalViews_aggregate {
-    aggregate: analytics_mat_ItemTotalViews_aggregate_fields
-    nodes: [analytics_mat_ItemTotalViews!]!
-}
-
-"""
-aggregate fields of "analytics.mat_ItemTotalViews"
-"""
-type analytics_mat_ItemTotalViews_aggregate_fields {
-    avg: analytics_mat_ItemTotalViews_avg_fields
-    count(columns: [analytics_mat_ItemTotalViews_select_column!], distinct: Boolean): Int!
-    max: analytics_mat_ItemTotalViews_max_fields
-    min: analytics_mat_ItemTotalViews_min_fields
-    stddev: analytics_mat_ItemTotalViews_stddev_fields
-    stddev_pop: analytics_mat_ItemTotalViews_stddev_pop_fields
-    stddev_samp: analytics_mat_ItemTotalViews_stddev_samp_fields
-    sum: analytics_mat_ItemTotalViews_sum_fields
-    var_pop: analytics_mat_ItemTotalViews_var_pop_fields
-    var_samp: analytics_mat_ItemTotalViews_var_samp_fields
-    variance: analytics_mat_ItemTotalViews_variance_fields
-}
-
-"""
-aggregate avg on columns
-"""
-type analytics_mat_ItemTotalViews_avg_fields {
-    totalViewCount: Float
-}
-
-"""
-Boolean expression to filter rows from the table "analytics.mat_ItemTotalViews". All fields are combined with a logical 'AND'.
-"""
-input analytics_mat_ItemTotalViews_bool_exp {
-    _and: [analytics_mat_ItemTotalViews_bool_exp!]
-    _not: analytics_mat_ItemTotalViews_bool_exp
-    _or: [analytics_mat_ItemTotalViews_bool_exp!]
-    itemId: uuid_comparison_exp
-    totalViewCount: bigint_comparison_exp
-}
-
-"""
-aggregate max on columns
-"""
-type analytics_mat_ItemTotalViews_max_fields {
-    itemId: uuid
-    totalViewCount: bigint
-}
-
-"""
-aggregate min on columns
-"""
-type analytics_mat_ItemTotalViews_min_fields {
-    itemId: uuid
-    totalViewCount: bigint
-}
-
-"""
-Ordering options when selecting data from "analytics.mat_ItemTotalViews".
-"""
-input analytics_mat_ItemTotalViews_order_by {
-    itemId: order_by
-    totalViewCount: order_by
-}
-
-"""
-select columns of table "analytics.mat_ItemTotalViews"
-"""
-enum analytics_mat_ItemTotalViews_select_column {
-    """
-    column name
-    """
-    itemId
-    """
-    column name
-    """
-    totalViewCount
-}
-
-"""
-aggregate stddev on columns
-"""
-type analytics_mat_ItemTotalViews_stddev_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate stddev_pop on columns
-"""
-type analytics_mat_ItemTotalViews_stddev_pop_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate stddev_samp on columns
-"""
-type analytics_mat_ItemTotalViews_stddev_samp_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate sum on columns
-"""
-type analytics_mat_ItemTotalViews_sum_fields {
-    totalViewCount: bigint
-}
-
-"""
-aggregate var_pop on columns
-"""
-type analytics_mat_ItemTotalViews_var_pop_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate var_samp on columns
-"""
-type analytics_mat_ItemTotalViews_var_samp_fields {
-    totalViewCount: Float
-}
-
-"""
-aggregate variance on columns
-"""
-type analytics_mat_ItemTotalViews_variance_fields {
-    totalViewCount: Float
-}
-
-"""
-columns and relationships of "analytics.mat_RoomPresence"
-"""
-type analytics_mat_RoomPresence {
-    count(
-        """
-        JSON select path
-        """
-        path: String
-    ): jsonb
-    created_at: timestamptz
-    id: uuid
-    name: String
-}
-
-"""
-aggregated selection of "analytics.mat_RoomPresence"
-"""
-type analytics_mat_RoomPresence_aggregate {
-    aggregate: analytics_mat_RoomPresence_aggregate_fields
-    nodes: [analytics_mat_RoomPresence!]!
-}
-
-"""
-aggregate fields of "analytics.mat_RoomPresence"
-"""
-type analytics_mat_RoomPresence_aggregate_fields {
-    count(columns: [analytics_mat_RoomPresence_select_column!], distinct: Boolean): Int!
-    max: analytics_mat_RoomPresence_max_fields
-    min: analytics_mat_RoomPresence_min_fields
-}
-
-"""
-Boolean expression to filter rows from the table "analytics.mat_RoomPresence". All fields are combined with a logical 'AND'.
-"""
-input analytics_mat_RoomPresence_bool_exp {
-    _and: [analytics_mat_RoomPresence_bool_exp!]
-    _not: analytics_mat_RoomPresence_bool_exp
-    _or: [analytics_mat_RoomPresence_bool_exp!]
-    count: jsonb_comparison_exp
-    created_at: timestamptz_comparison_exp
-    id: uuid_comparison_exp
-    name: String_comparison_exp
-}
-
-"""
-aggregate max on columns
-"""
-type analytics_mat_RoomPresence_max_fields {
-    created_at: timestamptz
-    id: uuid
-    name: String
-}
-
-"""
-aggregate min on columns
-"""
-type analytics_mat_RoomPresence_min_fields {
-    created_at: timestamptz
-    id: uuid
-    name: String
-}
-
-"""
-Ordering options when selecting data from "analytics.mat_RoomPresence".
-"""
-input analytics_mat_RoomPresence_order_by {
-    count: order_by
-    created_at: order_by
-    id: order_by
-    name: order_by
-}
-
-"""
-select columns of table "analytics.mat_RoomPresence"
-"""
-enum analytics_mat_RoomPresence_select_column {
-    """
-    column name
-    """
-    count
-    """
-    column name
-    """
-    created_at
-    """
-    column name
-    """
-    id
-    """
-    column name
-    """
-    name
 }
 
 scalar bigint
@@ -9431,6 +9492,56 @@ type conference_Conference {
     """
     An array relationship
     """
+    events(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Event_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Event_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Event_bool_exp
+    ): [schedule_Event!]!
+    """
+    An aggregate relationship
+    """
+    events_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Event_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Event_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Event_bool_exp
+    ): schedule_Event_aggregate!
+    """
+    An array relationship
+    """
     exhibitions(
         """
         distinct select on columns
@@ -9939,6 +10050,7 @@ input conference_Conference_bool_exp {
     defaultProgramVisibilityLevel: String_comparison_exp
     demoCode: conference_DemoCode_bool_exp
     demoCodeId: uuid_comparison_exp
+    events: schedule_Event_bool_exp
     exhibitions: collection_Exhibition_bool_exp
     id: uuid_comparison_exp
     items: content_Item_bool_exp
@@ -9995,6 +10107,7 @@ input conference_Conference_insert_input {
     defaultProgramVisibilityLevel: String
     demoCode: conference_DemoCode_obj_rel_insert_input
     demoCodeId: uuid
+    events: schedule_Event_arr_rel_insert_input
     exhibitions: collection_Exhibition_arr_rel_insert_input
     id: uuid
     items: content_Item_arr_rel_insert_input
@@ -10119,6 +10232,7 @@ input conference_Conference_order_by {
     defaultProgramVisibilityLevel: order_by
     demoCode: conference_DemoCode_order_by
     demoCodeId: order_by
+    events_aggregate: schedule_Event_aggregate_order_by
     exhibitions_aggregate: collection_Exhibition_aggregate_order_by
     id: order_by
     items_aggregate: content_Item_aggregate_order_by
@@ -10318,6 +10432,26 @@ enum conference_ConfigurationKey_constraint {
 
 enum conference_ConfigurationKey_enum {
     """
+    Number. Milliseconds UTC. Time from which to stop sending initial invitations automatically.
+    """
+    AUTOMATIC_INVITATIONS_END
+    """
+    Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically.
+    """
+    AUTOMATIC_INVITATIONS_REPEAT_END
+    """
+    Number. Milliseconds. Time between sending repeat emails for unaccepted invitations.
+    """
+    AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY
+    """
+    Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically.
+    """
+    AUTOMATIC_INVITATIONS_REPEAT_START
+    """
+    Number. Milliseconds UTC. Time from which to start sending initial invitations automatically.
+    """
+    AUTOMATIC_INVITATIONS_START
+    """
     A list of videos to be used as the background for title/sponsor slides.
     """
     BACKGROUND_VIDEOS
@@ -10343,6 +10477,14 @@ enum conference_ConfigurationKey_enum {
     Boolean. Whether to enable the External RTMP Broadcast feature.
     """
     ENABLE_EXTERNAL_RTMP_BROADCAST
+    """
+    Whether to enable email notifications for recordings (default: true).
+    """
+    ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS
+    """
+    Boolean. Hide the exhibition people from the event boxes in the schedule.
+    """
+    EVENT_BOX_HIDE_EXHIBITION_PEOPLE
     """
     List of S3 URLs.
     """
@@ -10379,6 +10521,10 @@ enum conference_ConfigurationKey_enum {
     String. Label for the "sponsors" in the sidebar for when a conference uses a different term.
     """
     SPONSORS_LABEL
+    """
+    A list of strings indicating which program people roles receive notifications (e.g. subtitles) about submissions. Default: ["PRESENTER","AUTHOR"].
+    """
+    SUBMISSION_NOTIFICATION_ROLES
     """
     A string representing a valid email address for contacting the conference organisers.
     """
@@ -12196,6 +12342,12 @@ type content_Element {
     """
     originatingData: conference_OriginatingData
     originatingDataId: uuid
+    source(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb
     """
     An array relationship
     """
@@ -12656,6 +12808,7 @@ append existing jsonb value of filtered columns with new jsonb value
 input content_Element_append_input {
     data: jsonb
     layoutData: jsonb
+    source: jsonb
 }
 
 """
@@ -12704,6 +12857,7 @@ input content_Element_bool_exp {
     name: String_comparison_exp
     originatingData: conference_OriginatingData_bool_exp
     originatingDataId: uuid_comparison_exp
+    source: jsonb_comparison_exp
     stats: analytics_ContentElementStats_bool_exp
     subconferenceId: uuid_comparison_exp
     totalViewsStat: analytics_ElementTotalViews_bool_exp
@@ -12731,6 +12885,7 @@ delete the field or element with specified path (for JSON arrays, negative integ
 input content_Element_delete_at_path_input {
     data: [String!]
     layoutData: [String!]
+    source: [String!]
 }
 
 """
@@ -12739,6 +12894,7 @@ delete the array element with specified index (negative integers count from the 
 input content_Element_delete_elem_input {
     data: Int
     layoutData: Int
+    source: Int
 }
 
 """
@@ -12747,6 +12903,7 @@ delete key/value pair or string element. key/value pairs are matched based on th
 input content_Element_delete_key_input {
     data: String
     layoutData: String
+    source: String
 }
 
 """
@@ -12772,6 +12929,7 @@ input content_Element_insert_input {
     name: String
     originatingData: conference_OriginatingData_obj_rel_insert_input
     originatingDataId: uuid
+    source: jsonb
     stats: analytics_ContentElementStats_arr_rel_insert_input
     subconferenceId: uuid
     totalViewsStat: analytics_ElementTotalViews_obj_rel_insert_input
@@ -12895,6 +13053,7 @@ input content_Element_order_by {
     name: order_by
     originatingData: conference_OriginatingData_order_by
     originatingDataId: order_by
+    source: order_by
     stats_aggregate: analytics_ContentElementStats_aggregate_order_by
     subconferenceId: order_by
     totalViewsStat: analytics_ElementTotalViews_order_by
@@ -12919,6 +13078,7 @@ prepend existing jsonb value of filtered columns with new jsonb value
 input content_Element_prepend_input {
     data: jsonb
     layoutData: jsonb
+    source: jsonb
 }
 
 """
@@ -12964,6 +13124,10 @@ enum content_Element_select_column {
     """
     column name
     """
+    source
+    """
+    column name
+    """
     subconferenceId
     """
     column name
@@ -12996,6 +13160,7 @@ input content_Element_set_input {
     layoutData: jsonb
     name: String
     originatingDataId: uuid
+    source: jsonb
     subconferenceId: uuid
     typeName: content_ElementType_enum
     updatedAt: timestamptz
@@ -13099,6 +13264,10 @@ enum content_Element_update_column {
     column name
     """
     originatingDataId
+    """
+    column name
+    """
+    source
     """
     column name
     """
@@ -18817,6 +18986,45 @@ type mutation_root {
     """
     delete_analytics_ContentItemStats_by_pk(id: uuid!): analytics_ContentItemStats
     """
+    delete data from the table: "analytics.ElementTotalViews"
+    """
+    delete_analytics_ElementTotalViews(
+        """
+        filter the rows which have to be deleted
+        """
+        where: analytics_ElementTotalViews_bool_exp!
+    ): analytics_ElementTotalViews_mutation_response
+    """
+    delete single row from the table: "analytics.ElementTotalViews"
+    """
+    delete_analytics_ElementTotalViews_by_pk(elementId: uuid!): analytics_ElementTotalViews
+    """
+    delete data from the table: "analytics.ItemTotalViews"
+    """
+    delete_analytics_ItemTotalViews(
+        """
+        filter the rows which have to be deleted
+        """
+        where: analytics_ItemTotalViews_bool_exp!
+    ): analytics_ItemTotalViews_mutation_response
+    """
+    delete single row from the table: "analytics.ItemTotalViews"
+    """
+    delete_analytics_ItemTotalViews_by_pk(itemId: uuid!): analytics_ItemTotalViews
+    """
+    delete data from the table: "analytics.RoomPresence"
+    """
+    delete_analytics_RoomPresence(
+        """
+        filter the rows which have to be deleted
+        """
+        where: analytics_RoomPresence_bool_exp!
+    ): analytics_RoomPresence_mutation_response
+    """
+    delete single row from the table: "analytics.RoomPresence"
+    """
+    delete_analytics_RoomPresence_by_pk(id: uuid!): analytics_RoomPresence
+    """
     delete data from the table: "analytics.RoomStats"
     """
     delete_analytics_RoomStats(
@@ -20082,6 +20290,84 @@ type mutation_root {
         """
         on_conflict: analytics_ContentItemStats_on_conflict
     ): analytics_ContentItemStats
+    """
+    insert data into the table: "analytics.ElementTotalViews"
+    """
+    insert_analytics_ElementTotalViews(
+        """
+        the rows to be inserted
+        """
+        objects: [analytics_ElementTotalViews_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: analytics_ElementTotalViews_on_conflict
+    ): analytics_ElementTotalViews_mutation_response
+    """
+    insert a single row into the table: "analytics.ElementTotalViews"
+    """
+    insert_analytics_ElementTotalViews_one(
+        """
+        the row to be inserted
+        """
+        object: analytics_ElementTotalViews_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: analytics_ElementTotalViews_on_conflict
+    ): analytics_ElementTotalViews
+    """
+    insert data into the table: "analytics.ItemTotalViews"
+    """
+    insert_analytics_ItemTotalViews(
+        """
+        the rows to be inserted
+        """
+        objects: [analytics_ItemTotalViews_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: analytics_ItemTotalViews_on_conflict
+    ): analytics_ItemTotalViews_mutation_response
+    """
+    insert a single row into the table: "analytics.ItemTotalViews"
+    """
+    insert_analytics_ItemTotalViews_one(
+        """
+        the row to be inserted
+        """
+        object: analytics_ItemTotalViews_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: analytics_ItemTotalViews_on_conflict
+    ): analytics_ItemTotalViews
+    """
+    insert data into the table: "analytics.RoomPresence"
+    """
+    insert_analytics_RoomPresence(
+        """
+        the rows to be inserted
+        """
+        objects: [analytics_RoomPresence_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: analytics_RoomPresence_on_conflict
+    ): analytics_RoomPresence_mutation_response
+    """
+    insert a single row into the table: "analytics.RoomPresence"
+    """
+    insert_analytics_RoomPresence_one(
+        """
+        the row to be inserted
+        """
+        object: analytics_RoomPresence_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: analytics_RoomPresence_on_conflict
+    ): analytics_RoomPresence
     """
     insert data into the table: "analytics.RoomStats"
     """
@@ -22515,6 +22801,99 @@ type mutation_root {
         _set: analytics_ContentItemStats_set_input
         pk_columns: analytics_ContentItemStats_pk_columns_input!
     ): analytics_ContentItemStats
+    """
+    update data of the table: "analytics.ElementTotalViews"
+    """
+    update_analytics_ElementTotalViews(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: analytics_ElementTotalViews_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: analytics_ElementTotalViews_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: analytics_ElementTotalViews_bool_exp!
+    ): analytics_ElementTotalViews_mutation_response
+    """
+    update single row of the table: "analytics.ElementTotalViews"
+    """
+    update_analytics_ElementTotalViews_by_pk(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: analytics_ElementTotalViews_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: analytics_ElementTotalViews_set_input
+        pk_columns: analytics_ElementTotalViews_pk_columns_input!
+    ): analytics_ElementTotalViews
+    """
+    update data of the table: "analytics.ItemTotalViews"
+    """
+    update_analytics_ItemTotalViews(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: analytics_ItemTotalViews_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: analytics_ItemTotalViews_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: analytics_ItemTotalViews_bool_exp!
+    ): analytics_ItemTotalViews_mutation_response
+    """
+    update single row of the table: "analytics.ItemTotalViews"
+    """
+    update_analytics_ItemTotalViews_by_pk(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: analytics_ItemTotalViews_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: analytics_ItemTotalViews_set_input
+        pk_columns: analytics_ItemTotalViews_pk_columns_input!
+    ): analytics_ItemTotalViews
+    """
+    update data of the table: "analytics.RoomPresence"
+    """
+    update_analytics_RoomPresence(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: analytics_RoomPresence_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: analytics_RoomPresence_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: analytics_RoomPresence_bool_exp!
+    ): analytics_RoomPresence_mutation_response
+    """
+    update single row of the table: "analytics.RoomPresence"
+    """
+    update_analytics_RoomPresence_by_pk(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: analytics_RoomPresence_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: analytics_RoomPresence_set_input
+        pk_columns: analytics_RoomPresence_pk_columns_input!
+    ): analytics_RoomPresence
     """
     update data of the table: "analytics.RoomStats"
     """
@@ -25817,6 +26196,10 @@ type query_root {
         where: analytics_ElementTotalViews_bool_exp
     ): analytics_ElementTotalViews_aggregate!
     """
+    fetch data from the table: "analytics.ElementTotalViews" using primary key columns
+    """
+    analytics_ElementTotalViews_by_pk(elementId: uuid!): analytics_ElementTotalViews
+    """
     fetch data from the table: "analytics.ItemTotalViews"
     """
     analytics_ItemTotalViews(
@@ -25867,6 +26250,10 @@ type query_root {
         where: analytics_ItemTotalViews_bool_exp
     ): analytics_ItemTotalViews_aggregate!
     """
+    fetch data from the table: "analytics.ItemTotalViews" using primary key columns
+    """
+    analytics_ItemTotalViews_by_pk(itemId: uuid!): analytics_ItemTotalViews
+    """
     fetch data from the table: "analytics.RoomPresence"
     """
     analytics_RoomPresence(
@@ -25916,6 +26303,10 @@ type query_root {
         """
         where: analytics_RoomPresence_bool_exp
     ): analytics_RoomPresence_aggregate!
+    """
+    fetch data from the table: "analytics.RoomPresence" using primary key columns
+    """
+    analytics_RoomPresence_by_pk(id: uuid!): analytics_RoomPresence
     """
     fetch data from the table: "analytics.RoomStats"
     """
@@ -25970,156 +26361,6 @@ type query_root {
     fetch data from the table: "analytics.RoomStats" using primary key columns
     """
     analytics_RoomStats_by_pk(id: uuid!): analytics_RoomStats
-    """
-    fetch data from the table: "analytics.mat_ElementTotalViews"
-    """
-    analytics_mat_ElementTotalViews(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_ElementTotalViews_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_ElementTotalViews_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_ElementTotalViews_bool_exp
-    ): [analytics_mat_ElementTotalViews!]!
-    """
-    fetch aggregated fields from the table: "analytics.mat_ElementTotalViews"
-    """
-    analytics_mat_ElementTotalViews_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_ElementTotalViews_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_ElementTotalViews_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_ElementTotalViews_bool_exp
-    ): analytics_mat_ElementTotalViews_aggregate!
-    """
-    fetch data from the table: "analytics.mat_ItemTotalViews"
-    """
-    analytics_mat_ItemTotalViews(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_ItemTotalViews_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_ItemTotalViews_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_ItemTotalViews_bool_exp
-    ): [analytics_mat_ItemTotalViews!]!
-    """
-    fetch aggregated fields from the table: "analytics.mat_ItemTotalViews"
-    """
-    analytics_mat_ItemTotalViews_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_ItemTotalViews_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_ItemTotalViews_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_ItemTotalViews_bool_exp
-    ): analytics_mat_ItemTotalViews_aggregate!
-    """
-    fetch data from the table: "analytics.mat_RoomPresence"
-    """
-    analytics_mat_RoomPresence(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_RoomPresence_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_RoomPresence_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_RoomPresence_bool_exp
-    ): [analytics_mat_RoomPresence!]!
-    """
-    fetch aggregated fields from the table: "analytics.mat_RoomPresence"
-    """
-    analytics_mat_RoomPresence_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_RoomPresence_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_RoomPresence_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_RoomPresence_bool_exp
-    ): analytics_mat_RoomPresence_aggregate!
     """
     fetch data from the table: "chat.Chat"
     """
@@ -33069,6 +33310,15 @@ type registrant_Registrant {
     """
     invitation: registrant_Invitation
     """
+    A computed field, executes function "registrant.InvitationEmailStatus"
+    """
+    invitationStatus(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb
+    """
     A computed field, executes function "registrant.HasBeenInvited"
     """
     inviteSent: Boolean
@@ -33448,6 +33698,7 @@ input registrant_Registrant_bool_exp {
     groupRegistrants: registrant_GroupRegistrant_bool_exp
     id: uuid_comparison_exp
     invitation: registrant_Invitation_bool_exp
+    invitationStatus: jsonb_comparison_exp
     inviteSent: Boolean_comparison_exp
     profile: registrant_Profile_bool_exp
     programPeople: collection_ProgramPerson_bool_exp
@@ -33589,6 +33840,7 @@ input registrant_Registrant_order_by {
     groupRegistrants_aggregate: registrant_GroupRegistrant_aggregate_order_by
     id: order_by
     invitation: registrant_Invitation_order_by
+    invitationStatus: order_by
     inviteSent: order_by
     profile: registrant_Profile_order_by
     programPeople_aggregate: collection_ProgramPerson_aggregate_order_by
@@ -41932,6 +42184,10 @@ type subscription_root {
         where: analytics_ElementTotalViews_bool_exp
     ): analytics_ElementTotalViews_aggregate!
     """
+    fetch data from the table: "analytics.ElementTotalViews" using primary key columns
+    """
+    analytics_ElementTotalViews_by_pk(elementId: uuid!): analytics_ElementTotalViews
+    """
     fetch data from the table: "analytics.ItemTotalViews"
     """
     analytics_ItemTotalViews(
@@ -41982,6 +42238,10 @@ type subscription_root {
         where: analytics_ItemTotalViews_bool_exp
     ): analytics_ItemTotalViews_aggregate!
     """
+    fetch data from the table: "analytics.ItemTotalViews" using primary key columns
+    """
+    analytics_ItemTotalViews_by_pk(itemId: uuid!): analytics_ItemTotalViews
+    """
     fetch data from the table: "analytics.RoomPresence"
     """
     analytics_RoomPresence(
@@ -42031,6 +42291,10 @@ type subscription_root {
         """
         where: analytics_RoomPresence_bool_exp
     ): analytics_RoomPresence_aggregate!
+    """
+    fetch data from the table: "analytics.RoomPresence" using primary key columns
+    """
+    analytics_RoomPresence_by_pk(id: uuid!): analytics_RoomPresence
     """
     fetch data from the table: "analytics.RoomStats"
     """
@@ -42085,156 +42349,6 @@ type subscription_root {
     fetch data from the table: "analytics.RoomStats" using primary key columns
     """
     analytics_RoomStats_by_pk(id: uuid!): analytics_RoomStats
-    """
-    fetch data from the table: "analytics.mat_ElementTotalViews"
-    """
-    analytics_mat_ElementTotalViews(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_ElementTotalViews_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_ElementTotalViews_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_ElementTotalViews_bool_exp
-    ): [analytics_mat_ElementTotalViews!]!
-    """
-    fetch aggregated fields from the table: "analytics.mat_ElementTotalViews"
-    """
-    analytics_mat_ElementTotalViews_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_ElementTotalViews_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_ElementTotalViews_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_ElementTotalViews_bool_exp
-    ): analytics_mat_ElementTotalViews_aggregate!
-    """
-    fetch data from the table: "analytics.mat_ItemTotalViews"
-    """
-    analytics_mat_ItemTotalViews(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_ItemTotalViews_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_ItemTotalViews_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_ItemTotalViews_bool_exp
-    ): [analytics_mat_ItemTotalViews!]!
-    """
-    fetch aggregated fields from the table: "analytics.mat_ItemTotalViews"
-    """
-    analytics_mat_ItemTotalViews_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_ItemTotalViews_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_ItemTotalViews_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_ItemTotalViews_bool_exp
-    ): analytics_mat_ItemTotalViews_aggregate!
-    """
-    fetch data from the table: "analytics.mat_RoomPresence"
-    """
-    analytics_mat_RoomPresence(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_RoomPresence_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_RoomPresence_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_RoomPresence_bool_exp
-    ): [analytics_mat_RoomPresence!]!
-    """
-    fetch aggregated fields from the table: "analytics.mat_RoomPresence"
-    """
-    analytics_mat_RoomPresence_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [analytics_mat_RoomPresence_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [analytics_mat_RoomPresence_order_by!]
-        """
-        filter the rows returned
-        """
-        where: analytics_mat_RoomPresence_bool_exp
-    ): analytics_mat_RoomPresence_aggregate!
     """
     fetch data from the table: "chat.Chat"
     """
@@ -47319,6 +47433,7 @@ enum system_ConfigurationKey_enum {
     The name emails are from when sent via SendGrid.
     """
     SENDGRID_SENDER_NAME
+    SENDGRID_WEBHOOK_PUBLIC_KEY
     """
     Contact address for people to request emails never be sent to them again.
     """

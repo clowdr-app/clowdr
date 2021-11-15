@@ -91,9 +91,11 @@ array_relationships:
         schema: room
 - name: stats
   using:
-    foreign_key_constraint_on:
-      column: itemId
-      table:
+    manual_configuration:
+      column_mapping:
+        id: itemId
+      insertion_order: null
+      remote_table:
         name: ContentItemStats
         schema: analytics
 computed_fields:

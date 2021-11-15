@@ -1,11 +1,12 @@
 import { Spinner, useToast } from "@chakra-ui/react";
 import { gql } from "@urql/core";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import type { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
 import {
     useMultiSettingUpdater_DeleteConfigurationsMutation,
     useMultiSettingUpdater_GetConfigurationsQuery,
 } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import { useConference } from "../../useConference";
 
 gql`
@@ -46,6 +47,13 @@ export default function MultiSettingUpdater({
     settingNames: Conference_ConfigurationKey_Enum[];
     children: (props: MultiSettingChildProps) => JSX.Element;
 }): JSX.Element {
+    const context = useMemo(
+        () =>
+            makeContext({
+                "X-Auth-Role": "main-conference-organizer",
+            }),
+        []
+    );
     const conference = useConference();
     const [setting] = useMultiSettingUpdater_GetConfigurationsQuery({
         variables: {
@@ -53,15 +61,25 @@ export default function MultiSettingUpdater({
             keys: settingNames,
         },
         requestPolicy: "network-only",
+        context,
     });
     const [, deleteSettings] = useMultiSettingUpdater_DeleteConfigurationsMutation();
     const toast = useToast();
     const deleteAll = useCallback(async () => {
         try {
-            await deleteSettings({
-                conferenceId: conference.id,
-                keys: settingNames,
-            });
+            await deleteSettings(
+                {
+                    conferenceId: conference.id,
+                    keys: settingNames,
+                },
+                {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "main-conference-organizer",
+                        },
+                    },
+                }
+            );
             toast({
                 status: "success",
                 title: "Settings cleared",

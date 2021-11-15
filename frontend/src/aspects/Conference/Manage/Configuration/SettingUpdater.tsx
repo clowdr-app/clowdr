@@ -1,12 +1,13 @@
 import { Spinner, useToast } from "@chakra-ui/react";
 import { gql } from "@urql/core";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import type { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
 import {
     useSettingUpdater_DeleteConfigurationMutation,
     useSettingUpdater_GetConfigurationQuery,
     useSettingUpdater_SetConfigurationMutation,
 } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import { useConference } from "../../useConference";
 
 gql`
@@ -57,6 +58,13 @@ export default function SettingUpdater<T>({
     defaultValue: T | undefined;
     children: (props: SettingChildProps<T>) => JSX.Element;
 }): JSX.Element {
+    const context = useMemo(
+        () =>
+            makeContext({
+                "X-Auth-Role": "main-conference-organizer",
+            }),
+        []
+    );
     const conference = useConference();
     const [setting] = useSettingUpdater_GetConfigurationQuery({
         variables: {
@@ -64,6 +72,7 @@ export default function SettingUpdater<T>({
             key: settingName,
         },
         requestPolicy: "network-only",
+        context,
     });
     const [{ fetching: isUpdating }, updateSetting] = useSettingUpdater_SetConfigurationMutation();
     const [, deleteSetting] = useSettingUpdater_DeleteConfigurationMutation();
@@ -73,10 +82,19 @@ export default function SettingUpdater<T>({
         async (newValue: T | undefined) => {
             try {
                 if (newValue === undefined || (typeof newValue === "string" && !newValue?.trim().length)) {
-                    await deleteSetting({
-                        conferenceId: conference.id,
-                        key: settingName,
-                    });
+                    await deleteSetting(
+                        {
+                            conferenceId: conference.id,
+                            key: settingName,
+                        },
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "main-conference-organizer",
+                                },
+                            },
+                        }
+                    );
                     toast({
                         status: "success",
                         title: "Setting updated",
@@ -85,11 +103,20 @@ export default function SettingUpdater<T>({
                         position: "bottom",
                     });
                 } else {
-                    await updateSetting({
-                        conferenceId: conference.id,
-                        key: settingName,
-                        value: typeof newValue === "string" ? newValue?.trim() : newValue,
-                    });
+                    await updateSetting(
+                        {
+                            conferenceId: conference.id,
+                            key: settingName,
+                            value: typeof newValue === "string" ? newValue?.trim() : newValue,
+                        },
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "main-conference-organizer",
+                                },
+                            },
+                        }
+                    );
                     toast({
                         status: "success",
                         title: "Setting updated",

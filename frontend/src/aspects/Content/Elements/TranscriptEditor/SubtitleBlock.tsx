@@ -20,7 +20,7 @@ const hoursMinutesFormat = new Intl.NumberFormat(undefined, {
     maximumFractionDigits: 0,
 });
 
-const anyDecimalSeparator = /[,.٫‎⎖]/;
+const anyDecimalSeparator = /[,.٫⎖]/;
 
 export function timecodeToTenths(timecode: string): number {
     const [secondsFloatStr, minutesStr, hoursStr] = timecode.split(":").reverse();

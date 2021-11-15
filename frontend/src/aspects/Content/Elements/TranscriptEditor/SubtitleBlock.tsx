@@ -9,13 +9,13 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-const secondsFormat = new Intl.NumberFormat(undefined, {
+const secondsDisplayFormat = new Intl.NumberFormat(undefined, {
     minimumIntegerDigits: 2,
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
 });
 
-const hoursMinutesFormat = new Intl.NumberFormat(undefined, {
+const hoursMinutesDisplayFormat = new Intl.NumberFormat(undefined, {
     minimumIntegerDigits: 2,
     maximumFractionDigits: 0,
 });
@@ -37,12 +37,19 @@ export function timecodeToTenths(timecode: string): number {
     return ((hours * 60 + minutes) * 60 + seconds) * 10 + tenths;
 }
 
-export function tenthsToTimecode(tenthsTotal: number): string {
+export function tenthsToTimecode(
+    tenthsTotal: number,
+    { hoursFormat, minutesFormat, secondsFormat } = {
+        hoursFormat: hoursMinutesDisplayFormat,
+        minutesFormat: hoursMinutesDisplayFormat,
+        secondsFormat: secondsDisplayFormat,
+    }
+): string {
     const secondsTotal = tenthsTotal / 10;
     const secondsStr = secondsFormat.format(secondsTotal % 60);
     const minutesTotalFloor = Math.trunc(secondsTotal / 60);
-    const minutesStr = hoursMinutesFormat.format(minutesTotalFloor % 60);
-    const hoursStr = hoursMinutesFormat.format(Math.trunc(minutesTotalFloor / 60));
+    const minutesStr = minutesFormat.format(minutesTotalFloor % 60);
+    const hoursStr = hoursFormat.format(Math.trunc(minutesTotalFloor / 60));
     return hoursStr + ":" + minutesStr + ":" + secondsStr;
 }
 

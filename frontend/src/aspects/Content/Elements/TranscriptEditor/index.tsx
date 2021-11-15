@@ -60,6 +60,25 @@ function validateNewEndTenths({
     return newEndTenths > startTenths;
 }
 
+const SubripDevelopersLanguage = "cs";
+
+const secondsSRTFormat = new Intl.NumberFormat(SubripDevelopersLanguage, {
+    minimumIntegerDigits: 2,
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+});
+
+const hoursMinutesSRTFormat = new Intl.NumberFormat(SubripDevelopersLanguage, {
+    minimumIntegerDigits: 2,
+    maximumFractionDigits: 0,
+});
+
+const SRTTimeFormats = {
+    hoursFormat: hoursMinutesSRTFormat,
+    minutesFormat: hoursMinutesSRTFormat,
+    secondsFormat: secondsSRTFormat,
+};
+
 export default function TranscriptEditor({
     srtTranscript,
     mediaUrl,
@@ -162,8 +181,8 @@ export default function TranscriptEditor({
                                 transcriptWIP.reduce((serializableTranscript, { endTenths, text }, startTenths) => {
                                     serializableTranscript.push({
                                         id: (serializableTranscript.length + 1).toString(),
-                                        startTime: tenthsToTimecode(startTenths),
-                                        endTime: tenthsToTimecode(endTenths),
+                                        startTime: tenthsToTimecode(startTenths, SRTTimeFormats),
+                                        endTime: tenthsToTimecode(endTenths, SRTTimeFormats),
                                         text,
                                     });
                                     return serializableTranscript;

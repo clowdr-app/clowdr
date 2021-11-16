@@ -21,14 +21,15 @@ import {
 } from "@chakra-ui/react";
 import Papa from "papaparse";
 import * as R from "ramda";
-import type { LegacyRef} from "react";
+import type { LegacyRef } from "react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
     Content_Item_Set_Input,
     ManageContent_ExhibitionFragment,
     ManageContent_ItemFragment,
-    ManageContent_TagFragment} from "../../../../generated/graphql";
+    ManageContent_TagFragment,
+} from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
     ManageContent_ItemFragmentDoc,
@@ -50,10 +51,9 @@ import type {
     ColumnSpecification,
     DeepWriteable,
     ExtraButton,
-    RowSpecification} from "../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../Icons/FAIcon";
@@ -847,7 +847,10 @@ export default function ManageContentV2(): JSX.Element {
                                 Name: tag.name,
                                 Priority: tag.priority,
                                 Colour: tag.colour,
-                            }))
+                            })),
+                            {
+                                columns: ["Conference Id", "Tag Id", "Name", "Priority", "Colour"],
+                            }
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
@@ -881,7 +884,10 @@ export default function ManageContentV2(): JSX.Element {
                                 Priority: exhibition.priority,
                                 Colour: exhibition.colour,
                                 Hidden: exhibition.isHidden ? "Yes" : "No",
-                            }))
+                            })),
+                            {
+                                columns: ["Conference Id", "Exhibition Id", "Name", "Priority", "Colour", "Hidden"],
+                            }
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
@@ -911,54 +917,75 @@ export default function ManageContentV2(): JSX.Element {
                             itemIds: dataToExport.map((x) => x.id),
                         });
 
-                        const csvText = Papa.unparse(
-                            contentForExport.data.content_Item.map((item) => {
-                                const result: any = {
-                                    "Conference Id": item.conferenceId,
-                                    "Content Id": item.id,
-                                    "Externally Sourced Data Id": item.originatingDataId,
+                        const columns: Set<string> = new Set([
+                            "Conference Id",
+                            "Content Id",
+                            "Externally Sourced Data Id",
+                            "Title",
+                            "Short Title",
+                            "Type",
+                            "Tag Ids",
+                            "Exhibitions",
+                            "Discussion Room Ids",
+                            "Chat Id",
+                            "People",
+                        ]);
+                        const data = contentForExport.data.content_Item.map((item) => {
+                            const result: any = {
+                                "Conference Id": item.conferenceId,
+                                "Content Id": item.id,
+                                "Externally Sourced Data Id": item.originatingDataId,
 
-                                    Title: item.title,
-                                    "Short Title": item.shortTitle ?? "",
-                                    Type: item.typeName,
-                                    "Tag Ids": item.itemTags.map((itemTag) => itemTag.tagId),
-                                    Exhibitions: item.itemExhibitions.map(
-                                        (itemExh) => `${itemExh.priority ?? "N"}: ${itemExh.exhibitionId}`
-                                    ),
-                                    "Discussion Room Ids": item.rooms.map((room) => room.id),
-                                    "Chat Id": item.chatId ?? "",
+                                Title: item.title,
+                                "Short Title": item.shortTitle ?? "",
+                                Type: item.typeName,
+                                "Tag Ids": item.itemTags.map((itemTag) => itemTag.tagId),
+                                Exhibitions: item.itemExhibitions.map(
+                                    (itemExh) => `${itemExh.priority ?? "N"}: ${itemExh.exhibitionId}`
+                                ),
+                                "Discussion Room Ids": item.rooms.map((room) => room.id),
+                                "Chat Id": item.chatId ?? "",
 
-                                    People: item.itemPeople.map(
-                                        (itemPerson) =>
-                                            `${itemPerson.priority ?? "N"}: ${itemPerson.person?.id} (${
-                                                itemPerson.roleName
-                                            }) [${itemPerson.person?.name} (${
-                                                itemPerson.person?.affiliation ?? "No affiliation"
-                                            }) <${itemPerson.person?.email ?? "No email"}>]`
-                                    ),
-                                };
+                                People: item.itemPeople.map(
+                                    (itemPerson) =>
+                                        `${itemPerson.priority ?? "N"}: ${itemPerson.person?.id} (${
+                                            itemPerson.roleName
+                                        }) [${itemPerson.person?.name} (${
+                                            itemPerson.person?.affiliation ?? "No affiliation"
+                                        }) <${itemPerson.person?.email ?? "No email"}>]`
+                                ),
+                            };
 
-                                for (let idx = 0; idx < item.elements.length; idx++) {
-                                    const baseName = `Element ${idx}`;
-                                    const element = item.elements[idx];
-                                    result[`${baseName}: Id`] = element.id;
-                                    result[`${baseName}: Name`] = element.name;
-                                    result[`${baseName}: Type`] = element.typeName;
-                                    result[`${baseName}: Data`] =
-                                        element.data && element.data instanceof Array
-                                            ? JSON.stringify(element.data[element.data.length - 1])
-                                            : null;
-                                    result[`${baseName}: Layout`] = element.layoutData
-                                        ? JSON.stringify(element.layoutData)
+                            for (let idx = 0; idx < item.elements.length; idx++) {
+                                const baseName = `Element ${idx}`;
+                                const element = item.elements[idx];
+                                result[`${baseName}: Id`] = element.id;
+                                result[`${baseName}: Name`] = element.name;
+                                result[`${baseName}: Type`] = element.typeName;
+                                result[`${baseName}: Data`] =
+                                    element.data && element.data instanceof Array
+                                        ? JSON.stringify(element.data[element.data.length - 1])
                                         : null;
-                                    result[`${baseName}: Uploads Remaining`] = element.uploadsRemaining ?? "Unlimited";
-                                    result[`${baseName}: Hidden`] = element.isHidden ? "Yes" : "No";
-                                    result[`${baseName}: Updated At`] = element.updatedAt;
-                                }
+                                result[`${baseName}: Layout`] = element.layoutData
+                                    ? JSON.stringify(element.layoutData)
+                                    : null;
+                                result[`${baseName}: Uploads Remaining`] = element.uploadsRemaining ?? "Unlimited";
+                                result[`${baseName}: Hidden`] = element.isHidden ? "Yes" : "No";
+                                result[`${baseName}: Updated At`] = element.updatedAt;
 
-                                return result;
-                            })
-                        );
+                                columns.add(`${baseName}: Id`);
+                                columns.add(`${baseName}: Name`);
+                                columns.add(`${baseName}: Type`);
+                                columns.add(`${baseName}: Data`);
+                                columns.add(`${baseName}: Layout`);
+                                columns.add(`${baseName}: Uploads Remaining`);
+                                columns.add(`${baseName}: Hidden`);
+                                columns.add(`${baseName}: Updated At`);
+                            }
+
+                            return result;
+                        });
+                        const csvText = Papa.unparse(data, { columns: [...columns] });
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
                         let csvURL: string | null = null;

@@ -175,21 +175,24 @@ export default function TranscriptEditor({
                 </video>
                 <Button
                     colorScheme="green"
-                    onClick={() => {
+                    onClick={() =>
                         handleSaveEditor(
                             SRT.toSrt(
-                                transcriptWIP.reduce((serializableTranscript, { endTenths, text }, startTenths) => {
-                                    serializableTranscript.push({
-                                        id: (serializableTranscript.length + 1).toString(),
-                                        startTime: tenthsToTimecode(startTenths, SRTTimeFormats),
-                                        endTime: tenthsToTimecode(endTenths, SRTTimeFormats),
-                                        text,
-                                    });
-                                    return serializableTranscript;
-                                }, [] as SerializableBlock[])
+                                transcriptWIP.reduce(
+                                    (serializableTranscript, { endTenths, text }, startTenths) => [
+                                        ...serializableTranscript,
+                                        {
+                                            id: (serializableTranscript.length + 1).toString(),
+                                            startTime: tenthsToTimecode(startTenths, SRTTimeFormats),
+                                            endTime: tenthsToTimecode(endTenths, SRTTimeFormats),
+                                            text,
+                                        },
+                                    ],
+                                    [] as SerializableBlock[]
+                                )
                             )
-                        );
-                    }}
+                        )
+                    }
                 >
                     Save Subtitles
                 </Button>

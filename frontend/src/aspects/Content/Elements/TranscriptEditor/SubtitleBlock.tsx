@@ -1,72 +1,18 @@
-import {
-    Flex,
-    NumberDecrementStepper,
-    NumberIncrementStepper,
-    NumberInput,
-    NumberInputField,
-    NumberInputStepper,
-    Textarea,
-} from "@chakra-ui/react";
+import { Flex, Textarea } from "@chakra-ui/react";
 import React from "react";
+import TimecodeInput from "./TimecodeInput";
 
-const secondsDisplayFormat = new Intl.NumberFormat(undefined, {
-    minimumIntegerDigits: 2,
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-});
-
-const hoursMinutesDisplayFormat = new Intl.NumberFormat(undefined, {
-    minimumIntegerDigits: 2,
-    maximumFractionDigits: 0,
-});
-
-const anyDecimalSeparator = /[,.٫⎖]/;
-
-export function timecodeToTenths(timecode: string): number {
-    const [secondsFloatStr, minutesStr, hoursStr] = timecode.split(":").reverse();
-    const [secondsStr, fractionStr] = secondsFloatStr.split(anyDecimalSeparator);
-
-    let tenthsFloat = fractionStr ? parseInt(fractionStr, 10) : 0;
-    while (tenthsFloat >= 10) tenthsFloat /= 10;
-
-    const tenths = Math.round(tenthsFloat);
-    const seconds = parseInt(secondsStr, 10);
-    const minutes = minutesStr ? parseInt(minutesStr, 10) : 0;
-    const hours = hoursStr ? parseInt(hoursStr, 10) : 0;
-
-    return ((hours * 60 + minutes) * 60 + seconds) * 10 + tenths;
-}
-
-export function tenthsToTimecode(
-    tenthsTotal: number,
-    { hoursFormat, minutesFormat, secondsFormat } = {
-        hoursFormat: hoursMinutesDisplayFormat,
-        minutesFormat: hoursMinutesDisplayFormat,
-        secondsFormat: secondsDisplayFormat,
-    }
-): string {
-    const secondsTotal = tenthsTotal / 10;
-    const secondsStr = secondsFormat.format(secondsTotal % 60);
-    const minutesTotalFloor = Math.trunc(secondsTotal / 60);
-    const minutesStr = minutesFormat.format(minutesTotalFloor % 60);
-    const hoursStr = hoursFormat.format(Math.trunc(minutesTotalFloor / 60));
-    return hoursStr + ":" + minutesStr + ":" + secondsStr;
-}
-
-export interface SubtitleBlockData {
-    startTenths: number;
-    endTenths: number;
-    text: string;
-}
-
-export function SubtitleBlock({
+export default function SubtitleBlock({
     startTenths,
     endTenths,
     text,
     onTextInput,
     onStartTenthsInput,
     onEndTenthsInput,
-}: SubtitleBlockData & {
+}: {
+    startTenths: number;
+    endTenths: number;
+    text: string;
     onTextInput: (newText: string) => void;
     onStartTenthsInput: (newStartTenths: number) => void;
     onEndTenthsInput: (newEndTenths: number) => void;
@@ -85,20 +31,8 @@ export function SubtitleBlock({
                 }}
             />
             <Flex flexBasis={"16em"} flexGrow={0} flexDirection="column" justifyContent="space-between">
-                <NumberInput value={tenthsToTimecode(startTenths)}>
-                    <NumberInputField readOnly />
-                    <NumberInputStepper>
-                        <NumberIncrementStepper onClick={() => onStartTenthsInput(startTenths + 1)} />
-                        <NumberDecrementStepper onClick={() => onStartTenthsInput(startTenths - 1)} />
-                    </NumberInputStepper>
-                </NumberInput>
-                <NumberInput value={tenthsToTimecode(endTenths)}>
-                    <NumberInputField readOnly />
-                    <NumberInputStepper>
-                        <NumberIncrementStepper onClick={() => onEndTenthsInput(endTenths + 1)} />
-                        <NumberDecrementStepper onClick={() => onEndTenthsInput(endTenths - 1)} />
-                    </NumberInputStepper>
-                </NumberInput>
+                <TimecodeInput value={startTenths} onInput={onStartTenthsInput} />
+                <TimecodeInput value={endTenths} onInput={onEndTenthsInput} />
             </Flex>
         </Flex>
     );

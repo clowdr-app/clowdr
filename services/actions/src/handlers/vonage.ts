@@ -1,6 +1,8 @@
 import { gql } from "@apollo/client/core";
 import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { Content_ElementType_Enum, ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import type { SourceBlob } from "@clowdr-app/shared-types/build/content/element";
+import { SourceType } from "@clowdr-app/shared-types/build/content/element";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
@@ -115,6 +117,7 @@ gql`
             id
             name
             startTime
+            durationSeconds
             conferenceId
             item {
                 id
@@ -247,6 +250,13 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                     return true;
                 }
 
+                const source: SourceBlob = {
+                    source: SourceType.EventRecording,
+                    eventId: eventId,
+                    startTimeMillis: Date.parse(event.startTime),
+                    durationSeconds: event.durationSeconds,
+                };
+
                 const data: ElementDataBlob = [
                     {
                         createdAt: Date.now(),
@@ -274,6 +284,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                             object: {
                                 conferenceId: event.conferenceId,
                                 data,
+                                source,
                                 isHidden: false,
                                 itemId: event.item.id,
                                 layoutData,

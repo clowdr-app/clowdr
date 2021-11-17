@@ -1,8 +1,8 @@
 import type {
-    OptimisticMutationResolver as GraphCacheOptimisticMutationResolver,
     Resolver as GraphCacheResolver,
-    StorageAdapter as GraphCacheStorageAdapter,
     UpdateResolver as GraphCacheUpdateResolver,
+    OptimisticMutationResolver as GraphCacheOptimisticMutationResolver,
+    StorageAdapter as GraphCacheStorageAdapter,
 } from "@urql/exchange-graphcache";
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import gql from "graphql-tag";

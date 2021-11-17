@@ -213,6 +213,7 @@ importers:
       styled-components: ^5.3.3
       styled-system: ^5.1.5
       tinycolor2: ^1.4.2
+      ts-patch: ^2.0.1
       tsc-watch: ^4.5.0
       typescript: ^4.4.4
       url: ^0.11.0
@@ -339,6 +340,7 @@ importers:
       styled-components: 5.3.3_281a4fa50a045c9112baf635f3bc27a7
       styled-system: 5.1.5
       tinycolor2: 1.4.2
+      ts-patch: 2.0.1_typescript@4.4.4
       typescript: 4.4.4
       url: 0.11.0
       urql: 2.0.5_graphql@15.7.2+react@17.0.2

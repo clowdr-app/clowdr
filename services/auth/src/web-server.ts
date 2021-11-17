@@ -1,4 +1,4 @@
-import { requestId } from "@midspace/auth/middlewares/request-id";
+import { requestId } from "@midspace/server-utils/middlewares/request-id";
 import assert from "assert";
 import cors from "cors";
 import express from "express";

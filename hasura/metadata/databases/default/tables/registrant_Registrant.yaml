@@ -121,6 +121,7 @@ select_permissions:
     - conferenceId
     - id
     computed_fields:
+    - invitationStatus
     - inviteSent
     filter:
       conferenceId:
@@ -136,6 +137,7 @@ select_permissions:
     - updated_at
     - conferenceRole
     computed_fields:
+    - invitationStatus
     - inviteSent
     filter:
       conferenceId:

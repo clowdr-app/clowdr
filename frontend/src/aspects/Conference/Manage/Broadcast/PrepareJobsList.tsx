@@ -16,7 +16,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import { AuthHeaders } from "@midspace/shared-types/auth";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useCreateConferencePrepareJobMutation, useGetConferencePrepareJobsQuery } from "../../../../generated/graphql";
@@ -57,7 +57,7 @@ export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeaders.Role]: "organizer",
+                [AuthHeader.Role]: "organizer",
             }),
         []
     );

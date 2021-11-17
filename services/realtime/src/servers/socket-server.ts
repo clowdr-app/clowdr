@@ -79,17 +79,20 @@ socketServer.on("connection", async function (socket: Socket) {
 
     // Validate the token
     if (!socket.decodedToken?.sub) {
-        logger.error(`Socket ${socketId} attempted to connect with a JWT that was missing the relevant claims.`);
+        logger.error(
+            { socketId },
+            `Socket ${socketId} attempted to connect with a JWT that was missing the relevant claims.`
+        );
         socket.disconnect();
         return;
     }
 
     const userId: string = socket.decodedToken.sub;
     if (userId) {
-        logger.info(`Authorized client connected: ${userId} / ${socketId}`);
+        logger.info({ userId, socketId }, `Authorized client connected: ${userId} / ${socketId}`);
 
         socket.on("disconnect", () => {
-            logger.info(`Client disconnected: ${userId} / ${socketId}`);
+            logger.info({ userId, socketId }, `Client disconnected: ${userId} / ${socketId}`);
 
             onDisconnectPresence(socketId, userId);
             onDisconnectChat(socketId, userId);
@@ -106,7 +109,10 @@ socketServer.on("connection", async function (socket: Socket) {
             try {
                 socket.emit("time", { ...syncPacket, serverSendTime: Date.now() });
                 if (syncPacket?.clientSendTime && typeof syncPacket.clientSendTime === "number") {
-                    logger.info("Client time sync. Time offset=" + (Date.now() - syncPacket.clientSendTime) + "ms");
+                    logger.info(
+                        { timeOffsetMs: Date.now() - syncPacket.clientSendTime },
+                        "Client time sync. Time offset=" + (Date.now() - syncPacket.clientSendTime) + "ms"
+                    );
                 }
             } catch {
                 // Do nothing

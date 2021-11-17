@@ -40,6 +40,7 @@
         { "path": "../../packages/shared/shared-types/tsconfig.cjs.json" },
         { "path": "../../packages/shared/graphql/tsconfig.cjs.json" },
         { "path": "../../packages/shared/hasura/tsconfig.cjs.json" },
-        { "path": "../../packages/node/auth/tsconfig.cjs.json" }
+        { "path": "../../packages/node/auth/tsconfig.cjs.json" },
+        { "path": "../../packages/node/server-utils/tsconfig.cjs.json" }
     ]
 }

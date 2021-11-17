@@ -38,6 +38,7 @@
     },
     "references": [
         { "path": "../../packages/node/auth/tsconfig.cjs.json" },
+        { "path": "../../packages/node/server-utils/tsconfig.cjs.json" },
         { "path": "../../packages/node/caches/tsconfig.cjs.json" }
     ]
 }

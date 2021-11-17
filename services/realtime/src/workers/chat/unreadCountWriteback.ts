@@ -69,6 +69,7 @@ async function Main(continueExecuting = false) {
                                     return r;
                                 } else {
                                     logger.warn(
+                                        { userId: x.userId, chatId: x.chatId, messageSId: x.messageSId },
                                         `Unable to find registrant id for user: ${x.userId}. Cannot write back their unread index for ${x.chatId} (Read up to message sId: ${x.messageSId})`
                                     );
                                 }
@@ -84,21 +85,22 @@ async function Main(continueExecuting = false) {
         if (!continueExecuting) {
             process.exit(0);
         }
-    } catch (error: any) {
+    } catch (err: any) {
         if (
-            !error
+            !err
                 .toString()
                 .includes(
                     'Foreign key violation. insert or update on table "ReadUpToIndex" violates foreign key constraint "ReadUpToIndex_messageSId_fkey"'
                 )
         ) {
-            logger.error({ error }, "SEVERE ERROR: Cannot write back read up to indices!");
+            logger.error({ err }, "SEVERE ERROR: Cannot write back read up to indices!");
 
             if (!continueExecuting) {
                 process.exit(-1);
             }
         } else {
             logger.warn(
+                { err },
                 "Warning: Ignoring read up to indices write back error (foreign key violation suggests the system attempted to store the read up to index before message has been written back.)"
             );
             if (!continueExecuting) {

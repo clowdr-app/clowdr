@@ -1,12 +1,12 @@
-web: node ./build/web-server.js
+web: node --enable-source-maps ./build/web-server.js
 
-chatMessagesDistributionWorker: node ./build/workers/chat/messages/distribution.js
-chatMessagesWritebackWorker: node ./build/workers/chat/messages/writeback.js
+chatMessagesDistributionWorker: node --enable-source-maps ./build/workers/chat/messages/distribution.js
+chatMessagesWritebackWorker: node --enable-source-maps ./build/workers/chat/messages/writeback.js
 
-chatReactionsDistributionWorker: node ./build/workers/chat/reactions/distribution.js
-chatReactionsWritebackWorker: node ./build/workers/chat/reactions/writeback.js
+chatReactionsDistributionWorker: node --enable-source-maps ./build/workers/chat/reactions/distribution.js
+chatReactionsWritebackWorker: node --enable-source-maps ./build/workers/chat/reactions/writeback.js
 
-analyticsConferenceComputationWorker: node ./build/workers/analytics/conferenceComputation.js
-analyticsItemComputationWorker: node ./build/workers/analytics/itemComputation.js
-analyticsElementComputationWorker: node ./build/workers/analytics/elementComputation.js
-analyticsRoomComputationWorker: node ./build/workers/analytics/roomComputation.js
+analyticsConferenceComputationWorker: node --enable-source-maps ./build/workers/analytics/conferenceComputation.js
+analyticsItemComputationWorker: node --enable-source-maps ./build/workers/analytics/itemComputation.js
+analyticsElementComputationWorker: node --enable-source-maps ./build/workers/analytics/elementComputation.js
+analyticsRoomComputationWorker: node --enable-source-maps ./build/workers/analytics/roomComputation.js

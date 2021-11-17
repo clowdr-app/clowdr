@@ -3,7 +3,6 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        // Start Services in Docker -- Local Development
         {
             "label": "Start Docker Services -- Local Development",
             "type": "shell",
@@ -16,9 +15,6 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            // Use `"-p", "Hasura 3",` as the first arguments to use a different
-            // Docker project name
-            // Keywords: project_name, project-name, container name, container-name
             "args": [
                 "compose",
                 "-f",
@@ -33,7 +29,6 @@
                 "-d"
             ]
         },
-        // Hasura Console -- Local Development
         {
             "label": "Hasura Console -- Local Development",
             "type": "shell",
@@ -49,7 +44,6 @@
             },
             "args": ["console-when-ready"]
         },
-        // Hasura Console -- CI Testing
         {
             "label": "Hasura Console -- CI Testing",
             "type": "shell",
@@ -64,7 +58,6 @@
             },
             "args": ["console-when-ready", "--envfile='./.env.ci-test'"]
         },
-        // All -- GraphQL Codegen
         {
             "label": "All -- GraphQL Codegen",
             "type": "shell",
@@ -78,7 +71,6 @@
             },
             "args": ["codegen", "-r"]
         },
-        // Offline -- GraphQL Codegen
         {
             "label": "Offline -- GraphQL Codegen",
             "type": "shell",
@@ -92,7 +84,6 @@
             },
             "args": ["codegen", "-r", "--filter \"...^@midspace/graphql\""]
         },
-        // Single -- GraphQL Codegen
         {
             "label": "Single -- GraphQL Codegen",
             "type": "shell",
@@ -106,7 +97,6 @@
             },
             "args": ["codegen", "--filter", "${input:package-name}"]
         },
-        // Action service -- Local Development
         {
             "label": "Actions Service -- Local Development",
             "type": "shell",
@@ -121,7 +111,6 @@
             },
             "args": ["run", "dev"]
         },
-        // Datadog Proxy service -- Local Development
         {
             "label": "DataDog Proxy Service -- Local Development",
             "type": "shell",
@@ -136,7 +125,6 @@
             },
             "args": ["dev"]
         },
-        // Action service -- Heroku Local
         {
             "label": "Actions Service -- Heroku Local",
             "type": "shell",
@@ -151,7 +139,6 @@
             },
             "args": ["local", "web"]
         },
-        // Auth service -- Local Development
         {
             "label": "Auth Service -- Local Development",
             "type": "shell",
@@ -166,7 +153,6 @@
             },
             "args": ["dev"]
         },
-        // Caches service -- Local Development
         {
             "label": "Caches Service -- Local Development",
             "type": "shell",
@@ -181,7 +167,6 @@
             },
             "args": ["dev"]
         },
-        // Real-time service -- Local Development
         {
             "label": "Real-time Service -- Local Development",
             "type": "shell",
@@ -196,7 +181,6 @@
             },
             "args": ["dev"]
         },
-        // Playout service -- Local Development
         {
             "label": "Playout Service -- Local Development",
             "type": "shell",
@@ -211,7 +195,6 @@
             },
             "args": ["dev"]
         },
-        // Frontend -- Local Development
         {
             "label": "Frontend -- Local Development",
             "type": "shell",
@@ -225,7 +208,6 @@
             },
             "args": ["dev"]
         },
-        // Frontend -- Production Build
         {
             "label": "Frontend -- Production Build",
             "type": "shell",
@@ -237,7 +219,6 @@
             },
             "group": "build"
         },
-        // Frontend -- Serve Production Build
         {
             "label": "Frontend -- Serve Production Build",
             "type": "shell",
@@ -248,7 +229,6 @@
                 "cwd": "${workspaceFolder}/frontend"
             }
         },
-        // Prettier
         {
             "label": "Prettier: Format code",
             "type": "shell",
@@ -262,7 +242,6 @@
             },
             "args": ["prettier", "--write", "."]
         },
-        // All -- Build
         {
             "label": "All -- Build",
             "type": "shell",
@@ -276,7 +255,6 @@
             },
             "args": ["build", "-r"]
         },
-        // All -- Clean
         {
             "label": "All -- Clean",
             "type": "shell",
@@ -290,7 +268,6 @@
             },
             "args": ["clean", "-r"]
         },
-        // Single -- Build
         {
             "label": "Single -- Build",
             "type": "shell",
@@ -304,7 +281,6 @@
             },
             "args": ["build", "--filter", "${input:package-name}..."]
         },
-        // Packetriot
         {
             "label": "Packetriot",
             "type": "shell",
@@ -318,7 +294,6 @@
             },
             "args": ["start", "--config", "pktriot.json"]
         },
-        // Run All -- Local Development
         {
             "label": "Run All -- Local Development",
             "dependsOn": [
@@ -335,7 +310,6 @@
             "isBackground": true,
             "problemMatcher": []
         },
-        // Run Minimal -- Local Development
         {
             "label": "Run Minimal -- Local Development",
             "dependsOn": [
@@ -393,6 +367,14 @@
             "command": "aws-vault",
             "problemMatcher": [],
             "args": ["login", "${input:aws-profile-name}-internal"]
+        },
+        {
+            "label": "Outdated packages",
+            "detail": "Find outdated dependencies in all packages.",
+            "type": "shell",
+            "command": "pnpm",
+            "args": ["dlx", "npm-check-updates", "--deep"],
+            "problemMatcher": []
         },
         {
             "label": "Fix Frontend ESLint errors/warnings",

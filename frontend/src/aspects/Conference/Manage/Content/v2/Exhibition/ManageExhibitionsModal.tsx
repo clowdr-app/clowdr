@@ -24,6 +24,7 @@ import {
     useColorMode,
     useDisclosure,
 } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import type { LegacyRef } from "react";
 import React, { useCallback, useMemo, useState } from "react";
@@ -489,12 +490,17 @@ function ManageExhibitionsModalBody(): JSX.Element {
     const updateDescriptiveItemId = useCallback(
         (itemId: string | null) => {
             if (editingId) {
-                updateExhibition({
-                    id: editingId,
-                    update: {
-                        descriptiveItemId: itemId,
+                updateExhibition(
+                    {
+                        id: editingId,
+                        update: {
+                            descriptiveItemId: itemId,
+                        },
                     },
-                });
+                    makeContext({
+                        [AuthHeader.Role]: "organizer",
+                    })
+                );
             }
         },
         [editingId, updateExhibition]

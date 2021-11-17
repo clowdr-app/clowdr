@@ -1,1 +1,1 @@
-schema: ./packages/graphql/build/schema.graphql
+schema: ./packages/shared/graphql/schema/schema.graphql

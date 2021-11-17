@@ -32,4 +32,4 @@ server.use("/analytics", analyticsRouter);
 const INDEX_FILE = "../resources/index.html";
 server.use((_req, res) => res.sendFile(path.resolve(path.join(__dirname, INDEX_FILE))));
 
-export const httpServer = server.listen(PORT, () => logger.info(`Listening on ${PORT}`));
+export const httpServer = server.listen(PORT, () => logger.info({ port: PORT }, `Listening on ${PORT}`));

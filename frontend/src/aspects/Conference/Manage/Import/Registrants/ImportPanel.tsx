@@ -16,6 +16,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { IntermediaryRegistrantData } from "@midspace/shared-types/import/intermediary";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
@@ -73,7 +74,7 @@ export default function ImportPanel({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "main-conference-organizer",
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -267,7 +268,7 @@ export default function ImportPanel({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "main-conference-organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }

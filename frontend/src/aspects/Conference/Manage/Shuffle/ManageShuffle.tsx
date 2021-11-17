@@ -9,6 +9,7 @@ import {
     Spinner,
     Text,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useManageShufflePeriods_SelectAllQuery } from "../../../../generated/graphql";
@@ -71,7 +72,7 @@ export default function ManageShuffle(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );

@@ -29,6 +29,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
@@ -135,7 +136,7 @@ function SecondaryEditorInner({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -271,7 +272,7 @@ function AddItemExhibitionBody({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }
@@ -364,7 +365,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    "X-Auth-Role": "organizer",
+                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -378,7 +379,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    "X-Auth-Role": "organizer",
+                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -402,7 +403,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    "X-Auth-Role": "organizer",
+                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -416,7 +417,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    "X-Auth-Role": "organizer",
+                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -442,7 +443,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    "X-Auth-Role": "organizer",
+                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                 },
                                             },
                                         }

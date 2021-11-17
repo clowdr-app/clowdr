@@ -21,6 +21,7 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Suspense, useEffect, useMemo, useState } from "react";
@@ -169,7 +170,7 @@ export default function LivestreamMonitoring(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -566,7 +567,7 @@ function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );

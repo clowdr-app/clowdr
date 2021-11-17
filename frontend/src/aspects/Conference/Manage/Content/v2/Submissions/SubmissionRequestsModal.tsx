@@ -26,6 +26,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@midspace/shared-types/email";
@@ -129,7 +130,7 @@ function SendSubmissionRequestsModalLazyInner({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -312,7 +313,7 @@ export function SendSubmissionRequestsModalInner({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }

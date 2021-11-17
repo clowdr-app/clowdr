@@ -17,6 +17,7 @@ import {
     useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import Papa from "papaparse";
 import type { LegacyRef } from "react";
@@ -135,7 +136,7 @@ export default function ManageProgramPeople(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -540,7 +541,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -563,7 +564,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 {
                     fetchOptions: {
                         headers: {
-                            "X-Auth-Role": "organizer",
+                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                         },
                     },
                 }
@@ -591,7 +592,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }

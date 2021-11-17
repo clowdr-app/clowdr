@@ -7,5 +7,9 @@
         "rootDir": "./src/",
         "composite": true
     },
-    "references": [{ "path": "../component-clients/tsconfig.esm.json" }, { "path": "../caches/tsconfig.esm.json" }]
+    "references": [
+        { "path": "../component-clients/tsconfig.esm.json" },
+        { "path": "../caches/tsconfig.esm.json" },
+        { "path": "../../shared/shared-types/tsconfig.esm.json" }
+    ]
 }

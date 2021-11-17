@@ -55,7 +55,7 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - id
@@ -81,7 +81,7 @@ select_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - chimeRegistrantId

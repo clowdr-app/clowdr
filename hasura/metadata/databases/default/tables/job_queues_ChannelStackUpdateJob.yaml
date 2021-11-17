@@ -18,4 +18,4 @@ select_permissions:
       channelStack:
         conferenceId:
           _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer

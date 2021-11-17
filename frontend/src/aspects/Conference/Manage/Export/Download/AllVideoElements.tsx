@@ -1,4 +1,5 @@
 import { Button, ButtonGroup, List, ListItem, Spinner } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import {
     AWSJobStatus,
@@ -65,7 +66,7 @@ export function AllVideoElements(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );

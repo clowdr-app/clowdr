@@ -22,6 +22,7 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -86,7 +87,7 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );

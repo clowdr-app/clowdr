@@ -15,6 +15,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useCallback, useMemo, useState } from "react";
 import { gql } from "urql";
 import {
@@ -43,7 +44,7 @@ export default function EditStreamTextIntegration({ eventId }: { eventId: string
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -89,7 +90,7 @@ function EditStreamTextIntegrationInner({
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }

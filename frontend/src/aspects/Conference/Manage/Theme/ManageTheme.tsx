@@ -11,6 +11,7 @@ import {
     Text,
     Textarea,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useCallback, useEffect, useState } from "react";
 import { gql } from "urql";
 import { useUpsertConferenceThemeMutation } from "../../../../generated/graphql";
@@ -134,7 +135,7 @@ export default function ManageShuffle(): JSX.Element {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "main-conference-organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -156,7 +157,7 @@ export default function ManageShuffle(): JSX.Element {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "main-conference-organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -179,7 +180,7 @@ export default function ManageShuffle(): JSX.Element {
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "main-conference-organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }

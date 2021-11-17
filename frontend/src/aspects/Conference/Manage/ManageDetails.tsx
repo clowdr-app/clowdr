@@ -20,6 +20,7 @@ import {
     Tooltip,
     useToast,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
@@ -102,7 +103,7 @@ export default function ManageName(): JSX.Element {
                         const result = await updateConferenceMutation(variables, {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "main-conference-organizer",
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                 },
                             },
                         });

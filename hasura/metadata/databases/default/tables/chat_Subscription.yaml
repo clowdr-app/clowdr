@@ -72,7 +72,7 @@ insert_permissions:
     - registrantId
     set:
       wasManuallySubscribed: "true"
-  role: organizer
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -105,7 +105,7 @@ select_permissions:
               _in: X-Hasura-Conference-Ids
           - subconferenceId:
               _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
@@ -136,7 +136,7 @@ delete_permissions:
       - chat:
           enableMandatorySubscribe:
             _eq: false
-  role: organizer
+  role: subconference-organizer
 event_triggers:
 - definition:
     delete:

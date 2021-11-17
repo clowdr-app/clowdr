@@ -27,6 +27,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -222,7 +223,7 @@ function AddEventPeople_FromContentPanel({
                         {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "organizer",
+                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                 },
                             },
                         }
@@ -373,7 +374,7 @@ function AddEventPeople_SingleProgramPersonPanel({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -536,7 +537,7 @@ function AddEventPeople_FromGroupPanel({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -614,7 +615,7 @@ function AddEventPeople_FromGroupPanel({
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -637,7 +638,7 @@ function AddEventPeople_FromGroupPanel({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -741,7 +742,7 @@ function AddEventPeople_SingleRegistrantPanel({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -818,7 +819,7 @@ function AddEventPeople_SingleRegistrantPanel({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -916,7 +917,7 @@ async function insertEventPeople(
         {
             fetchOptions: {
                 headers: {
-                    "X-Auth-Role": "organizer",
+                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                 },
             },
         }
@@ -971,7 +972,7 @@ export async function addRegistrantsToEvent(
             {
                 fetchOptions: {
                     headers: {
-                        "X-Auth-Role": "organizer",
+                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                     },
                 },
             }

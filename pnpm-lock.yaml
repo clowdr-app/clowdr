@@ -384,6 +384,7 @@ importers:
       '@midspace/caches': workspace:*
       '@midspace/component-clients': workspace:*
       '@midspace/graphql': workspace:*
+      '@midspace/shared-types': workspace:*
       '@socket.io/redis-emitter': ^4.1.0
       '@types/amqplib': ^0.8.0
       '@types/cors': ^2.8.12
@@ -419,7 +420,7 @@ importers:
       rimraf: ^3.0.2
       socket.io: ^3.1.2
       subscriptions-transport-ws: ^0.9.19
-      ts-patch: ^1.4.5
+      ts-patch: ^2.0.1
       tsc-watch: ^4.4.0
       typescript: ^4.4.4
       typescript-is: ^0.18.3
@@ -429,6 +430,7 @@ importers:
       '@midspace/caches': link:../caches
       '@midspace/component-clients': link:../component-clients
       '@midspace/graphql': link:../../shared/graphql
+      '@midspace/shared-types': link:../../shared/shared-types
       '@socket.io/redis-emitter': 4.1.0
       '@types/amqplib': 0.8.2
       '@types/cors': 2.8.12
@@ -464,7 +466,7 @@ importers:
       rimraf: 3.0.2
       socket.io: 3.1.2_5971b5a749a91823f5467a6d31a2f8b3
       subscriptions-transport-ws: 0.9.19_acd0233f23cbd4adaed8ca3972580acc
-      ts-patch: 1.4.5_typescript@4.4.4
+      ts-patch: 2.0.1_typescript@4.4.4
       typescript: 4.4.4
       typescript-is: 0.18.3_typescript@4.4.4
       utf-8-validate: 5.0.7
@@ -531,7 +533,7 @@ importers:
       redlock: ^4.2.0
       rimraf: ^3.0.2
       subscriptions-transport-ws: ^0.9.19
-      ts-patch: ^1.4.5
+      ts-patch: ^2.0.1
       tsc-watch: ^4.4.0
       typescript: ^4.4.4
       typescript-is: ^0.18.3
@@ -582,7 +584,7 @@ importers:
       redis: 3.1.2
       redlock: 4.2.0
       subscriptions-transport-ws: 0.9.19_acd0233f23cbd4adaed8ca3972580acc
-      ts-patch: 1.4.5_typescript@4.4.4
+      ts-patch: 2.0.1_typescript@4.4.4
       typescript: 4.4.4
       typescript-is: 0.18.3_typescript@4.4.4
       utf-8-validate: 5.0.7
@@ -627,7 +629,7 @@ importers:
       redlock: ^4.2.0
       rimraf: ^3.0.2
       subscriptions-transport-ws: ^0.9.19
-      ts-patch: ^1.4.5
+      ts-patch: ^2.0.1
       tsc-watch: ^4.4.0
       typescript: ^4.4.4
       typescript-is: ^0.18.3
@@ -667,7 +669,7 @@ importers:
       redlock: 4.2.0
       rimraf: 3.0.2
       subscriptions-transport-ws: 0.9.19_acd0233f23cbd4adaed8ca3972580acc
-      ts-patch: 1.4.5_typescript@4.4.4
+      ts-patch: 2.0.1_typescript@4.4.4
       typescript: 4.4.4
       typescript-is: 0.18.3_typescript@4.4.4
       utf-8-validate: 5.0.7
@@ -679,14 +681,14 @@ importers:
     specifiers:
       '@types/express': ^4.17.12
       rimraf: ^3.0.2
-      ts-patch: ^1.4.5
+      ts-patch: ^2.0.1
       tsc-watch: ^4.5.0
       typescript: ^4.4.4
       typescript-is: ^0.19.0
     dependencies:
       '@types/express': 4.17.13
       rimraf: 3.0.2
-      ts-patch: 1.4.5_typescript@4.4.4
+      ts-patch: 2.0.1_typescript@4.4.4
       typescript: 4.4.4
       typescript-is: 0.19.0_typescript@4.4.4
     devDependencies:
@@ -695,10 +697,10 @@ importers:
   packages/shared/assert:
     specifiers:
       rimraf: ^3.0.2
-      ts-patch: ^1.4.5
+      ts-patch: ^2.0.1
       typescript: ^4.4.4
     dependencies:
-      ts-patch: 1.4.5_typescript@4.4.4
+      ts-patch: 2.0.1_typescript@4.4.4
       typescript: 4.4.4
     devDependencies:
       rimraf: 3.0.2
@@ -714,7 +716,7 @@ importers:
       graphql: ^15.7.2
       prettier: ^2.4.1
       rimraf: ^3.0.2
-      ts-patch: ^1.4.5
+      ts-patch: ^2.0.1
       tsc-watch: ^4.4.0
     devDependencies:
       '@graphql-codegen/cli': 2.2.2_graphql@15.7.2+typescript@4.4.4
@@ -726,7 +728,7 @@ importers:
       graphql: 15.7.2
       prettier: 2.4.1
       rimraf: 3.0.2
-      ts-patch: 1.4.5_typescript@4.4.4
+      ts-patch: 2.0.1_typescript@4.4.4
       tsc-watch: 4.5.0_typescript@4.4.4
 
   packages/shared/hasura:
@@ -743,7 +745,7 @@ importers:
       graphql: ^15.7.2
       prettier: ^2.4.1
       rimraf: ^3.0.2
-      ts-patch: ^1.4.5
+      ts-patch: ^2.0.1
       tsc-watch: ^4.4.0
     dependencies:
       '@midspace/graphql': link:../graphql
@@ -759,7 +761,7 @@ importers:
       graphql: 15.7.2
       prettier: 2.4.1
       rimraf: 3.0.2
-      ts-patch: 1.4.5_typescript@4.4.4
+      ts-patch: 2.0.1_typescript@4.4.4
       tsc-watch: 4.5.0_typescript@4.4.4
 
   packages/shared/opentok-types:
@@ -773,18 +775,18 @@ importers:
       jsonata: ^1.8.4
       ramda: ^0.27.1
       rimraf: ^3.0.2
-      ts-patch: ^1.4.5
+      ts-patch: ^2.0.1
       typescript: ^4.4.4
-      typescript-is: ^0.18.3
+      typescript-is: ^0.19.0
     dependencies:
       '@types/ramda': 0.27.47
       class-transformer: 0.4.0
       class-validator: 0.13.1
       jsonata: 1.8.5
       ramda: 0.27.1
-      ts-patch: 1.4.5_typescript@4.4.4
+      ts-patch: 2.0.1_typescript@4.4.4
       typescript: 4.4.4
-      typescript-is: 0.18.3_typescript@4.4.4
+      typescript-is: 0.19.0_typescript@4.4.4
     devDependencies:
       rimraf: 3.0.2
 
@@ -815,7 +817,7 @@ importers:
       '@graphql-codegen/typescript-graphql-files-modules': ^2.1.0
       '@graphql-codegen/typescript-graphql-request': ^4.3.0
       '@graphql-codegen/typescript-operations': ^2.2.0
-      '@graphql-typed-document-node/core': ^3.1.0
+      '@graphql-typed-document-node/core': ^3.1.1
       '@midspace/auth': workspace:*
       '@midspace/graphql': workspace:*
       '@midspace/hasura': workspace:*
@@ -908,7 +910,7 @@ importers:
       '@graphql-codegen/typescript-graphql-files-modules': 2.1.0_graphql@15.7.2
       '@graphql-codegen/typescript-graphql-request': 4.3.0_graphql@15.7.2
       '@graphql-codegen/typescript-operations': 2.2.0_graphql@15.7.2
-      '@graphql-typed-document-node/core': 3.1.0_graphql@15.7.2
+      '@graphql-typed-document-node/core': 3.1.1_graphql@15.7.2
       '@midspace/auth': link:../../packages/node/auth
       '@midspace/graphql': link:../../packages/shared/graphql
       '@midspace/hasura': link:../../packages/shared/hasura
@@ -2100,6 +2102,7 @@ packages:
       '@aws-cdk/core': 1.132.0
       '@aws-cdk/cx-api': 1.132.0
       constructs: 3.3.161
+      minimatch: 3.0.4
     dev: false
     bundledDependencies:
       - minimatch
@@ -2727,6 +2730,9 @@ packages:
   /@aws-cdk/cloud-assembly-schema/1.132.0:
     resolution: {integrity: sha512-49f8o1015tu3XlHSIuoA7+FmM5fZEHpKH3Svvuu4rDTr9ywwPFA9aVblqMXtTeLg1HBXJVXKy7jhy0mKaZaAdw==}
     engines: {node: '>= 10.13.0 <13 || >=13.7.0'}
+    dependencies:
+      jsonschema: 1.4.0
+      semver: 7.3.5
     dev: false
     bundledDependencies:
       - jsonschema
@@ -2783,7 +2789,11 @@ packages:
       '@aws-cdk/cloud-assembly-schema': 1.132.0
       '@aws-cdk/cx-api': 1.132.0
       '@aws-cdk/region-info': 1.132.0
+      '@balena/dockerignore': 1.0.2
       constructs: 3.3.161
+      fs-extra: 9.1.0
+      ignore: 5.1.9
+      minimatch: 3.0.4
     dev: false
     bundledDependencies:
       - fs-extra
@@ -2833,6 +2843,7 @@ packages:
     engines: {node: '>= 10.13.0 <13 || >=13.7.0'}
     dependencies:
       '@aws-cdk/cloud-assembly-schema': 1.132.0
+      semver: 7.3.5
     dev: false
     bundledDependencies:
       - semver
@@ -14128,6 +14139,11 @@ packages:
     resolution: {integrity: sha512-BMpfD7PpiETpBl/A6S498BaIJ6Y/ABT93ETbby2fP00v4EbvPBXWEoaR1UBPKs3iR53pJY7EtZk5KACI57i1Uw==}
     engines: {node: '>= 4'}
 
+  /ignore/5.1.9:
+    resolution: {integrity: sha512-2zeMQpbKz5dhZ9IwL0gbxSW5w0NK/MSAMtNuhgIHEPmaU3vPdKPL0UdvUCXs5SS4JAwsBxysK5sFMW8ocFiVjQ==}
+    engines: {node: '>= 4'}
+    dev: false
+
   /immediate/3.0.6:
     resolution: {integrity: sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=}
     dev: false
@@ -20005,11 +20021,11 @@ packages:
       typescript: 4.4.4
       yn: 3.1.1
 
-  /ts-patch/1.4.5_typescript@4.4.4:
-    resolution: {integrity: sha512-8H1lIhT8uNm2TH+fk8FR1DWSyNIZ4E46aCXrUY+6mgzwiOnrqfHwb3sFGX23NR+s/vthyRxxsIZykqfGJVLvsg==}
+  /ts-patch/2.0.1_typescript@4.4.4:
+    resolution: {integrity: sha512-mP7beU1QkmyDs1+SzXYVaSTD6Xo7ZCibOJ3sZkb/xsQjoAQXvn4oPjk0keC2LfCNAgilqtqgjiWp3pQri1uz4w==}
     hasBin: true
     peerDependencies:
-      typescript: '>2.7.0'
+      typescript: '>=4.0.0'
     dependencies:
       chalk: 4.1.2
       glob: 7.2.0

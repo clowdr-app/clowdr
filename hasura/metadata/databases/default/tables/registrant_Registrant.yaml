@@ -93,7 +93,7 @@ insert_permissions:
     - displayName
     - id
     - userId
-  role: main-conference-organizer
+  role: conference-organizer
 select_permissions:
 - permission:
     columns:
@@ -126,7 +126,7 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - id
@@ -142,7 +142,7 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - id
@@ -208,7 +208,7 @@ update_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     check: null
     columns:
@@ -233,7 +233,7 @@ delete_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 event_triggers:
 - definition:
     delete:

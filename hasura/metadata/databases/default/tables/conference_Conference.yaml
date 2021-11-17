@@ -160,7 +160,7 @@ select_permissions:
           _in: X-Hasura-Conference-Ids
       - createdBy:
           _eq: X-Hasura-User-Id
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - id
@@ -176,7 +176,7 @@ select_permissions:
     filter:
       id:
         _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - conferenceVisibilityLevel
@@ -218,13 +218,13 @@ update_permissions:
           _in: X-Hasura-Conference-Ids
       - createdBy:
           _eq: X-Hasura-User-Id
-  role: main-conference-organizer
+  role: conference-organizer
 delete_permissions:
 - permission:
     filter:
       createdBy:
         _eq: X-Hasura-User-Id
-  role: main-conference-organizer
+  role: conference-organizer
 event_triggers:
 - definition:
     delete:

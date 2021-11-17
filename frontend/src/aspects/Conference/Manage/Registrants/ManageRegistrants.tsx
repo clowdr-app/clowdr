@@ -20,6 +20,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import Papa from "papaparse";
 import type { LegacyRef } from "react";
@@ -242,7 +243,7 @@ export default function ManageRegistrants(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "main-conference-organizer",
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -258,7 +259,7 @@ export default function ManageRegistrants(): JSX.Element {
     const selectAllRegistrantsContext = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "main-conference-organizer",
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -723,7 +724,7 @@ export default function ManageRegistrants(): JSX.Element {
                         {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "main-conference-organizer",
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                 },
                             },
                         }
@@ -743,7 +744,7 @@ export default function ManageRegistrants(): JSX.Element {
                         {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "main-conference-organizer",
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                 },
                             },
                         }
@@ -771,7 +772,7 @@ export default function ManageRegistrants(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "main-conference-organizer",
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -792,7 +793,7 @@ export default function ManageRegistrants(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "main-conference-organizer",
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -832,7 +833,7 @@ export default function ManageRegistrants(): JSX.Element {
                                           {
                                               fetchOptions: {
                                                   headers: {
-                                                      "X-Auth-Role": "main-conference-organizer",
+                                                      [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                   },
                                               },
                                           }
@@ -1035,7 +1036,8 @@ export default function ManageRegistrants(): JSX.Element {
                                                             {
                                                                 fetchOptions: {
                                                                     headers: {
-                                                                        "X-Auth-Role": "organizer",
+                                                                        [AuthHeader.Role]:
+                                                                            HasuraRoleName.SubconferenceOrganizer,
                                                                     },
                                                                 },
                                                             }
@@ -1086,7 +1088,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 {
                                                     fetchOptions: {
                                                         headers: {
-                                                            "X-Auth-Role": "organizer",
+                                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                         },
                                                     },
                                                 }
@@ -1150,7 +1152,8 @@ export default function ManageRegistrants(): JSX.Element {
                                                             {
                                                                 fetchOptions: {
                                                                     headers: {
-                                                                        "X-Auth-Role": "organizer",
+                                                                        [AuthHeader.Role]:
+                                                                            HasuraRoleName.SubconferenceOrganizer,
                                                                     },
                                                                 },
                                                             }
@@ -1201,7 +1204,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 {
                                                     fetchOptions: {
                                                         headers: {
-                                                            "X-Auth-Role": "organizer",
+                                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                         },
                                                     },
                                                 }
@@ -1366,7 +1369,7 @@ export default function ManageRegistrants(): JSX.Element {
                         {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "organizer",
+                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                 },
                             },
                         }

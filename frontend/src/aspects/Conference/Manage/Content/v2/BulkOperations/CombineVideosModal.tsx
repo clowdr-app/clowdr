@@ -15,6 +15,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { CombineVideosJobDataBlob, InputElement } from "@midspace/shared-types/combineVideosJob";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
@@ -117,7 +118,7 @@ function ModalInner({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -215,7 +216,7 @@ function ModalInner({
                         {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "organizer",
+                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                 },
                             },
                         }

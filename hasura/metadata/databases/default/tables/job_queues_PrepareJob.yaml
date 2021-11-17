@@ -29,7 +29,7 @@ insert_permissions:
         _in: X-Hasura-Conference-Ids
     columns:
     - conferenceId
-  role: main-conference-organizer
+  role: conference-organizer
 select_permissions:
 - permission:
     columns:
@@ -42,7 +42,7 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - id
@@ -54,7 +54,7 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer
 event_triggers:
 - definition:
     enable_manual: false

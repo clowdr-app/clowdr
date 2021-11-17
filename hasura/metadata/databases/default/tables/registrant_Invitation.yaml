@@ -38,7 +38,7 @@ insert_permissions:
     - conferenceId
     - invitedEmailAddress
     - registrantId
-  role: main-conference-organizer
+  role: conference-organizer
 select_permissions:
 - permission:
     columns:
@@ -71,7 +71,7 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - invitedEmailAddress
@@ -93,7 +93,7 @@ select_permissions:
           subconferenceMemberships:
             subconferenceId:
               _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - id
@@ -127,13 +127,13 @@ update_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 delete_permissions:
 - permission:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 event_triggers:
 - definition:
     enable_manual: true

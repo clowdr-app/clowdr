@@ -51,7 +51,7 @@ select_permissions:
       registrant:
         conferenceId:
           _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - affiliation
@@ -112,11 +112,11 @@ update_permissions:
       registrant:
         conferenceId:
           _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
       registrant:
         conferenceId:
           _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer

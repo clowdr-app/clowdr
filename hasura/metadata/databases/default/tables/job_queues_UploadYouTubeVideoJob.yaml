@@ -59,7 +59,7 @@ insert_permissions:
     - videoDescription
     - videoPrivacyStatus
     - videoTitle
-  role: organizer
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -95,4 +95,4 @@ select_permissions:
       - registrantGoogleAccount:
           registrantId:
             _in: X-Hasura-Registrant-Ids
-  role: organizer
+  role: subconference-organizer

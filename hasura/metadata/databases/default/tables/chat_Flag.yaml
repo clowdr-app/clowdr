@@ -76,7 +76,7 @@ insert_permissions:
     - discussionChatId
     - flaggedById
     - messageSId
-  role: organizer
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -121,7 +121,7 @@ select_permissions:
               _in: X-Hasura-Conference-Ids
           - subconferenceId:
               _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 update_permissions:
 - permission:
     check: null
@@ -158,7 +158,7 @@ update_permissions:
                 _in: X-Hasura-Subconference-Ids
       - resolved_at:
           _is_null: true
-  role: organizer
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:

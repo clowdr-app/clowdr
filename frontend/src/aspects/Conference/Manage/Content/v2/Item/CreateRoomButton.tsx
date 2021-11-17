@@ -1,5 +1,6 @@
 import type { ButtonProps } from "@chakra-ui/react";
 import { Button, useToast } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
 import { useItem_CreateRoomMutation } from "../../../../../../generated/graphql";
@@ -43,7 +44,7 @@ export function CreateRoomButton({
                 {
                     fetchOptions: {
                         headers: {
-                            "X-Auth-Role": "organizer",
+                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                         },
                     },
                 }

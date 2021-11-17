@@ -13,6 +13,7 @@ import { roomMembershipsCache } from "@midspace/caches/roomMembership";
 import { subconferenceCache } from "@midspace/caches/subconference";
 import { subconferenceRoomsCache } from "@midspace/caches/subconferenceRoom";
 import { userCache } from "@midspace/caches/user";
+import { HasuraRoleName } from "@midspace/shared-types/auth";
 import type { P } from "pino";
 
 /** @summary Output variables (verified) from the auth service - to be used as Hasura session variables. */
@@ -27,19 +28,6 @@ export enum AuthSessionVariables {
 
     MagicToken = "X-Hasura-Magic-Token",
     InviteCode = "X-Hasura-Invite-Code",
-}
-
-enum HasuraRoleNames {
-    User = "user",
-    Unauthenticated = "unauthenticated",
-    MainConferenceOrganizer = "main-conference-organizer",
-    Organizer = "organizer",
-    Moderator = "moderator",
-    Attendee = "attendee",
-    Submitter = "submitter",
-    RoomAdmin = "room-admin",
-    RoomMember = "room-member",
-    Superuser = "superuser",
 }
 
 /**
@@ -130,14 +118,14 @@ export async function computeAuthHeaders(
     //          And if so, what is the invalidation strategy?
     //          Particularly given the constraints of redis deleting keys
 
-    if (unverifiedParams.role === HasuraRoleNames.Superuser) {
+    if (unverifiedParams.role === HasuraRoleName.Superuser) {
         if (verifiedParams.userId?.length) {
             // We rely on Hasura permissions to figure this out since it is so
             // infrequent that we don't want to waste space caching these
             // permissions.
             return {
                 [AuthSessionVariables.UserId]: verifiedParams.userId,
-                [AuthSessionVariables.Role]: HasuraRoleNames.Superuser,
+                [AuthSessionVariables.Role]: HasuraRoleName.Superuser,
             };
         } else {
             return false;
@@ -146,21 +134,21 @@ export async function computeAuthHeaders(
 
     if (unverifiedParams.magicToken) {
         return {
-            [AuthSessionVariables.Role]: HasuraRoleNames.Submitter,
+            [AuthSessionVariables.Role]: HasuraRoleName.Submitter,
             [AuthSessionVariables.MagicToken]: unverifiedParams.magicToken,
         };
     }
 
     if (unverifiedParams.inviteCode) {
         return {
-            [AuthSessionVariables.Role]: HasuraRoleNames.Unauthenticated,
+            [AuthSessionVariables.Role]: HasuraRoleName.Unauthenticated,
             [AuthSessionVariables.InviteCode]: unverifiedParams.inviteCode,
         };
     }
 
-    if (!verifiedParams.userId?.length || unverifiedParams.role === HasuraRoleNames.Unauthenticated) {
+    if (!verifiedParams.userId?.length || unverifiedParams.role === HasuraRoleName.Unauthenticated) {
         const result: Partial<Record<AuthSessionVariables, string>> = {
-            [AuthSessionVariables.Role]: HasuraRoleNames.Unauthenticated,
+            [AuthSessionVariables.Role]: HasuraRoleName.Unauthenticated,
             [AuthSessionVariables.ConferenceIds]: formatArrayForHasuraHeader([]),
             [AuthSessionVariables.SubconferenceIds]: formatArrayForHasuraHeader([]),
         };
@@ -176,13 +164,13 @@ export async function computeAuthHeaders(
         return result;
     } else if (verifiedParams.userId?.length) {
         const result: Partial<Record<AuthSessionVariables, string>> = {};
-        const allowedRoles: HasuraRoleNames[] = [];
-        let requestedRole = (unverifiedParams.role ?? HasuraRoleNames.User) as HasuraRoleNames;
+        const allowedRoles: HasuraRoleName[] = [];
+        let requestedRole = (unverifiedParams.role ?? HasuraRoleName.User) as HasuraRoleName;
 
         const user = await userCache.getEntity(verifiedParams.userId);
         if (user) {
             result[AuthSessionVariables.UserId] = user.id;
-            allowedRoles.push(HasuraRoleNames.User);
+            allowedRoles.push(HasuraRoleName.User);
 
             if (unverifiedParams.conferenceId) {
                 const registrantId = user.registrants.find((x) => x.conferenceId === unverifiedParams.conferenceId);
@@ -195,12 +183,12 @@ export async function computeAuthHeaders(
                         result[AuthSessionVariables.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
 
                         if (!unverifiedParams.subconferenceId) {
-                            allowedRoles.push(HasuraRoleNames.Attendee);
+                            allowedRoles.push(HasuraRoleName.Attendee);
 
                             let availableSubconferenceIds: string[] = [];
 
                             if (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator) {
-                                allowedRoles.push(HasuraRoleNames.Moderator);
+                                allowedRoles.push(HasuraRoleName.Moderator);
 
                                 for (const subconferenceId of conference.subconferenceIds) {
                                     const subconference = await subconferenceCache.getEntity(subconferenceId);
@@ -214,9 +202,9 @@ export async function computeAuthHeaders(
                                     }
                                 }
                             } else if (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) {
-                                allowedRoles.push(HasuraRoleNames.Moderator);
-                                allowedRoles.push(HasuraRoleNames.Organizer);
-                                allowedRoles.push(HasuraRoleNames.MainConferenceOrganizer);
+                                allowedRoles.push(HasuraRoleName.Moderator);
+                                allowedRoles.push(HasuraRoleName.SubconferenceOrganizer);
+                                allowedRoles.push(HasuraRoleName.ConferenceOrganizer);
 
                                 availableSubconferenceIds = conference.subconferenceIds;
                             } else {
@@ -241,26 +229,26 @@ export async function computeAuthHeaders(
                                 if (room) {
                                     if (room.conferenceId === conference.id && !room.subconferenceId) {
                                         if (
-                                            allowedRoles.includes(HasuraRoleNames.Moderator) ||
-                                            allowedRoles.includes(HasuraRoleNames.Organizer) ||
-                                            allowedRoles.includes(HasuraRoleNames.MainConferenceOrganizer)
+                                            allowedRoles.includes(HasuraRoleName.Moderator) ||
+                                            allowedRoles.includes(HasuraRoleName.SubconferenceOrganizer) ||
+                                            allowedRoles.includes(HasuraRoleName.ConferenceOrganizer)
                                         ) {
                                             result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
-                                            allowedRoles.push(HasuraRoleNames.RoomAdmin);
-                                            allowedRoles.push(HasuraRoleNames.RoomMember);
+                                            allowedRoles.push(HasuraRoleName.RoomAdmin);
+                                            allowedRoles.push(HasuraRoleName.RoomMember);
                                         } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
                                             result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
-                                            allowedRoles.push(HasuraRoleNames.RoomMember);
+                                            allowedRoles.push(HasuraRoleName.RoomMember);
                                         } else {
                                             const role = await roomMembershipsCache.getField(room.id, registrant.id);
                                             if (role) {
                                                 result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
                                                     room.id
                                                 );
-                                                allowedRoles.push(HasuraRoleNames.RoomMember);
+                                                allowedRoles.push(HasuraRoleName.RoomMember);
 
                                                 if (role === Room_PersonRole_Enum.Admin) {
-                                                    allowedRoles.push(HasuraRoleNames.RoomAdmin);
+                                                    allowedRoles.push(HasuraRoleName.RoomAdmin);
                                                 }
                                             } else {
                                                 return false;
@@ -273,7 +261,7 @@ export async function computeAuthHeaders(
                                     return false;
                                 }
                             } else if (unverifiedParams.includeRoomIds) {
-                                allowedRoles.push(HasuraRoleNames.RoomMember);
+                                allowedRoles.push(HasuraRoleName.RoomMember);
 
                                 const allRooms: Record<string, string> | undefined =
                                     await conferenceRoomsCache.getEntity(conference.id);
@@ -288,7 +276,7 @@ export async function computeAuthHeaders(
                                         }
                                     }
 
-                                    if (requestedRole === HasuraRoleNames.Organizer) {
+                                    if (requestedRole === HasuraRoleName.SubconferenceOrganizer) {
                                         if (allowedRoles.includes(requestedRole)) {
                                             const availableRoomIds: string[] = [];
                                             for (const roomId in allRooms) {
@@ -345,12 +333,12 @@ export async function computeAuthHeaders(
                                 result[AuthSessionVariables.SubconferenceIds] = formatArrayForHasuraHeader(
                                     unverifiedParams.subconferenceId
                                 );
-                                allowedRoles.push(HasuraRoleNames.Attendee);
+                                allowedRoles.push(HasuraRoleName.Attendee);
                                 if (subconferenceMembership.role === Registrant_RegistrantRole_Enum.Moderator) {
-                                    allowedRoles.push(HasuraRoleNames.Moderator);
+                                    allowedRoles.push(HasuraRoleName.Moderator);
                                 } else if (subconferenceMembership.role === Registrant_RegistrantRole_Enum.Organizer) {
-                                    allowedRoles.push(HasuraRoleNames.Moderator);
-                                    allowedRoles.push(HasuraRoleNames.Organizer);
+                                    allowedRoles.push(HasuraRoleName.Moderator);
+                                    allowedRoles.push(HasuraRoleName.SubconferenceOrganizer);
                                 }
 
                                 if (unverifiedParams.roomId) {
@@ -361,19 +349,19 @@ export async function computeAuthHeaders(
                                             room.subconferenceId === subconferenceMembership.subconferenceId
                                         ) {
                                             if (
-                                                allowedRoles.includes(HasuraRoleNames.Moderator) ||
-                                                allowedRoles.includes(HasuraRoleNames.Organizer)
+                                                allowedRoles.includes(HasuraRoleName.Moderator) ||
+                                                allowedRoles.includes(HasuraRoleName.SubconferenceOrganizer)
                                             ) {
                                                 result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
                                                     room.id
                                                 );
-                                                allowedRoles.push(HasuraRoleNames.RoomAdmin);
-                                                allowedRoles.push(HasuraRoleNames.RoomMember);
+                                                allowedRoles.push(HasuraRoleName.RoomAdmin);
+                                                allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
                                                 result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
                                                     room.id
                                                 );
-                                                allowedRoles.push(HasuraRoleNames.RoomMember);
+                                                allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else {
                                                 const role = await roomMembershipsCache.getField(
                                                     room.id,
@@ -383,10 +371,10 @@ export async function computeAuthHeaders(
                                                     result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
                                                         room.id
                                                     );
-                                                    allowedRoles.push(HasuraRoleNames.RoomMember);
+                                                    allowedRoles.push(HasuraRoleName.RoomMember);
 
                                                     if (role === Room_PersonRole_Enum.Admin) {
-                                                        allowedRoles.push(HasuraRoleNames.RoomAdmin);
+                                                        allowedRoles.push(HasuraRoleName.RoomAdmin);
                                                     }
                                                 } else {
                                                     return false;
@@ -399,13 +387,13 @@ export async function computeAuthHeaders(
                                         return false;
                                     }
                                 } else if (unverifiedParams.includeRoomIds) {
-                                    allowedRoles.push(HasuraRoleNames.RoomMember);
+                                    allowedRoles.push(HasuraRoleName.RoomMember);
 
                                     const allRooms = await subconferenceRoomsCache.getEntity(
                                         subconferenceMembership.subconferenceId
                                     );
                                     if (allRooms) {
-                                        if (requestedRole === HasuraRoleNames.Organizer) {
+                                        if (requestedRole === HasuraRoleName.SubconferenceOrganizer) {
                                             if (allowedRoles.includes(requestedRole)) {
                                                 const availableRoomIds: string[] = [];
                                                 for (const roomId in allRooms) {
@@ -465,15 +453,15 @@ export async function computeAuthHeaders(
                     const conference = await conferenceCache.getEntity(unverifiedParams.conferenceId);
                     if (conference) {
                         if (conference.createdBy === user.id) {
-                            allowedRoles.push(HasuraRoleNames.Organizer);
-                            allowedRoles.push(HasuraRoleNames.MainConferenceOrganizer);
+                            allowedRoles.push(HasuraRoleName.SubconferenceOrganizer);
+                            allowedRoles.push(HasuraRoleName.ConferenceOrganizer);
                             result[AuthSessionVariables.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
                         } else {
                             result[AuthSessionVariables.ConferenceIds] = formatArrayForHasuraHeader([]);
                             result[AuthSessionVariables.SubconferenceIds] = formatArrayForHasuraHeader([]);
                             if (await evaluateUnauthenticatedConference(conference, result, unverifiedParams)) {
-                                allowedRoles.push(HasuraRoleNames.Unauthenticated);
-                                requestedRole = HasuraRoleNames.Unauthenticated;
+                                allowedRoles.push(HasuraRoleName.Unauthenticated);
+                                requestedRole = HasuraRoleName.Unauthenticated;
                             } else {
                                 return false;
                             }

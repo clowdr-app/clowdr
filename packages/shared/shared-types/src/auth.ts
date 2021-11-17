@@ -9,3 +9,17 @@ export enum AuthHeader {
     InviteCode = "X-Auth-Invite-Code",
     IncludeRoomIds = "X-Auth-Include-Room-Ids",
 }
+
+/** @summary Roles configured in Hasura. */
+export enum HasuraRoleName {
+    User = "user",
+    Unauthenticated = "unauthenticated",
+    ConferenceOrganizer = "conference-organizer",
+    SubconferenceOrganizer = "subconference-organizer",
+    Moderator = "moderator",
+    Attendee = "attendee",
+    Submitter = "submitter",
+    RoomAdmin = "room-admin",
+    RoomMember = "room-member",
+    Superuser = "superuser",
+}

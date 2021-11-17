@@ -8,7 +8,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: organizer
+  - role: subconference-organizer
 - name: createRoomDm
   definition:
     kind: synchronous
@@ -29,7 +29,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: organizer
+  - role: subconference-organizer
 - name: getSlug
   definition:
     kind: ""
@@ -86,7 +86,7 @@ actions:
   permissions:
   - role: room-admin
   - role: room-member
-  - role: organizer
+  - role: subconference-organizer
   - role: attendee
 - name: joinRoomChimeSession
   definition:
@@ -100,7 +100,7 @@ actions:
   - role: room-member
   - role: room-admin
   - role: attendee
-  - role: organizer
+  - role: subconference-organizer
   - role: user
 - name: joinRoomVonageSession
   definition:
@@ -114,7 +114,7 @@ actions:
   - role: room-member
   - role: room-admin
   - role: attendee
-  - role: organizer
+  - role: subconference-organizer
   - role: user
 - name: notifyEventEnded
   definition:
@@ -149,7 +149,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: organizer
+  - role: subconference-organizer
 - name: stopEventBroadcast
   definition:
     kind: synchronous
@@ -159,7 +159,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: organizer
+  - role: subconference-organizer
 - name: submitGoogleOAuthCode
   definition:
     kind: synchronous
@@ -169,7 +169,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: organizer
+  - role: subconference-organizer
 - name: submitUploadableElement
   definition:
     kind: synchronous
@@ -192,7 +192,7 @@ actions:
   - role: room-member
   - role: room-admin
   - role: attendee
-  - role: organizer
+  - role: subconference-organizer
   - role: user
 - name: updateProfilePhoto
   definition:

@@ -10,6 +10,7 @@ import {
     ModalOverlay,
     Text,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useMemo, useState } from "react";
 import type { ManageContent_ItemFragment } from "../../../../../../generated/graphql";
@@ -71,7 +72,7 @@ function ModalInner({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -120,7 +121,7 @@ function ModalInner({
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }

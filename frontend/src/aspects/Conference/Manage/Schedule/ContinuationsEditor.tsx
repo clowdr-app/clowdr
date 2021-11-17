@@ -20,6 +20,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
@@ -102,7 +103,7 @@ export default function ContinuationsEditor({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -224,7 +225,8 @@ export default function ContinuationsEditor({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                "X-Auth-Role": "organizer",
+                                                                [AuthHeader.Role]:
+                                                                    HasuraRoleName.SubconferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -240,7 +242,8 @@ export default function ContinuationsEditor({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                "X-Auth-Role": "organizer",
+                                                                [AuthHeader.Role]:
+                                                                    HasuraRoleName.SubconferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -306,7 +309,7 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }
@@ -322,7 +325,7 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }
@@ -345,7 +348,7 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }
@@ -361,7 +364,7 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }
@@ -416,7 +419,7 @@ function ContinuationOption({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    "X-Auth-Role": "organizer",
+                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -441,7 +444,7 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }

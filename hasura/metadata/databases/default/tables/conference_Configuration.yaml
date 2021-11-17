@@ -22,7 +22,7 @@ insert_permissions:
     - value
     - created_at
     - updated_at
-  role: main-conference-organizer
+  role: conference-organizer
 select_permissions:
 - permission:
     columns:
@@ -62,7 +62,7 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - value
@@ -73,7 +73,7 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - value
@@ -112,10 +112,10 @@ update_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 delete_permissions:
 - permission:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer

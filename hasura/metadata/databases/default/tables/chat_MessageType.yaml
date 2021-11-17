@@ -12,12 +12,12 @@ select_permissions:
     columns:
     - name
     filter: {}
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - name
     filter: {}
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - name

@@ -9,6 +9,7 @@ import {
     Tooltip,
     useToast,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import type { FieldProps, FormikErrors } from "formik";
 import { Field, Form, Formik } from "formik";
@@ -294,7 +295,7 @@ export default function NewConferenceForm(): JSX.Element {
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "main-conference-organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                             "X-Auth-Conference-Id": conferenceId,
                                         },
                                     },

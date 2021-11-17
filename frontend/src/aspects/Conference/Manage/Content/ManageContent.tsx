@@ -16,10 +16,12 @@ import {
     Tooltip,
     useDisclosure,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import Papa from "papaparse";
 import * as R from "ramda";
-import React, { LegacyRef, useCallback, useMemo, useRef, useState } from "react";
+import type { LegacyRef } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import type {
@@ -310,7 +312,7 @@ export default function ManageContentV2(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -689,7 +691,7 @@ export default function ManageContentV2(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -727,7 +729,7 @@ export default function ManageContentV2(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -754,7 +756,7 @@ export default function ManageContentV2(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -881,7 +883,7 @@ export default function ManageContentV2(): JSX.Element {
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }

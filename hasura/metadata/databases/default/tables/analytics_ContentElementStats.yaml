@@ -54,7 +54,7 @@ select_permissions:
               _in: X-Hasura-Conference-Ids
           - subconferenceId:
               _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - viewCount

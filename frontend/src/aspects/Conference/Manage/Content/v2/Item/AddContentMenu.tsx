@@ -1,6 +1,7 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Button, Menu, MenuButton, MenuItem, MenuList, useToast } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { ElementBaseTypes } from "@midspace/shared-types/content";
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import { gql } from "@urql/core";
@@ -89,7 +90,7 @@ export function AddContentMenu({
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                "X-Auth-Role": "organizer",
+                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                             },
                                         },
                                     }

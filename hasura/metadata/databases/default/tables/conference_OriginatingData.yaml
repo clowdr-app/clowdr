@@ -78,7 +78,7 @@ insert_permissions:
     - updated_at
     - conferenceId
     - subconferenceId
-  role: organizer
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -103,7 +103,7 @@ select_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 update_permissions:
 - permission:
     check: null
@@ -124,7 +124,7 @@ update_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
@@ -141,4 +141,4 @@ delete_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer

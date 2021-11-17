@@ -1,4 +1,5 @@
 import { Spinner, useToast } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useMemo } from "react";
 import type { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
@@ -61,7 +62,7 @@ export default function SettingUpdater<T>({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "main-conference-organizer",
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -90,7 +91,7 @@ export default function SettingUpdater<T>({
                         {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "main-conference-organizer",
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                 },
                             },
                         }
@@ -112,7 +113,7 @@ export default function SettingUpdater<T>({
                         {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "main-conference-organizer",
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                 },
                             },
                         }

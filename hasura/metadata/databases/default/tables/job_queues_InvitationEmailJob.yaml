@@ -20,4 +20,4 @@ insert_permissions:
     - conferenceId
     - registrantIds
     - sendRepeat
-  role: organizer
+  role: subconference-organizer

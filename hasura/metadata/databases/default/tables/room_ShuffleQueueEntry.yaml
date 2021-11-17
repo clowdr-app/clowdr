@@ -83,7 +83,7 @@ select_permissions:
                 _is_null: false
             - subconferenceId:
                 _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:

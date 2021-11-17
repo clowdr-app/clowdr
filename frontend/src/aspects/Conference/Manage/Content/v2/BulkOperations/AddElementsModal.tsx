@@ -24,6 +24,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { ElementBaseTypes } from "@midspace/shared-types/content";
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import { gql } from "@urql/core";
@@ -244,7 +245,7 @@ function ModalInner({
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                "X-Auth-Role": "organizer",
+                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                             },
                                         },
                                     }

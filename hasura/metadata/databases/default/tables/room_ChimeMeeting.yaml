@@ -75,7 +75,7 @@ select_permissions:
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
     limit: 1
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - conferenceId

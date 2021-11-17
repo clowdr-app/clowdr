@@ -21,6 +21,7 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import { gql } from "@urql/core";
 import React, { useRef, useState } from "react";
@@ -118,7 +119,8 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    "X-Auth-Role": "organizer",
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.SubconferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -141,7 +143,8 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    "X-Auth-Role": "organizer",
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.SubconferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -182,7 +185,8 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    "X-Auth-Role": "organizer",
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.SubconferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -205,7 +209,8 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    "X-Auth-Role": "organizer",
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.SubconferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -251,7 +256,7 @@ export function EditElement({
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        "X-Auth-Role": "organizer",
+                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -308,7 +313,8 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    "X-Auth-Role": "organizer",
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.SubconferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -449,7 +455,7 @@ export function EditElement({
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        "X-Auth-Role": "organizer",
+                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                     },
                                                 },
                                             }

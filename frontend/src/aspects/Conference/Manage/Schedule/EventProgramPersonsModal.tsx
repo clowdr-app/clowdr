@@ -23,6 +23,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import type { LegacyRef } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -115,8 +116,9 @@ export function AddEventProgramPerson_RegistrantModal({
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const context = useMemo(
-        () => makeContext({
-                "X-Auth-Role": "organizer",
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -191,7 +193,7 @@ export function AddEventProgramPerson_RegistrantModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -534,7 +536,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        "X-Auth-Role": "organizer",
+                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -553,7 +555,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        "X-Auth-Role": "organizer",
+                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -570,7 +572,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        "X-Auth-Role": "organizer",
+                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                     },
                                                 },
                                             }

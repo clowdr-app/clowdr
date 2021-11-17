@@ -25,7 +25,7 @@ insert_permissions:
     - createdByRegistrantId
     - data
     - outputName
-  role: organizer
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -41,4 +41,4 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer

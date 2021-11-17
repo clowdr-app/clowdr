@@ -24,6 +24,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
 import type { ManageShufflePeriods_ShufflePeriodFragment } from "../../../../generated/graphql";
@@ -146,7 +147,7 @@ export default function ConfigureQueueModal({
                 {
                     fetchOptions: {
                         headers: {
-                            "X-Auth-Role": "organizer",
+                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                         },
                     },
                 }

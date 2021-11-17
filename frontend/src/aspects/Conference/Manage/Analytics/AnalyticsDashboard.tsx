@@ -26,6 +26,7 @@ import {
     UnorderedList,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import Papa from "papaparse";
 import React, { useCallback, useMemo } from "react";
 import { gql } from "urql";
@@ -148,7 +149,7 @@ export default function AnalyticsDashboard(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );

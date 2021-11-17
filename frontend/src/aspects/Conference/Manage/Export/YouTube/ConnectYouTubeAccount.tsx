@@ -1,5 +1,6 @@
 import type { BoxProps } from "@chakra-ui/react";
 import { Box, Button, Heading, HStack, List, ListItem, useId, useIds, useToast } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useContext, useState } from "react";
@@ -74,7 +75,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -110,7 +111,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                 {
                     fetchOptions: {
                         headers: {
-                            "X-Auth-Role": "organizer",
+                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                         },
                     },
                 }

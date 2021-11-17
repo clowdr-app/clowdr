@@ -16,7 +16,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import { AuthHeader } from "@midspace/shared-types/auth";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useCreateConferencePrepareJobMutation, useGetConferencePrepareJobsQuery } from "../../../../generated/graphql";
@@ -88,7 +88,7 @@ export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "main-conference-organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }

@@ -30,6 +30,7 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { ContinuationTo } from "@midspace/shared-types/continuation";
 import { ContinuationDefaultFor, ContinuationType, NavigationView } from "@midspace/shared-types/continuation";
 import { gql } from "@urql/core";
@@ -535,7 +536,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -575,7 +576,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -622,7 +623,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -661,7 +662,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -708,7 +709,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -751,7 +752,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -790,7 +791,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -830,7 +831,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -1133,7 +1134,8 @@ export default function CreateContinuationModal({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                "X-Auth-Role": "organizer",
+                                                                [AuthHeader.Role]:
+                                                                    HasuraRoleName.SubconferenceOrganizer,
                                                             },
                                                         },
                                                     }

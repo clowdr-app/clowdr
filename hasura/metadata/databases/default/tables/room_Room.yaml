@@ -203,7 +203,7 @@ insert_permissions:
     - originatingItemId
     - priority
     - subconferenceId
-  role: organizer
+  role: subconference-organizer
 - permission:
     backend_only: false
     check:
@@ -308,7 +308,7 @@ select_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - capacity
@@ -421,7 +421,7 @@ update_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     check: null
     columns:
@@ -465,7 +465,7 @@ delete_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     filter:
       _and:

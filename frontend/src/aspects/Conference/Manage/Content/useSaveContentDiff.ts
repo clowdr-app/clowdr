@@ -1,4 +1,5 @@
 import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { CombinedError } from "@urql/core";
 import { gql } from "@urql/core";
 import { useEffect, useMemo, useState } from "react";
@@ -490,7 +491,7 @@ export function useSaveContentDiff():
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -680,7 +681,7 @@ export function useSaveContentDiff():
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -705,7 +706,7 @@ export function useSaveContentDiff():
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                "X-Auth-Role": "organizer",
+                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                             },
                                         },
                                     }
@@ -737,7 +738,7 @@ export function useSaveContentDiff():
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -765,7 +766,7 @@ export function useSaveContentDiff():
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -791,7 +792,7 @@ export function useSaveContentDiff():
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                "X-Auth-Role": "organizer",
+                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                             },
                                         },
                                     }
@@ -825,7 +826,7 @@ export function useSaveContentDiff():
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -850,7 +851,7 @@ export function useSaveContentDiff():
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                "X-Auth-Role": "organizer",
+                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                             },
                                         },
                                     }
@@ -931,7 +932,7 @@ export function useSaveContentDiff():
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -956,7 +957,7 @@ export function useSaveContentDiff():
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }
@@ -1070,7 +1071,7 @@ export function useSaveContentDiff():
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        "X-Auth-Role": "organizer",
+                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -1091,7 +1092,7 @@ export function useSaveContentDiff():
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        "X-Auth-Role": "organizer",
+                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -1112,7 +1113,7 @@ export function useSaveContentDiff():
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        "X-Auth-Role": "organizer",
+                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -1170,7 +1171,7 @@ export function useSaveContentDiff():
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }
@@ -1197,7 +1198,7 @@ export function useSaveContentDiff():
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -1222,7 +1223,7 @@ export function useSaveContentDiff():
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -1247,7 +1248,7 @@ export function useSaveContentDiff():
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }
@@ -1272,7 +1273,7 @@ export function useSaveContentDiff():
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }

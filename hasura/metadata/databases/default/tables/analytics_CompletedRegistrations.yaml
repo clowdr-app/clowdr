@@ -19,4 +19,4 @@ select_permissions:
     filter:
       id:
         _in: X-Hasura-Conference-Ids
-  role: organizer
+  role: subconference-organizer

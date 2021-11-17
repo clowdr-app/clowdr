@@ -51,7 +51,7 @@ select_permissions:
     filter:
       usedById:
         _eq: X-Hasura-User-Id
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - note
@@ -89,7 +89,7 @@ update_permissions:
     filter:
       usedById:
         _is_null: true
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     check: null
     columns:

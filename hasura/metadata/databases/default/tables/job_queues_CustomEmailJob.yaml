@@ -28,4 +28,4 @@ insert_permissions:
     - registrantIds
     - subconferenceId
     - subject
-  role: organizer
+  role: subconference-organizer

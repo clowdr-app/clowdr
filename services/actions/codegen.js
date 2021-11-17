@@ -17,6 +17,7 @@ module.exports = {
                 withHooks: false,
                 withHOC: false,
                 withComponent: false,
+                useTypeImports: true,
             },
         },
     },

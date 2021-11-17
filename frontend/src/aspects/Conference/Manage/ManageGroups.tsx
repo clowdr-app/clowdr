@@ -1,5 +1,6 @@
 import { Heading, Spinner } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -72,7 +73,7 @@ export default function ManageGroups(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -267,7 +268,7 @@ export default function ManageGroups(): JSX.Element {
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                "X-Auth-Role": "organizer",
+                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                             },
                                         },
                                     }
@@ -312,7 +313,7 @@ export default function ManageGroups(): JSX.Element {
                                                 {
                                                     fetchOptions: {
                                                         headers: {
-                                                            "X-Auth-Role": "organizer",
+                                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                         },
                                                     },
                                                 }

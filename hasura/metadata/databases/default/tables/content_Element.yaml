@@ -78,7 +78,7 @@ insert_permissions:
     - typeName
     - uploadsRemaining
     - visibilityLevel
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     backend_only: false
     check:
@@ -108,7 +108,7 @@ insert_permissions:
     - typeName
     - uploadsRemaining
     - visibilityLevel
-  role: organizer
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -171,7 +171,7 @@ select_permissions:
           _in: X-Hasura-Conference-Ids
       - subconferenceId:
           _is_null: true
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - isHidden
@@ -205,7 +205,7 @@ select_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - isHidden
@@ -289,7 +289,7 @@ update_permissions:
           _in: X-Hasura-Conference-Ids
       - subconferenceId:
           _is_null: true
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     check: null
     columns:
@@ -315,7 +315,7 @@ update_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
@@ -324,7 +324,7 @@ delete_permissions:
           _in: X-Hasura-Conference-Ids
       - subconferenceId:
           _is_null: true
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     filter:
       _or:
@@ -340,7 +340,7 @@ delete_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 event_triggers:
 - definition:
     enable_manual: true

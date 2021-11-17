@@ -85,7 +85,7 @@ insert_permissions:
     - eventId
     - id
     - subconferenceId
-  role: organizer
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -152,7 +152,7 @@ select_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 event_triggers:
 - definition:
     enable_manual: false

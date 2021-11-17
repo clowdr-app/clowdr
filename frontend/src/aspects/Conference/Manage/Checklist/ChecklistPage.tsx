@@ -23,6 +23,7 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import {
     AWSJobStatus,
@@ -433,7 +434,7 @@ export default function ChecklistPage(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );

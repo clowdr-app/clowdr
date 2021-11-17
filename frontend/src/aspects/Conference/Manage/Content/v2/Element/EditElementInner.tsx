@@ -1,4 +1,5 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Divider, Text } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { ElementBaseTypes } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
 import type { ManageContent_ElementFragment } from "../../../../../../generated/graphql";
@@ -44,7 +45,7 @@ export function EditElementInner(props: {
                         {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "organizer",
+                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                 },
                             },
                         }
@@ -102,7 +103,7 @@ export function EditElementInner(props: {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "organizer",
+                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                     },
                                 },
                             }

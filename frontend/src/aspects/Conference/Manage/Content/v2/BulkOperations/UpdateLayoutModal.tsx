@@ -20,6 +20,7 @@ import {
     NumberInputStepper,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import React, { useCallback, useState } from "react";
 import { gql } from "urql";
@@ -93,7 +94,7 @@ function ModalInner({
                 {
                     fetchOptions: {
                         headers: {
-                            "X-Auth-Role": "organizer",
+                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                         },
                     },
                 }

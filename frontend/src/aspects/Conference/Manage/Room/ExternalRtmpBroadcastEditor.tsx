@@ -12,6 +12,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useCallback, useMemo, useState } from "react";
 import { gql } from "urql";
 import {
@@ -93,7 +94,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -141,7 +142,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                "X-Auth-Role": "organizer",
+                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                             },
                                         },
                                     }
@@ -156,7 +157,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                "X-Auth-Role": "organizer",
+                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                             },
                                         },
                                     }
@@ -172,7 +173,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "organizer",
+                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                         },
                                     },
                                 }

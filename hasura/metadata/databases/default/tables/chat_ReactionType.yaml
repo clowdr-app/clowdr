@@ -14,13 +14,13 @@ select_permissions:
     - description
     - name
     filter: {}
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - name
     - description
     filter: {}
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - description

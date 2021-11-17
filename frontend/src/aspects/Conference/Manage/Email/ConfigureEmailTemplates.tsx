@@ -16,6 +16,7 @@ import {
     Textarea,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import type { EmailTemplate_Defaults } from "@midspace/shared-types/email";
@@ -67,7 +68,7 @@ export function ConfigureEmailTemplates(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -130,7 +131,7 @@ export function ConfigureEmailTemplatesInner({
                 {
                     fetchOptions: {
                         headers: {
-                            "X-Auth-Role": "main-conference-organizer",
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                         },
                     },
                 }

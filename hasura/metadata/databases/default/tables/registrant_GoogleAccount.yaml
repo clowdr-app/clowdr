@@ -26,7 +26,7 @@ select_permissions:
     filter:
       registrantId:
         _in: X-Hasura-Registrant-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - conferenceId
@@ -46,7 +46,7 @@ delete_permissions:
     filter:
       registrantId:
         _in: X-Hasura-Registrant-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     filter:
       registrant:

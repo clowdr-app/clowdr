@@ -22,6 +22,7 @@ import {
     Tr,
     useDisclosure,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useCallback, useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import { gql } from "urql";
@@ -50,7 +51,7 @@ export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );

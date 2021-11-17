@@ -1,4 +1,5 @@
 import { Alert, AlertIcon, AlertTitle, Box, Heading } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import React, { useMemo } from "react";
@@ -29,7 +30,7 @@ export function Configuration({ conferenceId }: { conferenceId: string }): JSX.E
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );

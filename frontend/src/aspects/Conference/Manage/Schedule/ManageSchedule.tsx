@@ -37,6 +37,7 @@ import {
     useDisclosure,
     VisuallyHidden,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import { DateTime } from "luxon";
 import Papa from "papaparse";
@@ -250,7 +251,7 @@ function EditableScheduleTable(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -1186,7 +1187,7 @@ function EditableScheduleTable(): JSX.Element {
                               {
                                   fetchOptions: {
                                       headers: {
-                                          "X-Auth-Role": "organizer",
+                                          [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                       },
                                   },
                               }
@@ -1218,7 +1219,7 @@ function EditableScheduleTable(): JSX.Element {
                 updateEvent(variables, {
                     fetchOptions: {
                         headers: {
-                            "X-Auth-Role": "organizer",
+                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                         },
                     },
                 });
@@ -1243,7 +1244,7 @@ function EditableScheduleTable(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }

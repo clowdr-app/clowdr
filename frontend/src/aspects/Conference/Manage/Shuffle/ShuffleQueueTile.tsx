@@ -24,6 +24,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import { formatRelative } from "date-fns";
 import React, { useEffect, useMemo } from "react";
@@ -143,7 +144,7 @@ export default function ShuffleQueueTile({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    "X-Auth-Role": "organizer",
+                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                                                 },
                                             },
                                         }

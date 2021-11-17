@@ -23,6 +23,7 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
 import type { YouTubeDataBlob } from "@midspace/shared-types/registrantGoogleAccount";
@@ -196,7 +197,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -332,7 +333,7 @@ export function UploadYouTubeVideos(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -367,7 +368,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -581,7 +582,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }

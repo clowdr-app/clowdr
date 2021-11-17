@@ -24,7 +24,7 @@ import {
     useColorMode,
     useDisclosure,
 } from "@chakra-ui/react";
-import { AuthHeader } from "@midspace/shared-types/auth";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import type { LegacyRef } from "react";
 import React, { useCallback, useMemo, useState } from "react";
@@ -110,7 +110,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );
@@ -416,7 +416,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -450,7 +450,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }
@@ -477,7 +477,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                "X-Auth-Role": "organizer",
+                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
                             },
                         },
                     }

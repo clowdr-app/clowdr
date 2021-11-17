@@ -21,7 +21,7 @@ insert_permissions:
     - slug
     - conferenceVisibilityLevel
     - defaultProgramVisibilityLevel
-  role: main-conference-organizer
+  role: conference-organizer
 select_permissions:
 - permission:
     columns:
@@ -59,7 +59,7 @@ select_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - conferenceVisibilityLevel
@@ -77,7 +77,7 @@ select_permissions:
           _in: X-Hasura-Conference-Ids
       - id:
           _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 - permission:
     columns:
     - conferenceId
@@ -111,7 +111,7 @@ update_permissions:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 - permission:
     check: null
     columns:
@@ -126,13 +126,13 @@ update_permissions:
           _in: X-Hasura-Conference-Ids
       - id:
           _in: X-Hasura-Subconference-Ids
-  role: organizer
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
-  role: main-conference-organizer
+  role: conference-organizer
 event_triggers:
 - definition:
     delete:

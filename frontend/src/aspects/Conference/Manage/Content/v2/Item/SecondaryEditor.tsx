@@ -18,6 +18,7 @@ import {
     useClipboard,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import type {
     ManageContent_ElementFragment,
@@ -110,7 +111,7 @@ function SecondaryEditorInner({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "organizer",
+                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
             }),
         []
     );

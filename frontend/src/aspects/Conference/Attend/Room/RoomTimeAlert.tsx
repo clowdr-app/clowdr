@@ -26,7 +26,7 @@ export default function RoomTimeAlert({
 
     return (
         <>
-            {secondsUntilShuffleEnds <= 24 * 60 * 60 * 1000 ? (
+            {secondsUntilShuffleEnds >= 0 && secondsUntilShuffleEnds <= 24 * 60 * 60 * 1000 ? (
                 <Alert
                     status={secondsUntilShuffleEnds <= 3 ? "error" : secondsUntilShuffleEnds <= 30 ? "warning" : "info"}
                     pos="sticky"
@@ -42,7 +42,9 @@ export default function RoomTimeAlert({
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {showDefaultVideoChatRoom && secondsUntilVideoChatRoomCloses <= 180 ? (
+            {showDefaultVideoChatRoom &&
+            secondsUntilVideoChatRoomCloses >= 0 &&
+            secondsUntilVideoChatRoomCloses <= 180 ? (
                 <Alert status="warning" pos="sticky" top={0} zIndex={1000} alignItems="flex-start">
                     <AlertIcon />
                     <AlertDescription as={VStack} w="100%">

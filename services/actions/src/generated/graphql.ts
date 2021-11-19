@@ -17,7 +17,6 @@ export type Scalars = {
   uuid: any;
 };
 
-
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
 export type Boolean_Comparison_Exp = {
   _eq?: Maybe<Scalars['Boolean']>;
@@ -799,6 +798,11 @@ export type NotifyEventEnded = {
   ok: Scalars['Boolean'];
 };
 
+export type NotifyEventStarted = {
+  __typename?: 'NotifyEventStarted';
+  ok: Scalars['Boolean'];
+};
+
 export type PresenceFlushOutput = {
   __typename?: 'PresenceFlushOutput';
   ok?: Maybe<Scalars['String']>;
@@ -1078,8 +1082,8 @@ export type ToggleVonageRecordingStateOutput = {
 export type UpdateProfilePhotoResponse = {
   __typename?: 'UpdateProfilePhotoResponse';
   ok: Scalars['Boolean'];
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "User" */
@@ -2411,8 +2415,8 @@ export type Analytics_ElementTotalViews = {
   __typename?: 'analytics_ElementTotalViews';
   /** An object relationship */
   element?: Maybe<Content_Element>;
-  elementId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
+  elementId: Scalars['uuid'];
+  totalViewCount: Scalars['bigint'];
 };
 
 /** aggregated selection of "analytics.ElementTotalViews" */
@@ -2461,6 +2465,17 @@ export type Analytics_ElementTotalViews_Bool_Exp = {
   totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
+/** unique or primary key constraints on table "analytics.ElementTotalViews" */
+export enum Analytics_ElementTotalViews_Constraint {
+  /** unique or primary key constraint */
+  ElementTotalViewsPkey = 'ElementTotalViews_pkey'
+}
+
+/** input type for incrementing numeric columns in table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Inc_Input = {
+  totalViewCount?: Maybe<Scalars['bigint']>;
+};
+
 /** input type for inserting data into table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Insert_Input = {
   element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
@@ -2482,9 +2497,27 @@ export type Analytics_ElementTotalViews_Min_Fields = {
   totalViewCount?: Maybe<Scalars['bigint']>;
 };
 
+/** response of any mutation on the table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Mutation_Response = {
+  __typename?: 'analytics_ElementTotalViews_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Analytics_ElementTotalViews>;
+};
+
 /** input type for inserting object relation for remote table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Obj_Rel_Insert_Input = {
   data: Analytics_ElementTotalViews_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_On_Conflict = {
+  constraint: Analytics_ElementTotalViews_Constraint;
+  update_columns?: Array<Analytics_ElementTotalViews_Update_Column>;
+  where?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.ElementTotalViews". */
@@ -2494,6 +2527,11 @@ export type Analytics_ElementTotalViews_Order_By = {
   totalViewCount?: Maybe<Order_By>;
 };
 
+/** primary key columns input for table: analytics_ElementTotalViews */
+export type Analytics_ElementTotalViews_Pk_Columns_Input = {
+  elementId: Scalars['uuid'];
+};
+
 /** select columns of table "analytics.ElementTotalViews" */
 export enum Analytics_ElementTotalViews_Select_Column {
   /** column name */
@@ -2501,6 +2539,12 @@ export enum Analytics_ElementTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
+
+/** input type for updating data in table "analytics.ElementTotalViews" */
+export type Analytics_ElementTotalViews_Set_Input = {
+  elementId?: Maybe<Scalars['uuid']>;
+  totalViewCount?: Maybe<Scalars['bigint']>;
+};
 
 /** aggregate stddev on columns */
 export type Analytics_ElementTotalViews_Stddev_Fields = {
@@ -2526,6 +2570,14 @@ export type Analytics_ElementTotalViews_Sum_Fields = {
   totalViewCount?: Maybe<Scalars['bigint']>;
 };
 
+/** update columns of table "analytics.ElementTotalViews" */
+export enum Analytics_ElementTotalViews_Update_Column {
+  /** column name */
+  ElementId = 'elementId',
+  /** column name */
+  TotalViewCount = 'totalViewCount'
+}
+
 /** aggregate var_pop on columns */
 export type Analytics_ElementTotalViews_Var_Pop_Fields = {
   __typename?: 'analytics_ElementTotalViews_var_pop_fields';
@@ -2549,8 +2601,8 @@ export type Analytics_ItemTotalViews = {
   __typename?: 'analytics_ItemTotalViews';
   /** An object relationship */
   item?: Maybe<Content_Item>;
-  itemId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
+  itemId: Scalars['uuid'];
+  totalViewCount: Scalars['bigint'];
 };
 
 /** aggregated selection of "analytics.ItemTotalViews" */
@@ -2599,6 +2651,17 @@ export type Analytics_ItemTotalViews_Bool_Exp = {
   totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
+/** unique or primary key constraints on table "analytics.ItemTotalViews" */
+export enum Analytics_ItemTotalViews_Constraint {
+  /** unique or primary key constraint */
+  ItemTotalViewsPkey = 'ItemTotalViews_pkey'
+}
+
+/** input type for incrementing numeric columns in table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Inc_Input = {
+  totalViewCount?: Maybe<Scalars['bigint']>;
+};
+
 /** input type for inserting data into table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Insert_Input = {
   item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
@@ -2620,9 +2683,27 @@ export type Analytics_ItemTotalViews_Min_Fields = {
   totalViewCount?: Maybe<Scalars['bigint']>;
 };
 
+/** response of any mutation on the table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Mutation_Response = {
+  __typename?: 'analytics_ItemTotalViews_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Analytics_ItemTotalViews>;
+};
+
 /** input type for inserting object relation for remote table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Obj_Rel_Insert_Input = {
   data: Analytics_ItemTotalViews_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_On_Conflict = {
+  constraint: Analytics_ItemTotalViews_Constraint;
+  update_columns?: Array<Analytics_ItemTotalViews_Update_Column>;
+  where?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.ItemTotalViews". */
@@ -2632,6 +2713,11 @@ export type Analytics_ItemTotalViews_Order_By = {
   totalViewCount?: Maybe<Order_By>;
 };
 
+/** primary key columns input for table: analytics_ItemTotalViews */
+export type Analytics_ItemTotalViews_Pk_Columns_Input = {
+  itemId: Scalars['uuid'];
+};
+
 /** select columns of table "analytics.ItemTotalViews" */
 export enum Analytics_ItemTotalViews_Select_Column {
   /** column name */
@@ -2639,6 +2725,12 @@ export enum Analytics_ItemTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
+
+/** input type for updating data in table "analytics.ItemTotalViews" */
+export type Analytics_ItemTotalViews_Set_Input = {
+  itemId?: Maybe<Scalars['uuid']>;
+  totalViewCount?: Maybe<Scalars['bigint']>;
+};
 
 /** aggregate stddev on columns */
 export type Analytics_ItemTotalViews_Stddev_Fields = {
@@ -2664,6 +2756,14 @@ export type Analytics_ItemTotalViews_Sum_Fields = {
   totalViewCount?: Maybe<Scalars['bigint']>;
 };
 
+/** update columns of table "analytics.ItemTotalViews" */
+export enum Analytics_ItemTotalViews_Update_Column {
+  /** column name */
+  ItemId = 'itemId',
+  /** column name */
+  TotalViewCount = 'totalViewCount'
+}
+
 /** aggregate var_pop on columns */
 export type Analytics_ItemTotalViews_Var_Pop_Fields = {
   __typename?: 'analytics_ItemTotalViews_var_pop_fields';
@@ -2685,18 +2785,12 @@ export type Analytics_ItemTotalViews_Variance_Fields = {
 /** columns and relationships of "analytics.RoomPresence" */
 export type Analytics_RoomPresence = {
   __typename?: 'analytics_RoomPresence';
-  count?: Maybe<Scalars['jsonb']>;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  count: Scalars['bigint'];
+  created_at: Scalars['timestamptz'];
+  id: Scalars['uuid'];
   /** An object relationship */
-  room?: Maybe<Room_Room>;
-};
-
-
-/** columns and relationships of "analytics.RoomPresence" */
-export type Analytics_RoomPresenceCountArgs = {
-  path?: Maybe<Scalars['String']>;
+  room: Room_Room;
+  roomId: Scalars['uuid'];
 };
 
 /** aggregated selection of "analytics.RoomPresence" */
@@ -2709,9 +2803,17 @@ export type Analytics_RoomPresence_Aggregate = {
 /** aggregate fields of "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Aggregate_Fields = {
   __typename?: 'analytics_RoomPresence_aggregate_fields';
+  avg?: Maybe<Analytics_RoomPresence_Avg_Fields>;
   count: Scalars['Int'];
   max?: Maybe<Analytics_RoomPresence_Max_Fields>;
   min?: Maybe<Analytics_RoomPresence_Min_Fields>;
+  stddev?: Maybe<Analytics_RoomPresence_Stddev_Fields>;
+  stddev_pop?: Maybe<Analytics_RoomPresence_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Analytics_RoomPresence_Stddev_Samp_Fields>;
+  sum?: Maybe<Analytics_RoomPresence_Sum_Fields>;
+  var_pop?: Maybe<Analytics_RoomPresence_Var_Pop_Fields>;
+  var_samp?: Maybe<Analytics_RoomPresence_Var_Samp_Fields>;
+  variance?: Maybe<Analytics_RoomPresence_Variance_Fields>;
 };
 
 
@@ -2723,14 +2825,35 @@ export type Analytics_RoomPresence_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Aggregate_Order_By = {
+  avg?: Maybe<Analytics_RoomPresence_Avg_Order_By>;
   count?: Maybe<Order_By>;
   max?: Maybe<Analytics_RoomPresence_Max_Order_By>;
   min?: Maybe<Analytics_RoomPresence_Min_Order_By>;
+  stddev?: Maybe<Analytics_RoomPresence_Stddev_Order_By>;
+  stddev_pop?: Maybe<Analytics_RoomPresence_Stddev_Pop_Order_By>;
+  stddev_samp?: Maybe<Analytics_RoomPresence_Stddev_Samp_Order_By>;
+  sum?: Maybe<Analytics_RoomPresence_Sum_Order_By>;
+  var_pop?: Maybe<Analytics_RoomPresence_Var_Pop_Order_By>;
+  var_samp?: Maybe<Analytics_RoomPresence_Var_Samp_Order_By>;
+  variance?: Maybe<Analytics_RoomPresence_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Arr_Rel_Insert_Input = {
   data: Array<Analytics_RoomPresence_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Analytics_RoomPresence_Avg_Fields = {
+  __typename?: 'analytics_RoomPresence_avg_fields';
+  count?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Avg_Order_By = {
+  count?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "analytics.RoomPresence". All fields are combined with a logical 'AND'. */
@@ -2738,50 +2861,83 @@ export type Analytics_RoomPresence_Bool_Exp = {
   _and?: Maybe<Array<Analytics_RoomPresence_Bool_Exp>>;
   _not?: Maybe<Analytics_RoomPresence_Bool_Exp>;
   _or?: Maybe<Array<Analytics_RoomPresence_Bool_Exp>>;
-  count?: Maybe<Jsonb_Comparison_Exp>;
+  count?: Maybe<Bigint_Comparison_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
-  name?: Maybe<String_Comparison_Exp>;
   room?: Maybe<Room_Room_Bool_Exp>;
+  roomId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "analytics.RoomPresence" */
+export enum Analytics_RoomPresence_Constraint {
+  /** unique or primary key constraint */
+  RoomPresencePkey = 'RoomPresence_pkey',
+  /** unique or primary key constraint */
+  RoomPresenceRoomIdCreatedAtKey = 'RoomPresence_roomId_created_at_key'
+}
+
+/** input type for incrementing numeric columns in table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Inc_Input = {
+  count?: Maybe<Scalars['bigint']>;
 };
 
 /** input type for inserting data into table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Insert_Input = {
-  count?: Maybe<Scalars['jsonb']>;
+  count?: Maybe<Scalars['bigint']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
   room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+  roomId?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregate max on columns */
 export type Analytics_RoomPresence_Max_Fields = {
   __typename?: 'analytics_RoomPresence_max_fields';
+  count?: Maybe<Scalars['bigint']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  roomId?: Maybe<Scalars['uuid']>;
 };
 
 /** order by max() on columns of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Max_Order_By = {
+  count?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  roomId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Analytics_RoomPresence_Min_Fields = {
   __typename?: 'analytics_RoomPresence_min_fields';
+  count?: Maybe<Scalars['bigint']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  roomId?: Maybe<Scalars['uuid']>;
 };
 
 /** order by min() on columns of table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Min_Order_By = {
+  count?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  roomId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Mutation_Response = {
+  __typename?: 'analytics_RoomPresence_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Analytics_RoomPresence>;
+};
+
+/** on conflict condition type for table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_On_Conflict = {
+  constraint: Analytics_RoomPresence_Constraint;
+  update_columns?: Array<Analytics_RoomPresence_Update_Column>;
+  where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
 };
 
 /** Ordering options when selecting data from "analytics.RoomPresence". */
@@ -2789,8 +2945,13 @@ export type Analytics_RoomPresence_Order_By = {
   count?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
   room?: Maybe<Room_Room_Order_By>;
+  roomId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: analytics_RoomPresence */
+export type Analytics_RoomPresence_Pk_Columns_Input = {
+  id: Scalars['uuid'];
 };
 
 /** select columns of table "analytics.RoomPresence" */
@@ -2802,8 +2963,105 @@ export enum Analytics_RoomPresence_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Name = 'name'
+  RoomId = 'roomId'
 }
+
+/** input type for updating data in table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Set_Input = {
+  count?: Maybe<Scalars['bigint']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  roomId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate stddev on columns */
+export type Analytics_RoomPresence_Stddev_Fields = {
+  __typename?: 'analytics_RoomPresence_stddev_fields';
+  count?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Order_By = {
+  count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Analytics_RoomPresence_Stddev_Pop_Fields = {
+  __typename?: 'analytics_RoomPresence_stddev_pop_fields';
+  count?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Pop_Order_By = {
+  count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Analytics_RoomPresence_Stddev_Samp_Fields = {
+  __typename?: 'analytics_RoomPresence_stddev_samp_fields';
+  count?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Stddev_Samp_Order_By = {
+  count?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Analytics_RoomPresence_Sum_Fields = {
+  __typename?: 'analytics_RoomPresence_sum_fields';
+  count?: Maybe<Scalars['bigint']>;
+};
+
+/** order by sum() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Sum_Order_By = {
+  count?: Maybe<Order_By>;
+};
+
+/** update columns of table "analytics.RoomPresence" */
+export enum Analytics_RoomPresence_Update_Column {
+  /** column name */
+  Count = 'count',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoomId = 'roomId'
+}
+
+/** aggregate var_pop on columns */
+export type Analytics_RoomPresence_Var_Pop_Fields = {
+  __typename?: 'analytics_RoomPresence_var_pop_fields';
+  count?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Var_Pop_Order_By = {
+  count?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Analytics_RoomPresence_Var_Samp_Fields = {
+  __typename?: 'analytics_RoomPresence_var_samp_fields';
+  count?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Var_Samp_Order_By = {
+  count?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Analytics_RoomPresence_Variance_Fields = {
+  __typename?: 'analytics_RoomPresence_variance_fields';
+  count?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "analytics.RoomPresence" */
+export type Analytics_RoomPresence_Variance_Order_By = {
+  count?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "analytics.RoomStats" */
 export type Analytics_RoomStats = {
@@ -3096,335 +3354,6 @@ export type Analytics_RoomStats_Variance_Fields = {
 export type Analytics_RoomStats_Variance_Order_By = {
   hlsViewCount?: Maybe<Order_By>;
 };
-
-/** columns and relationships of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews = {
-  __typename?: 'analytics_mat_ElementTotalViews';
-  elementId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** aggregated selection of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate = {
-  __typename?: 'analytics_mat_ElementTotalViews_aggregate';
-  aggregate?: Maybe<Analytics_Mat_ElementTotalViews_Aggregate_Fields>;
-  nodes: Array<Analytics_Mat_ElementTotalViews>;
-};
-
-/** aggregate fields of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_aggregate_fields';
-  avg?: Maybe<Analytics_Mat_ElementTotalViews_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Analytics_Mat_ElementTotalViews_Max_Fields>;
-  min?: Maybe<Analytics_Mat_ElementTotalViews_Min_Fields>;
-  stddev?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Fields>;
-  stddev_pop?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields>;
-  sum?: Maybe<Analytics_Mat_ElementTotalViews_Sum_Fields>;
-  var_pop?: Maybe<Analytics_Mat_ElementTotalViews_Var_Pop_Fields>;
-  var_samp?: Maybe<Analytics_Mat_ElementTotalViews_Var_Samp_Fields>;
-  variance?: Maybe<Analytics_Mat_ElementTotalViews_Variance_Fields>;
-};
-
-
-/** aggregate fields of "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** aggregate avg on columns */
-export type Analytics_Mat_ElementTotalViews_Avg_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_avg_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_ElementTotalViews". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_ElementTotalViews_Bool_Exp = {
-  _and?: Maybe<Array<Analytics_Mat_ElementTotalViews_Bool_Exp>>;
-  _not?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-  _or?: Maybe<Array<Analytics_Mat_ElementTotalViews_Bool_Exp>>;
-  elementId?: Maybe<Uuid_Comparison_Exp>;
-  totalViewCount?: Maybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_ElementTotalViews_Max_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_max_fields';
-  elementId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_ElementTotalViews_Min_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_min_fields';
-  elementId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_ElementTotalViews". */
-export type Analytics_Mat_ElementTotalViews_Order_By = {
-  elementId?: Maybe<Order_By>;
-  totalViewCount?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_ElementTotalViews" */
-export enum Analytics_Mat_ElementTotalViews_Select_Column {
-  /** column name */
-  ElementId = 'elementId',
-  /** column name */
-  TotalViewCount = 'totalViewCount'
-}
-
-/** aggregate stddev on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_stddev_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Pop_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_stddev_pop_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Analytics_Mat_ElementTotalViews_Stddev_Samp_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_stddev_samp_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate sum on columns */
-export type Analytics_Mat_ElementTotalViews_Sum_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_sum_fields';
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** aggregate var_pop on columns */
-export type Analytics_Mat_ElementTotalViews_Var_Pop_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_var_pop_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate var_samp on columns */
-export type Analytics_Mat_ElementTotalViews_Var_Samp_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_var_samp_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate variance on columns */
-export type Analytics_Mat_ElementTotalViews_Variance_Fields = {
-  __typename?: 'analytics_mat_ElementTotalViews_variance_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** columns and relationships of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews = {
-  __typename?: 'analytics_mat_ItemTotalViews';
-  itemId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** aggregated selection of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate = {
-  __typename?: 'analytics_mat_ItemTotalViews_aggregate';
-  aggregate?: Maybe<Analytics_Mat_ItemTotalViews_Aggregate_Fields>;
-  nodes: Array<Analytics_Mat_ItemTotalViews>;
-};
-
-/** aggregate fields of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_aggregate_fields';
-  avg?: Maybe<Analytics_Mat_ItemTotalViews_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Analytics_Mat_ItemTotalViews_Max_Fields>;
-  min?: Maybe<Analytics_Mat_ItemTotalViews_Min_Fields>;
-  stddev?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Fields>;
-  stddev_pop?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields>;
-  sum?: Maybe<Analytics_Mat_ItemTotalViews_Sum_Fields>;
-  var_pop?: Maybe<Analytics_Mat_ItemTotalViews_Var_Pop_Fields>;
-  var_samp?: Maybe<Analytics_Mat_ItemTotalViews_Var_Samp_Fields>;
-  variance?: Maybe<Analytics_Mat_ItemTotalViews_Variance_Fields>;
-};
-
-
-/** aggregate fields of "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** aggregate avg on columns */
-export type Analytics_Mat_ItemTotalViews_Avg_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_avg_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_ItemTotalViews". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_ItemTotalViews_Bool_Exp = {
-  _and?: Maybe<Array<Analytics_Mat_ItemTotalViews_Bool_Exp>>;
-  _not?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-  _or?: Maybe<Array<Analytics_Mat_ItemTotalViews_Bool_Exp>>;
-  itemId?: Maybe<Uuid_Comparison_Exp>;
-  totalViewCount?: Maybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_ItemTotalViews_Max_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_max_fields';
-  itemId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_ItemTotalViews_Min_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_min_fields';
-  itemId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_ItemTotalViews". */
-export type Analytics_Mat_ItemTotalViews_Order_By = {
-  itemId?: Maybe<Order_By>;
-  totalViewCount?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_ItemTotalViews" */
-export enum Analytics_Mat_ItemTotalViews_Select_Column {
-  /** column name */
-  ItemId = 'itemId',
-  /** column name */
-  TotalViewCount = 'totalViewCount'
-}
-
-/** aggregate stddev on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_stddev_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Pop_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_stddev_pop_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Analytics_Mat_ItemTotalViews_Stddev_Samp_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_stddev_samp_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate sum on columns */
-export type Analytics_Mat_ItemTotalViews_Sum_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_sum_fields';
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** aggregate var_pop on columns */
-export type Analytics_Mat_ItemTotalViews_Var_Pop_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_var_pop_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate var_samp on columns */
-export type Analytics_Mat_ItemTotalViews_Var_Samp_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_var_samp_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate variance on columns */
-export type Analytics_Mat_ItemTotalViews_Variance_Fields = {
-  __typename?: 'analytics_mat_ItemTotalViews_variance_fields';
-  totalViewCount?: Maybe<Scalars['Float']>;
-};
-
-/** columns and relationships of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence = {
-  __typename?: 'analytics_mat_RoomPresence';
-  count?: Maybe<Scalars['jsonb']>;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-
-/** columns and relationships of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresenceCountArgs = {
-  path?: Maybe<Scalars['String']>;
-};
-
-/** aggregated selection of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate = {
-  __typename?: 'analytics_mat_RoomPresence_aggregate';
-  aggregate?: Maybe<Analytics_Mat_RoomPresence_Aggregate_Fields>;
-  nodes: Array<Analytics_Mat_RoomPresence>;
-};
-
-/** aggregate fields of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate_Fields = {
-  __typename?: 'analytics_mat_RoomPresence_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Analytics_Mat_RoomPresence_Max_Fields>;
-  min?: Maybe<Analytics_Mat_RoomPresence_Min_Fields>;
-};
-
-
-/** aggregate fields of "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** Boolean expression to filter rows from the table "analytics.mat_RoomPresence". All fields are combined with a logical 'AND'. */
-export type Analytics_Mat_RoomPresence_Bool_Exp = {
-  _and?: Maybe<Array<Analytics_Mat_RoomPresence_Bool_Exp>>;
-  _not?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-  _or?: Maybe<Array<Analytics_Mat_RoomPresence_Bool_Exp>>;
-  count?: Maybe<Jsonb_Comparison_Exp>;
-  created_at?: Maybe<Timestamptz_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  name?: Maybe<String_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Analytics_Mat_RoomPresence_Max_Fields = {
-  __typename?: 'analytics_mat_RoomPresence_max_fields';
-  created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-/** aggregate min on columns */
-export type Analytics_Mat_RoomPresence_Min_Fields = {
-  __typename?: 'analytics_mat_RoomPresence_min_fields';
-  created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-/** Ordering options when selecting data from "analytics.mat_RoomPresence". */
-export type Analytics_Mat_RoomPresence_Order_By = {
-  count?: Maybe<Order_By>;
-  created_at?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
-};
-
-/** select columns of table "analytics.mat_RoomPresence" */
-export enum Analytics_Mat_RoomPresence_Select_Column {
-  /** column name */
-  Count = 'count',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Name = 'name'
-}
-
 
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
 export type Bigint_Comparison_Exp = {
@@ -7711,6 +7640,10 @@ export type Conference_Conference = {
   demoCode: Conference_DemoCode;
   demoCodeId: Scalars['uuid'];
   /** An array relationship */
+  events: Array<Schedule_Event>;
+  /** An aggregate relationship */
+  events_aggregate: Schedule_Event_Aggregate;
+  /** An array relationship */
   exhibitions: Array<Collection_Exhibition>;
   /** An aggregate relationship */
   exhibitions_aggregate: Collection_Exhibition_Aggregate;
@@ -7803,6 +7736,26 @@ export type Conference_ConferenceConfigurations_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Conference_Configuration_Order_By>>;
   where?: Maybe<Conference_Configuration_Bool_Exp>;
+};
+
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEventsArgs = {
+  distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEvents_AggregateArgs = {
+  distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
 };
 
 
@@ -8094,6 +8047,7 @@ export type Conference_Conference_Bool_Exp = {
   creator?: Maybe<User_Bool_Exp>;
   demoCode?: Maybe<Conference_DemoCode_Bool_Exp>;
   demoCodeId?: Maybe<Uuid_Comparison_Exp>;
+  events?: Maybe<Schedule_Event_Bool_Exp>;
   exhibitions?: Maybe<Collection_Exhibition_Bool_Exp>;
   groups?: Maybe<Permissions_Group_Bool_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
@@ -8137,6 +8091,7 @@ export type Conference_Conference_Insert_Input = {
   creator?: Maybe<User_Obj_Rel_Insert_Input>;
   demoCode?: Maybe<Conference_DemoCode_Obj_Rel_Insert_Input>;
   demoCodeId?: Maybe<Scalars['uuid']>;
+  events?: Maybe<Schedule_Event_Arr_Rel_Insert_Input>;
   exhibitions?: Maybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
   groups?: Maybe<Permissions_Group_Arr_Rel_Insert_Input>;
   id?: Maybe<Scalars['uuid']>;
@@ -8239,6 +8194,7 @@ export type Conference_Conference_Order_By = {
   creator?: Maybe<User_Order_By>;
   demoCode?: Maybe<Conference_DemoCode_Order_By>;
   demoCodeId?: Maybe<Order_By>;
+  events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
   exhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
   groups_aggregate?: Maybe<Permissions_Group_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
@@ -15628,7 +15584,6 @@ export type Job_Queues_UploadYouTubeVideoJob_Variance_Fields = {
   retriesCount?: Maybe<Scalars['Float']>;
 };
 
-
 /** Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'. */
 export type Jsonb_Comparison_Exp = {
   /** is the column contained in the given json value */
@@ -15681,6 +15636,18 @@ export type Mutation_Root = {
   delete_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
   /** delete single row from the table: "analytics.ContentItemStats" */
   delete_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+  /** delete data from the table: "analytics.ElementTotalViews" */
+  delete_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+  /** delete single row from the table: "analytics.ElementTotalViews" */
+  delete_analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
+  /** delete data from the table: "analytics.ItemTotalViews" */
+  delete_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+  /** delete single row from the table: "analytics.ItemTotalViews" */
+  delete_analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
+  /** delete data from the table: "analytics.RoomPresence" */
+  delete_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+  /** delete single row from the table: "analytics.RoomPresence" */
+  delete_analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
   /** delete data from the table: "analytics.RoomStats" */
   delete_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** delete single row from the table: "analytics.RoomStats" */
@@ -16054,6 +16021,18 @@ export type Mutation_Root = {
   insert_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
   /** insert a single row into the table: "analytics.ContentItemStats" */
   insert_analytics_ContentItemStats_one?: Maybe<Analytics_ContentItemStats>;
+  /** insert data into the table: "analytics.ElementTotalViews" */
+  insert_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+  /** insert a single row into the table: "analytics.ElementTotalViews" */
+  insert_analytics_ElementTotalViews_one?: Maybe<Analytics_ElementTotalViews>;
+  /** insert data into the table: "analytics.ItemTotalViews" */
+  insert_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+  /** insert a single row into the table: "analytics.ItemTotalViews" */
+  insert_analytics_ItemTotalViews_one?: Maybe<Analytics_ItemTotalViews>;
+  /** insert data into the table: "analytics.RoomPresence" */
+  insert_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+  /** insert a single row into the table: "analytics.RoomPresence" */
+  insert_analytics_RoomPresence_one?: Maybe<Analytics_RoomPresence>;
   /** insert data into the table: "analytics.RoomStats" */
   insert_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** insert a single row into the table: "analytics.RoomStats" */
@@ -16419,6 +16398,7 @@ export type Mutation_Root = {
   joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
   joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
   notifyEventEnded: NotifyEventEnded;
+  notifyEventStarted: NotifyEventStarted;
   presence_Flush: PresenceFlushOutput;
   refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
   stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
@@ -16451,6 +16431,18 @@ export type Mutation_Root = {
   update_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
   /** update single row of the table: "analytics.ContentItemStats" */
   update_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+  /** update data of the table: "analytics.ElementTotalViews" */
+  update_analytics_ElementTotalViews?: Maybe<Analytics_ElementTotalViews_Mutation_Response>;
+  /** update single row of the table: "analytics.ElementTotalViews" */
+  update_analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
+  /** update data of the table: "analytics.ItemTotalViews" */
+  update_analytics_ItemTotalViews?: Maybe<Analytics_ItemTotalViews_Mutation_Response>;
+  /** update single row of the table: "analytics.ItemTotalViews" */
+  update_analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
+  /** update data of the table: "analytics.RoomPresence" */
+  update_analytics_RoomPresence?: Maybe<Analytics_RoomPresence_Mutation_Response>;
+  /** update single row of the table: "analytics.RoomPresence" */
+  update_analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
   /** update data of the table: "analytics.RoomStats" */
   update_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** update single row of the table: "analytics.RoomStats" */
@@ -16884,6 +16876,42 @@ export type Mutation_RootDelete_Analytics_ContentItemStatsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Analytics_ContentItemStats_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ElementTotalViewsArgs = {
+  where: Analytics_ElementTotalViews_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ElementTotalViews_By_PkArgs = {
+  elementId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ItemTotalViewsArgs = {
+  where: Analytics_ItemTotalViews_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ItemTotalViews_By_PkArgs = {
+  itemId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomPresenceArgs = {
+  where: Analytics_RoomPresence_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomPresence_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -18024,6 +18052,48 @@ export type Mutation_RootInsert_Analytics_ContentItemStatsArgs = {
 export type Mutation_RootInsert_Analytics_ContentItemStats_OneArgs = {
   object: Analytics_ContentItemStats_Insert_Input;
   on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ElementTotalViewsArgs = {
+  objects: Array<Analytics_ElementTotalViews_Insert_Input>;
+  on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ElementTotalViews_OneArgs = {
+  object: Analytics_ElementTotalViews_Insert_Input;
+  on_conflict?: Maybe<Analytics_ElementTotalViews_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ItemTotalViewsArgs = {
+  objects: Array<Analytics_ItemTotalViews_Insert_Input>;
+  on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ItemTotalViews_OneArgs = {
+  object: Analytics_ItemTotalViews_Insert_Input;
+  on_conflict?: Maybe<Analytics_ItemTotalViews_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomPresenceArgs = {
+  objects: Array<Analytics_RoomPresence_Insert_Input>;
+  on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomPresence_OneArgs = {
+  object: Analytics_RoomPresence_Insert_Input;
+  on_conflict?: Maybe<Analytics_RoomPresence_On_Conflict>;
 };
 
 
@@ -19306,6 +19376,12 @@ export type Mutation_RootNotifyEventEndedArgs = {
 
 
 /** mutation root */
+export type Mutation_RootNotifyEventStartedArgs = {
+  eventId: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootRefreshYouTubeDataArgs = {
   registrantGoogleAccountId: Scalars['uuid'];
   registrantId: Scalars['uuid'];
@@ -19453,6 +19529,54 @@ export type Mutation_RootUpdate_Analytics_ContentItemStats_By_PkArgs = {
   _inc?: Maybe<Analytics_ContentItemStats_Inc_Input>;
   _set?: Maybe<Analytics_ContentItemStats_Set_Input>;
   pk_columns: Analytics_ContentItemStats_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ElementTotalViewsArgs = {
+  _inc?: Maybe<Analytics_ElementTotalViews_Inc_Input>;
+  _set?: Maybe<Analytics_ElementTotalViews_Set_Input>;
+  where: Analytics_ElementTotalViews_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ElementTotalViews_By_PkArgs = {
+  _inc?: Maybe<Analytics_ElementTotalViews_Inc_Input>;
+  _set?: Maybe<Analytics_ElementTotalViews_Set_Input>;
+  pk_columns: Analytics_ElementTotalViews_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ItemTotalViewsArgs = {
+  _inc?: Maybe<Analytics_ItemTotalViews_Inc_Input>;
+  _set?: Maybe<Analytics_ItemTotalViews_Set_Input>;
+  where: Analytics_ItemTotalViews_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ItemTotalViews_By_PkArgs = {
+  _inc?: Maybe<Analytics_ItemTotalViews_Inc_Input>;
+  _set?: Maybe<Analytics_ItemTotalViews_Set_Input>;
+  pk_columns: Analytics_ItemTotalViews_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomPresenceArgs = {
+  _inc?: Maybe<Analytics_RoomPresence_Inc_Input>;
+  _set?: Maybe<Analytics_RoomPresence_Set_Input>;
+  where: Analytics_RoomPresence_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomPresence_By_PkArgs = {
+  _inc?: Maybe<Analytics_RoomPresence_Inc_Input>;
+  _set?: Maybe<Analytics_RoomPresence_Set_Input>;
+  pk_columns: Analytics_RoomPresence_Pk_Columns_Input;
 };
 
 
@@ -20901,7 +21025,6 @@ export type Mutation_RootUpdate_Video_YouTubeUpload_By_PkArgs = {
   pk_columns: Video_YouTubeUpload_Pk_Columns_Input;
 };
 
-
 /** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
 export type Numeric_Comparison_Exp = {
   _eq?: Maybe<Scalars['numeric']>;
@@ -22240,32 +22363,26 @@ export type Query_Root = {
   analytics_ElementTotalViews: Array<Analytics_ElementTotalViews>;
   /** fetch aggregated fields from the table: "analytics.ElementTotalViews" */
   analytics_ElementTotalViews_aggregate: Analytics_ElementTotalViews_Aggregate;
+  /** fetch data from the table: "analytics.ElementTotalViews" using primary key columns */
+  analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
   /** fetch data from the table: "analytics.ItemTotalViews" */
   analytics_ItemTotalViews: Array<Analytics_ItemTotalViews>;
   /** fetch aggregated fields from the table: "analytics.ItemTotalViews" */
   analytics_ItemTotalViews_aggregate: Analytics_ItemTotalViews_Aggregate;
+  /** fetch data from the table: "analytics.ItemTotalViews" using primary key columns */
+  analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
   /** fetch data from the table: "analytics.RoomPresence" */
   analytics_RoomPresence: Array<Analytics_RoomPresence>;
   /** fetch aggregated fields from the table: "analytics.RoomPresence" */
   analytics_RoomPresence_aggregate: Analytics_RoomPresence_Aggregate;
+  /** fetch data from the table: "analytics.RoomPresence" using primary key columns */
+  analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
   /** fetch data from the table: "analytics.RoomStats" */
   analytics_RoomStats: Array<Analytics_RoomStats>;
   /** fetch aggregated fields from the table: "analytics.RoomStats" */
   analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
   /** fetch data from the table: "analytics.RoomStats" using primary key columns */
   analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** fetch data from the table: "analytics.mat_ElementTotalViews" */
-  analytics_mat_ElementTotalViews: Array<Analytics_Mat_ElementTotalViews>;
-  /** fetch aggregated fields from the table: "analytics.mat_ElementTotalViews" */
-  analytics_mat_ElementTotalViews_aggregate: Analytics_Mat_ElementTotalViews_Aggregate;
-  /** fetch data from the table: "analytics.mat_ItemTotalViews" */
-  analytics_mat_ItemTotalViews: Array<Analytics_Mat_ItemTotalViews>;
-  /** fetch aggregated fields from the table: "analytics.mat_ItemTotalViews" */
-  analytics_mat_ItemTotalViews_aggregate: Analytics_Mat_ItemTotalViews_Aggregate;
-  /** fetch data from the table: "analytics.mat_RoomPresence" */
-  analytics_mat_RoomPresence: Array<Analytics_Mat_RoomPresence>;
-  /** fetch aggregated fields from the table: "analytics.mat_RoomPresence" */
-  analytics_mat_RoomPresence_aggregate: Analytics_Mat_RoomPresence_Aggregate;
   /** fetch data from the table: "chat.Chat" */
   chat_Chat: Array<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -23034,6 +23151,11 @@ export type Query_RootAnalytics_ElementTotalViews_AggregateArgs = {
 };
 
 
+export type Query_RootAnalytics_ElementTotalViews_By_PkArgs = {
+  elementId: Scalars['uuid'];
+};
+
+
 export type Query_RootAnalytics_ItemTotalViewsArgs = {
   distinct_on?: Maybe<Array<Analytics_ItemTotalViews_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -23052,6 +23174,11 @@ export type Query_RootAnalytics_ItemTotalViews_AggregateArgs = {
 };
 
 
+export type Query_RootAnalytics_ItemTotalViews_By_PkArgs = {
+  itemId: Scalars['uuid'];
+};
+
+
 export type Query_RootAnalytics_RoomPresenceArgs = {
   distinct_on?: Maybe<Array<Analytics_RoomPresence_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -23067,6 +23194,11 @@ export type Query_RootAnalytics_RoomPresence_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Analytics_RoomPresence_Order_By>>;
   where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
+};
+
+
+export type Query_RootAnalytics_RoomPresence_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -23090,60 +23222,6 @@ export type Query_RootAnalytics_RoomStats_AggregateArgs = {
 
 export type Query_RootAnalytics_RoomStats_By_PkArgs = {
   id: Scalars['uuid'];
-};
-
-
-export type Query_RootAnalytics_Mat_ElementTotalViewsArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-  where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-
-export type Query_RootAnalytics_Mat_ElementTotalViews_AggregateArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-  where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-
-export type Query_RootAnalytics_Mat_ItemTotalViewsArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-  where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-
-export type Query_RootAnalytics_Mat_ItemTotalViews_AggregateArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-  where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-
-export type Query_RootAnalytics_Mat_RoomPresenceArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-  where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-};
-
-
-export type Query_RootAnalytics_Mat_RoomPresence_AggregateArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-  where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
 };
 
 
@@ -25852,8 +25930,8 @@ export type Registrant_Profile = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   pronouns?: Maybe<Scalars['jsonb']>;
   /** An object relationship */
   registrant: Registrant_Registrant;
@@ -26045,8 +26123,8 @@ export type Registrant_Profile_Bool_Exp = {
   photoS3BucketName?: Maybe<String_Comparison_Exp>;
   photoS3BucketRegion?: Maybe<String_Comparison_Exp>;
   photoS3ObjectName?: Maybe<String_Comparison_Exp>;
-  photoURL_350x350?: Maybe<String_Comparison_Exp>;
   photoURL_50x50?: Maybe<String_Comparison_Exp>;
+  photoURL_350x350?: Maybe<String_Comparison_Exp>;
   pronouns?: Maybe<Jsonb_Comparison_Exp>;
   registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
   registrantId?: Maybe<Uuid_Comparison_Exp>;
@@ -26100,8 +26178,8 @@ export type Registrant_Profile_Insert_Input = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   pronouns?: Maybe<Scalars['jsonb']>;
   registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
   registrantId?: Maybe<Scalars['uuid']>;
@@ -26123,8 +26201,8 @@ export type Registrant_Profile_Max_Fields = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   registrantId?: Maybe<Scalars['uuid']>;
   timezoneUTCOffset?: Maybe<Scalars['Float']>;
   twitter?: Maybe<Scalars['String']>;
@@ -26144,8 +26222,8 @@ export type Registrant_Profile_Min_Fields = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   registrantId?: Maybe<Scalars['uuid']>;
   timezoneUTCOffset?: Maybe<Scalars['Float']>;
   twitter?: Maybe<Scalars['String']>;
@@ -26189,8 +26267,8 @@ export type Registrant_Profile_Order_By = {
   photoS3BucketName?: Maybe<Order_By>;
   photoS3BucketRegion?: Maybe<Order_By>;
   photoS3ObjectName?: Maybe<Order_By>;
-  photoURL_350x350?: Maybe<Order_By>;
   photoURL_50x50?: Maybe<Order_By>;
+  photoURL_350x350?: Maybe<Order_By>;
   pronouns?: Maybe<Order_By>;
   registrant?: Maybe<Registrant_Registrant_Order_By>;
   registrantId?: Maybe<Order_By>;
@@ -26236,9 +26314,9 @@ export enum Registrant_Profile_Select_Column {
   /** column name */
   PhotoS3ObjectName = 'photoS3ObjectName',
   /** column name */
-  PhotoUrl_350x350 = 'photoURL_350x350',
-  /** column name */
   PhotoUrl_50x50 = 'photoURL_50x50',
+  /** column name */
+  PhotoUrl_350x350 = 'photoURL_350x350',
   /** column name */
   Pronouns = 'pronouns',
   /** column name */
@@ -26266,8 +26344,8 @@ export type Registrant_Profile_Set_Input = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   pronouns?: Maybe<Scalars['jsonb']>;
   registrantId?: Maybe<Scalars['uuid']>;
   timezoneUTCOffset?: Maybe<Scalars['Float']>;
@@ -26325,9 +26403,9 @@ export enum Registrant_Profile_Update_Column {
   /** column name */
   PhotoS3ObjectName = 'photoS3ObjectName',
   /** column name */
-  PhotoUrl_350x350 = 'photoURL_350x350',
-  /** column name */
   PhotoUrl_50x50 = 'photoURL_50x50',
+  /** column name */
+  PhotoUrl_350x350 = 'photoURL_350x350',
   /** column name */
   Pronouns = 'pronouns',
   /** column name */
@@ -32282,32 +32360,26 @@ export type Subscription_Root = {
   analytics_ElementTotalViews: Array<Analytics_ElementTotalViews>;
   /** fetch aggregated fields from the table: "analytics.ElementTotalViews" */
   analytics_ElementTotalViews_aggregate: Analytics_ElementTotalViews_Aggregate;
+  /** fetch data from the table: "analytics.ElementTotalViews" using primary key columns */
+  analytics_ElementTotalViews_by_pk?: Maybe<Analytics_ElementTotalViews>;
   /** fetch data from the table: "analytics.ItemTotalViews" */
   analytics_ItemTotalViews: Array<Analytics_ItemTotalViews>;
   /** fetch aggregated fields from the table: "analytics.ItemTotalViews" */
   analytics_ItemTotalViews_aggregate: Analytics_ItemTotalViews_Aggregate;
+  /** fetch data from the table: "analytics.ItemTotalViews" using primary key columns */
+  analytics_ItemTotalViews_by_pk?: Maybe<Analytics_ItemTotalViews>;
   /** fetch data from the table: "analytics.RoomPresence" */
   analytics_RoomPresence: Array<Analytics_RoomPresence>;
   /** fetch aggregated fields from the table: "analytics.RoomPresence" */
   analytics_RoomPresence_aggregate: Analytics_RoomPresence_Aggregate;
+  /** fetch data from the table: "analytics.RoomPresence" using primary key columns */
+  analytics_RoomPresence_by_pk?: Maybe<Analytics_RoomPresence>;
   /** fetch data from the table: "analytics.RoomStats" */
   analytics_RoomStats: Array<Analytics_RoomStats>;
   /** fetch aggregated fields from the table: "analytics.RoomStats" */
   analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
   /** fetch data from the table: "analytics.RoomStats" using primary key columns */
   analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** fetch data from the table: "analytics.mat_ElementTotalViews" */
-  analytics_mat_ElementTotalViews: Array<Analytics_Mat_ElementTotalViews>;
-  /** fetch aggregated fields from the table: "analytics.mat_ElementTotalViews" */
-  analytics_mat_ElementTotalViews_aggregate: Analytics_Mat_ElementTotalViews_Aggregate;
-  /** fetch data from the table: "analytics.mat_ItemTotalViews" */
-  analytics_mat_ItemTotalViews: Array<Analytics_Mat_ItemTotalViews>;
-  /** fetch aggregated fields from the table: "analytics.mat_ItemTotalViews" */
-  analytics_mat_ItemTotalViews_aggregate: Analytics_Mat_ItemTotalViews_Aggregate;
-  /** fetch data from the table: "analytics.mat_RoomPresence" */
-  analytics_mat_RoomPresence: Array<Analytics_Mat_RoomPresence>;
-  /** fetch aggregated fields from the table: "analytics.mat_RoomPresence" */
-  analytics_mat_RoomPresence_aggregate: Analytics_Mat_RoomPresence_Aggregate;
   /** fetch data from the table: "chat.Chat" */
   chat_Chat: Array<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -33071,6 +33143,11 @@ export type Subscription_RootAnalytics_ElementTotalViews_AggregateArgs = {
 };
 
 
+export type Subscription_RootAnalytics_ElementTotalViews_By_PkArgs = {
+  elementId: Scalars['uuid'];
+};
+
+
 export type Subscription_RootAnalytics_ItemTotalViewsArgs = {
   distinct_on?: Maybe<Array<Analytics_ItemTotalViews_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -33089,6 +33166,11 @@ export type Subscription_RootAnalytics_ItemTotalViews_AggregateArgs = {
 };
 
 
+export type Subscription_RootAnalytics_ItemTotalViews_By_PkArgs = {
+  itemId: Scalars['uuid'];
+};
+
+
 export type Subscription_RootAnalytics_RoomPresenceArgs = {
   distinct_on?: Maybe<Array<Analytics_RoomPresence_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -33104,6 +33186,11 @@ export type Subscription_RootAnalytics_RoomPresence_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Analytics_RoomPresence_Order_By>>;
   where?: Maybe<Analytics_RoomPresence_Bool_Exp>;
+};
+
+
+export type Subscription_RootAnalytics_RoomPresence_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -33127,60 +33214,6 @@ export type Subscription_RootAnalytics_RoomStats_AggregateArgs = {
 
 export type Subscription_RootAnalytics_RoomStats_By_PkArgs = {
   id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootAnalytics_Mat_ElementTotalViewsArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-  where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-
-export type Subscription_RootAnalytics_Mat_ElementTotalViews_AggregateArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_ElementTotalViews_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_ElementTotalViews_Order_By>>;
-  where?: Maybe<Analytics_Mat_ElementTotalViews_Bool_Exp>;
-};
-
-
-export type Subscription_RootAnalytics_Mat_ItemTotalViewsArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-  where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-
-export type Subscription_RootAnalytics_Mat_ItemTotalViews_AggregateArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_ItemTotalViews_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_ItemTotalViews_Order_By>>;
-  where?: Maybe<Analytics_Mat_ItemTotalViews_Bool_Exp>;
-};
-
-
-export type Subscription_RootAnalytics_Mat_RoomPresenceArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-  where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
-};
-
-
-export type Subscription_RootAnalytics_Mat_RoomPresence_AggregateArgs = {
-  distinct_on?: Maybe<Array<Analytics_Mat_RoomPresence_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Analytics_Mat_RoomPresence_Order_By>>;
-  where?: Maybe<Analytics_Mat_RoomPresence_Bool_Exp>;
 };
 
 
@@ -35660,7 +35693,6 @@ export enum System_Configuration_Update_Column {
   Value = 'value'
 }
 
-
 /** Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'. */
 export type Timestamptz_Comparison_Exp = {
   _eq?: Maybe<Scalars['timestamptz']>;
@@ -35673,7 +35705,6 @@ export type Timestamptz_Comparison_Exp = {
   _neq?: Maybe<Scalars['timestamptz']>;
   _nin?: Maybe<Array<Scalars['timestamptz']>>;
 };
-
 
 /** Boolean expression to compare columns of type "uuid". All fields are combined with logical 'AND'. */
 export type Uuid_Comparison_Exp = {
@@ -39422,7 +39453,7 @@ export type CombineVideosJob_FailJobMutationVariables = Exact<{
 }>;
 
 
-export type CombineVideosJob_FailJobMutation = { __typename?: 'mutation_root', update_job_queues_CombineVideosJob?: Maybe<{ __typename?: 'job_queues_CombineVideosJob_mutation_response', affected_rows: number }> };
+export type CombineVideosJob_FailJobMutation = { __typename?: 'mutation_root', update_job_queues_CombineVideosJob?: { __typename?: 'job_queues_CombineVideosJob_mutation_response', affected_rows: number } | null | undefined };
 
 export type CombineVideosJob_StartJobMutationVariables = Exact<{
   combineVideosJobId: Scalars['uuid'];
@@ -39430,21 +39461,21 @@ export type CombineVideosJob_StartJobMutationVariables = Exact<{
 }>;
 
 
-export type CombineVideosJob_StartJobMutation = { __typename?: 'mutation_root', update_job_queues_CombineVideosJob?: Maybe<{ __typename?: 'job_queues_CombineVideosJob_mutation_response', affected_rows: number }> };
+export type CombineVideosJob_StartJobMutation = { __typename?: 'mutation_root', update_job_queues_CombineVideosJob?: { __typename?: 'job_queues_CombineVideosJob_mutation_response', affected_rows: number } | null | undefined };
 
 export type CombineVideosJob_CompleteJobMutationVariables = Exact<{
   combineVideosJobId: Scalars['uuid'];
 }>;
 
 
-export type CombineVideosJob_CompleteJobMutation = { __typename?: 'mutation_root', update_job_queues_CombineVideosJob?: Maybe<{ __typename?: 'job_queues_CombineVideosJob_mutation_response', affected_rows: number }> };
+export type CombineVideosJob_CompleteJobMutation = { __typename?: 'mutation_root', update_job_queues_CombineVideosJob?: { __typename?: 'job_queues_CombineVideosJob_mutation_response', affected_rows: number } | null | undefined };
 
 export type MediaConvert_GetCombineVideosJobQueryVariables = Exact<{
   combineVideosJobId: Scalars['uuid'];
 }>;
 
 
-export type MediaConvert_GetCombineVideosJobQuery = { __typename?: 'query_root', job_queues_CombineVideosJob_by_pk?: Maybe<{ __typename?: 'job_queues_CombineVideosJob', id: any, conferenceId: any, outputName: string }> };
+export type MediaConvert_GetCombineVideosJobQuery = { __typename?: 'query_root', job_queues_CombineVideosJob_by_pk?: { __typename?: 'job_queues_CombineVideosJob', id: any, conferenceId: any, outputName: string } | null | undefined };
 
 export type CombineVideosJob_CreateElementMutationVariables = Exact<{
   data: Scalars['jsonb'];
@@ -39454,7 +39485,7 @@ export type CombineVideosJob_CreateElementMutationVariables = Exact<{
 }>;
 
 
-export type CombineVideosJob_CreateElementMutation = { __typename?: 'mutation_root', insert_content_Element_one?: Maybe<{ __typename?: 'content_Element', id: any }> };
+export type CombineVideosJob_CreateElementMutation = { __typename?: 'mutation_root', insert_content_Element_one?: { __typename?: 'content_Element', id: any } | null | undefined };
 
 export type CheckForFrontendHostsQueryVariables = Exact<{
   host: Scalars['jsonb'];
@@ -39469,16 +39500,16 @@ export type ElementAddNewVersionMutationVariables = Exact<{
 }>;
 
 
-export type ElementAddNewVersionMutation = { __typename?: 'mutation_root', update_content_Element_by_pk?: Maybe<{ __typename?: 'content_Element', id: any }> };
+export type ElementAddNewVersionMutation = { __typename?: 'mutation_root', update_content_Element_by_pk?: { __typename?: 'content_Element', id: any } | null | undefined };
 
-export type ElementUpdateNotification_ElementDetailsFragment = { __typename?: 'content_Element', id: any, name: string, source?: Maybe<any>, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string, recordingNotificationsEnabled: Array<{ __typename?: 'conference_Configuration', value: any }>, submissionNotificationRoles: Array<{ __typename?: 'conference_Configuration', value: any }>, emailTemplateSubtitlesGenerated: Array<{ __typename?: 'conference_Configuration', value: any }> }, item: { __typename?: 'content_Item', id: any, title: string, itemPeople: Array<{ __typename?: 'content_ItemProgramPerson', id: any, roleName: string, person: { __typename?: 'collection_ProgramPerson', id: any, name: string, email?: Maybe<string>, accessToken: string } }> } };
+export type ElementUpdateNotification_ElementDetailsFragment = { __typename?: 'content_Element', id: any, name: string, source?: any | null | undefined, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string, recordingNotificationsEnabled: Array<{ __typename?: 'conference_Configuration', value: any }>, submissionNotificationRoles: Array<{ __typename?: 'conference_Configuration', value: any }>, emailTemplateSubtitlesGenerated: Array<{ __typename?: 'conference_Configuration', value: any }> }, item: { __typename?: 'content_Item', id: any, title: string, itemPeople: Array<{ __typename?: 'content_ItemProgramPerson', id: any, roleName: string, person: { __typename?: 'collection_ProgramPerson', id: any, name: string, email?: string | null | undefined, accessToken: string } }> } };
 
 export type GetElementDetailsQueryVariables = Exact<{
   elementId: Scalars['uuid'];
 }>;
 
 
-export type GetElementDetailsQuery = { __typename?: 'query_root', content_Element_by_pk?: Maybe<{ __typename?: 'content_Element', id: any, name: string, source?: Maybe<any>, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string, recordingNotificationsEnabled: Array<{ __typename?: 'conference_Configuration', value: any }>, submissionNotificationRoles: Array<{ __typename?: 'conference_Configuration', value: any }>, emailTemplateSubtitlesGenerated: Array<{ __typename?: 'conference_Configuration', value: any }> }, item: { __typename?: 'content_Item', id: any, title: string, itemPeople: Array<{ __typename?: 'content_ItemProgramPerson', id: any, roleName: string, person: { __typename?: 'collection_ProgramPerson', id: any, name: string, email?: Maybe<string>, accessToken: string } }> } }> };
+export type GetElementDetailsQuery = { __typename?: 'query_root', content_Element_by_pk?: { __typename?: 'content_Element', id: any, name: string, source?: any | null | undefined, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string, recordingNotificationsEnabled: Array<{ __typename?: 'conference_Configuration', value: any }>, submissionNotificationRoles: Array<{ __typename?: 'conference_Configuration', value: any }>, emailTemplateSubtitlesGenerated: Array<{ __typename?: 'conference_Configuration', value: any }> }, item: { __typename?: 'content_Item', id: any, title: string, itemPeople: Array<{ __typename?: 'content_ItemProgramPerson', id: any, roleName: string, person: { __typename?: 'collection_ProgramPerson', id: any, name: string, email?: string | null | undefined, accessToken: string } }> } } | null | undefined };
 
 export type GetUploadAgreementQueryVariables = Exact<{
   accessToken: Scalars['String'];
@@ -39502,7 +39533,7 @@ export type CustomEmail_SelectRegistrantsQueryVariables = Exact<{
 }>;
 
 
-export type CustomEmail_SelectRegistrantsQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', displayName: string, id: any, invitation?: Maybe<{ __typename?: 'registrant_Invitation', invitedEmailAddress: string, id: any }>, user?: Maybe<{ __typename?: 'User', id: string, email?: Maybe<string> }> }>, conference_Conference_by_pk?: Maybe<{ __typename?: 'conference_Conference', shortName: string, techSupportAddress: Array<{ __typename?: 'conference_Configuration', value: any }> }>, platformAddress?: Maybe<{ __typename?: 'system_Configuration', value: any }> };
+export type CustomEmail_SelectRegistrantsQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', displayName: string, id: any, invitation?: { __typename?: 'registrant_Invitation', invitedEmailAddress: string, id: any } | null | undefined, user?: { __typename?: 'User', id: string, email?: string | null | undefined } | null | undefined }>, conference_Conference_by_pk?: { __typename?: 'conference_Conference', shortName: string, techSupportAddress: Array<{ __typename?: 'conference_Configuration', value: any }> } | null | undefined, platformAddress?: { __typename?: 'system_Configuration', value: any } | null | undefined };
 
 export type SelectUnprocessedCustomEmailJobsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -39514,7 +39545,7 @@ export type CompleteCustomEmailJobsMutationVariables = Exact<{
 }>;
 
 
-export type CompleteCustomEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_CustomEmailJob?: Maybe<{ __typename?: 'job_queues_CustomEmailJob_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'job_queues_CustomEmailJob', id: any }> }> };
+export type CompleteCustomEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_CustomEmailJob?: { __typename?: 'job_queues_CustomEmailJob_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'job_queues_CustomEmailJob', id: any }> } | null | undefined };
 
 export type ConferenceEmailConfigurationQueryVariables = Exact<{
   conferenceId?: Maybe<Scalars['uuid']>;
@@ -39522,14 +39553,14 @@ export type ConferenceEmailConfigurationQueryVariables = Exact<{
 }>;
 
 
-export type ConferenceEmailConfigurationQuery = { __typename?: 'query_root', support: Maybe<Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>>, techSupport: Maybe<Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>>, hostOrganisationName?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, stopEmails?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, frontendHost: Maybe<Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>>, defaultFrontendHost?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, allowEmailsToDomains?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, conference_Conference?: Maybe<Array<{ __typename?: 'conference_Conference', shortName: string }>> };
+export type ConferenceEmailConfigurationQuery = { __typename?: 'query_root', support: Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>, techSupport: Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>, hostOrganisationName?: { __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any } | null | undefined, stopEmails?: { __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any } | null | undefined, frontendHost: Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>, defaultFrontendHost?: { __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any } | null | undefined, allowEmailsToDomains?: { __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any } | null | undefined, conference_Conference?: Array<{ __typename?: 'conference_Conference', shortName: string }> };
 
 export type InsertEmailsMutationVariables = Exact<{
   objects: Array<Email_Insert_Input> | Email_Insert_Input;
 }>;
 
 
-export type InsertEmailsMutation = { __typename?: 'mutation_root', insert_Email?: Maybe<{ __typename?: 'Email_mutation_response', affected_rows: number }> };
+export type InsertEmailsMutation = { __typename?: 'mutation_root', insert_Email?: { __typename?: 'Email_mutation_response', affected_rows: number } | null | undefined };
 
 export type SelectUnsentEmailIdsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -39542,19 +39573,19 @@ export type MarkAndSelectUnsentEmailsMutationVariables = Exact<{
 }>;
 
 
-export type MarkAndSelectUnsentEmailsMutation = { __typename?: 'mutation_root', update_Email?: Maybe<{ __typename?: 'Email_mutation_response', returning: Array<{ __typename?: 'Email', recipientName?: Maybe<string>, emailAddress: string, htmlContents: string, plainTextContents: string, id: any, subject: string, retriesCount: number }> }> };
+export type MarkAndSelectUnsentEmailsMutation = { __typename?: 'mutation_root', update_Email?: { __typename?: 'Email_mutation_response', returning: Array<{ __typename?: 'Email', recipientName?: string | null | undefined, emailAddress: string, htmlContents: string, plainTextContents: string, id: any, subject: string, retriesCount: number }> } | null | undefined };
 
 export type UnmarkUnsentEmailsMutationVariables = Exact<{
   ids: Array<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type UnmarkUnsentEmailsMutation = { __typename?: 'mutation_root', update_Email?: Maybe<{ __typename?: 'Email_mutation_response', affected_rows: number }> };
+export type UnmarkUnsentEmailsMutation = { __typename?: 'mutation_root', update_Email?: { __typename?: 'Email_mutation_response', affected_rows: number } | null | undefined };
 
 export type GetSendGridConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSendGridConfigQuery = { __typename?: 'query_root', apiKey?: Maybe<{ __typename?: 'system_Configuration', value: any }>, senderEmail?: Maybe<{ __typename?: 'system_Configuration', value: any }>, senderName?: Maybe<{ __typename?: 'system_Configuration', value: any }>, replyTo?: Maybe<{ __typename?: 'system_Configuration', value: any }>, webhookPublicKey?: Maybe<{ __typename?: 'system_Configuration', value: any }> };
+export type GetSendGridConfigQuery = { __typename?: 'query_root', apiKey?: { __typename?: 'system_Configuration', value: any } | null | undefined, senderEmail?: { __typename?: 'system_Configuration', value: any } | null | undefined, senderName?: { __typename?: 'system_Configuration', value: any } | null | undefined, replyTo?: { __typename?: 'system_Configuration', value: any } | null | undefined, webhookPublicKey?: { __typename?: 'system_Configuration', value: any } | null | undefined };
 
 export type UpdateEmailStatusMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -39563,14 +39594,14 @@ export type UpdateEmailStatusMutationVariables = Exact<{
 }>;
 
 
-export type UpdateEmailStatusMutation = { __typename?: 'mutation_root', update_Email_by_pk?: Maybe<{ __typename?: 'Email', id: any }> };
+export type UpdateEmailStatusMutation = { __typename?: 'mutation_root', update_Email_by_pk?: { __typename?: 'Email', id: any } | null | undefined };
 
 export type GetEventChatInfoQueryVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
 
 
-export type GetEventChatInfoQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, startTime: any, durationSeconds: number, room: { __typename?: 'room_Room', id: any, name: string, chatId?: Maybe<any> }, item?: Maybe<{ __typename?: 'content_Item', id: any, title: string, chatId?: Maybe<any> }> }> };
+export type GetEventChatInfoQuery = { __typename?: 'query_root', schedule_Event_by_pk?: { __typename?: 'schedule_Event', id: any, startTime: any, durationSeconds: number, room: { __typename?: 'room_Room', id: any, name: string, chatId?: any | null | undefined }, item?: { __typename?: 'content_Item', id: any, title: string, chatId?: any | null | undefined } | null | undefined } | null | undefined };
 
 export type StartChatDuplicationMutationVariables = Exact<{
   chatId1: Scalars['uuid'];
@@ -39578,7 +39609,7 @@ export type StartChatDuplicationMutationVariables = Exact<{
 }>;
 
 
-export type StartChatDuplicationMutation = { __typename?: 'mutation_root', update_chat1?: Maybe<{ __typename?: 'chat_Chat', id: any }>, update_chat2?: Maybe<{ __typename?: 'chat_Chat', id: any }> };
+export type StartChatDuplicationMutation = { __typename?: 'mutation_root', update_chat1?: { __typename?: 'chat_Chat', id: any } | null | undefined, update_chat2?: { __typename?: 'chat_Chat', id: any } | null | undefined };
 
 export type EndChatDuplicationMutationVariables = Exact<{
   chatId1: Scalars['uuid'];
@@ -39586,7 +39617,14 @@ export type EndChatDuplicationMutationVariables = Exact<{
 }>;
 
 
-export type EndChatDuplicationMutation = { __typename?: 'mutation_root', update_chat1?: Maybe<{ __typename?: 'chat_Chat', id: any }>, update_chat2?: Maybe<{ __typename?: 'chat_Chat', id: any }> };
+export type EndChatDuplicationMutation = { __typename?: 'mutation_root', update_chat1?: { __typename?: 'chat_Chat', id: any } | null | undefined, update_chat2?: { __typename?: 'chat_Chat', id: any } | null | undefined };
+
+export type NotifyRealtimeEventStartedMutationVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type NotifyRealtimeEventStartedMutation = { __typename?: 'mutation_root', notifyEventStarted: { __typename?: 'NotifyEventStarted', ok: boolean } };
 
 export type NotifyRealtimeEventEndedMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -39600,21 +39638,21 @@ export type GetEventTimingsQueryVariables = Exact<{
 }>;
 
 
-export type GetEventTimingsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, name: string, timingsUpdatedAt: any, startTime: any, endTime?: Maybe<any>, conferenceId: any, intendedRoomModeName: Room_Mode_Enum, roomId: any, enableRecording: boolean, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', id: any, sessionId: string }>, item?: Maybe<{ __typename?: 'content_Item', id: any, title: string, chatId?: Maybe<any> }>, continuations: Array<{ __typename?: 'schedule_Continuation', id: any, to: any }> }> };
+export type GetEventTimingsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: { __typename?: 'schedule_Event', id: any, name: string, timingsUpdatedAt: any, startTime: any, endTime?: any | null | undefined, conferenceId: any, intendedRoomModeName: Room_Mode_Enum, roomId: any, enableRecording: boolean, eventVonageSession?: { __typename?: 'video_EventVonageSession', id: any, sessionId: string } | null | undefined, item?: { __typename?: 'content_Item', id: any, title: string, chatId?: any | null | undefined } | null | undefined, continuations: Array<{ __typename?: 'schedule_Continuation', id: any, to: any }> } | null | undefined };
 
 export type Event_GetEventVonageSessionQueryVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
 
 
-export type Event_GetEventVonageSessionQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', id: any, sessionId: string }> }> };
+export type Event_GetEventVonageSessionQuery = { __typename?: 'query_root', schedule_Event_by_pk?: { __typename?: 'schedule_Event', id: any, eventVonageSession?: { __typename?: 'video_EventVonageSession', id: any, sessionId: string } | null | undefined } | null | undefined };
 
 export type GoogleOAuth_ConferenceConfig_FrontendHostQueryVariables = Exact<{
   registrantId: Scalars['uuid'];
 }>;
 
 
-export type GoogleOAuth_ConferenceConfig_FrontendHostQuery = { __typename?: 'query_root', registrant?: Maybe<{ __typename?: 'registrant_Registrant', conference: { __typename?: 'conference_Conference', frontendHost: Array<{ __typename?: 'conference_Configuration', value: any }> } }>, defaultFrontendHost?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }> };
+export type GoogleOAuth_ConferenceConfig_FrontendHostQuery = { __typename?: 'query_root', registrant?: { __typename?: 'registrant_Registrant', conference: { __typename?: 'conference_Conference', frontendHost: Array<{ __typename?: 'conference_Configuration', value: any }> } } | null | undefined, defaultFrontendHost?: { __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any } | null | undefined };
 
 export type Google_CreateRegistrantGoogleAccountMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -39624,7 +39662,7 @@ export type Google_CreateRegistrantGoogleAccountMutationVariables = Exact<{
 }>;
 
 
-export type Google_CreateRegistrantGoogleAccountMutation = { __typename?: 'mutation_root', insert_registrant_GoogleAccount_one?: Maybe<{ __typename?: 'registrant_GoogleAccount', id: any }> };
+export type Google_CreateRegistrantGoogleAccountMutation = { __typename?: 'mutation_root', insert_registrant_GoogleAccount_one?: { __typename?: 'registrant_GoogleAccount', id: any } | null | undefined };
 
 export type CreateYouTubeUploadMutationVariables = Exact<{
   elementId: Scalars['uuid'];
@@ -39637,7 +39675,7 @@ export type CreateYouTubeUploadMutationVariables = Exact<{
 }>;
 
 
-export type CreateYouTubeUploadMutation = { __typename?: 'mutation_root', insert_video_YouTubeUpload_one?: Maybe<{ __typename?: 'video_YouTubeUpload', id: any }> };
+export type CreateYouTubeUploadMutation = { __typename?: 'mutation_root', insert_video_YouTubeUpload_one?: { __typename?: 'video_YouTubeUpload', id: any } | null | undefined };
 
 export type SelectNewUploadYouTubeVideoJobsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -39649,16 +39687,16 @@ export type MarkAndSelectNewUploadYouTubeVideoJobsMutationVariables = Exact<{
 }>;
 
 
-export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = { __typename?: 'mutation_root', update_job_queues_UploadYouTubeVideoJob?: Maybe<{ __typename?: 'job_queues_UploadYouTubeVideoJob_mutation_response', returning: Array<{ __typename?: 'job_queues_UploadYouTubeVideoJob', id: any, conferenceId: any, jobStatusName: Video_JobStatus_Enum, retriesCount: number, videoTitle: string, videoDescription: string, videoPrivacyStatus: string, playlistId?: Maybe<string>, registrantGoogleAccount: { __typename?: 'registrant_GoogleAccount', id: any, tokenData: any, googleAccountEmail: string }, element: { __typename?: 'content_Element', data: any, id: any, item: { __typename?: 'content_Item', id: any, title: string } } }> }> };
+export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = { __typename?: 'mutation_root', update_job_queues_UploadYouTubeVideoJob?: { __typename?: 'job_queues_UploadYouTubeVideoJob_mutation_response', returning: Array<{ __typename?: 'job_queues_UploadYouTubeVideoJob', id: any, conferenceId: any, jobStatusName: Video_JobStatus_Enum, retriesCount: number, videoTitle: string, videoDescription: string, videoPrivacyStatus: string, playlistId?: string | null | undefined, registrantGoogleAccount: { __typename?: 'registrant_GoogleAccount', id: any, tokenData: any, googleAccountEmail: string }, element: { __typename?: 'content_Element', data: any, id: any, item: { __typename?: 'content_Item', id: any, title: string } } }> } | null | undefined };
 
-export type UploadYouTubeVideoJobDataFragment = { __typename?: 'job_queues_UploadYouTubeVideoJob', id: any, conferenceId: any, jobStatusName: Video_JobStatus_Enum, retriesCount: number, videoTitle: string, videoDescription: string, videoPrivacyStatus: string, playlistId?: Maybe<string>, registrantGoogleAccount: { __typename?: 'registrant_GoogleAccount', id: any, tokenData: any, googleAccountEmail: string }, element: { __typename?: 'content_Element', data: any, id: any, item: { __typename?: 'content_Item', id: any, title: string } } };
+export type UploadYouTubeVideoJobDataFragment = { __typename?: 'job_queues_UploadYouTubeVideoJob', id: any, conferenceId: any, jobStatusName: Video_JobStatus_Enum, retriesCount: number, videoTitle: string, videoDescription: string, videoPrivacyStatus: string, playlistId?: string | null | undefined, registrantGoogleAccount: { __typename?: 'registrant_GoogleAccount', id: any, tokenData: any, googleAccountEmail: string }, element: { __typename?: 'content_Element', data: any, id: any, item: { __typename?: 'content_Item', id: any, title: string } } };
 
 export type UnmarkUploadYouTubeVideoJobsMutationVariables = Exact<{
   ids: Array<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type UnmarkUploadYouTubeVideoJobsMutation = { __typename?: 'mutation_root', update_job_queues_UploadYouTubeVideoJob?: Maybe<{ __typename?: 'job_queues_UploadYouTubeVideoJob_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'job_queues_UploadYouTubeVideoJob', id: any }> }> };
+export type UnmarkUploadYouTubeVideoJobsMutation = { __typename?: 'mutation_root', update_job_queues_UploadYouTubeVideoJob?: { __typename?: 'job_queues_UploadYouTubeVideoJob_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'job_queues_UploadYouTubeVideoJob', id: any }> } | null | undefined };
 
 export type FailUploadYouTubeVideoJobMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -39666,18 +39704,18 @@ export type FailUploadYouTubeVideoJobMutationVariables = Exact<{
 }>;
 
 
-export type FailUploadYouTubeVideoJobMutation = { __typename?: 'mutation_root', update_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<{ __typename?: 'job_queues_UploadYouTubeVideoJob', id: any }> };
+export type FailUploadYouTubeVideoJobMutation = { __typename?: 'mutation_root', update_job_queues_UploadYouTubeVideoJob_by_pk?: { __typename?: 'job_queues_UploadYouTubeVideoJob', id: any } | null | undefined };
 
 export type CompleteUploadYouTubeVideoJobMutationVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type CompleteUploadYouTubeVideoJobMutation = { __typename?: 'mutation_root', update_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<{ __typename?: 'job_queues_UploadYouTubeVideoJob', id: any }> };
+export type CompleteUploadYouTubeVideoJobMutation = { __typename?: 'mutation_root', update_job_queues_UploadYouTubeVideoJob_by_pk?: { __typename?: 'job_queues_UploadYouTubeVideoJob', id: any } | null | undefined };
 
-export type InvitationPartsFragment = { __typename?: 'registrant_Invitation', registrantId: any, confirmationCode?: Maybe<any>, id: any, inviteCode: any, invitedEmailAddress: string, linkToUserId?: Maybe<string>, updatedAt: any, createdAt: any, registrant: { __typename?: 'registrant_Registrant', displayName: string, userId?: Maybe<string>, conference: { __typename?: 'conference_Conference', name: string, slug: string } }, user?: Maybe<{ __typename?: 'User', email?: Maybe<string> }> };
+export type InvitationPartsFragment = { __typename?: 'registrant_Invitation', registrantId: any, confirmationCode?: any | null | undefined, id: any, inviteCode: any, invitedEmailAddress: string, linkToUserId?: string | null | undefined, updatedAt: any, createdAt: any, registrant: { __typename?: 'registrant_Registrant', displayName: string, userId?: string | null | undefined, conference: { __typename?: 'conference_Conference', name: string, slug: string } }, user?: { __typename?: 'User', email?: string | null | undefined } | null | undefined };
 
-export type InvitedUserPartsFragment = { __typename?: 'User', id: string, email?: Maybe<string> };
+export type InvitedUserPartsFragment = { __typename?: 'User', id: string, email?: string | null | undefined };
 
 export type SelectInvitationAndUserQueryVariables = Exact<{
   inviteCode: Scalars['uuid'];
@@ -39685,7 +39723,7 @@ export type SelectInvitationAndUserQueryVariables = Exact<{
 }>;
 
 
-export type SelectInvitationAndUserQuery = { __typename?: 'query_root', registrant_Invitation: Array<{ __typename?: 'registrant_Invitation', registrantId: any, confirmationCode?: Maybe<any>, id: any, inviteCode: any, invitedEmailAddress: string, linkToUserId?: Maybe<string>, updatedAt: any, createdAt: any, registrant: { __typename?: 'registrant_Registrant', displayName: string, userId?: Maybe<string>, conference: { __typename?: 'conference_Conference', name: string, slug: string } }, user?: Maybe<{ __typename?: 'User', email?: Maybe<string> }> }>, User_by_pk?: Maybe<{ __typename?: 'User', id: string, email?: Maybe<string> }> };
+export type SelectInvitationAndUserQuery = { __typename?: 'query_root', registrant_Invitation: Array<{ __typename?: 'registrant_Invitation', registrantId: any, confirmationCode?: any | null | undefined, id: any, inviteCode: any, invitedEmailAddress: string, linkToUserId?: string | null | undefined, updatedAt: any, createdAt: any, registrant: { __typename?: 'registrant_Registrant', displayName: string, userId?: string | null | undefined, conference: { __typename?: 'conference_Conference', name: string, slug: string } }, user?: { __typename?: 'User', email?: string | null | undefined } | null | undefined }>, User_by_pk?: { __typename?: 'User', id: string, email?: string | null | undefined } | null | undefined };
 
 export type UpdateInvitationMutationVariables = Exact<{
   confirmationCode: Scalars['uuid'];
@@ -39695,7 +39733,7 @@ export type UpdateInvitationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateInvitationMutation = { __typename?: 'mutation_root', update_registrant_Invitation?: Maybe<{ __typename?: 'registrant_Invitation_mutation_response', affected_rows: number }> };
+export type UpdateInvitationMutation = { __typename?: 'mutation_root', update_registrant_Invitation?: { __typename?: 'registrant_Invitation_mutation_response', affected_rows: number } | null | undefined };
 
 export type SetRegistrantUserIdMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -39703,16 +39741,16 @@ export type SetRegistrantUserIdMutationVariables = Exact<{
 }>;
 
 
-export type SetRegistrantUserIdMutation = { __typename?: 'mutation_root', update_registrant_Registrant?: Maybe<{ __typename?: 'registrant_Registrant_mutation_response', affected_rows: number }> };
+export type SetRegistrantUserIdMutation = { __typename?: 'mutation_root', update_registrant_Registrant?: { __typename?: 'registrant_Registrant_mutation_response', affected_rows: number } | null | undefined };
 
-export type RegistrantWithInvitePartsFragment = { __typename?: 'registrant_Registrant', id: any, displayName: string, userId?: Maybe<string>, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string, slug: string }, invitation?: Maybe<{ __typename?: 'registrant_Invitation', id: any, inviteCode: any, invitedEmailAddress: string, emails: Array<{ __typename?: 'Email', reason: string }> }> };
+export type RegistrantWithInvitePartsFragment = { __typename?: 'registrant_Registrant', id: any, displayName: string, userId?: string | null | undefined, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string, slug: string }, invitation?: { __typename?: 'registrant_Invitation', id: any, inviteCode: any, invitedEmailAddress: string, emails: Array<{ __typename?: 'Email', reason: string }> } | null | undefined };
 
 export type SelectRegistrantsWithInvitationQueryVariables = Exact<{
   registrantIds: Array<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type SelectRegistrantsWithInvitationQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', id: any, displayName: string, userId?: Maybe<string>, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string, slug: string }, invitation?: Maybe<{ __typename?: 'registrant_Invitation', id: any, inviteCode: any, invitedEmailAddress: string, emails: Array<{ __typename?: 'Email', reason: string }> }> }> };
+export type SelectRegistrantsWithInvitationQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', id: any, displayName: string, userId?: string | null | undefined, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string, slug: string }, invitation?: { __typename?: 'registrant_Invitation', id: any, inviteCode: any, invitedEmailAddress: string, emails: Array<{ __typename?: 'Email', reason: string }> } | null | undefined }> };
 
 export type SelectUnprocessedInvitationEmailJobsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -39724,14 +39762,14 @@ export type CompleteInvitationEmailJobsMutationVariables = Exact<{
 }>;
 
 
-export type CompleteInvitationEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_InvitationEmailJob?: Maybe<{ __typename?: 'job_queues_InvitationEmailJob_mutation_response', affected_rows: number }> };
+export type CompleteInvitationEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_InvitationEmailJob?: { __typename?: 'job_queues_InvitationEmailJob_mutation_response', affected_rows: number } | null | undefined };
 
 export type GetAutomaticInvitationsConfigurationQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type GetAutomaticInvitationsConfigurationQuery = { __typename?: 'query_root', initialStart?: Maybe<{ __typename?: 'conference_Configuration', value: any }>, initialEnd?: Maybe<{ __typename?: 'conference_Configuration', value: any }> };
+export type GetAutomaticInvitationsConfigurationQuery = { __typename?: 'query_root', initialStart?: { __typename?: 'conference_Configuration', value: any } | null | undefined, initialEnd?: { __typename?: 'conference_Configuration', value: any } | null | undefined };
 
 export type GetAutomaticInvitationsRepeatConfigurationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -39745,14 +39783,14 @@ export type InsertInvitationEmailJobMutationVariables = Exact<{
 }>;
 
 
-export type InsertInvitationEmailJobMutation = { __typename?: 'mutation_root', insert_job_queues_InvitationEmailJob_one?: Maybe<{ __typename?: 'job_queues_InvitationEmailJob', id: any }> };
+export type InsertInvitationEmailJobMutation = { __typename?: 'mutation_root', insert_job_queues_InvitationEmailJob_one?: { __typename?: 'job_queues_InvitationEmailJob', id: any } | null | undefined };
 
 export type GetAutomaticInvitations_ToBeRepeatedQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type GetAutomaticInvitations_ToBeRepeatedQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', id: any, invitationStatus?: Maybe<any> }> };
+export type GetAutomaticInvitations_ToBeRepeatedQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', id: any, invitationStatus?: any | null | undefined }> };
 
 export type OtherConferencePrepareJobsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -39777,7 +39815,7 @@ export type CreateVideoRenderJobMutationVariables = Exact<{
 }>;
 
 
-export type CreateVideoRenderJobMutation = { __typename?: 'mutation_root', insert_video_VideoRenderJob_one?: Maybe<{ __typename?: 'video_VideoRenderJob', id: any }> };
+export type CreateVideoRenderJobMutation = { __typename?: 'mutation_root', insert_video_VideoRenderJob_one?: { __typename?: 'video_VideoRenderJob', id: any } | null | undefined };
 
 export type GetEventsWithoutVonageSessionQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -39791,7 +39829,7 @@ export type Recording_GetEventQueryVariables = Exact<{
 }>;
 
 
-export type Recording_GetEventQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, startTime: any, endTime?: Maybe<any>, room: { __typename?: 'room_Room', id: any, channelStack?: Maybe<{ __typename?: 'video_ChannelStack', id: any, mediaPackageChannelId: string }> } }> };
+export type Recording_GetEventQuery = { __typename?: 'query_root', schedule_Event_by_pk?: { __typename?: 'schedule_Event', id: any, startTime: any, endTime?: any | null | undefined, room: { __typename?: 'room_Room', id: any, channelStack?: { __typename?: 'video_ChannelStack', id: any, mediaPackageChannelId: string } | null | undefined } } | null | undefined };
 
 export type StartMediaPackageHarvestJobMutationVariables = Exact<{
   awsJobId: Scalars['String'];
@@ -39799,7 +39837,7 @@ export type StartMediaPackageHarvestJobMutationVariables = Exact<{
 }>;
 
 
-export type StartMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', update_job_queues_MediaPackageHarvestJob_by_pk?: Maybe<{ __typename?: 'job_queues_MediaPackageHarvestJob', id: any }> };
+export type StartMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', update_job_queues_MediaPackageHarvestJob_by_pk?: { __typename?: 'job_queues_MediaPackageHarvestJob', id: any } | null | undefined };
 
 export type CreateMediaPackageHarvestJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -39807,14 +39845,14 @@ export type CreateMediaPackageHarvestJobMutationVariables = Exact<{
 }>;
 
 
-export type CreateMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', insert_job_queues_MediaPackageHarvestJob_one?: Maybe<{ __typename?: 'job_queues_MediaPackageHarvestJob', id: any }> };
+export type CreateMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', insert_job_queues_MediaPackageHarvestJob_one?: { __typename?: 'job_queues_MediaPackageHarvestJob', id: any } | null | undefined };
 
 export type Recording_GetMediaPackageHarvestJobQueryVariables = Exact<{
   mediaPackageHarvestJobId: Scalars['String'];
 }>;
 
 
-export type Recording_GetMediaPackageHarvestJobQuery = { __typename?: 'query_root', job_queues_MediaPackageHarvestJob: Array<{ __typename?: 'job_queues_MediaPackageHarvestJob', conferenceId: any, id: any, event: { __typename?: 'schedule_Event', id: any, name: string, startTime: any, durationSeconds: number, item?: Maybe<{ __typename?: 'content_Item', id: any, title: string }> } }> };
+export type Recording_GetMediaPackageHarvestJobQuery = { __typename?: 'query_root', job_queues_MediaPackageHarvestJob: Array<{ __typename?: 'job_queues_MediaPackageHarvestJob', conferenceId: any, id: any, event: { __typename?: 'schedule_Event', id: any, name: string, startTime: any, durationSeconds: number, item?: { __typename?: 'content_Item', id: any, title: string } | null | undefined } }> };
 
 export type Recording_CompleteMediaPackageHarvestJobMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -39827,7 +39865,7 @@ export type Recording_CompleteMediaPackageHarvestJobMutationVariables = Exact<{
 }>;
 
 
-export type Recording_CompleteMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', update_job_queues_MediaPackageHarvestJob_by_pk?: Maybe<{ __typename?: 'job_queues_MediaPackageHarvestJob', id: any }>, insert_content_Element_one?: Maybe<{ __typename?: 'content_Element', id: any }> };
+export type Recording_CompleteMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', update_job_queues_MediaPackageHarvestJob_by_pk?: { __typename?: 'job_queues_MediaPackageHarvestJob', id: any } | null | undefined, insert_content_Element_one?: { __typename?: 'content_Element', id: any } | null | undefined };
 
 export type Recording_IgnoreMediaPackageHarvestJobMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -39835,7 +39873,7 @@ export type Recording_IgnoreMediaPackageHarvestJobMutationVariables = Exact<{
 }>;
 
 
-export type Recording_IgnoreMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', update_job_queues_MediaPackageHarvestJob_by_pk?: Maybe<{ __typename?: 'job_queues_MediaPackageHarvestJob', id: any }> };
+export type Recording_IgnoreMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', update_job_queues_MediaPackageHarvestJob_by_pk?: { __typename?: 'job_queues_MediaPackageHarvestJob', id: any } | null | undefined };
 
 export type FailMediaPackageHarvestJobMutationVariables = Exact<{
   awsJobId: Scalars['String'];
@@ -39843,14 +39881,14 @@ export type FailMediaPackageHarvestJobMutationVariables = Exact<{
 }>;
 
 
-export type FailMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', update_job_queues_MediaPackageHarvestJob?: Maybe<{ __typename?: 'job_queues_MediaPackageHarvestJob_mutation_response', affected_rows: number }> };
+export type FailMediaPackageHarvestJobMutation = { __typename?: 'mutation_root', update_job_queues_MediaPackageHarvestJob?: { __typename?: 'job_queues_MediaPackageHarvestJob_mutation_response', affected_rows: number } | null | undefined };
 
 export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQuery = { __typename?: 'query_root', registrant_GoogleAccount_by_pk?: Maybe<{ __typename?: 'registrant_GoogleAccount', registrantId: any, id: any, tokenData: any, youTubeData?: Maybe<any> }> };
+export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQuery = { __typename?: 'query_root', registrant_GoogleAccount_by_pk?: { __typename?: 'registrant_GoogleAccount', registrantId: any, id: any, tokenData: any, youTubeData?: any | null | undefined } | null | undefined };
 
 export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutationVariables = Exact<{
   registrantGoogleAccountId: Scalars['uuid'];
@@ -39858,7 +39896,7 @@ export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutationVariabl
 }>;
 
 
-export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutation = { __typename?: 'mutation_root', update_registrant_GoogleAccount_by_pk?: Maybe<{ __typename?: 'registrant_GoogleAccount', id: any }> };
+export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutation = { __typename?: 'mutation_root', update_registrant_GoogleAccount_by_pk?: { __typename?: 'registrant_GoogleAccount', id: any } | null | undefined };
 
 export type SetRoomVonageSessionIdMutationVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -39866,7 +39904,7 @@ export type SetRoomVonageSessionIdMutationVariables = Exact<{
 }>;
 
 
-export type SetRoomVonageSessionIdMutation = { __typename?: 'mutation_root', update_room_Room_by_pk?: Maybe<{ __typename?: 'room_Room', id: any }> };
+export type SetRoomVonageSessionIdMutation = { __typename?: 'mutation_root', update_room_Room_by_pk?: { __typename?: 'room_Room', id: any } | null | undefined };
 
 export type GetRegistrantsForRoomAndUserQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -39874,7 +39912,7 @@ export type GetRegistrantsForRoomAndUserQueryVariables = Exact<{
 }>;
 
 
-export type GetRegistrantsForRoomAndUserQuery = { __typename?: 'query_root', room_Room_by_pk?: Maybe<{ __typename?: 'room_Room', id: any, conference: { __typename?: 'conference_Conference', id: any, registrants: Array<{ __typename?: 'registrant_Registrant', userId?: Maybe<string>, id: any }> } }> };
+export type GetRegistrantsForRoomAndUserQuery = { __typename?: 'query_root', room_Room_by_pk?: { __typename?: 'room_Room', id: any, conference: { __typename?: 'conference_Conference', id: any, registrants: Array<{ __typename?: 'registrant_Registrant', userId?: string | null | undefined, id: any }> } } | null | undefined };
 
 export type AddRegistrantToRoomPeopleMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -39883,7 +39921,7 @@ export type AddRegistrantToRoomPeopleMutationVariables = Exact<{
 }>;
 
 
-export type AddRegistrantToRoomPeopleMutation = { __typename?: 'mutation_root', insert_room_RoomPerson_one?: Maybe<{ __typename?: 'room_RoomPerson', id: any }> };
+export type AddRegistrantToRoomPeopleMutation = { __typename?: 'mutation_root', insert_room_RoomPerson_one?: { __typename?: 'room_RoomPerson', id: any } | null | undefined };
 
 export type CreateDmRoom_GetRegistrantsQueryVariables = Exact<{
   registrantIds?: Maybe<Array<Scalars['uuid']> | Scalars['uuid']>;
@@ -39899,7 +39937,7 @@ export type CreateDmRoom_GetExistingRoomsQueryVariables = Exact<{
 }>;
 
 
-export type CreateDmRoom_GetExistingRoomsQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any, chatId?: Maybe<any>, roomPeople: Array<{ __typename?: 'room_RoomPerson', registrantId: any, id: any }> }> };
+export type CreateDmRoom_GetExistingRoomsQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any, chatId?: any | null | undefined, roomPeople: Array<{ __typename?: 'room_RoomPerson', registrantId: any, id: any }> }> };
 
 export type CreateDmRoomMutationVariables = Exact<{
   capacity: Scalars['Int'];
@@ -39909,13 +39947,13 @@ export type CreateDmRoomMutationVariables = Exact<{
 }>;
 
 
-export type CreateDmRoomMutation = { __typename?: 'mutation_root', insert_room_Room_one?: Maybe<{ __typename?: 'room_Room', id: any, chatId?: Maybe<any> }> };
+export type CreateDmRoomMutation = { __typename?: 'mutation_root', insert_room_Room_one?: { __typename?: 'room_Room', id: any, chatId?: any | null | undefined } | null | undefined };
 
 export type UnallocatedShuffleQueueEntryFragment = { __typename?: 'room_ShuffleQueueEntry', registrantId: any, id: any, created_at: any };
 
 export type ActiveShuffleRoomFragment = { __typename?: 'room_ShuffleRoom', id: any, startedAt: any, durationMinutes: number, room: { __typename?: 'room_Room', id: any, people: Array<{ __typename?: 'room_RoomPerson', id: any, registrantId: any }>, participants: Array<{ __typename?: 'room_Participant', id: any, registrantId: any }> } };
 
-export type ActiveShufflePeriodFragment = { __typename?: 'room_ShufflePeriod', conferenceId: any, endAt: any, id: any, maxRegistrantsPerRoom: number, name: string, organiserId: any, roomDurationMinutes: number, startAt: any, targetRegistrantsPerRoom: number, waitRoomMaxDurationSeconds: number, algorithm: Room_ShuffleAlgorithm_Enum, unallocatedQueueEntries: Array<{ __typename?: 'room_ShuffleQueueEntry', registrantId: any, id: any, created_at: any }>, activeRooms: Array<{ __typename?: 'room_ShuffleRoom', id: any, startedAt: any, durationMinutes: number, room: { __typename?: 'room_Room', id: any, people: Array<{ __typename?: 'room_RoomPerson', id: any, registrantId: any }>, participants: Array<{ __typename?: 'room_Participant', id: any, registrantId: any }> } }>, events: Array<{ __typename?: 'schedule_Event', id: any, endTime?: Maybe<any> }> };
+export type ActiveShufflePeriodFragment = { __typename?: 'room_ShufflePeriod', conferenceId: any, endAt: any, id: any, maxRegistrantsPerRoom: number, name: string, organiserId: any, roomDurationMinutes: number, startAt: any, targetRegistrantsPerRoom: number, waitRoomMaxDurationSeconds: number, algorithm: Room_ShuffleAlgorithm_Enum, unallocatedQueueEntries: Array<{ __typename?: 'room_ShuffleQueueEntry', registrantId: any, id: any, created_at: any }>, activeRooms: Array<{ __typename?: 'room_ShuffleRoom', id: any, startedAt: any, durationMinutes: number, room: { __typename?: 'room_Room', id: any, people: Array<{ __typename?: 'room_RoomPerson', id: any, registrantId: any }>, participants: Array<{ __typename?: 'room_Participant', id: any, registrantId: any }> } }>, events: Array<{ __typename?: 'schedule_Event', id: any, endTime?: any | null | undefined }> };
 
 export type SelectShufflePeriodQueryVariables = Exact<{
   id: Scalars['uuid'];
@@ -39923,7 +39961,7 @@ export type SelectShufflePeriodQueryVariables = Exact<{
 }>;
 
 
-export type SelectShufflePeriodQuery = { __typename?: 'query_root', room_ShufflePeriod_by_pk?: Maybe<{ __typename?: 'room_ShufflePeriod', conferenceId: any, endAt: any, id: any, maxRegistrantsPerRoom: number, name: string, organiserId: any, roomDurationMinutes: number, startAt: any, targetRegistrantsPerRoom: number, waitRoomMaxDurationSeconds: number, algorithm: Room_ShuffleAlgorithm_Enum, unallocatedQueueEntries: Array<{ __typename?: 'room_ShuffleQueueEntry', registrantId: any, id: any, created_at: any }>, activeRooms: Array<{ __typename?: 'room_ShuffleRoom', id: any, startedAt: any, durationMinutes: number, room: { __typename?: 'room_Room', id: any, people: Array<{ __typename?: 'room_RoomPerson', id: any, registrantId: any }>, participants: Array<{ __typename?: 'room_Participant', id: any, registrantId: any }> } }>, events: Array<{ __typename?: 'schedule_Event', id: any, endTime?: Maybe<any> }> }> };
+export type SelectShufflePeriodQuery = { __typename?: 'query_root', room_ShufflePeriod_by_pk?: { __typename?: 'room_ShufflePeriod', conferenceId: any, endAt: any, id: any, maxRegistrantsPerRoom: number, name: string, organiserId: any, roomDurationMinutes: number, startAt: any, targetRegistrantsPerRoom: number, waitRoomMaxDurationSeconds: number, algorithm: Room_ShuffleAlgorithm_Enum, unallocatedQueueEntries: Array<{ __typename?: 'room_ShuffleQueueEntry', registrantId: any, id: any, created_at: any }>, activeRooms: Array<{ __typename?: 'room_ShuffleRoom', id: any, startedAt: any, durationMinutes: number, room: { __typename?: 'room_Room', id: any, people: Array<{ __typename?: 'room_RoomPerson', id: any, registrantId: any }>, participants: Array<{ __typename?: 'room_Participant', id: any, registrantId: any }> } }>, events: Array<{ __typename?: 'schedule_Event', id: any, endTime?: any | null | undefined }> } | null | undefined };
 
 export type SelectActiveShufflePeriodsQueryVariables = Exact<{
   from: Scalars['timestamptz'];
@@ -39932,7 +39970,7 @@ export type SelectActiveShufflePeriodsQueryVariables = Exact<{
 }>;
 
 
-export type SelectActiveShufflePeriodsQuery = { __typename?: 'query_root', room_ShufflePeriod: Array<{ __typename?: 'room_ShufflePeriod', conferenceId: any, endAt: any, id: any, maxRegistrantsPerRoom: number, name: string, organiserId: any, roomDurationMinutes: number, startAt: any, targetRegistrantsPerRoom: number, waitRoomMaxDurationSeconds: number, algorithm: Room_ShuffleAlgorithm_Enum, unallocatedQueueEntries: Array<{ __typename?: 'room_ShuffleQueueEntry', registrantId: any, id: any, created_at: any }>, activeRooms: Array<{ __typename?: 'room_ShuffleRoom', id: any, startedAt: any, durationMinutes: number, room: { __typename?: 'room_Room', id: any, people: Array<{ __typename?: 'room_RoomPerson', id: any, registrantId: any }>, participants: Array<{ __typename?: 'room_Participant', id: any, registrantId: any }> } }>, events: Array<{ __typename?: 'schedule_Event', id: any, endTime?: Maybe<any> }> }> };
+export type SelectActiveShufflePeriodsQuery = { __typename?: 'query_root', room_ShufflePeriod: Array<{ __typename?: 'room_ShufflePeriod', conferenceId: any, endAt: any, id: any, maxRegistrantsPerRoom: number, name: string, organiserId: any, roomDurationMinutes: number, startAt: any, targetRegistrantsPerRoom: number, waitRoomMaxDurationSeconds: number, algorithm: Room_ShuffleAlgorithm_Enum, unallocatedQueueEntries: Array<{ __typename?: 'room_ShuffleQueueEntry', registrantId: any, id: any, created_at: any }>, activeRooms: Array<{ __typename?: 'room_ShuffleRoom', id: any, startedAt: any, durationMinutes: number, room: { __typename?: 'room_Room', id: any, people: Array<{ __typename?: 'room_RoomPerson', id: any, registrantId: any }>, participants: Array<{ __typename?: 'room_Participant', id: any, registrantId: any }> } }>, events: Array<{ __typename?: 'schedule_Event', id: any, endTime?: any | null | undefined }> }> };
 
 export type AddPeopleToExistingShuffleRoomMutationVariables = Exact<{
   shuffleRoomId: Scalars['Int'];
@@ -39941,14 +39979,14 @@ export type AddPeopleToExistingShuffleRoomMutationVariables = Exact<{
 }>;
 
 
-export type AddPeopleToExistingShuffleRoomMutation = { __typename?: 'mutation_root', insert_room_RoomPerson?: Maybe<{ __typename?: 'room_RoomPerson_mutation_response', affected_rows: number }>, update_room_ShuffleQueueEntry?: Maybe<{ __typename?: 'room_ShuffleQueueEntry_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'room_ShuffleQueueEntry', id: any }> }> };
+export type AddPeopleToExistingShuffleRoomMutation = { __typename?: 'mutation_root', insert_room_RoomPerson?: { __typename?: 'room_RoomPerson_mutation_response', affected_rows: number } | null | undefined, update_room_ShuffleQueueEntry?: { __typename?: 'room_ShuffleQueueEntry_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'room_ShuffleQueueEntry', id: any }> } | null | undefined };
 
 export type ExpireShuffleQueueEntriesMutationVariables = Exact<{
   queueEntryIds: Array<Scalars['bigint']> | Scalars['bigint'];
 }>;
 
 
-export type ExpireShuffleQueueEntriesMutation = { __typename?: 'mutation_root', update_room_ShuffleQueueEntry?: Maybe<{ __typename?: 'room_ShuffleQueueEntry_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'room_ShuffleQueueEntry', id: any }> }> };
+export type ExpireShuffleQueueEntriesMutation = { __typename?: 'mutation_root', update_room_ShuffleQueueEntry?: { __typename?: 'room_ShuffleQueueEntry_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'room_ShuffleQueueEntry', id: any }> } | null | undefined };
 
 export type InsertShuffleRoomMutationVariables = Exact<{
   durationMinutes: Scalars['Int'];
@@ -39959,7 +39997,7 @@ export type InsertShuffleRoomMutationVariables = Exact<{
 }>;
 
 
-export type InsertShuffleRoomMutation = { __typename?: 'mutation_root', insert_room_ShuffleRoom_one?: Maybe<{ __typename?: 'room_ShuffleRoom', id: any }> };
+export type InsertShuffleRoomMutation = { __typename?: 'mutation_root', insert_room_ShuffleRoom_one?: { __typename?: 'room_ShuffleRoom', id: any } | null | undefined };
 
 export type InsertManagedRoomMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -39968,39 +40006,39 @@ export type InsertManagedRoomMutationVariables = Exact<{
 }>;
 
 
-export type InsertManagedRoomMutation = { __typename?: 'mutation_root', insert_room_Room_one?: Maybe<{ __typename?: 'room_Room', id: any }> };
+export type InsertManagedRoomMutation = { __typename?: 'mutation_root', insert_room_Room_one?: { __typename?: 'room_Room', id: any } | null | undefined };
 
 export type SetAutoPinOnManagedRoomMutationVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type SetAutoPinOnManagedRoomMutation = { __typename?: 'mutation_root', update_chat_Chat?: Maybe<{ __typename?: 'chat_Chat_mutation_response', affected_rows: number }> };
+export type SetAutoPinOnManagedRoomMutation = { __typename?: 'mutation_root', update_chat_Chat?: { __typename?: 'chat_Chat_mutation_response', affected_rows: number } | null | undefined };
 
 export type SetShuffleRoomsEndedMutationVariables = Exact<{
   ids: Array<Scalars['bigint']> | Scalars['bigint'];
 }>;
 
 
-export type SetShuffleRoomsEndedMutation = { __typename?: 'mutation_root', update_room_ShuffleRoom?: Maybe<{ __typename?: 'room_ShuffleRoom_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'room_ShuffleRoom', id: any }> }> };
+export type SetShuffleRoomsEndedMutation = { __typename?: 'mutation_root', update_room_ShuffleRoom?: { __typename?: 'room_ShuffleRoom_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'room_ShuffleRoom', id: any }> } | null | undefined };
 
 export type UploadableElementQueryVariables = Exact<{
   accessToken: Scalars['String'];
 }>;
 
 
-export type UploadableElementQuery = { __typename?: 'query_root', content_Element: Array<{ __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: Maybe<number>, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string, configurations: Array<{ __typename?: 'conference_Configuration', conferenceId: any, key: Conference_ConfigurationKey_Enum, value: any }> }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: Maybe<any>, entityId?: Maybe<any>, conferenceSlug: string }> }> };
+export type UploadableElementQuery = { __typename?: 'query_root', content_Element: Array<{ __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: number | null | undefined, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string, configurations: Array<{ __typename?: 'conference_Configuration', conferenceId: any, key: Conference_ConfigurationKey_Enum, value: any }> }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: any | null | undefined, entityId?: any | null | undefined, conferenceSlug: string }> }> };
 
-export type UploadableElementPermissionGrantFieldsFragment = { __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: Maybe<any>, entityId?: Maybe<any>, conferenceSlug: string };
+export type UploadableElementPermissionGrantFieldsFragment = { __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: any | null | undefined, entityId?: any | null | undefined, conferenceSlug: string };
 
-export type UploadableElementFieldsFragment = { __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: Maybe<number>, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: Maybe<any>, entityId?: Maybe<any>, conferenceSlug: string }> };
+export type UploadableElementFieldsFragment = { __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: number | null | undefined, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: any | null | undefined, entityId?: any | null | undefined, conferenceSlug: string }> };
 
 export type GetUploadersQueryVariables = Exact<{
   elementId: Scalars['uuid'];
 }>;
 
 
-export type GetUploadersQuery = { __typename?: 'query_root', content_Element_by_pk?: Maybe<{ __typename?: 'content_Element', id: any, conferenceId: any, typeName: Content_ElementType_Enum, conference: { __typename?: 'conference_Conference', submissionNotificationRoles: Array<{ __typename?: 'conference_Configuration', value: any }> }, item: { __typename?: 'content_Item', id: any, itemPeople: Array<{ __typename?: 'content_ItemProgramPerson', id: any, roleName: string, person: { __typename?: 'collection_ProgramPerson', id: any, name: string, email?: Maybe<string> } }> } }> };
+export type GetUploadersQuery = { __typename?: 'query_root', content_Element_by_pk?: { __typename?: 'content_Element', id: any, conferenceId: any, typeName: Content_ElementType_Enum, conference: { __typename?: 'conference_Conference', submissionNotificationRoles: Array<{ __typename?: 'conference_Configuration', value: any }> }, item: { __typename?: 'content_Item', id: any, itemPeople: Array<{ __typename?: 'content_ItemProgramPerson', id: any, roleName: string, person: { __typename?: 'collection_ProgramPerson', id: any, name: string, email?: string | null | undefined } }> } } | null | undefined };
 
 export type SetUploadableElementUploadsRemainingMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -40008,9 +40046,9 @@ export type SetUploadableElementUploadsRemainingMutationVariables = Exact<{
 }>;
 
 
-export type SetUploadableElementUploadsRemainingMutation = { __typename?: 'mutation_root', update_content_Element_by_pk?: Maybe<{ __typename?: 'content_Element', id: any }> };
+export type SetUploadableElementUploadsRemainingMutation = { __typename?: 'mutation_root', update_content_Element_by_pk?: { __typename?: 'content_Element', id: any } | null | undefined };
 
-export type UploaderPartsFragment = { __typename?: 'content_Uploader', id: any, email: string, emailsSentCount: number, name: string, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string }, element: { __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: Maybe<number>, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: Maybe<any>, entityId?: Maybe<any>, conferenceSlug: string }> } };
+export type UploaderPartsFragment = { __typename?: 'content_Uploader', id: any, email: string, emailsSentCount: number, name: string, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string }, element: { __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: number | null | undefined, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: any | null | undefined, entityId?: any | null | undefined, conferenceSlug: string }> } };
 
 export type InsertSubmissionRequestEmailsMutationVariables = Exact<{
   uploaderIds: Array<Scalars['uuid']> | Scalars['uuid'];
@@ -40018,26 +40056,26 @@ export type InsertSubmissionRequestEmailsMutationVariables = Exact<{
 }>;
 
 
-export type InsertSubmissionRequestEmailsMutation = { __typename?: 'mutation_root', update_content_Uploader?: Maybe<{ __typename?: 'content_Uploader_mutation_response', affected_rows: number }>, update_collection_ProgramPerson?: Maybe<{ __typename?: 'collection_ProgramPerson_mutation_response', affected_rows: number }> };
+export type InsertSubmissionRequestEmailsMutation = { __typename?: 'mutation_root', update_content_Uploader?: { __typename?: 'content_Uploader_mutation_response', affected_rows: number } | null | undefined, update_collection_ProgramPerson?: { __typename?: 'collection_ProgramPerson_mutation_response', affected_rows: number } | null | undefined };
 
 export type SelectUnprocessedSubmissionRequestEmailJobsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SelectUnprocessedSubmissionRequestEmailJobsQuery = { __typename?: 'query_root', job_queues_SubmissionRequestEmailJob: Array<{ __typename?: 'job_queues_SubmissionRequestEmailJob', id: any, emailTemplate?: Maybe<any>, uploader?: Maybe<{ __typename?: 'content_Uploader', id: any, email: string, emailsSentCount: number, name: string, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string }, element: { __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: Maybe<number>, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: Maybe<any>, entityId?: Maybe<any>, conferenceSlug: string }> } }>, person?: Maybe<{ __typename?: 'collection_ProgramPerson', id: any, name: string, email?: Maybe<string>, accessToken: string, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string } }> }> };
+export type SelectUnprocessedSubmissionRequestEmailJobsQuery = { __typename?: 'query_root', job_queues_SubmissionRequestEmailJob: Array<{ __typename?: 'job_queues_SubmissionRequestEmailJob', id: any, emailTemplate?: any | null | undefined, uploader?: { __typename?: 'content_Uploader', id: any, email: string, emailsSentCount: number, name: string, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string }, element: { __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: number | null | undefined, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: any | null | undefined, entityId?: any | null | undefined, conferenceSlug: string }> } } | null | undefined, person?: { __typename?: 'collection_ProgramPerson', id: any, name: string, email?: string | null | undefined, accessToken: string, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string } } | null | undefined }> };
 
 export type CompleteSubmissionRequestEmailJobsMutationVariables = Exact<{
   ids: Array<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type CompleteSubmissionRequestEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_SubmissionRequestEmailJob?: Maybe<{ __typename?: 'job_queues_SubmissionRequestEmailJob_mutation_response', affected_rows: number }> };
+export type CompleteSubmissionRequestEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_SubmissionRequestEmailJob?: { __typename?: 'job_queues_SubmissionRequestEmailJob_mutation_response', affected_rows: number } | null | undefined };
 
 export type GetElementIdForVideoRenderJobQueryVariables = Exact<{
   videoRenderJobId: Scalars['uuid'];
 }>;
 
 
-export type GetElementIdForVideoRenderJobQuery = { __typename?: 'query_root', video_VideoRenderJob_by_pk?: Maybe<{ __typename?: 'video_VideoRenderJob', elementId: any, id: any }> };
+export type GetElementIdForVideoRenderJobQuery = { __typename?: 'query_root', video_VideoRenderJob_by_pk?: { __typename?: 'video_VideoRenderJob', elementId: any, id: any } | null | undefined };
 
 export type SelectNewVideoRenderJobsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -40049,7 +40087,7 @@ export type MarkAndSelectNewVideoRenderJobsMutationVariables = Exact<{
 }>;
 
 
-export type MarkAndSelectNewVideoRenderJobsMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob?: Maybe<{ __typename?: 'video_VideoRenderJob_mutation_response', returning: Array<{ __typename?: 'video_VideoRenderJob', id: any, jobStatusName: Video_JobStatus_Enum, data: any, retriesCount: number }> }> };
+export type MarkAndSelectNewVideoRenderJobsMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob?: { __typename?: 'video_VideoRenderJob_mutation_response', returning: Array<{ __typename?: 'video_VideoRenderJob', id: any, jobStatusName: Video_JobStatus_Enum, data: any, retriesCount: number }> } | null | undefined };
 
 export type VideoRenderJobDataFragment = { __typename?: 'video_VideoRenderJob', id: any, jobStatusName: Video_JobStatus_Enum, data: any, retriesCount: number };
 
@@ -40058,7 +40096,7 @@ export type UnmarkVideoRenderJobsMutationVariables = Exact<{
 }>;
 
 
-export type UnmarkVideoRenderJobsMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob?: Maybe<{ __typename?: 'video_VideoRenderJob_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'video_VideoRenderJob', id: any }> }> };
+export type UnmarkVideoRenderJobsMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob?: { __typename?: 'video_VideoRenderJob_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'video_VideoRenderJob', id: any }> } | null | undefined };
 
 export type OngoingBroadcastableVideoRoomEventsQueryVariables = Exact<{
   time: Scalars['timestamptz'];
@@ -40081,14 +40119,14 @@ export type GetEventForArchiveQueryVariables = Exact<{
 }>;
 
 
-export type GetEventForArchiveQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, name: string, startTime: any, durationSeconds: number, conferenceId: any, item?: Maybe<{ __typename?: 'content_Item', id: any, elements_aggregate: { __typename?: 'content_Element_aggregate', aggregate?: Maybe<{ __typename?: 'content_Element_aggregate_fields', count: number }> } }> }> };
+export type GetEventForArchiveQuery = { __typename?: 'query_root', schedule_Event_by_pk?: { __typename?: 'schedule_Event', id: any, name: string, startTime: any, durationSeconds: number, conferenceId: any, item?: { __typename?: 'content_Item', id: any, elements_aggregate: { __typename?: 'content_Element_aggregate', aggregate?: { __typename?: 'content_Element_aggregate_fields', count: number } | null | undefined } } | null | undefined } | null | undefined };
 
 export type InsertVonageArchiveElementMutationVariables = Exact<{
   object: Content_Element_Insert_Input;
 }>;
 
 
-export type InsertVonageArchiveElementMutation = { __typename?: 'mutation_root', insert_content_Element_one?: Maybe<{ __typename?: 'content_Element', id: any }> };
+export type InsertVonageArchiveElementMutation = { __typename?: 'mutation_root', insert_content_Element_one?: { __typename?: 'content_Element', id: any } | null | undefined };
 
 export type CheckForVonageRoomRecordingQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -40114,7 +40152,7 @@ export type SaveVonageRoomRecordingMutationVariables = Exact<{
 }>;
 
 
-export type SaveVonageRoomRecordingMutation = { __typename?: 'mutation_root', update_video_VonageRoomRecording_by_pk?: Maybe<{ __typename?: 'video_VonageRoomRecording', id: any }> };
+export type SaveVonageRoomRecordingMutation = { __typename?: 'mutation_root', update_video_VonageRoomRecording_by_pk?: { __typename?: 'video_VonageRoomRecording', id: any } | null | undefined };
 
 export type Vonage_GetEventDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -40122,7 +40160,7 @@ export type Vonage_GetEventDetailsQueryVariables = Exact<{
 }>;
 
 
-export type Vonage_GetEventDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', conferenceId: any, id: any, intendedRoomModeName: Room_Mode_Enum, enableRecording: boolean, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', id: any, sessionId: string }>, room: { __typename?: 'room_Room', id: any, publicVonageSessionId?: Maybe<string> }, eventPeople: Array<{ __typename?: 'schedule_EventProgramPerson', id: any, roleName: Schedule_EventProgramPersonRole_Enum }>, conference: { __typename?: 'conference_Conference', id: any, registrants: Array<{ __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any, groupRegistrants: Array<{ __typename?: 'permissions_GroupRegistrant', id: any, group: { __typename?: 'permissions_Group', id: any, groupRoles: Array<{ __typename?: 'permissions_GroupRole', id: any, role: { __typename?: 'permissions_Role', id: any, rolePermissions: Array<{ __typename?: 'permissions_RolePermission', id: any, permissionName: Permissions_Permission_Enum }> } }> } }> }> } }> };
+export type Vonage_GetEventDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: { __typename?: 'schedule_Event', conferenceId: any, id: any, intendedRoomModeName: Room_Mode_Enum, enableRecording: boolean, eventVonageSession?: { __typename?: 'video_EventVonageSession', id: any, sessionId: string } | null | undefined, room: { __typename?: 'room_Room', id: any, publicVonageSessionId?: string | null | undefined }, eventPeople: Array<{ __typename?: 'schedule_EventProgramPerson', id: any, roleName: Schedule_EventProgramPersonRole_Enum }>, conference: { __typename?: 'conference_Conference', id: any, registrants: Array<{ __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any, groupRegistrants: Array<{ __typename?: 'permissions_GroupRegistrant', id: any, group: { __typename?: 'permissions_Group', id: any, groupRoles: Array<{ __typename?: 'permissions_GroupRole', id: any, role: { __typename?: 'permissions_Role', id: any, rolePermissions: Array<{ __typename?: 'permissions_RolePermission', id: any, permissionName: Permissions_Permission_Enum }> } }> } }> }> } } | null | undefined };
 
 export type VonageJoinRoom_GetInfoQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -40130,7 +40168,7 @@ export type VonageJoinRoom_GetInfoQueryVariables = Exact<{
 }>;
 
 
-export type VonageJoinRoom_GetInfoQuery = { __typename?: 'query_root', room_Room_by_pk?: Maybe<{ __typename?: 'room_Room', id: any, originatingItem?: Maybe<{ __typename?: 'content_Item', id: any, itemPeople: Array<{ __typename?: 'content_ItemProgramPerson', id: any, roleName: string, personId: any }> }> }> };
+export type VonageJoinRoom_GetInfoQuery = { __typename?: 'query_root', room_Room_by_pk?: { __typename?: 'room_Room', id: any, originatingItem?: { __typename?: 'content_Item', id: any, itemPeople: Array<{ __typename?: 'content_ItemProgramPerson', id: any, roleName: string, personId: any }> } | null | undefined } | null | undefined };
 
 export type AddVonageRoomRecordingToUserListMutationVariables = Exact<{
   recordingId: Scalars['uuid'];
@@ -40138,7 +40176,7 @@ export type AddVonageRoomRecordingToUserListMutationVariables = Exact<{
 }>;
 
 
-export type AddVonageRoomRecordingToUserListMutation = { __typename?: 'mutation_root', insert_registrant_SavedVonageRoomRecording_one?: Maybe<{ __typename?: 'registrant_SavedVonageRoomRecording', id: any }> };
+export type AddVonageRoomRecordingToUserListMutation = { __typename?: 'mutation_root', insert_registrant_SavedVonageRoomRecording_one?: { __typename?: 'registrant_SavedVonageRoomRecording', id: any } | null | undefined };
 
 export type FindRoomByVonageSessionIdQueryVariables = Exact<{
   vonageSessionId: Scalars['String'];
@@ -40156,19 +40194,19 @@ export type VonageSession_RemoveInvalidStreamsMutationVariables = Exact<{
 }>;
 
 
-export type VonageSession_RemoveInvalidStreamsMutation = { __typename?: 'mutation_root', update_video_VonageParticipantStream?: Maybe<{ __typename?: 'video_VonageParticipantStream_mutation_response', affected_rows: number }> };
+export type VonageSession_RemoveInvalidStreamsMutation = { __typename?: 'mutation_root', update_video_VonageParticipantStream?: { __typename?: 'video_VonageParticipantStream_mutation_response', affected_rows: number } | null | undefined };
 
 export type FetchPresenceSummaryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchPresenceSummaryQuery = { __typename?: 'query_root', presence_Summary?: Maybe<{ __typename?: 'PresenceSummaryOutput', total_unique_tabs: number, total_unique_user_ids: number, pages?: Maybe<any> }> };
+export type FetchPresenceSummaryQuery = { __typename?: 'query_root', presence_Summary?: { __typename?: 'PresenceSummaryOutput', total_unique_tabs: number, total_unique_user_ids: number, pages?: any | null | undefined } | null | undefined };
 
 export type InsertAppStatsMutationVariables = Exact<{
   object: Analytics_AppStats_Insert_Input;
 }>;
 
 
-export type InsertAppStatsMutation = { __typename?: 'mutation_root', insert_analytics_AppStats_one?: Maybe<{ __typename?: 'analytics_AppStats', id: number }> };
+export type InsertAppStatsMutation = { __typename?: 'mutation_root', insert_analytics_AppStats_one?: { __typename?: 'analytics_AppStats', id: number } | null | undefined };
 
 export type GetRegistrantQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -40211,7 +40249,7 @@ export type Authorisation_GetRegistrantQueryVariables = Exact<{
 }>;
 
 
-export type Authorisation_GetRegistrantQuery = { __typename?: 'query_root', registrant_Registrant_by_pk?: Maybe<{ __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any }> };
+export type Authorisation_GetRegistrantQuery = { __typename?: 'query_root', registrant_Registrant_by_pk?: { __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any } | null | undefined };
 
 export type GetConfigurationValueQueryVariables = Exact<{
   key: Conference_ConfigurationKey_Enum;
@@ -40219,7 +40257,7 @@ export type GetConfigurationValueQueryVariables = Exact<{
 }>;
 
 
-export type GetConfigurationValueQuery = { __typename?: 'query_root', conference_Configuration_by_pk?: Maybe<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }> };
+export type GetConfigurationValueQuery = { __typename?: 'query_root', conference_Configuration_by_pk?: { __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any } | null | undefined };
 
 export type Configuration_RecordingEmailNotificationsEnabledFragment = { __typename?: 'conference_Conference', recordingNotificationsEnabled: Array<{ __typename?: 'conference_Configuration', value: any }> };
 
@@ -40233,26 +40271,26 @@ export type FailConferencePrepareJobMutationVariables = Exact<{
 }>;
 
 
-export type FailConferencePrepareJobMutation = { __typename?: 'mutation_root', update_conference_PrepareJob_by_pk?: Maybe<{ __typename?: 'conference_PrepareJob', id: any }> };
+export type FailConferencePrepareJobMutation = { __typename?: 'mutation_root', update_conference_PrepareJob_by_pk?: { __typename?: 'conference_PrepareJob', id: any } | null | undefined };
 
 export type CompleteConferencePrepareJobMutationVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type CompleteConferencePrepareJobMutation = { __typename?: 'mutation_root', update_conference_PrepareJob_by_pk?: Maybe<{ __typename?: 'conference_PrepareJob', id: any }> };
+export type CompleteConferencePrepareJobMutation = { __typename?: 'mutation_root', update_conference_PrepareJob_by_pk?: { __typename?: 'conference_PrepareJob', id: any } | null | undefined };
 
 export type GetElementByIdQueryVariables = Exact<{
   elementId: Scalars['uuid'];
 }>;
 
 
-export type GetElementByIdQuery = { __typename?: 'query_root', content_Element_by_pk?: Maybe<{ __typename?: 'content_Element', id: any, data: any, typeName: Content_ElementType_Enum }> };
+export type GetElementByIdQuery = { __typename?: 'query_root', content_Element_by_pk?: { __typename?: 'content_Element', id: any, data: any, typeName: Content_ElementType_Enum } | null | undefined };
 
 export type GetEmailTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEmailTemplatesQuery = { __typename?: 'query_root', emailTemplates?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }> };
+export type GetEmailTemplatesQuery = { __typename?: 'query_root', emailTemplates?: { __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any } | null | undefined };
 
 export type GetEventVonageSessionQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -40268,14 +40306,14 @@ export type SetEventVonageSessionIdMutationVariables = Exact<{
 }>;
 
 
-export type SetEventVonageSessionIdMutation = { __typename?: 'mutation_root', insert_video_EventVonageSession_one?: Maybe<{ __typename?: 'video_EventVonageSession', id: any }> };
+export type SetEventVonageSessionIdMutation = { __typename?: 'mutation_root', insert_video_EventVonageSession_one?: { __typename?: 'video_EventVonageSession', id: any } | null | undefined };
 
 export type CreateItemRoom_GetItemQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type CreateItemRoom_GetItemQuery = { __typename?: 'query_root', content_Item_by_pk?: Maybe<{ __typename?: 'content_Item', id: any, chatId?: Maybe<any>, conferenceId: any, title: string, rooms: Array<{ __typename?: 'room_Room', id: any }> }> };
+export type CreateItemRoom_GetItemQuery = { __typename?: 'query_root', content_Item_by_pk?: { __typename?: 'content_Item', id: any, chatId?: any | null | undefined, conferenceId: any, title: string, rooms: Array<{ __typename?: 'room_Room', id: any }> } | null | undefined };
 
 export type Item_CreateRoomMutationVariables = Exact<{
   chatId?: Maybe<Scalars['uuid']>;
@@ -40285,14 +40323,14 @@ export type Item_CreateRoomMutationVariables = Exact<{
 }>;
 
 
-export type Item_CreateRoomMutation = { __typename?: 'mutation_root', insert_room_Room_one?: Maybe<{ __typename?: 'room_Room', id: any }> };
+export type Item_CreateRoomMutation = { __typename?: 'mutation_root', insert_room_Room_one?: { __typename?: 'room_Room', id: any } | null | undefined };
 
 export type GetRoomConferenceIdQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type GetRoomConferenceIdQuery = { __typename?: 'query_root', room_Room_by_pk?: Maybe<{ __typename?: 'room_Room', id: any, conferenceId: any }> };
+export type GetRoomConferenceIdQuery = { __typename?: 'query_root', room_Room_by_pk?: { __typename?: 'room_Room', id: any, conferenceId: any } | null | undefined };
 
 export type GetRoomThatRegistrantCanJoinQueryVariables = Exact<{
   roomId?: Maybe<Scalars['uuid']>;
@@ -40301,7 +40339,7 @@ export type GetRoomThatRegistrantCanJoinQueryVariables = Exact<{
 }>;
 
 
-export type GetRoomThatRegistrantCanJoinQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any, publicVonageSessionId?: Maybe<string>, conference: { __typename?: 'conference_Conference', registrants: Array<{ __typename?: 'registrant_Registrant', id: any }> } }>, FlatUserPermission: Array<{ __typename?: 'FlatUserPermission', permission_name?: Maybe<string> }> };
+export type GetRoomThatRegistrantCanJoinQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any, publicVonageSessionId?: string | null | undefined, conference: { __typename?: 'conference_Conference', registrants: Array<{ __typename?: 'registrant_Registrant', id: any }> } }>, FlatUserPermission: Array<{ __typename?: 'FlatUserPermission', permission_name?: string | null | undefined }> };
 
 export type CreateRoomChimeMeetingMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -40311,7 +40349,7 @@ export type CreateRoomChimeMeetingMutationVariables = Exact<{
 }>;
 
 
-export type CreateRoomChimeMeetingMutation = { __typename?: 'mutation_root', insert_room_ChimeMeeting_one?: Maybe<{ __typename?: 'room_ChimeMeeting', id: any }> };
+export type CreateRoomChimeMeetingMutation = { __typename?: 'mutation_root', insert_room_ChimeMeeting_one?: { __typename?: 'room_ChimeMeeting', id: any } | null | undefined };
 
 export type GetRoomChimeMeetingQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -40325,7 +40363,7 @@ export type GetRoomVonageMeetingQueryVariables = Exact<{
 }>;
 
 
-export type GetRoomVonageMeetingQuery = { __typename?: 'query_root', room_Room_by_pk?: Maybe<{ __typename?: 'room_Room', id: any, publicVonageSessionId?: Maybe<string> }> };
+export type GetRoomVonageMeetingQuery = { __typename?: 'query_root', room_Room_by_pk?: { __typename?: 'room_Room', id: any, publicVonageSessionId?: string | null | undefined } | null | undefined };
 
 export type GetRoomBySessionIdQueryVariables = Exact<{
   sessionId: Scalars['String'];
@@ -40346,7 +40384,7 @@ export type DeleteRoomChimeMeetingMutationVariables = Exact<{
 }>;
 
 
-export type DeleteRoomChimeMeetingMutation = { __typename?: 'mutation_root', delete_room_ChimeMeeting_by_pk?: Maybe<{ __typename?: 'room_ChimeMeeting', id: any }> };
+export type DeleteRoomChimeMeetingMutation = { __typename?: 'mutation_root', delete_room_ChimeMeeting_by_pk?: { __typename?: 'room_ChimeMeeting', id: any } | null | undefined };
 
 export type DeleteRoomChimeMeetingForRoomMutationVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -40354,7 +40392,7 @@ export type DeleteRoomChimeMeetingForRoomMutationVariables = Exact<{
 }>;
 
 
-export type DeleteRoomChimeMeetingForRoomMutation = { __typename?: 'mutation_root', delete_room_ChimeMeeting?: Maybe<{ __typename?: 'room_ChimeMeeting_mutation_response', affected_rows: number }> };
+export type DeleteRoomChimeMeetingForRoomMutation = { __typename?: 'mutation_root', delete_room_ChimeMeeting?: { __typename?: 'room_ChimeMeeting_mutation_response', affected_rows: number } | null | undefined };
 
 export type CreateRoomParticipantMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -40365,7 +40403,7 @@ export type CreateRoomParticipantMutationVariables = Exact<{
 }>;
 
 
-export type CreateRoomParticipantMutation = { __typename?: 'mutation_root', insert_room_Participant_one?: Maybe<{ __typename?: 'room_Participant', id: any }> };
+export type CreateRoomParticipantMutation = { __typename?: 'mutation_root', insert_room_Participant_one?: { __typename?: 'room_Participant', id: any } | null | undefined };
 
 export type RemoveRoomParticipantMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -40376,21 +40414,21 @@ export type RemoveRoomParticipantMutationVariables = Exact<{
 }>;
 
 
-export type RemoveRoomParticipantMutation = { __typename?: 'mutation_root', delete_room_Participant?: Maybe<{ __typename?: 'room_Participant_mutation_response', affected_rows: number }> };
+export type RemoveRoomParticipantMutation = { __typename?: 'mutation_root', delete_room_Participant?: { __typename?: 'room_Participant_mutation_response', affected_rows: number } | null | undefined };
 
 export type CountRoomParticipantsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type CountRoomParticipantsQuery = { __typename?: 'query_root', room_Participant_aggregate: { __typename?: 'room_Participant_aggregate', aggregate?: Maybe<{ __typename?: 'room_Participant_aggregate_fields', count: number }> } };
+export type CountRoomParticipantsQuery = { __typename?: 'query_root', room_Participant_aggregate: { __typename?: 'room_Participant_aggregate', aggregate?: { __typename?: 'room_Participant_aggregate_fields', count: number } | null | undefined } };
 
 export type InsertVonageSessionLayoutMutationVariables = Exact<{
   object: Video_VonageSessionLayout_Insert_Input;
 }>;
 
 
-export type InsertVonageSessionLayoutMutation = { __typename?: 'mutation_root', insert_video_VonageSessionLayout_one?: Maybe<{ __typename?: 'video_VonageSessionLayout', id: any }> };
+export type InsertVonageSessionLayoutMutation = { __typename?: 'mutation_root', insert_video_VonageSessionLayout_one?: { __typename?: 'video_VonageSessionLayout', id: any } | null | undefined };
 
 export type GetRoomParticipantDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -40398,16 +40436,16 @@ export type GetRoomParticipantDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetRoomParticipantDetailsQuery = { __typename?: 'query_root', room_Participant: Array<{ __typename?: 'room_Participant', id: any, vonageConnectionId?: Maybe<string>, chimeRegistrantId?: Maybe<string>, room: { __typename?: 'room_Room', id: any, conferenceId: any, publicVonageSessionId?: Maybe<string>, chimeMeeting?: Maybe<{ __typename?: 'room_ChimeMeeting', id: any, chimeMeetingId: string }> } }> };
+export type GetRoomParticipantDetailsQuery = { __typename?: 'query_root', room_Participant: Array<{ __typename?: 'room_Participant', id: any, vonageConnectionId?: string | null | undefined, chimeRegistrantId?: string | null | undefined, room: { __typename?: 'room_Room', id: any, conferenceId: any, publicVonageSessionId?: string | null | undefined, chimeMeeting?: { __typename?: 'room_ChimeMeeting', id: any, chimeMeetingId: string } | null | undefined } }> };
 
-export type RoomParticipantFragment = { __typename?: 'room_Participant', id: any, vonageConnectionId?: Maybe<string>, chimeRegistrantId?: Maybe<string>, room: { __typename?: 'room_Room', id: any, conferenceId: any, publicVonageSessionId?: Maybe<string>, chimeMeeting?: Maybe<{ __typename?: 'room_ChimeMeeting', id: any, chimeMeetingId: string }> } };
+export type RoomParticipantFragment = { __typename?: 'room_Participant', id: any, vonageConnectionId?: string | null | undefined, chimeRegistrantId?: string | null | undefined, room: { __typename?: 'room_Room', id: any, conferenceId: any, publicVonageSessionId?: string | null | undefined, chimeMeeting?: { __typename?: 'room_ChimeMeeting', id: any, chimeMeetingId: string } | null | undefined } };
 
 export type DeleteRoomParticipantsCreatedBeforeMutationVariables = Exact<{
   before: Scalars['timestamptz'];
 }>;
 
 
-export type DeleteRoomParticipantsCreatedBeforeMutation = { __typename?: 'mutation_root', delete_room_Participant?: Maybe<{ __typename?: 'room_Participant_mutation_response', affected_rows: number }> };
+export type DeleteRoomParticipantsCreatedBeforeMutation = { __typename?: 'mutation_root', delete_room_Participant?: { __typename?: 'room_Participant_mutation_response', affected_rows: number } | null | undefined };
 
 export type CreateTranscriptionJobMutationVariables = Exact<{
   awsTranscribeJobName: Scalars['String'];
@@ -40418,7 +40456,7 @@ export type CreateTranscriptionJobMutationVariables = Exact<{
 }>;
 
 
-export type CreateTranscriptionJobMutation = { __typename?: 'mutation_root', insert_video_TranscriptionJob_one?: Maybe<{ __typename?: 'video_TranscriptionJob', id: any }> };
+export type CreateTranscriptionJobMutation = { __typename?: 'mutation_root', insert_video_TranscriptionJob_one?: { __typename?: 'video_TranscriptionJob', id: any } | null | undefined };
 
 export type GetTranscriptionJobQueryVariables = Exact<{
   awsTranscribeJobName: Scalars['String'];
@@ -40433,7 +40471,7 @@ export type CompleteVideoRenderJobMutationVariables = Exact<{
 }>;
 
 
-export type CompleteVideoRenderJobMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob_by_pk?: Maybe<{ __typename?: 'video_VideoRenderJob', id: any, elementId: any }> };
+export type CompleteVideoRenderJobMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob_by_pk?: { __typename?: 'video_VideoRenderJob', id: any, elementId: any } | null | undefined };
 
 export type FailVideoRenderJobMutationVariables = Exact<{
   videoRenderJobId: Scalars['uuid'];
@@ -40441,7 +40479,7 @@ export type FailVideoRenderJobMutationVariables = Exact<{
 }>;
 
 
-export type FailVideoRenderJobMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob_by_pk?: Maybe<{ __typename?: 'video_VideoRenderJob', id: any, conferencePrepareJobId: any }> };
+export type FailVideoRenderJobMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob_by_pk?: { __typename?: 'video_VideoRenderJob', id: any, conferencePrepareJobId: any } | null | undefined };
 
 export type ExpireVideoRenderJobMutationVariables = Exact<{
   videoRenderJobId: Scalars['uuid'];
@@ -40449,7 +40487,7 @@ export type ExpireVideoRenderJobMutationVariables = Exact<{
 }>;
 
 
-export type ExpireVideoRenderJobMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob_by_pk?: Maybe<{ __typename?: 'video_VideoRenderJob', id: any }> };
+export type ExpireVideoRenderJobMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob_by_pk?: { __typename?: 'video_VideoRenderJob', id: any } | null | undefined };
 
 export type UpdateVideoRenderJobMutationVariables = Exact<{
   videoRenderJobId: Scalars['uuid'];
@@ -40457,21 +40495,21 @@ export type UpdateVideoRenderJobMutationVariables = Exact<{
 }>;
 
 
-export type UpdateVideoRenderJobMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob_by_pk?: Maybe<{ __typename?: 'video_VideoRenderJob', id: any }> };
+export type UpdateVideoRenderJobMutation = { __typename?: 'mutation_root', update_video_VideoRenderJob_by_pk?: { __typename?: 'video_VideoRenderJob', id: any } | null | undefined };
 
 export type CountUnfinishedVideoRenderJobsQueryVariables = Exact<{
   conferencePrepareJobId: Scalars['uuid'];
 }>;
 
 
-export type CountUnfinishedVideoRenderJobsQuery = { __typename?: 'query_root', video_VideoRenderJob_aggregate: { __typename?: 'video_VideoRenderJob_aggregate', aggregate?: Maybe<{ __typename?: 'video_VideoRenderJob_aggregate_fields', count: number }> } };
+export type CountUnfinishedVideoRenderJobsQuery = { __typename?: 'query_root', video_VideoRenderJob_aggregate: { __typename?: 'video_VideoRenderJob_aggregate', aggregate?: { __typename?: 'video_VideoRenderJob_aggregate_fields', count: number } | null | undefined } };
 
 export type GetBroadcastVideoRenderJobDetailsQueryVariables = Exact<{
   videoRenderJobId: Scalars['uuid'];
 }>;
 
 
-export type GetBroadcastVideoRenderJobDetailsQuery = { __typename?: 'query_root', video_VideoRenderJob_by_pk?: Maybe<{ __typename?: 'video_VideoRenderJob', id: any, elementId: any, jobStatusName: Video_JobStatus_Enum, conferencePrepareJob: { __typename?: 'conference_PrepareJob', id: any, jobStatusName: Video_JobStatus_Enum } }> };
+export type GetBroadcastVideoRenderJobDetailsQuery = { __typename?: 'query_root', video_VideoRenderJob_by_pk?: { __typename?: 'video_VideoRenderJob', id: any, elementId: any, jobStatusName: Video_JobStatus_Enum, conferencePrepareJob: { __typename?: 'conference_PrepareJob', id: any, jobStatusName: Video_JobStatus_Enum } } | null | undefined };
 
 export type OngoingArchivableVideoRoomEventsWithRoomInfoQueryVariables = Exact<{
   time: Scalars['timestamptz'];
@@ -40486,28 +40524,28 @@ export type GetEventBroadcastDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetEventBroadcastDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, room: { __typename?: 'room_Room', id: any, channelStack?: Maybe<{ __typename?: 'video_ChannelStack', rtmpAInputUri: string, rtmpBInputUri?: Maybe<string>, id: any }> }, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', sessionId: string, id: any, rtmpInputName: Video_RtmpInput_Enum }> }> };
+export type GetEventBroadcastDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: { __typename?: 'schedule_Event', id: any, room: { __typename?: 'room_Room', id: any, channelStack?: { __typename?: 'video_ChannelStack', rtmpAInputUri: string, rtmpBInputUri?: string | null | undefined, id: any } | null | undefined }, eventVonageSession?: { __typename?: 'video_EventVonageSession', sessionId: string, id: any, rtmpInputName: Video_RtmpInput_Enum } | null | undefined } | null | undefined };
 
 export type GetRoomArchiveDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type GetRoomArchiveDetailsQuery = { __typename?: 'query_root', room_Room_by_pk?: Maybe<{ __typename?: 'room_Room', publicVonageSessionId?: Maybe<string>, id: any }> };
+export type GetRoomArchiveDetailsQuery = { __typename?: 'query_root', room_Room_by_pk?: { __typename?: 'room_Room', publicVonageSessionId?: string | null | undefined, id: any } | null | undefined };
 
 export type CreateVonageRoomRecordingMutationVariables = Exact<{
   object: Video_VonageRoomRecording_Insert_Input;
 }>;
 
 
-export type CreateVonageRoomRecordingMutation = { __typename?: 'mutation_root', insert_video_VonageRoomRecording_one?: Maybe<{ __typename?: 'video_VonageRoomRecording', id: any }> };
+export type CreateVonageRoomRecordingMutation = { __typename?: 'mutation_root', insert_video_VonageRoomRecording_one?: { __typename?: 'video_VonageRoomRecording', id: any } | null | undefined };
 
 export type DisableEventRecordingFlagMutationVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
 
 
-export type DisableEventRecordingFlagMutation = { __typename?: 'mutation_root', update_schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any }> };
+export type DisableEventRecordingFlagMutation = { __typename?: 'mutation_root', update_schedule_Event_by_pk?: { __typename?: 'schedule_Event', id: any } | null | undefined };
 
 export type GetEventByVonageSessionIdQueryVariables = Exact<{
   sessionId: Scalars['String'];
@@ -40526,7 +40564,7 @@ export type CreateVonageParticipantStreamMutationVariables = Exact<{
 }>;
 
 
-export type CreateVonageParticipantStreamMutation = { __typename?: 'mutation_root', insert_video_VonageParticipantStream_one?: Maybe<{ __typename?: 'video_VonageParticipantStream', id: any }> };
+export type CreateVonageParticipantStreamMutation = { __typename?: 'mutation_root', insert_video_VonageParticipantStream_one?: { __typename?: 'video_VonageParticipantStream', id: any } | null | undefined };
 
 export type RemoveVonageParticipantStreamMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -40538,14 +40576,14 @@ export type RemoveVonageParticipantStreamMutationVariables = Exact<{
 }>;
 
 
-export type RemoveVonageParticipantStreamMutation = { __typename?: 'mutation_root', update_video_VonageParticipantStream?: Maybe<{ __typename?: 'video_VonageParticipantStream_mutation_response', affected_rows: number }> };
+export type RemoveVonageParticipantStreamMutation = { __typename?: 'mutation_root', update_video_VonageParticipantStream?: { __typename?: 'video_VonageParticipantStream_mutation_response', affected_rows: number } | null | undefined };
 
 export type GetVonageSessionLayoutQueryVariables = Exact<{
   vonageSessionId: Scalars['String'];
 }>;
 
 
-export type GetVonageSessionLayoutQuery = { __typename?: 'query_root', video_VonageSessionLayout: Array<{ __typename?: 'video_VonageSessionLayout', id: any, layoutData?: Maybe<any> }> };
+export type GetVonageSessionLayoutQuery = { __typename?: 'query_root', video_VonageSessionLayout: Array<{ __typename?: 'video_VonageSessionLayout', id: any, layoutData?: any | null | undefined }> };
 
 export type UpdateProfilePhotoMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -40558,7 +40596,7 @@ export type UpdateProfilePhotoMutationVariables = Exact<{
 }>;
 
 
-export type UpdateProfilePhotoMutation = { __typename?: 'mutation_root', update_registrant_Profile?: Maybe<{ __typename?: 'registrant_Profile_mutation_response', affected_rows: number }> };
+export type UpdateProfilePhotoMutation = { __typename?: 'mutation_root', update_registrant_Profile?: { __typename?: 'registrant_Profile_mutation_response', affected_rows: number } | null | undefined };
 
 export const Configuration_RecordingEmailNotificationsEnabledFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Configuration_RecordingEmailNotificationsEnabled"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"conference_Conference"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"recordingNotificationsEnabled"},"name":{"kind":"Name","value":"configurations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<Configuration_RecordingEmailNotificationsEnabledFragment, unknown>;
 export const Configuration_SubmissionNotificationRolesFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Configuration_SubmissionNotificationRoles"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"conference_Conference"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"submissionNotificationRoles"},"name":{"kind":"Name","value":"configurations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"SUBMISSION_NOTIFICATION_ROLES"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<Configuration_SubmissionNotificationRolesFragment, unknown>;
@@ -40604,6 +40642,7 @@ export const UpdateEmailStatusDocument = {"kind":"Document","definitions":[{"kin
 export const GetEventChatInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventChatInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"chatId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"chatId"}}]}}]}}]}}]} as unknown as DocumentNode<GetEventChatInfoQuery, GetEventChatInfoQueryVariables>;
 export const StartChatDuplicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartChatDuplication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"update_chat1"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"update_chat2"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<StartChatDuplicationMutation, StartChatDuplicationMutationVariables>;
 export const EndChatDuplicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EndChatDuplication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"update_chat1"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"NullValue"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"update_chat2"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"NullValue"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<EndChatDuplicationMutation, EndChatDuplicationMutationVariables>;
+export const NotifyRealtimeEventStartedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"NotifyRealtimeEventStarted"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyEventStarted"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"eventId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ok"}}]}}]}}]} as unknown as DocumentNode<NotifyRealtimeEventStartedMutation, NotifyRealtimeEventStartedMutationVariables>;
 export const NotifyRealtimeEventEndedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"NotifyRealtimeEventEnded"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyEventEnded"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"eventId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ok"}}]}}]}}]} as unknown as DocumentNode<NotifyRealtimeEventEndedMutation, NotifyRealtimeEventEndedMutationVariables>;
 export const GetEventTimingsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventTimings"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"timingsUpdatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"intendedRoomModeName"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}},{"kind":"Field","name":{"kind":"Name","value":"enableRecording"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"chatId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"continuations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"to"}}]}}]}}]}}]} as unknown as DocumentNode<GetEventTimingsQuery, GetEventTimingsQueryVariables>;
 export const Event_GetEventVonageSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Event_GetEventVonageSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}}]}}]}}]} as unknown as DocumentNode<Event_GetEventVonageSessionQuery, Event_GetEventVonageSessionQueryVariables>;

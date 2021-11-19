@@ -1,4 +1,4 @@
-import type { StackProps} from "@chakra-ui/react";
+import type { StackProps } from "@chakra-ui/react";
 import { Button, Code, HStack, Text, Tooltip, useColorModeValue, useToast, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
@@ -73,6 +73,10 @@ export default function MessageControls({
                 return false;
             case Chat_MessageType_Enum.Question:
                 return config.permissions.canEditQuestion;
+            case Chat_MessageType_Enum.EventStart:
+                return false;
+            case Chat_MessageType_Enum.ParticipationSurvey:
+                return false;
         }
     }, [
         config.permissions.canEditAnswer,
@@ -99,6 +103,10 @@ export default function MessageControls({
                 return false;
             case Chat_MessageType_Enum.Question:
                 return config.permissions.canDeleteQuestion;
+            case Chat_MessageType_Enum.EventStart:
+                return false;
+            case Chat_MessageType_Enum.ParticipationSurvey:
+                return false;
         }
     }, [
         config.permissions.canDeleteAnswer,

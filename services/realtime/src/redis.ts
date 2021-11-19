@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import assert from "assert";
 import genericPool from "generic-pool";
-import redis, { Callback, RedisClient } from "redis";
+import type { Callback, RedisClient } from "redis";
+import redis from "redis";
 import Redlock from "redlock";
 import { promisify } from "util";
 
@@ -84,6 +85,8 @@ export const redisClientP = {
         promisify((key: string, value: string, cb?: Callback<number>) => redisClient.sadd(key, value, cb)),
     srem: (redisClient: RedisClient) =>
         promisify((key: string, value: string, cb?: Callback<number>) => redisClient.srem(key, value, cb)),
+    sismember: (redisClient: RedisClient) =>
+        promisify((key: string, value: string, cb?: Callback<number>) => redisClient.sismember(key, value, cb)),
     smembers: (redisClient: RedisClient) =>
         promisify((key: string, cb?: Callback<string[]>) => redisClient.smembers(key, cb)),
     scan: (redisClient: RedisClient) =>

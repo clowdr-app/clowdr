@@ -114,13 +114,15 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
     }, [path]);
 
     return (
-        <HStack h="100%" w="100%" justifyContent="stretch" spacing={0}>
+        <HStack h="100%" w="100%" justifyContent="stretch" spacing={0} overflow="hidden">
             <Box
                 display={isRightBarOpen && maybeRegistrant ? "block" : "none"}
-                w="100%"
+                w="auto"
                 h="100%"
                 zIndex={0}
                 bgColor={sidebarBg}
+                overflow="hidden"
+                flex="0 1 100%"
             >
                 {rightSections}
             </Box>
@@ -288,6 +290,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                             }}
                             mb="auto"
                             showLabel={isExpanded}
+                            minW={isExpanded ? "9em" : undefined}
                         >
                             <Box pos="absolute" top={1} right={1} fontSize="xs">
                                 <PageCountText

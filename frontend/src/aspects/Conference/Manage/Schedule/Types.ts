@@ -27,6 +27,7 @@ export type EventDescriptor = {
     durationSeconds: number;
     endTime?: string | null;
     enableRecording?: boolean | null;
+    automaticParticipationSurvey?: boolean | null;
 
     tagIds: Set<string>;
 };

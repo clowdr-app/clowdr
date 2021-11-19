@@ -41,7 +41,7 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import Papa from "papaparse";
-import type { LegacyRef, Ref} from "react";
+import type { LegacyRef, Ref } from "react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
@@ -50,7 +50,8 @@ import type {
     ItemFullNestedInfoFragment,
     ProgramPersonInfoFragment,
     RoomInfoFragment,
-    ShufflePeriodInfoFragment} from "../../../../generated/graphql";
+    ShufflePeriodInfoFragment,
+} from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
     EventInfoFragmentDoc,
@@ -79,10 +80,9 @@ import type {
     ColumnHeaderProps,
     ColumnSpecification,
     ExtraButton,
-    RowSpecification} from "../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useRealTime } from "../../../Generic/useRealTime";
 import FAIcon from "../../../Icons/FAIcon";
@@ -120,6 +120,7 @@ gql`
         $shufflePeriodId: uuid = null
         $insertContinuation: Boolean!
         $enableRecording: Boolean!
+        $automaticParticipationSurvey: Boolean!
     ) {
         insert_schedule_Event_one(
             object: {
@@ -135,6 +136,7 @@ gql`
                 exhibitionId: $exhibitionId
                 shufflePeriodId: $shufflePeriodId
                 enableRecording: $enableRecording
+                automaticParticipationSurvey: $automaticParticipationSurvey
             }
         ) {
             ...EventInfo
@@ -166,6 +168,7 @@ gql`
         $exhibitionId: uuid = null
         $shufflePeriodId: uuid = null
         $enableRecording: Boolean!
+        $automaticParticipationSurvey: Boolean!
     ) {
         update_schedule_Event_by_pk(
             pk_columns: { id: $eventId }
@@ -180,6 +183,7 @@ gql`
                 exhibitionId: $exhibitionId
                 shufflePeriodId: $shufflePeriodId
                 enableRecording: $enableRecording
+                automaticParticipationSurvey: $automaticParticipationSurvey
             }
         ) {
             ...EventInfo
@@ -205,6 +209,7 @@ enum ColumnId {
     Exhibition = "exhibition",
     ShufflePeriod = "shufflePeriod",
     EnableRecording = "enableRecording",
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
 }
 
 function rowWarning(row: EventInfoFragment) {
@@ -994,6 +999,50 @@ function EditableScheduleTable(): JSX.Element {
                     );
                 },
             },
+            {
+                id: ColumnId.AutomaticParticipationSurvey,
+                header: function AutomaticParticipationSurveyHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<EventInfoFragment>) {
+                    if (isInCreate) {
+                        return <FormLabel>Participation survey?</FormLabel>;
+                    } else {
+                        return (
+                            <Button size="xs" onClick={onClick} h="auto" py={1}>
+                                Participation survey?{sortDir !== null ? ` ${sortDir}` : undefined}
+                            </Button>
+                        );
+                    }
+                },
+                get: (data) => data.automaticParticipationSurvey ?? false,
+                set: (data, value: boolean) => {
+                    data.automaticParticipationSurvey = value;
+                },
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<EventInfoFragment>, filterValue: boolean) => {
+                    return rows.filter((row) => !!row.automaticParticipationSurvey === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function AutomaticParticipationSurveyCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<EventInfoFragment>, boolean>) {
+                    return (
+                        <Center>
+                            <Checkbox
+                                isChecked={value ?? false}
+                                onChange={(ev) => onChange?.(ev.target.checked)}
+                                onBlur={onBlur}
+                                ref={ref as LegacyRef<HTMLInputElement>}
+                            />
+                        </Center>
+                    );
+                },
+            },
         ],
         [
             allowOngoingEventCreation,
@@ -1160,6 +1209,7 @@ function EditableScheduleTable(): JSX.Element {
                           shufflePeriodId: null,
                           originatingDataId: null,
                           enableRecording: true,
+                          automaticParticipationSurvey: false,
                       }),
                       makeWhole: (d) => d as EventInfoFragment,
                       start: (record) => {
@@ -1389,6 +1439,9 @@ function EditableScheduleTable(): JSX.Element {
                                     : "",
 
                                 "Tag Ids": event.eventTags.map((eventTag) => eventTag.tagId),
+
+                                "Recording Enabled": event.enableRecording,
+                                "Automatic Participation Survey Enabled": event.automaticParticipationSurvey,
                             })),
                             {
                                 columns: [
@@ -1416,6 +1469,8 @@ function EditableScheduleTable(): JSX.Element {
                                     "Exhibition Link",
                                     "Shuffle Link",
                                     "Tag Ids",
+                                    "Recording Enabled",
+                                    "Automatic Participation Survey Enabled",
                                 ],
                             }
                         );

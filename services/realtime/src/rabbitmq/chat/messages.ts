@@ -119,7 +119,7 @@ export async function action(action: Action<Message>, userId: string, confSlugs:
     return false;
 }
 
-async function publishAction(action: Action<Message>): Promise<boolean> {
+export async function publishAction(action: Action<Message>): Promise<boolean> {
     const channel = await uplinkChannel();
     return channel.publish(exchange, action.data.chatId, Buffer.from(JSON.stringify(action)), {
         persistent: true,

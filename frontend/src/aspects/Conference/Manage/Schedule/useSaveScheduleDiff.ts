@@ -1,11 +1,12 @@
-import type { ApolloError} from "@apollo/client";
+import type { ApolloError } from "@apollo/client";
 import { gql } from "@apollo/client";
 import assert from "assert";
 import { useEffect, useState } from "react";
 import type {
     Collection_Tag_Insert_Input,
     Conference_OriginatingData_Insert_Input,
-    Room_Room_Insert_Input} from "../../../../generated/graphql";
+    Room_Room_Insert_Input,
+} from "../../../../generated/graphql";
 import {
     Room_Mode_Enum,
     useDeleteEventsMutation,
@@ -67,6 +68,7 @@ gql`
         exhibitionId
         shufflePeriodId
         enableRecording
+        automaticParticipationSurvey
     }
 
     fragment EventProgramPersonInfo on schedule_EventProgramPerson {
@@ -587,6 +589,7 @@ export function useSaveScheduleDiff():
                                                 })),
                                             },
                                             enableRecording: event.enableRecording,
+                                            automaticParticipationSurvey: event.automaticParticipationSurvey,
                                         },
                                         newEventId: event.id,
                                         insertContinuation:

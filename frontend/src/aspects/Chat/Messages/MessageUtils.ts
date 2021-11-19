@@ -1,8 +1,10 @@
-import type { ChatMessageDataFragment, ChatReactionDataFragment} from "../../../generated/graphql";
+import type { ChatMessageDataFragment, ChatReactionDataFragment } from "../../../generated/graphql";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import type {
     AnswerMessageData,
+    EventStartData,
     MessageData,
+    ParticipationSurveyData,
     PollMessageData,
     PollResultsMessageData,
     ReactionData,
@@ -61,6 +63,16 @@ function areMessageDatasEqual(type: Chat_MessageType_Enum, x: MessageData, y: Me
         }
         case Chat_MessageType_Enum.Question:
             return true;
+        case Chat_MessageType_Enum.EventStart: {
+            const xD = x as EventStartData;
+            const yD = x as EventStartData;
+            return xD.event.id === yD.event.id;
+        }
+        case Chat_MessageType_Enum.ParticipationSurvey: {
+            const xD = x as ParticipationSurveyData;
+            const yD = x as ParticipationSurveyData;
+            return xD.event.id === yD.event.id;
+        }
     }
 }
 

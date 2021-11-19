@@ -30,6 +30,7 @@ export function convertScheduleToDescriptors(schedule: SelectWholeScheduleQuery)
                     startTime: event.startTime,
                     tagIds: new Set(event.eventTags.map((x) => x.tagId)),
                     enableRecording: event.enableRecording,
+                    automaticParticipationSurvey: event.automaticParticipationSurvey,
                 },
             ])
         ),
@@ -110,6 +111,7 @@ export function deepCloneEventDescriptor(event: EventDescriptor): EventDescripto
         startTime: event.startTime,
         tagIds: new Set(event.tagIds),
         enableRecording: event.enableRecording,
+        automaticParticipationSurvey: event.automaticParticipationSurvey,
     };
 }
 

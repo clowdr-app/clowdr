@@ -1,131 +1,83 @@
-import { Flex } from "@chakra-ui/react";
-import React from "react";
-import type { SubtitlesSparseArray } from "./srt";
+import React, { CSSProperties } from "react";
+import { FixedSizeList } from "react-window";
+import type { SubtitlesArray } from "./srt";
 import SubtitleBlock from "./SubtitleBlock";
 
 function validateNewStartTenths({
     oldTranscript,
-    oldStartTenths,
+    index,
     newStartTenths,
 }: {
-    oldTranscript: SubtitlesSparseArray;
-    oldStartTenths: number;
+    oldTranscript: SubtitlesArray;
+    index: number;
     newStartTenths: number;
 }): Boolean {
-    if (newStartTenths < oldStartTenths) {
-        if (newStartTenths < 0) return false;
-
-        for (let prevBlockStartTenths = oldStartTenths - 1; prevBlockStartTenths >= 0; --prevBlockStartTenths) {
-            if (oldTranscript[prevBlockStartTenths]) {
-                return newStartTenths >= oldTranscript[prevBlockStartTenths].endTenths;
-            }
-        }
-
-        return true;
+    if (newStartTenths < oldTranscript[index].startTenths) {
+        if (index === 0) return newStartTenths >= 0;
+        return newStartTenths >= oldTranscript[index - 1].endTenths;
     }
 
-    return newStartTenths < oldTranscript[oldStartTenths].endTenths;
+    return newStartTenths < oldTranscript[index].endTenths;
 }
 
 function validateNewEndTenths({
     oldTranscript,
-    startTenths,
+    index,
     newEndTenths,
 }: {
-    oldTranscript: SubtitlesSparseArray;
-    startTenths: number;
+    oldTranscript: SubtitlesArray;
+    index: number;
     newEndTenths: number;
 }): Boolean {
-    if (newEndTenths > oldTranscript[startTenths].endTenths) {
-        // TODO upper limit is end of video
-
-        for (
-            let nextBlockStartTenths = oldTranscript[startTenths].endTenths;
-            nextBlockStartTenths < newEndTenths;
-            ++nextBlockStartTenths
-        ) {
-            if (oldTranscript[nextBlockStartTenths]) return false;
-        }
-
-        return true;
+    if (newEndTenths > oldTranscript[index].endTenths) {
+        if (index === oldTranscript.length) return true; // TODO upper limit is end of video
+        return newEndTenths <= oldTranscript[index + 1].startTenths;
     }
 
-    return newEndTenths > startTenths;
+    return newEndTenths > oldTranscript[index].startTenths;
 }
 
 export default function Transcript({
     value,
     onInput,
 }: {
-    value: SubtitlesSparseArray;
-    onInput: (transform: (oldTranscript: SubtitlesSparseArray) => SubtitlesSparseArray) => void;
+    value: SubtitlesArray;
+    onInput: (transform: (oldTranscript: SubtitlesArray) => SubtitlesArray) => void;
 }): JSX.Element {
+    function SubtitleBlockJITRenderer({ index, style }: { index: number; style: CSSProperties }): JSX.Element {
+        const { startTenths, endTenths, text } = value[index];
+
+        function stateChange(updates: { startTenths?: number; endTenths?: number; text?: string }): void {
+            onInput((oldTranscript) => [
+                ...oldTranscript.slice(0, index),
+                { index, startTenths, endTenths, text, ...updates },
+                ...oldTranscript.slice(index + 1),
+            ]);
+        }
+
+        return (
+            <SubtitleBlock
+                {...{
+                    key: startTenths,
+                    startTenths,
+                    endTenths,
+                    text,
+                    style,
+                    onTextInput: (newText) => stateChange({ text: newText }),
+                    onStartTenthsInput: (newStartTenths) => stateChange({ startTenths: newStartTenths }),
+                    onEndTenthsInput: (newEndTenths) => stateChange({ endTenths: newEndTenths }),
+                }}
+            />
+        );
+    }
+
     return (
-        <Flex flexBasis={0} flexGrow={2} flexDirection="column" justifyContent="center">
-            {value.reduce(
-                (elements, { endTenths, text }, startTenths) => [
-                    ...elements,
-                    <SubtitleBlock
-                        {...{
-                            key: startTenths,
-                            startTenths,
-                            endTenths,
-                            text,
-                            onTextInput: (newText) => {
-                                onInput((oldTranscript) =>
-                                    oldTranscript.reduce((nextTranscript, thisBlock, thisIndex) => {
-                                        nextTranscript[thisIndex] =
-                                            thisIndex === startTenths
-                                                ? {
-                                                      endTenths: thisBlock.endTenths,
-                                                      text: newText,
-                                                  }
-                                                : thisBlock;
-                                        return nextTranscript;
-                                    }, [] as SubtitlesSparseArray)
-                                );
-                            },
-                            onStartTenthsInput: (newStartTenths) => {
-                                onInput((oldTranscript) =>
-                                    oldTranscript.reduce((nextTranscript, thisBlock, thisIndex) => {
-                                        nextTranscript[
-                                            thisIndex === startTenths &&
-                                            validateNewStartTenths({
-                                                oldTranscript,
-                                                oldStartTenths: startTenths,
-                                                newStartTenths,
-                                            })
-                                                ? newStartTenths
-                                                : thisIndex
-                                        ] = thisBlock;
-                                        return nextTranscript;
-                                    }, [] as SubtitlesSparseArray)
-                                );
-                            },
-                            onEndTenthsInput: (newEndTenths) => {
-                                onInput((oldTranscript) =>
-                                    oldTranscript.reduce((nextTranscript, thisBlock, thisIndex) => {
-                                        nextTranscript[thisIndex] =
-                                            thisIndex === startTenths &&
-                                            validateNewEndTenths({
-                                                oldTranscript,
-                                                startTenths,
-                                                newEndTenths,
-                                            })
-                                                ? {
-                                                      endTenths: newEndTenths,
-                                                      text: thisBlock.text,
-                                                  }
-                                                : thisBlock;
-                                        return nextTranscript;
-                                    }, [] as SubtitlesSparseArray)
-                                );
-                            },
-                        }}
-                    />,
-                ],
-                [] as JSX.Element[]
-            )}
-        </Flex>
+        <FixedSizeList
+            height={500}
+            width={800}
+            itemCount={value.length}
+            itemSize={101}
+            children={SubtitleBlockJITRenderer}
+        />
     );
 }

@@ -1,5 +1,5 @@
 import { Flex, Textarea } from "@chakra-ui/react";
-import React from "react";
+import React, { CSSProperties } from "react";
 import TimecodeInput from "./TimecodeInput";
 
 export default function SubtitleBlock({
@@ -9,6 +9,7 @@ export default function SubtitleBlock({
     onTextInput,
     onStartTenthsInput,
     onEndTenthsInput,
+    style,
 }: {
     startTenths: number;
     endTenths: number;
@@ -16,9 +17,10 @@ export default function SubtitleBlock({
     onTextInput: (newText: string) => void;
     onStartTenthsInput: (newStartTenths: number) => void;
     onEndTenthsInput: (newEndTenths: number) => void;
+    style: CSSProperties;
 }): JSX.Element {
     return (
-        <Flex style={{ fontFamily: "monospace" }}>
+        <Flex style={{ ...style, fontFamily: "monospace" }}>
             <Textarea
                 flexBasis={"54em"}
                 flexGrow={0}

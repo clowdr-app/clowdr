@@ -1,4 +1,4 @@
-import srtHandler, { Line as SerializableBlock } from "srt-parser-2";
+import srtHandler from "srt-parser-2";
 
 const anyDecimalSeparator = /[,.٫⎖]/;
 
@@ -28,31 +28,29 @@ function tenthsToSRTTimecode(tenthsTotal: number, { minusEpsilon = false } = {})
     return hoursStr + ":" + minutesStr + ":" + secondsStr + "," + millisecondsStr;
 }
 
-export type SubtitlesSparseArray = { endTenths: number; text: string }[];
+export type SubtitlesArray = {
+    index: number;
+    startTenths: number;
+    endTenths: number;
+    text: string;
+}[];
 
-export function SRTParse(srtTranscript: string): SubtitlesSparseArray {
-    return new srtHandler().fromSrt(srtTranscript).reduce((transcript, { startTime, endTime, text }) => {
-        transcript[timecodeToTenths(startTime)] = {
-            endTenths: timecodeToTenths(endTime),
-            text,
-        };
-        return transcript;
-    }, [] as SubtitlesSparseArray);
+export function SRTParse(srtTranscript: string): SubtitlesArray {
+    return new srtHandler().fromSrt(srtTranscript).map(({ startTime, endTime, text }, index) => ({
+        index,
+        startTenths: timecodeToTenths(startTime),
+        endTenths: timecodeToTenths(endTime),
+        text,
+    }));
 }
 
-export function SRTStringify(transcript: SubtitlesSparseArray): string {
+export function SRTStringify(transcript: SubtitlesArray): string {
     return new srtHandler().toSrt(
-        transcript.reduce(
-            (serializableTranscript, { endTenths, text }, startTenths) => [
-                ...serializableTranscript,
-                {
-                    id: (serializableTranscript.length + 1).toString(),
-                    startTime: tenthsToSRTTimecode(startTenths),
-                    endTime: tenthsToSRTTimecode(endTenths, { minusEpsilon: true }),
-                    text,
-                },
-            ],
-            [] as SerializableBlock[]
-        )
+        transcript.map(({ startTenths, endTenths, text }, index) => ({
+            id: (index + 1).toString(),
+            startTime: tenthsToSRTTimecode(startTenths),
+            endTime: tenthsToSRTTimecode(endTenths, { minusEpsilon: true }),
+            text,
+        }))
     );
 }

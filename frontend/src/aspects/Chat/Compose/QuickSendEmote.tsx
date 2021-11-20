@@ -1,4 +1,4 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Button, HStack, Tooltip } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useCallback, useMemo, useRef } from "react";
@@ -48,7 +48,7 @@ export default function QuickSendEmote(): JSX.Element {
                     <QuickSendEmojiButton send={send} emoji="😃" isDisabled={disable} />
                     <QuickSendEmojiButton send={send} emoji="🤣" isDisabled={disable} />
                     <QuickSendEmojiButton send={send} emoji="😢" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="❤" isDisabled={disable} />
+                    <QuickSendEmojiButton send={send} emoji="<3" isDisabled={disable} />
                 </HStack>
             </Tooltip>
         ),

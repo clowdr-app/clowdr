@@ -29,12 +29,14 @@ import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 import { useUXChoice, UXChoice } from "./aspects/UXChoice/UXChoice";
+import { IntlProvider } from 'react-intl'
+
 
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
 // }
 
-export default function App(): JSX.Element {
+export default function App(props: any): JSX.Element {
     const chimeTheme = useColorModeValue(lightTheme, darkTheme);
 
     // const query = useQuery();
@@ -65,11 +67,17 @@ export default function App(): JSX.Element {
     );
 
     return (
-        <AppSettingsProvider>
-            <ThemeProvider theme={chimeTheme}>
-                <MeetingProvider>{routed}</MeetingProvider>
-            </ThemeProvider>
-        </AppSettingsProvider>
+        <IntlProvider
+            locale={props.locale}
+            defaultLocale="en"
+            messages={props.messages}
+        >
+            <AppSettingsProvider>
+                <ThemeProvider theme={chimeTheme}>
+                    <MeetingProvider>{routed}</MeetingProvider>
+                </ThemeProvider>
+            </AppSettingsProvider>
+        </IntlProvider>
     );
 }
 

@@ -1,0 +1,32 @@
+{
+  "signup": [
+    {
+      "type": 0,
+      "value": "Sign Up"
+    }
+  ],
+  "users.newuser.landingpage.description": [
+    {
+      "type": 0,
+      "value": "Accessible virtual and hybrid conferences."
+    }
+  ],
+  "users.newuser.landingpage.learnmore": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
+  "users.newuser.landingpage.signin": [
+    {
+      "type": 0,
+      "value": "Please sign up or log in to use Midspace."
+    }
+  ],
+  "users.newuser.landingpage.welcome": [
+    {
+      "type": 0,
+      "value": "Welcome to Midspace"
+    }
+  ]
+}

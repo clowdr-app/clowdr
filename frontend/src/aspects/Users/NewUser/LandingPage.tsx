@@ -1,5 +1,6 @@
 import { Box, ButtonGroup, Container, Flex, FormControl, Heading, Text } from "@chakra-ui/react";
 import React from "react";
+import { FormattedMessage } from "react-intl";
 import LoginButton from "../../Auth/Buttons/LoginButton";
 import SignupButton from "../../Auth/Buttons/SignUpButton";
 import { ExternalLinkButton } from "../../Chakra/LinkButton";
@@ -30,7 +31,7 @@ export default function NewUserLandingPage({ conferenceName }: { conferenceName?
                             fontWeight="normal"
                             textAlign={["center", "left"]}
                         >
-                            Welcome to Midspace
+                            <FormattedMessage id="users.newuser.landingpage.welcome" defaultMessage="Welcome to Midspace" description="greetings text" />
                         </Heading>
                         <Heading
                             mt={4}
@@ -41,7 +42,11 @@ export default function NewUserLandingPage({ conferenceName }: { conferenceName?
                             fontWeight="thin"
                             textAlign={["center", "left"]}
                         >
-                            Accessible virtual and hybrid conferences.
+                            <FormattedMessage
+                                id="users.newuser.landingpage.description"
+                                defaultMessage="Accessible virtual and hybrid conferences."
+                                description="description text"
+                            />
                         </Heading>
                         <ExternalLinkButton
                             to="https://midspace.app"
@@ -49,7 +54,7 @@ export default function NewUserLandingPage({ conferenceName }: { conferenceName?
                             size="lg"
                             linkProps={{ "aria-label": "Learn more about Midspace on our marketing website" }}
                         >
-                            Learn more
+                            <FormattedMessage id="users.newuser.landingpage.learnmore" defaultMessage="Learn more" description="learn more text" />
                         </ExternalLinkButton>
                     </Container>
                 </Flex>
@@ -66,7 +71,11 @@ export default function NewUserLandingPage({ conferenceName }: { conferenceName?
                     <Container textAlign={["center", "right"]} maxW="container.sm">
                         <FormControl>
                             <Text fontSize="lg" fontWeight="normal" margin={0} lineHeight="revert" mb={4}>
-                                Please sign up or log in to use Midspace.
+                                <FormattedMessage
+                                    id="users.newuser.landingpage.signin"
+                                    defaultMessage="Please sign up or log in to use Midspace."
+                                    description="sign in text"
+                                />
                             </Text>
                             <ButtonGroup spacing={4}>
                                 <SignupButton size="lg" colorScheme="purple" />

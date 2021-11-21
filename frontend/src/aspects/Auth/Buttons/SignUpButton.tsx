@@ -1,6 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, MenuItem } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { FormattedMessage } from "react-intl";
 import { useLocation } from "react-router-dom";
 
 export default function SignupButton({
@@ -39,7 +40,11 @@ export default function SignupButton({
             onClick={() => loginWithRedirect(opts)}
             colorScheme={colorScheme ?? "LeftMenuButton"}
         >
-            Sign Up
+            <FormattedMessage
+                id="signup"
+                defaultMessage="Sign Up"
+                description="sign up"
+            />
         </MenuItem>
     ) : (
         <Button
@@ -48,7 +53,11 @@ export default function SignupButton({
             onClick={() => loginWithRedirect(opts)}
             colorScheme={colorScheme ?? "SignUpButtonWithinPage"}
         >
-            Sign Up
+            <FormattedMessage
+                id="signup"
+                defaultMessage="Sign Up"
+                description="sign up"
+            />
         </Button>
     );
 }

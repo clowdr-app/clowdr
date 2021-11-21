@@ -1,0 +1,22 @@
+{
+  "signup": {
+    "defaultMessage": "Sign Up",
+    "description": "sign up"
+  },
+  "users.newuser.landingpage.description": {
+    "defaultMessage": "Accessible virtual and hybrid conferences.",
+    "description": "description text"
+  },
+  "users.newuser.landingpage.learnmore": {
+    "defaultMessage": "Learn more",
+    "description": "learn more text"
+  },
+  "users.newuser.landingpage.signin": {
+    "defaultMessage": "Please sign up or log in to use Midspace.",
+    "description": "sign in text"
+  },
+  "users.newuser.landingpage.welcome": {
+    "defaultMessage": "Welcome to Midspace",
+    "description": "greetings text"
+  }
+}

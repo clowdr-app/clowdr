@@ -21,60 +21,70 @@ function validateNewEndTenths(oldTranscript: SubtitlesArray, index: number, newE
     return newEndTenths > oldTranscript[index].startTenths;
 }
 
-export default function Transcript({
-    value,
-    onInput,
-}: {
+type TranscriptInputHandler = (transform: (oldTranscript: SubtitlesArray) => SubtitlesArray) => void;
+
+interface TranscriptProps {
     value: SubtitlesArray;
-    onInput: (transform: (oldTranscript: SubtitlesArray) => SubtitlesArray) => void;
+    onInput: TranscriptInputHandler;
+}
+
+function SubtitleBlockJITRenderer({
+    data: { onInput, value },
+    index,
+    style,
+}: {
+    data: TranscriptProps;
+    index: number;
+    style: CSSProperties;
 }): JSX.Element {
-    function SubtitleBlockJITRenderer({ index, style }: { index: number; style: CSSProperties }): JSX.Element {
-        const { startTenths, endTenths, text } = value[index];
+    const { startTenths, endTenths, text } = value[index];
 
-        return (
-            <SubtitleBlock
-                {...{
-                    key: startTenths,
-                    startTenths,
-                    endTenths,
-                    text,
-                    style,
-                    onTextInput: (newText) =>
-                        onInput((oldTranscript) => [
-                            ...oldTranscript.slice(0, index),
-                            { startTenths, endTenths, text: newText },
-                            ...oldTranscript.slice(index + 1),
-                        ]),
-                    onStartTenthsInput: (newStartTenths) =>
-                        onInput((oldTranscript) =>
-                            validateNewStartTenths(oldTranscript, index, newStartTenths)
-                                ? [
-                                      ...oldTranscript.slice(0, index),
-                                      { startTenths: newStartTenths, endTenths, text },
-                                      ...oldTranscript.slice(index + 1),
-                                  ]
-                                : oldTranscript
-                        ),
-                    onEndTenthsInput: (newEndTenths) =>
-                        onInput((oldTranscript) =>
-                            validateNewEndTenths(oldTranscript, index, newEndTenths)
-                                ? [
-                                      ...oldTranscript.slice(0, index),
-                                      { startTenths, endTenths: newEndTenths, text },
-                                      ...oldTranscript.slice(index + 1),
-                                  ]
-                                : oldTranscript
-                        ),
-                }}
-            />
-        );
-    }
+    return (
+        <SubtitleBlock
+            {...{
+                startTenths,
+                endTenths,
+                text,
+                style,
+                onTextInput: (newText) =>
+                    onInput((oldTranscript) => [
+                        ...oldTranscript.slice(0, index),
+                        { startTenths, endTenths, text: newText },
+                        ...oldTranscript.slice(index + 1),
+                    ]),
+                onStartTenthsInput: (newStartTenths) =>
+                    onInput((oldTranscript) =>
+                        validateNewStartTenths(oldTranscript, index, newStartTenths)
+                            ? [
+                                  ...oldTranscript.slice(0, index),
+                                  { startTenths: newStartTenths, endTenths, text },
+                                  ...oldTranscript.slice(index + 1),
+                              ]
+                            : oldTranscript
+                    ),
+                onEndTenthsInput: (newEndTenths) =>
+                    onInput((oldTranscript) =>
+                        validateNewEndTenths(oldTranscript, index, newEndTenths)
+                            ? [
+                                  ...oldTranscript.slice(0, index),
+                                  { startTenths, endTenths: newEndTenths, text },
+                                  ...oldTranscript.slice(index + 1),
+                              ]
+                            : oldTranscript
+                    ),
+            }}
+        />
+    );
+}
 
+export default function Transcript({ value, onInput }: TranscriptProps): JSX.Element {
     return (
         <FixedSizeList
             height={500}
             width={800}
             itemCount={value.length}
+            itemData={{ value, onInput }}
+            itemKey={(i, { value }) => value[i].startTenths}
             itemSize={101}
             children={SubtitleBlockJITRenderer}
         />

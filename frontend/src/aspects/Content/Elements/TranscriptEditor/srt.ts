@@ -35,7 +35,7 @@ export type SubtitlesArray = {
 }[];
 
 export function SRTParse(srtTranscript: string): SubtitlesArray {
-    return new srtHandler().fromSrt(srtTranscript).map(({ startTime, endTime, text }, index) => ({
+    return new srtHandler().fromSrt(srtTranscript).map(({ startTime, endTime, text }) => ({
         startTenths: timecodeToTenths(startTime),
         endTenths: timecodeToTenths(endTime),
         text,

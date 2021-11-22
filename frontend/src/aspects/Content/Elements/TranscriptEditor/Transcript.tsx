@@ -21,15 +21,13 @@ function validateNewEndTenths(oldTranscript: SubtitlesArray, index: number, newE
     return newEndTenths > oldTranscript[index].startTenths;
 }
 
-type TranscriptInputHandler = (transform: (oldTranscript: SubtitlesArray) => SubtitlesArray) => void;
-
 interface TranscriptProps {
     value: SubtitlesArray;
-    onInput: TranscriptInputHandler;
+    onInput: (transform: (oldTranscript: SubtitlesArray) => SubtitlesArray) => void;
 }
 
 function SubtitleBlockJITRenderer({
-    data: { onInput, value },
+    data: { value, onInput },
     index,
     style,
 }: {

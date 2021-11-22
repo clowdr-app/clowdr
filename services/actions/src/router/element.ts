@@ -58,7 +58,7 @@ router.post("/submit", json(), async (req: Request, res: Response) => {
     }
 });
 
-router.post("/updateSubtitles", json(), async (req: Request, res: Response) => {
+router.post("/updateSubtitles", json({ limit: 2 ** 20 }), async (req: Request, res: Response) => {
     try {
         const params = req.body.input;
         assertType<updateSubtitlesArgs>(params);

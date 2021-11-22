@@ -244,17 +244,17 @@ export async function handleEventStartNotification(
                     });
                 });
             }
-
-            notifyRealtimeServiceEventStarted(eventId).catch((e) => {
-                console.error("Failed to notify real-time service event started", { eventId, e });
-            });
         }, waitForMillis);
 
         setTimeout(() => {
             insertChatDuplicationMarkers(eventId, true).catch((e) => {
                 console.error("Failed to insert chat duplication start markers", { eventId, e });
             });
-        }, startTimeMillis - nowMillis + 500);
+
+            notifyRealtimeServiceEventStarted(eventId).catch((e) => {
+                console.error("Failed to notify real-time service event started", { eventId, e });
+            });
+        }, Math.max(startTimeMillis - nowMillis + 500, 0));
 
         // Used to skip creating duplicate rooms by accident
         const itemsCreatedRoomsFor: string[] = [];

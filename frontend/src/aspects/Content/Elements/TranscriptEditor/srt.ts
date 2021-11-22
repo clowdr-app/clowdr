@@ -29,7 +29,6 @@ function tenthsToSRTTimecode(tenthsTotal: number, { minusEpsilon = false } = {})
 }
 
 export type SubtitlesArray = {
-    index: number;
     startTenths: number;
     endTenths: number;
     text: string;
@@ -37,7 +36,6 @@ export type SubtitlesArray = {
 
 export function SRTParse(srtTranscript: string): SubtitlesArray {
     return new srtHandler().fromSrt(srtTranscript).map(({ startTime, endTime, text }, index) => ({
-        index,
         startTenths: timecodeToTenths(startTime),
         endTenths: timecodeToTenths(endTime),
         text,

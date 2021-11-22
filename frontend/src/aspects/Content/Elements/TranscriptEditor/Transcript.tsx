@@ -50,7 +50,7 @@ export default function Transcript({
         function stateChange(updates: { startTenths?: number; endTenths?: number; text?: string }): void {
             onInput((oldTranscript) => [
                 ...oldTranscript.slice(0, index),
-                { index, startTenths, endTenths, text, ...updates },
+                { startTenths, endTenths, text, ...updates },
                 ...oldTranscript.slice(index + 1),
             ]);
         }

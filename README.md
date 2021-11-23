@@ -66,7 +66,9 @@ Midspace relies on various cloud services, which will need to be configured for 
 1. [Set up user authentication](docs/auth-setup.md)
 1. **Full Setup:** [Set up AWS account and Deploy AWS CloudFormation Stacks](aws/README.md)
 1. [Set up video chat service](docs/video-service-setup.md)
-1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and an API key for it.
+1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account.
+   1. Take note of the API key when creating the account; you will not be able to view it later without updating it to a new value.
+   1. Also set up [Signed Event Webhook Requests](https://docs.sendgrid.com/for-developers/tracking-events/getting-started-event-webhook-security-features#the-signed-event-webhook) and generate a verification key pair. You will need the public key, but you can come back to the Sendgrid mail settings page &rarr; Signed Event Webhook Requests modal to view it later.
 
 ## Setting Up Local Working Copy
 

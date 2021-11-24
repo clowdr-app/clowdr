@@ -25,6 +25,7 @@ and all of our backend services.
    | Key | Value |
    | ------- | ---------- |
    | `SENDGRID_API_KEY` | your SendGrid API key, as a JSON string (i.e. wrapped in double quotes) |
+   | `SENDGRID_WEBHOOK_PUBLIC_KEY` | your SendGrid webhook signed requests public key, as a JSON string (i.e. wrapped in double quotes) |
    | `SENDGRID_SENDER` | the 'from' email address you wish to use for emails sent by Midspace, as a JSON string |
    | `SENDGRID_REPLYTO` | the 'reply-to' email address you wish to use for emails sent by Midspace, as a JSON string |
    | `HOST_ORGANISATION_NAME` | Name of your organization to appear in email footers, as a JSON string |

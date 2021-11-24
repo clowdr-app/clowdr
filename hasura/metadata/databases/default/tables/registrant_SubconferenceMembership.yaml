@@ -23,20 +23,6 @@ insert_permissions:
     - role
     - subconferenceId
   role: conference-organizer
-- permission:
-    backend_only: false
-    check:
-      _and:
-      - subconferenceId:
-          _in: X-Hasura-Subconference-Ids
-      - registrant:
-          conferenceId:
-            _in: X-Hasura-Conference-Ids
-    columns:
-    - registrantId
-    - role
-    - subconferenceId
-  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -95,25 +81,12 @@ update_permissions:
       subconferenceId:
         _in: X-Hasura-Subconference-Ids
   role: conference-organizer
-- permission:
-    check: null
-    columns:
-    - role
-    filter:
-      subconferenceId:
-        _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
       subconferenceId:
         _in: X-Hasura-Subconference-Ids
   role: conference-organizer
-- permission:
-    filter:
-      subconferenceId:
-        _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
 event_triggers:
 - definition:
     delete:

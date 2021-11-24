@@ -17,9 +17,13 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      group:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
+      _and:
+      - group:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
+      - registrant:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
     columns:
     - groupId
     - id
@@ -28,20 +32,19 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      group:
-        _or:
-        - _and:
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _is_null: true
-        - _and:
-          - subconferenceId:
-              _is_null: false
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _in: X-Hasura-Subconference-Ids
+      _and:
+      - group:
+          _or:
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+      - registrant:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
     columns:
     - groupId
     - id
@@ -71,11 +74,6 @@ select_permissions:
       group:
         _or:
         - _and:
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _is_null: true
-        - _and:
           - subconferenceId:
               _is_null: false
           - conferenceId:
@@ -83,15 +81,6 @@ select_permissions:
           - subconferenceId:
               _in: X-Hasura-Subconference-Ids
   role: subconference-organizer
-update_permissions:
-- permission:
-    check: null
-    columns: []
-    filter:
-      group:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
-  role: conference-organizer
 delete_permissions:
 - permission:
     filter:
@@ -103,11 +92,6 @@ delete_permissions:
     filter:
       group:
         _or:
-        - _and:
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _is_null: true
         - _and:
           - subconferenceId:
               _is_null: false

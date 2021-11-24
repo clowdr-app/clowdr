@@ -14,7 +14,15 @@ export enum AuthHeader {
 export enum HasuraRoleName {
     User = "user",
     Unauthenticated = "unauthenticated",
+    /**
+     * Organiser of a top-level conference. This role does not grant access to
+     * content of subconferences (even though this may in fact be granted to the user).
+     */
     ConferenceOrganizer = "conference-organizer",
+    /**
+     * Organiser of a subconference. This role grants access only to the contents
+     * of subconferences
+     */
     SubconferenceOrganizer = "subconference-organizer",
     Moderator = "moderator",
     Attendee = "attendee",

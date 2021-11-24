@@ -69,6 +69,28 @@ insert_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
+    columns:
+    - conferenceId
+    - durationSeconds
+    - enableRecording
+    - endTime
+    - exhibitionId
+    - id
+    - intendedRoomModeName
+    - itemId
+    - name
+    - originatingDataId
+    - roomId
+    - shufflePeriodId
+    - startTime
+    - streamTextEventId
+    - subconferenceId
+    - visibilityLevel
+  role: conference-organizer
+- permission:
+    backend_only: false
+    check:
+      _or:
       - _and:
         - subconferenceId:
             _is_null: false
@@ -164,6 +186,31 @@ select_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
+  role: conference-organizer
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - durationSeconds
+    - enableRecording
+    - endTime
+    - exhibitionId
+    - id
+    - intendedRoomModeName
+    - itemId
+    - name
+    - originatingDataId
+    - roomId
+    - shufflePeriodId
+    - startTime
+    - streamTextEventId
+    - subconferenceId
+    - updated_at
+    - visibilityLevel
+    computed_fields:
+    - roomName
+    filter:
+      _or:
       - _and:
         - subconferenceId:
             _is_null: false
@@ -234,6 +281,25 @@ update_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
+  role: conference-organizer
+- permission:
+    check: null
+    columns:
+    - durationSeconds
+    - enableRecording
+    - endTime
+    - exhibitionId
+    - intendedRoomModeName
+    - itemId
+    - name
+    - originatingDataId
+    - roomId
+    - shufflePeriodId
+    - startTime
+    - streamTextEventId
+    - visibilityLevel
+    filter:
+      _or:
       - _and:
         - subconferenceId:
             _is_null: false
@@ -251,6 +317,10 @@ delete_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
+  role: conference-organizer
+- permission:
+    filter:
+      _or:
       - _and:
         - subconferenceId:
             _is_null: false

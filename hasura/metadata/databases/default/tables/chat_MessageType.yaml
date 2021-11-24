@@ -17,17 +17,17 @@ select_permissions:
     columns:
     - name
     filter: {}
-  role: subconference-organizer
-- permission:
-    columns:
-    - name
-    filter: {}
   role: room-admin
 - permission:
     columns:
     - name
     filter: {}
   role: room-member
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: subconference-organizer
 - permission:
     columns:
     - name

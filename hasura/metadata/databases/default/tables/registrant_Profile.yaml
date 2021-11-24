@@ -51,6 +51,29 @@ select_permissions:
       registrant:
         conferenceId:
           _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - affiliation
+    - affiliationURL
+    - badges
+    - bio
+    - country
+    - created_at
+    - github
+    - hasBeenEdited
+    - photoURL_350x350
+    - photoURL_50x50
+    - pronouns
+    - registrantId
+    - timezoneUTCOffset
+    - twitter
+    - updated_at
+    - website
+    filter:
+      registrant:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
   role: subconference-organizer
 - permission:
     columns:
@@ -103,7 +126,6 @@ update_permissions:
     - bio
     - country
     - github
-    - hasBeenEdited
     - pronouns
     - timezoneUTCOffset
     - twitter
@@ -112,6 +134,29 @@ update_permissions:
       registrant:
         conferenceId:
           _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    check: null
+    columns:
+    - affiliation
+    - affiliationURL
+    - badges
+    - bio
+    - country
+    - github
+    - hasBeenEdited
+    - pronouns
+    - timezoneUTCOffset
+    - twitter
+    - website
+    filter:
+      registrant:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceMemberships:
+            subconferenceId:
+              _in: X-Hasura-Subconference-Ids
   role: subconference-organizer
 delete_permissions:
 - permission:
@@ -119,4 +164,14 @@ delete_permissions:
       registrant:
         conferenceId:
           _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    filter:
+      registrant:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceMemberships:
+            subconferenceId:
+              _in: X-Hasura-Subconference-Ids
   role: subconference-organizer

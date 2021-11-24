@@ -41,6 +41,17 @@ select_permissions:
               _in: X-Hasura-Conference-Ids
           - subconferenceId:
               _is_null: true
+  role: conference-organizer
+- permission:
+    columns:
+    - id
+    - eventId
+    - registrantId
+    - created_at
+    - updated_at
+    filter:
+      event:
+        _or:
         - _and:
           - subconferenceId:
               _is_null: false

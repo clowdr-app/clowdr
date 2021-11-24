@@ -16,6 +16,30 @@ select_permissions:
     - updated_at
     filter:
       channelStack:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - room:
+            subconferenceId:
+              _is_null: true
+  role: conference-organizer
+- permission:
+    columns:
+    - channelStackId
+    - created_at
+    - id
+    - jobStatusName
+    - message
+    - updated_at
+    filter:
+      channelStack:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - room:
+            _and:
+            - subconferenceId:
+                _is_null: false
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
   role: subconference-organizer

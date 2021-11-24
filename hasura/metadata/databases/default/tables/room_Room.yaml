@@ -183,13 +183,6 @@ insert_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
     columns:
     - capacity
     - colour
@@ -203,7 +196,7 @@ insert_permissions:
     - originatingItemId
     - priority
     - subconferenceId
-  role: subconference-organizer
+  role: conference-organizer
 - permission:
     backend_only: false
     check:
@@ -230,6 +223,31 @@ insert_permissions:
     - priority
     - subconferenceId
   role: room-admin
+- permission:
+    backend_only: false
+    check:
+      _or:
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+    columns:
+    - capacity
+    - colour
+    - conferenceId
+    - currentModeName
+    - id
+    - managementModeName
+    - name
+    - originatingDataId
+    - originatingEventId
+    - originatingItemId
+    - priority
+    - subconferenceId
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -301,14 +319,7 @@ select_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  role: conference-organizer
 - permission:
     columns:
     - capacity
@@ -393,6 +404,37 @@ select_permissions:
         - id:
             _in: X-Hasura-Room-Ids
   role: room-member
+- permission:
+    columns:
+    - capacity
+    - priority
+    - backendName
+    - colour
+    - currentModeName
+    - managementModeName
+    - name
+    - publicVonageSessionId
+    - created_at
+    - updated_at
+    - chatId
+    - conferenceId
+    - id
+    - originatingDataId
+    - originatingEventId
+    - originatingItemId
+    - subconferenceId
+    computed_fields:
+    - isProgramRoom
+    filter:
+      _or:
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
 update_permissions:
 - permission:
     check: null
@@ -414,14 +456,7 @@ update_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  role: conference-organizer
 - permission:
     check: null
     columns:
@@ -449,6 +484,29 @@ update_permissions:
       - id:
           _in: X-Hasura-Room-Ids
   role: room-admin
+- permission:
+    check: null
+    columns:
+    - backendName
+    - capacity
+    - colour
+    - managementModeName
+    - name
+    - originatingDataId
+    - originatingEventId
+    - originatingItemId
+    - priority
+    - subconferenceId
+    filter:
+      _or:
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
@@ -458,14 +516,7 @@ delete_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  role: conference-organizer
 - permission:
     filter:
       _and:
@@ -485,6 +536,17 @@ delete_permissions:
       - id:
           _in: X-Hasura-Room-Ids
   role: room-admin
+- permission:
+    filter:
+      _or:
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
 event_triggers:
 - definition:
     delete:

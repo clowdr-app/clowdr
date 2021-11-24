@@ -32,8 +32,14 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - registrant:
+          conferenceId:
+            _ceq:
+            - $
+            - conferenceId
     columns:
     - conferenceId
     - invitedEmailAddress

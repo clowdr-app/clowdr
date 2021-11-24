@@ -32,12 +32,6 @@ select_permissions:
   role: conference-organizer
 - permission:
     columns:
-    - name
-    - description
-    filter: {}
-  role: subconference-organizer
-- permission:
-    columns:
     - description
     - name
     filter: {}
@@ -48,6 +42,12 @@ select_permissions:
     - name
     filter: {}
   role: room-member
+- permission:
+    columns:
+    - name
+    - description
+    filter: {}
+  role: subconference-organizer
 - permission:
     columns:
     - description

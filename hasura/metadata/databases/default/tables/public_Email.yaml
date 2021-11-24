@@ -16,6 +16,29 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
+    - conferenceId
+    - created_at
+    - emailAddress
+    - htmlContents
+    - id
+    - invitationId
+    - plainTextContents
+    - reason
+    - recipientName
+    - retriesCount
+    - sentAt
+    - subject
+    - updated_at
+    - userId
+    filter:
+      invitation:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - conferenceId
     - created_at
     - emailAddress
     - htmlContents

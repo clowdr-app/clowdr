@@ -25,8 +25,37 @@ insert_permissions:
     - createdByRegistrantId
     - data
     - outputName
+  role: conference-organizer
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - createdByRegistrantId:
+          _in: X-Hasura-Registrant-Ids
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+    columns:
+    - conferenceId
+    - createdByRegistrantId
+    - data
+    - outputName
   role: subconference-organizer
 select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - createdByRegistrantId
+    - created_at
+    - data
+    - id
+    - jobStatusName
+    - message
+    - outputName
+    - updated_at
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer
 - permission:
     columns:
     - conferenceId

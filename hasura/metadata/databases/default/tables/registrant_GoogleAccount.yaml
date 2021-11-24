@@ -26,6 +26,19 @@ select_permissions:
     filter:
       registrantId:
         _in: X-Hasura-Registrant-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - googleAccountEmail
+    - id
+    - registrantId
+    - updated_at
+    - youTubeData
+    filter:
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
   role: subconference-organizer
 - permission:
     columns:
@@ -42,6 +55,11 @@ select_permissions:
           _eq: X-Hasura-User-Id
   role: user
 delete_permissions:
+- permission:
+    filter:
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: conference-organizer
 - permission:
     filter:
       registrantId:

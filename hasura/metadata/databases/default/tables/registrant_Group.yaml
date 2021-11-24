@@ -31,6 +31,16 @@ insert_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
+    columns:
+    - conferenceId
+    - id
+    - name
+    - subconferenceId
+  role: conference-organizer
+- permission:
+    backend_only: false
+    check:
+      _or:
       - _and:
         - subconferenceId:
             _is_null: false
@@ -60,6 +70,17 @@ select_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
+  role: conference-organizer
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - id
+    - name
+    - subconferenceId
+    - updated_at
+    filter:
+      _or:
       - _and:
         - subconferenceId:
             _is_null: false
@@ -81,6 +102,14 @@ update_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
+  role: conference-organizer
+- permission:
+    check: null
+    columns:
+    - name
+    - subconferenceId
+    filter:
+      _or:
       - _and:
         - subconferenceId:
             _is_null: false
@@ -98,6 +127,10 @@ delete_permissions:
             _in: X-Hasura-Conference-Ids
         - subconferenceId:
             _is_null: true
+  role: conference-organizer
+- permission:
+    filter:
+      _or:
       - _and:
         - subconferenceId:
             _is_null: false

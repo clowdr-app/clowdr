@@ -251,7 +251,7 @@ function EditableScheduleTable(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -1187,7 +1187,7 @@ function EditableScheduleTable(): JSX.Element {
                               {
                                   fetchOptions: {
                                       headers: {
-                                          [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                          [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                       },
                                   },
                               }
@@ -1219,7 +1219,7 @@ function EditableScheduleTable(): JSX.Element {
                 updateEvent(variables, {
                     fetchOptions: {
                         headers: {
-                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                         },
                     },
                 });
@@ -1244,7 +1244,7 @@ function EditableScheduleTable(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }

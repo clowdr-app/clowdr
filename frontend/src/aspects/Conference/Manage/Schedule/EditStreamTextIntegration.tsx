@@ -44,7 +44,7 @@ export default function EditStreamTextIntegration({ eventId }: { eventId: string
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -90,7 +90,7 @@ function EditStreamTextIntegrationInner({
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }

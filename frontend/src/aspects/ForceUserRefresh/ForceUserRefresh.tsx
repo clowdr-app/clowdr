@@ -11,6 +11,7 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { compare } from "compare-versions";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
@@ -37,7 +38,7 @@ export default function ForceUserRefresh(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "attendee",
+                [AuthHeader.Role]: HasuraRoleName.Attendee,
             }),
         []
     );

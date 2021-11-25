@@ -57,7 +57,7 @@ export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: "organizer",
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );

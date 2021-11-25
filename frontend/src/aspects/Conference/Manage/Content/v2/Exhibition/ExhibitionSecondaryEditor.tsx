@@ -136,7 +136,7 @@ function SecondaryEditorInner({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -272,7 +272,7 @@ function AddItemExhibitionBody({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }
@@ -365,7 +365,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -379,7 +379,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -403,7 +403,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -417,7 +417,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -443,7 +443,7 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }

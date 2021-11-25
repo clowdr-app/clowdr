@@ -45,7 +45,7 @@ export function EditElementInner(props: {
                         {
                             fetchOptions: {
                                 headers: {
-                                    [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                 },
                             },
                         }
@@ -103,7 +103,7 @@ export function EditElementInner(props: {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }

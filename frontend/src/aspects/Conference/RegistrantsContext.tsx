@@ -1,3 +1,4 @@
+import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
@@ -234,7 +235,7 @@ export default function RegistrantsContextProvider({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "attendee",
+                                            [AuthHeader.Role]: "attendee",
                                         },
                                     },
                                 }
@@ -279,7 +280,7 @@ export default function RegistrantsContextProvider({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            "X-Auth-Role": "attendee",
+                                            [AuthHeader.Role]: "attendee",
                                         },
                                     },
                                 }

@@ -100,7 +100,7 @@ function ManageTagsModalBody(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -318,7 +318,7 @@ function ManageTagsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -351,7 +351,7 @@ function ManageTagsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -378,7 +378,7 @@ function ManageTagsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }

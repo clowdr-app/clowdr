@@ -13,6 +13,7 @@ import { useAuthParameters } from "./aspects/GQL/AuthParameters";
 import { makeContext } from "./aspects/GQL/make-context";
 import useMaybeCurrentUser from "./aspects/Users/CurrentUser/useMaybeCurrentUser";
 import { useGetSlugForUrlQuery } from "./generated/graphql";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 
 const EmailVerificationRequiredPage = React.lazy(() => import("./aspects/Auth/EmailVerificationRequiredPage"));
 const LoggedOutPage = React.lazy(() => import("./aspects/Auth/LoggedOutPage"));
@@ -105,7 +106,7 @@ function CheckSlugInner(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": mUser ? "user" : "unauthenticated",
+                [AuthHeader.Role]: mUser ? HasuraRoleName.User : HasuraRoleName.Unauthenticated,
             }),
         [mUser]
     );

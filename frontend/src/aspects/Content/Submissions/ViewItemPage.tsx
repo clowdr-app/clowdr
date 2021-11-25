@@ -10,6 +10,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import type { VideoFileBlob } from "@midspace/shared-types/content";
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import * as R from "ramda";
@@ -54,7 +55,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Magic-Token": magicToken,
+                [AuthHeader.MagicToken]: magicToken,
             }),
         [magicToken]
     );

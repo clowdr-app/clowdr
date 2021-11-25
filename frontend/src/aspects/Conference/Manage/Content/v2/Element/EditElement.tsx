@@ -120,7 +120,7 @@ export function EditElement({
                                                             fetchOptions: {
                                                                 headers: {
                                                                     [AuthHeader.Role]:
-                                                                        HasuraRoleName.SubconferenceOrganizer,
+                                                                        HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -144,7 +144,7 @@ export function EditElement({
                                                             fetchOptions: {
                                                                 headers: {
                                                                     [AuthHeader.Role]:
-                                                                        HasuraRoleName.SubconferenceOrganizer,
+                                                                        HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -186,7 +186,7 @@ export function EditElement({
                                                             fetchOptions: {
                                                                 headers: {
                                                                     [AuthHeader.Role]:
-                                                                        HasuraRoleName.SubconferenceOrganizer,
+                                                                        HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -210,7 +210,7 @@ export function EditElement({
                                                             fetchOptions: {
                                                                 headers: {
                                                                     [AuthHeader.Role]:
-                                                                        HasuraRoleName.SubconferenceOrganizer,
+                                                                        HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -256,7 +256,7 @@ export function EditElement({
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -314,7 +314,7 @@ export function EditElement({
                                                             fetchOptions: {
                                                                 headers: {
                                                                     [AuthHeader.Role]:
-                                                                        HasuraRoleName.SubconferenceOrganizer,
+                                                                        HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -455,7 +455,7 @@ export function EditElement({
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }

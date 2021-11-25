@@ -48,7 +48,7 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -138,7 +138,7 @@ function AddItemPersonBody({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -219,7 +219,7 @@ function AddItemPersonBody({
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                             },
                                         },
                                     }
@@ -336,7 +336,7 @@ function ItemPersonsList({
                                                         fetchOptions: {
                                                             headers: {
                                                                 [AuthHeader.Role]:
-                                                                    HasuraRoleName.SubconferenceOrganizer,
+                                                                    HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -352,7 +352,7 @@ function ItemPersonsList({
                                                         fetchOptions: {
                                                             headers: {
                                                                 [AuthHeader.Role]:
-                                                                    HasuraRoleName.SubconferenceOrganizer,
+                                                                    HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -381,7 +381,7 @@ function ItemPersonsList({
                                                         fetchOptions: {
                                                             headers: {
                                                                 [AuthHeader.Role]:
-                                                                    HasuraRoleName.SubconferenceOrganizer,
+                                                                    HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -397,7 +397,7 @@ function ItemPersonsList({
                                                         fetchOptions: {
                                                             headers: {
                                                                 [AuthHeader.Role]:
-                                                                    HasuraRoleName.SubconferenceOrganizer,
+                                                                    HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -454,7 +454,7 @@ function ItemPersonsList({
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -484,7 +484,7 @@ function ItemPersonsList({
                                                 {
                                                     fetchOptions: {
                                                         headers: {
-                                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                         },
                                                     },
                                                 }

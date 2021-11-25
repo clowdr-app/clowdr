@@ -1,3 +1,4 @@
+import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
@@ -95,7 +96,7 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Room-Id": roomId,
+                [AuthHeader.RoomId]: roomId,
             }),
         [roomId]
     );

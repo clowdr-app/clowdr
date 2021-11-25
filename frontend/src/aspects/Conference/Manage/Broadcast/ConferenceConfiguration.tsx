@@ -30,7 +30,7 @@ export function Configuration({ conferenceId }: { conferenceId: string }): JSX.E
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );

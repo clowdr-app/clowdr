@@ -118,7 +118,7 @@ export function AddEventProgramPerson_RegistrantModal({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -193,7 +193,7 @@ export function AddEventProgramPerson_RegistrantModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -536,7 +536,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -555,7 +555,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -572,7 +572,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }

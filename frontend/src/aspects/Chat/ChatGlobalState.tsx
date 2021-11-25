@@ -4,6 +4,7 @@ import type { RenderProps } from "@chakra-ui/react";
 import { Box, Button, ButtonGroup, CloseButton, createStandaloneToast, Heading, VStack } from "@chakra-ui/react";
 import { datadogLogs } from "@datadog/browser-logs";
 import { assert } from "@midspace/assert";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import type { Client } from "@urql/core";
 import { CombinedError, gql } from "@urql/core";
 import { Mutex } from "async-mutex";
@@ -429,8 +430,8 @@ export class MessageState {
                 {
                     fetchOptions: {
                         headers: {
-                            "X-Auth-Role": "attendee",
-                            "X-Auth-Include-Room-Ids": "true",
+                            [AuthHeader.Role]: "attendee",
+                            [AuthHeader.IncludeRoomIds]: "true",
                         },
                     },
                 }
@@ -573,12 +574,12 @@ export class ChatState {
                                         headers:
                                             this.DMRoomId || this.NonDMRoomId
                                                 ? {
-                                                      "X-Auth-Role": "attendee",
-                                                      "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                                      [AuthHeader.Role]: "attendee",
+                                                      [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
                                                   }
                                                 : {
-                                                      "X-Auth-Role": "attendee",
-                                                      "X-Auth-Include-Room-Ids": "true",
+                                                      [AuthHeader.Role]: "attendee",
+                                                      [AuthHeader.IncludeRoomIds]: "true",
                                                   },
                                     },
                                 }
@@ -603,12 +604,12 @@ export class ChatState {
                                     headers:
                                         this.DMRoomId || this.NonDMRoomId
                                             ? {
-                                                  "X-Auth-Role": "attendee",
-                                                  "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                                  [AuthHeader.Role]: "attendee",
+                                                  [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
                                               }
                                             : {
-                                                  "X-Auth-Role": "attendee",
-                                                  "X-Auth-Include-Room-Ids": "true",
+                                                  [AuthHeader.Role]: "attendee",
+                                                  [AuthHeader.IncludeRoomIds]: "true",
                                               },
                                 },
                             }
@@ -682,12 +683,12 @@ export class ChatState {
                                         headers:
                                             this.DMRoomId || this.NonDMRoomId
                                                 ? {
-                                                      "X-Auth-Role": "attendee",
-                                                      "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                                      [AuthHeader.Role]: "attendee",
+                                                      [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
                                                   }
                                                 : {
-                                                      "X-Auth-Role": "attendee",
-                                                      "X-Auth-Include-Room-Ids": "true",
+                                                      [AuthHeader.Role]: "attendee",
+                                                      [AuthHeader.IncludeRoomIds]: "true",
                                                   },
                                     },
                                 }
@@ -712,12 +713,12 @@ export class ChatState {
                                     headers:
                                         this.DMRoomId || this.NonDMRoomId
                                             ? {
-                                                  "X-Auth-Role": "attendee",
-                                                  "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                                  [AuthHeader.Role]: "attendee",
+                                                  [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
                                               }
                                             : {
-                                                  "X-Auth-Role": "attendee",
-                                                  "X-Auth-Include-Room-Ids": "true",
+                                                  [AuthHeader.Role]: "attendee",
+                                                  [AuthHeader.IncludeRoomIds]: "true",
                                               },
                                 },
                             }
@@ -810,12 +811,12 @@ export class ChatState {
                                 headers:
                                     this.DMRoomId || this.NonDMRoomId
                                         ? {
-                                              "X-Auth-Role": "attendee",
-                                              "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                              [AuthHeader.Role]: "attendee",
+                                              [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
                                           }
                                         : {
-                                              "X-Auth-Role": "attendee",
-                                              "X-Auth-Include-Room-Ids": "true",
+                                              [AuthHeader.Role]: "attendee",
+                                              [AuthHeader.IncludeRoomIds]: "true",
                                           },
                             },
                         }
@@ -1471,8 +1472,8 @@ export class GlobalChatState {
                                                 requestPolicy: "network-only",
                                                 fetchOptions: {
                                                     headers: {
-                                                        "X-Auth-Role": "attendee",
-                                                        "X-Auth-Include-Room-Ids": "true",
+                                                        [AuthHeader.Role]: "attendee",
+                                                        [AuthHeader.IncludeRoomIds]: "true",
                                                     },
                                                 },
                                             }
@@ -1590,8 +1591,8 @@ export class GlobalChatState {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "attendee",
-                                        "X-Auth-Include-Room-Ids": "true",
+                                        [AuthHeader.Role]: "attendee",
+                                        [AuthHeader.IncludeRoomIds]: "true",
                                     },
                                 },
                             }
@@ -1705,8 +1706,8 @@ export class GlobalChatState {
                                 requestPolicy: "network-only",
                                 fetchOptions: {
                                     headers: {
-                                        "X-Auth-Role": "attendee",
-                                        "X-Auth-Include-Room-Ids": "true",
+                                        [AuthHeader.Role]: "attendee",
+                                        [AuthHeader.IncludeRoomIds]: "true",
                                     },
                                 },
                             }

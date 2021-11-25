@@ -276,7 +276,7 @@ function RoomSecondaryEditor({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -319,7 +319,7 @@ function RoomSecondaryEditor({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -338,7 +338,7 @@ function RoomSecondaryEditor({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -614,7 +614,7 @@ function EditableRoomsCRUDTable() {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -1487,7 +1487,7 @@ function EditableRoomsCRUDTable() {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -1514,7 +1514,7 @@ function EditableRoomsCRUDTable() {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -1531,7 +1531,7 @@ function EditableRoomsCRUDTable() {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }

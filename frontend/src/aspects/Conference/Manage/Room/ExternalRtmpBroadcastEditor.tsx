@@ -94,7 +94,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -142,7 +142,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                             },
                                         },
                                     }
@@ -157,7 +157,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                             },
                                         },
                                     }
@@ -173,7 +173,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }

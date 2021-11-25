@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, chakra, Flex, FormLabel, Input, NumberInput, Select, useClipboard } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { LegacyRef } from "react";
 import React, { useMemo } from "react";
 import { gql } from "urql";
@@ -63,7 +64,7 @@ export default function SystemConfiguration(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "superuser",
+                [AuthHeader.Role]: HasuraRoleName.Superuser,
             }),
         []
     );
@@ -377,7 +378,7 @@ export default function SystemConfiguration(): JSX.Element {
     //                 {
     //                     fetchOptions: {
     //                         headers: {
-    //                             "X-Auth-Role": "superuser",
+    //                             [AuthHeader.Role] "superuser",
     //                         },
     //                     },
     //                 }
@@ -399,7 +400,7 @@ export default function SystemConfiguration(): JSX.Element {
     //                 {
     //                     fetchOptions: {
     //                         headers: {
-    //                             "X-Auth-Role": "superuser",
+    //                             [AuthHeader.Role] "superuser",
     //                         },
     //                     },
     //                 }

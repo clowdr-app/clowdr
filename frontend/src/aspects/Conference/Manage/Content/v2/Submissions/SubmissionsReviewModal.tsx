@@ -87,7 +87,7 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );

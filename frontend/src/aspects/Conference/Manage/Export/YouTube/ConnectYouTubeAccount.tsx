@@ -75,7 +75,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -111,7 +111,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                 {
                     fetchOptions: {
                         headers: {
-                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                         },
                     },
                 }

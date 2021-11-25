@@ -110,7 +110,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -416,7 +416,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -450,7 +450,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -477,7 +477,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -498,7 +498,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                         },
                     },
                     makeContext({
-                        [AuthHeader.Role]: "organizer",
+                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                     })
                 );
             }

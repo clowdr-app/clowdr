@@ -1,5 +1,6 @@
 import { VStack } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useMemo } from "react";
 import { AppError } from "../../AppError";
@@ -159,7 +160,7 @@ function ConferenceProvider_WithoutUser({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "unauthenticated",
+                [AuthHeader.Role]: HasuraRoleName.Unauthenticated,
             }),
         []
     );
@@ -205,7 +206,7 @@ function ConferenceProvider_WithUser({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "attendee",
+                [AuthHeader.Role]: HasuraRoleName.Attendee,
             }),
         []
     );

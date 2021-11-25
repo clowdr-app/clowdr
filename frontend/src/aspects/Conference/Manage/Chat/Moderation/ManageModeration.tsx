@@ -89,7 +89,7 @@ function ModerationList(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -372,7 +372,7 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                "X-Auth-Role": "moderator",
+                                                [AuthHeader.Role]: "moderator",
                                             },
                                         },
                                     }

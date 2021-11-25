@@ -14,6 +14,7 @@ import {
     Text,
     useDisclosure,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { gql } from "urql";
@@ -118,8 +119,8 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "room-member",
-                "X-Auth-Room-Id": roomDetails.id,
+                [AuthHeader.Role]: HasuraRoleName.RoomMember,
+                [AuthHeader.RoomId]: roomDetails.id,
             }),
         [roomDetails.id]
     );

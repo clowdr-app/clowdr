@@ -11,6 +11,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useItemsByPersonAccessTokenQuery } from "../../../generated/graphql";
@@ -44,7 +45,7 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Magic-Token": magicToken,
+                [AuthHeader.MagicToken]: magicToken,
             }),
         [magicToken]
     );

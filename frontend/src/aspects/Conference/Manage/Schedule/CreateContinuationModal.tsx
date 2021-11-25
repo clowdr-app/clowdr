@@ -536,7 +536,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -576,7 +576,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -623,7 +623,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -662,7 +662,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -709,7 +709,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -752,7 +752,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -791,7 +791,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -831,7 +831,7 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -1134,8 +1134,7 @@ export default function CreateContinuationModal({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]:
-                                                                    HasuraRoleName.SubconferenceOrganizer,
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }

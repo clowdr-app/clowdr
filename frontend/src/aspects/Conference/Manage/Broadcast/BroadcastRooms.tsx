@@ -51,7 +51,7 @@ export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );

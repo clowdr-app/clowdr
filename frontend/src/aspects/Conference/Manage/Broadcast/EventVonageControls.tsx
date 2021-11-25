@@ -37,7 +37,7 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );

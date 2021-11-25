@@ -1,4 +1,5 @@
 import { Box, Center, Divider, Heading, Link, ListItem, Spinner, Text, UnorderedList, VStack } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import "@uppy/core/dist/style.css";
 import "@uppy/progress-bar/dist/style.css";
 import React, { useCallback, useMemo } from "react";
@@ -62,8 +63,8 @@ export default function SubmitElementPage({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "submitter",
-                "X-Auth-Magic-Token": magicToken,
+                [AuthHeader.Role]: HasuraRoleName.Submitter,
+                [AuthHeader.MagicToken]: magicToken,
             }),
         [magicToken]
     );

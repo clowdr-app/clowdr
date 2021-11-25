@@ -11,6 +11,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
@@ -73,8 +74,8 @@ export function VideoChatVonageRoom({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "room-member",
-                "X-Auth-Room-Id": room.id,
+                [AuthHeader.Role]: HasuraRoleName.RoomMember,
+                [AuthHeader.RoomId]: room.id,
             }),
         [room.id]
     );

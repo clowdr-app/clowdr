@@ -232,7 +232,7 @@ export default function NewConferenceForm(): JSX.Element {
                         const result = await createConferenceMutation(values, {
                             fetchOptions: {
                                 headers: {
-                                    "X-Auth-Role": "user",
+                                    [AuthHeader.Role]: "user",
                                 },
                             },
                         });
@@ -296,7 +296,7 @@ export default function NewConferenceForm(): JSX.Element {
                                     fetchOptions: {
                                         headers: {
                                             [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-                                            "X-Auth-Conference-Id": conferenceId,
+                                            [AuthHeader.ConferenceId]: conferenceId,
                                         },
                                     },
                                 }

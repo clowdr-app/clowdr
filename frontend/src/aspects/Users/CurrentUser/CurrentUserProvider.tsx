@@ -14,6 +14,7 @@ import {
     Tooltip,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useMemo, useState } from "react";
 import type { UserInfoFragment } from "../../../generated/graphql";
@@ -140,7 +141,7 @@ function CurrentUserProvider_IsAuthenticated({
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "user",
+                [AuthHeader.Role]: HasuraRoleName.User,
                 NoConferenceId: "true",
             }),
         []

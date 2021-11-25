@@ -15,6 +15,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import React, { useEffect, useMemo } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { gql } from "urql";
@@ -147,7 +148,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Invite-Code": inviteCode ?? "",
+                [AuthHeader.InviteCode]: inviteCode ?? "",
             }),
         [inviteCode]
     );

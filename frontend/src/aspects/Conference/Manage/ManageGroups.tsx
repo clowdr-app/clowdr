@@ -73,7 +73,7 @@ export default function ManageGroups(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -268,7 +268,7 @@ export default function ManageGroups(): JSX.Element {
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                             },
                                         },
                                     }
@@ -313,7 +313,7 @@ export default function ManageGroups(): JSX.Element {
                                                 {
                                                     fetchOptions: {
                                                         headers: {
-                                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                         },
                                                     },
                                                 }

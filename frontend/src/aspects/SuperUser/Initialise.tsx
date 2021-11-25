@@ -1,4 +1,5 @@
 import { Alert, AlertDescription, AlertTitle, Button, Text } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useInitialiseSuperUserMutation } from "../../generated/graphql";
@@ -17,7 +18,7 @@ export default function SuperUserInitialise(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "superuser",
+                [AuthHeader.Role]: HasuraRoleName.Superuser,
             }),
         []
     );

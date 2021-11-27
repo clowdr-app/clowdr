@@ -78,8 +78,9 @@ function SubtitleBlockJITRenderer({
 export default function Transcript({ value, onInput }: TranscriptProps): JSX.Element {
     return (
         <FixedSizeList
-            height={500}
-            width={800}
+            height={404}
+            width="76ch"
+            style={{ margin: 4 }}
             itemCount={value.length}
             itemData={{ value, onInput }}
             itemKey={(i, { value }) => value[i].startTenths}

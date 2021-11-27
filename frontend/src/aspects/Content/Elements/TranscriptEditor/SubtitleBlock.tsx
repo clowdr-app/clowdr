@@ -22,17 +22,16 @@ export default function SubtitleBlock({
     return (
         <Flex style={{ ...style, fontFamily: "monospace" }}>
             <Textarea
-                flexBasis={"54em"}
-                flexGrow={0}
+                width={"50ch"}
                 rows={3}
-                cols={50}
+                cols={47}
                 resize="none"
                 value={text}
                 onInput={(e) => {
                     onTextInput((e.target as HTMLTextAreaElement).value);
                 }}
             />
-            <Flex flexBasis={"16em"} flexGrow={0} flexDirection="column" justifyContent="space-between">
+            <Flex width={"20ch"} flexDirection="column" justifyContent="space-between">
                 <TimecodeInput value={startTenths} onInput={onStartTenthsInput} />
                 <TimecodeInput value={endTenths} onInput={onEndTenthsInput} />
             </Flex>

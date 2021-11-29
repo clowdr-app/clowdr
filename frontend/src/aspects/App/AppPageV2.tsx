@@ -112,12 +112,13 @@ export default function AppPageV2(): JSX.Element {
             top={centerVisible ? undefined : "-100%"}
             borderRight={rightVisible ? "1px solid" : undefined}
             borderRightColor={borderColour}
-            css={{
-                ["scrollbarWidth"]: "thin",
-            }}
             ml={isAppLandingPage || isConferenceRootPage ? 0 : [2, 2, 2, 4]}
             mr={isAppLandingPage || isConferenceRootPage ? 0 : rightVisible ? 0 : [2, 2, 2, 4]}
             pr={isAppLandingPage || isConferenceRootPage ? 0 : rightVisible ? 2 : 0}
+            css={{
+                ["scrollbarWidth"]: "thin",
+                "@media print": { height: "auto" },
+            }}
         >
             <VStack
                 spacing={5}
@@ -142,6 +143,7 @@ export default function AppPageV2(): JSX.Element {
             justifyContent="center"
             alignItems="center"
             backgroundColor={bgColour}
+            css="@media print { height: auto; }"
         >
             <MainMenu state={mainMenuState}>
                 {!isAppLandingPage ? leftBar : undefined}
@@ -164,6 +166,7 @@ function LeftBar(): JSX.Element {
             flexDir="column"
             alignItems="stretch"
             justifyContent="center"
+            css="@media print { display: none; }"
         >
             <LeftMenu />
         </Box>
@@ -196,6 +199,7 @@ function RightBar({
             flexDir="column"
             alignItems={"stretch"}
             justifyContent={"center"}
+            css="@media print { display: none; }"
         >
             <RightMenu isVisible={rightVisible} />
         </Box>

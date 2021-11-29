@@ -16,11 +16,5 @@ module.exports = {
                 useTypeImports: true,
             },
         },
-        "./src/generated/graphql.schema.json": {
-            plugins: ["introspection"],
-            config: {
-                minify: true,
-            },
-        },
     },
 };

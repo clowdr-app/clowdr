@@ -1,8 +1,8 @@
 import type {
-    Resolver as GraphCacheResolver,
-    UpdateResolver as GraphCacheUpdateResolver,
     OptimisticMutationResolver as GraphCacheOptimisticMutationResolver,
+    Resolver as GraphCacheResolver,
     StorageAdapter as GraphCacheStorageAdapter,
+    UpdateResolver as GraphCacheUpdateResolver,
 } from "@urql/exchange-graphcache";
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import gql from "graphql-tag";
@@ -36571,8 +36571,8 @@ export type ContinuationChoices_ContinuationFragment = {
 
 export type ContinuationChoices_ContinuationsQueryVariables = Exact<{
     fromId: Scalars["uuid"];
-    nowStart?: Maybe<Scalars["timestamptz"]>;
-    nowEnd?: Maybe<Scalars["timestamptz"]>;
+    nowStart?: InputMaybe<Scalars["timestamptz"]>;
+    nowEnd?: InputMaybe<Scalars["timestamptz"]>;
 }>;
 
 export type ContinuationChoices_ContinuationsQuery = {
@@ -37169,7 +37169,7 @@ export type RegistrantInvitedEmailAddressQuery = {
 
 export type UpdateProfileMutationVariables = Exact<{
     registrantId: Scalars["uuid"];
-    profile?: Maybe<Registrant_Profile_Set_Input>;
+    profile?: InputMaybe<Registrant_Profile_Set_Input>;
 }>;
 
 export type UpdateProfileMutation = {
@@ -38520,7 +38520,7 @@ export type SocialRoomFragment = {
 export type RoomTile_GetRoomQueryVariables = Exact<{
     roomId: Scalars["uuid"];
     withEvent: Scalars["Boolean"];
-    eventId?: Maybe<Scalars["uuid"]>;
+    eventId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type RoomTile_GetRoomQuery = {
@@ -41638,8 +41638,8 @@ export type UpdateItemMutationVariables = Exact<{
     newGroupExhibitions: ReadonlyArray<Content_ItemExhibition_Insert_Input> | Content_ItemExhibition_Insert_Input;
     groupId: Scalars["uuid"];
     typeName: Content_ItemType_Enum;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    shortTitle?: Maybe<Scalars["String"]>;
+    originatingDataId?: InputMaybe<Scalars["uuid"]>;
+    shortTitle?: InputMaybe<Scalars["String"]>;
     title: Scalars["String"];
     deleteItemIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
     deleteGroupTagIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
@@ -41798,12 +41798,12 @@ export type UpdateItemMutation = {
 export type UpdateElementMutationVariables = Exact<{
     id: Scalars["uuid"];
     typeName: Content_ElementType_Enum;
-    layoutData?: Maybe<Scalars["jsonb"]>;
+    layoutData?: InputMaybe<Scalars["jsonb"]>;
     name: Scalars["String"];
     data: Scalars["jsonb"];
     isHidden: Scalars["Boolean"];
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    uploadsRemaining?: Maybe<Scalars["Int"]>;
+    originatingDataId?: InputMaybe<Scalars["uuid"]>;
+    uploadsRemaining?: InputMaybe<Scalars["Int"]>;
 }>;
 
 export type UpdateElementMutation = {
@@ -41829,7 +41829,7 @@ export type UpdateElementMutation = {
 export type UpdateGroupPersonMutationVariables = Exact<{
     id: Scalars["uuid"];
     roleName: Scalars["String"];
-    priority?: Maybe<Scalars["Int"]>;
+    priority?: InputMaybe<Scalars["Int"]>;
 }>;
 
 export type UpdateGroupPersonMutation = {
@@ -41849,8 +41849,8 @@ export type UpdateGroupPersonMutation = {
 
 export type UpdateGroupExhibitionMutationVariables = Exact<{
     id: Scalars["uuid"];
-    priority?: Maybe<Scalars["Int"]>;
-    layout?: Maybe<Scalars["jsonb"]>;
+    priority?: InputMaybe<Scalars["Int"]>;
+    layout?: InputMaybe<Scalars["jsonb"]>;
 }>;
 
 export type UpdateGroupExhibitionMutation = {
@@ -41871,10 +41871,10 @@ export type UpdateGroupExhibitionMutation = {
 export type UpdatePersonMutationVariables = Exact<{
     id: Scalars["uuid"];
     name: Scalars["String"];
-    affiliation?: Maybe<Scalars["String"]>;
-    email?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    registrantId?: Maybe<Scalars["uuid"]>;
+    affiliation?: InputMaybe<Scalars["String"]>;
+    email?: InputMaybe<Scalars["String"]>;
+    originatingDataId?: InputMaybe<Scalars["uuid"]>;
+    registrantId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type UpdatePersonMutation = {
@@ -41901,7 +41901,7 @@ export type UpdateTagMutationVariables = Exact<{
     id: Scalars["uuid"];
     name: Scalars["String"];
     colour: Scalars["String"];
-    originatingDataId?: Maybe<Scalars["uuid"]>;
+    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     priority?: Scalars["Int"];
 }>;
 
@@ -42723,7 +42723,7 @@ export type ChooseElementModal_GetItemsQuery = {
 };
 
 export type ChooseElementModal_GetVideoElementsQueryVariables = Exact<{
-    itemId?: Maybe<Scalars["uuid"]>;
+    itemId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type ChooseElementModal_GetVideoElementsQuery = {
@@ -43025,9 +43025,9 @@ export type ImportRegistrantsMutation = {
 
 export type UpdateConferenceMutationVariables = Exact<{
     id: Scalars["uuid"];
-    name?: Maybe<Scalars["String"]>;
-    shortName?: Maybe<Scalars["String"]>;
-    slug?: Maybe<Scalars["String"]>;
+    name?: InputMaybe<Scalars["String"]>;
+    shortName?: InputMaybe<Scalars["String"]>;
+    slug?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type UpdateConferenceMutation = {
@@ -43069,7 +43069,7 @@ export type SelectAllGroupsQuery = {
 };
 
 export type CreateDeleteGroupsMutationVariables = Exact<{
-    deleteGroupIds?: Maybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
+    deleteGroupIds?: InputMaybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
     insertGroups: ReadonlyArray<Registrant_Group_Insert_Input> | Registrant_Group_Insert_Input;
 }>;
 
@@ -43214,7 +43214,7 @@ export type ManageProgramPeople_InsertProgramPersonMutation = {
 };
 
 export type ManageProgramPeople_DeleteProgramPersonsMutationVariables = Exact<{
-    ids?: Maybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
+    ids?: InputMaybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
 }>;
 
 export type ManageProgramPeople_DeleteProgramPersonsMutation = {
@@ -43231,9 +43231,9 @@ export type ManageProgramPeople_DeleteProgramPersonsMutation = {
 export type ManageProgramPeople_UpdateProgramPersonMutationVariables = Exact<{
     id: Scalars["uuid"];
     name: Scalars["String"];
-    affiliation?: Maybe<Scalars["String"]>;
-    email?: Maybe<Scalars["String"]>;
-    registrantId?: Maybe<Scalars["uuid"]>;
+    affiliation?: InputMaybe<Scalars["String"]>;
+    email?: InputMaybe<Scalars["String"]>;
+    registrantId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type ManageProgramPeople_UpdateProgramPersonMutation = {
@@ -43513,10 +43513,10 @@ export type CreateRoomMutation = {
 export type UpdateRoomsWithParticipantsMutationVariables = Exact<{
     id: Scalars["uuid"];
     name: Scalars["String"];
-    capacity?: Maybe<Scalars["Int"]>;
+    capacity?: InputMaybe<Scalars["Int"]>;
     priority: Scalars["Int"];
     managementModeName: Room_ManagementMode_Enum;
-    originatingItemId?: Maybe<Scalars["uuid"]>;
+    originatingItemId?: InputMaybe<Scalars["uuid"]>;
     chatId: Scalars["uuid"];
     enableMandatoryPin: Scalars["Boolean"];
     enableAutoPin: Scalars["Boolean"];
@@ -43877,7 +43877,7 @@ export type InsertRegistrantWithoutInviteMutation = {
 };
 
 export type DeleteRegistrantsMutationVariables = Exact<{
-    deleteRegistrantIds?: Maybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
+    deleteRegistrantIds?: InputMaybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
 }>;
 
 export type DeleteRegistrantsMutation = {
@@ -43895,7 +43895,7 @@ export type UpdateRegistrantMutationVariables = Exact<{
     registrantId: Scalars["uuid"];
     registrantName: Scalars["String"];
     upsertGroups: ReadonlyArray<Registrant_GroupRegistrant_Insert_Input> | Registrant_GroupRegistrant_Insert_Input;
-    remainingGroupIds?: Maybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
+    remainingGroupIds?: InputMaybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
 }>;
 
 export type UpdateRegistrantMutation = {
@@ -44568,7 +44568,7 @@ export type SelectEventStreamTextEventIdQuery = {
 
 export type UpdateEventStreamTextEventIdMutationVariables = Exact<{
     eventId: Scalars["uuid"];
-    streamTextEventId?: Maybe<Scalars["String"]>;
+    streamTextEventId?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type UpdateEventStreamTextEventIdMutation = {
@@ -44668,13 +44668,13 @@ export type InsertEventInfoMutationVariables = Exact<{
     roomId: Scalars["uuid"];
     conferenceId: Scalars["uuid"];
     intendedRoomModeName: Room_Mode_Enum;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
+    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     name: Scalars["String"];
     startTime: Scalars["timestamptz"];
     durationSeconds: Scalars["Int"];
-    itemId?: Maybe<Scalars["uuid"]>;
-    exhibitionId?: Maybe<Scalars["uuid"]>;
-    shufflePeriodId?: Maybe<Scalars["uuid"]>;
+    itemId?: InputMaybe<Scalars["uuid"]>;
+    exhibitionId?: InputMaybe<Scalars["uuid"]>;
+    shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
     insertContinuation: Scalars["Boolean"];
     enableRecording: Scalars["Boolean"];
 }>;
@@ -44717,13 +44717,13 @@ export type UpdateEventInfoMutationVariables = Exact<{
     eventId: Scalars["uuid"];
     roomId: Scalars["uuid"];
     intendedRoomModeName: Room_Mode_Enum;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
+    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     name: Scalars["String"];
     startTime: Scalars["timestamptz"];
     durationSeconds: Scalars["Int"];
-    itemId?: Maybe<Scalars["uuid"]>;
-    exhibitionId?: Maybe<Scalars["uuid"]>;
-    shufflePeriodId?: Maybe<Scalars["uuid"]>;
+    itemId?: InputMaybe<Scalars["uuid"]>;
+    exhibitionId?: InputMaybe<Scalars["uuid"]>;
+    shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
     enableRecording: Scalars["Boolean"];
 }>;
 
@@ -45025,8 +45025,8 @@ export type DeleteRoomsMutation = {
 export type UpdateRoomMutationVariables = Exact<{
     id: Scalars["uuid"];
     name: Scalars["String"];
-    capacity?: Maybe<Scalars["Int"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
+    capacity?: InputMaybe<Scalars["Int"]>;
+    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     priority: Scalars["Int"];
 }>;
 
@@ -45120,12 +45120,12 @@ export type UpdateEventMutationVariables = Exact<{
     eventId: Scalars["uuid"];
     roomId: Scalars["uuid"];
     intendedRoomModeName: Room_Mode_Enum;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
+    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     name: Scalars["String"];
     startTime: Scalars["timestamptz"];
     durationSeconds: Scalars["Int"];
-    itemId?: Maybe<Scalars["uuid"]>;
-    exhibitionId?: Maybe<Scalars["uuid"]>;
+    itemId?: InputMaybe<Scalars["uuid"]>;
+    exhibitionId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type UpdateEventMutation = {
@@ -46178,7 +46178,7 @@ export type MainMenuSponsors_ItemDataFragment = {
 };
 
 export type CreateDmMutationVariables = Exact<{
-    registrantIds: ReadonlyArray<Maybe<Scalars["uuid"]>> | Maybe<Scalars["uuid"]>;
+    registrantIds: ReadonlyArray<InputMaybe<Scalars["uuid"]>> | InputMaybe<Scalars["uuid"]>;
     conferenceId: Scalars["uuid"];
 }>;
 

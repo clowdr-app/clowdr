@@ -9,7 +9,12 @@ export async function sendNotifications(userIds: Set<string>, notification: Noti
     const userIdsArr = [...userIds.values()];
     const pushNotifSubs = new Map<string, PushNotificationSubscriptionsEntity | undefined>(
         await Promise.all<[string, PushNotificationSubscriptionsEntity | undefined]>(
-            userIdsArr.map(async (userId) => [userId, await pushNotificationSubscriptionsCache.getEntity(userId)])
+            userIdsArr.map(
+                async (userId): Promise<[string, PushNotificationSubscriptionsEntity | undefined]> => [
+                    userId,
+                    await pushNotificationSubscriptionsCache.getEntity(userId),
+                ]
+            )
         )
     );
 

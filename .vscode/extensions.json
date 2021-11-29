@@ -4,21 +4,12 @@
 
     // List of extensions which should be recommended for users of this workspace.
     "recommendations": [
-        // Docker
         "ms-azuretools.vscode-docker",
-
-        // Markdown
         "bierner.markdown-preview-github-styles",
-
-        // Formatting
         "esbenp.prettier-vscode",
         "stkb.rewrap",
-
-        // GraphQL
         "graphql.vscode-graphql",
-
-        // Testing
-        "hbenl.vscode-test-explorer"
+        "dbaeumer.vscode-eslint"
     ],
     // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
     "unwantedRecommendations": []

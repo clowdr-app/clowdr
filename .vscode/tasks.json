@@ -223,7 +223,7 @@
             "label": "Frontend -- Serve Production Build",
             "type": "shell",
             "command": "pnpm",
-            "args": ["vite", "preview"],
+            "args": ["start"],
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/frontend"

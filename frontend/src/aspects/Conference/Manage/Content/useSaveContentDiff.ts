@@ -491,7 +491,7 @@ export function useSaveContentDiff():
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -678,13 +678,7 @@ export function useSaveContentDiff():
                                     })
                                 ),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of newTags.keys()) {
                             tagResults.set(key, true);
@@ -703,13 +697,7 @@ export function useSaveContentDiff():
                                         originatingDataId: tag.originatingDataId,
                                         priority: tag.priority,
                                     },
-                                    {
-                                        fetchOptions: {
-                                            headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                            },
-                                        },
-                                    }
+                                    context
                                 );
                                 ok = true;
                             } catch (e) {
@@ -735,13 +723,7 @@ export function useSaveContentDiff():
                                     })
                                 ),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of newOriginatingDatas.keys()) {
                             originatingDataResults.set(key, true);
@@ -763,13 +745,7 @@ export function useSaveContentDiff():
                                     })
                                 ),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of newPeople.keys()) {
                             peopleResults.set(key, true);
@@ -789,13 +765,7 @@ export function useSaveContentDiff():
                                         originatingDataId: person.originatingDataId,
                                         registrantId: person.registrantId,
                                     },
-                                    {
-                                        fetchOptions: {
-                                            headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                            },
-                                        },
-                                    }
+                                    context
                                 );
                                 ok = true;
                             } catch (e) {
@@ -823,13 +793,7 @@ export function useSaveContentDiff():
                                     })
                                 ),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of newExhibitions.keys()) {
                             exhibitionResults.set(key, true);
@@ -848,13 +812,7 @@ export function useSaveContentDiff():
                                         priority: exhibition.priority,
                                         isHidden: exhibition.isHidden,
                                     },
-                                    {
-                                        fetchOptions: {
-                                            headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                            },
-                                        },
-                                    }
+                                    context
                                 );
                                 ok = true;
                             } catch (e) {
@@ -929,13 +887,7 @@ export function useSaveContentDiff():
                                     return groupResult;
                                 }),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
 
                         if (elementsToPostInsert.length > 0) {
@@ -954,13 +906,7 @@ export function useSaveContentDiff():
                                         uploadsRemaining: item.uploadsRemaining,
                                     })),
                                 },
-                                {
-                                    fetchOptions: {
-                                        headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                        },
-                                    },
-                                }
+                                context
                             );
                         }
 
@@ -1068,13 +1014,7 @@ export function useSaveContentDiff():
                                                 originatingDataId: item.originatingDataId,
                                                 uploadsRemaining: item.uploadsRemaining,
                                             },
-                                            {
-                                                fetchOptions: {
-                                                    headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                                    },
-                                                },
-                                            }
+                                            context
                                         );
                                     })
                                 );
@@ -1089,13 +1029,7 @@ export function useSaveContentDiff():
                                                 priority: groupPerson.priority,
                                                 roleName: groupPerson.roleName,
                                             },
-                                            {
-                                                fetchOptions: {
-                                                    headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                                    },
-                                                },
-                                            }
+                                            context
                                         );
                                     })
                                 );
@@ -1110,13 +1044,7 @@ export function useSaveContentDiff():
                                                 priority: groupExhibition.priority,
                                                 layout: groupExhibition.layout,
                                             },
-                                            {
-                                                fetchOptions: {
-                                                    headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                                    },
-                                                },
-                                            }
+                                            context
                                         );
                                     })
                                 );
@@ -1168,13 +1096,7 @@ export function useSaveContentDiff():
                                     shortTitle: group.shortTitle,
                                     title: group.title,
                                 },
-                                {
-                                    fetchOptions: {
-                                        headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                        },
-                                    },
-                                }
+                                context
                             );
 
                             ok = true;
@@ -1195,13 +1117,7 @@ export function useSaveContentDiff():
                             {
                                 deleteTagIds: Array.from(deletedTagKeys.values()),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of deletedTagKeys.keys()) {
                             tagResults.set(key, true);
@@ -1220,13 +1136,7 @@ export function useSaveContentDiff():
                             {
                                 deleteExhibitionIds: Array.from(deletedExhibitionKeys.values()),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of deletedExhibitionKeys.keys()) {
                             exhibitionResults.set(key, true);
@@ -1245,13 +1155,7 @@ export function useSaveContentDiff():
                             {
                                 deletePersonIds: Array.from(deletedPersonKeys.values()),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of deletedPersonKeys.keys()) {
                             peopleResults.set(key, true);
@@ -1270,13 +1174,7 @@ export function useSaveContentDiff():
                             {
                                 deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of deletedOriginatingDataKeys.keys()) {
                             originatingDataResults.set(key, true);

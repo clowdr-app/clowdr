@@ -282,7 +282,7 @@ export function useSaveScheduleDiff():
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -454,13 +454,7 @@ export function useSaveScheduleDiff():
                                     })
                                 ),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of newTags.keys()) {
                             tagResults.set(key, true);
@@ -478,13 +472,7 @@ export function useSaveScheduleDiff():
                                         name: tag.name,
                                         originatingDataId: tag.originatingDataId,
                                     },
-                                    {
-                                        fetchOptions: {
-                                            headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                            },
-                                        },
-                                    }
+                                    context
                                 );
                                 ok = true;
                             } catch (_e) {
@@ -509,13 +497,7 @@ export function useSaveScheduleDiff():
                                     })
                                 ),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of newOriginatingDatas.keys()) {
                             originatingDataResults.set(key, true);
@@ -537,13 +519,7 @@ export function useSaveScheduleDiff():
                                     })
                                 ),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of newRooms.keys()) {
                             roomResults.set(key, true);
@@ -562,13 +538,7 @@ export function useSaveScheduleDiff():
                                         originatingDataId: room.originatingDataId,
                                         priority: room.priority,
                                     },
-                                    {
-                                        fetchOptions: {
-                                            headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                            },
-                                        },
-                                    }
+                                    context
                                 );
                                 ok = true;
                             } catch (_e) {
@@ -610,13 +580,7 @@ export function useSaveScheduleDiff():
                                                 ? true
                                                 : false,
                                     },
-                                    {
-                                        fetchOptions: {
-                                            headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                            },
-                                        },
-                                    }
+                                    context
                                 )
                             )
                         );
@@ -656,13 +620,7 @@ export function useSaveScheduleDiff():
                                     startTime: new Date(event.startTime).toISOString(),
                                     durationSeconds: event.durationSeconds,
                                 },
-                                {
-                                    fetchOptions: {
-                                        headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                        },
-                                    },
-                                }
+                                context
                             );
 
                             ok = true;
@@ -697,13 +655,7 @@ export function useSaveScheduleDiff():
                             {
                                 deleteRoomIds: Array.from(deletedRoomKeys.values()),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of deletedRoomKeys.keys()) {
                             roomResults.set(key, true);
@@ -721,13 +673,7 @@ export function useSaveScheduleDiff():
                             {
                                 deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                         for (const key of deletedOriginatingDataKeys.keys()) {
                             originatingDataResults.set(key, true);

@@ -4,6 +4,7 @@ import { ElementBaseTypes } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
 import type { ManageContent_ElementFragment } from "../../../../../../generated/graphql";
 import { useManageContent_UpdateElementMutation } from "../../../../../../generated/graphql";
+import { makeContext } from "../../../../../GQL/make-context";
 import { EditUploadsRemaining } from "./EditUploadsRemaining";
 import { ElementBaseTemplates } from "./Kinds/Templates";
 import type { ContentDescriptor } from "./Kinds/Types";
@@ -13,6 +14,13 @@ export function EditElementInner(props: {
     element: ManageContent_ElementFragment;
     openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
     const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation();
 
     const itemType = props.element.typeName;
@@ -42,20 +50,14 @@ export function EditElementInner(props: {
                             elementId: updated.id,
                             element: updatedItem,
                         },
-                        {
-                            fetchOptions: {
-                                headers: {
-                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-                                },
-                            },
-                        }
+                        context
                     );
                 }}
             />
         ) : (
             <Text>Cannot edit {itemType} items.</Text>
         );
-    }, [descriptors, itemTemplate, itemType, updateElement]);
+    }, [context, descriptors, itemTemplate, itemType, updateElement]);
 
     const readableTypeName = useMemo(
         () =>
@@ -78,7 +80,7 @@ export function EditElementInner(props: {
             <EditUploadsRemaining
                 elementId={props.element.id}
                 uploadsRemaining={props.element.uploadsRemaining ?? null}
-                updateUploadableElement={updateElement}
+                updateUploadableElement={(data) => updateElement(data, context)}
                 isUpdatingUploadable={updateElementResponse.fetching}
             />
             <Divider my={2} />
@@ -100,13 +102,7 @@ export function EditElementInner(props: {
                                     layoutData: newState.layoutData,
                                 },
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                     }
                 }}

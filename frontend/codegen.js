@@ -30,11 +30,5 @@ module.exports = {
                 addDocBlocks: true,
             },
         },
-        "./src/generated/graphql.schema.json": {
-            plugins: ["urql-introspection"],
-            config: {
-                minify: false,
-            },
-        },
     },
 };

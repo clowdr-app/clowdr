@@ -1528,13 +1528,7 @@ function EditableRoomsCRUDTable() {
                             {
                                 deleteRoomIds: keys,
                             },
-                            {
-                                fetchOptions: {
-                                    headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-                                    },
-                                },
-                            }
+                            context
                         );
                     },
                 }}

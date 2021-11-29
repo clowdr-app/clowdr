@@ -49,11 +49,11 @@ export default function useTrackView(
     }, [activatedAt, contentType, identifier, now, polling, requiredViewTimeMs, socket]);
 
     useEffect(() => {
-        const offSocketAvailable = rts.onSocketAvailable((socket) => {
+        const offSocketAvailable = rts.onSocketAvailable("useTrackView.useEffect", (socket) => {
             setSocket(socket);
         });
 
-        const offSocketUnavailable = rts.onSocketUnavailable((socket) => {
+        const offSocketUnavailable = rts.onSocketUnavailable("useTrackView.useEffect", (socket) => {
             setSocket((s) => (s === socket ? null : s));
         });
 

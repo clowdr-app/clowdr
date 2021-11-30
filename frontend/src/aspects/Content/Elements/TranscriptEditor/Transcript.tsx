@@ -1,7 +1,13 @@
 import React, { CSSProperties } from "react";
 import { FixedSizeList } from "react-window";
 import type { SubtitlesArray } from "./srt";
-import SubtitleBlock, { MAX_SUBTITLE_BLOCK_LINES, MAX_SUBTITLE_LINE_LEGNTH } from "./SubtitleBlock";
+import SubtitleBlock, {
+    MAX_SUBTITLE_BLOCK_LINES,
+    MAX_SUBTITLE_LINE_LEGNTH,
+    SUBTITLE_BLOCK_WIDTH_CH,
+} from "./SubtitleBlock";
+
+export const TRANSCRIPT_WIDTH_CH = SUBTITLE_BLOCK_WIDTH_CH + 6;
 
 function hardWrapSubtitleBlockIfPossible(newText: string): string | undefined {
     const lines = newText.split("\n");
@@ -103,7 +109,7 @@ export default function Transcript({ value, onInput }: TranscriptProps): JSX.Ele
     return (
         <FixedSizeList
             height={404}
-            width="76ch"
+            width={`${TRANSCRIPT_WIDTH_CH}ch`}
             style={{ margin: 4 }}
             itemCount={value.length}
             itemData={{ value, onInput }}

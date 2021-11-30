@@ -7,7 +7,7 @@ interface Props {
     srtTranscript: string;
     mediaUrl: string;
     handleSaveEditor: (srtTranscript: any) => void;
-    handleChange?: () => void;
+    handleChange: () => void;
 }
 
 export default function TranscriptEditor({
@@ -19,7 +19,13 @@ export default function TranscriptEditor({
     const [transcriptWIP, setTranscriptWIP] = useState(SRTParse(srtTranscript));
     return (
         <Flex flexDirection="row" justifyContent="center" alignItems="start" flexWrap="wrap-reverse">
-            <Transcript value={transcriptWIP} onInput={setTranscriptWIP} />
+            <Transcript
+                value={transcriptWIP}
+                onInput={(transform) => {
+                    handleChange();
+                    setTranscriptWIP(transform);
+                }}
+            />
             <Flex flexDirection="column" alignItems="center" justifyContent="space-between">
                 <video style={{ width: "76ch", margin: 4 }} src={mediaUrl} controls>
                     This is a video

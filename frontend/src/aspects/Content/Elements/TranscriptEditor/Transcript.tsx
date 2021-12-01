@@ -3,29 +3,15 @@ import { FixedSizeList } from "react-window";
 import type { SubtitlesArray } from "./srt";
 import SubtitleBlock, {
     MAX_SUBTITLE_BLOCK_LINES,
-    MAX_SUBTITLE_LINE_LEGNTH,
+    MAX_SUBTITLE_LINE_LENGTH,
     SUBTITLE_BLOCK_WIDTH_CH,
 } from "./SubtitleBlock";
 
 export const TRANSCRIPT_WIDTH_CH = SUBTITLE_BLOCK_WIDTH_CH + 6;
 
-function hardWrapSubtitleBlockIfPossible(newText: string): string | undefined {
-    const lines = newText.split("\n");
-    if (lines.length > MAX_SUBTITLE_BLOCK_LINES) return;
-    let remainder = "";
-    for (let i = 0; i < MAX_SUBTITLE_BLOCK_LINES; ++i) {
-        if (i === lines.length && !remainder) break;
-        lines[i] = remainder + (lines[i] || "");
-        remainder = "";
-        if (lines[i].length <= MAX_SUBTITLE_LINE_LEGNTH) continue;
-        const wrapSpaceIndex = lines[i].lastIndexOf(" ", MAX_SUBTITLE_LINE_LEGNTH);
-        if (wrapSpaceIndex === -1) return;
-        remainder = lines[i].substring(wrapSpaceIndex + 1);
-        lines[i] = lines[i].substring(0, wrapSpaceIndex + 1);
-    }
-    if (remainder) return;
-
-    return lines.join("\n");
+function validateNewText(newText: string): Boolean {
+    const lines = newText.split(/\r?\n/);
+    return lines.length <= MAX_SUBTITLE_BLOCK_LINES && lines.every((line) => line.length <= MAX_SUBTITLE_LINE_LENGTH);
 }
 
 function validateNewStartTenths(oldTranscript: SubtitlesArray, index: number, newStartTenths: number): Boolean {
@@ -70,16 +56,15 @@ function SubtitleBlockJITRenderer({
                 text,
                 style,
                 onTextInput: (newText) =>
-                    onInput((oldTranscript) => {
-                        const wrappedText = hardWrapSubtitleBlockIfPossible(newText);
-                        return wrappedText
+                    onInput((oldTranscript) =>
+                        validateNewText(newText)
                             ? [
                                   ...oldTranscript.slice(0, index),
-                                  { startTenths, endTenths, text: wrappedText },
+                                  { startTenths, endTenths, text: newText },
                                   ...oldTranscript.slice(index + 1),
                               ]
-                            : oldTranscript;
-                    }),
+                            : oldTranscript
+                    ),
                 onStartTenthsInput: (newStartTenths) =>
                     onInput((oldTranscript) =>
                         validateNewStartTenths(oldTranscript, index, newStartTenths)

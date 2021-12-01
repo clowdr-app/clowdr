@@ -3,13 +3,13 @@ import React, { CSSProperties } from "react";
 import TimecodeInput from "./TimecodeInput";
 
 export const MAX_SUBTITLE_BLOCK_LINES = 3;
-export const MAX_SUBTITLE_LINE_LEGNTH = 47;
+export const MAX_SUBTITLE_LINE_LENGTH = 47;
 const SUBTITLE_TEXTAREA_EXTRA_WIDTH_CH = 6;
 const SUBTITLE_TIMECODE_INPUT_WIDTH_CH = 20;
-const SUBTITLE_TEXTAREA_WIDTH = `${MAX_SUBTITLE_LINE_LEGNTH + SUBTITLE_TEXTAREA_EXTRA_WIDTH_CH}ch`;
+const SUBTITLE_TEXTAREA_WIDTH = `${MAX_SUBTITLE_LINE_LENGTH + SUBTITLE_TEXTAREA_EXTRA_WIDTH_CH}ch`;
 const SUBTITLE_TIMECODE_INPUT_WIDTH = `${SUBTITLE_TIMECODE_INPUT_WIDTH_CH}ch`;
 export const SUBTITLE_BLOCK_WIDTH_CH =
-    MAX_SUBTITLE_LINE_LEGNTH + SUBTITLE_TEXTAREA_EXTRA_WIDTH_CH + SUBTITLE_TIMECODE_INPUT_WIDTH_CH;
+    MAX_SUBTITLE_LINE_LENGTH + SUBTITLE_TEXTAREA_EXTRA_WIDTH_CH + SUBTITLE_TIMECODE_INPUT_WIDTH_CH;
 
 export default function SubtitleBlock({
     startTenths,
@@ -31,9 +31,9 @@ export default function SubtitleBlock({
     return (
         <Flex style={{ ...style, fontFamily: "monospace" }}>
             <Textarea
-                width={String(MAX_SUBTITLE_LINE_LEGNTH + 6) + "ch"}
+                width={String(MAX_SUBTITLE_LINE_LENGTH + 6) + "ch"}
                 rows={MAX_SUBTITLE_BLOCK_LINES}
-                cols={MAX_SUBTITLE_LINE_LEGNTH}
+                cols={MAX_SUBTITLE_LINE_LENGTH}
                 resize="none"
                 value={text}
                 onInput={(e) => {

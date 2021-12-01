@@ -20,18 +20,17 @@ databases.
 1. Instal pnpm: `npm i -g pnpm`
 1. Clone/download this package
 1. Add the PostgreSQL function from `src/introspectionFunction.sql` to your API.
-   Please refer to installation instructions below.
+   - Create the view by running the SQL migration from
+     `src/introspectionFunction.sql`
+   - There is no need to set any Hasura permissions. This table should only be
+     accessible via the admin role.
 1. `pnpm i`
 1. `pnpm build`
 1. `pnpm start -- [opts]`
 
-### Installing the PostgreSQL introspection function
-
-TODO: Installation instructions
-
 ## Options
 
-- `--metadata-dir [path]` **(Required)**
+- `--metadataDir [path]` **(Required)**
 
   Path to the root directory of your Hasura Metadata v3
 
@@ -49,7 +48,7 @@ TODO: Installation instructions
 
   - Shorthand: `-a`
 
-- `--hasura-admin-secret [secret]` **(Required)**
+- `--hasuraAdminSecret [secret]` **(Required)**
 
   Admin secret for your GraphQL API (for querying the custom introspection function)
 
@@ -201,11 +200,11 @@ schema.
 
 What are we to do then?
 
-### PostgreSQL Introspection Function
+### PostgreSQL Introspection View
 
-This package provides a PostgreSQL function to add to your database and GraphQL
-API. This function navigates Postgres' and Hasura's internal metadata to return
-the complete foreign key information. This generator script queries the function
+This package provides a PostgreSQL view to add to your database and GraphQL
+API. This view navigates Postgres' and Hasura's internal metadata to return
+the complete foreign key information. This generator script queries the view
 (using the Admin secret) to obtain this necessary supplementary information.
 
 There is an additional detail to be aware of before we proceed: foreign keys may
@@ -214,20 +213,34 @@ including manual relationships) may be specified on multiple columns. We will
 account for this by treating relationships as specifying a column mapping, being
 a list of pairs of field names.
 
-TODO: How the introspection function works
+The introspection view works by looking up all the "classes" (tables) in the
+database then joins them with all constraints on each table. The constraints are
+filtered to foreign key constraints only. Having found all the foreign keys, the
+data is in the form of id numbers. These id numbers are joined with the
+attribute and class tables to pull out the names of each table and column.
+
+The introspection view returns a row per column-pair of each constraint.
+Constraint names are unique only within a given table. To recover the complete
+column map of each constraint we must look at each table in turn, each
+constraint for a table and find all matching rows to aggregate the complete
+column mapping.
 
 ### Piecing it all together
 
 We now have enough information to output our augmentation schema file.
 
+We continue to use the Hasura relationships to guide our choice of relationship
+output. Although our foreign key introspection query returns every foreign key,
+not all of them will have been added to the Hasura GraphQL schema.
+
 1. For each foreign key object relationship:
-   1. Lookup the foreign key information to obtain the remote field name
+   1. Lookup the foreign key information to obtain the column mappings
    1. Append the relationship name and local to remote field mapping to the
       table information
 1. For each manual object relationship:
    1. Append the relationship name and local to remote field mapping to the
       table information
-1. TODO: Continue this logic for array relationships
+1. We repeat the same steps for array relationships
 1. Output the table information in the same structure as the Schema JSON.
    - This facilitates easier traversal in the resolver code since it will traverse
      both the schema JSON and our augmented schema JSON.

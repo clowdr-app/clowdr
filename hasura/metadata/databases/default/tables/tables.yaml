@@ -46,6 +46,7 @@
 - "!include job_queues_SubmissionRequestEmailJob.yaml"
 - "!include job_queues_UploadYouTubeVideoJob.yaml"
 - "!include public_Email.yaml"
+- "!include public_ForeignKeyIntrospection.yaml"
 - "!include public_PushNotificationSubscription.yaml"
 - "!include public_User.yaml"
 - "!include registrant_GoogleAccount.yaml"

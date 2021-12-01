@@ -4,17 +4,12 @@ const anyDecimalSeparator = /[,.٫⎖]/;
 
 function timecodeToTenths(timecode: string): number {
     const [secondsFloatStr, minutesStr, hoursStr] = timecode.split(":").reverse();
-    const [secondsStr, fractionStr] = secondsFloatStr.split(anyDecimalSeparator);
 
-    let tenthsFloat = fractionStr ? parseInt(fractionStr, 10) : 0;
-    while (tenthsFloat >= 10) tenthsFloat /= 10;
-
-    const tenths = Math.round(tenthsFloat);
-    const seconds = parseInt(secondsStr, 10);
+    const secondsFloat = parseFloat(secondsFloatStr.replace(anyDecimalSeparator, "."));
     const minutes = minutesStr ? parseInt(minutesStr, 10) : 0;
     const hours = hoursStr ? parseInt(hoursStr, 10) : 0;
 
-    return ((hours * 60 + minutes) * 60 + seconds) * 10 + tenths;
+    return (hours * 60 + minutes) * 600 + Math.round(secondsFloat * 10);
 }
 
 const toDigits = (n: number, d: number) => Math.trunc(n).toString().padStart(d, "0");

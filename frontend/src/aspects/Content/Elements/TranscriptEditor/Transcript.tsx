@@ -85,6 +85,7 @@ function SubtitleBlockJITRenderer({
                               ]
                             : oldTranscript
                     ),
+                onDelete: () => {},
             }}
         />
     );

@@ -18,7 +18,13 @@ export default function TranscriptEditor({
 }: Props): JSX.Element {
     const [transcriptWIP, setTranscriptWIP] = useState(SRTParse(srtTranscript));
     return (
-        <Flex flexDirection="row" justifyContent="center" alignItems="start" flexWrap="wrap-reverse">
+        <Flex
+            flexDirection="row"
+            justifyContent="center"
+            alignItems="start"
+            flexWrap="wrap-reverse"
+            style={{ fontFamily: "monospace" }}
+        >
             <Transcript
                 value={transcriptWIP}
                 onInput={(transform) => {
@@ -30,7 +36,11 @@ export default function TranscriptEditor({
                 <video style={{ width: `${TRANSCRIPT_WIDTH_CH}ch`, margin: 4 }} src={mediaUrl} controls>
                     This is a video
                 </video>
-                <Button colorScheme="green" onClick={() => handleSaveEditor(SRTStringify(transcriptWIP))}>
+                <Button
+                    colorScheme="green"
+                    onClick={() => handleSaveEditor(SRTStringify(transcriptWIP))}
+                    style={{ fontFamily: "var(--chakra-fonts-body)" }}
+                >
                     Save Subtitles
                 </Button>
             </Flex>

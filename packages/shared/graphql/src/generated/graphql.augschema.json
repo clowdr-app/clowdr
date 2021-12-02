@@ -1,0 +1,3277 @@
+{
+    "__schema": {
+        "types": [
+            {
+                "kind": "OBJECT",
+                "name": "analytics_AppStats",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_CompletedRegistrations",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_ContentElementStats",
+                "fields": [
+                    {
+                        "name": "element",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "elementId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_ContentItemStats",
+                "fields": [
+                    {
+                        "name": "item",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "itemId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_ElementTotalViews",
+                "fields": [
+                    {
+                        "name": "element",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "elementId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_ItemTotalViews",
+                "fields": [
+                    {
+                        "name": "item",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "itemId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomPresence",
+                "fields": [
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "analytics_RoomStats",
+                "fields": [
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_Chat",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "duplicatesFrom",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "duplicateToId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "duplicateTo",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "duplicateToId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "flags",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "discussionChatId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "chatId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "messages",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "chatId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "pins",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "chatId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "readUpToIndices",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "chatId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "rooms",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "chatId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "subscriptions",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "chatId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_Flag",
+                "fields": [
+                    {
+                        "name": "discussionChat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "discussionChatId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "flaggedBy",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "flaggedById": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "message",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "messageSId": "sId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_FlagType",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_Message",
+                "fields": [
+                    {
+                        "name": "chat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "chatId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "duplicateIncoming",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "sId": "duplicatedMessageSId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "duplicateOutgoing",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "duplicatedMessageSId": "sId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "flags",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "sId": "messageSId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "reactions",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "sId": "messageSId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "sender",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "senderId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_MessageType",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_Pin",
+                "fields": [
+                    {
+                        "name": "chat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "chatId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_Reaction",
+                "fields": [
+                    {
+                        "name": "chat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "chatId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "duplicate",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "duplicateSId": "sId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "duplicates",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "sId": "duplicateSId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "message",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "messageSId": "sId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "sender",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "senderId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_ReactionType",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_ReadUpToIndex",
+                "fields": [
+                    {
+                        "name": "chat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "chatId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "chat_Subscription",
+                "fields": [
+                    {
+                        "name": "XPin",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "chatId": "chatId",
+                                "registrantId": "registrantId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "chat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "chatId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "collection_Exhibition",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "descriptiveItem",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "descriptiveItemId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "exhibitionId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "collection_ProgramPerson",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "eventPeople",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "personId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "itemPeople",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "personId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "originatingData",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "originatingDataId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "collection_Tag",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "itemTags",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "tagId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "originatingData",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "originatingDataId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "conference_Conference",
+                "fields": [
+                    {
+                        "name": "chats",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "completedRegistrationsStat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "configurations",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "creator",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "createdBy": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "demoCode",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "demoCodeId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "events",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "exhibitions",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "originatingDatas",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "programPeople",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrants",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "rooms",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "shufflePeriods",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "subconferences",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "tags",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "conference_Configuration",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "conference_ConfigurationKey",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "conference_DemoCode",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "demoCodeId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "usedBy",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "usedById": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "conference_OriginatingData",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "elements",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "originatingDataId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "events",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "originatingDataId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "originatingDataId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "programPeople",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "originatingDataId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "rooms",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "originatingDataId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "tags",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "originatingDataId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "conference_Subconference",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "conference_VisibilityLevel",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "content_Element",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "item",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "itemId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "originatingData",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "originatingDataId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "stats",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "elementId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "totalViewsStat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "elementId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "typeName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "youTubeUploads",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "elementId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "content_ElementType",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "content_Item",
+                "fields": [
+                    {
+                        "name": "chat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "chatId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "descriptionOfExhibitions",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "descriptiveItemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "elements",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "itemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "events",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "itemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "itemExhibitions",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "itemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "itemPeople",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "itemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "itemTags",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "itemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "originatingData",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "originatingDataId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "originatingItemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "rooms",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "originatingItemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "stats",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "itemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "totalViewsStat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "itemId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "typeName": "name"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "content_ItemExhibition",
+                "fields": [
+                    {
+                        "name": "exhibition",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "exhibitionId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "item",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "itemId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "content_ItemProgramPerson",
+                "fields": [
+                    {
+                        "name": "item",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "itemId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "person",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "personId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "content_ItemTag",
+                "fields": [
+                    {
+                        "name": "item",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "itemId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "tag",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "tagId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "content_ItemType",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_ChannelStackCreateJob",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "jobStatus",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "jobStatusName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_ChannelStackDeleteJob",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_ChannelStackUpdateJob",
+                "fields": [
+                    {
+                        "name": "channelStack",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "channelStackId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_CombineVideosJob",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "jobStatus",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "jobStatusName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "createdByRegistrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_CustomEmailJob",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_InvitationEmailJob",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_JobStatus",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_MediaPackageHarvestJob",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "event",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "eventId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "jobStatus",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "jobStatusName": "name"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_PrepareJob",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "jobStatus",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "jobStatusName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "videoRenderJobs",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferencePrepareJobId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_PublishVideoJob",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "element",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "elementId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_SubmissionRequestEmailJob",
+                "fields": [
+                    {
+                        "name": "person",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "personId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "job_queues_UploadYouTubeVideoJob",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "element",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "elementId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "jobStatus",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "jobStatusName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrantGoogleAccount",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantGoogleAccountId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "youTubeUploads",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "uploadYouTubeVideoJobId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "public_Email",
+                "fields": [
+                    {
+                        "name": "invitation",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "invitationId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "user",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "userId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "public_ForeignKeyIntrospection",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "public_PushNotificationSubscription",
+                "fields": [
+                    {
+                        "name": "user",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "userId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "public_User",
+                "fields": [
+                    {
+                        "name": "conferenceDemoCodes",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "usedById"
+                            }
+                        }
+                    },
+                    {
+                        "name": "conferencesCreated",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "createdBy"
+                            }
+                        }
+                    },
+                    {
+                        "name": "emails",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "userId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "invitationsPendingConfirmation",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "linkToUserId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "pushNotificationSubscriptions",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "userId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrants",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "userId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "superUserPermissionGrants",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "userId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_GoogleAccount",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_Group",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "groupRegistrants",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "groupId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "subconference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "subconferenceId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_GroupRegistrant",
+                "fields": [
+                    {
+                        "name": "group",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "groupId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_Invitation",
+                "fields": [
+                    {
+                        "name": "emails",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "invitationId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "user",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "linkToUserId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_Profile",
+                "fields": [
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_ProfileBadges",
+                "fields": [
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_Registrant",
+                "fields": [
+                    {
+                        "name": "badges",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "registrantId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "groupRegistrants",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "registrantId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "invitation",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "registrantId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "profile",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "registrantId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "programPeople",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "registrantId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "roomParticipants",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "registrantId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "subconferenceMemberships",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "registrantId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "user",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "userId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_RegistrantRole",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_SavedVonageRoomRecording",
+                "fields": [
+                    {
+                        "name": "recording",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "recordingId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "registrant_SubconferenceMembership",
+                "fields": [
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "subconference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "subconferenceId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_Backend",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_ChimeMeeting",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_LivestreamDurations",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_ManagementMode",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_Mode",
+                "fields": [
+                    {
+                        "name": "events",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "name": "intendedRoomModeName"
+                            }
+                        }
+                    },
+                    {
+                        "name": "rooms",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "name": "currentModeName"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_Participant",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_PersonRole",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_Room",
+                "fields": [
+                    {
+                        "name": "channelStack",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "channelStackCreateJobs",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "chat",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "chatId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "chimeMeeting",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "currentMode",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "currentModeName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "events",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "livestreamDuration",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "managementMode",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "managementModeName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "originatingData",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "originatingDataId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "originatingEvent",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "originatingEventId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "originatingItem",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "originatingItemId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "participants",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "presenceCounts",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "roomMemberships",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "rtmpOutput",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "shuffleRooms",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "stats",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "vonageParticipantStreams",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "publicVonageSessionId": "vonageSessionId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "vonageRecordings",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "roomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "vonageSessionLayout",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "publicVonageSessionId": "vonageSessionId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_RoomGroupMembership",
+                "fields": [
+                    {
+                        "name": "group",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "groupId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_RoomMembership",
+                "fields": [
+                    {
+                        "name": "personRole",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "personRoleName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_ShuffleAlgorithm",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_ShufflePeriod",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "events",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "shufflePeriodId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "organiser",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "organiserId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "queueEntries",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "shufflePeriodId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "shuffleRooms",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "shufflePeriodId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_ShuffleQueueEntry",
+                "fields": [
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "shufflePeriod",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "shufflePeriodId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "shuffleRoom",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "allocatedShuffleRoomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "room_ShuffleRoom",
+                "fields": [
+                    {
+                        "name": "continuations",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "fromShuffleQueue"
+                            }
+                        }
+                    },
+                    {
+                        "name": "queueEntries",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "allocatedShuffleRoomId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "shufflePeriod",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "shufflePeriodId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "schedule_Continuation",
+                "fields": [
+                    {
+                        "name": "event",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "fromEvent": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "shufflePeriod",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "fromShuffleQueue": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "schedule_Event",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "continuations",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "fromEvent"
+                            }
+                        }
+                    },
+                    {
+                        "name": "eventPeople",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "eventId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "eventVonageSession",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "eventId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "exhibition",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "exhibitionId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "item",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "itemId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "originatingData",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "originatingDataId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "roomMode",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "intendedRoomModeName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "shufflePeriod",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "shufflePeriodId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "schedule_EventProgramPerson",
+                "fields": [
+                    {
+                        "name": "event",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "eventId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "eventPersonRole",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roleName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "person",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "personId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "schedule_EventProgramPersonRole",
+                "fields": [
+                    {
+                        "name": "eventPeople",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "name": "roleName"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "schedule_OverlappingEvents",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "eventX",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "xId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "eventY",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "yId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "schedule_StarredEvent",
+                "fields": [
+                    {
+                        "name": "event",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "eventId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "system_Configuration",
+                "fields": [
+                    {
+                        "name": "configurationKey",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "key": "name"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "system_ConfigurationKey",
+                "fields": [
+                    {
+                        "name": "grantedPermissions",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "name": "configurationKey"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "system_ConfigurationPermissionGrant",
+                "fields": [
+                    {
+                        "name": "grantedPermission",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "permissionName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "targetConfigurationKey",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "configurationKey": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "user",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "userId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "system_SuperUserPermission",
+                "fields": [
+                    {
+                        "name": "superUserGrantTargets",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "name": "targetPermissionName"
+                            }
+                        }
+                    },
+                    {
+                        "name": "superUserGrants",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "name": "grantedPermissionName"
+                            }
+                        }
+                    },
+                    {
+                        "name": "systemConfigurationGrants",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "name": "permissionName"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "system_SuperUserPermissionGrant",
+                "fields": [
+                    {
+                        "name": "grantedPermission",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "grantedPermissionName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "targetPermission",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "targetPermissionName": "name"
+                            }
+                        }
+                    },
+                    {
+                        "name": "user",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "userId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "system_SuperUserState",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_ChannelStack",
+                "fields": [
+                    {
+                        "name": "channelStackCreateJob",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "channelStackCreateJobId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "channelStackUpdateJobs",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "channelStackId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "mediaLiveChannelStatus",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "channelStackId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_EventVonageSession",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "event",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "eventId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "layouts",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "sessionId": "vonageSessionId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "participantStreams",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "sessionId": "vonageSessionId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "recordings",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "sessionId": "vonageSessionId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_ImmediateSwitch",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "event",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "eventId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_InputType",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_MediaLiveChannelStatus",
+                "fields": [
+                    {
+                        "name": "channelStack",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "channelStackId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_RoomRtmpOutput",
+                "fields": [
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_RtmpInput",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_TranscriptionJob",
+                "fields": []
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_VideoRenderJob",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "conferencePrepareJob",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferencePrepareJobId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "element",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "elementId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "jobStatus",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "jobStatusName": "name"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_VonageParticipantStream",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "eventVonageSession",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "vonageSessionId": "sessionId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "registrantId": "id"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_VonageRoomRecording",
+                "fields": [
+                    {
+                        "name": "initiator",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "initiatedBy": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "room",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "roomId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "saves",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "recordingId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_VonageSessionLayout",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "eventVonageSession",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "vonageSessionId": "sessionId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "rooms",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "vonageSessionId": "publicVonageSessionId"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_YouTubeUpload",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "element",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "elementId": "id"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

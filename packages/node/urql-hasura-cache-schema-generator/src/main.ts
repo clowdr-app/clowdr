@@ -468,6 +468,8 @@ class LS extends Command {
             });
         }
         fs.writeFileSync(flags.output, JSON.stringify(outputSchema, null, 4));
+
+        this.log("Augmented schema generated");
     }
 
     private async getDatabaseForeignKeys(flags: ProgramFlags): Promise<ForeignKey[]> {

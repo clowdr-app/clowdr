@@ -65,8 +65,8 @@ interface ArrayRelationshipSpec {
 
 interface TableSpec {
     table: TableDetailsSpec;
-    object_relationships: ObjectRelationshipSpec[];
-    array_relationships: ArrayRelationshipSpec[];
+    object_relationships?: ObjectRelationshipSpec | ObjectRelationshipSpec[];
+    array_relationships?: ArrayRelationshipSpec | ArrayRelationshipSpec[];
 }
 
 interface ProgramFlags {
@@ -74,6 +74,18 @@ interface ProgramFlags {
     output: string;
     api: URL;
     hasuraAdminSecret: string;
+}
+
+interface RelationshipSchema {
+    name: string;
+    type: "object" | "array";
+    remoteTable: TableDetailsSpec;
+    columnMap: Record<string, string>;
+}
+
+interface TableSchema {
+    localTable: TableDetailsSpec;
+    relationships: RelationshipSchema[];
 }
 
 class LS extends Command {
@@ -226,7 +238,7 @@ class LS extends Command {
 
     private async processDatabase(database: DatabaseSpec, flags: ProgramFlags) {
         if (database.name === "default") {
-            await this.getDatabaseForeignKeys(flags);
+            const foreignKeys = await this.getDatabaseForeignKeys(flags);
 
             const tables: TableSpec[] = [];
             if (typeof database.tables === "string") {
@@ -236,16 +248,226 @@ class LS extends Command {
                     tables.push(...(await this.getTables(Path.join(flags.metadataDir, "/databases"), path)));
                 }
             }
-
-            // TODO
-            this.log("Tables:");
             tables.sort(
                 (x, y) => x.table.schema.localeCompare(y.table.schema) || x.table.name.localeCompare(y.table.name)
             );
+
+            const tableSchemas: TableSchema[] = [];
             for (const table of tables) {
-                this.log(` - ${table.table.schema}.${table.table.name}`);
+                this.processTable(table, tableSchemas, foreignKeys);
+            }
+
+            this.outputSchema(tableSchemas, flags);
+        }
+    }
+
+    private processTable(table: TableSpec, tableSchemas: TableSchema[], foreignKeys: ForeignKey[]) {
+        const tableSchema: TableSchema = {
+            localTable: {
+                name: table.table.name,
+                schema: table.table.schema,
+            },
+            relationships: [],
+        };
+        tableSchemas.push(tableSchema);
+
+        // One to many and many to one foreign keys
+        const { m2oFKs, o2mFKs } = this.findForeignKeys(foreignKeys, table);
+
+        if (table.object_relationships) {
+            if (table.object_relationships instanceof Array) {
+                for (const relationship of table.object_relationships) {
+                    this.processObjectRelationship(relationship, tableSchema, m2oFKs);
+                }
+            } else {
+                this.processObjectRelationship(table.object_relationships, tableSchema, m2oFKs);
             }
         }
+
+        if (table.array_relationships) {
+            if (table.array_relationships instanceof Array) {
+                for (const relationship of table.array_relationships) {
+                    this.processArrayRelationship(relationship, tableSchema, o2mFKs);
+                }
+            } else {
+                this.processArrayRelationship(table.array_relationships, tableSchema, o2mFKs);
+            }
+        }
+
+        tableSchema.relationships.sort((x, y) => x.type.localeCompare(y.type) && x.name.localeCompare(y.name));
+    }
+
+    private findForeignKeys(
+        foreignKeys: ForeignKey[],
+        table: TableSpec
+    ): { m2oFKs: RelationshipSchema[]; o2mFKs: RelationshipSchema[] } {
+        const o2mFKs: RelationshipSchema[] = []; // Array relationships
+        const m2oFKs: RelationshipSchema[] = []; // Object relationships
+        for (const foreignKey of foreignKeys) {
+            if (foreignKey.parent_schema === table.table.schema && foreignKey.parent_table === table.table.name) {
+                // One to many - array relationship
+                const existing = o2mFKs.find((x) => x.name === foreignKey.constraint_name);
+
+                if (existing) {
+                    existing.columnMap[foreignKey.parent_column] = foreignKey.child_column;
+                } else {
+                    o2mFKs.push({
+                        name: foreignKey.constraint_name,
+                        type: "array",
+                        remoteTable: {
+                            name: foreignKey.child_table,
+                            schema: foreignKey.child_schema,
+                        },
+                        columnMap: {
+                            [foreignKey.parent_column]: foreignKey.child_column,
+                        },
+                    });
+                }
+            }
+
+            // This is not an either-or. If a foreign key points to the same table
+            // it's not possible for us to distinguish the relationship type from
+            // the available information. For our purposes, this isn't a problem
+            // because the Hasura metadata will tell us whether it was supposed to
+            // be an object or an array relationship.
+            if (foreignKey.child_schema === table.table.schema && foreignKey.child_table === table.table.name) {
+                // Many to one - object relationship
+                const existing = m2oFKs.find((x) => x.name === foreignKey.constraint_name);
+
+                if (existing) {
+                    existing.columnMap[foreignKey.child_column] = foreignKey.parent_column;
+                } else {
+                    m2oFKs.push({
+                        name: foreignKey.constraint_name,
+                        type: "object",
+                        remoteTable: {
+                            name: foreignKey.parent_table,
+                            schema: foreignKey.parent_schema,
+                        },
+                        columnMap: {
+                            [foreignKey.child_column]: foreignKey.parent_column,
+                        },
+                    });
+                }
+            }
+        }
+        return { m2oFKs, o2mFKs };
+    }
+
+    private processObjectRelationship(
+        relationship: ObjectRelationshipSpec,
+        tableSchema: TableSchema,
+        m2oFKs: RelationshipSchema[]
+    ) {
+        if ("manual_configuration" in relationship.using) {
+            const manConfig = relationship.using.manual_configuration;
+            tableSchema.relationships.push({
+                name: relationship.name,
+                type: "object",
+                remoteTable: {
+                    name: manConfig.remote_table.name,
+                    schema: manConfig.remote_table.schema,
+                },
+                columnMap: { ...manConfig.column_mapping },
+            });
+        } else {
+            let found = false;
+            for (const foreignKey of m2oFKs) {
+                if (
+                    Object.keys(foreignKey.columnMap).length === 1 &&
+                    relationship.using.foreign_key_constraint_on in foreignKey.columnMap
+                ) {
+                    tableSchema.relationships.push({
+                        name: relationship.name,
+                        type: "object",
+                        remoteTable: {
+                            name: foreignKey.remoteTable.name,
+                            schema: foreignKey.remoteTable.schema,
+                        },
+                        columnMap: foreignKey.columnMap,
+                    });
+                    found = true;
+                }
+            }
+            if (!found) {
+                throw new Error(
+                    `Unable to find matching foreign key for foreign key object relationship: ${relationship.name} on ${relationship.using.foreign_key_constraint_on}`
+                );
+            }
+        }
+    }
+
+    private processArrayRelationship(
+        relationship: ArrayRelationshipSpec,
+        tableSchema: TableSchema,
+        o2mFKs: RelationshipSchema[]
+    ) {
+        if ("manual_configuration" in relationship.using) {
+            const manConfig = relationship.using.manual_configuration;
+            tableSchema.relationships.push({
+                name: relationship.name,
+                type: "array",
+                remoteTable: {
+                    name: manConfig.remote_table.name,
+                    schema: manConfig.remote_table.schema,
+                },
+                columnMap: { ...manConfig.column_mapping },
+            });
+        } else {
+            let found = false;
+            for (const foreignKey of o2mFKs) {
+                if (
+                    foreignKey.remoteTable.name === relationship.using.foreign_key_constraint_on.table.name &&
+                    foreignKey.remoteTable.schema === relationship.using.foreign_key_constraint_on.table.schema &&
+                    Object.keys(foreignKey.columnMap).length === 1 &&
+                    Object.values(foreignKey.columnMap).includes(relationship.using.foreign_key_constraint_on.column)
+                ) {
+                    tableSchema.relationships.push({
+                        name: relationship.name,
+                        type: "array",
+                        remoteTable: {
+                            name: foreignKey.remoteTable.name,
+                            schema: foreignKey.remoteTable.schema,
+                        },
+                        columnMap: { ...foreignKey.columnMap },
+                    });
+                    found = true;
+                }
+            }
+            if (!found) {
+                throw new Error(
+                    `Unable to find matching foreign key for foreign key array relationship: ${relationship.name} on ${relationship.using.foreign_key_constraint_on.column}`
+                );
+            }
+        }
+    }
+
+    private outputSchema(tableSchemas: TableSchema[], flags: ProgramFlags) {
+        const outputSchema = {
+            __schema: {
+                types: [] as any[],
+            },
+        };
+        for (const table of tableSchemas) {
+            outputSchema.__schema.types.push({
+                kind: "OBJECT",
+                name: `${table.localTable.schema}_${table.localTable.name}`,
+                fields: table.relationships.map((relationship) => {
+                    const type: any = {};
+                    type.kind =
+                        relationship.type === "array" ? "ARRAY_RELATIONSHIP_KEY_MAP" : "OBJECT_RELATIONSHIP_KEY_MAP";
+                    type.columns = relationship.columnMap;
+                    return {
+                        name: relationship.name,
+                        description: `A column map for an ${
+                            relationship.type === "array" ? "array" : "object"
+                        } relationship`,
+                        type,
+                    };
+                }),
+            });
+        }
+        fs.writeFileSync(flags.output, JSON.stringify(outputSchema, null, 4));
     }
 
     private async getDatabaseForeignKeys(flags: ProgramFlags): Promise<ForeignKey[]> {

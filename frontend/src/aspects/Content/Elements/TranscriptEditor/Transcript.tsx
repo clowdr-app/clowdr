@@ -1,5 +1,7 @@
+import { Button, Flex } from "@chakra-ui/react";
 import React, { CSSProperties } from "react";
 import { FixedSizeList } from "react-window";
+import { FAIcon } from "../../../Icons/FAIcon";
 import type { SubtitlesArray } from "./srt";
 import SubtitleBlock, {
     MAX_SUBTITLE_BLOCK_LINES,
@@ -46,9 +48,26 @@ function SubtitleBlockJITRenderer({
     index: number;
     style: CSSProperties;
 }): JSX.Element {
-    const { startTenths, endTenths, text } = value[index];
+    const { startTenths, endTenths, text, deleted } = value[index];
 
-    return (
+    return deleted ? (
+        <Flex style={style} alignItems="center" justifyContent="center">
+            <Button
+                style={{ fontFamily: "var(--chakra-fonts-body)" }}
+                colorScheme="PrimaryActionButton"
+                leftIcon={<FAIcon iconStyle="s" icon="undo" />}
+                onClick={() =>
+                    onInput((oldTranscript) => [
+                        ...oldTranscript.slice(0, index),
+                        { startTenths, endTenths, text },
+                        ...oldTranscript.slice(index + 1),
+                    ])
+                }
+            >
+                Restore deleted subtitle block
+            </Button>
+        </Flex>
+    ) : (
         <SubtitleBlock
             {...{
                 startTenths,
@@ -85,7 +104,12 @@ function SubtitleBlockJITRenderer({
                               ]
                             : oldTranscript
                     ),
-                onDelete: () => {},
+                onDelete: () =>
+                    onInput((oldTranscript) => [
+                        ...oldTranscript.slice(0, index),
+                        { startTenths, endTenths, text, deleted: true },
+                        ...oldTranscript.slice(index + 1),
+                    ]),
             }}
         />
     );

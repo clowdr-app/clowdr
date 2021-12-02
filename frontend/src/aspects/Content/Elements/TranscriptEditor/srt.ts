@@ -27,6 +27,7 @@ export type SubtitlesArray = {
     startTenths: number;
     endTenths: number;
     text: string;
+    deleted?: true;
 }[];
 
 export function SRTParse(srtTranscript: string): SubtitlesArray {
@@ -39,11 +40,13 @@ export function SRTParse(srtTranscript: string): SubtitlesArray {
 
 export function SRTStringify(transcript: SubtitlesArray): string {
     return new srtHandler().toSrt(
-        transcript.map(({ startTenths, endTenths, text }, index) => ({
-            id: (index + 1).toString(),
-            startTime: tenthsToSRTTimecode(startTenths),
-            endTime: tenthsToSRTTimecode(endTenths, { minusEpsilon: true }),
-            text,
-        }))
+        transcript
+            .filter((b) => !b.deleted)
+            .map(({ startTenths, endTenths, text }, index) => ({
+                id: (index + 1).toString(),
+                startTime: tenthsToSRTTimecode(startTenths),
+                endTime: tenthsToSRTTimecode(endTenths, { minusEpsilon: true }),
+                text,
+            }))
     );
 }

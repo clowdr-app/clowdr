@@ -37,6 +37,16 @@ export default function SubtitleBlock({
 }): JSX.Element {
     return (
         <Flex {...{ style }}>
+            <Textarea
+                width={SUBTITLE_TEXTAREA_WIDTH}
+                rows={MAX_SUBTITLE_BLOCK_LINES}
+                cols={MAX_SUBTITLE_LINE_LENGTH}
+                resize="none"
+                value={text}
+                onInput={(e) => {
+                    onTextInput((e.target as HTMLTextAreaElement).value);
+                }}
+            />
             <Button
                 height="100%"
                 aria-label="Delete subtitle block"
@@ -48,16 +58,6 @@ export default function SubtitleBlock({
             >
                 <FAIcon iconStyle="s" icon="trash " />
             </Button>
-            <Textarea
-                width={SUBTITLE_TEXTAREA_WIDTH}
-                rows={MAX_SUBTITLE_BLOCK_LINES}
-                cols={MAX_SUBTITLE_LINE_LENGTH}
-                resize="none"
-                value={text}
-                onInput={(e) => {
-                    onTextInput((e.target as HTMLTextAreaElement).value);
-                }}
-            />
             <Flex width={SUBTITLE_TIMECODE_INPUT_WIDTH} flexDirection="column" justifyContent="space-between">
                 <TimecodeInput value={startTenths} onInput={onStartTenthsInput} />
                 <TimecodeInput value={endTenths} onInput={onEndTenthsInput} />

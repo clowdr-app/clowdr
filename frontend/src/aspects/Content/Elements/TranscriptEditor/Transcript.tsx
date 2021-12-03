@@ -68,63 +68,84 @@ function SubtitleBlockJITRenderer({
             </Button>
         </Flex>
     ) : (
-        <SubtitleBlock
-            {...{
-                startTenths,
-                endTenths,
-                text,
-                style,
-                onTextInput: (newText) =>
-                    onInput((oldTranscript) =>
-                        validateNewText(newText)
-                            ? [
-                                  ...oldTranscript.slice(0, index),
-                                  { startTenths, endTenths, text: newText },
-                                  ...oldTranscript.slice(index + 1),
-                              ]
-                            : oldTranscript
-                    ),
-                onStartTenthsInput: (newStartTenths) =>
-                    onInput((oldTranscript) =>
-                        validateNewStartTenths(oldTranscript, index, newStartTenths)
-                            ? [
-                                  ...oldTranscript.slice(0, index),
-                                  { startTenths: newStartTenths, endTenths, text },
-                                  ...oldTranscript.slice(index + 1),
-                              ]
-                            : oldTranscript
-                    ),
-                onEndTenthsInput: (newEndTenths) =>
-                    onInput((oldTranscript) =>
-                        validateNewEndTenths(oldTranscript, index, newEndTenths)
-                            ? [
-                                  ...oldTranscript.slice(0, index),
-                                  { startTenths, endTenths: newEndTenths, text },
-                                  ...oldTranscript.slice(index + 1),
-                              ]
-                            : oldTranscript
-                    ),
-                onDelete: () =>
-                    onInput((oldTranscript) => [
-                        ...oldTranscript.slice(0, index),
-                        { startTenths, endTenths, text, deleted: true },
-                        ...oldTranscript.slice(index + 1),
-                    ]),
-            }}
-        />
+        <Flex {...{ direction: "column", style }}>
+            <SubtitleBlock
+                {...{
+                    startTenths,
+                    endTenths,
+                    text,
+                    onTextInput: (newText) =>
+                        onInput((oldTranscript) =>
+                            validateNewText(newText)
+                                ? [
+                                      ...oldTranscript.slice(0, index),
+                                      { startTenths, endTenths, text: newText },
+                                      ...oldTranscript.slice(index + 1),
+                                  ]
+                                : oldTranscript
+                        ),
+                    onStartTenthsInput: (newStartTenths) =>
+                        onInput((oldTranscript) =>
+                            validateNewStartTenths(oldTranscript, index, newStartTenths)
+                                ? [
+                                      ...oldTranscript.slice(0, index),
+                                      { startTenths: newStartTenths, endTenths, text },
+                                      ...oldTranscript.slice(index + 1),
+                                  ]
+                                : oldTranscript
+                        ),
+                    onEndTenthsInput: (newEndTenths) =>
+                        onInput((oldTranscript) =>
+                            validateNewEndTenths(oldTranscript, index, newEndTenths)
+                                ? [
+                                      ...oldTranscript.slice(0, index),
+                                      { startTenths, endTenths: newEndTenths, text },
+                                      ...oldTranscript.slice(index + 1),
+                                  ]
+                                : oldTranscript
+                        ),
+                    onDelete: () =>
+                        onInput((oldTranscript) => [
+                            ...oldTranscript.slice(0, index),
+                            { startTenths, endTenths, text, deleted: true },
+                            ...oldTranscript.slice(index + 1),
+                        ]),
+                }}
+            />
+            <Flex height="16px" shrink={0} alignItems="center">
+                <Button
+                    minWidth="0px"
+                    paddingInline="0px"
+                    height="16px"
+                    aria-label="Insert new subtitle block after this one"
+                    title="Insert new subtitle block"
+                    color="var(--chakra-colors-PrimaryActionButton-500)"
+                    background="var(--chakra-colors-AppPageV2-pageBackground-light)"
+                    verticalAlign="center"
+                    onClick={() =>
+                        onInput((oldTranscript) => [
+                            ...oldTranscript.slice(0, index + 1),
+                            ...oldTranscript.slice(index + 1),
+                        ])
+                    }
+                >
+                    <FAIcon height="16px" iconStyle="s" icon="plus-circle" />
+                </Button>
+            </Flex>
+        </Flex>
     );
 }
 
 export default function Transcript({ value, onInput }: TranscriptProps): JSX.Element {
     return (
         <FixedSizeList
-            height={404}
+            height={400}
             width={`${TRANSCRIPT_WIDTH_CH}ch`}
             style={{ margin: 4 }}
             itemCount={value.length}
             itemData={{ value, onInput }}
             itemKey={(i, { value }) => value[i].startTenths}
-            itemSize={101}
+            itemSize={128}
             children={SubtitleBlockJITRenderer}
         />
     );

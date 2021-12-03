@@ -34,6 +34,25 @@ function validateNewEndTenths(oldTranscript: SubtitlesArray, index: number, newE
     return newEndTenths > oldTranscript[index].startTenths;
 }
 
+function getNewBlockAfter(
+    oldTranscript: SubtitlesArray,
+    index: number
+): { startTenths: number; endTenths: number; text: "" } | undefined {
+    const prevEndTenths = index < 0 ? 0 : oldTranscript[index].endTenths;
+    const nextStartTenths =
+        index === oldTranscript.length - 1 ? prevEndTenths + 20 : oldTranscript[index + 1].startTenths;
+    if (nextStartTenths === prevEndTenths) {
+        alert("Adjust timecodes in surrounding subtitle blocks to make room for a new block.");
+        return;
+    }
+    const midpointTenths = Math.trunc((prevEndTenths + nextStartTenths) / 2);
+    return {
+        startTenths: Math.max(prevEndTenths, midpointTenths - 10),
+        endTenths: Math.min(nextStartTenths, midpointTenths + 10),
+        text: "",
+    };
+}
+
 interface TranscriptProps {
     value: SubtitlesArray;
     onInput: (transform: (oldTranscript: SubtitlesArray) => SubtitlesArray) => void;
@@ -123,10 +142,12 @@ function SubtitleBlockJITRenderer({
                     background="var(--chakra-colors-AppPageV2-pageBackground-light)"
                     verticalAlign="center"
                     onClick={() =>
-                        onInput((oldTranscript) => [
-                            ...oldTranscript.slice(0, index + 1),
-                            ...oldTranscript.slice(index + 1),
-                        ])
+                        onInput((oldTranscript) => {
+                            const newBlock = getNewBlockAfter(oldTranscript, index);
+                            return newBlock
+                                ? [...oldTranscript.slice(0, index + 1), newBlock, ...oldTranscript.slice(index + 1)]
+                                : oldTranscript;
+                        })
                     }
                 >
                     <FAIcon height="16px" iconStyle="s" icon="plus-circle" />

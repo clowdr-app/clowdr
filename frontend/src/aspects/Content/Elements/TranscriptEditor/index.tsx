@@ -8,6 +8,7 @@ interface Props {
     mediaUrl: string;
     handleSaveEditor: (srtTranscript: any) => void;
     handleChange: () => void;
+    readOnly: Boolean;
 }
 
 export default function TranscriptEditor({
@@ -15,6 +16,7 @@ export default function TranscriptEditor({
     mediaUrl,
     handleSaveEditor,
     handleChange,
+    readOnly,
 }: Props): JSX.Element {
     const [transcriptWIP, setTranscriptWIP] = useState(SRTParse(srtTranscript));
     return (
@@ -22,6 +24,7 @@ export default function TranscriptEditor({
             <Transcript
                 value={transcriptWIP}
                 onInput={(transform) => {
+                    if (readOnly) return;
                     handleChange();
                     setTranscriptWIP(transform);
                 }}

@@ -64,7 +64,8 @@ export default function EditSubtitles({
 }): JSX.Element {
     const [_updateSubtitlesResponse, updateSubtitles] = useUpdateSubtitlesMutation();
     const toast = useToast();
-    const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [saveInProgress, setSaveInProgress] = useState(false);
     const history = useHistory();
 
     const { bucket: _srtBucket, key: _srtKey } = AmazonS3Uri(data.s3Url);
@@ -107,6 +108,7 @@ export default function EditSubtitles({
     const saveSubtitles = useCallback(
         async (srtTranscript: string) => {
             try {
+                setSaveInProgress(true);
                 const result = await updateSubtitles({
                     elementId,
                     magicToken,
@@ -128,6 +130,8 @@ export default function EditSubtitles({
                     description: (e as Error).message,
                     status: "error",
                 });
+            } finally {
+                setSaveInProgress(false);
             }
         },
         [elementId, magicToken, toast, updateSubtitles]
@@ -249,6 +253,7 @@ export default function EditSubtitles({
                             mediaUrl={videoUrl}
                             handleSaveEditor={saveSubtitles}
                             handleChange={() => setHasUnsavedChanges(true)}
+                            readOnly={saveInProgress}
                         />
                     </Suspense>
                 </Fragment>

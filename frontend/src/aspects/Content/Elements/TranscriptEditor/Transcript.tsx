@@ -70,9 +70,8 @@ function SubtitleBlockJITRenderer({
     const { startTenths, endTenths, text, deleted } = value[index];
 
     return deleted ? (
-        <Flex style={style} alignItems="center" justifyContent="center">
+        <Flex {...{ style, alignItems: "center", justifyContent: "center" }}>
             <Button
-                style={{ fontFamily: "var(--chakra-fonts-body)" }}
                 colorScheme="PrimaryActionButton"
                 leftIcon={<FAIcon iconStyle="s" icon="undo" />}
                 onClick={() =>

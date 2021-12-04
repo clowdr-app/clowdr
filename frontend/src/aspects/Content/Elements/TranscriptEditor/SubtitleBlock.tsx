@@ -37,7 +37,7 @@ export default function SubtitleBlock({
     onDelete: () => void;
 } & FlexProps): JSX.Element {
     return (
-        <Flex {...{ style: { padding: `8px ${SUBTITLE_BLOCK_PADDING_CH}ch` }, ...flexProps }}>
+        <Flex {...{ style: { padding: `8px ${SUBTITLE_BLOCK_PADDING_CH}ch`, fontFamily: "monospace" }, ...flexProps }}>
             <Textarea
                 shrink={0}
                 width={SUBTITLE_TEXTAREA_WIDTH}

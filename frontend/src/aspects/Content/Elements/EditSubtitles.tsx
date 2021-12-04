@@ -21,7 +21,7 @@ import type { SubtitleDetails } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import AmazonS3Uri from "amazon-s3-uri";
 import * as R from "ramda";
-import React, { Fragment, lazy, Suspense, useCallback, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import type { SrtValidationError } from "srt-validator";
 import srtValidator from "srt-validator";
@@ -32,6 +32,7 @@ import { useUpdateSubtitlesMutation } from "../../../generated/graphql";
 import { DownloadButton } from "../../Chakra/LinkButton";
 import { FAIcon } from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
+import TranscriptEditor from "./TranscriptEditor";
 
 gql`
     mutation UpdateSubtitles($elementId: String!, $magicToken: String!, $subtitleText: String!) {
@@ -48,8 +49,6 @@ class ValidationError extends Error {
         this.name = "ValidationError";
     }
 }
-
-const LazyTranscriptEditor = lazy(() => import("./TranscriptEditor"));
 
 export default function EditSubtitles({
     videoS3URL,
@@ -247,15 +246,13 @@ export default function EditSubtitles({
                             </HStack>
                         )}
                     </VStack>
-                    <Suspense fallback={<Spinner />}>
-                        <LazyTranscriptEditor
-                            srtTranscript={subtitlesData}
-                            mediaUrl={videoUrl}
-                            handleSaveEditor={saveSubtitles}
-                            handleChange={() => setHasUnsavedChanges(true)}
-                            readOnly={saveInProgress}
-                        />
-                    </Suspense>
+                    <TranscriptEditor
+                        srtTranscript={subtitlesData}
+                        mediaUrl={videoUrl}
+                        handleSaveEditor={saveSubtitles}
+                        handleChange={() => setHasUnsavedChanges(true)}
+                        readOnly={saveInProgress}
+                    />
                 </Fragment>
             ) : undefined}
         </Fragment>

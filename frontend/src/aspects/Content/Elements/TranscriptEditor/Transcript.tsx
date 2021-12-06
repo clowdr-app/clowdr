@@ -13,7 +13,10 @@ export const TRANSCRIPT_WIDTH_CH = SUBTITLE_BLOCK_WIDTH_CH + 6;
 
 function validateNewText(newText: string): Boolean {
     const lines = newText.split(/\r?\n/);
-    return lines.length <= MAX_SUBTITLE_BLOCK_LINES && lines.every((line) => line.length <= MAX_SUBTITLE_LINE_LENGTH);
+    return (
+        lines.length <= MAX_SUBTITLE_BLOCK_LINES &&
+        lines.every((line, i) => line.length <= MAX_SUBTITLE_LINE_LENGTH && (i === lines.length - 1 || line.length > 0))
+    );
 }
 
 function validateNewStartTenths(oldTranscript: SubtitlesArray, index: number, newStartTenths: number): Boolean {

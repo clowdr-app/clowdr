@@ -8,7 +8,7 @@ interface Props {
     mediaUrl: string;
     handleSaveEditor: (srtTranscript: any) => void;
     handleChange: () => void;
-    readOnly: Boolean;
+    readOnly: boolean;
 }
 
 export default function TranscriptEditor({

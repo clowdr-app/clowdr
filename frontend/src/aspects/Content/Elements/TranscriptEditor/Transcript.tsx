@@ -1,5 +1,6 @@
 import { Button, Flex } from "@chakra-ui/react";
-import React, { CSSProperties } from "react";
+import type { CSSProperties } from "react";
+import React from "react";
 import { FixedSizeList } from "react-window";
 import { FAIcon } from "../../../Icons/FAIcon";
 import type { SubtitlesArray } from "./srt";
@@ -11,7 +12,7 @@ import SubtitleBlock, {
 
 export const TRANSCRIPT_WIDTH_CH = SUBTITLE_BLOCK_WIDTH_CH + 6;
 
-function validateNewText(newText: string): Boolean {
+function validateNewText(newText: string): boolean {
     const lines = newText.split(/\r?\n/);
     return (
         lines.length <= MAX_SUBTITLE_BLOCK_LINES &&
@@ -19,7 +20,7 @@ function validateNewText(newText: string): Boolean {
     );
 }
 
-function validateNewStartTenths(oldTranscript: SubtitlesArray, index: number, newStartTenths: number): Boolean {
+function validateNewStartTenths(oldTranscript: SubtitlesArray, index: number, newStartTenths: number): boolean {
     if (newStartTenths < oldTranscript[index].startTenths) {
         if (index === 0) return newStartTenths >= 0;
         return newStartTenths >= oldTranscript[index - 1].endTenths;
@@ -28,7 +29,7 @@ function validateNewStartTenths(oldTranscript: SubtitlesArray, index: number, ne
     return newStartTenths < oldTranscript[index].endTenths;
 }
 
-function validateNewEndTenths(oldTranscript: SubtitlesArray, index: number, newEndTenths: number): Boolean {
+function validateNewEndTenths(oldTranscript: SubtitlesArray, index: number, newEndTenths: number): boolean {
     if (newEndTenths > oldTranscript[index].endTenths) {
         if (index === oldTranscript.length) return true; // TODO upper limit is end of video
         return newEndTenths <= oldTranscript[index + 1].startTenths;
@@ -170,7 +171,8 @@ export default function Transcript({ value, onInput }: TranscriptProps): JSX.Ele
             itemData={{ value, onInput }}
             itemKey={(i, { value }) => value[i].startTenths}
             itemSize={128}
-            children={SubtitleBlockJITRenderer}
-        />
+        >
+            {SubtitleBlockJITRenderer}
+        </FixedSizeList>
     );
 }

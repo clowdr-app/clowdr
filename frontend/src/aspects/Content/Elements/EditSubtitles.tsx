@@ -136,7 +136,7 @@ export default function EditSubtitles({
                 setSaveInProgress(false);
             }
         },
-        [elementId, magicToken, toast, updateSubtitles]
+        [elementId, magicToken, refresh, toast, updateSubtitles]
     );
 
     return (

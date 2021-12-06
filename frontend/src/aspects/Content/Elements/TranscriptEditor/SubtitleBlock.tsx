@@ -1,4 +1,5 @@
-import { Button, Flex, FlexProps, Textarea } from "@chakra-ui/react";
+import type { FlexProps } from "@chakra-ui/react";
+import { Button, Flex, Textarea } from "@chakra-ui/react";
 import React from "react";
 import { FAIcon } from "../../../Icons/FAIcon";
 import TimecodeInput from "./TimecodeInput";

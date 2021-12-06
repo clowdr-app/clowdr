@@ -41,7 +41,7 @@ function getNewBlockAfter(
     const prevEndTenths = index < 0 ? 0 : oldTranscript[index].endTenths;
     const nextStartTenths =
         index === oldTranscript.length - 1 ? prevEndTenths + 20 : oldTranscript[index + 1].startTenths;
-    if (nextStartTenths === prevEndTenths) {
+    if (nextStartTenths <= prevEndTenths) {
         alert("Adjust timecodes in surrounding subtitle blocks to make room for a new block.");
         return;
     }

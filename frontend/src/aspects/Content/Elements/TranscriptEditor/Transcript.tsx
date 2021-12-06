@@ -135,6 +135,7 @@ function SubtitleBlockJITRenderer({
                     minWidth="0px"
                     paddingInline="0px"
                     height="16px"
+                    lineHeight="15px"
                     aria-label="Insert new subtitle block after this one"
                     title="Insert new subtitle block"
                     color="var(--chakra-colors-PrimaryActionButton-500)"

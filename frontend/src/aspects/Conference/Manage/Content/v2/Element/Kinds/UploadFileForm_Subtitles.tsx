@@ -114,12 +114,6 @@ export default function UploadFileForm_Subtitles({
     useEffect(() => {
         uppy?.on("file-added", updateFiles);
         uppy?.on("file-removed", updateFiles);
-        uppy?.on("upload-success", () => {
-            toast({
-                status: "success",
-                description: "All files uploaded.",
-            });
-        });
     }, [toast, updateFiles, uppy]);
 
     const latestVersionData = useMemo<

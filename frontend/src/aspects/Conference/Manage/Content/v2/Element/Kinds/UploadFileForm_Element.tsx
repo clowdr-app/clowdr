@@ -85,14 +85,6 @@ export default function UploadFileForm_Element({
         uppy.on("file-added", onUpdateFiles);
         uppy.on("file-removed", onUpdateFiles);
 
-        const onUploadSuccess = () => {
-            toast({
-                status: "success",
-                description: "All files uploaded.",
-            });
-        };
-        uppy.on("upload-success", onUploadSuccess);
-
         const onError = (err: Error) => {
             console.error("Error while uploading file", { err });
             toast({
@@ -116,7 +108,6 @@ export default function UploadFileForm_Element({
         return () => {
             uppy.off("file-added", onUpdateFiles);
             uppy.off("file-removed", onUpdateFiles);
-            uppy.off("upload-success", onUploadSuccess);
             uppy.off("error", onError);
             uppy.off("upload-error", onUploadError);
         };

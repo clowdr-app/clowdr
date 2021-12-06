@@ -11,6 +11,7 @@ export type Scalars = {
     Float: number;
     bigint: any;
     jsonb: any;
+    name: any;
     numeric: any;
     timestamptz: any;
     uuid: any;
@@ -518,6 +519,80 @@ export type Float_Comparison_Exp = {
     _neq?: Maybe<Scalars["Float"]>;
     _nin?: Maybe<Array<Scalars["Float"]>>;
 };
+
+/** columns and relationships of "ForeignKeyIntrospection" */
+export type ForeignKeyIntrospection = {
+    __typename?: "ForeignKeyIntrospection";
+    child_column?: Maybe<Scalars["name"]>;
+    child_schema?: Maybe<Scalars["name"]>;
+    child_table?: Maybe<Scalars["name"]>;
+    constraint_name?: Maybe<Scalars["name"]>;
+    parent_column?: Maybe<Scalars["name"]>;
+    parent_schema?: Maybe<Scalars["name"]>;
+    parent_table?: Maybe<Scalars["name"]>;
+};
+
+/** aggregated selection of "ForeignKeyIntrospection" */
+export type ForeignKeyIntrospection_Aggregate = {
+    __typename?: "ForeignKeyIntrospection_aggregate";
+    aggregate?: Maybe<ForeignKeyIntrospection_Aggregate_Fields>;
+    nodes: Array<ForeignKeyIntrospection>;
+};
+
+/** aggregate fields of "ForeignKeyIntrospection" */
+export type ForeignKeyIntrospection_Aggregate_Fields = {
+    __typename?: "ForeignKeyIntrospection_aggregate_fields";
+    count: Scalars["Int"];
+};
+
+/** aggregate fields of "ForeignKeyIntrospection" */
+export type ForeignKeyIntrospection_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<ForeignKeyIntrospection_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "ForeignKeyIntrospection". All fields are combined with a logical 'AND'. */
+export type ForeignKeyIntrospection_Bool_Exp = {
+    _and?: Maybe<Array<ForeignKeyIntrospection_Bool_Exp>>;
+    _not?: Maybe<ForeignKeyIntrospection_Bool_Exp>;
+    _or?: Maybe<Array<ForeignKeyIntrospection_Bool_Exp>>;
+    child_column?: Maybe<Name_Comparison_Exp>;
+    child_schema?: Maybe<Name_Comparison_Exp>;
+    child_table?: Maybe<Name_Comparison_Exp>;
+    constraint_name?: Maybe<Name_Comparison_Exp>;
+    parent_column?: Maybe<Name_Comparison_Exp>;
+    parent_schema?: Maybe<Name_Comparison_Exp>;
+    parent_table?: Maybe<Name_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "ForeignKeyIntrospection". */
+export type ForeignKeyIntrospection_Order_By = {
+    child_column?: Maybe<Order_By>;
+    child_schema?: Maybe<Order_By>;
+    child_table?: Maybe<Order_By>;
+    constraint_name?: Maybe<Order_By>;
+    parent_column?: Maybe<Order_By>;
+    parent_schema?: Maybe<Order_By>;
+    parent_table?: Maybe<Order_By>;
+};
+
+/** select columns of table "ForeignKeyIntrospection" */
+export enum ForeignKeyIntrospection_Select_Column {
+    /** column name */
+    ChildColumn = "child_column",
+    /** column name */
+    ChildSchema = "child_schema",
+    /** column name */
+    ChildTable = "child_table",
+    /** column name */
+    ConstraintName = "constraint_name",
+    /** column name */
+    ParentColumn = "parent_column",
+    /** column name */
+    ParentSchema = "parent_schema",
+    /** column name */
+    ParentTable = "parent_table",
+}
 
 export type GetGoogleOAuthUrlOutput = {
     __typename?: "GetGoogleOAuthUrlOutput";
@@ -16944,6 +17019,7 @@ export type Mutation_RootSubmitGoogleOAuthCodeArgs = {
 /** mutation root */
 export type Mutation_RootSubmitUploadableElementArgs = {
     data: Scalars["jsonb"];
+    elementId: Scalars["uuid"];
     magicToken: Scalars["String"];
 };
 
@@ -18336,6 +18412,19 @@ export type Mutation_RootUpdate_Video_YouTubeUpload_By_PkArgs = {
     pk_columns: Video_YouTubeUpload_Pk_Columns_Input;
 };
 
+/** Boolean expression to compare columns of type "name". All fields are combined with logical 'AND'. */
+export type Name_Comparison_Exp = {
+    _eq?: Maybe<Scalars["name"]>;
+    _gt?: Maybe<Scalars["name"]>;
+    _gte?: Maybe<Scalars["name"]>;
+    _in?: Maybe<Array<Scalars["name"]>>;
+    _is_null?: Maybe<Scalars["Boolean"]>;
+    _lt?: Maybe<Scalars["name"]>;
+    _lte?: Maybe<Scalars["name"]>;
+    _neq?: Maybe<Scalars["name"]>;
+    _nin?: Maybe<Array<Scalars["name"]>>;
+};
+
 /** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
 export type Numeric_Comparison_Exp = {
     _eq?: Maybe<Scalars["numeric"]>;
@@ -18373,6 +18462,10 @@ export type Query_Root = {
     Email_aggregate: Email_Aggregate;
     /** fetch data from the table: "Email" using primary key columns */
     Email_by_pk?: Maybe<Email>;
+    /** fetch data from the table: "ForeignKeyIntrospection" */
+    ForeignKeyIntrospection: Array<ForeignKeyIntrospection>;
+    /** fetch aggregated fields from the table: "ForeignKeyIntrospection" */
+    ForeignKeyIntrospection_aggregate: ForeignKeyIntrospection_Aggregate;
     /** fetch data from the table: "PushNotificationSubscription" */
     PushNotificationSubscription: Array<PushNotificationSubscription>;
     /** fetch aggregated fields from the table: "PushNotificationSubscription" */
@@ -18987,6 +19080,22 @@ export type Query_RootEmail_AggregateArgs = {
 
 export type Query_RootEmail_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootForeignKeyIntrospectionArgs = {
+    distinct_on?: Maybe<Array<ForeignKeyIntrospection_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<ForeignKeyIntrospection_Order_By>>;
+    where?: Maybe<ForeignKeyIntrospection_Bool_Exp>;
+};
+
+export type Query_RootForeignKeyIntrospection_AggregateArgs = {
+    distinct_on?: Maybe<Array<ForeignKeyIntrospection_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<ForeignKeyIntrospection_Order_By>>;
+    where?: Maybe<ForeignKeyIntrospection_Bool_Exp>;
 };
 
 export type Query_RootPushNotificationSubscriptionArgs = {
@@ -28631,6 +28740,10 @@ export type Subscription_Root = {
     Email_aggregate: Email_Aggregate;
     /** fetch data from the table: "Email" using primary key columns */
     Email_by_pk?: Maybe<Email>;
+    /** fetch data from the table: "ForeignKeyIntrospection" */
+    ForeignKeyIntrospection: Array<ForeignKeyIntrospection>;
+    /** fetch aggregated fields from the table: "ForeignKeyIntrospection" */
+    ForeignKeyIntrospection_aggregate: ForeignKeyIntrospection_Aggregate;
     /** fetch data from the table: "PushNotificationSubscription" */
     PushNotificationSubscription: Array<PushNotificationSubscription>;
     /** fetch aggregated fields from the table: "PushNotificationSubscription" */
@@ -29241,6 +29354,22 @@ export type Subscription_RootEmail_AggregateArgs = {
 
 export type Subscription_RootEmail_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Subscription_RootForeignKeyIntrospectionArgs = {
+    distinct_on?: Maybe<Array<ForeignKeyIntrospection_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<ForeignKeyIntrospection_Order_By>>;
+    where?: Maybe<ForeignKeyIntrospection_Bool_Exp>;
+};
+
+export type Subscription_RootForeignKeyIntrospection_AggregateArgs = {
+    distinct_on?: Maybe<Array<ForeignKeyIntrospection_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<ForeignKeyIntrospection_Order_By>>;
+    where?: Maybe<ForeignKeyIntrospection_Bool_Exp>;
 };
 
 export type Subscription_RootPushNotificationSubscriptionArgs = {

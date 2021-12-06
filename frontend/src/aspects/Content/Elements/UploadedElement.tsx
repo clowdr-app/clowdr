@@ -28,6 +28,11 @@ export default function UploadedElement({
         }
     }, [disableRefresh]);
 
+    const refreshItem = async () => {
+        setDisableRefresh(true);
+        await refetch();
+    };
+
     return (
         <>
             {loading ? <Spinner /> : undefined}
@@ -44,10 +49,7 @@ export default function UploadedElement({
                                 <span>
                                     <Button
                                         aria-label="Refresh submitted item"
-                                        onClick={async () => {
-                                            setDisableRefresh(true);
-                                            refetch();
-                                        }}
+                                        onClick={refreshItem}
                                         isDisabled={disableRefresh}
                                         size="md"
                                     >
@@ -62,7 +64,12 @@ export default function UploadedElement({
                             !item?.data[item.data.length - 1]?.data.subtitles["en_US"]?.s3Url?.length ? (
                                 <RenderElement data={item.data} />
                             ) : undefined}
-                            <EditElement data={item.data} elementId={item.id} magicToken={magicToken} />
+                            <EditElement
+                                data={item.data}
+                                elementId={item.id}
+                                magicToken={magicToken}
+                                refresh={refreshItem}
+                            />
                         </VStack>
                     ) : undefined
                 )

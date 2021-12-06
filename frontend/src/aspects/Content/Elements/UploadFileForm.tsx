@@ -97,12 +97,6 @@ export default function UploadFileForm({
     useEffect(() => {
         uppy?.on("file-added", updateFiles);
         uppy?.on("file-removed", updateFiles);
-        uppy?.on("upload-success", () => {
-            toast({
-                status: "success",
-                description: "All files uploaded.",
-            });
-        });
     }, [toast, updateFiles, uppy]);
 
     return (
@@ -147,6 +141,7 @@ export default function UploadFileForm({
                                     altText: values.altText,
                                 },
                                 magicToken,
+                                elementId,
                             },
                             context
                         );

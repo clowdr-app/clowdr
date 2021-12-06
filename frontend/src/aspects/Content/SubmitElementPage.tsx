@@ -36,8 +36,8 @@ gql`
         }
     }
 
-    mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!) {
-        submitUploadableElement(data: $elementData, magicToken: $magicToken) {
+    mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!, $elementId: uuid!) {
+        submitUploadableElement(data: $elementData, magicToken: $magicToken, elementId: $elementId) {
             message
             success
         }
@@ -123,6 +123,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.Text:
                 return (
                     <UploadTextForm
+                        elementId={elementId}
                         magicToken={magicToken}
                         uploadAgreementText={uploadAgreementText}
                         uploadAgreementUrl={uploadAgreementUrl}
@@ -152,6 +153,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.AudioLink:
                 return (
                     <UploadLinkForm
+                        elementId={elementId}
                         magicToken={magicToken}
                         uploadAgreementText={uploadAgreementText}
                         uploadAgreementUrl={uploadAgreementUrl}
@@ -167,6 +169,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.Zoom:
                 return (
                     <UploadUrlForm
+                        elementId={elementId}
                         magicToken={magicToken}
                         uploadAgreementText={uploadAgreementText}
                         uploadAgreementUrl={uploadAgreementUrl}
@@ -209,7 +212,7 @@ export default function SubmitElementPage({
             default:
                 return <>Unrecognised upload type.</>;
         }
-    }, [uploadableElement, magicToken, uploadAgreementText, uploadAgreementUrl, formSubmitted]);
+    }, [elementId, uploadableElement, magicToken, uploadAgreementText, uploadAgreementUrl, formSubmitted]);
 
     const person = data?.collection_ProgramPerson.length ? data?.collection_ProgramPerson[0] : undefined;
 

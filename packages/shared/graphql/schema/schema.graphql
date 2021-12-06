@@ -658,6 +658,97 @@ input Float_comparison_exp {
     _nin: [Float!]
 }
 
+"""
+columns and relationships of "ForeignKeyIntrospection"
+"""
+type ForeignKeyIntrospection {
+    child_column: name
+    child_schema: name
+    child_table: name
+    constraint_name: name
+    parent_column: name
+    parent_schema: name
+    parent_table: name
+}
+
+"""
+aggregated selection of "ForeignKeyIntrospection"
+"""
+type ForeignKeyIntrospection_aggregate {
+    aggregate: ForeignKeyIntrospection_aggregate_fields
+    nodes: [ForeignKeyIntrospection!]!
+}
+
+"""
+aggregate fields of "ForeignKeyIntrospection"
+"""
+type ForeignKeyIntrospection_aggregate_fields {
+    count(columns: [ForeignKeyIntrospection_select_column!], distinct: Boolean): Int!
+}
+
+"""
+Boolean expression to filter rows from the table "ForeignKeyIntrospection". All fields are combined with a logical 'AND'.
+"""
+input ForeignKeyIntrospection_bool_exp {
+    _and: [ForeignKeyIntrospection_bool_exp!]
+    _not: ForeignKeyIntrospection_bool_exp
+    _or: [ForeignKeyIntrospection_bool_exp!]
+    child_column: name_comparison_exp
+    child_schema: name_comparison_exp
+    child_table: name_comparison_exp
+    constraint_name: name_comparison_exp
+    parent_column: name_comparison_exp
+    parent_schema: name_comparison_exp
+    parent_table: name_comparison_exp
+}
+
+"""
+Ordering options when selecting data from "ForeignKeyIntrospection".
+"""
+input ForeignKeyIntrospection_order_by {
+    child_column: order_by
+    child_schema: order_by
+    child_table: order_by
+    constraint_name: order_by
+    parent_column: order_by
+    parent_schema: order_by
+    parent_table: order_by
+}
+
+"""
+select columns of table "ForeignKeyIntrospection"
+"""
+enum ForeignKeyIntrospection_select_column {
+    """
+    column name
+    """
+    child_column
+    """
+    column name
+    """
+    child_schema
+    """
+    column name
+    """
+    child_table
+    """
+    column name
+    """
+    constraint_name
+    """
+    column name
+    """
+    parent_column
+    """
+    column name
+    """
+    parent_schema
+    """
+    column name
+    """
+    parent_table
+}
+
 type GetGoogleOAuthUrlOutput {
     url: String!
 }
@@ -22587,7 +22678,7 @@ type mutation_root {
     refreshYouTubeData(registrantGoogleAccountId: uuid!, registrantId: uuid!): RefreshYouTubeDataOutput
     stopEventBroadcast(eventId: uuid!): StopEventBroadcastOutput
     submitGoogleOAuthCode(code: String!, state: String!): SubmitGoogleOAuthCodeOutput
-    submitUploadableElement(data: jsonb!, magicToken: String!): SubmitUploadableElementOutput
+    submitUploadableElement(data: jsonb!, elementId: uuid!, magicToken: String!): SubmitUploadableElementOutput
     toggleVonageRecordingState(recordingActive: Boolean!, vonageSessionId: String!): ToggleVonageRecordingStateOutput
     updateProfilePhoto(registrantId: uuid!, s3URL: String): UpdateProfilePhotoResponse
     updateSubtitles(elementId: String!, magicToken: String!, subtitleText: String!): SubmitUpdatedSubtitlesOutput
@@ -25723,6 +25814,23 @@ type mutation_root {
     ): video_YouTubeUpload
 }
 
+scalar name
+
+"""
+Boolean expression to compare columns of type "name". All fields are combined with logical 'AND'.
+"""
+input name_comparison_exp {
+    _eq: name
+    _gt: name
+    _gte: name
+    _in: [name!]
+    _is_null: Boolean
+    _lt: name
+    _lte: name
+    _neq: name
+    _nin: [name!]
+}
+
 scalar numeric
 
 """
@@ -25825,6 +25933,56 @@ type query_root {
     fetch data from the table: "Email" using primary key columns
     """
     Email_by_pk(id: uuid!): Email
+    """
+    fetch data from the table: "ForeignKeyIntrospection"
+    """
+    ForeignKeyIntrospection(
+        """
+        distinct select on columns
+        """
+        distinct_on: [ForeignKeyIntrospection_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [ForeignKeyIntrospection_order_by!]
+        """
+        filter the rows returned
+        """
+        where: ForeignKeyIntrospection_bool_exp
+    ): [ForeignKeyIntrospection!]!
+    """
+    fetch aggregated fields from the table: "ForeignKeyIntrospection"
+    """
+    ForeignKeyIntrospection_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [ForeignKeyIntrospection_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [ForeignKeyIntrospection_order_by!]
+        """
+        filter the rows returned
+        """
+        where: ForeignKeyIntrospection_bool_exp
+    ): ForeignKeyIntrospection_aggregate!
     """
     fetch data from the table: "PushNotificationSubscription"
     """
@@ -41813,6 +41971,56 @@ type subscription_root {
     fetch data from the table: "Email" using primary key columns
     """
     Email_by_pk(id: uuid!): Email
+    """
+    fetch data from the table: "ForeignKeyIntrospection"
+    """
+    ForeignKeyIntrospection(
+        """
+        distinct select on columns
+        """
+        distinct_on: [ForeignKeyIntrospection_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [ForeignKeyIntrospection_order_by!]
+        """
+        filter the rows returned
+        """
+        where: ForeignKeyIntrospection_bool_exp
+    ): [ForeignKeyIntrospection!]!
+    """
+    fetch aggregated fields from the table: "ForeignKeyIntrospection"
+    """
+    ForeignKeyIntrospection_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [ForeignKeyIntrospection_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [ForeignKeyIntrospection_order_by!]
+        """
+        filter the rows returned
+        """
+        where: ForeignKeyIntrospection_bool_exp
+    ): ForeignKeyIntrospection_aggregate!
     """
     fetch data from the table: "PushNotificationSubscription"
     """

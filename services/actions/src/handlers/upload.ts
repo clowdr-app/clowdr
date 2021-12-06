@@ -44,12 +44,14 @@ gql`
     query UploadableElement($accessToken: String!) {
         content_Element(where: { item: { itemPeople: { person: { accessToken: { _eq: $accessToken } } } } }) {
             ...UploadableElementFields
-            conference {
-                configurations(where: { key: { _eq: UPLOAD_CUTOFF_TIMESTAMP } }) {
-                    conferenceId
-                    key
-                    value
-                }
+        }
+        conference_Conference(where: { programPeople: { accessToken: { _eq: $accessToken } } }) {
+            id
+            name
+            configurations(where: { key: { _eq: UPLOAD_CUTOFF_TIMESTAMP } }) {
+                conferenceId
+                key
+                value
             }
         }
     }
@@ -61,10 +63,6 @@ gql`
         uploadsRemaining
         isHidden
         data
-        conference {
-            id
-            name
-        }
         item {
             id
             title
@@ -210,12 +208,16 @@ async function createBlob(
     }
 }
 
-interface ItemByToken {
-    uploadableElement: UploadableElementFieldsFragment;
+interface ElementsByToken {
+    elements: readonly UploadableElementFieldsFragment[];
+    conference: {
+        id: string;
+        name: string;
+    };
     uploadCutoffTimestamp?: Date;
 }
 
-async function getItemByToken(magicToken: string): Promise<ItemByToken | { error: string }> {
+async function getElementsByToken(magicToken: string): Promise<ElementsByToken | { error: string }> {
     if (!magicToken) {
         return {
             error: "Access token not provided.",
@@ -229,19 +231,22 @@ async function getItemByToken(magicToken: string): Promise<ItemByToken | { error
         },
     });
 
-    if (response.data.content_Element.length !== 1) {
+    if (response.data.content_Element.length === 0) {
         return {
-            error: "Could not find an element that matched the request.",
+            error: "Could not find any elements that matched the request.",
         };
     }
 
-    const element = response.data.content_Element[0];
+    const result: ElementsByToken = {
+        elements: response.data.content_Element,
+        conference: response.data.conference_Conference[0],
+    };
 
-    const result: ItemByToken = { uploadableElement: element };
-
-    if (element.conference.configurations.length === 1) {
+    if (response.data.conference_Conference[0].configurations.length === 1) {
         // UPLOAD_CUTOFF_TIMESTAMP is specified in epoch milliseconds
-        result.uploadCutoffTimestamp = new Date(parseInt(element.conference.configurations[0].value));
+        result.uploadCutoffTimestamp = new Date(
+            parseInt(response.data.conference_Conference[0].configurations[0].value)
+        );
     }
 
     return result;
@@ -341,15 +346,23 @@ async function sendSubmittedEmail(
 }
 
 export async function handleElementSubmitted(logger: P.Logger, args: submitElementArgs): Promise<SubmitElementOutput> {
-    const itemByToken = await getItemByToken(args.magicToken);
-    if ("error" in itemByToken) {
+    const elementsByToken = await getElementsByToken(args.magicToken);
+    if ("error" in elementsByToken) {
+        logger.info({ magicToken: args.magicToken }, "Magic token");
         return {
             success: false,
-            message: itemByToken.error,
+            message: elementsByToken.error,
         };
     }
 
-    const uploadableElement = itemByToken.uploadableElement;
+    const uploadableElement = elementsByToken.elements.find((x) => x.id === args.elementId);
+
+    if (!uploadableElement) {
+        return {
+            message: "No matching content element",
+            success: false,
+        };
+    }
 
     if (uploadableElement.uploadsRemaining === 0) {
         return {
@@ -358,7 +371,7 @@ export async function handleElementSubmitted(logger: P.Logger, args: submitEleme
         };
     }
 
-    if (itemByToken.uploadCutoffTimestamp && itemByToken.uploadCutoffTimestamp < new Date()) {
+    if (elementsByToken.uploadCutoffTimestamp && elementsByToken.uploadCutoffTimestamp < new Date()) {
         return {
             success: false,
             message: "Submission deadline has passed",
@@ -407,7 +420,7 @@ export async function handleElementSubmitted(logger: P.Logger, args: submitEleme
                 uploadableElement.id,
                 uploadableElement.name,
                 uploadableElement.item.title,
-                uploadableElement.conference.name
+                elementsByToken.conference.name
             );
         } catch (e: any) {
             logger.error({ err: e }, "Failed to save new version of content item");
@@ -446,19 +459,19 @@ export async function handleUpdateSubtitles(
     logger: P.Logger,
     args: updateSubtitlesArgs
 ): Promise<SubmitUpdatedSubtitlesOutput> {
-    const itemByToken = await getItemByToken(args.magicToken);
-    if ("error" in itemByToken) {
+    const elementsByToken = await getElementsByToken(args.magicToken);
+    if ("error" in elementsByToken) {
         return {
             success: false,
-            message: itemByToken.error,
+            message: elementsByToken.error,
         };
     }
 
-    const uploadableElement = itemByToken.uploadableElement;
+    const uploadableElement = elementsByToken.elements.find((x) => x.id === args.elementId);
 
     if (!uploadableElement) {
         return {
-            message: "No matching content item",
+            message: "No matching content element",
             success: false,
         };
     }
@@ -467,7 +480,7 @@ export async function handleUpdateSubtitles(
 
     if (!latestVersion) {
         return {
-            message: "No existing content item data",
+            message: "No existing content element data",
             success: false,
         };
     }
@@ -477,7 +490,7 @@ export async function handleUpdateSubtitles(
     newVersion.createdBy = "user";
     assert(
         is<VideoElementBlob>(newVersion.data) || is<AudioElementBlob>(newVersion.data),
-        "Content item is not a video or audio file."
+        "Content element is not a video or audio file."
     );
 
     const bucket = process.env.AWS_CONTENT_BUCKET_ID;
@@ -515,9 +528,9 @@ export async function handleUpdateSubtitles(
             },
         });
     } catch (e: any) {
-        logger.error({ err: e }, "Failed to save new content item version");
+        logger.error({ err: e }, "Failed to save new content element version");
         return {
-            message: "Failed to save new content item version",
+            message: "Failed to save new content element version",
             success: false,
         };
     }

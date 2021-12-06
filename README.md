@@ -71,17 +71,6 @@ Midspace relies on various cloud services, which will need to be configured for 
 ## Setting Up Local Working Copy
 
 1. Clone this repository
-1. Initialise and update submodules:
-   ```
-         git submodule init
-         git submodule update
-   ```
-1. Build `slate-transcript-editor` as follows:
-   1. `cd slate-transcript-editor`
-   1. Run `npm install`
-   1. Run `npm run build:component`
-   1. You should see the `dist` folder created.
-   1. You will not need to do this again (hopefully)
 1. Install top-level and shared npm packages:
    ```
    npm i

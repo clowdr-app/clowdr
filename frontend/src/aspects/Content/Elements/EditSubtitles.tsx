@@ -250,7 +250,7 @@ export default function EditSubtitles({
                         )}
                     </VStack>
                     <TranscriptEditor
-                        key={_srtKey}
+                        key={subtitlesData}
                         srtTranscript={subtitlesData}
                         mediaUrl={videoUrl}
                         handleSaveEditor={saveSubtitles}

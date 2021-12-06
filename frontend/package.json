@@ -118,6 +118,7 @@
         "react-select": "^4.3.1",
         "reflect-metadata": "^0.1.13",
         "socket.io-client": "^4.1.3",
+        "srt-parser-2": "^1.1.7",
         "srt-validator": "^3.2.4",
         "stream-browserify": "^3.0.0",
         "string.prototype.matchall": "^4.0.6",

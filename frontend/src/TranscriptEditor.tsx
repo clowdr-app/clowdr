@@ -1,5 +1,6 @@
 import { Button, Flex, FormControl, Textarea } from "@chakra-ui/react";
 import React from "react";
+import srtParser from "srt-parser-2";
 
 interface Props {
     srtTranscript: string;
@@ -9,7 +10,9 @@ interface Props {
 }
 
 export default (props: Props) => {
-    const [transcriptWIP, setTranscriptWIP] = React.useState(props.srtTranscript);
+    const SRT = new srtParser();
+    const initialTranscript = SRT.fromSrt(props.srtTranscript);
+    const [transcriptWIP, setTranscriptWIP] = React.useState(initialTranscript);
     return (
         <Flex flexDirection="row" width="100%">
             <FormControl display="flex" flexBasis={0} flexGrow={1} justifyContent="center">
@@ -19,9 +22,9 @@ export default (props: Props) => {
                     cols={32}
                     resize="none"
                     style={{ fontFamily: "monospace" }}
-                    value={transcriptWIP}
+                    value={JSON.stringify(transcriptWIP)}
                     onInput={(e) => {
-                        setTranscriptWIP((e.target as HTMLTextAreaElement).value);
+                        setTranscriptWIP(JSON.parse((e.target as HTMLTextAreaElement).value));
                     }}
                 />
             </FormControl>
@@ -32,7 +35,7 @@ export default (props: Props) => {
                 <Button
                     colorScheme="green"
                     onClick={() => {
-                        props.handleSaveEditor(transcriptWIP);
+                        props.handleSaveEditor(SRT.toSrt(transcriptWIP));
                     }}
                 >
                     Save Subtitles

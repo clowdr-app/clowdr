@@ -8,10 +8,12 @@ export function EditElement({
     data,
     elementId,
     magicToken,
+    refresh,
 }: {
     data: ElementDataBlob;
     elementId: string;
     magicToken: string;
+    refresh: () => Promise<void>;
 }): JSX.Element {
     const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;
 
@@ -27,6 +29,7 @@ export function EditElement({
                     data={latestSubtitles}
                     elementId={elementId}
                     magicToken={magicToken}
+                    refresh={refresh}
                 />
             ) : latestVersion?.data.baseType === ElementBaseType.Video ? (
                 <Text>Subtitles are still being processed for this item. Please check back in 15 minutes.</Text>

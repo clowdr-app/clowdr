@@ -55,11 +55,13 @@ export default function EditSubtitles({
     data,
     elementId,
     magicToken,
+    refresh,
 }: {
     videoS3URL: string;
     data: SubtitleDetails;
     elementId: string;
     magicToken: string;
+    refresh: () => Promise<void>;
 }): JSX.Element {
     const [_updateSubtitlesResponse, updateSubtitles] = useUpdateSubtitlesMutation();
     const toast = useToast();
@@ -122,6 +124,7 @@ export default function EditSubtitles({
                     throw new Error(result.data?.updateSubtitles?.message ?? "Failed for unknown reason");
                 }
                 setHasUnsavedChanges(false);
+                await refresh();
             } catch (e: any) {
                 console.error("Failed to save subtitles", e);
                 toast({
@@ -247,6 +250,7 @@ export default function EditSubtitles({
                         )}
                     </VStack>
                     <TranscriptEditor
+                        key={_srtKey}
                         srtTranscript={subtitlesData}
                         mediaUrl={videoUrl}
                         handleSaveEditor={saveSubtitles}

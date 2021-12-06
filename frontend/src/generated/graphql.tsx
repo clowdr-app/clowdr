@@ -22,6 +22,7 @@ export type Scalars = {
     Float: number;
     bigint: any;
     jsonb: any;
+    name: any;
     numeric: any;
     timestamptz: any;
     uuid: any;
@@ -529,6 +530,80 @@ export type Float_Comparison_Exp = {
     readonly _neq?: InputMaybe<Scalars["Float"]>;
     readonly _nin?: InputMaybe<ReadonlyArray<Scalars["Float"]>>;
 };
+
+/** columns and relationships of "ForeignKeyIntrospection" */
+export type ForeignKeyIntrospection = {
+    readonly __typename?: "ForeignKeyIntrospection";
+    readonly child_column?: Maybe<Scalars["name"]>;
+    readonly child_schema?: Maybe<Scalars["name"]>;
+    readonly child_table?: Maybe<Scalars["name"]>;
+    readonly constraint_name?: Maybe<Scalars["name"]>;
+    readonly parent_column?: Maybe<Scalars["name"]>;
+    readonly parent_schema?: Maybe<Scalars["name"]>;
+    readonly parent_table?: Maybe<Scalars["name"]>;
+};
+
+/** aggregated selection of "ForeignKeyIntrospection" */
+export type ForeignKeyIntrospection_Aggregate = {
+    readonly __typename?: "ForeignKeyIntrospection_aggregate";
+    readonly aggregate?: Maybe<ForeignKeyIntrospection_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<ForeignKeyIntrospection>;
+};
+
+/** aggregate fields of "ForeignKeyIntrospection" */
+export type ForeignKeyIntrospection_Aggregate_Fields = {
+    readonly __typename?: "ForeignKeyIntrospection_aggregate_fields";
+    readonly count: Scalars["Int"];
+};
+
+/** aggregate fields of "ForeignKeyIntrospection" */
+export type ForeignKeyIntrospection_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "ForeignKeyIntrospection". All fields are combined with a logical 'AND'. */
+export type ForeignKeyIntrospection_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Bool_Exp>>;
+    readonly _not?: InputMaybe<ForeignKeyIntrospection_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Bool_Exp>>;
+    readonly child_column?: InputMaybe<Name_Comparison_Exp>;
+    readonly child_schema?: InputMaybe<Name_Comparison_Exp>;
+    readonly child_table?: InputMaybe<Name_Comparison_Exp>;
+    readonly constraint_name?: InputMaybe<Name_Comparison_Exp>;
+    readonly parent_column?: InputMaybe<Name_Comparison_Exp>;
+    readonly parent_schema?: InputMaybe<Name_Comparison_Exp>;
+    readonly parent_table?: InputMaybe<Name_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "ForeignKeyIntrospection". */
+export type ForeignKeyIntrospection_Order_By = {
+    readonly child_column?: InputMaybe<Order_By>;
+    readonly child_schema?: InputMaybe<Order_By>;
+    readonly child_table?: InputMaybe<Order_By>;
+    readonly constraint_name?: InputMaybe<Order_By>;
+    readonly parent_column?: InputMaybe<Order_By>;
+    readonly parent_schema?: InputMaybe<Order_By>;
+    readonly parent_table?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "ForeignKeyIntrospection" */
+export enum ForeignKeyIntrospection_Select_Column {
+    /** column name */
+    ChildColumn = "child_column",
+    /** column name */
+    ChildSchema = "child_schema",
+    /** column name */
+    ChildTable = "child_table",
+    /** column name */
+    ConstraintName = "constraint_name",
+    /** column name */
+    ParentColumn = "parent_column",
+    /** column name */
+    ParentSchema = "parent_schema",
+    /** column name */
+    ParentTable = "parent_table",
+}
 
 export type GetGoogleOAuthUrlOutput = {
     readonly __typename?: "GetGoogleOAuthUrlOutput";
@@ -16947,6 +17022,7 @@ export type Mutation_RootSubmitGoogleOAuthCodeArgs = {
 /** mutation root */
 export type Mutation_RootSubmitUploadableElementArgs = {
     data: Scalars["jsonb"];
+    elementId: Scalars["uuid"];
     magicToken: Scalars["String"];
 };
 
@@ -18339,6 +18415,19 @@ export type Mutation_RootUpdate_Video_YouTubeUpload_By_PkArgs = {
     pk_columns: Video_YouTubeUpload_Pk_Columns_Input;
 };
 
+/** Boolean expression to compare columns of type "name". All fields are combined with logical 'AND'. */
+export type Name_Comparison_Exp = {
+    readonly _eq?: InputMaybe<Scalars["name"]>;
+    readonly _gt?: InputMaybe<Scalars["name"]>;
+    readonly _gte?: InputMaybe<Scalars["name"]>;
+    readonly _in?: InputMaybe<ReadonlyArray<Scalars["name"]>>;
+    readonly _is_null?: InputMaybe<Scalars["Boolean"]>;
+    readonly _lt?: InputMaybe<Scalars["name"]>;
+    readonly _lte?: InputMaybe<Scalars["name"]>;
+    readonly _neq?: InputMaybe<Scalars["name"]>;
+    readonly _nin?: InputMaybe<ReadonlyArray<Scalars["name"]>>;
+};
+
 /** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
 export type Numeric_Comparison_Exp = {
     readonly _eq?: InputMaybe<Scalars["numeric"]>;
@@ -18376,6 +18465,10 @@ export type Query_Root = {
     readonly Email_aggregate: Email_Aggregate;
     /** fetch data from the table: "Email" using primary key columns */
     readonly Email_by_pk?: Maybe<Email>;
+    /** fetch data from the table: "ForeignKeyIntrospection" */
+    readonly ForeignKeyIntrospection: ReadonlyArray<ForeignKeyIntrospection>;
+    /** fetch aggregated fields from the table: "ForeignKeyIntrospection" */
+    readonly ForeignKeyIntrospection_aggregate: ForeignKeyIntrospection_Aggregate;
     /** fetch data from the table: "PushNotificationSubscription" */
     readonly PushNotificationSubscription: ReadonlyArray<PushNotificationSubscription>;
     /** fetch aggregated fields from the table: "PushNotificationSubscription" */
@@ -18990,6 +19083,22 @@ export type Query_RootEmail_AggregateArgs = {
 
 export type Query_RootEmail_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootForeignKeyIntrospectionArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Order_By>>;
+    where?: InputMaybe<ForeignKeyIntrospection_Bool_Exp>;
+};
+
+export type Query_RootForeignKeyIntrospection_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Order_By>>;
+    where?: InputMaybe<ForeignKeyIntrospection_Bool_Exp>;
 };
 
 export type Query_RootPushNotificationSubscriptionArgs = {
@@ -28632,6 +28741,10 @@ export type Subscription_Root = {
     readonly Email_aggregate: Email_Aggregate;
     /** fetch data from the table: "Email" using primary key columns */
     readonly Email_by_pk?: Maybe<Email>;
+    /** fetch data from the table: "ForeignKeyIntrospection" */
+    readonly ForeignKeyIntrospection: ReadonlyArray<ForeignKeyIntrospection>;
+    /** fetch aggregated fields from the table: "ForeignKeyIntrospection" */
+    readonly ForeignKeyIntrospection_aggregate: ForeignKeyIntrospection_Aggregate;
     /** fetch data from the table: "PushNotificationSubscription" */
     readonly PushNotificationSubscription: ReadonlyArray<PushNotificationSubscription>;
     /** fetch aggregated fields from the table: "PushNotificationSubscription" */
@@ -29242,6 +29355,22 @@ export type Subscription_RootEmail_AggregateArgs = {
 
 export type Subscription_RootEmail_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Subscription_RootForeignKeyIntrospectionArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Order_By>>;
+    where?: InputMaybe<ForeignKeyIntrospection_Bool_Exp>;
+};
+
+export type Subscription_RootForeignKeyIntrospection_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<ForeignKeyIntrospection_Order_By>>;
+    where?: InputMaybe<ForeignKeyIntrospection_Bool_Exp>;
 };
 
 export type Subscription_RootPushNotificationSubscriptionArgs = {
@@ -45918,6 +46047,7 @@ export type GetElementQuery = {
 export type SubmitUploadableElementMutationVariables = Exact<{
     elementData: Scalars["jsonb"];
     magicToken: Scalars["String"];
+    elementId: Scalars["uuid"];
 }>;
 
 export type SubmitUploadableElementMutation = {
@@ -54320,8 +54450,8 @@ export function useGetElementQuery(options: Omit<Urql.UseQueryArgs<GetElementQue
     return Urql.useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
 }
 export const SubmitUploadableElementDocument = gql`
-    mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!) {
-        submitUploadableElement(data: $elementData, magicToken: $magicToken) {
+    mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!, $elementId: uuid!) {
+        submitUploadableElement(data: $elementData, magicToken: $magicToken, elementId: $elementId) {
             message
             success
         }
@@ -55078,6 +55208,11 @@ export type GraphCacheKeysConfig = {
     Email_var_pop_fields?: (data: WithTypename<Email_Var_Pop_Fields>) => null | string;
     Email_var_samp_fields?: (data: WithTypename<Email_Var_Samp_Fields>) => null | string;
     Email_variance_fields?: (data: WithTypename<Email_Variance_Fields>) => null | string;
+    ForeignKeyIntrospection?: (data: WithTypename<ForeignKeyIntrospection>) => null | string;
+    ForeignKeyIntrospection_aggregate?: (data: WithTypename<ForeignKeyIntrospection_Aggregate>) => null | string;
+    ForeignKeyIntrospection_aggregate_fields?: (
+        data: WithTypename<ForeignKeyIntrospection_Aggregate_Fields>
+    ) => null | string;
     GetGoogleOAuthUrlOutput?: (data: WithTypename<GetGoogleOAuthUrlOutput>) => null | string;
     GetSlugOutput?: (data: WithTypename<GetSlugOutput>) => null | string;
     GetUploadAgreementOutput?: (data: WithTypename<GetUploadAgreementOutput>) => null | string;
@@ -56511,6 +56646,16 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootEmail_By_PkArgs,
             WithTypename<Email> | string
+        >;
+        ForeignKeyIntrospection?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootForeignKeyIntrospectionArgs,
+            Array<WithTypename<ForeignKeyIntrospection> | string>
+        >;
+        ForeignKeyIntrospection_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootForeignKeyIntrospection_AggregateArgs,
+            WithTypename<ForeignKeyIntrospection_Aggregate> | string
         >;
         PushNotificationSubscription?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -58341,6 +58486,62 @@ export type GraphCacheResolvers = {
             WithTypename<Email_Variance_Fields>,
             Record<string, never>,
             Scalars["Float"] | string
+        >;
+    };
+    ForeignKeyIntrospection?: {
+        child_column?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection>,
+            Record<string, never>,
+            Scalars["name"] | string
+        >;
+        child_schema?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection>,
+            Record<string, never>,
+            Scalars["name"] | string
+        >;
+        child_table?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection>,
+            Record<string, never>,
+            Scalars["name"] | string
+        >;
+        constraint_name?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection>,
+            Record<string, never>,
+            Scalars["name"] | string
+        >;
+        parent_column?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection>,
+            Record<string, never>,
+            Scalars["name"] | string
+        >;
+        parent_schema?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection>,
+            Record<string, never>,
+            Scalars["name"] | string
+        >;
+        parent_table?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection>,
+            Record<string, never>,
+            Scalars["name"] | string
+        >;
+    };
+    ForeignKeyIntrospection_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection_Aggregate>,
+            Record<string, never>,
+            WithTypename<ForeignKeyIntrospection_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<ForeignKeyIntrospection> | string>
+        >;
+    };
+    ForeignKeyIntrospection_aggregate_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<ForeignKeyIntrospection_Aggregate_Fields>,
+            ForeignKeyIntrospection_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
         >;
     };
     GetGoogleOAuthUrlOutput?: {
@@ -81192,6 +81393,14 @@ export type GraphCacheUpdaters = {
         Email_by_pk?: GraphCacheUpdateResolver<
             { Email_by_pk: Maybe<WithTypename<Email>> },
             Subscription_RootEmail_By_PkArgs
+        >;
+        ForeignKeyIntrospection?: GraphCacheUpdateResolver<
+            { ForeignKeyIntrospection: Array<WithTypename<ForeignKeyIntrospection>> },
+            Subscription_RootForeignKeyIntrospectionArgs
+        >;
+        ForeignKeyIntrospection_aggregate?: GraphCacheUpdateResolver<
+            { ForeignKeyIntrospection_aggregate: WithTypename<ForeignKeyIntrospection_Aggregate> },
+            Subscription_RootForeignKeyIntrospection_AggregateArgs
         >;
         PushNotificationSubscription?: GraphCacheUpdateResolver<
             { PushNotificationSubscription: Array<WithTypename<PushNotificationSubscription>> },

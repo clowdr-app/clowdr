@@ -98,6 +98,7 @@ type Mutation {
   submitUploadableElement (
     data: jsonb!
     magicToken: String!
+    elementId: uuid!
   ): SubmitUploadableElementOutput
 }
 

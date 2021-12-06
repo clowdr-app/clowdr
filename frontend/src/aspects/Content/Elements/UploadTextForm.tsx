@@ -13,21 +13,25 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
-import React from "react";
+import React, { useMemo } from "react";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
+import { makeContext } from "../../GQL/make-context";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
 import { Markdown } from "../../Text/Markdown";
 import UploadAgreementField from "./UploadAgreementField";
 
 export default function UploadTextForm({
+    elementId,
     magicToken,
     uploadAgreementText,
     uploadAgreementUrl,
     existingText,
     handleFormSubmitted,
 }: {
+    elementId: string;
     magicToken: string;
     uploadAgreementText?: string;
     uploadAgreementUrl?: string;
@@ -35,6 +39,7 @@ export default function UploadTextForm({
     handleFormSubmitted?: () => void;
 }): JSX.Element {
     const toast = useToast();
+    const context = useMemo(() => makeContext({ [AuthHeader.MagicToken]: magicToken }), [magicToken]);
     const [_submitUploadableElementResponse, submitUploadableElement] = useSubmitUploadableElementMutation();
     return (
         <>
@@ -44,12 +49,16 @@ export default function UploadTextForm({
                 }}
                 onSubmit={async (values) => {
                     try {
-                        const submitResult = await submitUploadableElement({
-                            elementData: {
-                                text: values.text,
+                        const submitResult = await submitUploadableElement(
+                            {
+                                elementData: {
+                                    text: values.text,
+                                },
+                                magicToken,
+                                elementId,
                             },
-                            magicToken,
-                        });
+                            context
+                        );
 
                         if (submitResult.error || !submitResult.data?.submitUploadableElement?.success) {
                             throw new Error(

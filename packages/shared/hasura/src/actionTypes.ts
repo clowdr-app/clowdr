@@ -283,6 +283,7 @@ export type stopEventBroadcastArgs = {
 export type submitElementArgs = {
     data: jsonb;
     magicToken: string;
+    elementId: string;
 };
 
 export type submitGoogleOAuthCodeArgs = {

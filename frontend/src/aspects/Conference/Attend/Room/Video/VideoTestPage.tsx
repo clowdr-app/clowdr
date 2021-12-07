@@ -15,7 +15,6 @@ import React, { Suspense, useCallback, useState } from "react";
 import { VideoAspectWrapper } from "./VideoAspectWrapper";
 
 const HlsPlayer = React.lazy(() => import("./HlsPlayer"));
-const HlsPlayerV1 = React.lazy(() => import("./HlsPlayerV1"));
 
 const defaultUri = "https://playertest.longtailvideo.com/streams/live-vtt-countdown/live.m3u8";
 
@@ -90,18 +89,14 @@ export function VideoTestPage(): JSX.Element {
             {mountPlayer ? (
                 <Suspense fallback={<Spinner />}>
                     <VideoAspectWrapper>
-                        {(onAspectRatioChange) =>
-                            choice === "v1" ? (
-                                <HlsPlayerV1 canPlay={true} hlsUri={uri} />
-                            ) : (
-                                <HlsPlayer
-                                    canPlay={true}
-                                    hlsUri={uri}
-                                    onAspectRatioChange={onAspectRatioChange}
-                                    expectLivestream={expectLivestream ?? undefined}
-                                />
-                            )
-                        }
+                        {(onAspectRatioChange) => (
+                            <HlsPlayer
+                                canPlay={true}
+                                hlsUri={uri}
+                                onAspectRatioChange={onAspectRatioChange}
+                                expectLivestream={expectLivestream ?? undefined}
+                            />
+                        )}
                     </VideoAspectWrapper>
                 </Suspense>
             ) : undefined}

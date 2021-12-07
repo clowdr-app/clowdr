@@ -4,17 +4,7 @@ const componentMap: ComponentMap = {
     ConferenceLandingPage: {
         backgroundColor: { light: "", dark: "" },
     },
-    AppPageV1: {
-        centerColumnBackground: {
-            light: "gray.100",
-            dark: "gray.800",
-        },
-        centerColumnBorders: {
-            light: "gray.200",
-            dark: "gray.600",
-        },
-    },
-    AppPageV2: {
+    AppPage: {
         pageBackground: {
             light: "gray.50",
             dark: "gray.900",
@@ -22,6 +12,32 @@ const componentMap: ComponentMap = {
         pageBorders: {
             light: "gray.200",
             dark: "gray.600",
+        },
+    },
+    MainMenuHeaderBar: {
+        backgroundColor: {
+            light: "purple.700",
+            dark: "purple.700",
+        },
+        titleHoverBackgroundColor: {
+            light: "purple.600",
+            dark: "purple.600",
+        },
+        titleFocusBackgroundColor: {
+            light: "purple.500",
+            dark: "purple.500",
+        },
+        buttonHoverBackgroundColor: {
+            light: "purple.600",
+            dark: "purple.600",
+        },
+        buttonFocusBackgroundColor: {
+            light: "purple.500",
+            dark: "purple.500",
+        },
+        textColor: {
+            light: "white",
+            dark: "white",
         },
     },
     ProtectedRoute: generateColorScheme("red"),

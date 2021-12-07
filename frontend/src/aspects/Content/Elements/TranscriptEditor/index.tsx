@@ -1,5 +1,6 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Button, Flex, HStack } from "@chakra-ui/react";
 import React, { useState } from "react";
+import FAIcon from "../../../Icons/FAIcon";
 import { SRTParse, SRTStringify } from "./srt";
 import Transcript, { TRANSCRIPT_WIDTH_CH } from "./Transcript";
 
@@ -17,7 +18,8 @@ export default function TranscriptEditor({
     handleSaveEditor,
     handleChange,
     readOnly,
-}: Props): JSX.Element {
+    children,
+}: React.PropsWithChildren<Props>): JSX.Element {
     const [transcriptWIP, setTranscriptWIP] = useState(SRTParse(srtTranscript));
     return (
         <Flex flexDirection="row" justifyContent="center" alignItems="start" flexWrap="wrap-reverse">
@@ -30,12 +32,16 @@ export default function TranscriptEditor({
                 }}
             />
             <Flex flexDirection="column" alignItems="center" justifyContent="space-between">
-                <video style={{ width: `${TRANSCRIPT_WIDTH_CH}ch`, margin: 4 }} src={mediaUrl} controls>
+                <video style={{ width: `${TRANSCRIPT_WIDTH_CH}ch`, margin: 0 }} src={mediaUrl} controls>
                     This is a video
                 </video>
-                <Button colorScheme="green" onClick={() => handleSaveEditor(SRTStringify(transcriptWIP))}>
-                    Save Subtitles
-                </Button>
+                <HStack justifyContent="flex-start" w="100%" mt={2}>
+                    {children}
+                    <Button colorScheme="green" onClick={() => handleSaveEditor(SRTStringify(transcriptWIP))}>
+                        <FAIcon iconStyle="s" icon="save" mr={2} />
+                        Save Subtitles
+                    </Button>
+                </HStack>
             </Flex>
         </Flex>
     );

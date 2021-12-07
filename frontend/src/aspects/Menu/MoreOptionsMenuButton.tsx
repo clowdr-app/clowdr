@@ -1,7 +1,7 @@
 import type { ButtonProps } from "@chakra-ui/react";
 import { Button, chakra, Image, Menu, MenuButton, MenuList, Portal, useBreakpointValue } from "@chakra-ui/react";
 import React from "react";
-import { FAIcon } from "../../Icons/FAIcon";
+import { FAIcon } from "../Icons/FAIcon";
 
 export default function MoreOptionsMenuButton({
     label,
@@ -32,6 +32,7 @@ export default function MoreOptionsMenuButton({
                 aria-label={label}
                 size={size}
                 p={2}
+                pr={3}
                 minW="100%"
                 textAlign={showLabel ? "left" : "center"}
                 justifyContent={showLabel ? "flex-start" : "center"}

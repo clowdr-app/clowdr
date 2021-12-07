@@ -1,9 +1,9 @@
 import { TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
-import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
-import { useMaybeCurrentRegistrant } from "../../../Conference/useCurrentRegistrant";
-import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useGlobalChatState } from "../../Chat/GlobalChatStateProvider";
+import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
+import { useAuthParameters } from "../../GQL/AuthParameters";
 import { ChatsPanel } from "./Panels/ChatsPanel";
 import { ItemChatPanel } from "./Panels/ItemChatPanel";
 import { PresencePanel } from "./Panels/PresencePanel";
@@ -17,9 +17,9 @@ function RightSidebarSections_Inner({
     externalSetPageChatAvailable,
     isVisible,
 }: {
-    externalSetPageChatUnreadCount: (count: string) => void;
-    externalSetChatsUnreadCount: (count: string) => void;
-    externalSetPageChatAvailable: (isAvailable: boolean) => void;
+    externalSetPageChatUnreadCount?: (count: string) => void;
+    externalSetChatsUnreadCount?: (count: string) => void;
+    externalSetPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
     const { path } = useRouteMatch();
@@ -68,8 +68,8 @@ function RightSidebarSections_Inner({
 
     useEffect(() => {
         if (!roomId && !itemOrExhibitionId) {
-            externalSetPageChatUnreadCount("");
-            externalSetPageChatAvailable(false);
+            externalSetPageChatUnreadCount?.("");
+            externalSetPageChatAvailable?.(false);
         }
     }, [itemOrExhibitionId, roomId, externalSetPageChatUnreadCount, externalSetPageChatAvailable]);
 
@@ -180,9 +180,9 @@ export default function RightSidebarSections({
     isVisible,
 }: {
     onClose: () => void;
-    externalSetPageChatUnreadCount: (count: string) => void;
-    externalSetChatsUnreadCount: (count: string) => void;
-    externalSetPageChatAvailable: (isAvailable: boolean) => void;
+    externalSetPageChatUnreadCount?: (count: string) => void;
+    externalSetChatsUnreadCount?: (count: string) => void;
+    externalSetPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
     const registrant = useMaybeCurrentRegistrant();

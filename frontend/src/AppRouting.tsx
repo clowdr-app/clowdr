@@ -1,5 +1,6 @@
 import { Spinner, Text } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { Suspense, useEffect, useMemo } from "react";
 import type { RouteComponentProps } from "react-router-dom";
@@ -13,7 +14,6 @@ import { useAuthParameters } from "./aspects/GQL/AuthParameters";
 import { makeContext } from "./aspects/GQL/make-context";
 import useMaybeCurrentUser from "./aspects/Users/CurrentUser/useMaybeCurrentUser";
 import { useGetSlugForUrlQuery } from "./generated/graphql";
-import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 
 const EmailVerificationRequiredPage = React.lazy(() => import("./aspects/Auth/EmailVerificationRequiredPage"));
 const LoggedOutPage = React.lazy(() => import("./aspects/Auth/LoggedOutPage"));

@@ -1,41 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ErrorBoundary } from "react-error-boundary";
-import { HelmetProvider } from "react-helmet-async";
-import { BrowserRouter } from "react-router-dom";
-import App from "./App";
+import AppInner from "./App";
 import { AppError } from "./AppError";
-import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
-import ChakraCustomProvider from "./aspects/Chakra/ChakraCustomProvider";
-import { VonageGlobalStateProvider } from "./aspects/Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
 import "./aspects/DataDog/DataDog";
-import { AuthParametersProvider } from "./aspects/GQL/AuthParameters";
-import UrqlProvider from "./aspects/GQL/UrqlProvider";
-import { UXChoiceProvider } from "./aspects/UXChoice/UXChoice";
-import UXChoiceDialog from "./aspects/UXChoice/UXChoiceDialog";
 import "./index.css";
 
 ReactDOM.render(
     <React.StrictMode>
         <ErrorBoundary FallbackComponent={AppError}>
-            <VonageGlobalStateProvider>
-                <AuthParametersProvider>
-                    <HelmetProvider>
-                        <BrowserRouter>
-                            <Auth0CustomProvider>
-                                <UrqlProvider>
-                                    <ChakraCustomProvider>
-                                        <UXChoiceProvider>
-                                            <UXChoiceDialog />
-                                            <App />
-                                        </UXChoiceProvider>
-                                    </ChakraCustomProvider>
-                                </UrqlProvider>
-                            </Auth0CustomProvider>
-                        </BrowserRouter>
-                    </HelmetProvider>
-                </AuthParametersProvider>
-            </VonageGlobalStateProvider>
+            <AppInner />
         </ErrorBoundary>
     </React.StrictMode>,
     document.getElementById("root")

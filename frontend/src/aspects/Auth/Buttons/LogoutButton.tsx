@@ -1,33 +1,55 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button, MenuItem, Tooltip } from "@chakra-ui/react";
+import { Button, MenuItem, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import FAIcon from "../../Icons/FAIcon";
-import MenuButton from "../../Menu/V2/MenuButton";
 
 export default function LogoutButton({
     asMenuItem,
-    asMenuButtonV2,
-    showLabel,
+    asMenuButton,
 }: {
     asMenuItem?: boolean;
-    asMenuButtonV2?: boolean;
-    showLabel?: boolean;
+    asMenuButton?: boolean;
 }): JSX.Element {
     const { logout } = useAuth0();
     const returnTo = useMemo(() => `${window.location.origin}/auth0/logged-out`, []);
 
-    return asMenuButtonV2 ? (
-        <MenuButton
-            label="Logout"
-            iconStyle="s"
-            icon="sign-out-alt"
+    const buttonHoverBgColor = useColorModeValue(
+        "MainMenuHeaderBar.buttonHoverBackgroundColor-light",
+        "MainMenuHeaderBar.buttonHoverBackgroundColor-dark"
+    );
+    const buttonFocusBgColor = useColorModeValue(
+        "MainMenuHeaderBar.buttonFocusBackgroundColor-light",
+        "MainMenuHeaderBar.buttonFocusBackgroundColor-dark"
+    );
+
+    return asMenuButton ? (
+        <Button
+            aria-label="Login"
+            variant="ghost"
+            size="md"
+            w="auto"
+            h="calc(100% - 3px)"
+            py={0}
+            px={2}
+            m="3px"
             borderRadius={0}
-            colorScheme="RightMenuButton"
-            side="right"
+            _hover={{
+                bgColor: buttonHoverBgColor,
+            }}
+            _focus={{
+                bgColor: buttonFocusBgColor,
+                boxShadow: defaultOutline_AsBoxShadow,
+            }}
+            _active={{
+                bgColor: buttonFocusBgColor,
+                boxShadow: defaultOutline_AsBoxShadow,
+            }}
             onClick={() => logout({ returnTo })}
-            mb={1}
-            showLabel={showLabel}
-        />
+        >
+            <FAIcon iconStyle="s" icon="sign-out-alt" mr={2} aria-hidden={true} />
+            Logout
+        </Button>
     ) : asMenuItem ? (
         <MenuItem size="sm" onClick={() => logout({ returnTo })}>
             <FAIcon iconStyle="s" icon="sign-out-alt" mr={2} aria-hidden={true} /> Log Out

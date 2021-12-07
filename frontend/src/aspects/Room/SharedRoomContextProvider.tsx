@@ -1,4 +1,3 @@
-import { Spinner } from "@chakra-ui/react";
 import React, { Suspense, useMemo } from "react";
 import * as portals from "react-reverse-portal";
 import { SharedRoomContext } from "./useSharedRoomContext";
@@ -23,7 +22,7 @@ export function SharedRoomContextProvider({
 
     return (
         <>
-            <Suspense fallback={<Spinner />}>
+            <Suspense fallback={<></>}>
                 <portals.InPortal node={vonageNode}>
                     <VonageRoom
                         getAccessToken={async () => ""}
@@ -41,7 +40,7 @@ export function SharedRoomContextProvider({
                     />
                 </portals.InPortal>
             </Suspense>
-            <Suspense fallback={<Spinner />}>
+            <Suspense fallback={<></>}>
                 <portals.InPortal node={chimeNode}>
                     <ChimeRoom disable={true} roomId="" />
                 </portals.InPortal>

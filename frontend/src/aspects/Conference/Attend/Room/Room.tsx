@@ -29,7 +29,6 @@ import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
-import { useUXChoice, UXChoice } from "../../../UXChoice/UXChoice";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import JoinZoomButton from "./JoinZoomButton";
 import { RoomContent } from "./RoomContent";
@@ -46,7 +45,6 @@ import { VideoChatRoom } from "./VideoChat/VideoChatRoom";
 const Backstages = React.lazy(() => import("./Stream/Backstages"));
 const VideoPlayer = React.lazy(() => import("./Video/VideoPlayer"));
 const HlsPlayer = React.lazy(() => import("./Video/HlsPlayer"));
-const HlsPlayerV1 = React.lazy(() => import("./Video/HlsPlayerV1"));
 
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
@@ -204,7 +202,6 @@ function RoomInner({
     defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
 }): JSX.Element {
     const currentRegistrant = useCurrentRegistrant();
-    const { choice } = useUXChoice();
 
     const now5s = useRealTime(5000);
     const now30s = useRealTime(30000);
@@ -639,21 +636,13 @@ function RoomInner({
                     <VideoAspectWrapper>
                         {(onAspectRatioChange) => (
                             <Suspense fallback={<Spinner />}>
-                                {choice === UXChoice.V1 ? (
-                                    <HlsPlayerV1
-                                        roomId={roomDetails.id}
-                                        canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
-                                        hlsUri={hlsUri}
-                                    />
-                                ) : (
-                                    <HlsPlayer
-                                        roomId={roomDetails.id}
-                                        canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
-                                        hlsUri={hlsUri}
-                                        onAspectRatioChange={onAspectRatioChange}
-                                        expectLivestream={secondsUntilBroadcastEvent < 10}
-                                    />
-                                )}
+                                <HlsPlayer
+                                    roomId={roomDetails.id}
+                                    canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
+                                    hlsUri={hlsUri}
+                                    onAspectRatioChange={onAspectRatioChange}
+                                    expectLivestream={secondsUntilBroadcastEvent < 10}
+                                />
                                 <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
                             </Suspense>
                         )}
@@ -672,7 +661,6 @@ function RoomInner({
         roomDetails.chatId,
         roomDetails.id,
         hlsUri,
-        choice,
         secondsUntilBroadcastEvent,
     ]);
 

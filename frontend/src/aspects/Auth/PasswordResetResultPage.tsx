@@ -16,7 +16,7 @@ export default function PasswordResetResultPage({
             <Heading as="h1" id="page-heading" fontSize="4xl" lineHeight="revert">
                 {success ? "Your password was reset" : message ?? "Password reset - status unknown"}
             </Heading>
-            <LoginButton size="lg" asMenuItem={false} />
+            <LoginButton size="lg" />
         </>
     );
 }

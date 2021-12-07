@@ -2,13 +2,14 @@ import { AtSignIcon, ChatIcon, LockIcon } from "@chakra-ui/icons";
 import { Button, Divider, List, ListIcon, ListItem, Spinner, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { useCreateDmMutation } from "../../../../generated/graphql";
 import { Chat } from "../../../Chat/Chat";
 import { ChatState } from "../../../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
 import { useConference } from "../../../Conference/useConference";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import FAIcon from "../../../Icons/FAIcon";
 import { PeopleSearch } from "./PeopleSearch";
 
@@ -50,14 +51,17 @@ export function ChatsPanel({
     openChat,
     closeChat,
     setUnread,
+    isVisible,
 }: {
     pageChatId: string | null;
     switchToPageChat: () => void;
     openChat: React.MutableRefObject<((chatId: string) => void) | null>;
     closeChat: React.MutableRefObject<(() => void) | null>;
-    setUnread: (v: string) => void;
+    setUnread?: (v: string) => void;
+    isVisible: boolean;
 }): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const toast = useToast();
     const [pinnedChatsMap, setPinnedChatsMap] = useState<Map<string, ChatState> | null>(null);
     const unreadCountsRef = React.useRef<Map<string, string>>(new Map());
@@ -76,7 +80,7 @@ export function ChatsPanel({
                             !x?.length ? acc : x.includes("+") ? Number.POSITIVE_INFINITY : acc + parseInt(x, 10),
                         0
                     );
-                    setUnread(total === Number.POSITIVE_INFINITY ? "10+" : total > 0 ? total.toString() : "");
+                    setUnread?.(total === Number.POSITIVE_INFINITY ? "10+" : total > 0 ? total.toString() : "");
                 })
             );
         }
@@ -287,8 +291,19 @@ export function ChatsPanel({
         ]
     );
 
-    const chat_IsVisible = React.useRef<boolean>(true);
-    const { path } = useRouteMatch();
+    const chat_IsVisible = React.useRef<boolean>(false);
+    useEffect(() => {
+        const _isVisible = isVisible && !!currentChatId && currentChatId !== pageChatId && !!currentChat;
+        chat_IsVisible.current = _isVisible;
+        if (_isVisible) {
+            currentChat?.fixUnreadCountToZero();
+        }
+        return () => {
+            if (_isVisible) {
+                currentChat?.unfixUnreadCountToZero();
+            }
+        };
+    }, [currentChat, currentChatId, pageChatId, isVisible]);
     const chatEl = useMemo(() => {
         if (currentChatId && currentChatId !== pageChatId) {
             if (currentChat) {
@@ -304,16 +319,18 @@ export function ChatsPanel({
                                         onClick={() => setCurrentChatId(null)}
                                         aria-label="Return to all chats list"
                                     >
-                                        <FAIcon iconStyle="s" icon="chevron-left" mr={1} /> All chats
+                                        <FAIcon iconStyle="s" icon="chevron-left" mr={1} />
+                                        &nbsp;
+                                        <FAIcon iconStyle="s" icon="comments" mr={1} />
                                     </Button>
                                 </Tooltip>,
                                 currentChat && currentChat.RoomId ? (
-                                    <Tooltip key="video-room-button" label="Go to video room">
+                                    <Tooltip key="room-button" label="Go to video room">
                                         <Button
                                             key="room-button"
                                             size="xs"
                                             colorScheme="PrimaryActionButton"
-                                            onClick={() => history.push(`${path}/room/${currentChat.RoomId}`)}
+                                            onClick={() => history.push(`${conferencePath}/room/${currentChat.RoomId}`)}
                                             aria-label="Go to video room for this chat"
                                         >
                                             <FAIcon iconStyle="s" icon="video" />
@@ -330,7 +347,7 @@ export function ChatsPanel({
             }
         }
         return undefined;
-    }, [path, currentChat, currentChatId, history, pageChatId, setCurrentChatId]);
+    }, [currentChat, currentChatId, history, pageChatId, setCurrentChatId, conferencePath]);
 
     const chatLists = useMemo(
         () => (

@@ -1,24 +1,22 @@
-import { Box, Flex, Link, MenuDivider, MenuItem, Text } from "@chakra-ui/react";
+import { Box, Flex, Link, MenuItem, useColorModeValue } from "@chakra-ui/react";
 import { gql } from "@urql/core";
-import * as R from "ramda";
-import React, { Fragment, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
-import { useCountSwagBagsQuery } from "../../../generated/graphql";
-import LogoutButton from "../../Auth/Buttons/LogoutButton";
-import { useMyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
-import { useLiveProgramRoomsModal } from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
-import { useSocialiseModal } from "../../Conference/Attend/Rooms/V2/SocialiseModalProvider";
-import { ProgramModalTab, useScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
-import { useStarredEventsModal } from "../../Conference/Attend/Schedule/StarredEventsModal";
-import RequireRole from "../../Conference/RequireRole";
-import { useConference } from "../../Conference/useConference";
-import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
-import { useRestorableState } from "../../Generic/useRestorableState";
-import { useAuthParameters } from "../../GQL/AuthParameters";
-import FAIcon from "../../Icons/FAIcon";
-import { useLiveEvents } from "../../LiveEvents/LiveEvents";
-import useRoomParticipants from "../../Room/useRoomParticipants";
-import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
+import { useCountSwagBagsQuery } from "../../generated/graphql";
+import { useMyBackstagesModal } from "../Conference/Attend/Profile/MyBackstages";
+import { useLiveProgramRoomsModal } from "../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
+import { useSocialiseModal } from "../Conference/Attend/Rooms/V2/SocialiseModalProvider";
+import { ProgramModalTab, useScheduleModal } from "../Conference/Attend/Schedule/ProgramModal";
+import { useStarredEventsModal } from "../Conference/Attend/Schedule/StarredEventsModal";
+import RequireRole from "../Conference/RequireRole";
+import { useConference } from "../Conference/useConference";
+import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
+import { useRestorableState } from "../Generic/useRestorableState";
+import { useAuthParameters } from "../GQL/AuthParameters";
+import FAIcon from "../Icons/FAIcon";
+import { useLiveEvents } from "../LiveEvents/LiveEvents";
+import useRoomParticipants from "../Room/useRoomParticipants";
+import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import MenuButton from "./MenuButton";
 import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
 
@@ -93,50 +91,18 @@ export default function LeftMenu(): JSX.Element {
     const liveRoomCount = Object.keys(liveEventsByRoom).length;
     const showLive = liveRoomCount > 0;
 
-    const [isExpanded, setIsExpanded] = useRestorableState<boolean>(
+    const [isExpanded, _setIsExpanded] = useRestorableState<boolean>(
         "LeftMenu_IsExpanded",
         true,
         (x) => x.toString(),
         (x) => x === "true"
     );
+
+    const bgColor = useColorModeValue("LeftMenu.500", "LeftMenu.200");
+
     return (
         <>
-            <Flex flexDir="column" justifyContent="center" alignItems="flex-start" h="100%" bgColor="LeftMenu.600">
-                <MenuButton
-                    label={isExpanded ? "Collapse menu" : "Expand menu"}
-                    iconStyle="s"
-                    icon={isExpanded ? ["arrow-left", "grip-lines-vertical"] : ["grip-lines-vertical", "arrow-right"]}
-                    borderTopRadius={0}
-                    colorScheme={colorScheme}
-                    side="right"
-                    mb={1}
-                    showLabel={false}
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    fontSize="xs"
-                    justifyContent="center"
-                    w="auto"
-                    minW="auto"
-                    alignSelf="flex-end"
-                    minH={0}
-                    h="auto"
-                    lineHeight={0}
-                    m={1.5}
-                />
-                <MenuButton
-                    label="Home"
-                    iconStyle="s"
-                    icon="home"
-                    borderRadius={0}
-                    colorScheme={colorScheme}
-                    side="left"
-                    onClick={() => {
-                        if (conferencePath) {
-                            history.push(conferencePath);
-                        }
-                    }}
-                    mb={1}
-                    showLabel={isExpanded}
-                />
+            <Flex flexDir="column" justifyContent="center" alignItems="flex-start" h="100%" bgColor={bgColor}>
                 {showLive ? (
                     <MenuButton
                         label="Live now"
@@ -225,28 +191,12 @@ export default function LeftMenu(): JSX.Element {
                             showLabel={isExpanded}
                             imageSrc={maybeRegistrant.profile?.photoURL_50x50 ?? undefined}
                         >
-                            <Text px={2} fontSize="sm" fontWeight="bold">
-                                {maybeRegistrant.displayName}
-                            </Text>
-                            {maybeUser ? (
-                                <Text py={1} px={2} fontSize="sm" fontFamily="monospace">
-                                    {maybeUser?.email}
-                                </Text>
-                            ) : undefined}
                             <MenuItem
                                 ref={myStarredEventsButtonRef as React.RefObject<HTMLButtonElement>}
                                 onClick={myStarredEvents_OnOpen}
                             >
                                 <FAIcon iconStyle="s" icon="star" mr={2} aria-hidden={true} w="1.2em" />
                                 My events
-                            </MenuItem>
-                            <MenuItem as={ReactLink} to={`${conferencePath}/profile`}>
-                                <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
-                                My profile
-                            </MenuItem>
-                            <MenuItem as={ReactLink} to={`${conferencePath}/recordings`}>
-                                <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
-                                My recordings
                             </MenuItem>
                             {swagBagsResponse.data?.content_Item_aggregate.aggregate?.count ? (
                                 <MenuItem as={ReactLink} to={`${conferencePath}/swag`}>
@@ -261,86 +211,26 @@ export default function LeftMenu(): JSX.Element {
                                 <FAIcon iconStyle="s" icon="person-booth" mr={2} aria-hidden={true} w="1.2em" /> My
                                 backstages
                             </MenuItem>
-                            <LogoutButton asMenuItem showLabel={isExpanded} />
                         </MoreOptionsMenuButton>
                     </>
                 ) : undefined}
                 <RequireRole organizerRole moderatorRole>
-                    <MoreOptionsMenuButton
+                    <MenuButton
                         label="Manage"
                         iconStyle="s"
                         icon="cog"
                         borderRadius={0}
                         colorScheme={colorScheme}
                         side="left"
+                        onClick={() => {
+                            if (conferencePath) {
+                                history.push(`${conferencePath}/manage`);
+                            }
+                        }}
                         mb={1}
                         showLabel={isExpanded}
-                    >
-                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/checklist`}>
-                            <FAIcon iconStyle="s" icon="check" mr={2} aria-hidden={true} w="1.2em" />
-                            Checklist
-                        </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferencePath}/manage`}>
-                            <FAIcon iconStyle="s" icon="cog" mr={2} aria-hidden={true} w="1.2em" />
-                            Dashboard
-                        </MenuItem>
-                        <MenuDivider />
-                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/content`}>
-                            <FAIcon iconStyle="s" icon="align-left" mr={2} aria-hidden={true} w="1.2em" />
-                            Content
-                        </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/schedule`}>
-                            <FAIcon iconStyle="s" icon="calendar" mr={2} aria-hidden={true} w="1.2em" />
-                            Schedule
-                        </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/rooms`}>
-                            <FAIcon iconStyle="s" icon="coffee" mr={2} aria-hidden={true} w="1.2em" />
-                            Rooms
-                        </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/people`}>
-                            <FAIcon iconStyle="s" icon="people-arrows" mr={2} aria-hidden={true} w="1.2em" />
-                            Program People
-                        </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/registrants`}>
-                            <FAIcon iconStyle="s" icon="users" mr={2} aria-hidden={true} w="1.2em" />
-                            Registrants
-                        </MenuItem>
-                    </MoreOptionsMenuButton>
+                    />
                 </RequireRole>
-                {maybeUser ? (
-                    <MoreOptionsMenuButton
-                        label="Conferences"
-                        iconStyle="s"
-                        icon="ticket-alt"
-                        borderRadius={0}
-                        colorScheme={colorScheme}
-                        side="left"
-                        mb={1}
-                        showLabel={isExpanded}
-                    >
-                        {R.sortBy((registrant) => registrant.conference.shortName, maybeUser.registrants).map(
-                            (registrant) =>
-                                registrant.conferenceId === conference.id ? (
-                                    <Fragment key={registrant.conferenceId} />
-                                ) : (
-                                    <MenuItem
-                                        key={registrant.conferenceId}
-                                        as={ReactLink}
-                                        to={`/conference/${registrant.conference.slug}`}
-                                    >
-                                        <FAIcon iconStyle="s" icon="link" />
-                                        &nbsp;&nbsp;
-                                        {registrant.conference.shortName}
-                                    </MenuItem>
-                                )
-                        )}
-                        {!conference || maybeUser.registrants.length > 1 ? <MenuDivider /> : undefined}
-                        <MenuItem as={ReactLink} to="/join">
-                            <FAIcon iconStyle="s" icon="ticket-alt" />
-                            &nbsp;&nbsp; Use invite code
-                        </MenuItem>
-                    </MoreOptionsMenuButton>
-                ) : undefined}
                 <MenuButton
                     label="Feedback"
                     iconStyle="s"

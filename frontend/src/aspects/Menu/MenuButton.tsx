@@ -1,7 +1,7 @@
 import type { As, PropsOf } from "@chakra-ui/react";
 import { Button, chakra, useBreakpointValue } from "@chakra-ui/react";
 import React, { forwardRef } from "react";
-import { FAIcon } from "../../Icons/FAIcon";
+import { FAIcon } from "../Icons/FAIcon";
 
 type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
     label: string;
@@ -33,6 +33,7 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
             aria-label={ariaLabel ?? label}
             size={size}
             p={2}
+            pr={3}
             minW="100%"
             ref={ref}
             textAlign="left"

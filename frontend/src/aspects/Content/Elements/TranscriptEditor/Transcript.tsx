@@ -143,7 +143,7 @@ function SubtitleBlockJITRenderer({
                     aria-label="Insert new subtitle block after this one"
                     title="Insert new subtitle block"
                     color="var(--chakra-colors-PrimaryActionButton-500)"
-                    background="var(--chakra-colors-AppPageV2-pageBackground-light)"
+                    background="var(--chakra-colors-AppPage-pageBackground-light)"
                     verticalAlign="center"
                     onClick={() =>
                         onInput((oldTranscript) => {

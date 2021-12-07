@@ -20,10 +20,14 @@ export function RoomChatPanel({
     roomId,
     onChatIdLoaded,
     setUnread,
+    setPageChatAvailable,
+    isVisible,
 }: {
     roomId: string;
     onChatIdLoaded: (chatId: string) => void;
-    setUnread: (v: string) => void;
+    setUnread?: (v: string) => void;
+    setPageChatAvailable?: (isAvailable: boolean) => void;
+    isVisible: boolean;
 }): JSX.Element {
     const [{ fetching: loading, error, data }] = useGetRoomChatIdQuery({
         variables: {
@@ -55,7 +59,7 @@ export function RoomChatPanel({
 
     useEffect(() => {
         let unsubscribe: (() => void) | undefined;
-        if (chat) {
+        if (chat && setUnread) {
             unsubscribe = chat.UnreadCount.subscribe(setUnread);
         }
         return () => {
@@ -63,7 +67,23 @@ export function RoomChatPanel({
         };
     }, [chat, setUnread]);
 
-    const isVisible = React.useRef<boolean>(true);
+    const isVisibleRef = React.useRef<boolean>(false);
+    useEffect(() => {
+        const _isVisible = isVisible;
+        isVisibleRef.current = _isVisible;
+        if (_isVisible) {
+            chat?.fixUnreadCountToZero();
+        }
+        return () => {
+            if (_isVisible) {
+                chat?.unfixUnreadCountToZero();
+            }
+        };
+    }, [chat, isVisible]);
+
+    useEffect(() => {
+        setPageChatAvailable?.(!error && chat !== null);
+    }, [chat, error, setPageChatAvailable]);
 
     if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
@@ -106,5 +126,5 @@ export function RoomChatPanel({
         );
     }
 
-    return <Chat chat={chat} isVisible={isVisible} />;
+    return <Chat chat={chat} isVisible={isVisibleRef} />;
 }

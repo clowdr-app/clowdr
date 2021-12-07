@@ -1,14 +1,19 @@
 import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React, { Suspense } from "react";
+import { HelmetProvider } from "react-helmet-async";
+import { BrowserRouter } from "react-router-dom";
 import "reflect-metadata";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider as ChimeThemeProvider } from "styled-components";
 import "./App.css";
+import AppPage from "./aspects/App/AppPage";
 import { AppSettingsProvider } from "./aspects/App/AppSettingsProvider";
-import CenteredSpinner from "./aspects/Chakra/CenteredSpinner";
+import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
+import ChakraCustomProvider from "./aspects/Chakra/ChakraCustomProvider";
 import { GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
 import { MyBackstagesModalProvider } from "./aspects/Conference/Attend/Profile/MyBackstages";
 import { PermissionInstructionsProvider } from "./aspects/Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
+import { VonageGlobalStateProvider } from "./aspects/Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
 import { LiveProgramRoomsModalProvider } from "./aspects/Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { SocialiseModalProvider } from "./aspects/Conference/Attend/Rooms/V2/SocialiseModalProvider";
 import { ScheduleModalProvider } from "./aspects/Conference/Attend/Schedule/ProgramModal";
@@ -19,24 +24,41 @@ import ConferenceProvider from "./aspects/Conference/useConference";
 import { CurrentRegistrantProvider } from "./aspects/Conference/useCurrentRegistrant";
 import { EmojiFloatProvider } from "./aspects/Emoji/EmojiFloat";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
-import { useAuthParameters } from "./aspects/GQL/AuthParameters";
+import { AuthParametersProvider, useAuthParameters } from "./aspects/GQL/AuthParameters";
+import UrqlProvider from "./aspects/GQL/UrqlProvider";
 import { LiveEventsProvider } from "./aspects/LiveEvents/LiveEvents";
-import { RightSidebarCurrentTabProvider } from "./aspects/Menu/V2/RightSidebar/RightSidebarCurrentTab";
+import { RightSidebarCurrentTabProvider } from "./aspects/Menu/RightSidebar/RightSidebarCurrentTab";
 import { RaiseHandProvider } from "./aspects/RaiseHand/RaiseHandProvider";
 import { EnableRoomParticipantsPollingProvider } from "./aspects/Room/EnableRoomParticipantsPollingContext";
 import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
-import { useUXChoice, UXChoice } from "./aspects/UXChoice/UXChoice";
-
-const AppPageV2 = React.lazy(() => import("./aspects/App/AppPageV2"));
-const AppPageV1 = React.lazy(() => import("./aspects/App/AppPageV1"));
 
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
 // }
 
 export default function App(): JSX.Element {
+    return (
+        <VonageGlobalStateProvider>
+            <AuthParametersProvider>
+                <HelmetProvider>
+                    <BrowserRouter>
+                        <ChakraCustomProvider>
+                            <Auth0CustomProvider>
+                                <UrqlProvider>
+                                    <AppInner />
+                                </UrqlProvider>
+                            </Auth0CustomProvider>
+                        </ChakraCustomProvider>
+                    </BrowserRouter>
+                </HelmetProvider>
+            </AuthParametersProvider>
+        </VonageGlobalStateProvider>
+    );
+}
+
+function AppInner(): JSX.Element {
     const chimeTheme = useColorModeValue(lightTheme, darkTheme);
 
     // const query = useQuery();
@@ -52,21 +74,22 @@ export default function App(): JSX.Element {
     return (
         <CurrentUserProvider>
             <AppSettingsProvider>
-                <ThemeProvider theme={chimeTheme}>
+                <ChimeThemeProvider theme={chimeTheme}>
                     <MeetingProvider>
-                        <AppInner />
+                        <AppInner2 />
                     </MeetingProvider>
-                </ThemeProvider>
+                </ChimeThemeProvider>
             </AppSettingsProvider>
         </CurrentUserProvider>
     );
 }
 
-function AppInner(): JSX.Element {
+function AppInner2(): JSX.Element {
     const { conferenceId } = useAuthParameters();
-    const { choice } = useUXChoice();
     const page = (
-        <Suspense fallback={<CenteredSpinner />}>{choice === UXChoice.V1 ? <AppPageV1 /> : <AppPageV2 />}</Suspense>
+        <Suspense fallback={<></>}>
+            <AppPage />
+        </Suspense>
     );
 
     return (

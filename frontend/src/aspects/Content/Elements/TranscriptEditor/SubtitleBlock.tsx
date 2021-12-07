@@ -56,7 +56,7 @@ export default function SubtitleBlock({
                 height="auto"
                 aria-label="Delete subtitle block"
                 title="Delete subtitle block"
-                backgroundColor="var(--chakra-colors-AppPageV2-pageBackground-light)"
+                backgroundColor="var(--chakra-colors-AppPage-pageBackground-light)"
                 color="var(--chakra-colors-gray-100)"
                 _hover={{ backgroundColor: "var(--chakra-colors-gray-100)", color: "DestructiveActionButton.400" }}
                 onClick={onDelete}

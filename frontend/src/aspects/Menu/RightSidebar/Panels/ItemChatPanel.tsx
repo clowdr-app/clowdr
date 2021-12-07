@@ -2,13 +2,13 @@ import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, HStack, Spinner
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
-import { useGetConferenceLandingPageItemIdQuery, useGetItemChatIdQuery } from "../../../../../generated/graphql";
-import { Chat } from "../../../../Chat/Chat";
-import type { ChatState } from "../../../../Chat/ChatGlobalState";
-import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
-import { useConference } from "../../../../Conference/useConference";
-import { useAuthParameters } from "../../../../GQL/AuthParameters";
-import FAIcon from "../../../../Icons/FAIcon";
+import { useGetConferenceLandingPageItemIdQuery, useGetItemChatIdQuery } from "../../../../generated/graphql";
+import { Chat } from "../../../Chat/Chat";
+import type { ChatState } from "../../../Chat/ChatGlobalState";
+import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
+import { useConference } from "../../../Conference/useConference";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import FAIcon from "../../../Icons/FAIcon";
 
 gql`
     query GetItemChatId($itemOrExhibitionId: uuid!) {
@@ -41,8 +41,8 @@ export function ItemChatPanel({
 }: {
     itemOrExhibitionId: string;
     onChatIdLoaded: (chatId: string) => void;
-    setUnread: (v: string) => void;
-    setPageChatAvailable: (isAvailable: boolean) => void;
+    setUnread?: (v: string) => void;
+    setPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
     if (itemOrExhibitionId === "LANDING_PAGE") {
@@ -57,8 +57,8 @@ function LandingPageChatPanel({
     ...props
 }: {
     onChatIdLoaded: (chatId: string) => void;
-    setUnread: (v: string) => void;
-    setPageChatAvailable: (isAvailable: boolean) => void;
+    setUnread?: (v: string) => void;
+    setPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }) {
     const conference = useConference();
@@ -70,7 +70,7 @@ function LandingPageChatPanel({
 
     useEffect(() => {
         if (!response.fetching && !response.data?.content_Item?.length) {
-            setPageChatAvailable(false);
+            setPageChatAvailable?.(false);
         }
     }, [response.data?.content_Item?.length, response.fetching, setPageChatAvailable]);
 
@@ -96,8 +96,8 @@ function ItemChatPanelInner({
 }: {
     itemOrExhibitionId: string;
     onChatIdLoaded: (chatId: string) => void;
-    setUnread: (v: string) => void;
-    setPageChatAvailable: (isAvailable: boolean) => void;
+    setUnread?: (v: string) => void;
+    setPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
     const [{ fetching: loading, error, data }] = useGetItemChatIdQuery({
@@ -129,7 +129,7 @@ function ItemChatPanelInner({
 
     useEffect(() => {
         let unsubscribe: (() => void) | undefined;
-        if (chat) {
+        if (chat && setUnread) {
             unsubscribe = chat.UnreadCount.subscribe(setUnread);
         }
         return () => {
@@ -155,7 +155,7 @@ function ItemChatPanelInner({
     const { conferencePath } = useAuthParameters();
 
     useEffect(() => {
-        setPageChatAvailable(!error && chat !== null);
+        setPageChatAvailable?.(!error && chat !== null);
     }, [chat, chatId, error, setPageChatAvailable]);
 
     if (loading || chat === undefined) {

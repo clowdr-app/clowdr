@@ -14,9 +14,9 @@ import {
     Text,
     UnorderedList,
     useToast,
-    VStack,
 } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import type { SubtitleDetails } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import AmazonS3Uri from "amazon-s3-uri";
@@ -30,6 +30,7 @@ import { useFilePicker } from "use-file-picker";
 import useFetch from "use-http";
 import { useUpdateSubtitlesMutation } from "../../../generated/graphql";
 import { DownloadButton } from "../../Chakra/LinkButton";
+import { makeContext } from "../../GQL/make-context";
 import { FAIcon } from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
 import TranscriptEditor from "./TranscriptEditor";
@@ -63,6 +64,7 @@ export default function EditSubtitles({
     magicToken: string;
     refresh: () => Promise<void>;
 }): JSX.Element {
+    const context = useMemo(() => makeContext({ [AuthHeader.MagicToken]: magicToken }), [magicToken]);
     const [_updateSubtitlesResponse, updateSubtitles] = useUpdateSubtitlesMutation();
     const toast = useToast();
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -110,11 +112,14 @@ export default function EditSubtitles({
         async (srtTranscript: string) => {
             try {
                 setSaveInProgress(true);
-                const result = await updateSubtitles({
-                    elementId,
-                    magicToken,
-                    subtitleText: srtTranscript,
-                });
+                const result = await updateSubtitles(
+                    {
+                        elementId,
+                        magicToken,
+                        subtitleText: srtTranscript,
+                    },
+                    context
+                );
                 if (result.data?.updateSubtitles?.success) {
                     toast({
                         description: "Saved subtitles",
@@ -136,7 +141,7 @@ export default function EditSubtitles({
                 setSaveInProgress(false);
             }
         },
-        [elementId, magicToken, refresh, toast, updateSubtitles]
+        [context, elementId, magicToken, refresh, toast, updateSubtitles]
     );
 
     return (
@@ -146,7 +151,14 @@ export default function EditSubtitles({
             {subtitlesData ? (
                 <Fragment>
                     <UnsavedChangesWarning hasUnsavedChanges={hasUnsavedChanges} />
-                    <VStack alignItems="stretch" flex={1} width="min-content" minWidth="30ch">
+                    <TranscriptEditor
+                        key={subtitlesData}
+                        srtTranscript={subtitlesData}
+                        mediaUrl={videoUrl}
+                        handleSaveEditor={saveSubtitles}
+                        handleChange={() => setHasUnsavedChanges(true)}
+                        readOnly={saveInProgress}
+                    >
                         <DownloadButton to={subtitlesUrl} colorScheme="SecondaryActionButton" w="100%">
                             Download .SRT file
                         </DownloadButton>
@@ -248,15 +260,7 @@ export default function EditSubtitles({
                                 ) : undefined}
                             </HStack>
                         )}
-                    </VStack>
-                    <TranscriptEditor
-                        key={subtitlesData}
-                        srtTranscript={subtitlesData}
-                        mediaUrl={videoUrl}
-                        handleSaveEditor={saveSubtitles}
-                        handleChange={() => setHasUnsavedChanges(true)}
-                        readOnly={saveInProgress}
-                    />
+                    </TranscriptEditor>
                 </Fragment>
             ) : undefined}
         </Fragment>

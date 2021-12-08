@@ -11,7 +11,7 @@ export interface IconProps extends ChakraProps {
     inline?: boolean;
 }
 
-export const FAIcon = forwardRef<IconProps, "i">(function Icon(
+const FAIcon = forwardRef<IconProps, "i">(function Icon(
     props: MergeWithAs<IconProps, any>,
     ref: ForwardedRef<HTMLSpanElement>
 ) {

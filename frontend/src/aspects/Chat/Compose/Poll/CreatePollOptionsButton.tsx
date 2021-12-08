@@ -1,7 +1,7 @@
 import type { ButtonProps } from "@chakra-ui/react";
 import { useColorModeValue, useDisclosure } from "@chakra-ui/react";
 import React from "react";
-import FAIcon from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import { useChatConfiguration } from "../../Configuration";
 import { useComposeContext } from "../ComposeContext";
 import SendLockoutButton from "../SendLockoutButton";

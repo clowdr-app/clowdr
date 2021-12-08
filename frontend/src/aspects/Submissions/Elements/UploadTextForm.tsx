@@ -18,9 +18,9 @@ import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo } from "react";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
+import { Markdown } from "../../Chakra/Markdown";
 import { makeContext } from "../../GQL/make-context";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
-import { Markdown } from "../../Text/Markdown";
 import UploadAgreementField from "./UploadAgreementField";
 
 export default function UploadTextForm({

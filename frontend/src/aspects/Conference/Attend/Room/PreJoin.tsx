@@ -2,7 +2,7 @@ import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
 import { Box, Center, chakra, HStack, useToast, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import { FAIcon } from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import { backgroundImage } from "../../../Vonage/resources";
 import { useVonageRoom } from "../../../Vonage/useVonageRoom";
 

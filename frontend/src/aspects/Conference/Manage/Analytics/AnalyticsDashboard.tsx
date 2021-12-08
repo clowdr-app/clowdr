@@ -32,9 +32,9 @@ import React, { useCallback, useMemo } from "react";
 import { gql } from "urql";
 import { useConferenceStatsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { makeContext } from "../../../GQL/make-context";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
+import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 

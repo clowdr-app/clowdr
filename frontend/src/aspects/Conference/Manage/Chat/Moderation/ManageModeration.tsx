@@ -27,6 +27,7 @@ import {
     useManageModeration_UpdateFlagMutation,
 } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
+import { Markdown } from "../../../../Chakra/Markdown";
 import { MessageState } from "../../../../Chat/ChatGlobalState";
 import type { ChatConfiguration } from "../../../../Chat/Configuration";
 import { ChatConfigurationProvider, ChatSpacing } from "../../../../Chat/Configuration";
@@ -35,10 +36,9 @@ import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalPro
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
 import MessageBox from "../../../../Chat/Messages/MessageBox";
 import PageNotFound from "../../../../Errors/PageNotFound";
-import { useRestorableState } from "../../../../Generic/useRestorableState";
 import { makeContext } from "../../../../GQL/make-context";
-import { Markdown } from "../../../../Text/Markdown";
-import { useTitle } from "../../../../Utils/useTitle";
+import { useRestorableState } from "../../../../Hooks/useRestorableState";
+import { useTitle } from "../../../../Hooks/useTitle";
 import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";

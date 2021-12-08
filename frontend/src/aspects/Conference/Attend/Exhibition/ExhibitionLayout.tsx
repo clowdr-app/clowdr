@@ -21,12 +21,12 @@ import type {
 } from "../../../../generated/graphql";
 import { Content_ElementType_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import FAIcon from "../../../Chakra/FAIcon";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
-import { useRealTime } from "../../../Generic/useRealTime";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import { FAIcon } from "../../../Icons/FAIcon";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import PageCountText from "../../../Realtime/PageCountText";
-import { maybeCompare } from "../../../Utils/maybeSort";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import { AuthorList } from "../Content/AuthorList";
 import { Element } from "../Content/Element/Element";
 import TagList from "../Content/TagList";

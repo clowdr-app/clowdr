@@ -22,7 +22,7 @@ import { gql } from "urql";
 import { useMyRecordingsQuery } from "../../../../generated/graphql";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 
 gql`

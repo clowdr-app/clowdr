@@ -8,7 +8,7 @@ import React, { useEffect, useMemo, useReducer, useRef } from "react";
 import { useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery } from "../../generated/graphql";
 import type { DevicesProps } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 import { useConference } from "../Conference/useConference";
-import { useRestorableState } from "../Generic/useRestorableState";
+import { useRestorableState } from "../Hooks/useRestorableState";
 
 export interface VonageRoomState {
     preferredCameraId: string | null;

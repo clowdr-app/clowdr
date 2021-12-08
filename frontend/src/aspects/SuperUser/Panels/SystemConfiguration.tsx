@@ -11,11 +11,11 @@ import {
     useAllSystemConfigurationsQuery,
     useUserSysConfigPermissionsQuery,
 } from "../../../generated/graphql";
+import FAIcon from "../../Chakra/FAIcon";
 import { TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
 import type { CellProps, ColumnHeaderProps, ColumnSpecification, RowSpecification } from "../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import { makeContext } from "../../GQL/make-context";
-import { FAIcon } from "../../Icons/FAIcon";
 import useCurrentUser from "../../Users/CurrentUser/useCurrentUser";
 
 gql`

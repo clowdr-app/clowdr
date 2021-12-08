@@ -26,8 +26,8 @@ import {
     useGetEventVonageTokenMutation,
     useGetRoomVonageTokenMutation,
 } from "../../../../../generated/graphql";
-import { useRealTime } from "../../../../Generic/useRealTime";
 import { makeContext } from "../../../../GQL/make-context";
+import { useRealTime } from "../../../../Hooks/useRealTime";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 

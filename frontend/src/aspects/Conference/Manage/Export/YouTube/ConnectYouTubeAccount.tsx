@@ -10,9 +10,9 @@ import {
     useManageExport_DeleteRegistrantGoogleAccountMutation,
     useManageExport_GetGoogleOAuthUrlMutation,
 } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { useGoogleOAuthRedirectPath } from "../../../../Google/useGoogleOAuthRedirectUrl";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
-import { FAIcon } from "../../../../Icons/FAIcon";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { YouTubeExportContext } from "./YouTubeExportContext";
 

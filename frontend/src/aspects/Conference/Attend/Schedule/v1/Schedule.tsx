@@ -16,9 +16,9 @@ import type {
     Schedule_TagFragment,
 } from "../../../../../generated/graphql";
 import { useSchedule_SelectSummariesQuery } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { useTitle } from "../../../../Utils/useTitle";
+import { useTitle } from "../../../../Hooks/useTitle";
 import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import type { TimelineEvent } from "./DayList";

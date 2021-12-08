@@ -4,7 +4,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
 import Color from "tinycolor2";
 import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
-import FAIcon from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 
 export default function ContinuationChoiceList({
     choices,

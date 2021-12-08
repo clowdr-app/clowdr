@@ -1,6 +1,6 @@
 import { Flex, Heading, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
-import { useTitle } from "../../Utils/useTitle";
+import { useTitle } from "../../Hooks/useTitle";
 import { useConference } from "../useConference";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 

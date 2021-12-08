@@ -30,7 +30,7 @@ import { formatRelative } from "date-fns";
 import React, { useEffect, useMemo } from "react";
 import type { ManageShufflePeriods_ShufflePeriodFragment } from "../../../../generated/graphql";
 import { useDeleteShufflePeriodMutation } from "../../../../generated/graphql";
-import { FAIcon } from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import ContinuationsEditor from "../Schedule/ContinuationsEditor";
 import ConfigureQueueModal from "./ConfigureQueueModal";
 

@@ -1,8 +1,8 @@
 import type { As, PropsOf } from "@chakra-ui/react";
 import { Button, chakra, useColorModeValue } from "@chakra-ui/react";
 import React, { forwardRef } from "react";
+import FAIcon from "../../Chakra/FAIcon";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
-import { FAIcon } from "../../Icons/FAIcon";
 
 type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
     label: string;

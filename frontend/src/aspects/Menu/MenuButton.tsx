@@ -1,7 +1,7 @@
 import type { As, PropsOf } from "@chakra-ui/react";
 import { Button, chakra, useBreakpointValue } from "@chakra-ui/react";
 import React, { forwardRef } from "react";
-import { FAIcon } from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
 
 type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
     label: string;

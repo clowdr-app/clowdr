@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { Registrant_RegistrantRole_Enum } from "../../generated/graphql";
 import RequireRole from "../Conference/RequireRole";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
-import { useRestorableState } from "../Generic/useRestorableState";
+import { useRestorableState } from "../Hooks/useRestorableState";
 import type { ChatState } from "./ChatGlobalState";
 import type { ChatConfiguration } from "./Configuration";
 import { ChatConfigurationProvider, ChatSpacing } from "./Configuration";

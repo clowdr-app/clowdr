@@ -15,7 +15,7 @@ import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
 import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
-import { useRealTime } from "../../../../Generic/useRealTime";
+import { useRealTime } from "../../../../Hooks/useRealTime";
 import StreamTextCaptions from "../StreamTextCaptions";
 import { isEventNow, isEventSoon } from "./isEventAt";
 import { VonageBackstage } from "./VonageBackstage";

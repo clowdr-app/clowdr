@@ -18,12 +18,12 @@ import React, { useMemo } from "react";
 import { gql } from "urql";
 import { Content_ElementType_Enum, useItemByPersonAccessTokenQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
+import FAIcon from "../Chakra/FAIcon";
 import { LinkButton } from "../Chakra/LinkButton";
 import { contentSortOrder } from "../Conference/Attend/Content/Element/ElementsGridLayout";
 import { makeContext } from "../GQL/make-context";
-import FAIcon from "../Icons/FAIcon";
-import { maybeCompare } from "../Utils/maybeSort";
-import { useTitle } from "../Utils/useTitle";
+import { useTitle } from "../Hooks/useTitle";
+import { maybeCompare } from "../Utils/maybeCompare";
 import RenderElement from "./Elements/RenderElement";
 
 gql`

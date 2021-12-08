@@ -21,7 +21,7 @@ import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import { FAIcon } from "../../Icons/FAIcon";
+import FAIcon from "../../Chakra/FAIcon";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
 import type { AnswerMessageData, MessageMediaData } from "../Types/Messages";
 import { MediaType } from "../Types/Messages";

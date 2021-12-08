@@ -8,7 +8,7 @@ import {
     useStarEventButton_GetStarsQuery,
     useStarEventButton_InsertStarsMutation,
 } from "../../../../generated/graphql";
-import FAIcon from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 

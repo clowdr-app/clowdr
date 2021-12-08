@@ -2,7 +2,7 @@ import { Button, chakra, Code, Text, VStack } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import React, { useState } from "react";
 import type { FallbackProps } from "react-error-boundary";
-import { FAIcon } from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
 
 export function HlsPlayerError(props: PropsWithChildren<FallbackProps>): JSX.Element {
     const [now] = useState(Date.now());

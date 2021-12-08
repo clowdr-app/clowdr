@@ -4,8 +4,8 @@ import React, { useMemo } from "react";
 import type { RouteComponentProps, RouteProps } from "react-router-dom";
 import { Redirect, Route } from "react-router-dom";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
+import FAIcon from "../Chakra/FAIcon";
 import GenericErrorPage from "../Errors/GenericErrorPage";
-import { FAIcon } from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 export default function ProtectedRoute({

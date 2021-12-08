@@ -3,8 +3,8 @@ import * as R from "ramda";
 import React, { useMemo } from "react";
 import { gql, useQuery } from "urql";
 import type { ItemEventFragment, ItemRoomEventFragment } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import { EventsTable } from "./EventsTable";
 

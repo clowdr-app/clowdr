@@ -9,12 +9,12 @@ import React, { useMemo } from "react";
 import type { ElementDataFragment, SwagBagFragment } from "../../../../generated/graphql";
 import { Content_ElementType_Enum, useSelectSwagBagsQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import FAIcon from "../../../Icons/FAIcon";
+import { useTitle } from "../../../Hooks/useTitle";
 import PageCountText from "../../../Realtime/PageCountText";
-import { maybeCompare } from "../../../Utils/maybeSort";
-import { useTitle } from "../../../Utils/useTitle";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import { useConference } from "../../useConference";
 import { Element } from "../Content/Element/Element";
 

@@ -1,8 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, MenuItem, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import FAIcon from "../../Chakra/FAIcon";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
-import FAIcon from "../../Icons/FAIcon";
 
 export default function LogoutButton({
     asMenuItem,

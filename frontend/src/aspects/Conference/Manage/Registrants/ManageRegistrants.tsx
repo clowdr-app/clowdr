@@ -44,6 +44,7 @@ import {
     useUpdateRegistrantMutation,
 } from "../../../../generated/graphql";
 import type { BadgeData } from "../../../Badges/ProfileBadge";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import MultiSelect from "../../../Chakra/MultiSelect";
 import {
@@ -68,9 +69,8 @@ import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { maybeCompare } from "../../../Utils/maybeSort";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import { SendEmailModal } from "./SendEmailModal";

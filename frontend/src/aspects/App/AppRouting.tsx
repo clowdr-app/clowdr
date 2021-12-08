@@ -5,39 +5,38 @@ import { gql } from "@urql/core";
 import React, { Suspense, useEffect, useMemo } from "react";
 import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
-import CenteredSpinner from "./aspects/Chakra/CenteredSpinner";
-import { useConferenceTheme } from "./aspects/Chakra/ChakraCustomProvider";
-import { LinkButton } from "./aspects/Chakra/LinkButton";
-import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
-import { useAuthParameters } from "./aspects/GQL/AuthParameters";
-import { makeContext } from "./aspects/GQL/make-context";
-import useMaybeCurrentUser from "./aspects/Users/CurrentUser/useMaybeCurrentUser";
-import { useGetSlugForUrlQuery } from "./generated/graphql";
+import { useGetSlugForUrlQuery } from "../../generated/graphql";
+import ProtectedRoute from "../Auth/ProtectedRoute";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
+import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
+import { LinkButton } from "../Chakra/LinkButton";
+import ConferenceRoutes from "../Conference/ConferenceRoutes";
+import { useAuthParameters } from "../GQL/AuthParameters";
+import { makeContext } from "../GQL/make-context";
+import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
-const EmailVerificationRequiredPage = React.lazy(() => import("./aspects/Auth/EmailVerificationRequiredPage"));
-const LoggedOutPage = React.lazy(() => import("./aspects/Auth/LoggedOutPage"));
-const PasswordResetResultPage = React.lazy(() => import("./aspects/Auth/PasswordResetResultPage"));
-const UseInviteOrCreateView = React.lazy(() => import("./aspects/Conference/UseInviteOrCreateView"));
-const SubmitItemsPage = React.lazy(() => import("./aspects/Submissions/SubmitItemsPage"));
-const SubmitItemPage = React.lazy(() => import("./aspects/Submissions/SubmitItemPage"));
-const SubmitElementPage = React.lazy(() => import("./aspects/Submissions/SubmitElementPage"));
-const PushNotificationSettings = React.lazy(() => import("./aspects/PushNotifications/PushNotificationSettings"));
-const GenericErrorPage = React.lazy(() => import("./aspects/Errors/GenericErrorPage"));
-const CRUDTestPage = React.lazy(() => import("./aspects/CRUDTable/CRUDTestPage"));
-const PageNotFound = React.lazy(() => import("./aspects/Errors/PageNotFound"));
-const AcceptInvitationPage = React.lazy(() => import("./aspects/Invitation/AcceptInvitationPage"));
-const SuperUserLandingPage = React.lazy(() => import("./aspects/SuperUser/LandingPage"));
-const CurrentUserPage = React.lazy(() => import("./aspects/Users/CurrentUser/CurrentUserPage"));
-const ExistingUserLandingPage = React.lazy(() => import("./aspects/Users/ExistingUser/LandingPage"));
-const NewUserLandingPage = React.lazy(() => import("./aspects/Users/NewUser/LandingPage"));
+const EmailVerificationRequiredPage = React.lazy(() => import("../Auth/EmailVerificationRequiredPage"));
+const LoggedOutPage = React.lazy(() => import("../Auth/LoggedOutPage"));
+const PasswordResetResultPage = React.lazy(() => import("../Auth/PasswordResetResultPage"));
+const UseInviteOrCreateView = React.lazy(() => import("../Conference/UseInviteOrCreateView"));
+const SubmitItemsPage = React.lazy(() => import("../Submissions/SubmitItemsPage"));
+const SubmitItemPage = React.lazy(() => import("../Submissions/SubmitItemPage"));
+const SubmitElementPage = React.lazy(() => import("../Submissions/SubmitElementPage"));
+const PushNotificationSettings = React.lazy(() => import("../PushNotifications/PushNotificationSettings"));
+const GenericErrorPage = React.lazy(() => import("../Errors/GenericErrorPage"));
+const CRUDTestPage = React.lazy(() => import("../CRUDTable/CRUDTestPage"));
+const PageNotFound = React.lazy(() => import("../Errors/PageNotFound"));
+const AcceptInvitationPage = React.lazy(() => import("../Invitation/AcceptInvitationPage"));
+const SuperUserLandingPage = React.lazy(() => import("../SuperUser/LandingPage"));
+const CurrentUserPage = React.lazy(() => import("../Users/CurrentUser/CurrentUserPage"));
+const NewUserLandingPage = React.lazy(() => import("../Users/NewUser/LandingPage"));
 
-const GoogleOAuth = React.lazy(() => import("./aspects/Google/GoogleOAuth").then((x) => ({ default: x.GoogleOAuth })));
+const GoogleOAuth = React.lazy(() => import("../Google/GoogleOAuth").then((x) => ({ default: x.GoogleOAuth })));
 const GoogleOAuthRedirect = React.lazy(() =>
-    import("./aspects/Google/GoogleOAuth").then((x) => ({ default: x.GoogleOAuthRedirect }))
+    import("../Google/GoogleOAuth").then((x) => ({ default: x.GoogleOAuthRedirect }))
 );
 const VideoTestPage = React.lazy(() =>
-    import("./aspects/Conference/Attend/Room/Video/VideoTestPage").then((x) => ({ default: x.VideoTestPage }))
+    import("../Conference/Attend/Room/Video/VideoTestPage").then((x) => ({ default: x.VideoTestPage }))
 );
 
 gql`
@@ -318,7 +317,7 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
                             }
                             exact
                             path="/"
-                            component={ExistingUserLandingPage}
+                            component={() => <Redirect to="/user" />}
                         />
                         <Route path="/">
                             <PageNotFound />

@@ -15,14 +15,13 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
-import LoginButton from "../../Auth/Buttons/LoginButton";
-import LogoutButton from "../../Auth/Buttons/LogoutButton";
+import { LoginButton, LogoutButton } from "../../Auth";
+import FAIcon from "../../Chakra/FAIcon";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import { useMaybeConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../../GQL/AuthParameters";
-import FAIcon from "../../Icons/FAIcon";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import HeaderBarButton from "./HeaderBarButton";
 

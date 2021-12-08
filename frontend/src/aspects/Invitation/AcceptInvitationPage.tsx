@@ -20,13 +20,12 @@ import React, { useEffect, useMemo } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { useInvitation_ConfirmCurrentMutation, useSelectInvitationForAcceptQuery } from "../../generated/graphql";
-import LoginButton from "../Auth/Buttons/LoginButton";
-import SignupButton from "../Auth/Buttons/SignUpButton";
+import { LoginButton, SignupButton } from "../Auth";
+import FAIcon from "../Chakra/FAIcon";
 import { makeContext } from "../GQL/make-context";
-import FAIcon from "../Icons/FAIcon";
+import { useTitle } from "../Hooks/useTitle";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { setCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
-import { useTitle } from "../Utils/useTitle";
 
 interface Props {
     inviteCode?: string;

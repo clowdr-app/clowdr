@@ -1,4 +1,4 @@
-import { roundDownToNearest } from "../../../Generic/MathUtils";
+import { roundDownToNearest } from "../../../Utils/MathUtils";
 
 export function formatRemainingTime(seconds: number, includeHours = true): string {
     // If you test this function with 59.999s and the following line is left out,

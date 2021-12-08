@@ -15,11 +15,3 @@ export function maybeCompare<T>(
         return 0;
     }
 }
-
-export default function maybeSort<T>(
-    compare: (x: T, y: T) => number
-): (x: T | null | undefined, y: T | null | undefined) => number {
-    return (x, y) => {
-        return maybeCompare<T>(x, y, compare);
-    };
-}

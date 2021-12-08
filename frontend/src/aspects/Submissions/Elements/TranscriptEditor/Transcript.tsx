@@ -2,7 +2,7 @@ import { Button, Flex } from "@chakra-ui/react";
 import type { CSSProperties } from "react";
 import React from "react";
 import { FixedSizeList } from "react-window";
-import { FAIcon } from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import type { SubtitlesArray } from "./srt";
 import SubtitleBlock, {
     MAX_SUBTITLE_BLOCK_LINES,

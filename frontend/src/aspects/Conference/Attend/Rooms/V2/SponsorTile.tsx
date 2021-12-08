@@ -7,9 +7,9 @@ import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import type { SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { defaultOutline_AsBoxShadow } from "../../../../Chakra/Outline";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
-import { FAIcon } from "../../../../Icons/FAIcon";
 import RoomPresenceGrid from "./RoomPresenceGrid";
 
 function getLogoUrlFromData(data: any): string | null {

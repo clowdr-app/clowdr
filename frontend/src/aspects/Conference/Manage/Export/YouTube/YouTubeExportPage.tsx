@@ -4,7 +4,7 @@ import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
-import { useTitle } from "../../../../Utils/useTitle";
+import { useTitle } from "../../../../Hooks/useTitle";
 import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import { DashboardPage } from "../../DashboardPage";

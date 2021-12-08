@@ -29,9 +29,9 @@ import type { Validator } from "use-file-picker";
 import { useFilePicker } from "use-file-picker";
 import useFetch from "use-http";
 import { useUpdateSubtitlesMutation } from "../../../generated/graphql";
+import FAIcon from "../../Chakra/FAIcon";
 import { DownloadButton } from "../../Chakra/LinkButton";
 import { makeContext } from "../../GQL/make-context";
-import { FAIcon } from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
 import TranscriptEditor from "./TranscriptEditor";
 

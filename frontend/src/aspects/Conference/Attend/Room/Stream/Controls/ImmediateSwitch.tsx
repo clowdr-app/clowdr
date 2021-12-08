@@ -36,8 +36,8 @@ import {
     useImmediateSwitch_CreateMutation,
     useImmediateSwitch_GetElementsQuery,
 } from "../../../../../../generated/graphql";
-import { useRealTime } from "../../../../../Generic/useRealTime";
-import FAIcon from "../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../Chakra/FAIcon";
+import { useRealTime } from "../../../../../Hooks/useRealTime";
 import { useConference } from "../../../../useConference";
 
 gql`

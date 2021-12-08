@@ -30,8 +30,8 @@ import {
     useChooseElementByTagModal_GetTagsQuery,
     useChooseElementByTagModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { makeContext } from "../../../../GQL/make-context";
-import { FAIcon } from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
 
 gql`

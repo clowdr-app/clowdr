@@ -10,8 +10,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
-import FAIcon from "../../Icons/FAIcon";
-import isValidUUID from "../../Utils/isValidUUID";
+import { validate } from "uuid";
+import FAIcon from "../../Chakra/FAIcon";
 import { getCachedInviteCode, setCachedInviteCode } from "./InviteCodeLocalStorage";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -24,7 +24,7 @@ export default function InviteCodeInput({
 }): JSX.Element {
     const [inviteCode, setInviteCode] = useState<string>("");
     const inviteCodeButtonRef = useRef<HTMLButtonElement>(null);
-    const isInviteCodeValid = isValidUUID(inviteCode);
+    const isInviteCodeValid = validate(inviteCode);
     const history = useHistory();
 
     useEffect(() => {

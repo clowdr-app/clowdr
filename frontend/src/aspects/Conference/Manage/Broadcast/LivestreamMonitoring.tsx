@@ -35,12 +35,12 @@ import {
     useMonitorLivestreamsQuery,
     useRoomPage_GetRoomChannelStackQuery,
 } from "../../../../generated/graphql";
-import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
-import { useRealTime } from "../../../Generic/useRealTime";
+import FAIcon from "../../../Chakra/FAIcon";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
-import FAIcon from "../../../Icons/FAIcon";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { usePresenceState } from "../../../Realtime/PresenceStateProvider";
+import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
 import { useConference } from "../../useConference";
 
 const HlsPlayer = React.lazy(() => import("../../Attend/Room/Video/HlsPlayer"));

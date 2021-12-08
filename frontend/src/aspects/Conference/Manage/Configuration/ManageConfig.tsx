@@ -1,7 +1,7 @@
 import { Button, Divider, GridItem, Heading, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import { roleOptions } from "../Content/v2/Submissions/SubmissionRequestsModal";
 import { DashboardPage } from "../DashboardPage";

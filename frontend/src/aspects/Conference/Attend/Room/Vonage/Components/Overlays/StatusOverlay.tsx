@@ -2,8 +2,8 @@ import { ViewOffIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { Button, HStack, Image, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
 import React from "react";
 import type { RegistrantDataFragment } from "../../../../../../../generated/graphql";
+import FAIcon from "../../../../../../Chakra/FAIcon";
 import { useChatProfileModal } from "../../../../../../Chat/Frame/ChatProfileModalProvider";
-import { FAIcon } from "../../../../../../Icons/FAIcon";
 
 export default function CameraOverlay({
     registrant,

@@ -2,8 +2,8 @@ import { HStack, Tooltip } from "@chakra-ui/react";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useContext, useMemo } from "react";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { DownloadButton } from "../../../../Chakra/LinkButton";
-import { FAIcon } from "../../../../Icons/FAIcon";
 import { VideoDownloadContext } from "./VideoDownloadContext";
 
 export function VideoDownloadLink({

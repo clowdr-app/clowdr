@@ -30,7 +30,7 @@ import {
     useManageContent_DeleteElementMutation,
     useManageContent_UpdateElementMutation,
 } from "../../../../../../generated/graphql";
-import { FAIcon } from "../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { EditElementInner } from "./EditElementInner";
 
 gql`

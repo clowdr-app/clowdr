@@ -31,11 +31,11 @@ import {
 import { LinkButton } from "../Chakra/LinkButton";
 import { useConference } from "../Conference/useConference";
 import useCurrentRegistrant from "../Conference/useCurrentRegistrant";
-import { roundToNearest } from "../Generic/MathUtils";
-import { useRealTime } from "../Generic/useRealTime";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
-import { useTitle } from "../Utils/useTitle";
+import { useRealTime } from "../Hooks/useRealTime";
+import { useTitle } from "../Hooks/useTitle";
+import { roundToNearest } from "../Utils/MathUtils";
 
 gql`
     fragment ShufflePeriodData on room_ShufflePeriod {

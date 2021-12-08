@@ -1,7 +1,7 @@
 import { Button, Center, Image, List, ListItem, Text } from "@chakra-ui/react";
 import React from "react";
+import FAIcon from "../../../Chakra/FAIcon";
 import type { Registrant } from "../../../Conference/useCurrentRegistrant";
-import FAIcon from "../../../Icons/FAIcon";
 
 function RegistrantTile({ registrant, onClick }: { registrant: Registrant; onClick: () => void }): JSX.Element {
     return (

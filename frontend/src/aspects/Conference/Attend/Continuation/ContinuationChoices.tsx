@@ -10,8 +10,8 @@ import {
     useContinuationChoices_ContinuationsQuery,
     useContinuationChoices_RoomsQuery,
 } from "../../../../generated/graphql";
-import { useRealTime } from "../../../Generic/useRealTime";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { useMyBackstagesModal } from "../Profile/MyBackstages";
 import { useLiveProgramRoomsModal } from "../Rooms/V2/LiveProgramRoomsModal";
 import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModalProvider";

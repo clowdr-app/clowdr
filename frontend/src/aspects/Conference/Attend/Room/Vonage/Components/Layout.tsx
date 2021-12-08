@@ -13,8 +13,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import * as portals from "react-reverse-portal";
-import usePolling from "../../../../../Generic/usePolling";
-import useResizeObserver from "../../../../../Generic/useResizeObserver";
+import usePolling from "../../../../../Hooks/usePolling";
+import useResizeObserver from "../../../../../Hooks/useResizeObserver";
 import { useVonageLayout } from "../VonageLayoutProvider";
 import CameraPlaceholderImage from "./CameraPlaceholder";
 import type { Viewport } from "./LayoutTypes";

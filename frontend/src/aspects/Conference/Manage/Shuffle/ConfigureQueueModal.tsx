@@ -29,8 +29,8 @@ import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
 import type { ManageShufflePeriods_ShufflePeriodFragment } from "../../../../generated/graphql";
 import { Room_ShuffleAlgorithm_Enum, useUpdateShufflePeriodMutation } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
-import { FAIcon } from "../../../Icons/FAIcon";
 
 gql`
     mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {

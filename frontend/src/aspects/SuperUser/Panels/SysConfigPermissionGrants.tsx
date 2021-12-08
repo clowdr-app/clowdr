@@ -14,6 +14,7 @@ import {
     useSuPermissionGrants_AllUsersQuery,
     useUserSuPermissionsQuery,
 } from "../../../generated/graphql";
+import FAIcon from "../../Chakra/FAIcon";
 import { TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
 import type {
     CellProps,
@@ -25,7 +26,6 @@ import type {
 } from "../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import { makeContext } from "../../GQL/make-context";
-import { FAIcon } from "../../Icons/FAIcon";
 import useCurrentUser from "../../Users/CurrentUser/useCurrentUser";
 
 gql`

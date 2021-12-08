@@ -5,12 +5,12 @@ import { Twemoji } from "react-emoji-render";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { useCreateDmMutation } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { Chat } from "../../../Chat/Chat";
 import { ChatState } from "../../../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
 import { useConference } from "../../../Conference/useConference";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import FAIcon from "../../../Icons/FAIcon";
 import { PeopleSearch } from "./PeopleSearch";
 
 gql`

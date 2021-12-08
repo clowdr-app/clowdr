@@ -63,11 +63,11 @@ import {
     useAddEventPeople_SelectProgramPeopleQuery,
     useAddEventPeople_SelectRegistrantsQuery,
 } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
 import { makeContext } from "../../../GQL/make-context";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { maybeCompare } from "../../../Utils/maybeSort";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 

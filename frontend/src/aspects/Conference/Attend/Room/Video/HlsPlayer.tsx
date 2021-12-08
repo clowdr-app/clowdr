@@ -7,7 +7,7 @@ import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "videojs-contrib-quality-levels";
 import hlsQualitySelector from "videojs-hls-quality-selector";
-import { useRestorableState, useSessionState } from "../../../../Generic/useRestorableState";
+import { useRestorableState, useSessionState } from "../../../../Hooks/useRestorableState";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
 import "./hls-player.css";
 import { HlsPlayerError } from "./HlsPlayerError";

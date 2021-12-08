@@ -4,7 +4,7 @@ import { assert } from "@midspace/assert";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import { useRealTime } from "../../Generic/useRealTime";
+import { useRealTime } from "../../Hooks/useRealTime";
 import { useChatConfiguration } from "../Configuration";
 import { useSendMessageQueries } from "./SendMessageQueries";
 

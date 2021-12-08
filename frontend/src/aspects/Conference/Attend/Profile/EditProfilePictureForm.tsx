@@ -9,7 +9,7 @@ import { gql } from "@urql/core";
 import { Form, Formik } from "formik";
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
-import FAIcon from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { RegistrantContextT } from "../../useCurrentRegistrant";
 

@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import type { ManageContent_UpdateElementMutationVariables } from "../../../../../../generated/graphql";
-import { FAIcon } from "../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../Chakra/FAIcon";
 
 export function EditUploadsRemaining({
     elementId,

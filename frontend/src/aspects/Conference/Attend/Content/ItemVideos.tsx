@@ -4,7 +4,7 @@ import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import type { ItemElements_ItemDataFragment } from "../../../../generated/graphql";
 import { Content_ElementType_Enum } from "../../../../generated/graphql";
-import usePolling from "../../../Generic/usePolling";
+import usePolling from "../../../Hooks/usePolling";
 import { VideoElement } from "./Element/VideoElement";
 
 export function ItemVideos({ itemData }: { itemData: ItemElements_ItemDataFragment }): JSX.Element {

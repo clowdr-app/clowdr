@@ -7,7 +7,7 @@ import { Content_ElementType_Enum, useConferenceLandingPageItemQuery } from "../
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useTitle } from "../../Utils/useTitle";
+import { useTitle } from "../../Hooks/useTitle";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import ElementsGridLayout from "./Content/Element/ElementsGridLayout";

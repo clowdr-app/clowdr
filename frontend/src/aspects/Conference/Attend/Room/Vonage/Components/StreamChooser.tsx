@@ -2,8 +2,8 @@ import { Button, chakra, Flex, HStack, Menu, MenuButton, MenuItem, MenuList, Por
 import type { ParticipantPlacement } from "@midspace/shared-types/vonage";
 import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
-import FAIcon from "../../../../../Icons/FAIcon";
-import { maybeCompare } from "../../../../../Utils/maybeSort";
+import FAIcon from "../../../../../Chakra/FAIcon";
+import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { useVonageLayout } from "../VonageLayoutProvider";
 
 export default function StreamChooser({

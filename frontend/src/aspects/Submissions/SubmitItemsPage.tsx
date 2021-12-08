@@ -18,7 +18,7 @@ import { useItemsByPersonAccessTokenQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { LinkButton } from "../Chakra/LinkButton";
 import { makeContext } from "../GQL/make-context";
-import { useTitle } from "../Utils/useTitle";
+import { useTitle } from "../Hooks/useTitle";
 
 gql`
     query ItemsByPersonAccessToken($accessToken: String!) {

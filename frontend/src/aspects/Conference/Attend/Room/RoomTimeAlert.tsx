@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertIcon, chakra, Text, VStack } from "@chakra-ui/react";
 import React from "react";
-import { useRealTime } from "../../../Generic/useRealTime";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { formatRemainingTime } from "./formatRemainingTime";
 
 export default function RoomTimeAlert({

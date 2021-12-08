@@ -1,15 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ErrorBoundary } from "react-error-boundary";
-import AppInner from "./App";
-import { AppError } from "./AppError";
+import { App, AppError } from "./aspects/App";
 import "./aspects/DataDog/DataDog";
 import "./index.css";
 
 ReactDOM.render(
     <React.StrictMode>
         <ErrorBoundary FallbackComponent={AppError}>
-            <AppInner />
+            <App />
         </ErrorBoundary>
     </React.StrictMode>,
     document.getElementById("root")

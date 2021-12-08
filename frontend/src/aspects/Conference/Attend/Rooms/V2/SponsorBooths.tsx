@@ -4,7 +4,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
 import type { SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
 import { useGetSponsorBoothsQuery } from "../../../../../generated/graphql";
-import { maybeCompare } from "../../../../Utils/maybeSort";
+import { maybeCompare } from "../../../../Utils/maybeCompare";
 import { useConference } from "../../../useConference";
 import SponsorsSummary from "./SponsorsSummary";
 

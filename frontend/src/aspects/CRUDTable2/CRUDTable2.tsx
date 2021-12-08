@@ -45,8 +45,8 @@ import {
 import type { LegacyRef, MutableRefObject, ReactNode, ReactNodeArray } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
-import { useRestorableState } from "../Generic/useRestorableState";
-import FAIcon from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
+import { useRestorableState } from "../Hooks/useRestorableState";
 
 export type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
 

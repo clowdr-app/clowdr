@@ -50,12 +50,12 @@ import {
     UnsubscribeChatDocument,
 } from "../../generated/graphql";
 import { theme } from "../Chakra/ChakraCustomProvider";
+import { Markdown } from "../Chakra/Markdown";
 import type { Registrant } from "../Conference/useCurrentRegistrant";
 import type { Observer } from "../Observable";
 import { Observable } from "../Observable";
 import { realtimeService } from "../Realtime/RealtimeService";
 import type { Action, Message, Notification, Reaction } from "../Realtime/RealtimeServiceCommonTypes";
-import { Markdown } from "../Text/Markdown";
 import type { AnswerMessageData, AnswerReactionData, MessageData } from "./Types/Messages";
 
 gql`

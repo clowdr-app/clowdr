@@ -22,7 +22,7 @@ import type { Config } from "react-player";
 import ReactPlayer from "react-player";
 import type { TrackProps } from "react-player/file";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
-import { FAIcon } from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
 
 export function VideoElement({

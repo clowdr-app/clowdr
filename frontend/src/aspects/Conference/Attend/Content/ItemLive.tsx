@@ -6,10 +6,10 @@ import type {
     ItemPage_ItemRoomsFragment,
 } from "../../../../generated/graphql";
 import { Content_ItemType_Enum } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import usePolling from "../../../Generic/usePolling";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import FAIcon from "../../../Icons/FAIcon";
+import usePolling from "../../../Hooks/usePolling";
 import PageCountText from "../../../Realtime/PageCountText";
 
 export function ItemLive({

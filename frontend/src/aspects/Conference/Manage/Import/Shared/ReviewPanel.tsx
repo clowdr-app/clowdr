@@ -1,8 +1,8 @@
 import { Box, Button, Code, Text } from "@chakra-ui/react";
 import type { IntermediaryContentData } from "@midspace/shared-types/import/intermediary";
 import React from "react";
+import FAIcon from "../../../../Chakra/FAIcon";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
-import FAIcon from "../../../../Icons/FAIcon";
 
 export default function ReviewPanel<T = IntermediaryContentData>({
     data,

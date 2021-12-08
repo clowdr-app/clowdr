@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, Center, HStack, Image, ListItem, OrderedList, Spacer, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
+import FAIcon from "../../../Chakra/FAIcon";
 import type { Registrant } from "../../../Conference/useCurrentRegistrant";
-import FAIcon from "../../../Icons/FAIcon";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 
 function RegistrantTile({

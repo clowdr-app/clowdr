@@ -36,13 +36,13 @@ import * as R from "ramda";
 import type { PropsWithChildren } from "react";
 import React, { Fragment, useMemo } from "react";
 import { Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { roundDownToNearest } from "../../../Generic/MathUtils";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
+import { roundDownToNearest } from "../../../Utils/MathUtils";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 

@@ -21,8 +21,8 @@ import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
+import FAIcon from "../../Chakra/FAIcon";
 import { makeContext } from "../../GQL/make-context";
-import FAIcon from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
 import UploadAgreementField from "./UploadAgreementField";
 

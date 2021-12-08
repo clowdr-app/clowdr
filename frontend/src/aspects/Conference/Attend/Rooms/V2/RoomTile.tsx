@@ -4,9 +4,9 @@ import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { Room_ManagementMode_Enum, useRoomTile_GetRoomQuery } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
-import { FAIcon } from "../../../../Icons/FAIcon";
 import EventHighlight from "./EventHighlight";
 import RoomPresenceGrid from "./RoomPresenceGrid";
 

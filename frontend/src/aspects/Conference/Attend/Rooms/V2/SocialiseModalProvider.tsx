@@ -1,7 +1,7 @@
 import { useDisclosure } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
 import React, { Suspense, useCallback, useContext, useMemo, useRef } from "react";
-import { useRestorableState } from "../../../../Generic/useRestorableState";
+import { useRestorableState } from "../../../../Hooks/useRestorableState";
 import { EnableRoomParticipantsPollingContext } from "../../../../Room/EnableRoomParticipantsPollingContext";
 import { useConference } from "../../../useConference";
 import { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";

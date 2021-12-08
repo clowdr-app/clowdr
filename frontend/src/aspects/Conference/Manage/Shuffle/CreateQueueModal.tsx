@@ -29,7 +29,7 @@ import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
 import { Room_ShuffleAlgorithm_Enum, useInsertShufflePeriodMutation } from "../../../../generated/graphql";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
-import { roundUpToNearest } from "../../../Generic/MathUtils";
+import { roundUpToNearest } from "../../../Utils/MathUtils";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 

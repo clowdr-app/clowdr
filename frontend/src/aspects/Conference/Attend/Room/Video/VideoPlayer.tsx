@@ -17,9 +17,9 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { gql } from "urql";
 import { useVideoPlayer_GetElementQuery } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
-import { FAIcon } from "../../../../Icons/FAIcon";
 import { VideoElement } from "../../Content/Element/VideoElement";
 
 export default function VideoPlayer({

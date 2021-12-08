@@ -33,7 +33,7 @@ import React, { useCallback, useMemo } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import type { RegistrantPartsFragment } from "../../../../generated/graphql";
-import { Markdown } from "../../../Text/Markdown";
+import { Markdown } from "../../../Chakra/Markdown";
 import { useConference } from "../../useConference";
 
 type Inputs = { subject: string; markdownBody: string };

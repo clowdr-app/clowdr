@@ -1,8 +1,8 @@
 import { Box, Center, Grid, GridItem, Image, Text, Tooltip } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
-import FAIcon from "../../../../Icons/FAIcon";
 import { usePresenceState } from "../../../../Realtime/PresenceStateProvider";
 import type { RegistrantIdSpec } from "../../../RegistrantsContext";
 import { useRegistrants } from "../../../RegistrantsContext";

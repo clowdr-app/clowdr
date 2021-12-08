@@ -2,8 +2,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Button, MenuItem, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
+import FAIcon from "../../Chakra/FAIcon";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
-import FAIcon from "../../Icons/FAIcon";
 
 export default function LoginButton({
     asMenuItem,

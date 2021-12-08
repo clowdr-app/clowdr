@@ -1,9 +1,9 @@
 import { keyframes, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
+import FAIcon from "../../../Chakra/FAIcon";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { defaultOutline_AsBoxShadow } from "../../../Chakra/Outline";
-import { useRealTime } from "../../../Generic/useRealTime";
-import { FAIcon } from "../../../Icons/FAIcon";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { formatRemainingTime } from "./formatRemainingTime";
 
 export default function JoinZoomButton({

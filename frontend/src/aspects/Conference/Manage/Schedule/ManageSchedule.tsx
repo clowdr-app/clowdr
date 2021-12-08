@@ -62,7 +62,8 @@ import {
     useSelectWholeScheduleQuery,
     useUpdateEventInfoMutation,
 } from "../../../../generated/graphql";
-import { useAppSettings } from "../../../App/AppSettingsProvider";
+import { useAppSettings } from "../../../App";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import {
@@ -82,11 +83,10 @@ import type {
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { useRealTime } from "../../../Generic/useRealTime";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
-import FAIcon from "../../../Icons/FAIcon";
-import { useTitle } from "../../../Utils/useTitle";
+import { useRealTime } from "../../../Hooks/useRealTime";
+import { useTitle } from "../../../Hooks/useTitle";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import BatchAddEventPeople from "./BatchAddEventPeople";

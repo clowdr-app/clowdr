@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import jsonata from "jsonata";
 import React, { useEffect, useState } from "react";
-import FAIcon from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
 
 function Set_toJSON(_key: string, value: any) {
     if (typeof value === "object" && value instanceof Set) {

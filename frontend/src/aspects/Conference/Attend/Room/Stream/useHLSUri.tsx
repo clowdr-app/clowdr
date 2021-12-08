@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRoomPage_GetRoomChannelStackQuery } from "../../../../../generated/graphql";
-import usePolling from "../../../../Generic/usePolling";
-import { useRealTime } from "../../../../Generic/useRealTime";
+import usePolling from "../../../../Hooks/usePolling";
+import { useRealTime } from "../../../../Hooks/useRealTime";
 
 export function useHLSUri(roomId: string, broadcastEventStartsAt: number): string | null {
     const now5s = useRealTime(30000);

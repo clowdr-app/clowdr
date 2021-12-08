@@ -1,7 +1,7 @@
 import { Box, Tooltip, useToast } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import type { CombinedError } from "urql";
-import FAIcon from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
 import { useUrqlContext } from "./UrqlProvider";
 
 // let shownJWTIssuedAtFutureReloadWarning = false;

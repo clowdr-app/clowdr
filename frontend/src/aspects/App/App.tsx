@@ -5,34 +5,34 @@ import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter } from "react-router-dom";
 import "reflect-metadata";
 import { ThemeProvider as ChimeThemeProvider } from "styled-components";
+import { AppSettingsProvider } from "../App";
+import AppPage from "../App/AppPage";
+import { Auth0Provider } from "../Auth";
+import ChakraCustomProvider from "../Chakra/ChakraCustomProvider";
+import { GlobalChatStateProvider } from "../Chat/GlobalChatStateProvider";
+import { MyBackstagesModalProvider } from "../Conference/Attend/Profile/MyBackstages";
+import { PermissionInstructionsProvider } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
+import { VonageGlobalStateProvider } from "../Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
+import { LiveProgramRoomsModalProvider } from "../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
+import { SocialiseModalProvider } from "../Conference/Attend/Rooms/V2/SocialiseModalProvider";
+import { ScheduleModalProvider } from "../Conference/Attend/Schedule/ProgramModal";
+import StarredEventsModalProvider from "../Conference/Attend/Schedule/StarredEventsModal";
+import useConferenceIdUpdater from "../Conference/ConferenceIdUpdater";
+import AttendeesContextProvider from "../Conference/RegistrantsContext";
+import ConferenceProvider from "../Conference/useConference";
+import { CurrentRegistrantProvider } from "../Conference/useCurrentRegistrant";
+import { EmojiFloatProvider } from "../Emoji/EmojiFloat";
+import ForceUserRefresh from "../ForceUserRefresh/ForceUserRefresh";
+import { AuthParametersProvider, useAuthParameters } from "../GQL/AuthParameters";
+import UrqlProvider from "../GQL/UrqlProvider";
+import { LiveEventsProvider } from "../LiveEvents/LiveEvents";
+import { RightSidebarCurrentTabProvider } from "../Menu/RightSidebar/RightSidebarCurrentTab";
+import { RaiseHandProvider } from "../RaiseHand/RaiseHandProvider";
+import { EnableRoomParticipantsPollingProvider } from "../Room/EnableRoomParticipantsPollingContext";
+import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
+import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
+import CurrentUserProvider from "../Users/CurrentUser/CurrentUserProvider";
 import "./App.css";
-import AppPage from "./aspects/App/AppPage";
-import { AppSettingsProvider } from "./aspects/App/AppSettingsProvider";
-import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
-import ChakraCustomProvider from "./aspects/Chakra/ChakraCustomProvider";
-import { GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
-import { MyBackstagesModalProvider } from "./aspects/Conference/Attend/Profile/MyBackstages";
-import { PermissionInstructionsProvider } from "./aspects/Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
-import { VonageGlobalStateProvider } from "./aspects/Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
-import { LiveProgramRoomsModalProvider } from "./aspects/Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
-import { SocialiseModalProvider } from "./aspects/Conference/Attend/Rooms/V2/SocialiseModalProvider";
-import { ScheduleModalProvider } from "./aspects/Conference/Attend/Schedule/ProgramModal";
-import StarredEventsModalProvider from "./aspects/Conference/Attend/Schedule/StarredEventsModal";
-import useConferenceIdUpdater from "./aspects/Conference/ConferenceIdUpdater";
-import AttendeesContextProvider from "./aspects/Conference/RegistrantsContext";
-import ConferenceProvider from "./aspects/Conference/useConference";
-import { CurrentRegistrantProvider } from "./aspects/Conference/useCurrentRegistrant";
-import { EmojiFloatProvider } from "./aspects/Emoji/EmojiFloat";
-import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
-import { AuthParametersProvider, useAuthParameters } from "./aspects/GQL/AuthParameters";
-import UrqlProvider from "./aspects/GQL/UrqlProvider";
-import { LiveEventsProvider } from "./aspects/LiveEvents/LiveEvents";
-import { RightSidebarCurrentTabProvider } from "./aspects/Menu/RightSidebar/RightSidebarCurrentTab";
-import { RaiseHandProvider } from "./aspects/RaiseHand/RaiseHandProvider";
-import { EnableRoomParticipantsPollingProvider } from "./aspects/Room/EnableRoomParticipantsPollingContext";
-import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
-import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
-import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
@@ -45,11 +45,11 @@ export default function App(): JSX.Element {
                 <HelmetProvider>
                     <BrowserRouter>
                         <ChakraCustomProvider>
-                            <Auth0CustomProvider>
+                            <Auth0Provider>
                                 <UrqlProvider>
                                     <AppInner />
                                 </UrqlProvider>
-                            </Auth0CustomProvider>
+                            </Auth0Provider>
                         </ChakraCustomProvider>
                     </BrowserRouter>
                 </HelmetProvider>

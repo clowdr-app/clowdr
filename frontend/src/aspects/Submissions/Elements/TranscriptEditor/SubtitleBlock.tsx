@@ -1,7 +1,7 @@
 import type { FlexProps } from "@chakra-ui/react";
 import { Button, Flex, Textarea } from "@chakra-ui/react";
 import React from "react";
-import { FAIcon } from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import TimecodeInput from "./TimecodeInput";
 
 export const MAX_SUBTITLE_BLOCK_LINES = 3;

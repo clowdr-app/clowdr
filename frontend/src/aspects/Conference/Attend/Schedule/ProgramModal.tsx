@@ -2,7 +2,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
 import { gql } from "@urql/core";
 import React, { Suspense, useCallback, useMemo, useRef } from "react";
-import { useRestorableState } from "../../../Generic/useRestorableState";
+import { useRestorableState } from "../../../Hooks/useRestorableState";
 import { useConference } from "../../useConference";
 
 const ScheduleModal = React.lazy(() => import("./ScheduleModal"));

@@ -65,7 +65,7 @@ import {
     CreateContinuationModal_TagsDocument,
     useContinuationsEditor_InsertMutation,
 } from "../../../../generated/graphql";
-import FAIcon from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import { useConference } from "../../useConference";
 
 function LazySelectFromQuery({

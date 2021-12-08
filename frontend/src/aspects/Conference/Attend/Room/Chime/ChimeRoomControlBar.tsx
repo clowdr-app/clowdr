@@ -29,7 +29,7 @@ import {
 } from "amazon-chime-sdk-component-library-react";
 import type { DeviceChangeObserver } from "amazon-chime-sdk-js";
 import React, { useCallback, useEffect, useRef } from "react";
-import { FAIcon } from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { PermissionInstructions } from "../VideoChat/PermissionInstructions";
 
 export function ChimeRoomControlBar(): JSX.Element {

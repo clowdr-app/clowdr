@@ -4,7 +4,7 @@ import { JSONataToIntermediaryContent } from "@midspace/shared-types/import/inte
 import React, { useMemo, useState } from "react";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
-import { useTitle } from "../../../../Utils/useTitle";
+import { useTitle } from "../../../../Hooks/useTitle";
 import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import ConfigPanel from "../Shared/ConfigPanel";

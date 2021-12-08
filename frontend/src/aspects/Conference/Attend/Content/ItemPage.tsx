@@ -11,7 +11,7 @@ import { Content_ItemType_Enum, useGetItemQuery } from "../../../../generated/gr
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import QueryWrapper from "../../../GQL/QueryWrapper";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
 import RequireRole from "../../RequireRole";
 import { ItemElements } from "./ItemElements";
 import { ItemEvents } from "./ItemEvents";

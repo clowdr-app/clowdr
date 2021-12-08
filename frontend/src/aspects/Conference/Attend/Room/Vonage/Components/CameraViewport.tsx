@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useFullScreenHandle } from "react-full-screen";
 import { validate } from "uuid";
 import type { RegistrantDataFragment } from "../../../../../../generated/graphql";
-import FAIcon from "../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { useRegistrant } from "../../../../RegistrantsContext";
 import { StateType } from "../VonageGlobalState";
 import { useVonageGlobalState } from "../VonageGlobalStateProvider";

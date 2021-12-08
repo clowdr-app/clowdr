@@ -1,13 +1,13 @@
 import { Box, Flex, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
-import Routing from "../../AppRouting";
 import { useMaybeConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import MenuHeaderBar from "../Menu/HeaderBar/MenuHeaderBar";
 import LeftMenu from "../Menu/LeftMenu";
 import RightMenu from "../Menu/RightMenu";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
+import Routing from "./AppRouting";
 
 export default function AppPage(): JSX.Element {
     const user = useMaybeCurrentUser();

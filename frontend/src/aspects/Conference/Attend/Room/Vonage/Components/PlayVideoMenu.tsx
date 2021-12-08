@@ -4,7 +4,7 @@ import * as R from "ramda";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useGetEventVideosQuery, useGetRoomVideosQuery } from "../../../../../../generated/graphql";
-import { maybeCompare } from "../../../../../Utils/maybeSort";
+import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { useVonageGlobalState } from "../VonageGlobalStateProvider";
 
 gql`

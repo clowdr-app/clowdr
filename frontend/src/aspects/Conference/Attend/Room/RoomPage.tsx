@@ -6,7 +6,7 @@ import { useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { makeContext } from "../../../GQL/make-context";
 import QueryWrapper from "../../../GQL/QueryWrapper";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
 import RequireRole from "../../RequireRole";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import Room from "./Room";

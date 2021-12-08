@@ -3,6 +3,7 @@ import { gql } from "@urql/core";
 import React, { useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
 import { useCountSwagBagsQuery } from "../../generated/graphql";
+import FAIcon from "../Chakra/FAIcon";
 import { useMyBackstagesModal } from "../Conference/Attend/Profile/MyBackstages";
 import { useLiveProgramRoomsModal } from "../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { useSocialiseModal } from "../Conference/Attend/Rooms/V2/SocialiseModalProvider";
@@ -11,9 +12,8 @@ import { useStarredEventsModal } from "../Conference/Attend/Schedule/StarredEven
 import RequireRole from "../Conference/RequireRole";
 import { useConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
-import { useRestorableState } from "../Generic/useRestorableState";
 import { useAuthParameters } from "../GQL/AuthParameters";
-import FAIcon from "../Icons/FAIcon";
+import { useRestorableState } from "../Hooks/useRestorableState";
 import { useLiveEvents } from "../LiveEvents/LiveEvents";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";

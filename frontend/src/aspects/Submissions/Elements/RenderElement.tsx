@@ -3,10 +3,10 @@ import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { ElementBaseType } from "@midspace/shared-types/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import React from "react";
+import FAIcon from "../../Chakra/FAIcon";
 import { ExternalLinkButton } from "../../Chakra/LinkButton";
+import { Markdown } from "../../Chakra/Markdown";
 import { VideoElement } from "../../Conference/Attend/Content/Element/VideoElement";
-import FAIcon from "../../Icons/FAIcon";
-import { Markdown } from "../../Text/Markdown";
 
 export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.Element {
     const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;

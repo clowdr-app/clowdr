@@ -13,7 +13,7 @@ import {
 import type { FieldProps } from "formik";
 import { Field } from "formik";
 import React from "react";
-import { FAIcon } from "../../Icons/FAIcon";
+import FAIcon from "../../Chakra/FAIcon";
 
 export default function UploadAgreementField({
     uploadAgreementText,

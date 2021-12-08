@@ -4,7 +4,7 @@ import React, { useContext, useEffect } from "react";
 import { useGetAllRoomParticipantsQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
-import usePolling from "../Generic/usePolling";
+import usePolling from "../Hooks/usePolling";
 import { EnableRoomParticipantsPollingContext } from "./EnableRoomParticipantsPollingContext";
 import { RoomParticipantsContext } from "./useRoomParticipants";
 

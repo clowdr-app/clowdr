@@ -4,7 +4,7 @@ import { chakra, Heading, Icon, List, ListItem, Text, useColorModeValue, VStack 
 import React from "react";
 import type { RegistrantFieldsFragment } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
-import { useTitle } from "../../Utils/useTitle";
+import { useTitle } from "../../Hooks/useTitle";
 import useCurrentUser from "./useCurrentUser";
 
 export default function ListConferencesView(): JSX.Element {

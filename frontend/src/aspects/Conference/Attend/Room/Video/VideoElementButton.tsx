@@ -1,7 +1,7 @@
 import { Button, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { defaultOutline_AsBoxShadow } from "../../../../Chakra/Outline";
-import { FAIcon } from "../../../../Icons/FAIcon";
 
 export function VideoElementButton({
     elementName,

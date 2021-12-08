@@ -21,12 +21,12 @@ import {
 import React, { useCallback } from "react";
 import { useCreateDmMutation } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
+import { Markdown } from "../../../Chakra/Markdown";
 import { useMaybeGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
-import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";

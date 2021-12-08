@@ -1,9 +1,9 @@
 import type { ButtonProps } from "@chakra-ui/react";
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
+import FAIcon from "../../Chakra/FAIcon";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { useAuthParameters } from "../../GQL/AuthParameters";
-import FAIcon from "../../Icons/FAIcon";
 import RequireRole from "../RequireRole";
 
 export default function RestrictedDashboardButton({

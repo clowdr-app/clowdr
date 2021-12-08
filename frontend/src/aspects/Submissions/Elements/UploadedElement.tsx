@@ -1,7 +1,7 @@
 import { Button, Spinner, Text, Tooltip, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import type { GetElementQuery } from "../../../generated/graphql";
-import FAIcon from "../../Icons/FAIcon";
+import FAIcon from "../../Chakra/FAIcon";
 import { EditElement } from "./EditElement";
 import RenderElement from "./RenderElement";
 

@@ -16,6 +16,7 @@ import { Field, Form, Formik } from "formik";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { useClient } from "urql";
+import { validate } from "uuid";
 import type {
     ConferenceTakenQuery,
     ConferenceTakenQueryVariables,
@@ -27,7 +28,6 @@ import {
     useCreateNewConferenceMetaStructureMutation,
 } from "../../generated/graphql";
 import useCurrentUser from "../Users/CurrentUser/useCurrentUser";
-import isValidUUID from "../Utils/isValidUUID";
 
 gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
@@ -176,7 +176,7 @@ export default function NewConferenceForm(): JSX.Element {
     const [, createNewConferenceMetaStructureMutation] = useCreateNewConferenceMetaStructureMutation();
 
     function validateDemoCode(value: string | null | undefined) {
-        if (!!value && isValidUUID(value)) {
+        if (!!value && validate(value)) {
             return undefined;
         } else {
             return "Not a valid access code.";

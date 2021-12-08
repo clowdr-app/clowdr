@@ -2,14 +2,14 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { ButtonGroup, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink, Route, Switch } from "react-router-dom";
-import LoginButton from "../Auth/Buttons/LoginButton";
+import { LoginButton } from "../Auth";
+import FAIcon from "../Chakra/FAIcon";
 import { ExternalLinkButton, LinkButton } from "../Chakra/LinkButton";
 import { useMaybeConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../GQL/AuthParameters";
-import { FAIcon } from "../Icons/FAIcon";
+import { useTitle } from "../Hooks/useTitle";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import { useTitle } from "../Utils/useTitle";
 import GenericErrorPage from "./GenericErrorPage";
 
 export default function PageNotFound(): JSX.Element {

@@ -34,7 +34,7 @@ import * as R from "ramda";
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import type { SrtValidationError } from "srt-validator";
 import srtValidator from "srt-validator";
-import FAIcon from "../../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../../Chakra/FAIcon";
 import UnsavedChangesWarning from "../../../../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { ElementDescriptor } from "./Types";
 

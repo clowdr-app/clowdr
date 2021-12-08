@@ -13,7 +13,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 import type { RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables } from "../../../../../generated/graphql";
 import { RoomTile_GetRoomDocument } from "../../../../../generated/graphql";
-import { useRealTime } from "../../../../Generic/useRealTime";
+import { useRealTime } from "../../../../Hooks/useRealTime";
 import { useLiveEvents } from "../../../../LiveEvents/LiveEvents";
 import LiveProgramRooms from "./LiveProgramRooms";
 

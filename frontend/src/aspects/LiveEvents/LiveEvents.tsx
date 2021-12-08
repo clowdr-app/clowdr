@@ -4,8 +4,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import type { MinimalEventInfoFragment } from "../../generated/graphql";
 import { useGetEventsInNextHourQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
-import { roundDownToNearest, roundUpToNearest } from "../Generic/MathUtils";
-import { useRealTime } from "../Generic/useRealTime";
+import { useRealTime } from "../Hooks/useRealTime";
+import { roundDownToNearest, roundUpToNearest } from "../Utils/MathUtils";
 
 gql`
     query GetEventsInNextHour($conferenceId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {

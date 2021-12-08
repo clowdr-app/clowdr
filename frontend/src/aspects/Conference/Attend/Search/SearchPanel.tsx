@@ -32,8 +32,8 @@ import {
     SearchPanel_ItemsDocument,
     SearchPanel_PeopleDocument,
 } from "../../../../generated/graphql";
-import { useRestorableState } from "../../../Generic/useRestorableState";
-import { FAIcon } from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
+import { useRestorableState } from "../../../Hooks/useRestorableState";
 import { useConference } from "../../useConference";
 import SearchResult_Event from "./SearchResult_Event";
 import SearchResult_Item from "./SearchResult_Item";

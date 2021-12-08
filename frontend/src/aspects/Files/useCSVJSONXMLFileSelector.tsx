@@ -12,7 +12,7 @@ import {
 import JSZip from "jszip";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import FAIcon from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
 
 function normaliseFileType(name: string, type: string): "CSV" | "JSON" | "XML" | "ZIP" | false {
     name = name.toLowerCase();

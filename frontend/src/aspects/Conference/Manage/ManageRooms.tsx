@@ -68,6 +68,7 @@ import {
     useSelectAllRoomsWithParticipantsQuery,
     useUpdateRoomsWithParticipantsMutation,
 } from "../../../generated/graphql";
+import FAIcon from "../../Chakra/FAIcon";
 import { LinkButton } from "../../Chakra/LinkButton";
 import {
     CheckBoxColumnFilter,
@@ -88,8 +89,7 @@ import PageNotFound from "../../Errors/PageNotFound";
 import { useAuthParameters } from "../../GQL/AuthParameters";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import FAIcon from "../../Icons/FAIcon";
-import { useTitle } from "../../Utils/useTitle";
+import { useTitle } from "../../Hooks/useTitle";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import ExternalRtmpBroadcastEditor from "./Room/ExternalRtmpBroadcastEditor";

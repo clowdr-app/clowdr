@@ -13,7 +13,7 @@ import {
     MenuOptionGroup,
 } from "@chakra-ui/react";
 import React from "react";
-import FAIcon from "../../Icons/FAIcon";
+import FAIcon from "../../Chakra/FAIcon";
 import { ChatSpacing, findSpacing, useChatConfiguration } from "../Configuration";
 import { PinnedButton } from "../Pin/PinnedButton";
 import { ChatPinnedQueryProvider } from "../Pin/PinnedQuery";

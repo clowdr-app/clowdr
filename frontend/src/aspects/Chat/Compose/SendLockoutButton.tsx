@@ -2,7 +2,7 @@ import type { ButtonProps } from "@chakra-ui/react";
 import { Box, Button, CircularProgress, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import FAIcon from "../../Icons/FAIcon";
+import FAIcon from "../../Chakra/FAIcon";
 import { useChatConfiguration } from "../Configuration";
 import { useComposeContext } from "./ComposeContext";
 

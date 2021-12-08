@@ -30,7 +30,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
-import FAIcon from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import { useChatConfiguration } from "../../Configuration";
 import type { MessageData, PollMessageData } from "../../Types/Messages";
 import { useComposeContext } from "../ComposeContext";

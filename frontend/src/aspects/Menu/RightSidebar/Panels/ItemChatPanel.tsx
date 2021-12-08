@@ -3,12 +3,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { useGetConferenceLandingPageItemIdQuery, useGetItemChatIdQuery } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { Chat } from "../../../Chat/Chat";
 import type { ChatState } from "../../../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
 import { useConference } from "../../../Conference/useConference";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import FAIcon from "../../../Icons/FAIcon";
 
 gql`
     query GetItemChatId($itemOrExhibitionId: uuid!) {

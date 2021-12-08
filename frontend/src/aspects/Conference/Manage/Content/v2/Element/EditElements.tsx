@@ -19,7 +19,7 @@ import type {
     ManageContent_ItemSecondaryFragment,
 } from "../../../../../../generated/graphql";
 import { Content_ItemType_Enum } from "../../../../../../generated/graphql";
-import { FAIcon } from "../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { EditItemPeoplePanel } from "../Item/EditItemPeople";
 import { EditElement } from "./EditElement";
 

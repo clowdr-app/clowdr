@@ -9,7 +9,7 @@ import { LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import QueryWrapper from "../../../GQL/QueryWrapper";
 import useTrackView from "../../../Realtime/Analytics/useTrackView";
-import { maybeCompare } from "../../../Utils/maybeSort";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import RequireRole from "../../RequireRole";
 import { AuthorList } from "./AuthorList";
 import { Element } from "./Element/Element";

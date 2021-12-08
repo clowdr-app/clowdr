@@ -3,7 +3,7 @@ import { assert } from "@midspace/assert";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, validate } from "uuid";
 import {
     useCreateDeleteGroupsMutation,
     useSelectAllGroupsQuery,
@@ -14,8 +14,7 @@ import CRUDTable, { defaultStringFilter, FieldType } from "../../CRUDTable/CRUDT
 import PageNotFound from "../../Errors/PageNotFound";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import isValidUUID from "../../Utils/isValidUUID";
-import { useTitle } from "../../Utils/useTitle";
+import { useTitle } from "../../Hooks/useTitle";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 
@@ -371,7 +370,7 @@ export default function ManageGroups(): JSX.Element {
                             convertToUI: (x) => x,
                             disallowSpaces: true,
                         },
-                        validate: (v) => isValidUUID(v) || ["Invalid UUID"],
+                        validate: (v) => validate(v) || ["Invalid UUID"],
                         getRowTitle: (v) => v.name,
                     },
                     otherFields: fields,

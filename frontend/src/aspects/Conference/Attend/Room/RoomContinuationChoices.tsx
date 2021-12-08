@@ -8,7 +8,7 @@ import type {
     Room_EventSummaryFragment,
 } from "../../../../generated/graphql";
 import { Room_Mode_Enum, Schedule_EventProgramPersonRole_Enum } from "../../../../generated/graphql";
-import { useRealTime } from "../../../Generic/useRealTime";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import ContinuationChoices from "../Continuation/ContinuationChoices";
 

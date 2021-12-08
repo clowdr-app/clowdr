@@ -1,8 +1,8 @@
 import type { TextProps } from "@chakra-ui/react";
 import { Box, chakra, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import FAIcon from "../Chakra/FAIcon";
 import { useMaybeConference } from "../Conference/useConference";
-import FAIcon from "../Icons/FAIcon";
 import { usePresenceState } from "./PresenceStateProvider";
 
 export default function PageCountText({

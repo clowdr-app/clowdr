@@ -5,7 +5,7 @@ import { gql } from "urql";
 import { useSuperUserStateQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { makeContext } from "../GQL/make-context";
-import { useTitle } from "../Utils/useTitle";
+import { useTitle } from "../Hooks/useTitle";
 import SuperUserInitialise from "./Initialise";
 import SuperUserLandingPageContent from "./LandingPageContent";
 

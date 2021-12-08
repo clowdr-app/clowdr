@@ -3,7 +3,7 @@ import IntersectionObserver from "@researchgate/react-intersection-observer";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import BadgeList from "../../../Badges/BadgeList";
-import FAIcon from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import type { Registrant } from "../../useCurrentRegistrant";
 import ProfileModal from "./ProfileModal";
 

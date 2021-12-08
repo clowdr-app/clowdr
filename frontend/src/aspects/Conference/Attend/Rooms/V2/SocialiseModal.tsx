@@ -17,8 +17,8 @@ import {
 import type { FocusableElement } from "@chakra-ui/utils";
 import React, { useCallback, useMemo, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
-import FAIcon from "../../../../Icons/FAIcon";
 import { ShuffleWaiting } from "../../../../ShuffleRooms/WaitingPage";
 import { AllRegistrantsList } from "../../Registrant/RegistrantListPage";
 import { CreateRoomModal } from "../../Room/CreateRoomModal";

@@ -33,10 +33,10 @@ import {
     useContinuationsEditor_UpdateManyMutation,
     useContinuationsEditor_UpdateMutation,
 } from "../../../../generated/graphql";
-import { useRestorableState } from "../../../Generic/useRestorableState";
+import FAIcon from "../../../Chakra/FAIcon";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import FAIcon from "../../../Icons/FAIcon";
+import { useRestorableState } from "../../../Hooks/useRestorableState";
 import CreateContinuationModal from "./CreateContinuationModal";
 
 gql`

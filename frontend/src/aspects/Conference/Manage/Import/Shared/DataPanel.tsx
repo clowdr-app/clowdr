@@ -12,11 +12,11 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import FAIcon from "../../../../Chakra/FAIcon";
 import useCSVJSONXMLFileSelector from "../../../../Files/useCSVJSONXMLFileSelector";
 import useCSVJSONXMLImportOptions from "../../../../Files/useCSVJSONXMLImportOptions";
 import type { ParsedData, ParserResult } from "../../../../Files/useCSVJSONXMLParser";
 import useCSVJSONXMLParse from "../../../../Files/useCSVJSONXMLParser";
-import FAIcon from "../../../../Icons/FAIcon";
 
 function parser(data: any): ParserResult<any[]> {
     // Researchr XML

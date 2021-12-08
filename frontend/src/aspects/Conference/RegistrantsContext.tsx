@@ -10,7 +10,7 @@ import type {
     RegistrantsByUserIdQueryVariables,
 } from "../../generated/graphql";
 import { RegistrantsByIdDocument, RegistrantsByUserIdDocument } from "../../generated/graphql";
-import usePolling from "../Generic/usePolling";
+import usePolling from "../Hooks/usePolling";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useConference } from "./useConference";
 

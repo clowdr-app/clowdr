@@ -2,7 +2,7 @@ import type { StackProps } from "@chakra-ui/react";
 import { Button, Code, HStack, Text, Tooltip, useColorModeValue, useToast, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
-import FAIcon from "../../Icons/FAIcon";
+import FAIcon from "../../Chakra/FAIcon";
 import type { MessageState } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
 import { useEmojiPicker } from "../EmojiPickerProvider";

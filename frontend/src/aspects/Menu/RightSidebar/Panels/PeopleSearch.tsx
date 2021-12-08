@@ -13,11 +13,11 @@ import type { CombinedError } from "urql";
 import { useClient } from "urql";
 import type { SearchRegistrantsQuery, SearchRegistrantsQueryVariables } from "../../../../generated/graphql";
 import { SearchRegistrantsDocument } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { useConference } from "../../../Conference/useConference";
 import type { Registrant } from "../../../Conference/useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../../Conference/useCurrentRegistrant";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import FAIcon from "../../../Icons/FAIcon";
 import { RegistrantsList } from "./RegistrantsList";
 
 export function PeopleSearch({ createDM }: { createDM: (registrantId: string) => void }): JSX.Element {

@@ -44,10 +44,10 @@ import {
     useInsertSubmissionRequestEmailJobsMutation,
     useSubmissionRequestsModalDataQuery,
 } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
 import { makeContext } from "../../../../../GQL/make-context";
 import QueryWrapper from "../../../../../GQL/QueryWrapper";
-import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
 
 gql`

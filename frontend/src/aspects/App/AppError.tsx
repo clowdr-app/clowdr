@@ -2,9 +2,9 @@ import { Button, chakra, Text, VStack } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import React, { useMemo } from "react";
 import type { FallbackProps } from "react-error-boundary";
-import { hasOwnProperty } from "./aspects/Generic/ObjectUtils";
+import { hasOwnProperty } from "../Utils/ObjectUtils";
 
-export function AppError({ error }: PropsWithChildren<FallbackProps>): JSX.Element {
+export default function AppError({ error }: PropsWithChildren<FallbackProps>): JSX.Element {
     const now = useMemo(() => Date.now(), []);
     const graphQlErrors = hasOwnProperty(error, "graphQLErrors") ? error.graphQLErrors : null;
 

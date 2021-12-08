@@ -2,12 +2,12 @@ import { Divider, Heading, List, ListItem, Spinner, Text, useDisclosure } from "
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
+import FAIcon from "../../../Chakra/FAIcon";
 import ProfileModal from "../../../Conference/Attend/Registrant/ProfileModal";
 import type { RegistrantIdSpec } from "../../../Conference/RegistrantsContext";
 import { useRegistrant, useRegistrants } from "../../../Conference/RegistrantsContext";
 import { useMaybeConference } from "../../../Conference/useConference";
 import type { Registrant } from "../../../Conference/useCurrentRegistrant";
-import FAIcon from "../../../Icons/FAIcon";
 import { usePresenceState } from "../../../Realtime/PresenceStateProvider";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import { RegistrantsList } from "./RegistrantsList";

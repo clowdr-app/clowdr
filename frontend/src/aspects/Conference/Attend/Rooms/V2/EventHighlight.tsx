@@ -3,7 +3,7 @@ import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
 import type { RoomTile_EventFragment } from "../../../../../generated/graphql";
 import { Room_Mode_Enum } from "../../../../../generated/graphql";
-import { FAIcon } from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
 
 export default function EventHighlight({ event }: { event: RoomTile_EventFragment }): JSX.Element {
     return (

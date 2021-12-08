@@ -18,9 +18,9 @@ import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { useGetForceUserRefreshConfigQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
-import { useRealTime } from "../Generic/useRealTime";
-import { useRestorableState } from "../Generic/useRestorableState";
 import { makeContext } from "../GQL/make-context";
+import { useRealTime } from "../Hooks/useRealTime";
+import { useRestorableState } from "../Hooks/useRestorableState";
 
 gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {

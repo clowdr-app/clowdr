@@ -18,7 +18,7 @@ import { useUpsertConferenceThemeMutation } from "../../../../generated/graphql"
 import { useConferenceTheme } from "../../../Chakra/ChakraCustomProvider";
 import defaultTheme from "../../../Chakra/Colors/ComponentMap";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 

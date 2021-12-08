@@ -44,8 +44,8 @@ import type { Dispatch, SetStateAction } from "react";
 import React, { useCallback, useMemo, useState } from "react";
 import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
+import FAIcon from "../Chakra/FAIcon";
 import { LinkButton } from "../Chakra/LinkButton";
-import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 import useDebouncedState from "./useDebouncedState";
 

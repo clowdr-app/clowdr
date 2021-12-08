@@ -1,7 +1,6 @@
 import { Heading } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import isValidUUID from "../Utils/isValidUUID";
+import { v4 as uuidv4, validate } from "uuid";
 import type {
     BatchModeCUDCallbacks,
     BooleanFieldSpec,
@@ -187,7 +186,7 @@ export default function CRUDTestPage(): JSX.Element {
                             convertToUI: (x) => x,
                             disallowSpaces: true,
                         },
-                        validate: (v) => isValidUUID(v) || ["Invalid UUID"],
+                        validate: (v) => validate(v) || ["Invalid UUID"],
                         getRowTitle: (v) => v.id,
                     },
                     otherFields: {

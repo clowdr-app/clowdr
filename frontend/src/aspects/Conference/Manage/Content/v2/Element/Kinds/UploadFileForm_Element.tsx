@@ -22,7 +22,7 @@ import AmazonS3URI from "amazon-s3-uri";
 import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { Suspense, useEffect, useMemo, useState } from "react";
-import FAIcon from "../../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../../Chakra/FAIcon";
 import UnsavedChangesWarning from "../../../../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { ElementDescriptor } from "./Types";
 

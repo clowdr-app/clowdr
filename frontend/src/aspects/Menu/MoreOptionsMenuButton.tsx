@@ -1,7 +1,7 @@
 import type { ButtonProps } from "@chakra-ui/react";
 import { Button, chakra, Image, Menu, MenuButton, MenuList, Portal, useBreakpointValue } from "@chakra-ui/react";
 import React from "react";
-import { FAIcon } from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
 
 export default function MoreOptionsMenuButton({
     label,

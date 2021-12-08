@@ -12,8 +12,8 @@ import {
 import { assert } from "@midspace/assert";
 import type { IntermediaryContentData } from "@midspace/shared-types/import/intermediary";
 import React, { useEffect, useState } from "react";
+import FAIcon from "../../../../Chakra/FAIcon";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
-import FAIcon from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
 import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "../../Content/Types";
 import { useSaveContentDiff } from "../../Content/useSaveContentDiff";

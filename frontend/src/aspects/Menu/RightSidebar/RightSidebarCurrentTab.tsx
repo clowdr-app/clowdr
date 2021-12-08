@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useRestorableState } from "../../Generic/useRestorableState";
+import { useRestorableState } from "../../Hooks/useRestorableState";
 
 export enum RightSidebarTabs {
     PageChat = 1,

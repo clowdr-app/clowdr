@@ -45,7 +45,7 @@ import type {
 } from "../../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../../CRUDTable2/CRUDTable2";
 import { makeContext } from "../../../../GQL/make-context";
-import { maybeCompare } from "../../../../Utils/maybeSort";
+import { maybeCompare } from "../../../../Utils/maybeCompare";
 import { useConference } from "../../../useConference";
 
 gql`

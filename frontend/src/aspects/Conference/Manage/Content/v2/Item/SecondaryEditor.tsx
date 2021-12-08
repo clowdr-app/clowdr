@@ -25,11 +25,11 @@ import type {
     ManageContent_ItemSecondaryFragment,
 } from "../../../../../../generated/graphql";
 import { Content_ItemType_Enum, useManageContent_SelectItemQuery } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../../GQL/make-context";
 import QueryWrapper from "../../../../../GQL/QueryWrapper";
-import { FAIcon } from "../../../../../Icons/FAIcon";
 import { EditElements } from "../Element/EditElements";
 import { AddContentMenu } from "./AddContentMenu";
 import { CreateRoomButton } from "./CreateRoomButton";

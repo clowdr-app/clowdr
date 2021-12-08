@@ -31,11 +31,11 @@ import type {
     ItemList_TagInfoFragment,
 } from "../../../../generated/graphql";
 import { ContentOfTagDocument, useTagsQuery } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useRestorableState } from "../../../Generic/useRestorableState";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import FAIcon from "../../../Icons/FAIcon";
+import { useRestorableState } from "../../../Hooks/useRestorableState";
 import { useConference } from "../../useConference";
 import { AuthorList } from "./AuthorList";
 

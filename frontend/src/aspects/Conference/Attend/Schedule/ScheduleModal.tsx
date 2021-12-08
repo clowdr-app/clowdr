@@ -23,10 +23,10 @@ import type {
     Schedule_TagFragment,
 } from "../../../../generated/graphql";
 import { useGetSponsorBoothsQuery, useSchedule_HappeningSoonQuery } from "../../../../generated/graphql";
-import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
-import { useRealTime } from "../../../Generic/useRealTime";
+import FAIcon from "../../../Chakra/FAIcon";
 import QueryWrapper from "../../../GQL/QueryWrapper";
-import { FAIcon } from "../../../Icons/FAIcon";
+import { useRealTime } from "../../../Hooks/useRealTime";
+import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
 import { useConference } from "../../useConference";
 import ItemList from "../Content/ItemList";
 import { ExhibitionsGrid } from "../Exhibition/ExhibitionsPage";

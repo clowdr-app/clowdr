@@ -36,11 +36,11 @@ import {
     useManageContent_SelectProgramPeopleQuery,
     useManageContent_UpdateItemProgramPersonMutation,
 } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../../GQL/make-context";
-import { FAIcon } from "../../../../../Icons/FAIcon";
-import { maybeCompare } from "../../../../../Utils/maybeSort";
+import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { useConference } from "../../../../useConference";
 
 export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element {
@@ -335,8 +335,7 @@ function ItemPersonsList({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]:
-                                                                    HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -351,8 +350,7 @@ function ItemPersonsList({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]:
-                                                                    HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -380,8 +378,7 @@ function ItemPersonsList({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]:
-                                                                    HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -396,8 +393,7 @@ function ItemPersonsList({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]:
-                                                                    HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }

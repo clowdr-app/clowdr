@@ -1,7 +1,7 @@
 import { Container, Heading, VStack } from "@chakra-ui/react";
 import React from "react";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import { ConfigureEmailTemplates } from "./ConfigureEmailTemplates";

@@ -44,11 +44,11 @@ import {
     useManageContent_SelectItemExhibitionsQuery,
     useManageContent_UpdateItemExhibitionMutation,
 } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../../GQL/make-context";
-import { FAIcon } from "../../../../../Icons/FAIcon";
-import { maybeCompare } from "../../../../../Utils/maybeSort";
+import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { useConference } from "../../../../useConference";
 
 gql`

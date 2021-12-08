@@ -1,7 +1,7 @@
 import { Heading, Text } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import React from "react";
-import FAIcon from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
 
 export default function GenericErrorPage({
     heading,

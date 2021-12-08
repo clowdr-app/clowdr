@@ -12,11 +12,11 @@ import {
     Job_Queues_JobStatus_Enum,
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
 } from "../../../../../generated/graphql";
-import usePolling from "../../../../Generic/usePolling";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { makeContext } from "../../../../GQL/make-context";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { useTitle } from "../../../../Utils/useTitle";
+import usePolling from "../../../../Hooks/usePolling";
+import { useTitle } from "../../../../Hooks/useTitle";
 import { useConference } from "../../../useConference";
 import { DashboardPage } from "../../DashboardPage";
 

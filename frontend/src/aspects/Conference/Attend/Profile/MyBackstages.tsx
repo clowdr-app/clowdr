@@ -33,12 +33,12 @@ import React, { useMemo, useRef } from "react";
 import type { MyBackstages_EventFragment } from "../../../../generated/graphql";
 import { useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useRealTime } from "../../../Generic/useRealTime";
+import { Markdown } from "../../../Chakra/Markdown";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { Markdown } from "../../../Text/Markdown";
-import { useTitle } from "../../../Utils/useTitle";
+import { useRealTime } from "../../../Hooks/useRealTime";
+import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 

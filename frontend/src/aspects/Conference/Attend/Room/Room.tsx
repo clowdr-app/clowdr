@@ -23,12 +23,12 @@ import {
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
-import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
-import { useRealTime } from "../../../Generic/useRealTime";
-import { FAIcon } from "../../../Icons/FAIcon";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
+import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import JoinZoomButton from "./JoinZoomButton";
 import { RoomContent } from "./RoomContent";

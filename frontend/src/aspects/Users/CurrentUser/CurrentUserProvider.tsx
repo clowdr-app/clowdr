@@ -21,10 +21,10 @@ import type { UserInfoFragment } from "../../../generated/graphql";
 import { useAgreeToTermsMutation, useSelectCurrentUserQuery, useTermsConfigsQuery } from "../../../generated/graphql";
 import useUserId from "../../Auth/useUserId";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
-import { useRestorableState } from "../../Generic/useRestorableState";
+import FAIcon from "../../Chakra/FAIcon";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import FAIcon from "../../Icons/FAIcon";
+import { useRestorableState } from "../../Hooks/useRestorableState";
 import type { UserInfo } from "./useMaybeCurrentUser";
 import { CurrentUserContext, defaultCurrentUserContext } from "./useMaybeCurrentUser";
 

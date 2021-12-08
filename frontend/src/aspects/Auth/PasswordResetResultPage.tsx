@@ -1,7 +1,7 @@
 import { Heading } from "@chakra-ui/react";
 import React from "react";
-import FAIcon from "../Icons/FAIcon";
-import LoginButton from "./Buttons/LoginButton";
+import FAIcon from "../Chakra/FAIcon";
+import { LoginButton } from "./Buttons";
 
 export default function PasswordResetResultPage({
     message,

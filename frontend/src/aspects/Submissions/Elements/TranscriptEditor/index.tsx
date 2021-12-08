@@ -1,6 +1,6 @@
 import { Button, Flex, HStack } from "@chakra-ui/react";
 import React, { useState } from "react";
-import FAIcon from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import { SRTParse, SRTStringify } from "./srt";
 import Transcript, { TRANSCRIPT_WIDTH_CH } from "./Transcript";
 

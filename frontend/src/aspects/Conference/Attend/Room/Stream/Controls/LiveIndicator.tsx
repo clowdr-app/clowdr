@@ -27,9 +27,9 @@ import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
 import type { RoomEventDetailsFragment } from "../../../../../../generated/graphql";
 import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../../generated/graphql";
-import usePolling from "../../../../../Generic/usePolling";
-import { useRealTime } from "../../../../../Generic/useRealTime";
-import { FAIcon } from "../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../Chakra/FAIcon";
+import usePolling from "../../../../../Hooks/usePolling";
+import { useRealTime } from "../../../../../Hooks/useRealTime";
 import { formatRemainingTime } from "../../formatRemainingTime";
 import StreamPreview from "./StreamPreview";
 

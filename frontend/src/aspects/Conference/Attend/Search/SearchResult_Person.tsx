@@ -2,8 +2,8 @@ import { HStack, Link, List, ListItem, Text, useColorModeValue, VStack } from "@
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
 import type { SearchPanel_PersonFragment } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import { FAIcon } from "../../../Icons/FAIcon";
 
 export default function SearchResult_Person({ person }: { person: SearchPanel_PersonFragment }): JSX.Element {
     const { conferencePath } = useAuthParameters();

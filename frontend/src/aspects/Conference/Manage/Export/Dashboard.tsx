@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
 import RestrictedDashboardButton from "../RestrictedDashboardButton";

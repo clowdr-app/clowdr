@@ -8,10 +8,10 @@ import type {
     ProgramPersonDataFragment,
     RegistrantDataFragment,
 } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import ChatProfileModalProvider, { useChatProfileModal } from "../../../Chat/Frame/ChatProfileModalProvider";
 import ProfileBox from "../../../Chat/Messages/ProfileBox";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { maybeCompare } from "../../../Utils/maybeSort";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import { useRegistrant } from "../../RegistrantsContext";
 
 gql`

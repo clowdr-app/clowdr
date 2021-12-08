@@ -26,7 +26,7 @@ import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gql } from "urql";
 import { useToggleVonageRecordingStateMutation } from "../../../../../generated/graphql";
-import FAIcon from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
 import type { DevicesProps } from "../VideoChat/PermissionInstructionsContext";

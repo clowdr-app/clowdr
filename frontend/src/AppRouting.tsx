@@ -19,9 +19,9 @@ const EmailVerificationRequiredPage = React.lazy(() => import("./aspects/Auth/Em
 const LoggedOutPage = React.lazy(() => import("./aspects/Auth/LoggedOutPage"));
 const PasswordResetResultPage = React.lazy(() => import("./aspects/Auth/PasswordResetResultPage"));
 const UseInviteOrCreateView = React.lazy(() => import("./aspects/Conference/UseInviteOrCreateView"));
-const ViewItemPage = React.lazy(() => import("./aspects/Content/Submissions/ViewItemPage"));
-const ViewItemsPage = React.lazy(() => import("./aspects/Content/Submissions/ViewItemsPage"));
-const SubmitElementPage = React.lazy(() => import("./aspects/Content/SubmitElementPage"));
+const SubmitItemsPage = React.lazy(() => import("./aspects/Submissions/SubmitItemsPage"));
+const SubmitItemPage = React.lazy(() => import("./aspects/Submissions/SubmitItemPage"));
+const SubmitElementPage = React.lazy(() => import("./aspects/Submissions/SubmitElementPage"));
 const PushNotificationSettings = React.lazy(() => import("./aspects/PushNotifications/PushNotificationSettings"));
 const GenericErrorPage = React.lazy(() => import("./aspects/Errors/GenericErrorPage"));
 const CRUDTestPage = React.lazy(() => import("./aspects/CRUDTable/CRUDTestPage"));
@@ -295,7 +295,7 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
                             token: string;
                             itemId: string;
                         }>
-                    ) => <ViewItemPage magicToken={props.match.params.token} itemId={props.match.params.itemId} />}
+                    ) => <SubmitItemPage magicToken={props.match.params.token} itemId={props.match.params.itemId} />}
                 />
                 <Route
                     path="/submissions/:token"
@@ -303,7 +303,7 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
                         props: RouteComponentProps<{
                             token: string;
                         }>
-                    ) => <ViewItemsPage magicToken={props.match.params.token} />}
+                    ) => <SubmitItemsPage magicToken={props.match.params.token} />}
                 />
 
                 <Route exact path="/googleoauth" component={GoogleOAuthRedirect} />

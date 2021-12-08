@@ -14,11 +14,11 @@ import {
 import { AuthHeader } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import { gql } from "urql";
-import { useItemsByPersonAccessTokenQuery } from "../../../generated/graphql";
-import CenteredSpinner from "../../Chakra/CenteredSpinner";
-import { LinkButton } from "../../Chakra/LinkButton";
-import { makeContext } from "../../GQL/make-context";
-import { useTitle } from "../../Utils/useTitle";
+import { useItemsByPersonAccessTokenQuery } from "../../generated/graphql";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
+import { LinkButton } from "../Chakra/LinkButton";
+import { makeContext } from "../GQL/make-context";
+import { useTitle } from "../Utils/useTitle";
 
 gql`
     query ItemsByPersonAccessToken($accessToken: String!) {

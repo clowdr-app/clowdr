@@ -16,15 +16,15 @@ import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { gql } from "urql";
-import { Content_ElementType_Enum, useItemByPersonAccessTokenQuery } from "../../../generated/graphql";
-import CenteredSpinner from "../../Chakra/CenteredSpinner";
-import { LinkButton } from "../../Chakra/LinkButton";
-import { contentSortOrder } from "../../Conference/Attend/Content/Element/ElementsGridLayout";
-import { makeContext } from "../../GQL/make-context";
-import FAIcon from "../../Icons/FAIcon";
-import { maybeCompare } from "../../Utils/maybeSort";
-import { useTitle } from "../../Utils/useTitle";
-import RenderElement from "../Elements/RenderElement";
+import { Content_ElementType_Enum, useItemByPersonAccessTokenQuery } from "../../generated/graphql";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
+import { LinkButton } from "../Chakra/LinkButton";
+import { contentSortOrder } from "../Conference/Attend/Content/Element/ElementsGridLayout";
+import { makeContext } from "../GQL/make-context";
+import FAIcon from "../Icons/FAIcon";
+import { maybeCompare } from "../Utils/maybeSort";
+import { useTitle } from "../Utils/useTitle";
+import RenderElement from "./Elements/RenderElement";
 
 gql`
     query ItemByPersonAccessToken($accessToken: String!, $itemId: uuid!) {

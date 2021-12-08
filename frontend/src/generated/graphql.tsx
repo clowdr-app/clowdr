@@ -36188,6 +36188,7 @@ export type ConferenceLandingPageItemQuery = {
             readonly layoutData?: any | null | undefined;
             readonly name: string;
             readonly typeName: Content_ElementType_Enum;
+            readonly isHidden: boolean;
         }>;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
@@ -36282,6 +36283,7 @@ export type ItemElements_GetItemQuery = {
                   readonly layoutData?: any | null | undefined;
                   readonly name: string;
                   readonly typeName: Content_ElementType_Enum;
+                  readonly isHidden: boolean;
               }>;
               readonly itemPeople: ReadonlyArray<{
                   readonly __typename?: "content_ItemProgramPerson";
@@ -36337,6 +36339,7 @@ export type ElementDataFragment = {
     readonly layoutData?: any | null | undefined;
     readonly name: string;
     readonly typeName: Content_ElementType_Enum;
+    readonly isHidden: boolean;
 };
 
 export type ItemElements_ItemDataFragment = {
@@ -36365,6 +36368,7 @@ export type ItemElements_ItemDataFragment = {
         readonly layoutData?: any | null | undefined;
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
+        readonly isHidden: boolean;
     }>;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
@@ -36595,6 +36599,7 @@ export type GetItemQuery = {
                   readonly layoutData?: any | null | undefined;
                   readonly name: string;
                   readonly typeName: Content_ElementType_Enum;
+                  readonly isHidden: boolean;
               }>;
               readonly itemPeople: ReadonlyArray<{
                   readonly __typename?: "content_ItemProgramPerson";
@@ -36770,6 +36775,7 @@ export type ExhibitionItemFragment = {
         readonly layoutData?: any | null | undefined;
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
+        readonly isHidden: boolean;
     }>;
     readonly events: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
@@ -36849,6 +36855,7 @@ export type ExhibitionWithContentFragment = {
                   readonly layoutData?: any | null | undefined;
                   readonly name: string;
                   readonly typeName: Content_ElementType_Enum;
+                  readonly isHidden: boolean;
               }>;
               readonly itemPeople: ReadonlyArray<{
                   readonly __typename?: "content_ItemProgramPerson";
@@ -36920,6 +36927,7 @@ export type ExhibitionWithContentFragment = {
                 readonly layoutData?: any | null | undefined;
                 readonly name: string;
                 readonly typeName: Content_ElementType_Enum;
+                readonly isHidden: boolean;
             }>;
             readonly events: ReadonlyArray<{
                 readonly __typename?: "schedule_Event";
@@ -37008,6 +37016,7 @@ export type SelectExhibitionQuery = {
                             readonly layoutData?: any | null | undefined;
                             readonly name: string;
                             readonly typeName: Content_ElementType_Enum;
+                            readonly isHidden: boolean;
                         }>;
                         readonly itemPeople: ReadonlyArray<{
                             readonly __typename?: "content_ItemProgramPerson";
@@ -37079,6 +37088,7 @@ export type SelectExhibitionQuery = {
                           readonly layoutData?: any | null | undefined;
                           readonly name: string;
                           readonly typeName: Content_ElementType_Enum;
+                          readonly isHidden: boolean;
                       }>;
                       readonly events: ReadonlyArray<{
                           readonly __typename?: "schedule_Event";
@@ -39902,6 +39912,7 @@ export type SwagBagFragment = {
         readonly layoutData?: any | null | undefined;
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
+        readonly isHidden: boolean;
     }>;
 };
 
@@ -39925,6 +39936,7 @@ export type SelectSwagBagsQuery = {
             readonly layoutData?: any | null | undefined;
             readonly name: string;
             readonly typeName: Content_ElementType_Enum;
+            readonly isHidden: boolean;
         }>;
     }>;
 };
@@ -42228,6 +42240,19 @@ export type UpdateLayoutMutation = {
         | undefined;
 };
 
+export type UpdateIsHiddenMutationVariables = Exact<{
+    elementIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+    isHidden: Scalars["Boolean"];
+}>;
+
+export type UpdateIsHiddenMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_content_Element?:
+        | { readonly __typename?: "content_Element_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
+};
+
 export type UpdateUploadsRemainingMutationVariables = Exact<{
     elementIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
     count: Scalars["Int"];
@@ -42703,6 +42728,7 @@ export type SubmissionsReviewModalDataQuery = {
             readonly name: string;
             readonly data: any;
             readonly itemId: any;
+            readonly isHidden: boolean;
         }>;
     }>;
 };
@@ -42731,6 +42757,7 @@ export type SubmissionsReviewModal_ItemFragment = {
         readonly name: string;
         readonly data: any;
         readonly itemId: any;
+        readonly isHidden: boolean;
     }>;
 };
 
@@ -42741,6 +42768,7 @@ export type SubmissionsReviewModal_ElementFragment = {
     readonly name: string;
     readonly data: any;
     readonly itemId: any;
+    readonly isHidden: boolean;
 };
 
 export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables = Exact<{
@@ -45957,121 +45985,6 @@ export type RegistrantDataFragment = {
         | undefined;
 };
 
-export type UpdateSubtitlesMutationVariables = Exact<{
-    elementId: Scalars["String"];
-    magicToken: Scalars["String"];
-    subtitleText: Scalars["String"];
-}>;
-
-export type UpdateSubtitlesMutation = {
-    readonly __typename?: "mutation_root";
-    readonly updateSubtitles?:
-        | { readonly __typename?: "SubmitUpdatedSubtitlesOutput"; readonly message: string; readonly success: boolean }
-        | null
-        | undefined;
-};
-
-export type ItemByPersonAccessTokenQueryVariables = Exact<{
-    accessToken: Scalars["String"];
-    itemId: Scalars["uuid"];
-}>;
-
-export type ItemByPersonAccessTokenQuery = {
-    readonly __typename?: "query_root";
-    readonly collection_ProgramPerson: ReadonlyArray<{
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly name: string;
-    }>;
-    readonly content_Item: ReadonlyArray<{
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly name: string;
-            readonly data: any;
-            readonly uploadsRemaining?: number | null | undefined;
-            readonly layoutData?: any | null | undefined;
-            readonly itemId: any;
-        }>;
-    }>;
-};
-
-export type ItemsByPersonAccessTokenQueryVariables = Exact<{
-    accessToken: Scalars["String"];
-}>;
-
-export type ItemsByPersonAccessTokenQuery = {
-    readonly __typename?: "query_root";
-    readonly collection_ProgramPerson: ReadonlyArray<{
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly name: string;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
-        }>;
-    }>;
-};
-
-export type GetElementQueryVariables = Exact<{
-    accessToken: Scalars["String"];
-    elementId: Scalars["uuid"];
-}>;
-
-export type GetElementQuery = {
-    readonly __typename?: "query_root";
-    readonly content_Element: ReadonlyArray<{
-        readonly __typename?: "content_Element";
-        readonly typeName: Content_ElementType_Enum;
-        readonly data: any;
-        readonly name: string;
-        readonly id: any;
-        readonly uploadsRemaining?: number | null | undefined;
-        readonly itemId: any;
-        readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
-    }>;
-    readonly collection_ProgramPerson: ReadonlyArray<{
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly name: string;
-    }>;
-};
-
-export type SubmitUploadableElementMutationVariables = Exact<{
-    elementData: Scalars["jsonb"];
-    magicToken: Scalars["String"];
-    elementId: Scalars["uuid"];
-}>;
-
-export type SubmitUploadableElementMutation = {
-    readonly __typename?: "mutation_root";
-    readonly submitUploadableElement?:
-        | { readonly __typename?: "SubmitUploadableElementOutput"; readonly message: string; readonly success: boolean }
-        | null
-        | undefined;
-};
-
-export type GetUploadAgreementQueryVariables = Exact<{ [key: string]: never }>;
-
-export type GetUploadAgreementQuery = {
-    readonly __typename?: "query_root";
-    readonly getUploadAgreement?:
-        | {
-              readonly __typename?: "GetUploadAgreementOutput";
-              readonly agreementText?: string | null | undefined;
-              readonly agreementUrl?: string | null | undefined;
-          }
-        | null
-        | undefined;
-};
-
 export type GetForceUserRefreshConfigQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
 }>;
@@ -46164,147 +46077,19 @@ export type MinimalEventInfoFragment = {
     readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
 };
 
-export type MenuScheduleQueryVariables = Exact<{
-    now: Scalars["timestamptz"];
-    inOneHour: Scalars["timestamptz"];
+export type CountSwagBagsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
 }>;
 
-export type MenuScheduleQuery = {
+export type CountSwagBagsQuery = {
     readonly __typename?: "query_root";
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly startTime: any;
-        readonly roomId: any;
-        readonly itemId?: any | null | undefined;
-        readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?:
-            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+    readonly content_Item_aggregate: {
+        readonly __typename?: "content_Item_aggregate";
+        readonly aggregate?:
+            | { readonly __typename?: "content_Item_aggregate_fields"; readonly count: number }
             | null
             | undefined;
-    }>;
-};
-
-export type MenuSchedule_SearchEventsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    search: Scalars["String"];
-}>;
-
-export type MenuSchedule_SearchEventsQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly startTime: any;
-        readonly roomId: any;
-        readonly itemId?: any | null | undefined;
-        readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?:
-            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
-            | null
-            | undefined;
-    }>;
-};
-
-export type MenuSchedule_EventFragment = {
-    readonly __typename?: "schedule_Event";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly name: string;
-    readonly startTime: any;
-    readonly roomId: any;
-    readonly itemId?: any | null | undefined;
-    readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-    readonly item?:
-        | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
-        | null
-        | undefined;
-};
-
-export type MainMenuSponsors_GetSponsorsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type MainMenuSponsors_GetSponsorsQuery = {
-    readonly __typename?: "query_root";
-    readonly content_Item: ReadonlyArray<{
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly typeName: Content_ItemType_Enum;
-        readonly title: string;
-        readonly shortTitle?: string | null | undefined;
-        readonly rooms: ReadonlyArray<{
-            readonly __typename?: "room_Room";
-            readonly id: any;
-            readonly priority: number;
-            readonly created_at: any;
-            readonly conferenceId: any;
-        }>;
-        readonly logo: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly data: any;
-            readonly itemId: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly updatedAt: any;
-            readonly layoutData?: any | null | undefined;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly roleName: string;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly registrantId?: any | null | undefined;
-            };
-        }>;
-    }>;
-};
-
-export type MainMenuSponsors_ItemDataFragment = {
-    readonly __typename?: "content_Item";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly typeName: Content_ItemType_Enum;
-    readonly title: string;
-    readonly shortTitle?: string | null | undefined;
-    readonly rooms: ReadonlyArray<{
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly priority: number;
-        readonly created_at: any;
-        readonly conferenceId: any;
-    }>;
-    readonly logo: ReadonlyArray<{
-        readonly __typename?: "content_Element";
-        readonly id: any;
-        readonly data: any;
-        readonly itemId: any;
-        readonly typeName: Content_ElementType_Enum;
-        readonly updatedAt: any;
-        readonly layoutData?: any | null | undefined;
-    }>;
-    readonly itemPeople: ReadonlyArray<{
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly personId: any;
-        readonly roleName: string;
-        readonly person: {
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly registrantId?: any | null | undefined;
-        };
-    }>;
+    };
 };
 
 export type CreateDmMutationVariables = Exact<{
@@ -46323,55 +46108,6 @@ export type CreateDmMutation = {
           }
         | null
         | undefined;
-};
-
-export type GetItemChatId_V1QueryVariables = Exact<{
-    itemId: Scalars["uuid"];
-}>;
-
-export type GetItemChatId_V1Query = {
-    readonly __typename?: "query_root";
-    readonly content_Item_by_pk?:
-        | {
-              readonly __typename?: "content_Item";
-              readonly id: any;
-              readonly title: string;
-              readonly chatId?: any | null | undefined;
-          }
-        | null
-        | undefined;
-};
-
-export type GetRoomChatIdQueryVariables = Exact<{
-    roomId: Scalars["uuid"];
-}>;
-
-export type GetRoomChatIdQuery = {
-    readonly __typename?: "query_root";
-    readonly room_Room_by_pk?:
-        | {
-              readonly __typename?: "room_Room";
-              readonly id: any;
-              readonly chatId?: any | null | undefined;
-              readonly name: string;
-          }
-        | null
-        | undefined;
-};
-
-export type CountSwagBagsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type CountSwagBagsQuery = {
-    readonly __typename?: "query_root";
-    readonly content_Item_aggregate: {
-        readonly __typename?: "content_Item_aggregate";
-        readonly aggregate?:
-            | { readonly __typename?: "content_Item_aggregate_fields"; readonly count: number }
-            | null
-            | undefined;
-    };
 };
 
 export type GetItemChatIdQueryVariables = Exact<{
@@ -46400,6 +46136,23 @@ export type GetConferenceLandingPageItemIdQuery = {
         readonly typeName: Content_ItemType_Enum;
         readonly conferenceId: any;
     }>;
+};
+
+export type GetRoomChatIdQueryVariables = Exact<{
+    roomId: Scalars["uuid"];
+}>;
+
+export type GetRoomChatIdQuery = {
+    readonly __typename?: "query_root";
+    readonly room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly chatId?: any | null | undefined;
+              readonly name: string;
+          }
+        | null
+        | undefined;
 };
 
 export type GetVapidPublicKeyQueryVariables = Exact<{ [key: string]: never }>;
@@ -46647,6 +46400,121 @@ export type GetShuffleRoomsParticipantsCountQuery = {
             | null
             | undefined;
     };
+};
+
+export type UpdateSubtitlesMutationVariables = Exact<{
+    elementId: Scalars["String"];
+    magicToken: Scalars["String"];
+    subtitleText: Scalars["String"];
+}>;
+
+export type UpdateSubtitlesMutation = {
+    readonly __typename?: "mutation_root";
+    readonly updateSubtitles?:
+        | { readonly __typename?: "SubmitUpdatedSubtitlesOutput"; readonly message: string; readonly success: boolean }
+        | null
+        | undefined;
+};
+
+export type GetElementQueryVariables = Exact<{
+    accessToken: Scalars["String"];
+    elementId: Scalars["uuid"];
+}>;
+
+export type GetElementQuery = {
+    readonly __typename?: "query_root";
+    readonly content_Element: ReadonlyArray<{
+        readonly __typename?: "content_Element";
+        readonly typeName: Content_ElementType_Enum;
+        readonly data: any;
+        readonly name: string;
+        readonly id: any;
+        readonly uploadsRemaining?: number | null | undefined;
+        readonly itemId: any;
+        readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
+    }>;
+    readonly collection_ProgramPerson: ReadonlyArray<{
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+        readonly name: string;
+    }>;
+};
+
+export type SubmitUploadableElementMutationVariables = Exact<{
+    elementData: Scalars["jsonb"];
+    magicToken: Scalars["String"];
+    elementId: Scalars["uuid"];
+}>;
+
+export type SubmitUploadableElementMutation = {
+    readonly __typename?: "mutation_root";
+    readonly submitUploadableElement?:
+        | { readonly __typename?: "SubmitUploadableElementOutput"; readonly message: string; readonly success: boolean }
+        | null
+        | undefined;
+};
+
+export type GetUploadAgreementQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetUploadAgreementQuery = {
+    readonly __typename?: "query_root";
+    readonly getUploadAgreement?:
+        | {
+              readonly __typename?: "GetUploadAgreementOutput";
+              readonly agreementText?: string | null | undefined;
+              readonly agreementUrl?: string | null | undefined;
+          }
+        | null
+        | undefined;
+};
+
+export type ItemByPersonAccessTokenQueryVariables = Exact<{
+    accessToken: Scalars["String"];
+    itemId: Scalars["uuid"];
+}>;
+
+export type ItemByPersonAccessTokenQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_ProgramPerson: ReadonlyArray<{
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+        readonly name: string;
+    }>;
+    readonly content_Item: ReadonlyArray<{
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly title: string;
+        readonly elements: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly typeName: Content_ElementType_Enum;
+            readonly name: string;
+            readonly data: any;
+            readonly uploadsRemaining?: number | null | undefined;
+            readonly layoutData?: any | null | undefined;
+            readonly itemId: any;
+        }>;
+    }>;
+};
+
+export type ItemsByPersonAccessTokenQueryVariables = Exact<{
+    accessToken: Scalars["String"];
+}>;
+
+export type ItemsByPersonAccessTokenQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_ProgramPerson: ReadonlyArray<{
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+        readonly name: string;
+        readonly itemPeople: ReadonlyArray<{
+            readonly __typename?: "content_ItemProgramPerson";
+            readonly id: any;
+            readonly itemId: any;
+            readonly personId: any;
+            readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
+        }>;
+    }>;
 };
 
 export type InitialiseSuperUserMutationVariables = Exact<{ [key: string]: never }>;
@@ -47321,6 +47189,7 @@ export const ElementDataFragmentDoc = gql`
         layoutData
         name
         typeName
+        isHidden
     }
 `;
 export const ItemTagDataFragmentDoc = gql`
@@ -48543,6 +48412,7 @@ export const SubmissionsReviewModal_ElementFragmentDoc = gql`
         name
         data
         itemId
+        isHidden
     }
 `;
 export const SubmissionsReviewModal_ItemFragmentDoc = gql`
@@ -49025,61 +48895,6 @@ export const MinimalEventInfoFragmentDoc = gql`
         room {
             id
             name
-        }
-    }
-`;
-export const MenuSchedule_EventFragmentDoc = gql`
-    fragment MenuSchedule_Event on schedule_Event {
-        id
-        conferenceId
-        name
-        startTime
-        roomId
-        room {
-            id
-            name
-        }
-        itemId
-        item {
-            id
-            title
-        }
-    }
-`;
-export const MainMenuSponsors_ItemDataFragmentDoc = gql`
-    fragment MainMenuSponsors_ItemData on content_Item {
-        id
-        conferenceId
-        typeName
-        rooms(limit: 1, order_by: { created_at: asc }, where: { conferenceId: { _eq: $conferenceId } }) {
-            id
-            priority
-            created_at
-            conferenceId
-        }
-        logo: elements(
-            where: { typeName: { _in: [IMAGE_URL, IMAGE_FILE] }, layoutData: { _contains: { isLogo: true } } }
-            order_by: { updatedAt: desc }
-            limit: 1
-        ) {
-            id
-            data
-            itemId
-            typeName
-            updatedAt
-            layoutData
-        }
-        title
-        shortTitle
-        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-            id
-            itemId
-            personId
-            person {
-                id
-                registrantId
-            }
-            roleName
         }
     }
 `;
@@ -52055,6 +51870,17 @@ export const UpdateLayoutDocument = gql`
 export function useUpdateLayoutMutation() {
     return Urql.useMutation<UpdateLayoutMutation, UpdateLayoutMutationVariables>(UpdateLayoutDocument);
 }
+export const UpdateIsHiddenDocument = gql`
+    mutation UpdateIsHidden($elementIds: [uuid!]!, $isHidden: Boolean!) {
+        update_content_Element(where: { id: { _in: $elementIds } }, _set: { isHidden: $isHidden }) {
+            affected_rows
+        }
+    }
+`;
+
+export function useUpdateIsHiddenMutation() {
+    return Urql.useMutation<UpdateIsHiddenMutation, UpdateIsHiddenMutationVariables>(UpdateIsHiddenDocument);
+}
 export const UpdateUploadsRemainingDocument = gql`
     mutation UpdateUploadsRemaining($elementIds: [uuid!]!, $count: Int!) {
         update_content_Element(where: { id: { _in: $elementIds } }, _set: { uploadsRemaining: $count }) {
@@ -54363,120 +54189,6 @@ export function useConferenceById_WithoutUserQuery(
 ) {
     return Urql.useQuery<ConferenceById_WithoutUserQuery>({ query: ConferenceById_WithoutUserDocument, ...options });
 }
-export const UpdateSubtitlesDocument = gql`
-    mutation UpdateSubtitles($elementId: String!, $magicToken: String!, $subtitleText: String!) {
-        updateSubtitles(elementId: $elementId, magicToken: $magicToken, subtitleText: $subtitleText) {
-            message
-            success
-        }
-    }
-`;
-
-export function useUpdateSubtitlesMutation() {
-    return Urql.useMutation<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>(UpdateSubtitlesDocument);
-}
-export const ItemByPersonAccessTokenDocument = gql`
-    query ItemByPersonAccessToken($accessToken: String!, $itemId: uuid!) {
-        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
-            id
-            name
-        }
-        content_Item(where: { id: { _eq: $itemId } }) {
-            id
-            title
-            elements {
-                id
-                typeName
-                name
-                data
-                uploadsRemaining
-                layoutData
-                itemId
-            }
-        }
-    }
-`;
-
-export function useItemByPersonAccessTokenQuery(
-    options: Omit<Urql.UseQueryArgs<ItemByPersonAccessTokenQueryVariables>, "query"> = {}
-) {
-    return Urql.useQuery<ItemByPersonAccessTokenQuery>({ query: ItemByPersonAccessTokenDocument, ...options });
-}
-export const ItemsByPersonAccessTokenDocument = gql`
-    query ItemsByPersonAccessToken($accessToken: String!) {
-        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
-            id
-            name
-            itemPeople(order_by: { item: { title: asc } }) {
-                id
-                itemId
-                personId
-                item {
-                    id
-                    title
-                }
-            }
-        }
-    }
-`;
-
-export function useItemsByPersonAccessTokenQuery(
-    options: Omit<Urql.UseQueryArgs<ItemsByPersonAccessTokenQueryVariables>, "query"> = {}
-) {
-    return Urql.useQuery<ItemsByPersonAccessTokenQuery>({ query: ItemsByPersonAccessTokenDocument, ...options });
-}
-export const GetElementDocument = gql`
-    query GetElement($accessToken: String!, $elementId: uuid!) {
-        content_Element(where: { id: { _eq: $elementId } }) {
-            typeName
-            data
-            name
-            id
-            uploadsRemaining
-            itemId
-            item {
-                id
-                title
-            }
-        }
-        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
-            id
-            name
-        }
-    }
-`;
-
-export function useGetElementQuery(options: Omit<Urql.UseQueryArgs<GetElementQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
-}
-export const SubmitUploadableElementDocument = gql`
-    mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!, $elementId: uuid!) {
-        submitUploadableElement(data: $elementData, magicToken: $magicToken, elementId: $elementId) {
-            message
-            success
-        }
-    }
-`;
-
-export function useSubmitUploadableElementMutation() {
-    return Urql.useMutation<SubmitUploadableElementMutation, SubmitUploadableElementMutationVariables>(
-        SubmitUploadableElementDocument
-    );
-}
-export const GetUploadAgreementDocument = gql`
-    query GetUploadAgreement {
-        getUploadAgreement {
-            agreementText
-            agreementUrl
-        }
-    }
-`;
-
-export function useGetUploadAgreementQuery(
-    options: Omit<Urql.UseQueryArgs<GetUploadAgreementQueryVariables>, "query"> = {}
-) {
-    return Urql.useQuery<GetUploadAgreementQuery>({ query: GetUploadAgreementDocument, ...options });
-}
 export const GetForceUserRefreshConfigDocument = gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
         conference_Configuration_by_pk(conferenceId: $conferenceId, key: CLOWDR_APP_VERSION) {
@@ -54551,87 +54263,18 @@ export function useGetEventsInNextHourQuery(
 ) {
     return Urql.useQuery<GetEventsInNextHourQuery>({ query: GetEventsInNextHourDocument, ...options });
 }
-export const MenuScheduleDocument = gql`
-    query MenuSchedule($now: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
-        schedule_Event(
-            where: {
-                startTime: { _lte: $inOneHour }
-                endTime: { _gte: $now }
-                conferenceId: { _eq: $conferenceId }
-                room: {}
+export const CountSwagBagsDocument = gql`
+    query CountSwagBags($conferenceId: uuid!) {
+        content_Item_aggregate(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SWAG_BAG } }) {
+            aggregate {
+                count
             }
-        ) {
-            ...MenuSchedule_Event
         }
     }
-    ${MenuSchedule_EventFragmentDoc}
 `;
 
-export function useMenuScheduleQuery(options: Omit<Urql.UseQueryArgs<MenuScheduleQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<MenuScheduleQuery>({ query: MenuScheduleDocument, ...options });
-}
-export const MenuSchedule_SearchEventsDocument = gql`
-    query MenuSchedule_SearchEvents($conferenceId: uuid!, $search: String!) {
-        schedule_Event(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                room: {}
-                _or: [
-                    { name: { _ilike: $search } }
-                    {
-                        item: {
-                            _or: [
-                                { title: { _ilike: $search } }
-                                {
-                                    itemPeople: {
-                                        person: {
-                                            _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                    {
-                        eventPeople: {
-                            person: { _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }] }
-                        }
-                    }
-                ]
-            }
-            limit: 10
-            order_by: { startTime: asc }
-        ) {
-            ...MenuSchedule_Event
-        }
-    }
-    ${MenuSchedule_EventFragmentDoc}
-`;
-
-export function useMenuSchedule_SearchEventsQuery(
-    options: Omit<Urql.UseQueryArgs<MenuSchedule_SearchEventsQueryVariables>, "query"> = {}
-) {
-    return Urql.useQuery<MenuSchedule_SearchEventsQuery>({ query: MenuSchedule_SearchEventsDocument, ...options });
-}
-export const MainMenuSponsors_GetSponsorsDocument = gql`
-    query MainMenuSponsors_GetSponsors($conferenceId: uuid!) {
-        content_Item(
-            where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SPONSOR } }
-            order_by: { title: asc }
-        ) {
-            ...MainMenuSponsors_ItemData
-        }
-    }
-    ${MainMenuSponsors_ItemDataFragmentDoc}
-`;
-
-export function useMainMenuSponsors_GetSponsorsQuery(
-    options: Omit<Urql.UseQueryArgs<MainMenuSponsors_GetSponsorsQueryVariables>, "query"> = {}
-) {
-    return Urql.useQuery<MainMenuSponsors_GetSponsorsQuery>({
-        query: MainMenuSponsors_GetSponsorsDocument,
-        ...options,
-    });
+export function useCountSwagBagsQuery(options: Omit<Urql.UseQueryArgs<CountSwagBagsQueryVariables>, "query"> = {}) {
+    return Urql.useQuery<CountSwagBagsQuery>({ query: CountSwagBagsDocument, ...options });
 }
 export const CreateDmDocument = gql`
     mutation CreateDm($registrantIds: [uuid]!, $conferenceId: uuid!) {
@@ -54645,47 +54288,6 @@ export const CreateDmDocument = gql`
 
 export function useCreateDmMutation() {
     return Urql.useMutation<CreateDmMutation, CreateDmMutationVariables>(CreateDmDocument);
-}
-export const GetItemChatId_V1Document = gql`
-    query GetItemChatId_V1($itemId: uuid!) {
-        content_Item_by_pk(id: $itemId) {
-            id
-            title
-            chatId
-        }
-    }
-`;
-
-export function useGetItemChatId_V1Query(
-    options: Omit<Urql.UseQueryArgs<GetItemChatId_V1QueryVariables>, "query"> = {}
-) {
-    return Urql.useQuery<GetItemChatId_V1Query>({ query: GetItemChatId_V1Document, ...options });
-}
-export const GetRoomChatIdDocument = gql`
-    query GetRoomChatId($roomId: uuid!) {
-        room_Room_by_pk(id: $roomId) {
-            id
-            chatId
-            name
-        }
-    }
-`;
-
-export function useGetRoomChatIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomChatIdQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
-}
-export const CountSwagBagsDocument = gql`
-    query CountSwagBags($conferenceId: uuid!) {
-        content_Item_aggregate(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SWAG_BAG } }) {
-            aggregate {
-                count
-            }
-        }
-    }
-`;
-
-export function useCountSwagBagsQuery(options: Omit<Urql.UseQueryArgs<CountSwagBagsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<CountSwagBagsQuery>({ query: CountSwagBagsDocument, ...options });
 }
 export const GetItemChatIdDocument = gql`
     query GetItemChatId($itemOrExhibitionId: uuid!) {
@@ -54724,6 +54326,19 @@ export function useGetConferenceLandingPageItemIdQuery(
         query: GetConferenceLandingPageItemIdDocument,
         ...options,
     });
+}
+export const GetRoomChatIdDocument = gql`
+    query GetRoomChatId($roomId: uuid!) {
+        room_Room_by_pk(id: $roomId) {
+            id
+            chatId
+            name
+        }
+    }
+`;
+
+export function useGetRoomChatIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomChatIdQueryVariables>, "query"> = {}) {
+    return Urql.useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
 }
 export const GetVapidPublicKeyDocument = gql`
     query GetVAPIDPublicKey {
@@ -54852,6 +54467,120 @@ export function useGetShuffleRoomsParticipantsCountQuery(
         query: GetShuffleRoomsParticipantsCountDocument,
         ...options,
     });
+}
+export const UpdateSubtitlesDocument = gql`
+    mutation UpdateSubtitles($elementId: String!, $magicToken: String!, $subtitleText: String!) {
+        updateSubtitles(elementId: $elementId, magicToken: $magicToken, subtitleText: $subtitleText) {
+            message
+            success
+        }
+    }
+`;
+
+export function useUpdateSubtitlesMutation() {
+    return Urql.useMutation<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>(UpdateSubtitlesDocument);
+}
+export const GetElementDocument = gql`
+    query GetElement($accessToken: String!, $elementId: uuid!) {
+        content_Element(where: { id: { _eq: $elementId } }) {
+            typeName
+            data
+            name
+            id
+            uploadsRemaining
+            itemId
+            item {
+                id
+                title
+            }
+        }
+        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
+            id
+            name
+        }
+    }
+`;
+
+export function useGetElementQuery(options: Omit<Urql.UseQueryArgs<GetElementQueryVariables>, "query"> = {}) {
+    return Urql.useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
+}
+export const SubmitUploadableElementDocument = gql`
+    mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!, $elementId: uuid!) {
+        submitUploadableElement(data: $elementData, magicToken: $magicToken, elementId: $elementId) {
+            message
+            success
+        }
+    }
+`;
+
+export function useSubmitUploadableElementMutation() {
+    return Urql.useMutation<SubmitUploadableElementMutation, SubmitUploadableElementMutationVariables>(
+        SubmitUploadableElementDocument
+    );
+}
+export const GetUploadAgreementDocument = gql`
+    query GetUploadAgreement {
+        getUploadAgreement {
+            agreementText
+            agreementUrl
+        }
+    }
+`;
+
+export function useGetUploadAgreementQuery(
+    options: Omit<Urql.UseQueryArgs<GetUploadAgreementQueryVariables>, "query"> = {}
+) {
+    return Urql.useQuery<GetUploadAgreementQuery>({ query: GetUploadAgreementDocument, ...options });
+}
+export const ItemByPersonAccessTokenDocument = gql`
+    query ItemByPersonAccessToken($accessToken: String!, $itemId: uuid!) {
+        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
+            id
+            name
+        }
+        content_Item(where: { id: { _eq: $itemId } }) {
+            id
+            title
+            elements {
+                id
+                typeName
+                name
+                data
+                uploadsRemaining
+                layoutData
+                itemId
+            }
+        }
+    }
+`;
+
+export function useItemByPersonAccessTokenQuery(
+    options: Omit<Urql.UseQueryArgs<ItemByPersonAccessTokenQueryVariables>, "query"> = {}
+) {
+    return Urql.useQuery<ItemByPersonAccessTokenQuery>({ query: ItemByPersonAccessTokenDocument, ...options });
+}
+export const ItemsByPersonAccessTokenDocument = gql`
+    query ItemsByPersonAccessToken($accessToken: String!) {
+        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
+            id
+            name
+            itemPeople(order_by: { item: { title: asc } }) {
+                id
+                itemId
+                personId
+                item {
+                    id
+                    title
+                }
+            }
+        }
+    }
+`;
+
+export function useItemsByPersonAccessTokenQuery(
+    options: Omit<Urql.UseQueryArgs<ItemsByPersonAccessTokenQueryVariables>, "query"> = {}
+) {
+    return Urql.useQuery<ItemsByPersonAccessTokenQuery>({ query: ItemsByPersonAccessTokenDocument, ...options });
 }
 export const InitialiseSuperUserDocument = gql`
     mutation InitialiseSuperUser {

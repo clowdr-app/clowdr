@@ -80,7 +80,6 @@ export function AddContentMenu({
                                     layoutData: {
                                         contentType: newContent.typeName,
                                         wide: false,
-                                        hidden: false,
                                     } as LayoutDataBlob,
                                 };
                                 const result = await createElement(

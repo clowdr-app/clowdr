@@ -19,7 +19,6 @@ export function LayoutEditor({
                 return {
                     contentType,
                     wide: false,
-                    hidden: false,
                     priority: 0,
                     isLogo: false,
                 };
@@ -27,7 +26,6 @@ export function LayoutEditor({
                 return {
                     contentType,
                     wide: false,
-                    hidden: false,
                     priority: 0,
                 } as LayoutDataBlob;
         }

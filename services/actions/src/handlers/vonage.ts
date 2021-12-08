@@ -287,7 +287,6 @@ export async function handleVonageArchiveMonitoringWebhook(
                 ];
                 const layoutData: LayoutDataBlob = {
                     contentType: Content_ElementType_Enum.VideoFile,
-                    hidden: false,
                     wide: true,
                     priority: event.item.elements_aggregate.aggregate?.count ?? 0,
                 };

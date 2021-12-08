@@ -223,7 +223,6 @@ function ModalInner({
                                     const layoutData: LayoutDataBlob = {
                                         contentType: elementType as any,
                                         wide,
-                                        hidden,
                                         priority,
                                     };
                                     return {

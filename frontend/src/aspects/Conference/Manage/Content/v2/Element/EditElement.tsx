@@ -105,7 +105,6 @@ export function EditElement({
                                                     const layoutDataA: LayoutDataBlob = {
                                                         contentType: element.typeName,
                                                         wide: false,
-                                                        hidden: false,
                                                         ...element.layoutData,
                                                         priority: idx - 1,
                                                     };
@@ -129,7 +128,6 @@ export function EditElement({
                                                     const layoutDataB: LayoutDataBlob = {
                                                         contentType: previousElement.typeName,
                                                         wide: false,
-                                                        hidden: false,
                                                         ...previousElement.layoutData,
                                                         priority: idx,
                                                     };
@@ -171,7 +169,6 @@ export function EditElement({
                                                     const layoutDataA: LayoutDataBlob = {
                                                         contentType: element.typeName,
                                                         wide: false,
-                                                        hidden: false,
                                                         ...element.layoutData,
                                                         priority: idx + 1,
                                                     };
@@ -195,7 +192,6 @@ export function EditElement({
                                                     const layoutDataB: LayoutDataBlob = {
                                                         contentType: nextElement.typeName,
                                                         wide: false,
-                                                        hidden: false,
                                                         ...nextElement.layoutData,
                                                         priority: idx,
                                                     };

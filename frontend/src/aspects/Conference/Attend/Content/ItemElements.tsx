@@ -31,6 +31,7 @@ gql`
         layoutData
         name
         typeName
+        isHidden
     }
 
     fragment ItemElements_ItemData on content_Item {

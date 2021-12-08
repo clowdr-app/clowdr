@@ -1,5 +1,5 @@
 import { assertType, is } from "typescript-is";
-import { Content_ElementType_Enum } from "../content";
+import type { Content_ElementType_Enum } from "../content";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function isLayoutDataBlob(data: any): boolean {
@@ -43,9 +43,17 @@ export type LayoutDataBlob =
     | DividerLayoutDataBlob;
 
 export interface BaseLayoutDataBlob {
-    wide: boolean;
-    hidden: boolean;
-    priority: number;
+    wide?: boolean;
+    priority?: number;
+
+    position?: {
+        row: number;
+        column: number;
+    };
+    size?: {
+        rows: number;
+        columns: number;
+    };
 }
 
 export interface AbstractLayoutDataBlob extends BaseLayoutDataBlob {

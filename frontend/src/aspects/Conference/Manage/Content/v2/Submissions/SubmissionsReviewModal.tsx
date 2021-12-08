@@ -63,6 +63,7 @@ gql`
         name
         data
         itemId
+        isHidden
     }
 `;
 

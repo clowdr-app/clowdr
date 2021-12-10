@@ -9,27 +9,19 @@ import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
 import ChakraCustomProvider from "./aspects/Chakra/ChakraCustomProvider";
 import { VonageGlobalStateProvider } from "./aspects/Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
 import "./aspects/DataDog/DataDog";
+import { useRestorableState } from "./aspects/Generic/useRestorableState";
 import ApolloCustomProvider from "./aspects/GQL/ApolloCustomProvider";
 import { UXChoiceProvider } from "./aspects/UXChoice/UXChoice";
 import UXChoiceDialog from "./aspects/UXChoice/UXChoiceDialog";
 import "./index.css";
-import messages_pt from "./lang-compiled/pt.json";
-import messages_en from "./lang-compiled/en.json";
-
-function loadLocaleData(locale: string) {
-  switch (locale) {
-    case 'pt':
-    case 'pt-br':
-    case 'pt-BR':
-      return messages_pt;
-    default:
-      return messages_en;
-  }
-}
 
 async function bootstrapApplication() {
-    const locale = navigator.language || 'en';
-    const messages = await loadLocaleData(locale);
+    const [locale, setLocale] = useRestorableState<string>(
+        "clowdr-language",
+        'en',
+        (x) => JSON.stringify(x),
+        (x) => JSON.parse(x)
+    );
     ReactDOM.render(
         <React.StrictMode>
             <ErrorBoundary FallbackComponent={AppError}>
@@ -41,7 +33,7 @@ async function bootstrapApplication() {
                                         <ChakraCustomProvider>
                                             <UXChoiceProvider>
                                                 <UXChoiceDialog />
-                                                <App locale={locale} messages={messages} />
+                                                <App locale={locale} />
                                             </UXChoiceProvider>
                                         </ChakraCustomProvider>
                                     </ApolloCustomProvider>

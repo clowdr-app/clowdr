@@ -23,7 +23,7 @@ ${graphQlErrors ? `GraphQL: ${JSON.stringify(graphQlErrors)}` : ""}
 ${error.stack}`}
             </chakra.pre>
             <Button
-                onClick={() => window.location.reload(false)}
+                onClick={() => window.location.reload()}
                 bgColor="#eee"
                 p="12px"
                 border="1px solid black"

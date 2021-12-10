@@ -5,9 +5,17 @@ import LoginButton from "../../Auth/Buttons/LoginButton";
 import SignupButton from "../../Auth/Buttons/SignUpButton";
 import { ExternalLinkButton } from "../../Chakra/LinkButton";
 import { useTitle } from "../../Utils/useTitle";
+import Select, { StylesConfig } from 'react-select'
 
 export default function NewUserLandingPage({ conferenceName }: { conferenceName?: string }): JSX.Element {
+    
     const title = useTitle(conferenceName ?? "");
+
+    const languages = [
+        { value: 'en', label: 'English' },
+        { value: 'pt', label: 'Português' },
+        { value: 'de', label: 'Deutsch' },
+    ]
 
     return (
         <>
@@ -82,6 +90,18 @@ export default function NewUserLandingPage({ conferenceName }: { conferenceName?
                                 <LoginButton size="lg" colorScheme="purple" />
                             </ButtonGroup>
                         </FormControl>
+                    </Container>
+                    <Container maxW="container.sm" marginTop="3vh">
+                        {/* <Select 
+                            options={languages}
+                            defaultValue={languages[0]}
+                            theme={(theme) => ({
+                                ...theme,
+                                colors: {
+                                    ...theme.colors,
+                                },
+                            })}
+                        /> */}
                     </Container>
                 </Flex>
             </Box>

@@ -1,0 +1,17 @@
+{
+  "signup": {
+    "defaultMessage": ""
+  },
+  "users.newuser.landingpage.description": {
+    "defaultMessage": "Conferenze virtuali e ibride accessibili."
+  },
+  "users.newuser.landingpage.learnmore": {
+    "defaultMessage": "Per saperne di più"
+  },
+  "users.newuser.landingpage.signin": {
+    "defaultMessage": "Per favore registrati o accedi per usare Midspace."
+  },
+  "users.newuser.landingpage.welcome": {
+    "defaultMessage": "Benvenuti a Midspace"
+  }
+}

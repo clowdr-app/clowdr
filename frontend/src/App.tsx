@@ -1,6 +1,6 @@
 import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
-import React, { useMemo } from "react";
+import React, { useMemo, Component } from "react";
 import type { RouteComponentProps } from "react-router-dom";
 import { Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
@@ -29,8 +29,23 @@ import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 import { useUXChoice, UXChoice } from "./aspects/UXChoice/UXChoice";
-import { IntlProvider } from 'react-intl'
+import { IntlProvider } from 'react-intl';
+import messages_pt from "./lang-compiled/pt.json";
+import messages_en from "./lang-compiled/en.json";
+import messages_de from "./lang-compiled/de.json";
 
+function loadLocaleData(locale: string) {
+    switch (locale) {
+        case 'pt':
+        case 'pt-br':
+        case 'pt-BR':
+            return messages_pt;
+        case 'de':
+            return messages_de;
+        default:
+            return messages_en;
+    }
+}
 
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
@@ -70,7 +85,7 @@ export default function App(props: any): JSX.Element {
         <IntlProvider
             locale={props.locale}
             defaultLocale="en"
-            messages={props.messages}
+            messages={loadLocaleData(props.locale)}
         >
             <AppSettingsProvider>
                 <ThemeProvider theme={chimeTheme}>

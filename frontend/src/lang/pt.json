@@ -1,23 +1,17 @@
 {
   "signup": {
-    "defaultMessage": "Inscrever-se",
-    "description": "sign up"
+    "defaultMessage": "Inscrever-se"
   },
   "users.newuser.landingpage.description": {
-    "defaultMessage": "Conferências virtuais e híbridas acessíveis.",
-    "description": "description text"
+    "defaultMessage": "Conferências virtuais e híbridas acessíveis."
   },
   "users.newuser.landingpage.learnmore": {
-    "defaultMessage": "Saiba mais",
-    "description": "learn more text"
+    "defaultMessage": "Saiba mais"
   },
   "users.newuser.landingpage.signin": {
-    "defaultMessage": "Cadastre-se ou faça login para usar o Midspace.",
-    "description": "sign in text"
+    "defaultMessage": "Cadastre-se ou faça login para usar o Midspace."
   },
   "users.newuser.landingpage.welcome": {
-    "defaultMessage": "Bem-vindo(a) ao Midspace",
-    "description": "greetings text"
+    "defaultMessage": "Bem-vindo(a) ao Midspace"
   }
 }
-  

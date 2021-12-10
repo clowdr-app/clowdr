@@ -1,0 +1,32 @@
+{
+  "signup": [
+    {
+      "type": 0,
+      "value": "Anmelden"
+    }
+  ],
+  "users.newuser.landingpage.description": [
+    {
+      "type": 0,
+      "value": "Zugängliche virtuelle und hybride Konferenzen."
+    }
+  ],
+  "users.newuser.landingpage.learnmore": [
+    {
+      "type": 0,
+      "value": "Mehr erfahren"
+    }
+  ],
+  "users.newuser.landingpage.signin": [
+    {
+      "type": 0,
+      "value": "Bitte melden Sie sich an oder melden Sie sich an, um Midspace zu nutzen."
+    }
+  ],
+  "users.newuser.landingpage.welcome": [
+    {
+      "type": 0,
+      "value": "Willkommen bei Midspace"
+    }
+  ]
+}

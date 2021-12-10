@@ -22,6 +22,7 @@ import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { FormattedMessage } from "react-intl";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { FAIcon } from "../../Icons/FAIcon";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
@@ -65,8 +66,8 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 description: (
                     <VStack alignItems="flex-start">
                         <Text as="p">
-                            Sorry, your message failed to send. Please try again in a moment. If the error noted below
-                            persists, please contact our technical support.
+                            <FormattedMessage id="chat.compose.chatcompose.sendfailed" defaultMessage="Sorry, your message failed to send. Please try again in a moment. If the error noted below
+                            persists, please contact our technical support." />
                         </Text>
                         <Text as="pre" bgColor={failedToSend_BgColor}>
                             <Code color={failedToSend_TextColor}>{composeCtx.sendError}</Code>

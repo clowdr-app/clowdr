@@ -36,6 +36,7 @@ import { useChatConfiguration } from "../../Configuration";
 import type { MessageData, PollMessageData } from "../../Types/Messages";
 import { useComposeContext } from "../ComposeContext";
 import SendLockoutButton from "../SendLockoutButton";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function CreatePollOptionsModal({
     onCancel,
@@ -54,6 +55,7 @@ export default function CreatePollOptionsModal({
     initialData: MessageData;
     sendFailed: boolean;
 }): JSX.Element {
+    const intl = useIntl();
     const config = useChatConfiguration();
     const compose = useComposeContext();
 
@@ -119,15 +121,26 @@ export default function CreatePollOptionsModal({
                         <VStack spacing={6}>
                             <VStack w="100%" justifyContent="flex-start" alignItems="center">
                                 <Heading as="h2" fontSize="md">
-                                    Your question:
+                                    <FormattedMessage
+                                        id="chat.compose.poll.createpolloptionsmodal.yourquestion"
+                                        defaultMessage="Your question:"
+                                    />
                                 </Heading>
                                 <Text as="p">{compose.newMessage}</Text>
                             </VStack>
                             <FormControl>
-                                <FormLabel>Options</FormLabel>
+                                <FormLabel>
+                                    <FormattedMessage
+                                        id="chat.compose.poll.createpolloptionsmodal.options"
+                                        defaultMessage="Options"
+                                    />
+                                </FormLabel>
                                 <FormHelperText>
-                                    Add or delete options by typing. Press enter when editing any choice to create a new
-                                    option below it. You may also enable registrants to create their own options.
+                                    <FormattedMessage
+                                        id="chat.compose.poll.createpolloptionsmodal.optionshelptext"
+                                        defaultMessage="Add or delete options by typing. Press enter when editing any choice to create a new
+                                        option below it. You may also enable registrants to create their own options."
+                                    />
                                 </FormHelperText>
                                 <OrderedList mt={4} spacing={4}>
                                     {options.map((option, idx) => (

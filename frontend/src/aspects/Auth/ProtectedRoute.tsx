@@ -1,6 +1,7 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { Button, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { FormattedMessage } from "react-intl";
 import type { RouteComponentProps, RouteProps } from "react-router-dom";
 import { Redirect, Route } from "react-router-dom";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
@@ -35,7 +36,10 @@ export default function ProtectedRoute({
             <GenericErrorPage heading="Sorry, an authentication error occurred…">
                 <>
                     <Text fontSize="xl" lineHeight="revert" fontWeight="light">
-                        User account was not found. Please contact tech support if this problem persists.
+                        <FormattedMessage
+                            id="auth.protectedroute.usernotfound"
+                            defaultMessage="User account was not found. Please contact tech support if this problem persists."
+                        />
                     </Text>
                     <Button
                         onClick={() => logout({ returnTo })}
@@ -44,7 +48,10 @@ export default function ProtectedRoute({
                         role="menuitem"
                         aria-label="Log out"
                     >
-                        Log out
+                        <FormattedMessage
+                            id="auth.protectedroute.logout"
+                            defaultMessage="Log out"
+                        />
                     </Button>
                 </>
             </GenericErrorPage>

@@ -20,6 +20,7 @@ import useRoomParticipants from "../../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import MenuButton from "./MenuButton";
 import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query CountSwagBags($conferenceId: uuid!) {
@@ -32,6 +33,7 @@ gql`
 `;
 
 export default function LeftMenu(): JSX.Element {
+    const intl = useIntl();
     const conference = useConference();
     const maybeUser = useMaybeCurrentUser()?.user;
     const maybeRegistrant = useMaybeCurrentRegistrant();
@@ -102,7 +104,7 @@ export default function LeftMenu(): JSX.Element {
         <>
             <Flex flexDir="column" justifyContent="center" alignItems="flex-start" h="100%" bgColor="LeftMenu.600">
                 <MenuButton
-                    label={isExpanded ? "Collapse menu" : "Expand menu"}
+                    label={isExpanded ? intl.formatMessage({ id: 'menu.v2.collapse', defaultMessage: "Collapse menu" }) : intl.formatMessage({ id: 'menu.v2.expand', defaultMessage: "Expand menu" })}
                     iconStyle="s"
                     icon={isExpanded ? ["arrow-left", "grip-lines-vertical"] : ["grip-lines-vertical", "arrow-right"]}
                     borderTopRadius={0}
@@ -122,7 +124,7 @@ export default function LeftMenu(): JSX.Element {
                     m={1.5}
                 />
                 <MenuButton
-                    label="Home"
+                    label= {intl.formatMessage({ id: 'menu.v2.collapse', defaultMessage: "Collapse menu" })}
                     iconStyle="s"
                     icon="home"
                     borderRadius={0}

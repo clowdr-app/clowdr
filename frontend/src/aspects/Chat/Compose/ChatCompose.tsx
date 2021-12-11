@@ -36,6 +36,7 @@ import QuickSendEmote from "./QuickSendEmote";
 import { SendMessageButton } from "./SendMessageButton";
 
 export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
+    const intl = useIntl();
     const config = useChatConfiguration();
     const cappedSpacing = Math.min(config.spacing, ChatSpacing.COMFORTABLE);
 
@@ -66,7 +67,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 description: (
                     <VStack alignItems="flex-start">
                         <Text as="p">
-                            <FormattedMessage id="chat.compose.chatcompose.sendfailed" defaultMessage="Sorry, your message failed to send. Please try again in a moment. If the error noted below
+                            <FormattedMessage id="chat.compose.chatcompose.sendfailedmessage" defaultMessage="Sorry, your message failed to send. Please try again in a moment. If the error noted below
                             persists, please contact our technical support." />
                         </Text>
                         <Text as="pre" bgColor={failedToSend_BgColor}>
@@ -77,7 +78,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 isClosable: true,
                 position: "bottom-right",
                 status: "error",
-                title: "Failed to send",
+                title: intl.formatMessage({ id: 'chat.compose.chatcompose.sendfailedtitle', defaultMessage: "Failed to send" }),
             });
             setSendFailed(toastId ?? null);
             setTimeout(() => {
@@ -176,8 +177,9 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
             for (const invalidFile of invalidFiles) {
                 toast({
                     status: "error",
-                    description:
-                        "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_",
+                    description: intl.formatMessage({ id: 'chat.compose.chatcompose.invalidfilename', defaultMessage:
+                        "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_"
+                    }),
                 });
                 uppy.removeFile(invalidFile.id);
             }
@@ -194,7 +196,9 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                     console.error("Failed to upload file", e);
                     toast({
                         status: "error",
-                        description: "Failed to upload file. Please try again.",
+                        description: intl.formatMessage({ id: 'chat.compose.chatcompose.uploadfailed',
+                            defaultMessage: "Failed to upload file. Please try again later."
+                        }),
                     });
                     uppy.reset();
                     composeCtx.setFile(null);
@@ -205,7 +209,9 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                     console.error("Failed to upload file", result.failed);
                     toast({
                         status: "error",
-                        description: "Failed to upload file. Please try again later.",
+                        description: intl.formatMessage({ id: 'chat.compose.chatcompose.uploadfailed',
+                            defaultMessage: "Failed to upload file. Please try again."
+                        }),
                     });
                     uppy.reset();
                     composeCtx.setFile(null);

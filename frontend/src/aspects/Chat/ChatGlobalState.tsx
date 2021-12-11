@@ -1255,7 +1255,7 @@ export class GlobalChatState {
                 if (!this.hasTorndown) {
                     this.offSocketAvailable?.();
                     this.offSocketUnavailable?.();
-                    this.offSocketAvailable = realtimeService.onSocketAvailable((socket) => {
+                    this.offSocketAvailable = realtimeService.onSocketAvailable("ChatGlobalState.init", (socket) => {
                         this.socket = socket;
 
                         datadogLogs.logger.info("Connection to chat established.");
@@ -1473,9 +1473,12 @@ export class GlobalChatState {
                             }
                         }
                     });
-                    this.offSocketUnavailable = realtimeService.onSocketUnavailable((socket) => {
-                        this.offSocketEvents(socket, true);
-                    });
+                    this.offSocketUnavailable = realtimeService.onSocketUnavailable(
+                        "ChatGlobalState.init",
+                        (socket) => {
+                            this.offSocketEvents(socket, true);
+                        }
+                    );
 
                     const initialData = await this.apolloClient.query<
                         InitialChatStateQuery,

@@ -1,4 +1,4 @@
-import type { TagProps} from "@chakra-ui/react";
+import type { TagProps } from "@chakra-ui/react";
 import { chakra, Tag, Tooltip } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
@@ -19,6 +19,10 @@ export function MessageTypeIndicator({
                 return { indicator: <FAIcon iconStyle="s" icon="check-circle" />, name: "Answer" };
             case Chat_MessageType_Enum.Poll:
                 return { indicator: <FAIcon iconStyle="s" icon="poll" />, name: "Poll" };
+            case Chat_MessageType_Enum.EventStart:
+                return { indicator: <FAIcon iconStyle="s" icon="calendar" />, name: "Event start" };
+            case Chat_MessageType_Enum.ParticipationSurvey:
+                return { indicator: <FAIcon iconStyle="s" icon="calendar-check" />, name: "Participation survey" };
             default:
                 return {
                     indicator: <FAIcon iconStyle="s" icon="exclamation-circle" />,

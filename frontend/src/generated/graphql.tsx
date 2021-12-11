@@ -801,6 +801,11 @@ export type NotifyEventEnded = {
   readonly ok: Scalars['Boolean'];
 };
 
+export type NotifyEventStarted = {
+  readonly __typename?: 'NotifyEventStarted';
+  readonly ok: Scalars['Boolean'];
+};
+
 export type PresenceFlushOutput = {
   readonly __typename?: 'PresenceFlushOutput';
   readonly ok?: Maybe<Scalars['String']>;
@@ -4497,7 +4502,9 @@ export enum Chat_MessageType_Enum {
   Answer = 'ANSWER',
   DuplicationMarker = 'DUPLICATION_MARKER',
   Emote = 'EMOTE',
+  EventStart = 'EVENT_START',
   Message = 'MESSAGE',
+  ParticipationSurvey = 'PARTICIPATION_SURVEY',
   Poll = 'POLL',
   PollResults = 'POLL_RESULTS',
   Question = 'QUESTION'
@@ -5257,6 +5264,8 @@ export enum Chat_ReactionType_Enum {
   Answer = 'ANSWER',
   /** A plain emoji reaction */
   Emoji = 'EMOJI',
+  /** Responding to an event participation survey. */
+  EventParticipation = 'EVENT_PARTICIPATION',
   /** A vote in a poll */
   PollChoice = 'POLL_CHOICE',
   /** Stop accepting new responses to the poll */
@@ -16398,6 +16407,7 @@ export type Mutation_Root = {
   readonly joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
   readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
   readonly notifyEventEnded: NotifyEventEnded;
+  readonly notifyEventStarted: NotifyEventStarted;
   readonly presence_Flush: PresenceFlushOutput;
   readonly refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
   readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
@@ -19370,6 +19380,12 @@ export type Mutation_RootJoinRoomVonageSessionArgs = {
 
 /** mutation root */
 export type Mutation_RootNotifyEventEndedArgs = {
+  eventId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootNotifyEventStartedArgs = {
   eventId: Scalars['uuid'];
 };
 
@@ -30959,6 +30975,7 @@ export type Schedule_Continuation_Variance_Order_By = {
 /** columns and relationships of "schedule.Event" */
 export type Schedule_Event = {
   readonly __typename?: 'schedule_Event';
+  readonly automaticParticipationSurvey: Scalars['Boolean'];
   /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -31667,6 +31684,7 @@ export type Schedule_Event_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
   readonly _not?: Maybe<Schedule_Event_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
+  readonly automaticParticipationSurvey?: Maybe<Boolean_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly continuations?: Maybe<Schedule_Continuation_Bool_Exp>;
@@ -31710,6 +31728,7 @@ export type Schedule_Event_Inc_Input = {
 
 /** input type for inserting data into table "schedule.Event" */
 export type Schedule_Event_Insert_Input = {
+  readonly automaticParticipationSurvey?: Maybe<Scalars['Boolean']>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly continuations?: Maybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
@@ -31843,6 +31862,7 @@ export type Schedule_Event_On_Conflict = {
 
 /** Ordering options when selecting data from "schedule.Event". */
 export type Schedule_Event_Order_By = {
+  readonly automaticParticipationSurvey?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly continuations_aggregate?: Maybe<Schedule_Continuation_Aggregate_Order_By>;
@@ -31881,6 +31901,8 @@ export type Schedule_Event_Pk_Columns_Input = {
 /** select columns of table "schedule.Event" */
 export enum Schedule_Event_Select_Column {
   /** column name */
+  AutomaticParticipationSurvey = 'automaticParticipationSurvey',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'createdAt',
@@ -31918,6 +31940,7 @@ export enum Schedule_Event_Select_Column {
 
 /** input type for updating data in table "schedule.Event" */
 export type Schedule_Event_Set_Input = {
+  readonly automaticParticipationSurvey?: Maybe<Scalars['Boolean']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
@@ -31983,6 +32006,8 @@ export type Schedule_Event_Sum_Order_By = {
 
 /** update columns of table "schedule.Event" */
 export enum Schedule_Event_Update_Column {
+  /** column name */
+  AutomaticParticipationSurvey = 'automaticParticipationSurvey',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -41480,10 +41505,11 @@ export type InsertEventInfoMutationVariables = Exact<{
   shufflePeriodId?: Maybe<Scalars['uuid']>;
   insertContinuation: Scalars['Boolean'];
   enableRecording: Scalars['Boolean'];
+  automaticParticipationSurvey: Scalars['Boolean'];
 }>;
 
 
-export type InsertEventInfoMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
+export type InsertEventInfoMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly automaticParticipationSurvey: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
 
 export type UpdateEventInfoMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -41497,10 +41523,11 @@ export type UpdateEventInfoMutationVariables = Exact<{
   exhibitionId?: Maybe<Scalars['uuid']>;
   shufflePeriodId?: Maybe<Scalars['uuid']>;
   enableRecording: Scalars['Boolean'];
+  automaticParticipationSurvey: Scalars['Boolean'];
 }>;
 
 
-export type UpdateEventInfoMutation = { readonly __typename?: 'mutation_root', readonly update_schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }> };
+export type UpdateEventInfoMutation = { readonly __typename?: 'mutation_root', readonly update_schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly automaticParticipationSurvey: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }> };
 
 export type DeleteEventInfosMutationVariables = Exact<{
   eventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -41511,7 +41538,7 @@ export type DeleteEventInfosMutation = { readonly __typename?: 'mutation_root', 
 
 export type RoomInfoFragment = { readonly __typename?: 'room_Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: Room_Mode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> };
 
-export type EventInfoFragment = { readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> };
+export type EventInfoFragment = { readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly automaticParticipationSurvey: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> };
 
 export type EventProgramPersonInfoFragment = { readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any };
 
@@ -41522,7 +41549,7 @@ export type SelectWholeScheduleQueryVariables = Exact<{
 }>;
 
 
-export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: Room_Mode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly conference_OriginatingData: ReadonlyArray<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number }>, readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number, readonly isHidden: boolean }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly conferenceId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly conferenceId: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly collection_ProgramPersonWithAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly conferenceId?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> }> };
+export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: Room_Mode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly automaticParticipationSurvey: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly conference_OriginatingData: ReadonlyArray<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number }>, readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number, readonly isHidden: boolean }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly conferenceId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly conferenceId: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly collection_ProgramPersonWithAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly conferenceId?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> }> };
 
 export type InsertRoomsMutationVariables = Exact<{
   newRooms: ReadonlyArray<Room_Room_Insert_Input> | Room_Room_Insert_Input;
@@ -41563,7 +41590,7 @@ export type InsertEventMutationVariables = Exact<{
 }>;
 
 
-export type InsertEventMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
+export type InsertEventMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly automaticParticipationSurvey: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
 
 export type UpdateEventMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -41580,7 +41607,7 @@ export type UpdateEventMutationVariables = Exact<{
 }>;
 
 
-export type UpdateEventMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_EventTag?: Maybe<{ readonly __typename?: 'schedule_EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly update_schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly delete_schedule_EventTag?: Maybe<{ readonly __typename?: 'schedule_EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly id: any }> }> };
+export type UpdateEventMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_EventTag?: Maybe<{ readonly __typename?: 'schedule_EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly update_schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly automaticParticipationSurvey: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly delete_schedule_EventTag?: Maybe<{ readonly __typename?: 'schedule_EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly id: any }> }> };
 
 export type UpdateShufflePeriodMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -43572,6 +43599,7 @@ export const EventInfoFragmentDoc = gql`
   exhibitionId
   shufflePeriodId
   enableRecording
+  automaticParticipationSurvey
 }
     ${EventProgramPersonInfoFragmentDoc}
 ${EventTagInfoFragmentDoc}`;
@@ -53425,9 +53453,9 @@ export type ManageSchedule_ShufflePeriodsQueryHookResult = ReturnType<typeof use
 export type ManageSchedule_ShufflePeriodsLazyQueryHookResult = ReturnType<typeof useManageSchedule_ShufflePeriodsLazyQuery>;
 export type ManageSchedule_ShufflePeriodsQueryResult = Apollo.QueryResult<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>;
 export const InsertEventInfoDocument = gql`
-    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $insertContinuation: Boolean!, $enableRecording: Boolean!) {
+    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $insertContinuation: Boolean!, $enableRecording: Boolean!, $automaticParticipationSurvey: Boolean!) {
   insert_schedule_Event_one(
-    object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId, enableRecording: $enableRecording}
+    object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId, enableRecording: $enableRecording, automaticParticipationSurvey: $automaticParticipationSurvey}
   ) {
     ...EventInfo
   }
@@ -53466,6 +53494,7 @@ export type InsertEventInfoMutationFn = Apollo.MutationFunction<InsertEventInfoM
  *      shufflePeriodId: // value for 'shufflePeriodId'
  *      insertContinuation: // value for 'insertContinuation'
  *      enableRecording: // value for 'enableRecording'
+ *      automaticParticipationSurvey: // value for 'automaticParticipationSurvey'
  *   },
  * });
  */
@@ -53477,10 +53506,10 @@ export type InsertEventInfoMutationHookResult = ReturnType<typeof useInsertEvent
 export type InsertEventInfoMutationResult = Apollo.MutationResult<InsertEventInfoMutation>;
 export type InsertEventInfoMutationOptions = Apollo.BaseMutationOptions<InsertEventInfoMutation, InsertEventInfoMutationVariables>;
 export const UpdateEventInfoDocument = gql`
-    mutation UpdateEventInfo($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $enableRecording: Boolean!) {
+    mutation UpdateEventInfo($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $enableRecording: Boolean!, $automaticParticipationSurvey: Boolean!) {
   update_schedule_Event_by_pk(
     pk_columns: {id: $eventId}
-    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId, enableRecording: $enableRecording}
+    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId, enableRecording: $enableRecording, automaticParticipationSurvey: $automaticParticipationSurvey}
   ) {
     ...EventInfo
   }
@@ -53512,6 +53541,7 @@ export type UpdateEventInfoMutationFn = Apollo.MutationFunction<UpdateEventInfoM
  *      exhibitionId: // value for 'exhibitionId'
  *      shufflePeriodId: // value for 'shufflePeriodId'
  *      enableRecording: // value for 'enableRecording'
+ *      automaticParticipationSurvey: // value for 'automaticParticipationSurvey'
  *   },
  * });
  */

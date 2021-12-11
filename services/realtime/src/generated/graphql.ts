@@ -795,6 +795,11 @@ export type NotifyEventEnded = {
     ok: Scalars["Boolean"];
 };
 
+export type NotifyEventStarted = {
+    __typename?: "NotifyEventStarted";
+    ok: Scalars["Boolean"];
+};
+
 export type PresenceFlushOutput = {
     __typename?: "PresenceFlushOutput";
     ok?: Maybe<Scalars["String"]>;
@@ -2386,6 +2391,8 @@ export type Analytics_ContentItemStats_Variance_Order_By = {
 /** columns and relationships of "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews = {
     __typename?: "analytics_ElementTotalViews";
+    /** An object relationship */
+    element?: Maybe<Content_Element>;
     elementId: Scalars["uuid"];
     totalViewCount: Scalars["bigint"];
 };
@@ -2430,6 +2437,7 @@ export type Analytics_ElementTotalViews_Bool_Exp = {
     _and?: Maybe<Array<Analytics_ElementTotalViews_Bool_Exp>>;
     _not?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
     _or?: Maybe<Array<Analytics_ElementTotalViews_Bool_Exp>>;
+    element?: Maybe<Content_Element_Bool_Exp>;
     elementId?: Maybe<Uuid_Comparison_Exp>;
     totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
@@ -2447,6 +2455,7 @@ export type Analytics_ElementTotalViews_Inc_Input = {
 
 /** input type for inserting data into table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Insert_Input = {
+    element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
     elementId?: Maybe<Scalars["uuid"]>;
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
@@ -2490,6 +2499,7 @@ export type Analytics_ElementTotalViews_On_Conflict = {
 
 /** Ordering options when selecting data from "analytics.ElementTotalViews". */
 export type Analytics_ElementTotalViews_Order_By = {
+    element?: Maybe<Content_Element_Order_By>;
     elementId?: Maybe<Order_By>;
     totalViewCount?: Maybe<Order_By>;
 };
@@ -2566,6 +2576,8 @@ export type Analytics_ElementTotalViews_Variance_Fields = {
 /** columns and relationships of "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews = {
     __typename?: "analytics_ItemTotalViews";
+    /** An object relationship */
+    item?: Maybe<Content_Item>;
     itemId: Scalars["uuid"];
     totalViewCount: Scalars["bigint"];
 };
@@ -2610,6 +2622,7 @@ export type Analytics_ItemTotalViews_Bool_Exp = {
     _and?: Maybe<Array<Analytics_ItemTotalViews_Bool_Exp>>;
     _not?: Maybe<Analytics_ItemTotalViews_Bool_Exp>;
     _or?: Maybe<Array<Analytics_ItemTotalViews_Bool_Exp>>;
+    item?: Maybe<Content_Item_Bool_Exp>;
     itemId?: Maybe<Uuid_Comparison_Exp>;
     totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
@@ -2627,6 +2640,7 @@ export type Analytics_ItemTotalViews_Inc_Input = {
 
 /** input type for inserting data into table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Insert_Input = {
+    item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
     itemId?: Maybe<Scalars["uuid"]>;
     totalViewCount?: Maybe<Scalars["bigint"]>;
 };
@@ -2670,6 +2684,7 @@ export type Analytics_ItemTotalViews_On_Conflict = {
 
 /** Ordering options when selecting data from "analytics.ItemTotalViews". */
 export type Analytics_ItemTotalViews_Order_By = {
+    item?: Maybe<Content_Item_Order_By>;
     itemId?: Maybe<Order_By>;
     totalViewCount?: Maybe<Order_By>;
 };
@@ -2749,6 +2764,8 @@ export type Analytics_RoomPresence = {
     count: Scalars["bigint"];
     created_at: Scalars["timestamptz"];
     id: Scalars["uuid"];
+    /** An object relationship */
+    room: Room_Room;
     roomId: Scalars["uuid"];
 };
 
@@ -2822,6 +2839,7 @@ export type Analytics_RoomPresence_Bool_Exp = {
     count?: Maybe<Bigint_Comparison_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
+    room?: Maybe<Room_Room_Bool_Exp>;
     roomId?: Maybe<Uuid_Comparison_Exp>;
 };
 
@@ -2843,6 +2861,7 @@ export type Analytics_RoomPresence_Insert_Input = {
     count?: Maybe<Scalars["bigint"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
+    room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: Maybe<Scalars["uuid"]>;
 };
 
@@ -2901,6 +2920,7 @@ export type Analytics_RoomPresence_Order_By = {
     count?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    room?: Maybe<Room_Room_Order_By>;
     roomId?: Maybe<Order_By>;
 };
 
@@ -4421,7 +4441,9 @@ export enum Chat_MessageType_Enum {
     Answer = "ANSWER",
     DuplicationMarker = "DUPLICATION_MARKER",
     Emote = "EMOTE",
+    EventStart = "EVENT_START",
     Message = "MESSAGE",
+    ParticipationSurvey = "PARTICIPATION_SURVEY",
     Poll = "POLL",
     PollResults = "POLL_RESULTS",
     Question = "QUESTION",
@@ -5174,6 +5196,8 @@ export enum Chat_ReactionType_Enum {
     Answer = "ANSWER",
     /** A plain emoji reaction */
     Emoji = "EMOJI",
+    /** Responding to an event participation survey. */
+    EventParticipation = "EVENT_PARTICIPATION",
     /** A vote in a poll */
     PollChoice = "POLL_CHOICE",
     /** Stop accepting new responses to the poll */
@@ -16172,6 +16196,7 @@ export type Mutation_Root = {
     joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
     notifyEventEnded: NotifyEventEnded;
+    notifyEventStarted: NotifyEventStarted;
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
@@ -18746,6 +18771,11 @@ export type Mutation_RootJoinRoomVonageSessionArgs = {
 
 /** mutation root */
 export type Mutation_RootNotifyEventEndedArgs = {
+    eventId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootNotifyEventStartedArgs = {
     eventId: Scalars["uuid"];
 };
 
@@ -29734,6 +29764,7 @@ export type Schedule_Continuation_Variance_Order_By = {
 /** columns and relationships of "schedule.Event" */
 export type Schedule_Event = {
     __typename?: "schedule_Event";
+    automaticParticipationSurvey: Scalars["Boolean"];
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
@@ -30430,6 +30461,7 @@ export type Schedule_Event_Bool_Exp = {
     _and?: Maybe<Array<Schedule_Event_Bool_Exp>>;
     _not?: Maybe<Schedule_Event_Bool_Exp>;
     _or?: Maybe<Array<Schedule_Event_Bool_Exp>>;
+    automaticParticipationSurvey?: Maybe<Boolean_Comparison_Exp>;
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     continuations?: Maybe<Schedule_Continuation_Bool_Exp>;
@@ -30473,6 +30505,7 @@ export type Schedule_Event_Inc_Input = {
 
 /** input type for inserting data into table "schedule.Event" */
 export type Schedule_Event_Insert_Input = {
+    automaticParticipationSurvey?: Maybe<Scalars["Boolean"]>;
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     continuations?: Maybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
@@ -30606,6 +30639,7 @@ export type Schedule_Event_On_Conflict = {
 
 /** Ordering options when selecting data from "schedule.Event". */
 export type Schedule_Event_Order_By = {
+    automaticParticipationSurvey?: Maybe<Order_By>;
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     continuations_aggregate?: Maybe<Schedule_Continuation_Aggregate_Order_By>;
@@ -30644,6 +30678,8 @@ export type Schedule_Event_Pk_Columns_Input = {
 /** select columns of table "schedule.Event" */
 export enum Schedule_Event_Select_Column {
     /** column name */
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
+    /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "createdAt",
@@ -30681,6 +30717,7 @@ export enum Schedule_Event_Select_Column {
 
 /** input type for updating data in table "schedule.Event" */
 export type Schedule_Event_Set_Input = {
+    automaticParticipationSurvey?: Maybe<Scalars["Boolean"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     durationSeconds?: Maybe<Scalars["Int"]>;
@@ -30746,6 +30783,8 @@ export type Schedule_Event_Sum_Order_By = {
 
 /** update columns of table "schedule.Event" */
 export enum Schedule_Event_Update_Column {
+    /** column name */
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -37866,6 +37905,22 @@ export type FlagInserted_GetModeratorsQuery = { __typename?: "query_root" } & {
     >;
 };
 
+export type GetEventQueryVariables = Exact<{
+    id: Scalars["uuid"];
+}>;
+
+export type GetEventQuery = { __typename?: "query_root" } & {
+    schedule_Event_by_pk?: Maybe<
+        { __typename?: "schedule_Event" } & Pick<
+            Schedule_Event,
+            "id" | "startTime" | "durationSeconds" | "roomId" | "name" | "automaticParticipationSurvey"
+        > & {
+                item?: Maybe<{ __typename?: "content_Item" } & Pick<Content_Item, "id" | "title">>;
+                room: { __typename?: "room_Room" } & Pick<Room_Room, "id" | "name" | "chatId">;
+            }
+    >;
+};
+
 export type ChatInfoQueryVariables = Exact<{
     chatId: Scalars["uuid"];
 }>;
@@ -38604,6 +38659,73 @@ export const FlagInserted_GetModeratorsDocument = {
         },
     ],
 } as unknown as DocumentNode<FlagInserted_GetModeratorsQuery, FlagInserted_GetModeratorsQueryVariables>;
+export const GetEventDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetEvent" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "schedule_Event_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "startTime" } },
+                                { kind: "Field", name: { kind: "Name", value: "durationSeconds" } },
+                                { kind: "Field", name: { kind: "Name", value: "roomId" } },
+                                { kind: "Field", name: { kind: "Name", value: "name" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "item" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "title" } },
+                                        ],
+                                    },
+                                },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "room" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "name" } },
+                                            { kind: "Field", name: { kind: "Name", value: "chatId" } },
+                                        ],
+                                    },
+                                },
+                                { kind: "Field", name: { kind: "Name", value: "automaticParticipationSurvey" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<GetEventQuery, GetEventQueryVariables>;
 export const ChatInfoDocument = {
     kind: "Document",
     definitions: [

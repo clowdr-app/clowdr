@@ -80,3 +80,7 @@ export interface PushNotificationSubscription {
 export interface EventEndedNotification {
     eventId: string;
 }
+
+export interface EventStartedNotification {
+    eventId: string;
+}

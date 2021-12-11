@@ -85,8 +85,14 @@ export default function AppPageV1(): JSX.Element {
         [leftVisible, onRightBarOpen, rightVisible]
     );
 
+    const centerBgColour = useColorModeValue(
+        "AppPageV1.centerColumnBackground-light",
+        "AppPageV1.centerColumnBackground-light"
+    );
+
     const leftBar = confSlug ? (
         <Box
+            bgColor={centerBgColour}
             overflow="hidden"
             height="100%"
             width={centerVisible ? leftSidebarWidthPc + "%" : "100%"}
@@ -94,12 +100,17 @@ export default function AppPageV1(): JSX.Element {
             flex="1 0 300px"
             mb="auto"
             display={leftVisible ? "flex" : "none"}
+            position={centerVisible ? undefined : "absolute"}
+            top={centerVisible ? undefined : 0}
+            left={centerVisible ? undefined : 0}
+            zIndex={1}
         >
             {left}
         </Box>
     ) : undefined;
     const rightBar = confSlug ? (
         <Box
+            bgColor={centerBgColour}
             overflow="hidden"
             height="100%"
             width={centerVisible ? rightSidebarWidthPc + "%" : "100%"}
@@ -108,6 +119,10 @@ export default function AppPageV1(): JSX.Element {
             mb="auto"
             ml="auto"
             display={rightVisible ? "flex" : "none"}
+            position={centerVisible ? undefined : "absolute"}
+            top={centerVisible ? undefined : 0}
+            left={centerVisible ? undefined : 0}
+            zIndex={1}
         >
             {right}
         </Box>
@@ -119,10 +134,6 @@ export default function AppPageV1(): JSX.Element {
     ]);
     const isSchedulePage = locationMatchSchedule !== null;
 
-    const centerBgColour = useColorModeValue(
-        "AppPageV1.centerColumnBackground-light",
-        "AppPageV1.centerColumnBackground-light"
-    );
     const borderColour = useColorModeValue("AppPageV1.centerColumnBorders-light", "AppPageV1.centerColumnBorders-dark");
     const centerBar = (
         <Box
@@ -133,13 +144,15 @@ export default function AppPageV1(): JSX.Element {
             flex="1 0 300px"
             mb="auto"
             position={centerVisible ? "relative" : "absolute"}
-            top={centerVisible ? undefined : "-100%"}
+            top={centerVisible ? undefined : 0}
+            left={centerVisible ? undefined : 0}
             bgColor={centerBgColour}
             borderX="1px solid"
             borderLeftColor={borderColour}
             borderRightColor={borderColour}
             display={isSchedulePage ? "flex" : undefined}
             flexDir={isSchedulePage ? "column" : undefined}
+            zIndex={0}
         >
             <MenuBar />
             <VStack
@@ -173,6 +186,9 @@ export default function AppPageV1(): JSX.Element {
             direction="column-reverse"
             justifyContent="center"
             alignItems="center"
+            position="fixed"
+            top={0}
+            left={0}
         >
             <MainMenu state={mainMenuState}>
                 <Flex w="100%" h="100%" overflow="hidden">

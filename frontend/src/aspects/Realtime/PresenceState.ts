@@ -10,7 +10,7 @@ export class PresenceState {
         this.offSocketAvailable?.();
         this.offSocketUnavailable?.();
 
-        this.offSocketAvailable = realtimeService.onSocketAvailable((socket) => {
+        this.offSocketAvailable = realtimeService.onSocketAvailable("PresenceState.setup", (socket) => {
             socket.on("entered", this.onEntered.bind(this));
             socket.on("left", this.onLeft.bind(this));
             socket.on("presences", this.onListPresent.bind(this));
@@ -18,7 +18,7 @@ export class PresenceState {
             this.pageChanged(window.location.pathname);
         });
         this.offSocketUnavailable =
-            realtimeService.onSocketUnavailable((socket) => {
+            realtimeService.onSocketUnavailable("PresenceState.setup", (socket) => {
                 socket.off("entered");
                 socket.off("left");
                 socket.off("presences");

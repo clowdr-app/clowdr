@@ -1,4 +1,240 @@
 {
+  "auth.emailverificationrequiredpage.emailinstructions": [
+  ],
+  "auth.emailverificationrequiredpage.emailverified": [
+    {
+      "type": 0,
+      "value": "Seu email foi verificado. Agora você pode fazer o login."
+    }
+  ],
+  "auth.emailverificationrequiredpage.pleaseverify": [
+    {
+      "type": 0,
+      "value": "por favor verifique seu endereço de email"
+    }
+  ],
+  "auth.emailverificationrequiredpage.title": [
+    {
+      "type": 0,
+      "value": "Verificação de e-mail necessária"
+    }
+  ],
+  "auth.emailverificationrequiredpage.youcanclose": [
+    {
+      "type": 0,
+      "value": "Agora você pode fechar esta página enquanto espera pelo seu e-mail de verificação."
+    }
+  ],
+  "auth.loggedoutpage.loadinguserinfo": [
+    {
+      "type": 0,
+      "value": "Carregando informações do usuário"
+    }
+  ],
+  "auth.loggedoutpage.loggedout": [
+    {
+      "type": 0,
+      "value": "Você foi desconectado."
+    }
+  ],
+  "auth.loggedoutpage.title": [
+    {
+      "type": 0,
+      "value": "Desconectado"
+    }
+  ],
+  "auth.passwordresetresultpage.passwordreset": [
+    {
+      "type": 0,
+      "value": "Sua senha foi redefinida"
+    }
+  ],
+  "auth.passwordresetresultpage.statusunknown": [
+    {
+      "type": 0,
+      "value": "Redefinição de senha - status desconhecido"
+    }
+  ],
+  "auth.protectedroute.logout": [
+    {
+      "type": 0,
+      "value": "Sair"
+    }
+  ],
+  "auth.protectedroute.usernotfound": [
+    {
+      "type": 0,
+      "value": "A conta do usuário não foi encontrada. Entre em contato com o suporte técnico se o problema persistir."
+    }
+  ],
+  "badges.badgeinput.badgenotfound": [
+    {
+      "type": 0,
+      "value": "Erro! Não foi possível encontrar o emblema"
+    }
+  ],
+  "badges.badgeinput.badges": [
+    {
+      "type": 0,
+      "value": "Distintivos"
+    }
+  ],
+  "badges.badgeinput.createbadges": [
+    {
+      "type": 0,
+      "value": "Crie emblemas digitando, pressione Enter e selecione uma cor."
+    }
+  ],
+  "badges.badgeinput.delete": [
+    {
+      "type": 0,
+      "value": "Exclua os emblemas clicando neles."
+    }
+  ],
+  "badges.badgeinput.done": [
+    {
+      "type": 0,
+      "value": "Feito"
+    }
+  ],
+  "badges.badgeinput.example01": [
+    {
+      "type": 0,
+      "value": "Autor"
+    }
+  ],
+  "badges.badgeinput.example02": [
+    {
+      "type": 0,
+      "value": "voluntário"
+    }
+  ],
+  "badges.badgeinput.example03": [
+    {
+      "type": 0,
+      "value": "Mentor"
+    }
+  ],
+  "badges.badgeinput.example04": [
+    {
+      "type": 0,
+      "value": "Mentee"
+    }
+  ],
+  "badges.badgeinput.example05": [
+    {
+      "type": 0,
+      "value": "Patrocinador"
+    }
+  ],
+  "badges.badgeinput.example06": [
+    {
+      "type": 0,
+      "value": "Contratando"
+    }
+  ],
+  "badges.badgeinput.example07": [
+    {
+      "type": 0,
+      "value": "Contrate-me"
+    }
+  ],
+  "badges.badgeinput.example08": [
+    {
+      "type": 0,
+      "value": "Vamos conversar!"
+    }
+  ],
+  "badges.badgeinput.example09": [
+    {
+      "type": 0,
+      "value": "Café?"
+    }
+  ],
+  "badges.badgeinput.example10": [
+    {
+      "type": 0,
+      "value": "organizador"
+    }
+  ],
+  "badges.badgeinput.examples": [
+    {
+      "type": 0,
+      "value": "Exemplos (clique para adicionar)"
+    }
+  ],
+  "badges.badgeinput.maxlength": [
+    {
+      "type": 0,
+      "value": "Comprimento máximo de 10 caracteres."
+    }
+  ],
+  "badges.badgeinput.selectcolour": [
+    {
+      "type": 0,
+      "value": "Selecione a cor do emblema"
+    }
+  ],
+  "badges.badgeinput.selectedbadges": [
+    {
+      "type": 0,
+      "value": "Selos selecionados"
+    }
+  ],
+  "chat.compose.chatcompose.invalidfilename": [
+    {
+      "type": 0,
+      "value": "Nome de arquivo inválido. Os nomes dos arquivos devem conter apenas letras, números, espaços e os seguintes caracteres especiais:! * '() -_"
+    }
+  ],
+  "chat.compose.chatcompose.sendfailedmessage": [
+    {
+      "type": 0,
+      "value": "Desculpe, sua mensagem falhou ao enviar. Por favor, tente novamente em alguns instantes. Se o erro observado abaixo persistir, entre em contato com nosso suporte técnico."
+    }
+  ],
+  "chat.compose.chatcompose.sendfailedtitle": [
+    {
+      "type": 0,
+      "value": "Falha ao enviar"
+    }
+  ],
+  "chat.compose.chatcompose.uploadfailed": [
+    {
+      "type": 0,
+      "value": "Falha ao fazer upload do arquivo. Por favor, tente novamente mais tarde."
+    }
+  ],
+  "chat.compose.poll.createpolloptionsmodal.options": [
+    {
+      "type": 0,
+      "value": "Opções"
+    }
+  ],
+  "chat.compose.poll.createpolloptionsmodal.optionshelptext": [
+    {
+      "type": 0,
+      "value": "Adicione ou exclua opções digitando. Pressione Enter ao editar qualquer escolha para criar uma nova opção abaixo dela. Você também pode permitir que os registrantes criem suas próprias opções."
+    }
+  ],
+  "chat.compose.poll.createpolloptionsmodal.yourquestion": [
+    {
+      "type": 0,
+      "value": "Sua pergunta:"
+    }
+  ],
+  "menu.v2.collapse": [
+    {
+      "type": 0,
+      "value": "Recolher Menu"
+    }
+  ],
+  "menu.v2.expand": [
+    {
+      "type": 0,
+      "value": "Expandir Menu"
+    }
+  ],
   "signup": [
     {
       "type": 0,
@@ -27,6 +263,54 @@
     {
       "type": 0,
       "value": "Bem-vindo(a) ao Midspace"
+    }
+  ],
+  "uxchoice.uxchoicedialog.buttonmsg": [
+    {
+      "type": 0,
+      "value": "Você pode mudar de ideia a qualquer momento usando o botão 'Alternar UI' no menu Perfil."
+    }
+  ],
+  "uxchoice.uxchoicedialog.changedyourmind": [
+    {
+      "type": 0,
+      "value": "Mudou sua mente? Sem problemas!"
+    }
+  ],
+  "uxchoice.uxchoicedialog.newxp": [
+    {
+      "type": 0,
+      "value": "Use a nova experiência"
+    }
+  ],
+  "uxchoice.uxchoicedialog.oldxp": [
+    {
+      "type": 0,
+      "value": "Fique com o velho"
+    }
+  ],
+  "uxchoice.uxchoicedialog.quickchoice": [
+    {
+      "type": 0,
+      "value": "Olá, temos uma escolha rápida para você ..."
+    }
+  ],
+  "uxchoice.uxchoicedialog.welcome1": [
+    {
+      "type": 0,
+      "value": "Novo no Midspace? Recomendamos nossa nova experiência mais simples"
+    }
+  ],
+  "uxchoice.uxchoicedialog.welcome2": [
+    {
+      "type": 0,
+      "value": "Todos os mesmos recursos, apenas mais fáceis de navegar."
+    }
+  ],
+  "uxchoice.uxchoicedialog.welcome3": [
+    {
+      "type": 0,
+      "value": "Usou o Midspace recentemente e prefere ficar com a versão antiga?"
     }
   ]
 }

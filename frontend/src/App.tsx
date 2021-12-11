@@ -29,23 +29,6 @@ import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 import { useUXChoice, UXChoice } from "./aspects/UXChoice/UXChoice";
-import { IntlProvider } from 'react-intl';
-import messages_pt from "./lang-compiled/pt.json";
-import messages_en from "./lang-compiled/en.json";
-import messages_de from "./lang-compiled/de.json";
-
-function loadLocaleData(locale: string) {
-    switch (locale) {
-        case 'pt':
-        case 'pt-br':
-        case 'pt-BR':
-            return messages_pt;
-        case 'de':
-            return messages_de;
-        default:
-            return messages_en;
-    }
-}
 
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
@@ -82,17 +65,11 @@ export default function App(props: any): JSX.Element {
     );
 
     return (
-        <IntlProvider
-            locale={props.locale}
-            defaultLocale="en"
-            messages={loadLocaleData(props.locale)}
-        >
-            <AppSettingsProvider>
-                <ThemeProvider theme={chimeTheme}>
-                    <MeetingProvider>{routed}</MeetingProvider>
-                </ThemeProvider>
-            </AppSettingsProvider>
-        </IntlProvider>
+        <AppSettingsProvider>
+            <ThemeProvider theme={chimeTheme}>
+                <MeetingProvider>{routed}</MeetingProvider>
+            </ThemeProvider>
+        </AppSettingsProvider>
     );
 }
 

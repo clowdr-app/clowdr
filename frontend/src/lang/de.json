@@ -1,4 +1,124 @@
 {
+  "auth.emailverificationrequiredpage.emailinstructions": {
+    "defaultMessage": ""
+  },
+  "auth.emailverificationrequiredpage.emailverified": {
+    "defaultMessage": "Ihre E-Mail wurde bestätigt. Sie können sich jetzt einloggen."
+  },
+  "auth.emailverificationrequiredpage.pleaseverify": {
+    "defaultMessage": "Bitte bestätige deine Email Adresse"
+  },
+  "auth.emailverificationrequiredpage.title": {
+    "defaultMessage": "E-Mail-Bestätigung erforderlich"
+  },
+  "auth.emailverificationrequiredpage.youcanclose": {
+    "defaultMessage": "Sie können diese Seite jetzt schließen, während Sie auf Ihre Bestätigungs-E-Mail warten."
+  },
+  "auth.loggedoutpage.loadinguserinfo": {
+    "defaultMessage": "Benutzerinformationen werden geladen"
+  },
+  "auth.loggedoutpage.loggedout": {
+    "defaultMessage": "Sie wurden ausgeloggt."
+  },
+  "auth.loggedoutpage.title": {
+    "defaultMessage": "Abgemeldet"
+  },
+  "auth.passwordresetresultpage.passwordreset": {
+    "defaultMessage": "Ihr Passwort wurde zurückgesetzt"
+  },
+  "auth.passwordresetresultpage.statusunknown": {
+    "defaultMessage": "Passwort zurücksetzen - Status unbekannt"
+  },
+  "auth.protectedroute.logout": {
+    "defaultMessage": "Ausloggen"
+  },
+  "auth.protectedroute.usernotfound": {
+    "defaultMessage": "Benutzerkonto wurde nicht gefunden. Bitte wenden Sie sich an den technischen Support, wenn dieses Problem weiterhin besteht."
+  },
+  "badges.badgeinput.badgenotfound": {
+    "defaultMessage": "Fehler! Abzeichen nicht gefunden"
+  },
+  "badges.badgeinput.badges": {
+    "defaultMessage": "Abzeichen"
+  },
+  "badges.badgeinput.createbadges": {
+    "defaultMessage": "Erstellen Sie Abzeichen durch Tippen, drücken Sie die Eingabetaste und wählen Sie dann eine Farbe aus."
+  },
+  "badges.badgeinput.delete": {
+    "defaultMessage": "Löschen Sie Abzeichen, indem Sie darauf klicken."
+  },
+  "badges.badgeinput.done": {
+    "defaultMessage": "Erledigt"
+  },
+  "badges.badgeinput.example01": {
+    "defaultMessage": "Autor"
+  },
+  "badges.badgeinput.example02": {
+    "defaultMessage": "Freiwillige"
+  },
+  "badges.badgeinput.example03": {
+    "defaultMessage": "Mentor"
+  },
+  "badges.badgeinput.example04": {
+    "defaultMessage": "Mentee"
+  },
+  "badges.badgeinput.example05": {
+    "defaultMessage": "Sponsor"
+  },
+  "badges.badgeinput.example06": {
+    "defaultMessage": "Einstellung"
+  },
+  "badges.badgeinput.example07": {
+    "defaultMessage": "Stellt mich ein"
+  },
+  "badges.badgeinput.example08": {
+    "defaultMessage": "Lass uns schreiben!"
+  },
+  "badges.badgeinput.example09": {
+    "defaultMessage": "Kaffee?"
+  },
+  "badges.badgeinput.example10": {
+    "defaultMessage": "Veranstalter"
+  },
+  "badges.badgeinput.examples": {
+    "defaultMessage": "Beispiele (zum Hinzufügen anklicken)"
+  },
+  "badges.badgeinput.maxlength": {
+    "defaultMessage": "Maximale Länge 10 Zeichen."
+  },
+  "badges.badgeinput.selectcolour": {
+    "defaultMessage": "Farbe des Abzeichens auswählen"
+  },
+  "badges.badgeinput.selectedbadges": {
+    "defaultMessage": "Ausgewählte Abzeichen"
+  },
+  "chat.compose.chatcompose.invalidfilename": {
+    "defaultMessage": "Ungültiger Dateiname. Dateinamen dürfen nur Buchstaben, Zahlen, Leerzeichen und folgende Sonderzeichen enthalten: !*'()-_"
+  },
+  "chat.compose.chatcompose.sendfailedmessage": {
+    "defaultMessage": "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es gleich noch einmal. Wenn der unten angegebene Fehler weiterhin besteht, wenden Sie sich bitte an unseren technischen Support."
+  },
+  "chat.compose.chatcompose.sendfailedtitle": {
+    "defaultMessage": "Senden fehlgeschlagen"
+  },
+  "chat.compose.chatcompose.uploadfailed": {
+    "defaultMessage": "Fehler beim Hochladen der Datei. Bitte versuchen Sie es später erneut."
+  },
+  "chat.compose.poll.createpolloptionsmodal.options": {
+    "defaultMessage": "Optionen"
+  },
+  "chat.compose.poll.createpolloptionsmodal.optionshelptext": {
+    "defaultMessage": "Optionen durch Eingabe hinzufügen oder löschen. Drücken Sie die Eingabetaste, wenn Sie eine Auswahl bearbeiten, um eine neue Option darunter zu erstellen. Sie können Registranten auch ermöglichen, ihre eigenen Optionen zu erstellen."
+  },
+  "chat.compose.poll.createpolloptionsmodal.yourquestion": {
+    "defaultMessage": "Ihre Frage:"
+  },
+  "menu.v2.collapse": {
+    "defaultMessage": "Menü reduzieren"
+  },
+  "menu.v2.expand": {
+    "defaultMessage": "Menü erweitern"
+  },
   "signup": {
     "defaultMessage": "Anmelden"
   },
@@ -13,5 +133,29 @@
   },
   "users.newuser.landingpage.welcome": {
     "defaultMessage": "Willkommen bei Midspace"
+  },
+  "uxchoice.uxchoicedialog.buttonmsg": {
+    "defaultMessage": "Sie können Ihre Meinung jederzeit ändern, indem Sie die Schaltfläche \"Benutzeroberfläche wechseln\" im Profilmenü verwenden."
+  },
+  "uxchoice.uxchoicedialog.changedyourmind": {
+    "defaultMessage": "Ihre Meinung geändert? Kein Problem!"
+  },
+  "uxchoice.uxchoicedialog.newxp": {
+    "defaultMessage": "Nutze die neue Erfahrung"
+  },
+  "uxchoice.uxchoicedialog.oldxp": {
+    "defaultMessage": "Bleib beim Alten"
+  },
+  "uxchoice.uxchoicedialog.quickchoice": {
+    "defaultMessage": "Hallo, wir haben eine schnelle Auswahl für Sie…"
+  },
+  "uxchoice.uxchoicedialog.welcome1": {
+    "defaultMessage": "Neu bei Midspace? Wir empfehlen unser neues, einfacheres Erlebnis"
+  },
+  "uxchoice.uxchoicedialog.welcome2": {
+    "defaultMessage": "Alle die gleichen Funktionen, nur einfacher zu navigieren."
+  },
+  "uxchoice.uxchoicedialog.welcome3": {
+    "defaultMessage": "Habe vor kurzem Midspace verwendet und würdest lieber bei der alten Version bleiben?"
   }
 }

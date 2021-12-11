@@ -1,320 +1,316 @@
 {
   "auth.emailverificationrequiredpage.emailinstructions": [
-    {
-      "type": 0,
-      "value": "Before you can login you must verify your email address. You should have received an email from our domain with your verification link. After verifying your email, please log in to continue."
-    }
   ],
   "auth.emailverificationrequiredpage.emailverified": [
     {
       "type": 0,
-      "value": "Your email was verified. You can now log in."
+      "value": "La tua email è stata verificata. Ora puoi accedere."
     }
   ],
   "auth.emailverificationrequiredpage.pleaseverify": [
     {
       "type": 0,
-      "value": "Please verify your email address"
+      "value": "per cortesia verifichi il suo indirizzo email"
     }
   ],
   "auth.emailverificationrequiredpage.title": [
     {
       "type": 0,
-      "value": "Email verification required"
+      "value": "Verifica e-mail richiesta"
     }
   ],
   "auth.emailverificationrequiredpage.youcanclose": [
     {
       "type": 0,
-      "value": "You can now close this page while you wait for your verification email."
+      "value": "Ora puoi chiudere questa pagina mentre aspetti l'e-mail di verifica."
     }
   ],
   "auth.loggedoutpage.loadinguserinfo": [
     {
       "type": 0,
-      "value": "Loading user info"
+      "value": "Caricamento informazioni utente"
     }
   ],
   "auth.loggedoutpage.loggedout": [
     {
       "type": 0,
-      "value": "You have been logged out."
+      "value": "Sei stato disconnesso."
     }
   ],
   "auth.loggedoutpage.title": [
     {
       "type": 0,
-      "value": "Logged Out"
+      "value": "Disconnesso"
     }
   ],
   "auth.passwordresetresultpage.passwordreset": [
     {
       "type": 0,
-      "value": "Your password was reset"
+      "value": "La tua password è stata reimpostata"
     }
   ],
   "auth.passwordresetresultpage.statusunknown": [
     {
       "type": 0,
-      "value": "Password reset - status unknown"
+      "value": "Reimpostazione password - stato sconosciuto"
     }
   ],
   "auth.protectedroute.logout": [
     {
       "type": 0,
-      "value": "Log out"
+      "value": "Disconnettersi"
     }
   ],
   "auth.protectedroute.usernotfound": [
     {
       "type": 0,
-      "value": "User account was not found. Please contact tech support if this problem persists."
+      "value": "L'account utente non è stato trovato. Si prega di contattare il supporto tecnico se il problema persiste."
     }
   ],
   "badges.badgeinput.badgenotfound": [
     {
       "type": 0,
-      "value": "Error! Could not find badge"
+      "value": "Errore! Impossibile trovare il badge"
     }
   ],
   "badges.badgeinput.badges": [
     {
       "type": 0,
-      "value": "Badges"
+      "value": "badge"
     }
   ],
   "badges.badgeinput.createbadges": [
     {
       "type": 0,
-      "value": "Create badges by typing, press Enter then select a colour."
+      "value": "Crea badge digitando, premi Invio quindi seleziona un colore."
     }
   ],
   "badges.badgeinput.delete": [
     {
       "type": 0,
-      "value": "Delete badges by clicking on them."
+      "value": "Elimina i badge facendo clic su di essi."
     }
   ],
   "badges.badgeinput.done": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Fatto"
     }
   ],
   "badges.badgeinput.example01": [
     {
       "type": 0,
-      "value": "Author"
+      "value": "Autore"
     }
   ],
   "badges.badgeinput.example02": [
     {
       "type": 0,
-      "value": "Volunteer"
+      "value": "volontario"
     }
   ],
   "badges.badgeinput.example03": [
     {
       "type": 0,
-      "value": "Mentor"
+      "value": "Mentore"
     }
   ],
   "badges.badgeinput.example04": [
     {
       "type": 0,
-      "value": "Mentee"
+      "value": "allievo"
     }
   ],
   "badges.badgeinput.example05": [
     {
       "type": 0,
-      "value": "Sponsor"
+      "value": "sponsor"
     }
   ],
   "badges.badgeinput.example06": [
     {
       "type": 0,
-      "value": "Hiring"
+      "value": "Assumere"
     }
   ],
   "badges.badgeinput.example07": [
     {
       "type": 0,
-      "value": "Hire me"
+      "value": "Assumimi"
     }
   ],
   "badges.badgeinput.example08": [
     {
       "type": 0,
-      "value": "Let's chat!"
+      "value": "Parliamo!"
     }
   ],
   "badges.badgeinput.example09": [
     {
       "type": 0,
-      "value": "Coffee?"
+      "value": "Caffè?"
     }
   ],
   "badges.badgeinput.example10": [
     {
       "type": 0,
-      "value": "Organiser"
+      "value": "organizzatore"
     }
   ],
   "badges.badgeinput.examples": [
     {
       "type": 0,
-      "value": "Examples (click to add)"
+      "value": "Esempi (clicca per aggiungere)"
     }
   ],
   "badges.badgeinput.maxlength": [
     {
       "type": 0,
-      "value": "Maximum length 10 characters."
+      "value": "Lunghezza massima 10 caratteri."
     }
   ],
   "badges.badgeinput.selectcolour": [
     {
       "type": 0,
-      "value": "Select badge colour"
+      "value": "Seleziona il colore del distintivo"
     }
   ],
   "badges.badgeinput.selectedbadges": [
     {
       "type": 0,
-      "value": "Selected badges"
+      "value": "Distintivi selezionati"
     }
   ],
   "chat.compose.chatcompose.invalidfilename": [
     {
       "type": 0,
-      "value": "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_"
+      "value": "Nome del file non valido. I nomi dei file devono contenere solo lettere, numeri, spazi e i seguenti caratteri speciali: !*'()-_"
     }
   ],
   "chat.compose.chatcompose.sendfailedmessage": [
     {
       "type": 0,
-      "value": "Sorry, your message failed to send. Please try again in a moment. If the error noted below persists, please contact our technical support."
+      "value": "Siamo spiacenti, il tuo messaggio non è stato inviato. Riprova tra un momento. Se l'errore indicato di seguito persiste, contattare il nostro supporto tecnico."
     }
   ],
   "chat.compose.chatcompose.sendfailedtitle": [
     {
       "type": 0,
-      "value": "Failed to send"
+      "value": "Impossibile inviare"
     }
   ],
   "chat.compose.chatcompose.uploadfailed": [
     {
       "type": 0,
-      "value": "Failed to upload file. Please try again later."
+      "value": "Impossibile caricare il file. Per favore riprova più tardi."
     }
   ],
   "chat.compose.poll.createpolloptionsmodal.options": [
     {
       "type": 0,
-      "value": "Options"
+      "value": "Opzioni"
     }
   ],
   "chat.compose.poll.createpolloptionsmodal.optionshelptext": [
     {
       "type": 0,
-      "value": "Add or delete options by typing. Press enter when editing any choice to create a new option below it. You may also enable registrants to create their own options."
+      "value": "Aggiungi o elimina opzioni digitando. Premi Invio quando modifichi una scelta per creare una nuova opzione sotto di essa. Puoi anche consentire agli iscritti di creare le proprie opzioni."
     }
   ],
   "chat.compose.poll.createpolloptionsmodal.yourquestion": [
     {
       "type": 0,
-      "value": "Your question:"
+      "value": "La tua domanda:"
     }
   ],
   "menu.v2.collapse": [
     {
       "type": 0,
-      "value": "Collapse menu"
+      "value": "Comprimi menu"
     }
   ],
   "menu.v2.expand": [
     {
       "type": 0,
-      "value": "Expand menu"
+      "value": "Espandi il menu"
     }
   ],
   "signup": [
     {
       "type": 0,
-      "value": "Sign Up"
+      "value": "Iscriviti"
     }
   ],
   "users.newuser.landingpage.description": [
     {
       "type": 0,
-      "value": "Accessible virtual and hybrid conferences."
+      "value": "Conferenze virtuali e ibride accessibili."
     }
   ],
   "users.newuser.landingpage.learnmore": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Per saperne di più"
     }
   ],
   "users.newuser.landingpage.signin": [
     {
       "type": 0,
-      "value": "Please sign up or log in to use Midspace."
+      "value": "Per favore registrati o accedi per usare Midspace."
     }
   ],
   "users.newuser.landingpage.welcome": [
     {
       "type": 0,
-      "value": "Welcome to Midspace"
+      "value": "Benvenuti a Midspace"
     }
   ],
   "uxchoice.uxchoicedialog.buttonmsg": [
     {
       "type": 0,
-      "value": "You can change your mind any time using the 'Switch UI' button in the Profile menu."
+      "value": "Puoi cambiare idea in qualsiasi momento utilizzando il pulsante \"Cambia interfaccia utente\" nel menu Profilo."
     }
   ],
   "uxchoice.uxchoicedialog.changedyourmind": [
     {
       "type": 0,
-      "value": "Changed your mind? No problem!"
+      "value": "Hai cambiato idea? Nessun problema!"
     }
   ],
   "uxchoice.uxchoicedialog.newxp": [
     {
       "type": 0,
-      "value": "Use the new experience"
+      "value": "Usa la nuova esperienza"
     }
   ],
   "uxchoice.uxchoicedialog.oldxp": [
     {
       "type": 0,
-      "value": "Stick with the old"
+      "value": "Resta con il vecchio"
     }
   ],
   "uxchoice.uxchoicedialog.quickchoice": [
     {
       "type": 0,
-      "value": "Hi, we've got a quick choice for you…"
+      "value": "Ciao, abbiamo una scelta rapida per te..."
     }
   ],
   "uxchoice.uxchoicedialog.welcome1": [
     {
       "type": 0,
-      "value": "New to Midspace? We recommend our new, simpler experience"
+      "value": "Nuovo nel Midspace? Consigliamo la nostra nuova esperienza più semplice"
     }
   ],
   "uxchoice.uxchoicedialog.welcome2": [
     {
       "type": 0,
-      "value": "All the same features, just easier to navigate."
+      "value": "Tutte le stesse funzionalità, solo più facile da navigare."
     }
   ],
   "uxchoice.uxchoicedialog.welcome3": [
     {
       "type": 0,
-      "value": "Used Midspace recently and would rather stick with the old version?"
+      "value": "Hai usato Midspace di recente e preferisci restare con la vecchia versione?"
     }
   ]
 }

@@ -1,4 +1,124 @@
 {
+  "auth.emailverificationrequiredpage.emailinstructions": {
+    "defaultMessage": "Before you can login you must verify your email address. You should have received an email from our domain with your verification link. After verifying your email, please log in to continue."
+  },
+  "auth.emailverificationrequiredpage.emailverified": {
+    "defaultMessage": "Your email was verified. You can now log in."
+  },
+  "auth.emailverificationrequiredpage.pleaseverify": {
+    "defaultMessage": "Please verify your email address"
+  },
+  "auth.emailverificationrequiredpage.title": {
+    "defaultMessage": "Email verification required"
+  },
+  "auth.emailverificationrequiredpage.youcanclose": {
+    "defaultMessage": "You can now close this page while you wait for your verification email."
+  },
+  "auth.loggedoutpage.loadinguserinfo": {
+    "defaultMessage": "Loading user info"
+  },
+  "auth.loggedoutpage.loggedout": {
+    "defaultMessage": "You have been logged out."
+  },
+  "auth.loggedoutpage.title": {
+    "defaultMessage": "Logged Out"
+  },
+  "auth.passwordresetresultpage.passwordreset": {
+    "defaultMessage": "Your password was reset"
+  },
+  "auth.passwordresetresultpage.statusunknown": {
+    "defaultMessage": "Password reset - status unknown"
+  },
+  "auth.protectedroute.logout": {
+    "defaultMessage": "Log out"
+  },
+  "auth.protectedroute.usernotfound": {
+    "defaultMessage": "User account was not found. Please contact tech support if this problem persists."
+  },
+  "badges.badgeinput.badgenotfound": {
+    "defaultMessage": "Error! Could not find badge"
+  },
+  "badges.badgeinput.badges": {
+    "defaultMessage": "Badges"
+  },
+  "badges.badgeinput.createbadges": {
+    "defaultMessage": "Create badges by typing, press Enter then select a colour."
+  },
+  "badges.badgeinput.delete": {
+    "defaultMessage": "Delete badges by clicking on them."
+  },
+  "badges.badgeinput.done": {
+    "defaultMessage": "Done"
+  },
+  "badges.badgeinput.example01": {
+    "defaultMessage": "Author"
+  },
+  "badges.badgeinput.example02": {
+    "defaultMessage": "Volunteer"
+  },
+  "badges.badgeinput.example03": {
+    "defaultMessage": "Mentor"
+  },
+  "badges.badgeinput.example04": {
+    "defaultMessage": "Mentee"
+  },
+  "badges.badgeinput.example05": {
+    "defaultMessage": "Sponsor"
+  },
+  "badges.badgeinput.example06": {
+    "defaultMessage": "Hiring"
+  },
+  "badges.badgeinput.example07": {
+    "defaultMessage": "Hire me"
+  },
+  "badges.badgeinput.example08": {
+    "defaultMessage": "Let's chat!"
+  },
+  "badges.badgeinput.example09": {
+    "defaultMessage": "Coffee?"
+  },
+  "badges.badgeinput.example10": {
+    "defaultMessage": "Organiser"
+  },
+  "badges.badgeinput.examples": {
+    "defaultMessage": "Examples (click to add)"
+  },
+  "badges.badgeinput.maxlength": {
+    "defaultMessage": "Maximum length 10 characters."
+  },
+  "badges.badgeinput.selectcolour": {
+    "defaultMessage": "Select badge colour"
+  },
+  "badges.badgeinput.selectedbadges": {
+    "defaultMessage": "Selected badges"
+  },
+  "chat.compose.chatcompose.invalidfilename": {
+    "defaultMessage": "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_"
+  },
+  "chat.compose.chatcompose.sendfailedmessage": {
+    "defaultMessage": "Sorry, your message failed to send. Please try again in a moment. If the error noted below persists, please contact our technical support."
+  },
+  "chat.compose.chatcompose.sendfailedtitle": {
+    "defaultMessage": "Failed to send"
+  },
+  "chat.compose.chatcompose.uploadfailed": {
+    "defaultMessage": "Failed to upload file. Please try again later."
+  },
+  "chat.compose.poll.createpolloptionsmodal.options": {
+    "defaultMessage": "Options"
+  },
+  "chat.compose.poll.createpolloptionsmodal.optionshelptext": {
+    "defaultMessage": "Add or delete options by typing. Press enter when editing any choice to create a new option below it. You may also enable registrants to create their own options."
+  },
+  "chat.compose.poll.createpolloptionsmodal.yourquestion": {
+    "defaultMessage": "Your question:"
+  },
+  "menu.v2.collapse": {
+    "defaultMessage": "Collapse menu"
+  },
+  "menu.v2.expand": {
+    "defaultMessage": "Expand menu"
+  },
   "signup": {
     "defaultMessage": "Sign Up",
     "description": "sign up"
@@ -18,5 +138,29 @@
   "users.newuser.landingpage.welcome": {
     "defaultMessage": "Welcome to Midspace",
     "description": "greetings text"
+  },
+  "uxchoice.uxchoicedialog.buttonmsg": {
+    "defaultMessage": "You can change your mind any time using the 'Switch UI' button in the Profile menu."
+  },
+  "uxchoice.uxchoicedialog.changedyourmind": {
+    "defaultMessage": "Changed your mind? No problem!"
+  },
+  "uxchoice.uxchoicedialog.newxp": {
+    "defaultMessage": "Use the new experience"
+  },
+  "uxchoice.uxchoicedialog.oldxp": {
+    "defaultMessage": "Stick with the old"
+  },
+  "uxchoice.uxchoicedialog.quickchoice": {
+    "defaultMessage": "Hi, we've got a quick choice for you…"
+  },
+  "uxchoice.uxchoicedialog.welcome1": {
+    "defaultMessage": "New to Midspace? We recommend our new, simpler experience"
+  },
+  "uxchoice.uxchoicedialog.welcome2": {
+    "defaultMessage": "All the same features, just easier to navigate."
+  },
+  "uxchoice.uxchoicedialog.welcome3": {
+    "defaultMessage": "Used Midspace recently and would rather stick with the old version?"
   }
 }

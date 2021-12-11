@@ -1,4 +1,124 @@
 {
+  "auth.emailverificationrequiredpage.emailinstructions": {
+    "defaultMessage": ""
+  },
+  "auth.emailverificationrequiredpage.emailverified": {
+    "defaultMessage": "Seu email foi verificado. Agora você pode fazer o login."
+  },
+  "auth.emailverificationrequiredpage.pleaseverify": {
+    "defaultMessage": "por favor verifique seu endereço de email"
+  },
+  "auth.emailverificationrequiredpage.title": {
+    "defaultMessage": "Verificação de e-mail necessária"
+  },
+  "auth.emailverificationrequiredpage.youcanclose": {
+    "defaultMessage": "Agora você pode fechar esta página enquanto espera pelo seu e-mail de verificação."
+  },
+  "auth.loggedoutpage.loadinguserinfo": {
+    "defaultMessage": "Carregando informações do usuário"
+  },
+  "auth.loggedoutpage.loggedout": {
+    "defaultMessage": "Você foi desconectado."
+  },
+  "auth.loggedoutpage.title": {
+    "defaultMessage": "Desconectado"
+  },
+  "auth.passwordresetresultpage.passwordreset": {
+    "defaultMessage": "Sua senha foi redefinida"
+  },
+  "auth.passwordresetresultpage.statusunknown": {
+    "defaultMessage": "Redefinição de senha - status desconhecido"
+  },
+  "auth.protectedroute.logout": {
+    "defaultMessage": "Sair"
+  },
+  "auth.protectedroute.usernotfound": {
+    "defaultMessage": "A conta do usuário não foi encontrada. Entre em contato com o suporte técnico se o problema persistir."
+  },
+  "badges.badgeinput.badgenotfound": {
+    "defaultMessage": "Erro! Não foi possível encontrar o emblema"
+  },
+  "badges.badgeinput.badges": {
+    "defaultMessage": "Distintivos"
+  },
+  "badges.badgeinput.createbadges": {
+    "defaultMessage": "Crie emblemas digitando, pressione Enter e selecione uma cor."
+  },
+  "badges.badgeinput.delete": {
+    "defaultMessage": "Exclua os emblemas clicando neles."
+  },
+  "badges.badgeinput.done": {
+    "defaultMessage": "Feito"
+  },
+  "badges.badgeinput.example01": {
+    "defaultMessage": "Autor"
+  },
+  "badges.badgeinput.example02": {
+    "defaultMessage": "voluntário"
+  },
+  "badges.badgeinput.example03": {
+    "defaultMessage": "Mentor"
+  },
+  "badges.badgeinput.example04": {
+    "defaultMessage": "Mentee"
+  },
+  "badges.badgeinput.example05": {
+    "defaultMessage": "Patrocinador"
+  },
+  "badges.badgeinput.example06": {
+    "defaultMessage": "Contratando"
+  },
+  "badges.badgeinput.example07": {
+    "defaultMessage": "Contrate-me"
+  },
+  "badges.badgeinput.example08": {
+    "defaultMessage": "Vamos conversar!"
+  },
+  "badges.badgeinput.example09": {
+    "defaultMessage": "Café?"
+  },
+  "badges.badgeinput.example10": {
+    "defaultMessage": "organizador"
+  },
+  "badges.badgeinput.examples": {
+    "defaultMessage": "Exemplos (clique para adicionar)"
+  },
+  "badges.badgeinput.maxlength": {
+    "defaultMessage": "Comprimento máximo de 10 caracteres."
+  },
+  "badges.badgeinput.selectcolour": {
+    "defaultMessage": "Selecione a cor do emblema"
+  },
+  "badges.badgeinput.selectedbadges": {
+    "defaultMessage": "Selos selecionados"
+  },
+  "chat.compose.chatcompose.invalidfilename": {
+    "defaultMessage": "Nome de arquivo inválido. Os nomes dos arquivos devem conter apenas letras, números, espaços e os seguintes caracteres especiais:! * '() -_"
+  },
+  "chat.compose.chatcompose.sendfailedmessage": {
+    "defaultMessage": "Desculpe, sua mensagem falhou ao enviar. Por favor, tente novamente em alguns instantes. Se o erro observado abaixo persistir, entre em contato com nosso suporte técnico."
+  },
+  "chat.compose.chatcompose.sendfailedtitle": {
+    "defaultMessage": "Falha ao enviar"
+  },
+  "chat.compose.chatcompose.uploadfailed": {
+    "defaultMessage": "Falha ao fazer upload do arquivo. Por favor, tente novamente mais tarde."
+  },
+  "chat.compose.poll.createpolloptionsmodal.options": {
+    "defaultMessage": "Opções"
+  },
+  "chat.compose.poll.createpolloptionsmodal.optionshelptext": {
+    "defaultMessage": "Adicione ou exclua opções digitando. Pressione Enter ao editar qualquer escolha para criar uma nova opção abaixo dela. Você também pode permitir que os registrantes criem suas próprias opções."
+  },
+  "chat.compose.poll.createpolloptionsmodal.yourquestion": {
+    "defaultMessage": "Sua pergunta:"
+  },
+  "menu.v2.collapse": {
+    "defaultMessage": "Recolher Menu"
+  },
+  "menu.v2.expand": {
+    "defaultMessage": "Expandir Menu"
+  },
   "signup": {
     "defaultMessage": "Inscrever-se"
   },
@@ -13,5 +133,29 @@
   },
   "users.newuser.landingpage.welcome": {
     "defaultMessage": "Bem-vindo(a) ao Midspace"
+  },
+  "uxchoice.uxchoicedialog.buttonmsg": {
+    "defaultMessage": "Você pode mudar de ideia a qualquer momento usando o botão 'Alternar UI' no menu Perfil."
+  },
+  "uxchoice.uxchoicedialog.changedyourmind": {
+    "defaultMessage": "Mudou sua mente? Sem problemas!"
+  },
+  "uxchoice.uxchoicedialog.newxp": {
+    "defaultMessage": "Use a nova experiência"
+  },
+  "uxchoice.uxchoicedialog.oldxp": {
+    "defaultMessage": "Fique com o velho"
+  },
+  "uxchoice.uxchoicedialog.quickchoice": {
+    "defaultMessage": "Olá, temos uma escolha rápida para você ..."
+  },
+  "uxchoice.uxchoicedialog.welcome1": {
+    "defaultMessage": "Novo no Midspace? Recomendamos nossa nova experiência mais simples"
+  },
+  "uxchoice.uxchoicedialog.welcome2": {
+    "defaultMessage": "Todos os mesmos recursos, apenas mais fáceis de navegar."
+  },
+  "uxchoice.uxchoicedialog.welcome3": {
+    "defaultMessage": "Usou o Midspace recentemente e prefere ficar com a versão antiga?"
   }
 }

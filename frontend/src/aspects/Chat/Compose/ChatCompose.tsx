@@ -22,7 +22,7 @@ import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { FAIcon } from "../../Icons/FAIcon";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
@@ -210,7 +210,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                     toast({
                         status: "error",
                         description: intl.formatMessage({ id: 'chat.compose.chatcompose.uploadfailed',
-                            defaultMessage: "Failed to upload file. Please try again."
+                            defaultMessage: "Failed to upload file. Please try again later."
                         }),
                     });
                     uppy.reset();

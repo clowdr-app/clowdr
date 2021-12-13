@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, HStack, Spinner, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useHistory } from "react-router-dom";
 import { useGetConferenceLandingPageItemIdQuery, useGetItemChatIdQuery } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
@@ -104,6 +105,7 @@ function ItemChatPanelInner({
     setPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
+    const intl = useIntl();
     const { loading, error, data } = useGetItemChatIdQuery({
         variables: {
             itemOrExhibitionId,
@@ -162,7 +164,7 @@ function ItemChatPanelInner({
     }, [chat, chatId, error, setPageChatAvailable]);
 
     if (loading || chat === undefined) {
-        return <Spinner label="Loading room chat" />;
+        return <Spinner label={intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.itemchatpanel.loadingchatroom', defaultMessage: "Loading room chat" })} />;
     }
 
     if (error) {
@@ -177,7 +179,12 @@ function ItemChatPanelInner({
             >
                 <HStack my={2}>
                     <AlertIcon />
-                    <AlertTitle>Error loading item chat</AlertTitle>
+                    <AlertTitle>
+                        <FormattedMessage
+                            id="menu.v2.rightsidebar.panels.itemchatpanel.errorloading"
+                            defaultMessage="Error loading item chat"
+                        />
+                    </AlertTitle>
                 </HStack>
                 <AlertDescription>{error.message}</AlertDescription>
             </Alert>
@@ -196,7 +203,12 @@ function ItemChatPanelInner({
             >
                 <HStack my={2}>
                     <AlertIcon />
-                    <AlertTitle>This item does not have a chat.</AlertTitle>
+                    <AlertTitle>
+                        <FormattedMessage
+                            id="menu.v2.rightsidebar.panels.itemchatpanel.donthavechat"
+                            defaultMessage="This item does not have a chat."
+                        />
+                    </AlertTitle>
                 </HStack>
             </Alert>
         );
@@ -206,12 +218,12 @@ function ItemChatPanelInner({
         <Chat
             customHeadingElements={[
                 chat.RoomId ? (
-                    <Tooltip key="room-button" label="Go to video room">
+                    <Tooltip key="room-button" label={intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.itemchatpanel.gotovideoroom', defaultMessage: "Go to video room" })}>
                         <Button
                             size="xs"
                             colorScheme="PrimaryActionButton"
                             onClick={() => history.push(`/conference/${confSlug}/room/${chat.RoomId}`)}
-                            aria-label="Go to video room for this chat"
+                            aria-label={intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.itemchatpanel.gotovideoroomdesc', defaultMessage: "Go to video room for this chat" })}
                         >
                             <FAIcon iconStyle="s" icon="video" />
                         </Button>

@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { FAIcon } from "../../Icons/FAIcon";
+import { useIntl } from "react-intl";
 
 export default function MoreOptionsMenuButton({
     label,
@@ -31,6 +32,7 @@ export default function MoreOptionsMenuButton({
     showLabel: boolean;
     imageSrc?: string;
 }): JSX.Element {
+    const intl = useIntl();
     const size = useBreakpointValue({
         base: "md",
         lg: "lg",
@@ -50,7 +52,7 @@ export default function MoreOptionsMenuButton({
                 {imageSrc ? (
                     <Image
                         display="inline-block"
-                        title="Your profile photo"
+                        title={intl.formatMessage({ id: 'menu.v2.moreoptionsmenubutton.yourprofilephoto', defaultMessage: "Your profile photo" })}
                         src={imageSrc}
                         w={showLabel ? 6 : 8}
                         mr={showLabel ? 2 : 0}

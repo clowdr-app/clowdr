@@ -1,5 +1,6 @@
 import { Box, Flex, HStack, MenuItem, useBreakpointValue, useColorMode, useColorModeValue } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
+import { useIntl, FormattedMessage } from "react-intl";
 import { Link as ReactLink, Route, useRouteMatch } from "react-router-dom";
 import type { Schedule_EventProgramPersonRole_Enum } from "../../../generated/graphql";
 import LoginButton from "../../Auth/Buttons/LoginButton";
@@ -18,6 +19,7 @@ import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebar/Righ
 import RightSidebarSections from "./RightSidebar/RightSidebarSections";
 
 export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.Element {
+    const intl = useIntl();
     const { isRightBarOpen, onRightBarOpen, onRightBarClose } = useMainMenu();
     const maybeConference = useMaybeConference();
     const maybeRegistrant = useMaybeCurrentRegistrant();
@@ -135,7 +137,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                 bgColor={`${colorScheme}.700`}
             >
                 <MenuButton
-                    label={isExpanded ? "Collapse menu" : "Expand menu"}
+                    label={isExpanded ? intl.formatMessage({ id: 'menu.v2.rightmenu.collapse', defaultMessage: "Collapse menu" }) : intl.formatMessage({ id: 'menu.v2.rightmenu.expand', defaultMessage: "Expand menu" })}
                     iconStyle="s"
                     icon={isExpanded ? ["grip-lines-vertical", "arrow-right"] : ["arrow-left", "grip-lines-vertical"]}
                     borderTopRadius={0}
@@ -165,8 +167,8 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                         {pageChatAvailable ? (
                             <MenuButton
                                 label={
-                                    (currentTab === RightSidebarTabs.PageChat && isRightBarOpen ? "Close " : "") +
-                                    "Chat here"
+                                    (currentTab === RightSidebarTabs.PageChat && isRightBarOpen ? intl.formatMessage({ id: 'menu.v2.rightmenu.close', defaultMessage: "Close" }) + " " : "") +
+                                    intl.formatMessage({ id: 'menu.v2.rightmenu.chathere', defaultMessage: "Chat here" })
                                 }
                                 iconStyle="s"
                                 icon={
@@ -201,8 +203,8 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                             {isBackstage || currentEventId ? (
                                 <MenuButton
                                     label={
-                                        (currentTab === RightSidebarTabs.RaiseHand && isRightBarOpen ? "Close " : "") +
-                                        "Raise hand"
+                                        (currentTab === RightSidebarTabs.RaiseHand && isRightBarOpen ? intl.formatMessage({ id: 'menu.v2.rightmenu.close', defaultMessage: "Close" }) + " " : "") +
+                                        intl.formatMessage({ id: 'menu.v2.rightmenu.raisehand', defaultMessage: "Raise hand" })
                                     }
                                     iconStyle="s"
                                     icon={
@@ -236,7 +238,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                         </Route>
                         <MenuButton
                             label={
-                                (currentTab === RightSidebarTabs.Chats && isRightBarOpen ? "Close " : "") + "My chats"
+                                (currentTab === RightSidebarTabs.Chats && isRightBarOpen ? intl.formatMessage({ id: 'menu.v2.rightmenu.close', defaultMessage: "Close" }) + " " : "") + "My chats"
                             }
                             iconStyle="s"
                             icon={
@@ -266,8 +268,8 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                         </MenuButton>
                         <MenuButton
                             label={
-                                (currentTab === RightSidebarTabs.Presence && isRightBarOpen ? "Close " : "") +
-                                "Who's here"
+                                (currentTab === RightSidebarTabs.Presence && isRightBarOpen ? intl.formatMessage({ id: 'menu.v2.rightmenu.close', defaultMessage: "Close" }) + " " : "") +
+                                intl.formatMessage({ id: 'menu.v2.rightmenu.whoshere', defaultMessage: "Who's here" })
                             }
                             iconStyle="s"
                             icon={
@@ -308,7 +310,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                 {maybeUser ? (
                     <>
                         <MoreOptionsMenuButton
-                            label="Options"
+                            label={intl.formatMessage({ id: 'menu.v2.rightmenu.options', defaultMessage: "Options" })}
                             iconStyle="s"
                             icon="ellipsis-h"
                             borderTopRadius={0}
@@ -324,11 +326,19 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                 }}
                             >
                                 <FAIcon iconStyle="s" icon="moon" />
-                                &nbsp;&nbsp;Toggle dark mode
+                                &nbsp;&nbsp;
+                                <FormattedMessage
+                                    id="menu.v2.rightmenu.toggledarkmode"
+                                    defaultMessage="Toggle dark mode"
+                                />
                             </MenuItem>
                             <MenuItem as={ReactLink} to="/user/pushNotifications">
                                 <FAIcon iconStyle="s" icon="envelope-open-text" />
-                                &nbsp;&nbsp;Push notifications
+                                &nbsp;&nbsp;
+                                <FormattedMessage
+                                    id="menu.v2.rightmenu.pushnotifications"
+                                    defaultMessage="Push notifications"
+                                />
                             </MenuItem>
                             {/* <MenuItem onClick={onOpenUXChoice}>
                         <FAIcon iconStyle="s" icon="exchange-alt" />

@@ -104,7 +104,7 @@ export default function LeftMenu(): JSX.Element {
         <>
             <Flex flexDir="column" justifyContent="center" alignItems="flex-start" h="100%" bgColor="LeftMenu.600">
                 <MenuButton
-                    label={isExpanded ? intl.formatMessage({ id: 'menu.v2.collapse', defaultMessage: "Collapse menu" }) : intl.formatMessage({ id: 'menu.v2.expand', defaultMessage: "Expand menu" })}
+                    label={isExpanded ? intl.formatMessage({ id: 'menu.v2.leftmenu.collapse', defaultMessage: "Collapse menu" }) : intl.formatMessage({ id: 'menu.v2.leftmenu.expand', defaultMessage: "Expand menu" })}
                     iconStyle="s"
                     icon={isExpanded ? ["arrow-left", "grip-lines-vertical"] : ["grip-lines-vertical", "arrow-right"]}
                     borderTopRadius={0}
@@ -124,7 +124,7 @@ export default function LeftMenu(): JSX.Element {
                     m={1.5}
                 />
                 <MenuButton
-                    label= {intl.formatMessage({ id: 'menu.v2.collapse', defaultMessage: "Collapse menu" })}
+                    label={intl.formatMessage({ id: 'menu.v2.leftmenu.collapse', defaultMessage: "Collapse menu" })}
                     iconStyle="s"
                     icon="home"
                     borderRadius={0}
@@ -138,7 +138,7 @@ export default function LeftMenu(): JSX.Element {
                 />
                 {showLive ? (
                     <MenuButton
-                        label="Live now"
+                        label={intl.formatMessage({ id: 'menu.v2.leftmenu.livenow', defaultMessage: "Live now" })}
                         iconStyle="s"
                         icon="podcast"
                         borderBottomRadius={0}
@@ -155,7 +155,7 @@ export default function LeftMenu(): JSX.Element {
                     </MenuButton>
                 ) : undefined}
                 <MenuButton
-                    label="Program"
+                    label={intl.formatMessage({ id: 'menu.v2.leftmenu.program', defaultMessage: "Program" })}
                     iconStyle="s"
                     icon={"calendar"}
                     px={0}
@@ -169,7 +169,7 @@ export default function LeftMenu(): JSX.Element {
                 />
                 {conference.forceSponsorsMenuLink?.[0]?.value ? (
                     <MenuButton
-                        label={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
+                        label={conference.sponsorsLabel?.[0]?.value ?? intl.formatMessage({ id: 'menu.v2.leftmenu.sponsors', defaultMessage: "Sponsors" })}
                         iconStyle="s"
                         icon={"star"}
                         px={0}
@@ -184,7 +184,7 @@ export default function LeftMenu(): JSX.Element {
                 {maybeRegistrant ? (
                     <>
                         <MenuButton
-                            label="Socialise"
+                            label={intl.formatMessage({ id: 'menu.v2.leftmenu.socialise', defaultMessage: "Socialise" })}
                             ariaLabel={
                                 roomParticipants !== undefined &&
                                 roomParticipants !== false &&
@@ -192,7 +192,7 @@ export default function LeftMenu(): JSX.Element {
                                     ? `Socialise: ${roomParticipants.length} ${
                                           roomParticipants.length === 1 ? "person" : "people"
                                       } connected`
-                                    : "Socialise"
+                                    : intl.formatMessage({ id: 'menu.v2.leftmenu.socialise', defaultMessage: "Socialise" })
                             }
                             iconStyle="s"
                             icon="mug-hot"
@@ -214,7 +214,7 @@ export default function LeftMenu(): JSX.Element {
                             ) : undefined}
                         </MenuButton>
                         <MoreOptionsMenuButton
-                            label="My stuff"
+                            label={intl.formatMessage({ id: 'menu.v2.leftmenu.mystuff', defaultMessage: "My stuff" })}
                             iconStyle="s"
                             icon="user"
                             borderRadius={0}
@@ -237,28 +237,43 @@ export default function LeftMenu(): JSX.Element {
                                 onClick={myStarredEvents_OnOpen}
                             >
                                 <FAIcon iconStyle="s" icon="star" mr={2} aria-hidden={true} w="1.2em" />
-                                My events
+                                <FormattedMessage
+                                    id="menu.v2.leftmenu.myevents"
+                                    defaultMessage="My events"
+                                />
                             </MenuItem>
                             <MenuItem as={ReactLink} to={`/conference/${conference.slug}/profile`}>
                                 <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
-                                My profile
+                                <FormattedMessage
+                                    id="menu.v2.leftmenu.myprofile"
+                                    defaultMessage="My profile"
+                                />
                             </MenuItem>
                             <MenuItem as={ReactLink} to={`/conference/${conference.slug}/recordings`}>
                                 <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
-                                My recordings
+                                <FormattedMessage
+                                    id="menu.v2.leftmenu.myrecordings"
+                                    defaultMessage="My recordings"
+                                />
                             </MenuItem>
                             {swagBagsResponse.data?.content_Item_aggregate.aggregate?.count ? (
                                 <MenuItem as={ReactLink} to={`/conference/${conference.slug}/swag`}>
                                     <FAIcon iconStyle="s" icon="gift" mr={2} aria-hidden={true} w="1.2em" />
-                                    My conference swag
+                                    <FormattedMessage
+                                        id="menu.v2.leftmenu.myconferenceswag"
+                                        defaultMessage="My conference swag"
+                                    />
                                 </MenuItem>
                             ) : undefined}
                             <MenuItem
                                 ref={myBackstagesButtonRef as React.RefObject<HTMLButtonElement>}
                                 onClick={myBackstages_OnOpen}
                             >
-                                <FAIcon iconStyle="s" icon="person-booth" mr={2} aria-hidden={true} w="1.2em" /> My
-                                backstages
+                                <FAIcon iconStyle="s" icon="person-booth" mr={2} aria-hidden={true} w="1.2em" />
+                                <FormattedMessage
+                                    id="menu.v2.leftmenu.mybackstages"
+                                    defaultMessage="My backstages"
+                                />
                             </MenuItem>
                             <LogoutButton asMenuItem showLabel={isExpanded} />
                         </MoreOptionsMenuButton>
@@ -288,38 +303,59 @@ export default function LeftMenu(): JSX.Element {
                     >
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/checklist`}>
                             <FAIcon iconStyle="s" icon="check" mr={2} aria-hidden={true} w="1.2em" />
-                            Checklist
+                            <FormattedMessage
+                                id="menu.v2.leftmenu.checklist"
+                                defaultMessage="Checklist"
+                            />
                         </MenuItem>
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage`}>
                             <FAIcon iconStyle="s" icon="cog" mr={2} aria-hidden={true} w="1.2em" />
-                            Dashboard
+                            <FormattedMessage
+                                id="menu.v2.leftmenu.dashboard"
+                                defaultMessage="Dashboard"
+                            />
                         </MenuItem>
                         <MenuDivider />
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/content`}>
                             <FAIcon iconStyle="s" icon="align-left" mr={2} aria-hidden={true} w="1.2em" />
-                            Content
+                            <FormattedMessage
+                                id="menu.v2.leftmenu.content"
+                                defaultMessage="Content"
+                            />
                         </MenuItem>
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/schedule`}>
                             <FAIcon iconStyle="s" icon="calendar" mr={2} aria-hidden={true} w="1.2em" />
-                            Schedule
+                            <FormattedMessage
+                                id="menu.v2.leftmenu.schedule"
+                                defaultMessage="Schedule"
+                            />
                         </MenuItem>
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/rooms`}>
                             <FAIcon iconStyle="s" icon="coffee" mr={2} aria-hidden={true} w="1.2em" />
-                            Rooms
+                            <FormattedMessage
+                                id="menu.v2.leftmenu.rooms"
+                                defaultMessage="Rooms"
+                            />
                         </MenuItem>
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/people`}>
                             <FAIcon iconStyle="s" icon="people-arrows" mr={2} aria-hidden={true} w="1.2em" />
-                            Program People
+                            <FormattedMessage
+                                id="menu.v2.leftmenu.programpeople"
+                                defaultMessage="Program People"
+                            />
                         </MenuItem>
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/registrants`}>
                             <FAIcon iconStyle="s" icon="users" mr={2} aria-hidden={true} w="1.2em" />
-                            Registrants
+                            <FormattedMessage
+                                id="menu.v2.leftmenu.registrants"
+                                defaultMessage="Registrants"
+                            />
                         </MenuItem>
                     </MoreOptionsMenuButton>
                 </RequireAtLeastOnePermissionWrapper>
                 {maybeUser ? (
                     <MoreOptionsMenuButton
-                        label="Conferences"
+                        label={intl.formatMessage({ id: 'menu.v2.leftmenu.conferences', defaultMessage: "Conferences" })}
                         iconStyle="s"
                         icon="ticket-alt"
                         borderRadius={0}
@@ -347,12 +383,16 @@ export default function LeftMenu(): JSX.Element {
                         {!conference || maybeUser.registrants.length > 1 ? <MenuDivider /> : undefined}
                         <MenuItem as={ReactLink} to="/join">
                             <FAIcon iconStyle="s" icon="ticket-alt" />
-                            &nbsp;&nbsp; Use invite code
+                            &nbsp;&nbsp;
+                            <FormattedMessage
+                                id="menu.v2.leftmenu.useinvitecode"
+                                defaultMessage="Use invite code"
+                            />
                         </MenuItem>
                     </MoreOptionsMenuButton>
                 ) : undefined}
                 <MenuButton
-                    label="Feedback"
+                    label={intl.formatMessage({ id: 'menu.v2.leftmenu.feedback', defaultMessage: "Feedback" })}
                     iconStyle="s"
                     icon="comment-medical"
                     borderTopRadius={0}

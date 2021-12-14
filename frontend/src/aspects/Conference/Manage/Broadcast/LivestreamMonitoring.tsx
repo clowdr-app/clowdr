@@ -27,7 +27,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import type {
     MonitorLivestreams_EventFragment,
-    MonitorLivestreams_PersonFragment} from "../../../../generated/graphql";
+    MonitorLivestreams_PersonFragment,
+} from "../../../../generated/graphql";
 import {
     Schedule_EventProgramPersonRole_Enum,
     useMonitorLivestreamsQuery,
@@ -110,7 +111,7 @@ gql`
         eventVonageSession {
             id
             sessionId
-            participantStreams {
+            participantStreams(where: { stopped_at: { _is_null: true } }) {
                 id
                 registrantId
                 vonageStreamType

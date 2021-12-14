@@ -42897,7 +42897,7 @@ export const MonitorLivestreams_EventFragmentDoc = gql`
   eventVonageSession {
     id
     sessionId
-    participantStreams {
+    participantStreams(where: { stopped_at: { _is_null: true } }) {
       id
       registrantId
       vonageStreamType

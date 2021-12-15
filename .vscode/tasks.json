@@ -221,6 +221,34 @@
             },
             "group": "build"
         },
+        // Frontend -- Extract Strings for Translation
+        {
+            "label": "Frontend -- Extract Strings for Translation",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "lang-extract"],
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },
+        // Frontend -- Compile Translation Strings
+        {
+            "label": "Frontend -- Compile Translation Strings",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "lang-compile"],
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },
         // Frontend -- Serve Production Build
         {
             "label": "Frontend -- Serve Production Build",

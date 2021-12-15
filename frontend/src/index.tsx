@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { HelmetProvider } from "react-helmet-async";
@@ -44,12 +44,13 @@ async function bootstrapApplication() {
     //     (x) => JSON.stringify(x),
     //     (x) => JSON.parse(x)
     // );
+    // const [locale, setLocale] = useState('en');
     const locale = navigator.language || 'en';
     ReactDOM.render(
         <React.StrictMode>
             <IntlProvider
                 locale={locale}
-                defaultLocale="en"
+                defaultLocale='en'
                 messages={loadLocaleData(locale)}
             >
                 <ErrorBoundary FallbackComponent={AppError}>

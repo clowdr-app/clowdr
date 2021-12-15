@@ -113,11 +113,152 @@
   "chat.compose.poll.createpolloptionsmodal.yourquestion": {
     "defaultMessage": "Your question:"
   },
-  "menu.v2.collapse": {
+  "content.oldaccessformatredirectionpage.selectyourself": {
+    "defaultMessage": "Please select yourself from the list below. If you do not see yourself listed, please contact your conference organizers."
+  },
+  "menu.v2.leftmenu.checklist": {
+    "defaultMessage": "Checklist"
+  },
+  "menu.v2.leftmenu.collapse": {
     "defaultMessage": "Collapse menu"
   },
-  "menu.v2.expand": {
+  "menu.v2.leftmenu.conferences": {
+    "defaultMessage": "Conferences"
+  },
+  "menu.v2.leftmenu.content": {
+    "defaultMessage": "Content"
+  },
+  "menu.v2.leftmenu.dashboard": {
+    "defaultMessage": "Dashboard"
+  },
+  "menu.v2.leftmenu.expand": {
     "defaultMessage": "Expand menu"
+  },
+  "menu.v2.leftmenu.feedback": {
+    "defaultMessage": "Feedback"
+  },
+  "menu.v2.leftmenu.livenow": {
+    "defaultMessage": "Live now"
+  },
+  "menu.v2.leftmenu.mybackstages": {
+    "defaultMessage": "My backstages"
+  },
+  "menu.v2.leftmenu.myconferenceswag": {
+    "defaultMessage": "My conference swag"
+  },
+  "menu.v2.leftmenu.myevents": {
+    "defaultMessage": "My events"
+  },
+  "menu.v2.leftmenu.myprofile": {
+    "defaultMessage": "My profile"
+  },
+  "menu.v2.leftmenu.myrecordings": {
+    "defaultMessage": "My recordings"
+  },
+  "menu.v2.leftmenu.mystuff": {
+    "defaultMessage": "My stuff"
+  },
+  "menu.v2.leftmenu.program": {
+    "defaultMessage": "Program"
+  },
+  "menu.v2.leftmenu.programpeople": {
+    "defaultMessage": "Program People"
+  },
+  "menu.v2.leftmenu.registrants": {
+    "defaultMessage": "Registrants"
+  },
+  "menu.v2.leftmenu.rooms": {
+    "defaultMessage": "Rooms"
+  },
+  "menu.v2.leftmenu.schedule": {
+    "defaultMessage": "Schedule"
+  },
+  "menu.v2.leftmenu.socialise": {
+    "defaultMessage": "Socialise"
+  },
+  "menu.v2.leftmenu.sponsors": {
+    "defaultMessage": "Sponsors"
+  },
+  "menu.v2.leftmenu.useinvitecode": {
+    "defaultMessage": "Use invite code"
+  },
+  "menu.v2.moreoptionsmenubutton.yourprofilephoto": {
+    "defaultMessage": "Your profile photo"
+  },
+  "menu.v2.rightmenu.chathere": {
+    "defaultMessage": "Chat here"
+  },
+  "menu.v2.rightmenu.close": {
+    "defaultMessage": "Close"
+  },
+  "menu.v2.rightmenu.collapse": {
+    "defaultMessage": "Collapse menu"
+  },
+  "menu.v2.rightmenu.expand": {
+    "defaultMessage": "Expand menu"
+  },
+  "menu.v2.rightmenu.options": {
+    "defaultMessage": "Options"
+  },
+  "menu.v2.rightmenu.pushnotifications": {
+    "defaultMessage": "Push notifications"
+  },
+  "menu.v2.rightmenu.raisehand": {
+    "defaultMessage": "Raise hand"
+  },
+  "menu.v2.rightmenu.toggledarkmode": {
+    "defaultMessage": "Toggle dark mode"
+  },
+  "menu.v2.rightmenu.whoshere": {
+    "defaultMessage": "Who's here"
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.backtochatslist": {
+    "defaultMessage": "Back to chats list"
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.backtochatslistdesc": {
+    "defaultMessage": "Return to all chats list"
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.couldnotcreatedm": {
+    "defaultMessage": "Could not create DM"
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.gotovideoroom": {
+    "defaultMessage": "Go to video room"
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.gotovideoroomdesc": {
+    "defaultMessage": "Go to video room for this chat"
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.loadingpinnedchats": {
+    "defaultMessage": "Loading pinned chats"
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.loadingselectedchat": {
+    "defaultMessage": "Loading selected chat"
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.nopinnedchats": {
+    "defaultMessage": "No pinned chats."
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.settingupchat": {
+    "defaultMessage": "Setting up chat..."
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.donthavechat": {
+    "defaultMessage": "This item does not have a chat."
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.errorloading": {
+    "defaultMessage": "Error loading item chat"
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.gotovideoroom": {
+    "defaultMessage": "Go to video room"
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.gotovideoroomdesc": {
+    "defaultMessage": "Go to video room for this chat"
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.loadingchatroom": {
+    "defaultMessage": "Loading room chat"
+  },
+  "menu.v2.rightsidebar.togglechatsbutton.closechats": {
+    "defaultMessage": "Close chats"
+  },
+  "menu.v2.rightsidebar.togglechatsbutton.openchats": {
+    "defaultMessage": "Open chats"
   },
   "signup": {
     "defaultMessage": "Sign Up",

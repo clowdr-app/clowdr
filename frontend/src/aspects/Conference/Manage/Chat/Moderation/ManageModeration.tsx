@@ -115,7 +115,9 @@ function ModerationList(): JSX.Element {
 
     return (
         <>
-            {flagsResponse.fetching && sortedFlags === undefined ? <CenteredSpinner /> : undefined}
+            {flagsResponse.fetching && sortedFlags === undefined ? (
+                <CenteredSpinner caller="ManageModeration:118" />
+            ) : undefined}
             <ModerationChatConfigurationProvider>
                 <List spacing={8} mt={4} px={2} py={2}>
                     {sortedFlags?.map((flag, idx) =>

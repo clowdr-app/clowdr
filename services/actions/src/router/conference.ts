@@ -23,7 +23,7 @@ router.post("/getSlug", async (req: Request, res: Response) => {
     }
     try {
         const slug = await handleGetSlug(req.body.input);
-        res.status(200).json({ slug });
+        res.status(200).json({ slug, url: req.body.input });
     } catch (e: any) {
         req.log.error({ err: e }, "Failure while handling get slug");
         res.status(500).json("Failure while handling get slug");

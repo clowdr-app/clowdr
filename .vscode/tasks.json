@@ -382,6 +382,27 @@
             "command": "pnpm",
             "problemMatcher": [],
             "args": ["eslint", "--ext", ".tsx", "--ext", ".ts", "--fix", "./frontend/src/aspects"]
+        },
+        {
+            "label": "Generated augmented GQL schema",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/packages/node/urql-hasura-cache-schema-generator"
+            },
+            "args": [
+                "start",
+                "--",
+                "-d",
+                "../../../hasura/metadata",
+                "-o",
+                "../../shared/graphql/src/generated/graphql.augschema.json",
+                "-a",
+                "http://localhost:8080/v1/graphql",
+                "-s",
+                "XXXXX"
+            ]
         }
     ],
     "inputs": [

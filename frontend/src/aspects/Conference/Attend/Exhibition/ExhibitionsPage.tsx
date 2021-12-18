@@ -225,6 +225,7 @@ export default function ExhibitionsPage(): JSX.Element {
             {sortedExhibitions === undefined ? (
                 <CenteredSpinner
                     spinnerProps={{ label: `Loading ${conference.visibleExhibitionsLabel[0]?.value ?? "Exhibitions"}` }}
+                    caller="ExhibitionsPage:228"
                 />
             ) : (
                 <>

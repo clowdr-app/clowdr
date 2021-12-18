@@ -234,7 +234,11 @@ function MessageList({
 
     const topEl = useMemo(() => {
         return isLoading ? (
-            <CenteredSpinner centerProps={{ py: 5, mb: 1 }} spinnerProps={{ label: "Loading messages" }} />
+            <CenteredSpinner
+                centerProps={{ py: 5, mb: 1 }}
+                spinnerProps={{ label: "Loading messages" }}
+                caller="ChatMessageList:237"
+            />
         ) : hasReachedEnd ? (
             <Heading
                 py={5}
@@ -314,7 +318,7 @@ function MessageList({
     return (
         <Box {...rest}>
             {messageElements.current === null ? (
-                <CenteredSpinner spinnerProps={{ label: "Loading messages" }} />
+                <CenteredSpinner spinnerProps={{ label: "Loading messages" }} caller="ChatMessageList:321" />
             ) : (
                 <Flex w="100%" h="100%" overflowX="hidden" overflowY="auto" flexDir="column" justifyContent="flex-end">
                     <Flex

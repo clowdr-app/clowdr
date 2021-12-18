@@ -304,7 +304,7 @@ export function ExhibitionLayoutWrapper({
     });
 
     return exhibitionResponse.fetching && !exhibitionResponse.data ? (
-        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
+        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} caller="ExhibitionLayout:307" />
     ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
         <ExhibitionLayout
             exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}

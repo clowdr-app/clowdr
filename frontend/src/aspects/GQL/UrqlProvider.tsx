@@ -1,5 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { augSchema } from "@midspace/graphql/graphql-aug-schema";
 import { schema } from "@midspace/graphql/graphql-schema";
+import { genericResolvers } from "@midspace/urql-hasura-cache-generic-resolver/genericResolver";
 import type { CombinedError, Operation } from "@urql/core";
 import { makeOperation } from "@urql/core";
 import { devtoolsExchange } from "@urql/devtools";
@@ -153,10 +155,11 @@ function UrqlProviderInner({
                             room_LivestreamDurations: (data) => data.roomId as string,
                             schedule_OverlappingEvents: (data) => data.xId + "-" + data.yId,
                             system_Configuration: (data) => data.key as string,
+                            GetSlugOutput: (data) => data.url as string,
                         },
                         schema: schema as any,
                         storage,
-                        // resolvers,
+                        resolvers: genericResolvers({}, schema as any, augSchema as any),
                         // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
                     });
 
@@ -176,7 +179,7 @@ function UrqlProviderInner({
                             retryExchange(retryOptions),
                             fetchExchange,
                         ],
-                        requestPolicy: "cache-and-network",
+                        requestPolicy: "cache-first",
                     });
                     setClient(newClient);
 
@@ -221,7 +224,7 @@ function UrqlProviderInner({
     }, [getAccessTokenSilently]);
 
     if (!client) {
-        return <>Loading...</>;
+        return <>Loading... z</>;
     }
 
     return (
@@ -243,7 +246,7 @@ export default function UrqlProvider({
     const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <>Loading... y</>;
     }
 
     return (

@@ -31,7 +31,7 @@ export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.El
     const { conferencePath } = useAuthParameters();
 
     if (loading || (!data?.chat_Chat_by_pk?.rooms && !data?.chat_Chat_by_pk?.items)) {
-        return <CenteredSpinner />;
+        return <CenteredSpinner caller="ChatRedirectPage:34" />;
     }
 
     if (error) {

@@ -148,7 +148,7 @@ function MyBackstages(): JSX.Element {
                 can go directly to your room at the start time. You will not see any backstages in this list.
             </Text>
             {myBackstagesResponse.fetching && !eventsGroupedByDay ? (
-                <CenteredSpinner spinnerProps={{ label: "Loading backstages" }} />
+                <CenteredSpinner spinnerProps={{ label: "Loading backstages" }} caller="MyBackstages:151" />
             ) : undefined}
             {eventsTodayAndFuture ? (
                 <>

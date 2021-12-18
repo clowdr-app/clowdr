@@ -17,7 +17,7 @@ databases.
 ## How to use
 
 1. Install Node
-1. Instal pnpm: `npm i -g pnpm`
+1. Install pnpm: `npm i -g pnpm`
 1. Clone/download this package
 1. Add the PostgreSQL function from `src/introspectionFunction.sql` to your API.
    - Create the view by running the SQL migration from

@@ -300,6 +300,7 @@ type NotifyEventEnded {
 
 type GetSlugOutput {
   slug : String
+  url : String
 }
 
 type MatchingPersonOutput {

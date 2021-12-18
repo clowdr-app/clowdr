@@ -60,7 +60,9 @@ export function VideoChatRoom({
                     />
                     {enableVonage ? <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} /> : undefined}
                 </Box>
-                {!backend && enable ? <CenteredSpinner spinnerProps={{ mt: 2, mx: "auto" }} /> : undefined}
+                {!backend && enable ? (
+                    <CenteredSpinner spinnerProps={{ mt: 2, mx: "auto" }} caller="VideoChatRoom:63" />
+                ) : undefined}
             </>
         );
     }, [

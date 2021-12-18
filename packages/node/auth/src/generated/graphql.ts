@@ -602,6 +602,7 @@ export type GetGoogleOAuthUrlOutput = {
 export type GetSlugOutput = {
     __typename?: "GetSlugOutput";
     slug?: Maybe<Scalars["String"]>;
+    url?: Maybe<Scalars["String"]>;
 };
 
 export type GetUploadAgreementOutput = {
@@ -4936,6 +4937,13 @@ export type Chat_Pin_Mutation_Response = {
     returning: Array<Chat_Pin>;
 };
 
+/** input type for inserting object relation for remote table "chat.Pin" */
+export type Chat_Pin_Obj_Rel_Insert_Input = {
+    data: Chat_Pin_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: Maybe<Chat_Pin_On_Conflict>;
+};
+
 /** on conflict condition type for table "chat.Pin" */
 export type Chat_Pin_On_Conflict = {
     constraint: Chat_Pin_Constraint;
@@ -5627,6 +5635,8 @@ export enum Chat_ReadUpToIndex_Update_Column {
 export type Chat_Subscription = {
     __typename?: "chat_Subscription";
     /** An object relationship */
+    XPin?: Maybe<Chat_Pin>;
+    /** An object relationship */
     chat: Chat_Chat;
     chatId: Scalars["uuid"];
     created_at: Scalars["timestamptz"];
@@ -5673,6 +5683,7 @@ export type Chat_Subscription_Arr_Rel_Insert_Input = {
 
 /** Boolean expression to filter rows from the table "chat.Subscription". All fields are combined with a logical 'AND'. */
 export type Chat_Subscription_Bool_Exp = {
+    XPin?: Maybe<Chat_Pin_Bool_Exp>;
     _and?: Maybe<Array<Chat_Subscription_Bool_Exp>>;
     _not?: Maybe<Chat_Subscription_Bool_Exp>;
     _or?: Maybe<Array<Chat_Subscription_Bool_Exp>>;
@@ -5692,6 +5703,7 @@ export enum Chat_Subscription_Constraint {
 
 /** input type for inserting data into table "chat.Subscription" */
 export type Chat_Subscription_Insert_Input = {
+    XPin?: Maybe<Chat_Pin_Obj_Rel_Insert_Input>;
     chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
     chatId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
@@ -5748,6 +5760,7 @@ export type Chat_Subscription_On_Conflict = {
 
 /** Ordering options when selecting data from "chat.Subscription". */
 export type Chat_Subscription_Order_By = {
+    XPin?: Maybe<Chat_Pin_Order_By>;
     chat?: Maybe<Chat_Chat_Order_By>;
     chatId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
@@ -9468,12 +9481,10 @@ export type Content_Element_Order_By = {
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     data?: Maybe<Order_By>;
-    hasBeenSubmitted?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     isHidden?: Maybe<Order_By>;
     item?: Maybe<Content_Item_Order_By>;
     itemId?: Maybe<Order_By>;
-    itemTitle?: Maybe<Order_By>;
     layoutData?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingData?: Maybe<Conference_OriginatingData_Order_By>;
@@ -10367,7 +10378,6 @@ export type Content_ItemProgramPerson_On_Conflict = {
 
 /** Ordering options when selecting data from "content.ItemProgramPerson". */
 export type Content_ItemProgramPerson_Order_By = {
-    hasSubmissionRequestBeenSent?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     item?: Maybe<Content_Item_Order_By>;
     itemId?: Maybe<Order_By>;
@@ -11010,7 +11020,6 @@ export type Content_Item_Order_By = {
     descriptionOfExhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
     elements_aggregate?: Maybe<Content_Element_Aggregate_Order_By>;
     events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
-    hasUnsubmittedElements?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     itemExhibitions_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
     itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -21924,7 +21933,6 @@ export type Registrant_Invitation_Order_By = {
     confirmationCode?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
-    hash?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     inviteCode?: Maybe<Order_By>;
     invitedEmailAddress?: Maybe<Order_By>;
@@ -22945,8 +22953,6 @@ export type Registrant_Registrant_Order_By = {
     groupRegistrants_aggregate?: Maybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
     invitation?: Maybe<Registrant_Invitation_Order_By>;
-    invitationStatus?: Maybe<Order_By>;
-    inviteSent?: Maybe<Order_By>;
     profile?: Maybe<Registrant_Profile_Order_By>;
     programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
     roomParticipants_aggregate?: Maybe<Room_Participant_Aggregate_Order_By>;
@@ -25520,7 +25526,6 @@ export type Room_Room_Order_By = {
     currentModeName?: Maybe<Order_By>;
     events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
-    isProgramRoom?: Maybe<Order_By>;
     livestreamDuration?: Maybe<Room_LivestreamDurations_Order_By>;
     managementMode?: Maybe<Room_ManagementMode_Order_By>;
     managementModeName?: Maybe<Order_By>;
@@ -28269,7 +28274,6 @@ export type Schedule_Event_Order_By = {
     room?: Maybe<Room_Room_Order_By>;
     roomId?: Maybe<Order_By>;
     roomMode?: Maybe<Room_Mode_Order_By>;
-    roomName?: Maybe<Order_By>;
     shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
     shufflePeriodId?: Maybe<Order_By>;
     startTime?: Maybe<Order_By>;
@@ -34774,7 +34778,6 @@ export type Video_VonageParticipantStream_Order_By = {
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
-    durationSeconds?: Maybe<Order_By>;
     eventVonageSession?: Maybe<Video_EventVonageSession_Order_By>;
     id?: Maybe<Order_By>;
     registrant?: Maybe<Registrant_Registrant_Order_By>;

@@ -451,7 +451,11 @@ class LS extends Command {
         for (const table of tableSchemas) {
             outputSchema.__schema.types.push({
                 kind: "OBJECT",
-                name: `${table.localTable.schema}_${table.localTable.name}`,
+                name: `${table.localTable.schema !== "public" ? table.localTable.schema + "_" : ""}${
+                    table.localTable.name
+                }`,
+                schemaName: table.localTable.schema,
+                tableName: table.localTable.name,
                 fields: table.relationships.map((relationship) => {
                     const type: any = {};
                     type.kind =

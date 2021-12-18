@@ -604,6 +604,7 @@ export type GetGoogleOAuthUrlOutput = {
 export type GetSlugOutput = {
     __typename?: "GetSlugOutput";
     slug?: Maybe<Scalars["String"]>;
+    url?: Maybe<Scalars["String"]>;
 };
 
 export type GetUploadAgreementOutput = {
@@ -4938,6 +4939,13 @@ export type Chat_Pin_Mutation_Response = {
     returning: Array<Chat_Pin>;
 };
 
+/** input type for inserting object relation for remote table "chat.Pin" */
+export type Chat_Pin_Obj_Rel_Insert_Input = {
+    data: Chat_Pin_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: InputMaybe<Chat_Pin_On_Conflict>;
+};
+
 /** on conflict condition type for table "chat.Pin" */
 export type Chat_Pin_On_Conflict = {
     constraint: Chat_Pin_Constraint;
@@ -5629,6 +5637,8 @@ export enum Chat_ReadUpToIndex_Update_Column {
 export type Chat_Subscription = {
     __typename?: "chat_Subscription";
     /** An object relationship */
+    XPin?: Maybe<Chat_Pin>;
+    /** An object relationship */
     chat: Chat_Chat;
     chatId: Scalars["uuid"];
     created_at: Scalars["timestamptz"];
@@ -5675,6 +5685,7 @@ export type Chat_Subscription_Arr_Rel_Insert_Input = {
 
 /** Boolean expression to filter rows from the table "chat.Subscription". All fields are combined with a logical 'AND'. */
 export type Chat_Subscription_Bool_Exp = {
+    XPin?: InputMaybe<Chat_Pin_Bool_Exp>;
     _and?: InputMaybe<Array<Chat_Subscription_Bool_Exp>>;
     _not?: InputMaybe<Chat_Subscription_Bool_Exp>;
     _or?: InputMaybe<Array<Chat_Subscription_Bool_Exp>>;
@@ -5694,6 +5705,7 @@ export enum Chat_Subscription_Constraint {
 
 /** input type for inserting data into table "chat.Subscription" */
 export type Chat_Subscription_Insert_Input = {
+    XPin?: InputMaybe<Chat_Pin_Obj_Rel_Insert_Input>;
     chat?: InputMaybe<Chat_Chat_Obj_Rel_Insert_Input>;
     chatId?: InputMaybe<Scalars["uuid"]>;
     created_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -5750,6 +5762,7 @@ export type Chat_Subscription_On_Conflict = {
 
 /** Ordering options when selecting data from "chat.Subscription". */
 export type Chat_Subscription_Order_By = {
+    XPin?: InputMaybe<Chat_Pin_Order_By>;
     chat?: InputMaybe<Chat_Chat_Order_By>;
     chatId?: InputMaybe<Order_By>;
     created_at?: InputMaybe<Order_By>;
@@ -9470,12 +9483,10 @@ export type Content_Element_Order_By = {
     conferenceId?: InputMaybe<Order_By>;
     createdAt?: InputMaybe<Order_By>;
     data?: InputMaybe<Order_By>;
-    hasBeenSubmitted?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     isHidden?: InputMaybe<Order_By>;
     item?: InputMaybe<Content_Item_Order_By>;
     itemId?: InputMaybe<Order_By>;
-    itemTitle?: InputMaybe<Order_By>;
     layoutData?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
@@ -10369,7 +10380,6 @@ export type Content_ItemProgramPerson_On_Conflict = {
 
 /** Ordering options when selecting data from "content.ItemProgramPerson". */
 export type Content_ItemProgramPerson_Order_By = {
-    hasSubmissionRequestBeenSent?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     item?: InputMaybe<Content_Item_Order_By>;
     itemId?: InputMaybe<Order_By>;
@@ -11012,7 +11022,6 @@ export type Content_Item_Order_By = {
     descriptionOfExhibitions_aggregate?: InputMaybe<Collection_Exhibition_Aggregate_Order_By>;
     elements_aggregate?: InputMaybe<Content_Element_Aggregate_Order_By>;
     events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
-    hasUnsubmittedElements?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     itemExhibitions_aggregate?: InputMaybe<Content_ItemExhibition_Aggregate_Order_By>;
     itemPeople_aggregate?: InputMaybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -21926,7 +21935,6 @@ export type Registrant_Invitation_Order_By = {
     confirmationCode?: InputMaybe<Order_By>;
     createdAt?: InputMaybe<Order_By>;
     emails_aggregate?: InputMaybe<Email_Aggregate_Order_By>;
-    hash?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     inviteCode?: InputMaybe<Order_By>;
     invitedEmailAddress?: InputMaybe<Order_By>;
@@ -22947,8 +22955,6 @@ export type Registrant_Registrant_Order_By = {
     groupRegistrants_aggregate?: InputMaybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
     id?: InputMaybe<Order_By>;
     invitation?: InputMaybe<Registrant_Invitation_Order_By>;
-    invitationStatus?: InputMaybe<Order_By>;
-    inviteSent?: InputMaybe<Order_By>;
     profile?: InputMaybe<Registrant_Profile_Order_By>;
     programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     roomParticipants_aggregate?: InputMaybe<Room_Participant_Aggregate_Order_By>;
@@ -25522,7 +25528,6 @@ export type Room_Room_Order_By = {
     currentModeName?: InputMaybe<Order_By>;
     events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     id?: InputMaybe<Order_By>;
-    isProgramRoom?: InputMaybe<Order_By>;
     livestreamDuration?: InputMaybe<Room_LivestreamDurations_Order_By>;
     managementMode?: InputMaybe<Room_ManagementMode_Order_By>;
     managementModeName?: InputMaybe<Order_By>;
@@ -28271,7 +28276,6 @@ export type Schedule_Event_Order_By = {
     room?: InputMaybe<Room_Room_Order_By>;
     roomId?: InputMaybe<Order_By>;
     roomMode?: InputMaybe<Room_Mode_Order_By>;
-    roomName?: InputMaybe<Order_By>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
     startTime?: InputMaybe<Order_By>;
@@ -34776,7 +34780,6 @@ export type Video_VonageParticipantStream_Order_By = {
     conference?: InputMaybe<Conference_Conference_Order_By>;
     conferenceId?: InputMaybe<Order_By>;
     createdAt?: InputMaybe<Order_By>;
-    durationSeconds?: InputMaybe<Order_By>;
     eventVonageSession?: InputMaybe<Video_EventVonageSession_Order_By>;
     id?: InputMaybe<Order_By>;
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;

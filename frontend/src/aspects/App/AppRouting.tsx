@@ -136,7 +136,7 @@ function CheckSlugInner(): JSX.Element {
         }
     }
 
-    return <CenteredSpinner />;
+    return <CenteredSpinner caller="AppRouting:139" />;
 }
 
 function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
@@ -326,7 +326,7 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
                 ) : conferenceId ? (
                     <ConferenceRoutes />
                 ) : (
-                    <CenteredSpinner centerProps={{ minHeight: "calc(100vh - 40px)" }} />
+                    <CenteredSpinner centerProps={{ minHeight: "calc(100vh - 40px)" }} caller="AppRouting:329" />
                 )}
             </Switch>
         </Suspense>

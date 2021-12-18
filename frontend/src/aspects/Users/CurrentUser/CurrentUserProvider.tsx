@@ -176,7 +176,9 @@ function CurrentUserProvider_IsAuthenticated({
     );
 
     if (termsLoading || loading) {
-        return <CenteredSpinner spinnerProps={{ label: "Loading terms configuration" }} />;
+        return (
+            <CenteredSpinner caller="CurrentUserProvider:179" spinnerProps={{ label: "Loading terms configuration" }} />
+        );
     }
 
     if (termsData && termsData.hostOrganisationName) {

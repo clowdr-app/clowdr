@@ -45,7 +45,7 @@ export default function SwagBags(): JSX.Element {
     });
 
     return swagBagsResponse.fetching && !swagBagsResponse.data ? (
-        <CenteredSpinner spinnerProps={{ label: "Loading your swag" }} />
+        <CenteredSpinner spinnerProps={{ label: "Loading your swag" }} caller="SwagBag:48" />
     ) : (
         <SwagBagsInner bags={swagBagsResponse.data?.content_Item ?? []} />
     );

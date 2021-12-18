@@ -287,6 +287,6 @@ function ManageConferenceRoutes(): JSX.Element {
             </Switch>
         </Suspense>
     ) : (
-        <CenteredSpinner />
+        <CenteredSpinner caller="ConferenceRoute:290" />
     );
 }

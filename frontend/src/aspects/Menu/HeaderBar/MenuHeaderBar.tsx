@@ -33,8 +33,10 @@ import HeaderBarButton from "./HeaderBarButton";
 
 export default function MenuHeaderBar({
     setRightMenuOpen,
+    toggleIsExpanded,
 }: {
     setRightMenuOpen: (value: boolean | ((old: boolean) => boolean)) => void;
+    toggleIsExpanded: () => void;
 }): JSX.Element {
     const maybeConference = useMaybeConference();
     const maybeUser = useMaybeCurrentUser()?.user;
@@ -66,8 +68,37 @@ export default function MenuHeaderBar({
 
     const { toggleColorMode } = useColorMode();
 
+    const leftMenu_BgColor = useColorModeValue("LeftMenu.500", "LeftMenu.200");
+
     return (
         <Flex bgColor={bgColor} color={textColor} w="100%" alignItems="center">
+            {maybeConference ? (
+                <Button
+                    onClick={toggleIsExpanded}
+                    variant="ghost"
+                    p={0}
+                    fontSize="2xl"
+                    w="3rem"
+                    minW={0}
+                    minH={0}
+                    h="100%"
+                    borderTopRadius="2xl"
+                    borderBottomRadius="none"
+                    _hover={{
+                        bgColor: leftMenu_BgColor,
+                    }}
+                    _focus={{
+                        bgColor: leftMenu_BgColor,
+                        shadow: defaultOutline_AsBoxShadow,
+                    }}
+                    _active={{
+                        bgColor: leftMenu_BgColor,
+                        shadow: defaultOutline_AsBoxShadow,
+                    }}
+                >
+                    <FAIcon iconStyle="s" icon="bars" />
+                </Button>
+            ) : undefined}
             <LinkButton
                 to={conferencePath ?? "/"}
                 fontSize="xl"

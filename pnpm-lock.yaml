@@ -114,9 +114,10 @@ importers:
       '@graphql-codegen/typescript-urql-graphcache': ^2.2.2
       '@graphql-codegen/urql-introspection': ^2.1.0
       '@midspace/assert': workspace:*
-      '@midspace/auth': workspace:^0.0.0
+      '@midspace/auth': workspace:*
       '@midspace/graphql': workspace:*
       '@midspace/shared-types': workspace:*
+      '@midspace/urql-hasura-cache-generic-resolver': workspace:*
       '@opentok/client': ^2.21.2
       '@researchgate/react-intersection-observer': ^1.3.5
       '@types/emoji-mart': ^3.0.8
@@ -251,6 +252,7 @@ importers:
       '@midspace/auth': link:../packages/node/auth
       '@midspace/graphql': link:../packages/shared/graphql
       '@midspace/shared-types': link:../packages/shared/shared-types
+      '@midspace/urql-hasura-cache-generic-resolver': link:../packages/shared/urql-hasura-cache-generic-resolver
       '@opentok/client': 2.21.2
       '@researchgate/react-intersection-observer': 1.3.5_react-dom@17.0.2+react@17.0.2
       '@types/emoji-mart': 3.0.8
@@ -816,6 +818,39 @@ importers:
       class-transformer: 0.4.0
       class-validator: 0.13.1
       jsonata: 1.8.5
+      ramda: 0.27.1
+      ts-patch: 2.0.1_typescript@4.5.2
+      typescript: 4.5.2
+      typescript-is: 0.19.0_typescript@4.5.2
+    devDependencies:
+      rimraf: 3.0.2
+
+  packages/shared/urql-hasura-cache-generic-resolver:
+    specifiers:
+      '@types/lodash': ^4.14.178
+      '@types/ramda': ^0.27.42
+      '@urql/core': ^2.3.5
+      '@urql/exchange-graphcache': ^4.3.5
+      class-transformer: ^0.4.0
+      class-validator: ^0.13.1
+      graphql: ^15.7.2
+      jsonata: ^1.8.4
+      lodash: ^4.17.21
+      ramda: ^0.27.1
+      rimraf: ^3.0.2
+      ts-patch: ^2.0.1
+      typescript: ^4.5.2
+      typescript-is: ^0.19.0
+    dependencies:
+      '@types/lodash': 4.14.178
+      '@types/ramda': 0.27.52
+      '@urql/core': 2.3.5_graphql@15.7.2
+      '@urql/exchange-graphcache': 4.3.5_graphql@15.7.2
+      class-transformer: 0.4.0
+      class-validator: 0.13.2
+      graphql: 15.7.2
+      jsonata: 1.8.5
+      lodash: 4.17.21
       ramda: 0.27.1
       ts-patch: 2.0.1_typescript@4.5.2
       typescript: 4.5.2
@@ -7533,6 +7568,12 @@ packages:
     dependencies:
       graphql: 15.7.2
 
+  /@graphql-typed-document-node/core/3.1.1:
+    resolution: {integrity: sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==}
+    peerDependencies:
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    dev: false
+
   /@graphql-typed-document-node/core/3.1.1_graphql@15.7.2:
     resolution: {integrity: sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==}
     peerDependencies:
@@ -8776,6 +8817,10 @@ packages:
     resolution: {integrity: sha512-xZmuPTa3rlZoIbtDUyJKZQimJV3bxCmzMIO2c9Pz9afyDro6kr7R79GwcB6mRhuoPmV2p1Vb66WOJH7F886WKQ==}
     dev: false
 
+  /@types/lodash/4.14.178:
+    resolution: {integrity: sha512-0d5Wd09ItQWH1qFbEyQ7oTQ3GZrMfth5JkbN3EvTKLXcHLRDSXeLnlvlOn0wvxVIwK5o2M8JzP/OWz7T3NRsbw==}
+    dev: false
+
   /@types/long/4.0.1:
     resolution: {integrity: sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==}
     dev: false
@@ -9494,7 +9539,7 @@ packages:
     peerDependencies:
       graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
     dependencies:
-      '@graphql-typed-document-node/core': 3.1.0
+      '@graphql-typed-document-node/core': 3.1.1
       wonka: 4.0.15
     dev: false
 
@@ -9503,7 +9548,7 @@ packages:
     peerDependencies:
       graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
     dependencies:
-      '@graphql-typed-document-node/core': 3.1.0_graphql@15.7.2
+      '@graphql-typed-document-node/core': 3.1.1_graphql@15.7.2
       graphql: 15.7.2
       wonka: 4.0.15
     dev: false

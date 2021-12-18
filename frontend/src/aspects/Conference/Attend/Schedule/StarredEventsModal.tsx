@@ -141,7 +141,7 @@ function StarredEvents(): JSX.Element {
     }, [eventIdsResponse.data]);
 
     if (!eventIdsResponse.data) {
-        return <CenteredSpinner />;
+        return <CenteredSpinner caller="StarredEventsModal:144" />;
     }
 
     return <StarredEventsInner eventIds={eventIds} />;
@@ -169,5 +169,9 @@ function StarredEventsInner({ eventIds }: { eventIds: string[] }): JSX.Element {
             });
         }
     }, [roomsResult.data]);
-    return !data ? <CenteredSpinner /> : <ScheduleInner titleStr={"My events"} noEventsText="" {...data} />;
+    return !data ? (
+        <CenteredSpinner caller="StarredEventsModal:172" />
+    ) : (
+        <ScheduleInner titleStr={"My events"} noEventsText="" {...data} />
+    );
 }

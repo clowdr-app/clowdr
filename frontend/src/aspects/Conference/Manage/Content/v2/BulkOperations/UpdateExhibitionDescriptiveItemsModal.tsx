@@ -143,7 +143,9 @@ function ModalInner({
                     This will set the descriptive item of any exhibition that currently lacks a descriptive item and
                     where a corresponding content exists with a title matching the exhibition name.
                 </Text>
-                {exhibitionsResponse.fetching ? <CenteredSpinner /> : undefined}
+                {exhibitionsResponse.fetching ? (
+                    <CenteredSpinner caller="UpdateExhibitionDescriptiveItemsModal:146" />
+                ) : undefined}
                 <Text mt={4}>{exhibitionMatches.length} new matches found.</Text>
                 {updatedCount > 0 ? <Text mt={4}>{updatedCount} updated.</Text> : undefined}
             </ModalBody>

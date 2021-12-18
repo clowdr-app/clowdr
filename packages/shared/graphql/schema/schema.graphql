@@ -755,6 +755,7 @@ type GetGoogleOAuthUrlOutput {
 
 type GetSlugOutput {
     slug: String
+    url: String
 }
 
 type GetUploadAgreementOutput {
@@ -6616,6 +6617,17 @@ type chat_Pin_mutation_response {
 }
 
 """
+input type for inserting object relation for remote table "chat.Pin"
+"""
+input chat_Pin_obj_rel_insert_input {
+    data: chat_Pin_insert_input!
+    """
+    on conflict condition
+    """
+    on_conflict: chat_Pin_on_conflict
+}
+
+"""
 on conflict condition type for table "chat.Pin"
 """
 input chat_Pin_on_conflict {
@@ -7559,6 +7571,10 @@ type chat_Subscription {
     """
     An object relationship
     """
+    XPin: chat_Pin
+    """
+    An object relationship
+    """
     chat: chat_Chat!
     chatId: uuid!
     created_at: timestamptz!
@@ -7611,6 +7627,7 @@ input chat_Subscription_arr_rel_insert_input {
 Boolean expression to filter rows from the table "chat.Subscription". All fields are combined with a logical 'AND'.
 """
 input chat_Subscription_bool_exp {
+    XPin: chat_Pin_bool_exp
     _and: [chat_Subscription_bool_exp!]
     _not: chat_Subscription_bool_exp
     _or: [chat_Subscription_bool_exp!]
@@ -7636,6 +7653,7 @@ enum chat_Subscription_constraint {
 input type for inserting data into table "chat.Subscription"
 """
 input chat_Subscription_insert_input {
+    XPin: chat_Pin_obj_rel_insert_input
     chat: chat_Chat_obj_rel_insert_input
     chatId: uuid
     created_at: timestamptz
@@ -7707,6 +7725,7 @@ input chat_Subscription_on_conflict {
 Ordering options when selecting data from "chat.Subscription".
 """
 input chat_Subscription_order_by {
+    XPin: chat_Pin_order_by
     chat: chat_Chat_order_by
     chatId: order_by
     created_at: order_by
@@ -13134,12 +13153,10 @@ input content_Element_order_by {
     conferenceId: order_by
     createdAt: order_by
     data: order_by
-    hasBeenSubmitted: order_by
     id: order_by
     isHidden: order_by
     item: content_Item_order_by
     itemId: order_by
-    itemTitle: order_by
     layoutData: order_by
     name: order_by
     originatingData: conference_OriginatingData_order_by
@@ -14496,7 +14513,6 @@ input content_ItemProgramPerson_on_conflict {
 Ordering options when selecting data from "content.ItemProgramPerson".
 """
 input content_ItemProgramPerson_order_by {
-    hasSubmissionRequestBeenSent: order_by
     id: order_by
     item: content_Item_order_by
     itemId: order_by
@@ -15337,7 +15353,6 @@ input content_Item_order_by {
     descriptionOfExhibitions_aggregate: collection_Exhibition_aggregate_order_by
     elements_aggregate: content_Element_aggregate_order_by
     events_aggregate: schedule_Event_aggregate_order_by
-    hasUnsubmittedElements: order_by
     id: order_by
     itemExhibitions_aggregate: content_ItemExhibition_aggregate_order_by
     itemPeople_aggregate: content_ItemProgramPerson_aggregate_order_by
@@ -32564,7 +32579,6 @@ input registrant_Invitation_order_by {
     confirmationCode: order_by
     createdAt: order_by
     emails_aggregate: Email_aggregate_order_by
-    hash: order_by
     id: order_by
     inviteCode: order_by
     invitedEmailAddress: order_by
@@ -33998,8 +34012,6 @@ input registrant_Registrant_order_by {
     groupRegistrants_aggregate: registrant_GroupRegistrant_aggregate_order_by
     id: order_by
     invitation: registrant_Invitation_order_by
-    invitationStatus: order_by
-    inviteSent: order_by
     profile: registrant_Profile_order_by
     programPeople_aggregate: collection_ProgramPerson_aggregate_order_by
     roomParticipants_aggregate: room_Participant_aggregate_order_by
@@ -37589,7 +37601,6 @@ input room_Room_order_by {
     currentModeName: order_by
     events_aggregate: schedule_Event_aggregate_order_by
     id: order_by
-    isProgramRoom: order_by
     livestreamDuration: room_LivestreamDurations_order_by
     managementMode: room_ManagementMode_order_by
     managementModeName: order_by
@@ -41289,7 +41300,6 @@ input schedule_Event_order_by {
     room: room_Room_order_by
     roomId: order_by
     roomMode: room_Mode_order_by
-    roomName: order_by
     shufflePeriod: room_ShufflePeriod_order_by
     shufflePeriodId: order_by
     startTime: order_by
@@ -52129,7 +52139,6 @@ input video_VonageParticipantStream_order_by {
     conference: conference_Conference_order_by
     conferenceId: order_by
     createdAt: order_by
-    durationSeconds: order_by
     eventVonageSession: video_EventVonageSession_order_by
     id: order_by
     registrant: registrant_Registrant_order_by

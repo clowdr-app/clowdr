@@ -12,7 +12,7 @@ export default function LoggedOutPage(): JSX.Element {
     const mUser = useMaybeCurrentUser();
 
     if (mUser.loading) {
-        return <CenteredSpinner spinnerProps={{ label: "Loading user info" }} />;
+        return <CenteredSpinner spinnerProps={{ label: "Loading user info" }} caller="LoggedOutPage:15" />;
     }
 
     if (mUser.user) {

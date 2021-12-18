@@ -1,5 +1,5 @@
 import type { As, PropsOf } from "@chakra-ui/react";
-import { Button, chakra, useBreakpointValue } from "@chakra-ui/react";
+import { Button, chakra, Tooltip } from "@chakra-ui/react";
 import React, { forwardRef } from "react";
 import FAIcon from "../Chakra/FAIcon";
 
@@ -24,30 +24,35 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
     { ariaLabel, label, showLabel, iconStyle, icon, children, ...props }: React.PropsWithChildren<Props>,
     ref
 ): JSX.Element {
-    const size = useBreakpointValue({
-        base: "md",
-        lg: "lg",
-    });
-    return (
+    const button = (
         <Button
             aria-label={ariaLabel ?? label}
-            size={size}
             p={2}
-            pr={3}
+            pl={3}
+            w="100%"
+            overflow="hidden"
             minW="100%"
             ref={ref}
             textAlign="left"
-            justifyContent={showLabel ? "flex-start" : "center"}
+            justifyContent="flex-start"
+            fontSize="lg"
             {...props}
         >
             {typeof icon === "string" ? (
-                <FAIcon iconStyle={iconStyle} icon={icon} w={6} mr={showLabel ? 2 : 0} textAlign="center" />
+                <FAIcon iconStyle={iconStyle} icon={icon} w={6} mr={3} textAlign="center" />
             ) : (
                 icon.map((ic, idx) => <FAIcon key={idx} iconStyle={iconStyle} icon={ic} />)
             )}
-            {showLabel ? <chakra.span fontSize="sm">{label}</chakra.span> : undefined}
+            {<chakra.span fontSize="sm">{label}</chakra.span>}
             {children}
         </Button>
+    );
+    return !showLabel ? (
+        <Tooltip label={label} hasArrow placement="right">
+            {button}
+        </Tooltip>
+    ) : (
+        button
     );
 });
 

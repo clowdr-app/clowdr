@@ -1,24 +1,19 @@
-import { Box, Flex, Link, MenuItem, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Link, useColorModeValue } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import React, { useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
 import { useCountSwagBagsQuery } from "../../generated/graphql";
-import FAIcon from "../Chakra/FAIcon";
-import { useMyBackstagesModal } from "../Conference/Attend/Profile/MyBackstages";
 import { useLiveProgramRoomsModal } from "../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { useSocialiseModal } from "../Conference/Attend/Rooms/V2/SocialiseModalProvider";
 import { ProgramModalTab, useScheduleModal } from "../Conference/Attend/Schedule/ProgramModal";
-import { useStarredEventsModal } from "../Conference/Attend/Schedule/StarredEventsModal";
 import RequireRole from "../Conference/RequireRole";
 import { useConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../GQL/AuthParameters";
-import { useRestorableState } from "../Hooks/useRestorableState";
 import { useLiveEvents } from "../LiveEvents/LiveEvents";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import MenuButton from "./MenuButton";
-import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
 
 gql`
     query CountSwagBags($conferenceId: uuid!) {
@@ -30,7 +25,7 @@ gql`
     }
 `;
 
-export default function LeftMenu(): JSX.Element {
+export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
     const maybeUser = useMaybeCurrentUser()?.user;
@@ -44,6 +39,7 @@ export default function LeftMenu(): JSX.Element {
         },
         pause: !maybeUser,
     });
+    const hasSwagBags = Boolean(swagBagsResponse.data?.content_Item_aggregate.aggregate?.count);
 
     const { liveEventsByRoom } = useLiveEvents();
 
@@ -60,49 +56,33 @@ export default function LeftMenu(): JSX.Element {
         onClose: liveNow_OnClose,
         finalFocusRef: liveNowButtonRef,
     } = useLiveProgramRoomsModal();
-    const {
-        onOpen: myBackstages_OnOpen,
-        onClose: myBackstages_OnClose,
-        finalFocusRef: myBackstagesButtonRef,
-    } = useMyBackstagesModal();
-    const {
-        onOpen: myStarredEvents_OnOpen,
-        onClose: myStarredEvents_OnClose,
-        finalFocusRef: myStarredEventsButtonRef,
-    } = useStarredEventsModal();
 
     useEffect(() => {
         liveNow_OnClose();
         schedule_OnClose();
         socialise_OnClose();
-        myBackstages_OnClose();
-        myStarredEvents_OnClose();
-    }, [
-        location.pathname,
-        liveNow_OnClose,
-        schedule_OnClose,
-        socialise_OnClose,
-        myBackstages_OnClose,
-        myStarredEvents_OnClose,
-    ]);
+    }, [location.pathname, liveNow_OnClose, schedule_OnClose, socialise_OnClose]);
 
     const roomParticipants = useRoomParticipants();
 
     const liveRoomCount = Object.keys(liveEventsByRoom).length;
     const showLive = liveRoomCount > 0;
 
-    const [isExpanded, _setIsExpanded] = useRestorableState<boolean>(
-        "LeftMenu_IsExpanded",
-        true,
-        (x) => x.toString(),
-        (x) => x === "true"
-    );
-
     const bgColor = useColorModeValue("LeftMenu.500", "LeftMenu.200");
 
     return (
         <>
-            <Flex flexDir="column" justifyContent="center" alignItems="flex-start" h="100%" bgColor={bgColor}>
+            <Flex
+                flexDir="column"
+                justifyContent="center"
+                alignItems="flex-start"
+                h="100%"
+                bgColor={bgColor}
+                w={isExpanded ? "9rem" : "3rem"}
+                flex="0 0 auto"
+                transition="width 0.15s cubic-bezier(0.33, 1, 0.68, 1)"
+                overflow="hidden"
+            >
                 {showLive ? (
                     <MenuButton
                         label="Live now"
@@ -122,7 +102,7 @@ export default function LeftMenu(): JSX.Element {
                     </MenuButton>
                 ) : undefined}
                 <MenuButton
-                    label="Program"
+                    label="Schedule"
                     iconStyle="s"
                     icon={"calendar"}
                     px={0}
@@ -130,7 +110,20 @@ export default function LeftMenu(): JSX.Element {
                     colorScheme={colorScheme}
                     side="left"
                     ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
-                    onClick={() => schedule_OnOpen()}
+                    onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
+                    mb={1}
+                    showLabel={isExpanded}
+                />
+                <MenuButton
+                    label="Exhibitions"
+                    iconStyle="s"
+                    icon={"puzzle-piece"}
+                    px={0}
+                    borderRadius={0}
+                    colorScheme={colorScheme}
+                    side="left"
+                    ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
+                    onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
                     mb={conference.forceSponsorsMenuLink?.[0]?.value || maybeRegistrant ? 1 : "auto"}
                     showLabel={isExpanded}
                 />
@@ -169,7 +162,7 @@ export default function LeftMenu(): JSX.Element {
                             pos="relative"
                             ref={socialiseButtonRef as React.RefObject<HTMLButtonElement>}
                             onClick={() => socialise_OnOpen()}
-                            mb={1}
+                            mb={!hasSwagBags ? "auto" : 1}
                             showLabel={isExpanded}
                         >
                             {roomParticipants !== undefined &&
@@ -180,38 +173,21 @@ export default function LeftMenu(): JSX.Element {
                                 </Box>
                             ) : undefined}
                         </MenuButton>
-                        <MoreOptionsMenuButton
-                            label="My stuff"
-                            iconStyle="s"
-                            icon="user"
-                            borderRadius={0}
-                            colorScheme={colorScheme}
-                            side="left"
-                            mb="auto"
-                            showLabel={isExpanded}
-                            imageSrc={maybeRegistrant.profile?.photoURL_50x50 ?? undefined}
-                        >
-                            <MenuItem
-                                ref={myStarredEventsButtonRef as React.RefObject<HTMLButtonElement>}
-                                onClick={myStarredEvents_OnOpen}
-                            >
-                                <FAIcon iconStyle="s" icon="star" mr={2} aria-hidden={true} w="1.2em" />
-                                My events
-                            </MenuItem>
-                            {swagBagsResponse.data?.content_Item_aggregate.aggregate?.count ? (
-                                <MenuItem as={ReactLink} to={`${conferencePath}/swag`}>
-                                    <FAIcon iconStyle="s" icon="gift" mr={2} aria-hidden={true} w="1.2em" />
-                                    My conference swag
-                                </MenuItem>
-                            ) : undefined}
-                            <MenuItem
-                                ref={myBackstagesButtonRef as React.RefObject<HTMLButtonElement>}
-                                onClick={myBackstages_OnOpen}
-                            >
-                                <FAIcon iconStyle="s" icon="person-booth" mr={2} aria-hidden={true} w="1.2em" /> My
-                                backstages
-                            </MenuItem>
-                        </MoreOptionsMenuButton>
+                        {hasSwagBags ? (
+                            <MenuButton
+                                label={"Swag"}
+                                iconStyle="s"
+                                icon={"gift"}
+                                px={0}
+                                borderRadius={0}
+                                colorScheme={colorScheme}
+                                side="left"
+                                as={ReactLink}
+                                to={`${conferencePath}/swag`}
+                                mb={"auto"}
+                                showLabel={isExpanded}
+                            />
+                        ) : undefined}
                     </>
                 ) : undefined}
                 <RequireRole organizerRole moderatorRole>

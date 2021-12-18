@@ -2,6 +2,16 @@ table:
   name: Subscription
   schema: chat
 object_relationships:
+- name: XPin
+  using:
+    manual_configuration:
+      column_mapping:
+        chatId: chatId
+        registrantId: registrantId
+      insertion_order: null
+      remote_table:
+        name: Pin
+        schema: chat
 - name: chat
   using:
     foreign_key_constraint_on: chatId

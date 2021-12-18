@@ -52,7 +52,7 @@ export default function WholeSchedule(): JSX.Element {
     }, [eventsResponse.data?.latestEndingEvent]);
 
     if (eventsResponse.fetching || !eventsResponse.data) {
-        return <CenteredSpinner />;
+        return <CenteredSpinner caller="WholeSchedule:55" />;
     }
 
     if (!earliestStartingTime || !latestEndingTime) {

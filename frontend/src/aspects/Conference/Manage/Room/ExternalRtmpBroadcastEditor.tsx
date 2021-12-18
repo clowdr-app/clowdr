@@ -211,7 +211,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
     );
 
     return rtmpOutputResponse.fetching && !rtmpOutputResponse.data ? (
-        <CenteredSpinner />
+        <CenteredSpinner caller="ExternalRtmpBroadcastEditor:214" />
     ) : (
         <VStack spacing={4} justifyContent="flex-start" alignItems="flex-start">
             <Text>

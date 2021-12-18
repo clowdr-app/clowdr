@@ -95,7 +95,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
         <Center pt={6} w="100%">
             {title}
             {itemResponse.fetching && !itemResponse.data ? (
-                <CenteredSpinner />
+                <CenteredSpinner caller="SubmitItemPage:98" />
             ) : (
                 <Container maxW="container.xl">
                     <VStack spacing={6} alignItems="flex-start" w="100%">

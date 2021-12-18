@@ -172,7 +172,7 @@ function ConferenceProvider_WithoutUser({
     });
 
     if (loading && !data) {
-        return <CenteredSpinner />;
+        return <CenteredSpinner caller="useConference:175" />;
     }
 
     if (error) {
@@ -219,7 +219,7 @@ function ConferenceProvider_WithUser({
     });
 
     if (loading && !data) {
-        return <CenteredSpinner />;
+        return <CenteredSpinner caller="useConference:222" />;
     }
 
     if (error) {
@@ -256,7 +256,7 @@ export default function ConferenceProvider({
     const user = useMaybeCurrentUser();
 
     if (user.loading) {
-        return <CenteredSpinner />;
+        return <CenteredSpinner caller="useConference:259" />;
     }
 
     if (user.user) {

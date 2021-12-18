@@ -37,7 +37,7 @@ export default function SuperUserLandingPage(): JSX.Element {
             {title}
             <Heading>Superuser</Heading>
             {suStateResponse.fetching && !suStateResponse.data?.system_SuperUserState.length ? (
-                <CenteredSpinner />
+                <CenteredSpinner caller="LandingPage:40" />
             ) : undefined}
             {suStateResponse.data?.system_SuperUserState.length ? (
                 suStateResponse.data.system_SuperUserState[0].isInitialised ? (

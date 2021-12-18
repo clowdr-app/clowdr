@@ -1,0 +1,58 @@
+{
+    "name": "@midspace/urql-hasura-cache-generic-resolver",
+    "version": "0.0.0",
+    "scripts": {
+        "build": "pnpm build:cjs && pnpm build:esm",
+        "build:cjs": "tsc --build tsconfig.cjs.json",
+        "build:esm": "tsc --build tsconfig.esm.json",
+        "clean": "rimraf build",
+        "prepare": "ts-patch install -s"
+    },
+    "author": "Clowdr CIC",
+    "license": "AGPL-3.0-or-later",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/clowdr-app/clowdr.git",
+        "directory": "packages/urql-hasura-cache-generic-resolver"
+    },
+    "bugs": {
+        "url": "https://github.com/clowdr-app/clowdr/issues"
+    },
+    "homepage": "https://github.com/clowdr-app/clowdr#readme",
+    "dependencies": {
+        "@types/lodash": "^4.14.178",
+        "@types/ramda": "^0.27.42",
+        "@urql/core": "^2.3.5",
+        "@urql/exchange-graphcache": "^4.3.5",
+        "class-transformer": "^0.4.0",
+        "class-validator": "^0.13.1",
+        "graphql": "^15.7.2",
+        "jsonata": "^1.8.4",
+        "lodash": "^4.17.21",
+        "ramda": "^0.27.1",
+        "ts-patch": "^2.0.1",
+        "typescript": "^4.5.2",
+        "typescript-is": "^0.19.0"
+    },
+    "engines": {
+        "node": ">=16.x",
+        "pnpm": "^6.19.x"
+    },
+    "exports": {
+        "./*": {
+            "import": "./build/esm/*.js",
+            "require": "./build/cjs/*.js"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            "*": [
+                "build/cjs/*",
+                "build/esm/*"
+            ]
+        }
+    },
+    "devDependencies": {
+        "rimraf": "^3.0.2"
+    }
+}

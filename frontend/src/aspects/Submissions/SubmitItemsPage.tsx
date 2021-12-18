@@ -63,7 +63,7 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
         <Center pt={6}>
             {title}
             {itemsResponse.fetching && !itemsResponse.data ? (
-                <CenteredSpinner />
+                <CenteredSpinner caller="SubmitItemsPage:66" />
             ) : (
                 <Container maxW="container.md">
                     <VStack spacing={6} alignItems="flex-start">

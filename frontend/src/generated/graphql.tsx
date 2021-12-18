@@ -613,6 +613,7 @@ export type GetGoogleOAuthUrlOutput = {
 export type GetSlugOutput = {
     readonly __typename?: "GetSlugOutput";
     readonly slug?: Maybe<Scalars["String"]>;
+    readonly url?: Maybe<Scalars["String"]>;
 };
 
 export type GetUploadAgreementOutput = {
@@ -4947,6 +4948,13 @@ export type Chat_Pin_Mutation_Response = {
     readonly returning: ReadonlyArray<Chat_Pin>;
 };
 
+/** input type for inserting object relation for remote table "chat.Pin" */
+export type Chat_Pin_Obj_Rel_Insert_Input = {
+    readonly data: Chat_Pin_Insert_Input;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Chat_Pin_On_Conflict>;
+};
+
 /** on conflict condition type for table "chat.Pin" */
 export type Chat_Pin_On_Conflict = {
     readonly constraint: Chat_Pin_Constraint;
@@ -5638,6 +5646,8 @@ export enum Chat_ReadUpToIndex_Update_Column {
 export type Chat_Subscription = {
     readonly __typename?: "chat_Subscription";
     /** An object relationship */
+    readonly XPin?: Maybe<Chat_Pin>;
+    /** An object relationship */
     readonly chat: Chat_Chat;
     readonly chatId: Scalars["uuid"];
     readonly created_at: Scalars["timestamptz"];
@@ -5684,6 +5694,7 @@ export type Chat_Subscription_Arr_Rel_Insert_Input = {
 
 /** Boolean expression to filter rows from the table "chat.Subscription". All fields are combined with a logical 'AND'. */
 export type Chat_Subscription_Bool_Exp = {
+    readonly XPin?: InputMaybe<Chat_Pin_Bool_Exp>;
     readonly _and?: InputMaybe<ReadonlyArray<Chat_Subscription_Bool_Exp>>;
     readonly _not?: InputMaybe<Chat_Subscription_Bool_Exp>;
     readonly _or?: InputMaybe<ReadonlyArray<Chat_Subscription_Bool_Exp>>;
@@ -5703,6 +5714,7 @@ export enum Chat_Subscription_Constraint {
 
 /** input type for inserting data into table "chat.Subscription" */
 export type Chat_Subscription_Insert_Input = {
+    readonly XPin?: InputMaybe<Chat_Pin_Obj_Rel_Insert_Input>;
     readonly chat?: InputMaybe<Chat_Chat_Obj_Rel_Insert_Input>;
     readonly chatId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -5759,6 +5771,7 @@ export type Chat_Subscription_On_Conflict = {
 
 /** Ordering options when selecting data from "chat.Subscription". */
 export type Chat_Subscription_Order_By = {
+    readonly XPin?: InputMaybe<Chat_Pin_Order_By>;
     readonly chat?: InputMaybe<Chat_Chat_Order_By>;
     readonly chatId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
@@ -9479,12 +9492,10 @@ export type Content_Element_Order_By = {
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
     readonly data?: InputMaybe<Order_By>;
-    readonly hasBeenSubmitted?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly isHidden?: InputMaybe<Order_By>;
     readonly item?: InputMaybe<Content_Item_Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
-    readonly itemTitle?: InputMaybe<Order_By>;
     readonly layoutData?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
@@ -10378,7 +10389,6 @@ export type Content_ItemProgramPerson_On_Conflict = {
 
 /** Ordering options when selecting data from "content.ItemProgramPerson". */
 export type Content_ItemProgramPerson_Order_By = {
-    readonly hasSubmissionRequestBeenSent?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly item?: InputMaybe<Content_Item_Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
@@ -11021,7 +11031,6 @@ export type Content_Item_Order_By = {
     readonly descriptionOfExhibitions_aggregate?: InputMaybe<Collection_Exhibition_Aggregate_Order_By>;
     readonly elements_aggregate?: InputMaybe<Content_Element_Aggregate_Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
-    readonly hasUnsubmittedElements?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly itemExhibitions_aggregate?: InputMaybe<Content_ItemExhibition_Aggregate_Order_By>;
     readonly itemPeople_aggregate?: InputMaybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -21935,7 +21944,6 @@ export type Registrant_Invitation_Order_By = {
     readonly confirmationCode?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
     readonly emails_aggregate?: InputMaybe<Email_Aggregate_Order_By>;
-    readonly hash?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly inviteCode?: InputMaybe<Order_By>;
     readonly invitedEmailAddress?: InputMaybe<Order_By>;
@@ -22956,8 +22964,6 @@ export type Registrant_Registrant_Order_By = {
     readonly groupRegistrants_aggregate?: InputMaybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly invitation?: InputMaybe<Registrant_Invitation_Order_By>;
-    readonly invitationStatus?: InputMaybe<Order_By>;
-    readonly inviteSent?: InputMaybe<Order_By>;
     readonly profile?: InputMaybe<Registrant_Profile_Order_By>;
     readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     readonly roomParticipants_aggregate?: InputMaybe<Room_Participant_Aggregate_Order_By>;
@@ -25531,7 +25537,6 @@ export type Room_Room_Order_By = {
     readonly currentModeName?: InputMaybe<Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly isProgramRoom?: InputMaybe<Order_By>;
     readonly livestreamDuration?: InputMaybe<Room_LivestreamDurations_Order_By>;
     readonly managementMode?: InputMaybe<Room_ManagementMode_Order_By>;
     readonly managementModeName?: InputMaybe<Order_By>;
@@ -28280,7 +28285,6 @@ export type Schedule_Event_Order_By = {
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
     readonly roomMode?: InputMaybe<Room_Mode_Order_By>;
-    readonly roomName?: InputMaybe<Order_By>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
     readonly startTime?: InputMaybe<Order_By>;
@@ -34785,7 +34789,6 @@ export type Video_VonageParticipantStream_Order_By = {
     readonly conference?: InputMaybe<Conference_Conference_Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
@@ -58282,6 +58285,7 @@ export type GraphCacheResolvers = {
     };
     GetSlugOutput?: {
         slug?: GraphCacheResolver<WithTypename<GetSlugOutput>, Record<string, never>, Scalars["String"] | string>;
+        url?: GraphCacheResolver<WithTypename<GetSlugOutput>, Record<string, never>, Scalars["String"] | string>;
     };
     GetUploadAgreementOutput?: {
         agreementText?: GraphCacheResolver<
@@ -61809,6 +61813,11 @@ export type GraphCacheResolvers = {
         >;
     };
     chat_Subscription?: {
+        XPin?: GraphCacheResolver<
+            WithTypename<Chat_Subscription>,
+            Record<string, never>,
+            WithTypename<Chat_Pin> | string
+        >;
         chat?: GraphCacheResolver<
             WithTypename<Chat_Subscription>,
             Record<string, never>,

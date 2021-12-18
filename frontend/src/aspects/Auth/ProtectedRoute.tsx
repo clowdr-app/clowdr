@@ -52,14 +52,14 @@ export default function ProtectedRoute({
     }
 
     if (isAuthenticated && !user) {
-        return <CenteredSpinner />;
+        return <CenteredSpinner caller="ProtectedRoute:55" />;
     }
 
     return (
         <Route
             component={withAuthenticationRequired(component, {
                 onRedirecting: function waitRedirecting() {
-                    return <CenteredSpinner />;
+                    return <CenteredSpinner caller="ProtectedRoute:62" />;
                 },
                 returnTo: () => {
                     return redirectTo ?? window.location.href;

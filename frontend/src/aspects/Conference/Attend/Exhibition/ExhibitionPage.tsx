@@ -184,7 +184,7 @@ export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string 
     });
 
     return exhibitionResponse.fetching && !exhibitionResponse.data ? (
-        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
+        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} caller="ExhibitionPage:187" />
     ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
         <ExhibitionPageInner
             exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}

@@ -41,6 +41,7 @@
     "exports": {
         "./schema.graphql": "./schema/schema.graphql",
         "./graphql.schema.json": "./build/cjs/graphql.schema.json",
+        "./graphql.augschema.json": "./build/cjs/graphql.augschema.json",
         "./*": {
             "import": "./build/esm/*.js",
             "require": "./build/cjs/*.js"

@@ -1,8 +1,9 @@
 import { Box, Flex, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
+import { useRestorableState } from "../Hooks/useRestorableState";
 import MenuHeaderBar from "../Menu/HeaderBar/MenuHeaderBar";
 import LeftMenu from "../Menu/LeftMenu";
 import RightMenu from "../Menu/RightMenu";
@@ -34,6 +35,16 @@ export default function AppPage(): JSX.Element {
 
     const [rightMenuOpen, setRightMenuOpen] = useState<boolean>(false);
 
+    const [leftMenu_IsExpanded, leftMenu_SetIsExpanded] = useRestorableState<boolean>(
+        "LeftMenu_IsExpanded",
+        true,
+        (x) => x.toString(),
+        (x) => x === "true"
+    );
+    const leftMenu_ToggleIsExpanded = useCallback(() => {
+        leftMenu_SetIsExpanded((old) => !old);
+    }, [leftMenu_SetIsExpanded]);
+
     return (
         <Flex
             as="main"
@@ -46,7 +57,9 @@ export default function AppPage(): JSX.Element {
             alignItems="center"
             backgroundColor={bgColour}
         >
-            {!user.user && isAppLandingPage ? undefined : <MenuHeaderBar setRightMenuOpen={setRightMenuOpen} />}
+            {!user.user && isAppLandingPage ? undefined : (
+                <MenuHeaderBar setRightMenuOpen={setRightMenuOpen} toggleIsExpanded={leftMenu_ToggleIsExpanded} />
+            )}
             <Flex
                 as="main"
                 height="100%"
@@ -58,7 +71,7 @@ export default function AppPage(): JSX.Element {
                 alignItems="center"
                 backgroundColor={bgColour}
             >
-                {conference ? <LeftMenu /> : undefined}
+                {conference ? <LeftMenu isExpanded={leftMenu_IsExpanded} /> : undefined}
                 <Box
                     zIndex={1}
                     overflowX="hidden"

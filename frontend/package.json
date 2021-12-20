@@ -1,7 +1,7 @@
 {
     "scripts": {
-        "start": "npm run build-shared && snowpack dev",
-        "build": "npm run build-shared && snowpack build",
+        "start": "npm run build-shared && npm run lang-compile && snowpack dev",
+        "build": "npm run build-shared && npm run lang-compile && snowpack build",
         "build-shared": "npm run --prefix=../ --workspace=shared build",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",

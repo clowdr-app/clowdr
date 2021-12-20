@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { Button, Center, Code, Container, Heading, List, ListItem, Text, useToast, VStack } from "@chakra-ui/react";
 import React from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useHistory } from "react-router-dom";
 import {
     useSubmissions_GetProgramPersonAccessTokenQuery,
@@ -40,6 +41,7 @@ export default function OldAccessFormatRedirectionPage({
     magicToken: string;
     elementId: string;
 }): JSX.Element {
+    const intl = useIntl();
     const title = useTitle("Submission identification");
 
     const response = useSubmissions_ListUploadersQuery({
@@ -71,11 +73,17 @@ export default function OldAccessFormatRedirectionPage({
                 <Container maxW="container.md">
                     <VStack spacing={6} alignItems="flex-start">
                         <Heading as="h1" fontSize="4xl">
-                            Submission Identification
+                            <FormattedMessage
+                                id="content.oldaccessformatredirectionpage.submissionidentification"
+                                defaultMessage="Submission Identification"
+                            />
                         </Heading>
                         <Text>
-                            Please select yourself from the list below. If you do not see yourself listed, please
-                            contact your conference organizers.
+                            <FormattedMessage
+                                id="content.oldaccessformatredirectionpage.selectyourself"
+                                defaultMessage="Please select yourself from the list below. If you do not see yourself listed, please
+                                contact your conference organizers."
+                            />
                         </Text>
                         {response.data?.content_Uploader.length ? (
                             <List listStylePos="inside" spacing={2}>
@@ -103,9 +111,10 @@ export default function OldAccessFormatRedirectionPage({
                                                         toast({
                                                             status: "error",
                                                             position: "top",
-                                                            title: "Unable to identify matching submissions",
-                                                            description:
-                                                                "Sorry, we were unable to identify matching submissions. Please contact your conference organizers to ask them to fix this.",
+                                                            title: intl.formatMessage({ id: 'content.oldaccessformatredirectionpage.erroridmatching', defaultMessage: "Unable to identify matching submissions" }),
+                                                            description: intl.formatMessage({ id: 'content.oldaccessformatredirectionpage.erroridmatchingdesc', defaultMessage: 
+                                                                "Sorry, we were unable to identify matching submissions. Please contact your conference organizers to ask them to fix this."
+                                                            }),
                                                             isClosable: true,
                                                             duration: 1000000,
                                                         });
@@ -114,14 +123,17 @@ export default function OldAccessFormatRedirectionPage({
                                                     toast({
                                                         status: "error",
                                                         position: "top",
-                                                        title: "A technical error has occurred",
+                                                        title: intl.formatMessage({ id: 'content.oldaccessformatredirectionpage.technicalerror', defaultMessage: "A technical error has occurred" }),
                                                         description: (
                                                             <>
                                                                 <Text mb={2}>
-                                                                    Sorry, a technical error has occurred. Please try
-                                                                    again in a few minutes. If this error persists,
-                                                                    please contact our support team quoting the
-                                                                    following error message:
+                                                                    <FormattedMessage
+                                                                        id="content.oldaccessformatredirectionpage.technicalerrordesc"
+                                                                        defaultMessage="Sorry, a technical error has occurred. Please try
+                                                                        again in a few minutes. If this error persists,
+                                                                        please contact our support team quoting the
+                                                                        following error message:"
+                                                                    />
                                                                 </Text>
                                                                 <Code>{e.toString()}</Code>
                                                             </>
@@ -139,8 +151,12 @@ export default function OldAccessFormatRedirectionPage({
                             </List>
                         ) : (
                             <Text>
-                                No people are listed for this submission token. Please contact your conference
-                                organizers.
+                                <FormattedMessage
+                                    id="content.oldaccessformatredirectionpage.nopeoplelisted"
+                                    defaultMessage="No people are listed for this submission token. Please contact your conference
+                                    organizers."
+                                />
+                                
                             </Text>
                         )}
                     </VStack>

@@ -113,8 +113,23 @@
   "chat.compose.poll.createpolloptionsmodal.yourquestion": {
     "defaultMessage": "Your question:"
   },
+  "content.oldaccessformatredirectionpage.erroridmatching": {
+    "defaultMessage": "Unable to identify matching submissions"
+  },
+  "content.oldaccessformatredirectionpage.erroridmatchingdesc": {
+    "defaultMessage": "Sorry, we were unable to identify matching submissions. Please contact your conference organizers to ask them to fix this."
+  },
+  "content.oldaccessformatredirectionpage.nopeoplelisted": {
+    "defaultMessage": "No people are listed for this submission token. Please contact your conference organizers."
+  },
   "content.oldaccessformatredirectionpage.selectyourself": {
     "defaultMessage": "Please select yourself from the list below. If you do not see yourself listed, please contact your conference organizers."
+  },
+  "content.oldaccessformatredirectionpage.technicalerror": {
+    "defaultMessage": "A technical error has occurred"
+  },
+  "content.oldaccessformatredirectionpage.technicalerrordesc": {
+    "defaultMessage": "Sorry, a technical error has occurred. Please try again in a few minutes. If this error persists, please contact our support team quoting the following error message:"
   },
   "menu.v2.leftmenu.checklist": {
     "defaultMessage": "Checklist"

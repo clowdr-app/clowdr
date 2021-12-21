@@ -42,7 +42,7 @@ export default function OldAccessFormatRedirectionPage({
     elementId: string;
 }): JSX.Element {
     const intl = useIntl();
-    const title = useTitle("Submission identification");
+    const title = useTitle(intl.formatMessage({ id: 'content.oldaccessformatredirectionpage.submissionidentification', defaultMessage: "Submission Identification" }));
 
     const response = useSubmissions_ListUploadersQuery({
         fetchPolicy: "network-only",

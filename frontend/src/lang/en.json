@@ -1,4 +1,13 @@
 {
+  "auth.auth0customprovider.loading": {
+    "defaultMessage": "Loading..."
+  },
+  "auth.buttons.loginbutton.login": {
+    "defaultMessage": "Log In"
+  },
+  "auth.buttons.logoutbutton.logout": {
+    "defaultMessage": "Log out"
+  },
   "auth.emailverificationrequiredpage.emailinstructions": {
     "defaultMessage": "Before you can login you must verify your email address. You should have received an email from our domain with your verification link. After verifying your email, please log in to continue."
   },
@@ -92,6 +101,9 @@
   "badges.badgeinput.selectedbadges": {
     "defaultMessage": "Selected badges"
   },
+  "chakra.colormodebutton.toggle": {
+    "defaultMessage": "Toggle dark mode"
+  },
   "chat.compose.chatcompose.invalidfilename": {
     "defaultMessage": "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_"
   },
@@ -125,11 +137,17 @@
   "content.oldaccessformatredirectionpage.selectyourself": {
     "defaultMessage": "Please select yourself from the list below. If you do not see yourself listed, please contact your conference organizers."
   },
+  "content.oldaccessformatredirectionpage.submissionidentification": {
+    "defaultMessage": "Submission Identification"
+  },
   "content.oldaccessformatredirectionpage.technicalerror": {
     "defaultMessage": "A technical error has occurred"
   },
   "content.oldaccessformatredirectionpage.technicalerrordesc": {
     "defaultMessage": "Sorry, a technical error has occurred. Please try again in a few minutes. If this error persists, please contact our support team quoting the following error message:"
+  },
+  "leavingpagewarnings.unsavedchangeswarning.message": {
+    "defaultMessage": "You have unsaved changes, are you sure you wish to leave the page?"
   },
   "menu.v2.leftmenu.checklist": {
     "defaultMessage": "Checklist"
@@ -275,6 +293,21 @@
   "menu.v2.rightsidebar.togglechatsbutton.openchats": {
     "defaultMessage": "Open chats"
   },
+  "pronouns.pronouninput.createpronouns": {
+    "defaultMessage": "Create pronouns by typing then press Enter."
+  },
+  "pronouns.pronouninput.deletepronouns": {
+    "defaultMessage": "Delete pronouns by clicking on them."
+  },
+  "pronouns.pronouninput.pronouns": {
+    "defaultMessage": "Pronouns"
+  },
+  "pronouns.pronouninput.typeapronoun": {
+    "defaultMessage": "Type a pronoun"
+  },
+  "room.permissioninstructionsmodal.issue": {
+    "defaultMessage": "There seems to be an issue with your"
+  },
   "signup": {
     "defaultMessage": "Sign Up",
     "description": "sign up"
@@ -294,6 +327,9 @@
   "users.newuser.landingpage.welcome": {
     "defaultMessage": "Welcome to Midspace",
     "description": "greetings text"
+  },
+  "uxchoice.switchuxchoicebutton.changeui": {
+    "defaultMessage": "Change UI experience"
   },
   "uxchoice.uxchoicedialog.buttonmsg": {
     "defaultMessage": "You can change your mind any time using the 'Switch UI' button in the Profile menu."

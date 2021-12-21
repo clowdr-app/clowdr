@@ -2,6 +2,7 @@ import type { AppState as Auth0State} from "@auth0/auth0-react";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import assert from "assert";
 import React, { useMemo } from "react";
+import { FormattedMessage } from "react-intl";
 import { useHistory } from "react-router-dom";
 
 export default function Auth0CustomProvider({ children }: { children: JSX.Element | Array<JSX.Element> }): JSX.Element {
@@ -43,7 +44,12 @@ function WaitForAuth0({ children }: { children: JSX.Element | Array<JSX.Element>
     const { isLoading } = useAuth0();
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <>
+            <FormattedMessage
+                id="auth.auth0customprovider.loading"
+                defaultMessage="Loading..."
+            />
+        </>;
     }
 
     return <>{children}</>;

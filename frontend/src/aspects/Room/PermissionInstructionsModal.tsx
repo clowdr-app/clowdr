@@ -5,6 +5,7 @@ import {
     PermissionInstructions,
 } from "../Conference/Attend/Room/VideoChat/PermissionInstructions";
 import { PermissionInstructionsContext } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
+import { FormattedMessage } from "react-intl";
 
 export function PermissionInstructionsModal(): JSX.Element {
     const { permissionsModal, devices, title } = useContext(PermissionInstructionsContext);
@@ -16,7 +17,11 @@ export function PermissionInstructionsModal(): JSX.Element {
                 {devices
                     ? <ModalHeader>{title}</ModalHeader> ?? (
                           <ModalHeader>
-                              There seems to be an issue with your {devicesToFriendlyName(devices, "or")}
+                              <FormattedMessage
+                                  id="room.permissioninstructionsmodal.issue"
+                                  defaultMessage="There seems to be an issue with your "
+                              />
+                              {devicesToFriendlyName(devices, "or")}
                           </ModalHeader>
                       )
                     : undefined}

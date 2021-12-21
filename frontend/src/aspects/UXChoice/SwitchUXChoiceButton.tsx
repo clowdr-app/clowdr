@@ -2,6 +2,7 @@ import { MenuItem } from "@chakra-ui/react";
 import React from "react";
 import { FAIcon } from "../Icons/FAIcon";
 import { useUXChoice } from "./UXChoice";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function SwitchUXChoiceButton(): JSX.Element {
     const { onOpen } = useUXChoice();
@@ -16,7 +17,10 @@ export default function SwitchUXChoiceButton(): JSX.Element {
                 mr={2}
                 aria-hidden={true}
             />
-            Change UI experience
+            <FormattedMessage
+                id="uxchoice.switchuxchoicebutton.changeui"
+                defaultMessage="Change UI experience"
+            />
         </MenuItem>
     );
 }

@@ -1,10 +1,12 @@
 import { Button, Text } from "@chakra-ui/react";
 import React from "react";
 import GenericErrorPage from "./GenericErrorPage";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function PageFailedToLoad({ children }: { children: JSX.Element | string }): JSX.Element {
+    const intl = useIntl();
     return (
-        <GenericErrorPage heading="Sorry, this page has failed to load…">
+        <GenericErrorPage heading={intl.formatMessage({ id: 'errors.pagefailedtoload.sorry', defaultMessage: "Sorry, this page has failed to load…" })}>
             <>
                 {typeof children === "string" ? (
                     <Text fontSize="xl" lineHeight="revert" fontWeight="light">
@@ -14,12 +16,15 @@ export default function PageFailedToLoad({ children }: { children: JSX.Element |
                     children
                 )}
                 <Button
-                    aria-label="Refresh the page to try again"
+                    aria-label={intl.formatMessage({ id: 'errors.pagefailedtoload.refresh', defaultMessage: "Refresh the page to try again" })}
                     onClick={() => {
                         window.location.reload();
                     }}
                 >
-                    Try again
+                    <FormattedMessage
+                        id="errors.pagefailedtoload.tryagain"
+                        defaultMessage="Try again"
+                    />
                 </Button>
             </>
         </GenericErrorPage>

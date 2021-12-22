@@ -3,6 +3,7 @@ import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import React from "react";
 import EditSubtitles from "./EditSubtitles";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export function EditElement({
     data,
@@ -29,7 +30,12 @@ export function EditElement({
                     magicToken={magicToken}
                 />
             ) : latestVersion?.data.baseType === ElementBaseType.Video ? (
-                <Text>Subtitles are still being processed for this item. Please check back in 15 minutes.</Text>
+                <Text>
+                    <FormattedMessage
+                        id="content.elements.editelement.processingsubtitles"
+                        defaultMessage="Subtitles are still being processed for this item. Please check back in 15 minutes."
+                    />
+                </Text>
             ) : undefined}
         </>
     );

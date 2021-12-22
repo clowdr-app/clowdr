@@ -104,6 +104,9 @@
   "chakra.colormodebutton.toggle": {
     "defaultMessage": "Toggle dark mode"
   },
+  "chat.ChatRedirectPage.error": {
+    "defaultMessage": "Error loading chat info"
+  },
   "chat.compose.chatcompose.invalidfilename": {
     "defaultMessage": "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_"
   },
@@ -124,6 +127,51 @@
   },
   "chat.compose.poll.createpolloptionsmodal.yourquestion": {
     "defaultMessage": "Your question:"
+  },
+  "chat.messages.polloptions.pollclosed": {
+    "defaultMessage": "Poll is closed."
+  },
+  "chat.messages.polloptions.pollcompleted": {
+    "defaultMessage": "Poll completed. {votesCount} vote(s) cast by {vountersCount} voter(s))."
+  },
+  "chat.messages.polloptions.pollopen": {
+    "defaultMessage": "Poll is open."
+  },
+  "chat.pin.pinnedbutton.loading": {
+    "defaultMessage": "Loading pinned status"
+  },
+  "chat.pin.pinnedbutton.pin": {
+    "defaultMessage": "Pin this chat to the sidebar"
+  },
+  "chat.pin.pinnedbutton.unpin": {
+    "defaultMessage": "Unpin this chat from the sidebar"
+  },
+  "conference.attend.conferencelandingpage.unrecognisederror": {
+    "defaultMessage": "Sorry, we were unable to load the page due to an unrecognised error. Please try again later or contact our support teams if this error persists."
+  },
+  "conference.attend.room.vonage.devicechoosermodal.camera": {
+    "defaultMessage": "Camera"
+  },
+  "conference.attend.room.vonage.devicechoosermodal.choosecamera": {
+    "defaultMessage": "Choose camera"
+  },
+  "conference.attend.room.vonage.devicechoosermodal.choosemicrophone": {
+    "defaultMessage": "Choose microphone"
+  },
+  "conference.attend.room.vonage.devicechoosermodal.microphone": {
+    "defaultMessage": "Microphone"
+  },
+  "conference.attend.room.vonage.devicechoosermodal.save": {
+    "defaultMessage": "Save"
+  },
+  "conference.useinviteorcreateview.create": {
+    "defaultMessage": "Create a conference"
+  },
+  "conference.useinviteorcreateview.join": {
+    "defaultMessage": "Join a conference"
+  },
+  "content.elements.editelement.processingsubtitles": {
+    "defaultMessage": "Subtitles are still being processed for this item. Please check back in 15 minutes."
   },
   "content.oldaccessformatredirectionpage.erroridmatching": {
     "defaultMessage": "Unable to identify matching submissions"
@@ -146,8 +194,38 @@
   "content.oldaccessformatredirectionpage.technicalerrordesc": {
     "defaultMessage": "Sorry, a technical error has occurred. Please try again in a few minutes. If this error persists, please contact our support team quoting the following error message:"
   },
+  "errors.pagefailedtoload.refresh": {
+    "defaultMessage": "Refresh the page to try again"
+  },
+  "errors.pagefailedtoload.sorry": {
+    "defaultMessage": "Sorry, this page has failed to load…"
+  },
+  "errors.pagefailedtoload.tryagain": {
+    "defaultMessage": "Try again"
+  },
+  "forceuserrefresh.forceuserrefresh.automaticrefresh": {
+    "defaultMessage": "Automatic refresh in"
+  },
+  "forceuserrefresh.forceuserrefresh.newversion": {
+    "defaultMessage": "A new version of Midspace is available!"
+  },
+  "forceuserrefresh.forceuserrefresh.pleaserefresh": {
+    "defaultMessage": "To receive the latest updates please refresh the page"
+  },
   "leavingpagewarnings.unsavedchangeswarning.message": {
     "defaultMessage": "You have unsaved changes, are you sure you wish to leave the page?"
+  },
+  "maintenance.downformaintenancepage.checkstatuspage": {
+    "defaultMessage": "Please check our status page for further information."
+  },
+  "maintenance.downformaintenancepage.offline": {
+    "defaultMessage": "Offline for maintenance"
+  },
+  "maintenance.downformaintenancepage.offlinedesc": {
+    "defaultMessage": "Midspace is offline for maintenance."
+  },
+  "maintenance.downformaintenancepage.viewstatus": {
+    "defaultMessage": "View Service Status"
   },
   "menu.v2.leftmenu.checklist": {
     "defaultMessage": "Checklist"

@@ -5,6 +5,7 @@ import { Chat_ReactionType_Enum } from "../../../generated/graphql";
 import type { MessageState } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
 import type { PollMessageData } from "../Types/Messages";
+import { useIntl } from "react-intl";
 
 function PollOption({ value, count, onClick }: { value: string; count: number; onClick?: () => void }): JSX.Element {
     const contents = (
@@ -69,6 +70,7 @@ export default function PollOptions({
     message: MessageState;
     reactions: readonly ChatReactionDataFragment[];
 }): JSX.Element {
+    const intl = useIntl();
     const config = useChatConfiguration();
     const currentRegistrantId = config.currentRegistrantId;
     const isClosed = useMemo(
@@ -157,12 +159,12 @@ export default function PollOptions({
             <Text as="p" fontSize="80%" fontStyle="italic">
                 (
                 {isCompleted
-                    ? `Poll completed. ${totalCount} vote${totalCount !== 1 ? "s" : ""} cast by ${uniqueVoters} voter${
-                          uniqueVoters !== 1 ? "s" : ""
-                      }.`
+                    ? intl.formatMessage({ id: 'chat.messages.polloptions.pollcompleted', defaultMessage:
+                        "Poll completed. {votesCount} vote(s) cast by {vountersCount} voter(s))." },
+                        { votesCount: totalCount, vountersCount: uniqueVoters })
                     : isClosed
-                    ? "Poll is closed."
-                    : "Poll is open."}
+                    ? intl.formatMessage({ id: 'chat.messages.polloptions.pollclosed', defaultMessage: "Poll is closed." })
+                    : intl.formatMessage({ id: 'chat.messages.polloptions.pollopen', defaultMessage: "Poll is open." })}
                 )
             </Text>
             <OrderedList w="100%">

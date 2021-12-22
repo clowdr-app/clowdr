@@ -15,6 +15,7 @@ import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import ElementsGridLayout from "./Content/Element/ElementsGridLayout";
+import { FormattedMessage } from "react-intl";
 
 gql`
     query ConferenceLandingPageItem($conferenceId: uuid!) {
@@ -81,8 +82,10 @@ function ConferenceLandingPageInner(): JSX.Element {
             <>
                 {title}
                 <PageFailedToLoad>
-                    Sorry, we were unable to load the page due to an unrecognised error. Please try again later or
-                    contact our support teams if this error persists.
+                    <FormattedMessage
+                        id="conference.attend.conferencelandingpage.unrecognisederror"
+                        defaultMessage="Sorry, we were unable to load the page due to an unrecognised error. Please try again later or contact our support teams if this error persists."
+                    />
                 </PageFailedToLoad>
             </>
         );

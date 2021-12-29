@@ -100,15 +100,15 @@ type FieldClauses =
     | Uuid_Comparison_Exp;
 
 enum ScalarComparisonType {
-    Bigint,
-    Boolean,
-    Float,
-    Int,
-    Jsonb,
-    Numeric,
-    String,
-    Timestamptz,
-    Uuid,
+    Bigint = "bigint",
+    Boolean = "boolean",
+    Float = "float",
+    Int = "int",
+    Jsonb = "jsonb",
+    Numeric = "numeric",
+    String = "string",
+    Timestamptz = "timestamptz",
+    Uuid = "uuid",
 }
 
 type ConditionalClauses<FieldKeys extends string = any> = DiadicBooleanClauses & {
@@ -561,15 +561,37 @@ function satisfiesScalarConditions(
     }
 }
 
-function satisfiesConditions(where: ConditionalClauses, entityKey: string, args: Variables, cache: Cache): boolean {
+function satisfiesConditions(
+    schema: IntrospectionData,
+    augSchema: AugmentedIntrospectionData,
+    conditionsInputObjectKey: string,
+    where: ConditionalClauses,
+    entityKey: string,
+    args: Variables,
+    cache: Cache
+): boolean {
     // console.log("Conditions", { where, entityKey });
+    const conditionsInputObject = schema.__schema.types?.find((x) => x.name === conditionsInputObjectKey);
+    if (!conditionsInputObject || conditionsInputObject.kind !== "INPUT_OBJECT") {
+        throw new GraphQLError("Conditions input object not found or incorrect type!");
+    }
 
     for (const conditionKey in where) {
         if (conditionKey === "_and") {
             const conditions = where[conditionKey];
             if (conditions) {
                 for (const innerCondition of conditions) {
-                    if (!satisfiesConditions(innerCondition, entityKey, args, cache)) {
+                    if (
+                        !satisfiesConditions(
+                            schema,
+                            augSchema,
+                            conditionsInputObjectKey,
+                            innerCondition,
+                            entityKey,
+                            args,
+                            cache
+                        )
+                    ) {
                         return false;
                     }
                 }
@@ -579,7 +601,17 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, args:
             if (conditions) {
                 let ok = false;
                 for (const innerCondition of conditions) {
-                    if (satisfiesConditions(innerCondition, entityKey, args, cache)) {
+                    if (
+                        satisfiesConditions(
+                            schema,
+                            augSchema,
+                            conditionsInputObjectKey,
+                            innerCondition,
+                            entityKey,
+                            args,
+                            cache
+                        )
+                    ) {
                         ok = true;
                         break;
                     }
@@ -591,16 +623,28 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, args:
         } else if (conditionKey === "_not") {
             const innerCondition = where[conditionKey];
             if (innerCondition) {
-                if (satisfiesConditions(innerCondition, entityKey, args, cache)) {
+                if (
+                    satisfiesConditions(
+                        schema,
+                        augSchema,
+                        conditionsInputObjectKey,
+                        innerCondition,
+                        entityKey,
+                        args,
+                        cache
+                    )
+                ) {
                     return false;
                 }
             }
         } else {
             const condition = (where as any)[conditionKey] as FieldClauses | ConditionalClauses | null;
             if (condition) {
-                const conditionOps = Object.keys(condition);
-                // TODO: Is the check against _and/_or/_not etc possible? Valid? Possibly not even relevant?
-                if (conditionOps.some((op) => op.startsWith("_") && op !== "_and" && op !== "_or" && op !== "_not")) {
+                const conditionInfo = conditionsInputObject.inputFields.find((x) => x.name === condition);
+                if (!conditionInfo || conditionInfo.type.kind !== "INPUT_OBJECT") {
+                    throw new GraphQLError("Condition info not found in schema or invalid!");
+                }
+                if (conditionInfo.type.name.endsWith("_comparison_exp")) {
                     // Scalar condition
                     const typedCondition: FieldClauses = condition as FieldClauses;
                     const fieldValue = cache.resolve(entityKey, conditionKey);
@@ -608,8 +652,10 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, args:
                         !satisfiesScalarConditions(
                             typedCondition,
                             fieldValue,
-                            // TODO: Lookup correct comparison type from the schema info
-                            typeof fieldValue === "string" ? ScalarComparisonType.String : ScalarComparisonType.Numeric
+                            conditionInfo.type.name.substring(
+                                0,
+                                conditionInfo.type.name.length - "_comparison_exp".length
+                            ) as ScalarComparisonType
                         )
                     ) {
                         return false;
@@ -622,7 +668,17 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, args:
                         if (innerEntityKeys instanceof Array) {
                             let ok = false;
                             for (const innerEntityKey of innerEntityKeys) {
-                                if (satisfiesConditions(typedCondition, innerEntityKey, args, cache)) {
+                                if (
+                                    satisfiesConditions(
+                                        schema,
+                                        augSchema,
+                                        conditionInfo.type.name,
+                                        typedCondition,
+                                        innerEntityKey,
+                                        args,
+                                        cache
+                                    )
+                                ) {
                                     ok = true;
                                     break;
                                 }
@@ -631,7 +687,17 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, args:
                                 return false;
                             }
                         } else {
-                            if (!satisfiesConditions(typedCondition, innerEntityKeys, args, cache)) {
+                            if (
+                                !satisfiesConditions(
+                                    schema,
+                                    augSchema,
+                                    conditionInfo.type.name,
+                                    typedCondition,
+                                    innerEntityKeys,
+                                    args,
+                                    cache
+                                )
+                            ) {
                                 return false;
                             }
                         }
@@ -647,10 +713,16 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, args:
 }
 
 const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospectionData) => Resolver = (
-    _schema,
-    _augSchema
+    schema,
+    augSchema
 ) =>
     function resolver(parent, args, cache, info) {
+        const tableSchema = getTableSchema(info.fieldName, schema, augSchema);
+        if (!tableSchema) {
+            info.error = new GraphQLError(`Table schema not found! ${info.fieldName}`);
+            return undefined;
+        }
+
         const allFields = cache.inspectFields(info.parentKey);
         const fieldInfos = allFields.filter((fieldInfo) => fieldInfo.fieldName === info.fieldName);
         if (fieldInfos.length === 0) {
@@ -659,6 +731,13 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
 
         const result = new Set<string>();
         if (args.where) {
+            const whereSchema = tableSchema.tableSchema.args.find((x) => x.name === "where");
+            if (!whereSchema || whereSchema.type.kind !== "INPUT_OBJECT") {
+                info.error = new GraphQLError(`Table 'where' schema not found! ${info.fieldName}`);
+                return undefined;
+            }
+            const boolExpSchemaName = whereSchema.type.name;
+
             // console.log(`CONDITIONS:\n${JSON.stringify(args.where, null, 2)}`);
 
             const where = args.where;
@@ -677,7 +756,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
             }
 
             for (const key of keysToTest) {
-                if (satisfiesConditions(where, key, args, cache)) {
+                if (satisfiesConditions(schema, augSchema, boolExpSchemaName, where, key, args, cache)) {
                     result.add(key);
                 }
             }
@@ -790,14 +869,8 @@ const objectFieldResolver: (schema: IntrospectionData, augSchema: AugmentedIntro
     function resolver(_parent, args, cache, info) {
         const existingFields = cache.inspectFields(info.parentKey);
         const matchingFields = existingFields.filter((x) => x.fieldName === info.fieldName);
-        const allExistingFieldValues = matchingFields.flatMap((field) => cache.resolve(info.parentKey, field.fieldKey));
-        const existingFieldValues = args.where
-            ? allExistingFieldValues.filter((x) =>
-                  typeof x === "string"
-                      ? satisfiesConditions(args.where as any, x, args, cache)
-                      : satisfiesConditions(args.where as any, cache.keyOfEntity(x as Entity) as string, args, cache)
-              )
-            : allExistingFieldValues;
+        const existingFieldValues = matchingFields.flatMap((field) => cache.resolve(info.parentKey, field.fieldKey));
+        // N.B. Object fields do not have 'where' arguments
         if (existingFieldValues.length > 0) {
             return existingFieldValues[0];
         }
@@ -848,26 +921,41 @@ const arrayFieldResolver: (schema: IntrospectionData, augSchema: AugmentedIntros
     augSchema
 ) =>
     function resolver(parent, args, cache, info) {
-        const existingFields = cache.inspectFields(parent as Entity);
-        const matchingFields = existingFields.filter((x) => x.fieldName === info.fieldName);
-        const allExistingFieldValues = matchingFields.flatMap((field) =>
-            cache.resolve(parent as Entity, field.fieldKey)
-        );
-        const existingFieldValues = args.where
-            ? allExistingFieldValues.filter((x) =>
-                  typeof x === "string"
-                      ? satisfiesConditions(args.where as any, x, args, cache)
-                      : satisfiesConditions(args.where as any, cache.keyOfEntity(x as Entity) as string, args, cache)
-              )
-            : allExistingFieldValues;
-
         const parentTableSchema = getTableFieldsSchema(info.parentTypeName, schema, augSchema);
         if (!parentTableSchema) {
             return undefined;
         }
         const fieldSchema = parentTableSchema.tableSchema.fields.find((x) => x.name === info.fieldName);
+        if (!fieldSchema) {
+            return undefined;
+        }
+        const whereSchema = fieldSchema.args.find((x) => x.name === "where");
+        const boolExpSchemaName = whereSchema?.type.kind === "INPUT_OBJECT" ? whereSchema.type.name : undefined;
+
+        const existingFields = cache.inspectFields(parent as Entity);
+        const matchingFields = existingFields.filter((x) => x.fieldName === info.fieldName);
+        const allExistingFieldValues = matchingFields.flatMap((field) =>
+            cache.resolve(parent as Entity, field.fieldKey)
+        );
+        const existingFieldValues =
+            boolExpSchemaName && args.where
+                ? allExistingFieldValues.filter((x) =>
+                      typeof x === "string"
+                          ? satisfiesConditions(schema, augSchema, boolExpSchemaName, args.where as any, x, args, cache)
+                          : satisfiesConditions(
+                                schema,
+                                augSchema,
+                                boolExpSchemaName,
+                                args.where as any,
+                                cache.keyOfEntity(x as Entity) as string,
+                                args,
+                                cache
+                            )
+                  )
+                : allExistingFieldValues;
+
         const fieldAugSchema = parentTableSchema.augTableSchema.fields.find((x) => x.name === info.fieldName);
-        if (!fieldSchema || !fieldAugSchema) {
+        if (!fieldAugSchema) {
             return undefined;
         }
         const fieldEntityTypeName = getObjectTypeName(fieldSchema.type);
@@ -1228,16 +1316,18 @@ export function genericResolvers(
             if (prop === schema.__schema.queryType.name) {
                 return true;
             }
-            // TODO
-            // if (prop.endsWith("_aggregate")) {
-            //     return true;
-            // }
-            // if (prop.endsWith("_aggregate_fields")) {
-            //     return true;
-            // }
-            // if (AggregateOperations.some((op) => prop.endsWith(`_${op}_fields`))) {
-            //     return true;
-            // }
+            if (prop.endsWith("_aggregate")) {
+                // TODO
+                return false;
+            }
+            if (prop.endsWith("_aggregate_fields")) {
+                // TODO
+                return false;
+            }
+            if (AggregateOperations.some((op) => prop.endsWith(`_${op}_fields`))) {
+                // TODO
+                return false;
+            }
 
             const tableSchema = getTableFieldsSchema(prop, schema, augSchema);
             return Boolean(tableSchema);
@@ -1250,17 +1340,19 @@ export function genericResolvers(
             if (prop === schema.__schema.queryType.name) {
                 return queryRootResolvers(target[prop] ?? {}, schema, augSchema);
             }
-            // TODO
-            // if (prop.endsWith("_aggregate")) {
-            //     return aggregateResolvers(target[prop] ?? {}, schema, augSchema);
-            // }
-            // if (prop.endsWith("_aggregate_fields")) {
-            //     return aggregateFieldResolvers(target[prop] ?? {}, schema, augSchema);
-            // }
-            // const op = AggregateOperations.find((op) => prop.endsWith(`_${op}_fields`));
-            // if (op) {
-            //     return aggregateOperationResolvers(target[prop] ?? {}, schema, augSchema, op as AggregateOperation);
-            // }
+            if (prop.endsWith("_aggregate")) {
+                return undefined;
+                // TODO: return aggregateResolvers(target[prop] ?? {}, schema, augSchema);
+            }
+            if (prop.endsWith("_aggregate_fields")) {
+                return undefined;
+                // TODO: return aggregateFieldResolvers(target[prop] ?? {}, schema, augSchema);
+            }
+            const op = AggregateOperations.find((op) => prop.endsWith(`_${op}_fields`));
+            if (op) {
+                return undefined;
+                // TODO: return aggregateOperationResolvers(target[prop] ?? {}, schema, augSchema, op as AggregateOperation);
+            }
 
             const tableSchema = getTableFieldsSchema(prop, schema, augSchema);
             if (tableSchema) {

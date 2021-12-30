@@ -38,6 +38,7 @@ interface InitialisedStateData {
     onRecordingIdReceived: (recordingId: string) => void;
     onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void;
     onPlayVideoReceived: (elementId: string) => void;
+    onTranscript: (data: TranscriptData) => void;
 }
 
 interface ConnectedStateData {
@@ -54,6 +55,12 @@ interface ConnectedStateData {
     screen: null | OT.Publisher;
     streams: OT.Stream[];
     connections: OT.Connection[];
+}
+
+export interface TranscriptData {
+    registrant: { id: string; name: string };
+    isPartial: boolean;
+    transcript: string;
 }
 
 export class VonageGlobalState {
@@ -127,7 +134,8 @@ export class VonageGlobalState {
         onRecordingStopped: () => void,
         onRecordingIdReceived: (recordingId: string) => void,
         onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void,
-        onPlayVideoReceived: (elementId: string) => void
+        onPlayVideoReceived: (elementId: string) => void,
+        onTranscript: (data: TranscriptData) => void
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -164,6 +172,7 @@ export class VonageGlobalState {
                 onRecordingIdReceived,
                 onLayoutReceived,
                 onPlayVideoReceived,
+                onTranscript,
             };
         } catch (e) {
             console.error("VonageGlobalState: initialiseState failure", e);
@@ -237,11 +246,6 @@ export class VonageGlobalState {
                     console.error("VonageGlobalState: error handling recordingId signal", e)
                 )
             );
-            session.on("signal:recordingId", (event: any) =>
-                this.onRecordingIdReceived(event.data).catch((e) =>
-                    console.error("VonageGlobalState: error handling recordingId signal", e)
-                )
-            );
             session.on("signal:layout-signal", (event: any) =>
                 this.onLayoutReceived(event.data).catch((e) =>
                     console.error("VonageGlobalState: error handling layout signal", e)
@@ -250,6 +254,11 @@ export class VonageGlobalState {
             session.on("signal:play-video", (event: any) =>
                 this.onPlayVideoReceived(event.data).catch((e) =>
                     console.error("VonageGlobalState: error handling play video signal", e)
+                )
+            );
+            session.on("signal:transcript", (event: any) =>
+                this.onTranscriptReceived(event.data).catch((e) =>
+                    console.error("VonageGlobalState: error handling transcript signal", e)
                 )
             );
 
@@ -1034,6 +1043,41 @@ export class VonageGlobalState {
                 (err) => {
                     if (err) {
                         console.error("Error sending play video signal", err);
+                    }
+                }
+            );
+        }
+    }
+
+    private async onTranscriptReceived(transcriptData: any): Promise<void> {
+        try {
+            const transcript: TranscriptData = JSON.parse(transcriptData);
+
+            if (this.state.type === StateType.Initialised) {
+                this.state.onTranscript(transcript);
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onTranscript(transcript);
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: onTranscriptReceived failure", e);
+            throw e;
+        }
+    }
+
+    public async sendTranscript(registrantId: string, registrantName: string, isPartial: boolean, transcript: string) {
+        if (this.state.type === StateType.Connected) {
+            this.state.session.signal(
+                {
+                    type: "transcript",
+                    data: JSON.stringify({
+                        registrant: { id: registrantId, name: registrantName },
+                        isPartial,
+                        transcript,
+                    }),
+                },
+                (err) => {
+                    if (err) {
+                        console.error("Error sending transcript signal", err);
                     }
                 }
             );

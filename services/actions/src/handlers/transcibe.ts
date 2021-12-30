@@ -27,7 +27,12 @@ export async function handleGeneratePresignedTranscribeWebsocketURL(
                 protocol: "wss",
                 expires: 4 * 60, // 4 hours?
                 region: region,
-                query: "language-code=" + languageCode + "&media-encoding=pcm&sample-rate=" + sampleRate,
+                query:
+                    "language-code=" +
+                    languageCode +
+                    "&media-encoding=pcm&sample-rate=" +
+                    sampleRate +
+                    "&enable-partial-results-stabilization=true&partial-results-stability=medium&content-redaction-type=PII&pii-entity-types=BANK_ACCOUNT_NUMBER,BANK_ROUTING,CREDIT_DEBIT_NUMBER,CREDIT_DEBIT_CVV,CREDIT_DEBIT_EXPIRY,PIN,EMAIL,ADDRESS,PHONE,SSN",
             }
         ),
     };

@@ -2,7 +2,7 @@ import { createStandaloneToast, useToast } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { theme } from "../../../../Chakra/ChakraCustomProvider";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
-import type { VonageGlobalState } from "./VonageGlobalState";
+import type { TranscriptData, VonageGlobalState } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { useVonageLayout } from "./VonageLayoutProvider";
@@ -18,6 +18,7 @@ export function useVonageComputedState({
     onRecordingStopped,
     onRecordingIdReceived,
     onPlayVideoReceived,
+    onTranscript,
     beginJoin,
     cancelJoin,
     completeJoinRef,
@@ -31,6 +32,7 @@ export function useVonageComputedState({
     onRecordingStopped?: () => void;
     onRecordingIdReceived?: (recordingId: string) => void;
     onPlayVideoReceived?: (elementId: string) => void;
+    onTranscript?: (data: TranscriptData) => void;
     beginJoin?: () => void;
     cancelJoin?: () => void;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
@@ -235,7 +237,11 @@ export function useVonageComputedState({
                     },
                     (elementId) => {
                         onPlayVideoReceived?.(elementId);
-                    }
+                    },
+                    onTranscript ??
+                        (() => {
+                            /* Do nothing */
+                        })
                 );
             } catch (e) {
                 console.warn("Failed to initialise session", e);

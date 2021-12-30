@@ -1,6 +1,7 @@
 import type { EventStreamMarshaller, Message as AWSEventStreamMessage } from "@aws-sdk/eventstream-marshaller";
 import * as marshaller from "@aws-sdk/eventstream-marshaller";
 import * as util_utf8_node from "@aws-sdk/util-utf8-node";
+import { datadogLogs } from "@datadog/browser-logs";
 import { useEffect, useMemo, useState } from "react";
 import { gql } from "urql";
 import { useTranscribeGeneratePresignedUrlQuery } from "../../../../../generated/graphql";
@@ -54,18 +55,23 @@ function getAudioEventMessage(buffer: Uint8Array): AWSEventStreamMessage {
     };
 }
 
-let transcription = "";
-function handleEventStreamMessage(messageJson: any) {
+function handleEventStreamMessage(
+    messageJson: any,
+    onPartialTranscript?: (transcript: string) => void,
+    onCompleteTranscript?: (transcript: string) => void
+) {
     const results = messageJson.Transcript.Results;
 
     if (results.length > 0) {
         if (results[0].Alternatives.length > 0) {
-            let transcript = results[0].Alternatives[0].Transcript;
-            transcript = decodeURIComponent(escape(transcript));
-            console.info(transcript);
+            // Amazon API specifies that with streaming transcription there will
+            // only ever be one alternative.
+            const result = results[0].Alternatives[0];
+            const transcript = decodeURIComponent(escape(result.Transcript));
             if (!results[0].IsPartial) {
-                transcription += transcript + "\n";
-                console.info(transcription);
+                onCompleteTranscript?.(transcript);
+            } else {
+                onPartialTranscript?.(transcript);
             }
         }
     }
@@ -73,9 +79,13 @@ function handleEventStreamMessage(messageJson: any) {
 
 const targetSampleRate = 16000;
 const languageCode = "en-US";
-export function useAWSTranscription(camera: OT.Publisher | null) {
+export function useAWSTranscription(
+    camera: OT.Publisher | null,
+    onPartialTranscript?: (transcript: string) => void,
+    onCompleteTranscript?: (transcript: string) => void
+) {
     const audioContext = useMemo(() => new AudioContext(), []);
-    const processorNode = useMemo(() => audioContext.createScriptProcessor(4096, 1, 1), []);
+    const processorNode = useMemo(() => audioContext.createScriptProcessor(4096, 1, 1), [audioContext]);
     useEffect(() => {
         processorNode.connect(audioContext.destination);
     }, [audioContext.destination, processorNode]);
@@ -116,49 +126,51 @@ export function useAWSTranscription(camera: OT.Publisher | null) {
             newSocket.binaryType = "arraybuffer";
             setSocket(newSocket);
 
-            newSocket.onopen = function () {
-                processorNode.addEventListener("audioprocess", function (ev: AudioProcessingEvent) {
-                    const binary = convertAudioToBinaryMessage(
-                        ev.inputBuffer.getChannelData(0).buffer,
-                        audioContext.sampleRate,
-                        targetSampleRate,
-                        eventStreamMarshaller
-                    );
+            const processAudio = function (ev: AudioProcessingEvent) {
+                const binary = convertAudioToBinaryMessage(
+                    ev.inputBuffer.getChannelData(0).buffer,
+                    audioContext.sampleRate,
+                    targetSampleRate,
+                    eventStreamMarshaller
+                );
 
-                    if (binary && newSocket.readyState === WebSocket.OPEN) {
-                        newSocket.send(binary);
-                    }
-                });
+                if (binary && newSocket.readyState === WebSocket.OPEN) {
+                    newSocket.send(binary);
+                }
+            };
+
+            const stopTranscribing = function (sock?: WebSocket) {
+                processorNode.removeEventListener("audioprocess", processAudio);
+                if (sock && sock.readyState === WebSocket.OPEN) {
+                    sock.close();
+                }
+                setSocket(null);
+            };
+
+            newSocket.onopen = function () {
+                processorNode.addEventListener("audioprocess", processAudio);
             };
 
             newSocket.onmessage = function (message) {
                 const messageWrapper = eventStreamMarshaller.unmarshall(new Uint8Array(message.data));
                 const messageBody = JSON.parse(String.fromCharCode(...messageWrapper.body));
                 if (messageWrapper.headers[":message-type"].value === "event") {
-                    handleEventStreamMessage(messageBody);
+                    handleEventStreamMessage(messageBody, onPartialTranscript, onCompleteTranscript);
                 } else {
-                    console.error("Transcribe error", messageBody.Message);
-                    // TODO: transcribeException = true;
-                    // TODO: showError(messageBody.Message);
-                    // TODO: toggleStartStop();
+                    datadogLogs.logger.error("Transcribe error from AWS", { awsReason: messageBody.Message });
+                    stopTranscribing(newSocket);
                 }
             };
 
             newSocket.onerror = function () {
-                // TODO
-                // TODO: toggleStartStop();
+                stopTranscribing();
             };
 
-            newSocket.onclose = function (_closeEvent) {
-                // TODO: micStream.stop();
-                // The close event immediately follows the error event; only handle one.
-                // TODO:
-                // if (!socketError && !transcribeException) {
-                //     if (closeEvent.code != 1000) {
-                //         // TODO: showError("</i><strong>Streaming Exception</strong><br>" + closeEvent.reason);
-                //     }
-                //     // TODO: toggleStartStop();
-                // }
+            newSocket.onclose = function (closeEvent) {
+                stopTranscribing();
+                if (closeEvent.code != 1000) {
+                    datadogLogs.logger.error("Transcribe error on close", { webSocketReason: closeEvent.reason });
+                }
             };
         } else {
             setSocket(null);

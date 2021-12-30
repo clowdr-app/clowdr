@@ -252,7 +252,22 @@ function VonageRoomInner({
         });
     const { setAvailableStreams, refetchLayout } = useVonageLayout();
 
-    useAWSTranscription(camera);
+    const userId = useUserId();
+    const registrant = useCurrentRegistrant();
+
+    const onPartialTranscript = useCallback<(transcript: string) => void>(
+        (transcript) => {
+            vonage.sendTranscript(registrant.id, registrant.displayName, true, transcript);
+        },
+        [registrant.displayName, registrant.id, vonage]
+    );
+    const onCompleteTranscript = useCallback<(transcript: string) => void>(
+        (transcript) => {
+            vonage.sendTranscript(registrant.id, registrant.displayName, false, transcript);
+        },
+        [registrant.displayName, registrant.id, vonage]
+    );
+    useAWSTranscription(camera, onPartialTranscript, onCompleteTranscript);
 
     useEffect(() => {
         if (connected) {
@@ -276,9 +291,6 @@ function VonageRoomInner({
         () => (connected ? undefined : <PreJoin cameraPreviewRef={cameraPreviewRef} />),
         [connected]
     );
-
-    const userId = useUserId();
-    const registrant = useCurrentRegistrant();
 
     const registrantIdSpecs = useMemo(
         () =>

@@ -5,6 +5,12 @@ import { App, AppError } from "./aspects/App";
 import "./aspects/DataDog/DataDog";
 import "./index.css";
 
+window.global = window.global || {};
+window.global.Uint8Array = Uint8Array;
+
+window.process = window.process || {};
+window.process.env = window.process.env || {};
+
 ReactDOM.render(
     <React.StrictMode>
         <ErrorBoundary FallbackComponent={AppError}>

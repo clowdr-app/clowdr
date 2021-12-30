@@ -16,6 +16,7 @@ import type { RegistrantIdSpec } from "../../../RegistrantsContext";
 import { useRegistrants } from "../../../RegistrantsContext";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { PreJoin } from "../PreJoin";
+import { useAWSTranscription } from "../Transcription/AWSTranscribe";
 import type { DevicesProps } from "../VideoChat/PermissionInstructionsContext";
 import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructionsContext";
 import { CameraViewport } from "./Components/CameraViewport";
@@ -250,6 +251,8 @@ function VonageRoomInner({
             onPlayVideoReceived,
         });
     const { setAvailableStreams, refetchLayout } = useVonageLayout();
+
+    useAWSTranscription(camera);
 
     useEffect(() => {
         if (connected) {

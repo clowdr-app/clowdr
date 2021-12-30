@@ -109,6 +109,13 @@ type Mutation {
   ): ToggleVonageRecordingStateOutput
 }
 
+type Query {
+  transcribeGeneratePresignedUrl (
+    languageCode: String!
+    sampleRate: String!
+  ): TranscribeGeneratePresignedUrlOutput!
+}
+
 type Mutation {
   updateProfilePhoto (
     registrantId: uuid!
@@ -315,5 +322,9 @@ type ToggleVonageRecordingStateOutput {
 type InitialiseSuperUserOutput {
   success : Boolean!
   error : String
+}
+
+type TranscribeGeneratePresignedUrlOutput {
+  url : String!
 }
 

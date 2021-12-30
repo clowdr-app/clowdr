@@ -310,6 +310,15 @@ export type GetSlugOutput = {
     slug?: Maybe<string>;
 };
 
+export type TranscribeGeneratePresignedUrlArgs = {
+    languageCode: string;
+    sampleRate: string;
+};
+
+export type TranscribeGeneratePresignedUrlOutput = {
+    url: string;
+};
+
 export type getProgramPersonAccessTokenArgs = {
     elementId: uuid;
     uploaderEmail: string;

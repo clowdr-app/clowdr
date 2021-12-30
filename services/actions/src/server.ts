@@ -1,7 +1,7 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
-import { requestId } from "@midspace/server-utils/middlewares/request-id";
 import type { invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
+import { requestId } from "@midspace/server-utils/middlewares/request-id";
 import assert from "assert";
 import { json } from "body-parser";
 import cors from "cors";
@@ -38,6 +38,7 @@ import { router as registrantGoogleAccountRouter } from "./router/registrantGoog
 import { router as roomRouter } from "./router/room";
 import { router as shuffleRoomsRouter } from "./router/shuffleRooms";
 import { router as superuserRouter } from "./router/superuser";
+import { router as transcribeRouter } from "./router/transcribe";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
 import { router as vonageSessionLayoutRouter } from "./router/vonageSessionLayout";
@@ -118,6 +119,7 @@ app.use("/su", superuserRouter);
 
 app.use("/conference", conferenceRouter);
 app.use("/invitation", invitationRouter);
+app.use("/transcribe", transcribeRouter);
 
 app.get("/", function (_req, res) {
     res.send("Midspace");

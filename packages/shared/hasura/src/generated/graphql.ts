@@ -931,6 +931,11 @@ export type ToggleVonageRecordingStateOutput = {
     recordingState: Scalars["Boolean"];
 };
 
+export type TranscribeGeneratePresignedUrlOutput = {
+    __typename?: "TranscribeGeneratePresignedUrlOutput";
+    url: Scalars["String"];
+};
+
 export type UpdateProfilePhotoResponse = {
     __typename?: "UpdateProfilePhotoResponse";
     ok: Scalars["Boolean"];
@@ -9481,10 +9486,12 @@ export type Content_Element_Order_By = {
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     data?: Maybe<Order_By>;
+    hasBeenSubmitted?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     isHidden?: Maybe<Order_By>;
     item?: Maybe<Content_Item_Order_By>;
     itemId?: Maybe<Order_By>;
+    itemTitle?: Maybe<Order_By>;
     layoutData?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingData?: Maybe<Conference_OriginatingData_Order_By>;
@@ -10378,6 +10385,7 @@ export type Content_ItemProgramPerson_On_Conflict = {
 
 /** Ordering options when selecting data from "content.ItemProgramPerson". */
 export type Content_ItemProgramPerson_Order_By = {
+    hasSubmissionRequestBeenSent?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     item?: Maybe<Content_Item_Order_By>;
     itemId?: Maybe<Order_By>;
@@ -11020,6 +11028,7 @@ export type Content_Item_Order_By = {
     descriptionOfExhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
     elements_aggregate?: Maybe<Content_Element_Aggregate_Order_By>;
     events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
+    hasUnsubmittedElements?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     itemExhibitions_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
     itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -18982,6 +18991,7 @@ export type Query_Root = {
     system_SuperUserState: Array<System_SuperUserState>;
     /** fetch aggregated fields from the table: "system.SuperUserState" */
     system_SuperUserState_aggregate: System_SuperUserState_Aggregate;
+    transcribeGeneratePresignedUrl: TranscribeGeneratePresignedUrlOutput;
     vapidPublicKey: VapidPublicKeyOutput;
     /** fetch data from the table: "video.ChannelStack" */
     video_ChannelStack: Array<Video_ChannelStack>;
@@ -20841,6 +20851,11 @@ export type Query_RootSystem_SuperUserState_AggregateArgs = {
     where?: Maybe<System_SuperUserState_Bool_Exp>;
 };
 
+export type Query_RootTranscribeGeneratePresignedUrlArgs = {
+    languageCode: Scalars["String"];
+    sampleRate: Scalars["String"];
+};
+
 export type Query_RootVideo_ChannelStackArgs = {
     distinct_on?: Maybe<Array<Video_ChannelStack_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -21933,6 +21948,7 @@ export type Registrant_Invitation_Order_By = {
     confirmationCode?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
+    hash?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     inviteCode?: Maybe<Order_By>;
     invitedEmailAddress?: Maybe<Order_By>;
@@ -22953,6 +22969,8 @@ export type Registrant_Registrant_Order_By = {
     groupRegistrants_aggregate?: Maybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
     invitation?: Maybe<Registrant_Invitation_Order_By>;
+    invitationStatus?: Maybe<Order_By>;
+    inviteSent?: Maybe<Order_By>;
     profile?: Maybe<Registrant_Profile_Order_By>;
     programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
     roomParticipants_aggregate?: Maybe<Room_Participant_Aggregate_Order_By>;
@@ -25526,6 +25544,7 @@ export type Room_Room_Order_By = {
     currentModeName?: Maybe<Order_By>;
     events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
+    isProgramRoom?: Maybe<Order_By>;
     livestreamDuration?: Maybe<Room_LivestreamDurations_Order_By>;
     managementMode?: Maybe<Room_ManagementMode_Order_By>;
     managementModeName?: Maybe<Order_By>;
@@ -28274,6 +28293,7 @@ export type Schedule_Event_Order_By = {
     room?: Maybe<Room_Room_Order_By>;
     roomId?: Maybe<Order_By>;
     roomMode?: Maybe<Room_Mode_Order_By>;
+    roomName?: Maybe<Order_By>;
     shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
     shufflePeriodId?: Maybe<Order_By>;
     startTime?: Maybe<Order_By>;
@@ -34778,6 +34798,7 @@ export type Video_VonageParticipantStream_Order_By = {
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
+    durationSeconds?: Maybe<Order_By>;
     eventVonageSession?: Maybe<Video_EventVonageSession_Order_By>;
     id?: Maybe<Order_By>;
     registrant?: Maybe<Registrant_Registrant_Order_By>;

@@ -942,6 +942,11 @@ export type ToggleVonageRecordingStateOutput = {
     readonly recordingState: Scalars["Boolean"];
 };
 
+export type TranscribeGeneratePresignedUrlOutput = {
+    readonly __typename?: "TranscribeGeneratePresignedUrlOutput";
+    readonly url: Scalars["String"];
+};
+
 export type UpdateProfilePhotoResponse = {
     readonly __typename?: "UpdateProfilePhotoResponse";
     readonly ok: Scalars["Boolean"];
@@ -9492,10 +9497,12 @@ export type Content_Element_Order_By = {
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
     readonly data?: InputMaybe<Order_By>;
+    readonly hasBeenSubmitted?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly isHidden?: InputMaybe<Order_By>;
     readonly item?: InputMaybe<Content_Item_Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
+    readonly itemTitle?: InputMaybe<Order_By>;
     readonly layoutData?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
@@ -10389,6 +10396,7 @@ export type Content_ItemProgramPerson_On_Conflict = {
 
 /** Ordering options when selecting data from "content.ItemProgramPerson". */
 export type Content_ItemProgramPerson_Order_By = {
+    readonly hasSubmissionRequestBeenSent?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly item?: InputMaybe<Content_Item_Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
@@ -11031,6 +11039,7 @@ export type Content_Item_Order_By = {
     readonly descriptionOfExhibitions_aggregate?: InputMaybe<Collection_Exhibition_Aggregate_Order_By>;
     readonly elements_aggregate?: InputMaybe<Content_Element_Aggregate_Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
+    readonly hasUnsubmittedElements?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly itemExhibitions_aggregate?: InputMaybe<Content_ItemExhibition_Aggregate_Order_By>;
     readonly itemPeople_aggregate?: InputMaybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -18993,6 +19002,7 @@ export type Query_Root = {
     readonly system_SuperUserState: ReadonlyArray<System_SuperUserState>;
     /** fetch aggregated fields from the table: "system.SuperUserState" */
     readonly system_SuperUserState_aggregate: System_SuperUserState_Aggregate;
+    readonly transcribeGeneratePresignedUrl: TranscribeGeneratePresignedUrlOutput;
     readonly vapidPublicKey: VapidPublicKeyOutput;
     /** fetch data from the table: "video.ChannelStack" */
     readonly video_ChannelStack: ReadonlyArray<Video_ChannelStack>;
@@ -20852,6 +20862,11 @@ export type Query_RootSystem_SuperUserState_AggregateArgs = {
     where?: InputMaybe<System_SuperUserState_Bool_Exp>;
 };
 
+export type Query_RootTranscribeGeneratePresignedUrlArgs = {
+    languageCode: Scalars["String"];
+    sampleRate: Scalars["String"];
+};
+
 export type Query_RootVideo_ChannelStackArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Video_ChannelStack_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -21944,6 +21959,7 @@ export type Registrant_Invitation_Order_By = {
     readonly confirmationCode?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
     readonly emails_aggregate?: InputMaybe<Email_Aggregate_Order_By>;
+    readonly hash?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly inviteCode?: InputMaybe<Order_By>;
     readonly invitedEmailAddress?: InputMaybe<Order_By>;
@@ -22964,6 +22980,8 @@ export type Registrant_Registrant_Order_By = {
     readonly groupRegistrants_aggregate?: InputMaybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly invitation?: InputMaybe<Registrant_Invitation_Order_By>;
+    readonly invitationStatus?: InputMaybe<Order_By>;
+    readonly inviteSent?: InputMaybe<Order_By>;
     readonly profile?: InputMaybe<Registrant_Profile_Order_By>;
     readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     readonly roomParticipants_aggregate?: InputMaybe<Room_Participant_Aggregate_Order_By>;
@@ -25537,6 +25555,7 @@ export type Room_Room_Order_By = {
     readonly currentModeName?: InputMaybe<Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     readonly id?: InputMaybe<Order_By>;
+    readonly isProgramRoom?: InputMaybe<Order_By>;
     readonly livestreamDuration?: InputMaybe<Room_LivestreamDurations_Order_By>;
     readonly managementMode?: InputMaybe<Room_ManagementMode_Order_By>;
     readonly managementModeName?: InputMaybe<Order_By>;
@@ -28285,6 +28304,7 @@ export type Schedule_Event_Order_By = {
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
     readonly roomMode?: InputMaybe<Room_Mode_Order_By>;
+    readonly roomName?: InputMaybe<Order_By>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
     readonly startTime?: InputMaybe<Order_By>;
@@ -34789,6 +34809,7 @@ export type Video_VonageParticipantStream_Order_By = {
     readonly conference?: InputMaybe<Conference_Conference_Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
+    readonly durationSeconds?: InputMaybe<Order_By>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
@@ -38225,6 +38246,19 @@ export type RoomEventDetailsFragment = {
           }
         | null
         | undefined;
+};
+
+export type TranscribeGeneratePresignedUrlQueryVariables = Exact<{
+    languageCode: Scalars["String"];
+    sampleRate: Scalars["String"];
+}>;
+
+export type TranscribeGeneratePresignedUrlQuery = {
+    readonly __typename?: "query_root";
+    readonly transcribeGeneratePresignedUrl: {
+        readonly __typename?: "TranscribeGeneratePresignedUrlOutput";
+        readonly url: string;
+    };
 };
 
 export type VideoPlayer_GetElementQueryVariables = Exact<{
@@ -49789,6 +49823,22 @@ export const GetEventDetailsDocument = gql`
 export function useGetEventDetailsQuery(options: Omit<Urql.UseQueryArgs<GetEventDetailsQueryVariables>, "query"> = {}) {
     return Urql.useQuery<GetEventDetailsQuery>({ query: GetEventDetailsDocument, ...options });
 }
+export const TranscribeGeneratePresignedUrlDocument = gql`
+    query TranscribeGeneratePresignedUrl($languageCode: String!, $sampleRate: String!) {
+        transcribeGeneratePresignedUrl(languageCode: $languageCode, sampleRate: $sampleRate) {
+            url
+        }
+    }
+`;
+
+export function useTranscribeGeneratePresignedUrlQuery(
+    options: Omit<Urql.UseQueryArgs<TranscribeGeneratePresignedUrlQueryVariables>, "query"> = {}
+) {
+    return Urql.useQuery<TranscribeGeneratePresignedUrlQuery>({
+        query: TranscribeGeneratePresignedUrlDocument,
+        ...options,
+    });
+}
 export const VideoPlayer_GetElementDocument = gql`
     query VideoPlayer_GetElement($elementId: uuid!) {
         content_Element_by_pk(id: $elementId) {
@@ -54977,6 +55027,7 @@ export type GraphCacheKeysConfig = {
     SubmitUpdatedSubtitlesOutput?: (data: WithTypename<SubmitUpdatedSubtitlesOutput>) => null | string;
     SubmitUploadableElementOutput?: (data: WithTypename<SubmitUploadableElementOutput>) => null | string;
     ToggleVonageRecordingStateOutput?: (data: WithTypename<ToggleVonageRecordingStateOutput>) => null | string;
+    TranscribeGeneratePresignedUrlOutput?: (data: WithTypename<TranscribeGeneratePresignedUrlOutput>) => null | string;
     UpdateProfilePhotoResponse?: (data: WithTypename<UpdateProfilePhotoResponse>) => null | string;
     User?: (data: WithTypename<User>) => null | string;
     User_aggregate?: (data: WithTypename<User_Aggregate>) => null | string;
@@ -57680,6 +57731,11 @@ export type GraphCacheResolvers = {
             Query_RootSystem_SuperUserState_AggregateArgs,
             WithTypename<System_SuperUserState_Aggregate> | string
         >;
+        transcribeGeneratePresignedUrl?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootTranscribeGeneratePresignedUrlArgs,
+            WithTypename<TranscribeGeneratePresignedUrlOutput> | string
+        >;
         vapidPublicKey?: GraphCacheResolver<
             WithTypename<Query_Root>,
             Record<string, never>,
@@ -58592,6 +58648,13 @@ export type GraphCacheResolvers = {
             WithTypename<ToggleVonageRecordingStateOutput>,
             Record<string, never>,
             Scalars["Boolean"] | string
+        >;
+    };
+    TranscribeGeneratePresignedUrlOutput?: {
+        url?: GraphCacheResolver<
+            WithTypename<TranscribeGeneratePresignedUrlOutput>,
+            Record<string, never>,
+            Scalars["String"] | string
         >;
     };
     UpdateProfilePhotoResponse?: {

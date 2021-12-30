@@ -203,6 +203,15 @@ actions:
   - role: attendee
   - role: subconference-organizer
   - role: user
+- name: transcribeGeneratePresignedUrl
+  definition:
+    kind: ""
+    handler: '{{ACTION_BASE_URL}}/transcribe/generatePresignedUrl'
+    headers:
+    - name: X-Hasura-Event-Secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: attendee
 - name: updateProfilePhoto
   definition:
     kind: synchronous
@@ -295,4 +304,5 @@ custom_types:
   - name: MatchingPersonOutput
   - name: ToggleVonageRecordingStateOutput
   - name: InitialiseSuperUserOutput
+  - name: TranscribeGeneratePresignedUrlOutput
   scalars: []

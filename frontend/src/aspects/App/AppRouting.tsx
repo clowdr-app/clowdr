@@ -128,8 +128,8 @@ function CheckSlugInner(): JSX.Element {
             window.localStorage.setItem("SLUG_CACHE", JSON.stringify(cache));
         }
     }, [origin, response.data?.getSlug?.slug]);
-    if (!response.fetching && response.data) {
-        if (!response.data.getSlug?.slug) {
+    if (!response.fetching) {
+        if (!response.data?.getSlug?.slug) {
             return <Routing />;
         } else {
             return <Routing confSlug={response.data.getSlug.slug} />;

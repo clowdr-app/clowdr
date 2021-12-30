@@ -17,6 +17,8 @@
         "@ahanapediatrics/ahana-fp": "^2.6.0",
         "@ahanapediatrics/react-volume-meter": "^5.9.0",
         "@auth0/auth0-react": "^1.8.0",
+        "@aws-sdk/eventstream-marshaller": "^3.40.0",
+        "@aws-sdk/util-utf8-node": "^3.37.0",
         "@babel/core": "^7.16.0",
         "@chakra-ui/icons": "^1.1.1",
         "@chakra-ui/react": "^1.7.2",

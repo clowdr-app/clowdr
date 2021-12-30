@@ -24,6 +24,7 @@ export class AwsStack extends cdk.Stack {
 
         // Managed policies
         const transcribeFullAccessPolicy = this.createTranscribeFullAccessPolicy();
+        const transcribeWebsocketStreamingPolicy = this.createTranscribeWebsocketStreamingPolicy();
         const channelStackAdministratorPolicy = this.createChannelStackAdministratorPolicy();
 
         // Service roles
@@ -35,7 +36,21 @@ export class AwsStack extends cdk.Stack {
 
         // IAM user
         const actionsUser = new iam.User(this, "ActionsUser", {});
+        const vonageUser = new iam.User(this, "VonageUser", {});
+        const publicTranscribeUser = new iam.User(this, "PublicTranscribeUser", {});
 
+        // IAM User Access Keys
+        const actionsUserAccessKey = new iam.CfnAccessKey(this, "accessKey", {
+            userName: actionsUser.userName,
+        });
+        const vonageUserAccessKey = new iam.CfnAccessKey(this, "VonageUserAccessKey", {
+            userName: vonageUser.userName,
+        });
+        const publicTranscribeUserAccessKey = new iam.CfnAccessKey(this, "PublicTranscribeUserAccessKey", {
+            userName: publicTranscribeUser.userName,
+        });
+
+        // Attach policies
         actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess"));
         actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaConvertFullAccess"));
         actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaPackageFullAccess"));
@@ -44,17 +59,9 @@ export class AwsStack extends cdk.Stack {
         actionsUser.addManagedPolicy(transcribeFullAccessPolicy);
         actionsUser.addManagedPolicy(channelStackAdministratorPolicy);
 
+        publicTranscribeUser.addManagedPolicy(transcribeWebsocketStreamingPolicy);
+
         const chimeManagerRole = this.createChimeManagerRole(actionsUser);
-
-        const actionsUserAccessKey = new iam.CfnAccessKey(this, "accessKey", {
-            userName: actionsUser.userName,
-        });
-
-        const vonageUser = new iam.User(this, "VonageUser", {});
-
-        const vonageUserAccessKey = new iam.CfnAccessKey(this, "VonageUserAccessKey", {
-            userName: vonageUser.userName,
-        });
 
         /* S3 */
         bucket.grantPut(actionsUser);
@@ -110,6 +117,8 @@ export class AwsStack extends cdk.Stack {
         this.createOutput("ActionsUserSecretAccessKey", actionsUserAccessKey.attrSecretAccessKey);
         this.createOutput("VonageUserAccessKeyId", vonageUserAccessKey.ref);
         this.createOutput("VonageUserSecretAccessKey", vonageUserAccessKey.attrSecretAccessKey);
+        this.createOutput("PublicTranscribeUserAccessKeyId", publicTranscribeUserAccessKey.ref);
+        this.createOutput("PublicTranscribeUserSecretAccessKey", publicTranscribeUserAccessKey.attrSecretAccessKey);
 
         // Service roles
         this.createOutput("ChimeManagerRoleArn", chimeManagerRole.roleArn);
@@ -173,6 +182,22 @@ export class AwsStack extends cdk.Stack {
             statements: [
                 new iam.PolicyStatement({
                     actions: ["transcribe:*"],
+                    effect: iam.Effect.ALLOW,
+                    resources: ["*"],
+                }),
+            ],
+        });
+    }
+
+    /**
+     * @returns a policy that grants websocket streaming to Amazon Transcribe.
+     */
+    private createTranscribeWebsocketStreamingPolicy(): iam.IManagedPolicy {
+        return new iam.ManagedPolicy(this, "TranscribeWebsocketStreaming", {
+            description: "Websocket streaming access for all Amazon Transcribe resources.",
+            statements: [
+                new iam.PolicyStatement({
+                    actions: ["transcribe:StartStreamTranscriptionWebSocket"],
                     effect: iam.Effect.ALLOW,
                     resources: ["*"],
                 }),

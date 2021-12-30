@@ -640,7 +640,7 @@ function satisfiesConditions(
         } else {
             const condition = (where as any)[conditionKey] as FieldClauses | ConditionalClauses | null;
             if (condition) {
-                const conditionInfo = conditionsInputObject.inputFields.find((x) => x.name === condition);
+                const conditionInfo = conditionsInputObject.inputFields.find((x) => x.name === conditionKey);
                 if (!conditionInfo || conditionInfo.type.kind !== "INPUT_OBJECT") {
                     throw new GraphQLError("Condition info not found in schema or invalid!");
                 }
@@ -652,10 +652,9 @@ function satisfiesConditions(
                         !satisfiesScalarConditions(
                             typedCondition,
                             fieldValue,
-                            conditionInfo.type.name.substring(
-                                0,
-                                conditionInfo.type.name.length - "_comparison_exp".length
-                            ) as ScalarComparisonType
+                            conditionInfo.type.name
+                                .substring(0, conditionInfo.type.name.length - "_comparison_exp".length)
+                                .toLowerCase() as ScalarComparisonType
                         )
                     ) {
                         return false;

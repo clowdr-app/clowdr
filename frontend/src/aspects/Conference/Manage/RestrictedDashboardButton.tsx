@@ -38,7 +38,7 @@ export default function RestrictedDashboardButton({
                 overflow="hidden"
                 whiteSpace="normal"
                 linkProps={{
-                    maxWidth: "20%",
+                    maxWidth: "min(20%, 275px)",
                     minWidth: "300px",
                 }}
                 colorScheme={colorScheme ?? "blue"}
@@ -48,6 +48,8 @@ export default function RestrictedDashboardButton({
                 display="inline-flex"
                 width="100%"
                 height="100%"
+                shadow="lg"
+                borderRadius="xl"
                 margin={0}
                 {...rest}
             >

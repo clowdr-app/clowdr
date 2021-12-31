@@ -83,9 +83,15 @@ interface RelationshipSchema {
     columnMap: Record<string, string>;
 }
 
+interface ReferenceSchema {
+    table: TableDetailsSpec;
+    relationshipName: string;
+}
+
 interface TableSchema {
     localTable: TableDetailsSpec;
     relationships: RelationshipSchema[];
+    referencedBy: ReferenceSchema[];
 }
 
 class LS extends Command {
@@ -252,24 +258,28 @@ class LS extends Command {
                 (x, y) => x.table.schema.localeCompare(y.table.schema) || x.table.name.localeCompare(y.table.name)
             );
 
-            const tableSchemas: TableSchema[] = [];
+            const tableSchemas = new Map<string, TableSchema>();
             for (const table of tables) {
                 this.processTable(table, tableSchemas, foreignKeys);
             }
+            for (const tableSchema of tableSchemas.values()) {
+                this.processTableSchema(tableSchema, tableSchemas);
+            }
 
-            this.outputSchema(tableSchemas, flags);
+            this.outputSchema([...tableSchemas.values()], flags);
         }
     }
 
-    private processTable(table: TableSpec, tableSchemas: TableSchema[], foreignKeys: ForeignKey[]) {
+    private processTable(table: TableSpec, tableSchemas: Map<string, TableSchema>, foreignKeys: ForeignKey[]) {
         const tableSchema: TableSchema = {
             localTable: {
                 name: table.table.name,
                 schema: table.table.schema,
             },
             relationships: [],
+            referencedBy: [],
         };
-        tableSchemas.push(tableSchema);
+        tableSchemas.set(tableSchema.localTable.schema + "_" + tableSchema.localTable.name, tableSchema);
 
         // One to many and many to one foreign keys
         const { m2oFKs, o2mFKs } = this.findForeignKeys(foreignKeys, table);
@@ -295,6 +305,16 @@ class LS extends Command {
         }
 
         tableSchema.relationships.sort((x, y) => x.type.localeCompare(y.type) && x.name.localeCompare(y.name));
+    }
+
+    private processTableSchema(table: TableSchema, tableSchemas: Map<string, TableSchema>): void {
+        for (const relationship of table.relationships) {
+            const otherTable = tableSchemas.get(relationship.remoteTable.schema + "_" + relationship.remoteTable.name);
+            otherTable?.referencedBy.push({
+                relationshipName: relationship.name,
+                table: table.localTable,
+            });
+        }
     }
 
     private findForeignKeys(
@@ -456,19 +476,31 @@ class LS extends Command {
                 }`,
                 schemaName: table.localTable.schema,
                 tableName: table.localTable.name,
-                fields: table.relationships.map((relationship) => {
-                    const type: any = {};
-                    type.kind =
-                        relationship.type === "array" ? "ARRAY_RELATIONSHIP_KEY_MAP" : "OBJECT_RELATIONSHIP_KEY_MAP";
-                    type.columns = relationship.columnMap;
-                    return {
-                        name: relationship.name,
-                        description: `A column map for an ${
-                            relationship.type === "array" ? "array" : "object"
-                        } relationship`,
-                        type,
-                    };
-                }),
+                fields: [
+                    ...table.relationships.map((relationship) => {
+                        const type: any = {};
+                        type.kind =
+                            relationship.type === "array"
+                                ? "ARRAY_RELATIONSHIP_KEY_MAP"
+                                : "OBJECT_RELATIONSHIP_KEY_MAP";
+                        type.columns = relationship.columnMap;
+                        return {
+                            name: relationship.name,
+                            description: `A column map for an ${
+                                relationship.type === "array" ? "array" : "object"
+                            } relationship`,
+                            type,
+                        };
+                    }),
+                    {
+                        name: "referencedBy",
+                        description: "A list of relationships that refer to this table",
+                        type: {
+                            kind: "REFERENCE_MAP",
+                            values: table.referencedBy,
+                        },
+                    },
+                ],
             });
         }
         fs.writeFileSync(flags.output, JSON.stringify(outputSchema, null, 4));

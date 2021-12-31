@@ -6,7 +6,16 @@
                 "name": "analytics_AppStats",
                 "schemaName": "analytics",
                 "tableName": "AppStats",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -22,6 +31,22 @@
                             "columns": {
                                 "id": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "completedRegistrationsStat",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -41,6 +66,22 @@
                                 "elementId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "stats",
+                                    "table": {
+                                        "name": "Element",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -58,6 +99,22 @@
                             "columns": {
                                 "itemId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "stats",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -77,6 +134,22 @@
                                 "elementId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "totalViewsStat",
+                                    "table": {
+                                        "name": "Element",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -94,6 +167,22 @@
                             "columns": {
                                 "itemId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "totalViewsStat",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -113,6 +202,22 @@
                                 "roomId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "presenceCounts",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -130,6 +235,22 @@
                             "columns": {
                                 "roomId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "stats",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -239,6 +360,92 @@
                                 "id": "chatId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "duplicatesFrom",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "duplicateTo",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "discussionChat",
+                                    "table": {
+                                        "name": "Flag",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "chat",
+                                    "table": {
+                                        "name": "Message",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "chat",
+                                    "table": {
+                                        "name": "Pin",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "chat",
+                                    "table": {
+                                        "name": "Reaction",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "chat",
+                                    "table": {
+                                        "name": "ReadUpToIndex",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "chat",
+                                    "table": {
+                                        "name": "Subscription",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "chats",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "chat",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "chat",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -277,6 +484,29 @@
                                 "messageSId": "sId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "flags",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "flags",
+                                    "table": {
+                                        "name": "Message",
+                                        "schema": "chat"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -285,7 +515,16 @@
                 "name": "chat_FlagType",
                 "schemaName": "chat",
                 "tableName": "FlagType",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -352,6 +591,50 @@
                                 "senderId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "messages",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "message",
+                                    "table": {
+                                        "name": "Flag",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "duplicateIncoming",
+                                    "table": {
+                                        "name": "Message",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "duplicateOutgoing",
+                                    "table": {
+                                        "name": "Message",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "message",
+                                    "table": {
+                                        "name": "Reaction",
+                                        "schema": "chat"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -360,7 +643,16 @@
                 "name": "chat_MessageType",
                 "schemaName": "chat",
                 "tableName": "MessageType",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -386,6 +678,29 @@
                             "columns": {
                                 "registrantId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "pins",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "XPin",
+                                    "table": {
+                                        "name": "Subscription",
+                                        "schema": "chat"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -445,6 +760,36 @@
                                 "senderId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "reactions",
+                                    "table": {
+                                        "name": "Message",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "duplicate",
+                                    "table": {
+                                        "name": "Reaction",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "duplicates",
+                                    "table": {
+                                        "name": "Reaction",
+                                        "schema": "chat"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -453,7 +798,16 @@
                 "name": "chat_ReactionType",
                 "schemaName": "chat",
                 "tableName": "ReactionType",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -479,6 +833,22 @@
                             "columns": {
                                 "registrantId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "readUpToIndices",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -519,6 +889,22 @@
                                 "registrantId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "subscriptions",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -556,6 +942,43 @@
                             "columns": {
                                 "id": "exhibitionId"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "exhibitions",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "descriptionOfExhibitions",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "exhibition",
+                                    "table": {
+                                        "name": "ItemExhibition",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "exhibition",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -615,6 +1038,57 @@
                                 "registrantId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "programPeople",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "programPeople",
+                                    "table": {
+                                        "name": "OriginatingData",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "person",
+                                    "table": {
+                                        "name": "ItemProgramPerson",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "person",
+                                    "table": {
+                                        "name": "SubmissionRequestEmailJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "programPeople",
+                                    "table": {
+                                        "name": "Registrant",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "person",
+                                    "table": {
+                                        "name": "EventProgramPerson",
+                                        "schema": "schedule"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -652,6 +1126,36 @@
                             "columns": {
                                 "originatingDataId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "tags",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "tags",
+                                    "table": {
+                                        "name": "OriginatingData",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "tag",
+                                    "table": {
+                                        "name": "ItemTag",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -811,6 +1315,281 @@
                                 "id": "conferenceId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "CompletedRegistrations",
+                                        "schema": "analytics"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Exhibition",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "ProgramPerson",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Tag",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Configuration",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "DemoCode",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "OriginatingData",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Subconference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Element",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "ChannelStackCreateJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "CombineVideosJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "CustomEmailJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "InvitationEmailJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "MediaPackageHarvestJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "PrepareJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "PublishVideoJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "UploadYouTubeVideoJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conferencesCreated",
+                                    "table": {
+                                        "name": "User",
+                                        "schema": "public"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "GoogleAccount",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Group",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Registrant",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "ChimeMeeting",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "LivestreamDurations",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Participant",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "ShufflePeriod",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "OverlappingEvents",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "ChannelStack",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "EventVonageSession",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "ImmediateSwitch",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "MediaLiveChannelStatus",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "VideoRenderJob",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "VonageParticipantStream",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "VonageSessionLayout",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "YouTubeUpload",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -829,6 +1608,22 @@
                                 "conferenceId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "configurations",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -837,7 +1632,16 @@
                 "name": "conference_ConfigurationKey",
                 "schemaName": "conference",
                 "tableName": "ConfigurationKey",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -863,6 +1667,29 @@
                             "columns": {
                                 "usedById": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "demoCode",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conferenceDemoCodes",
+                                    "table": {
+                                        "name": "User",
+                                        "schema": "public"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -942,6 +1769,64 @@
                                 "id": "originatingDataId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "originatingData",
+                                    "table": {
+                                        "name": "ProgramPerson",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "originatingData",
+                                    "table": {
+                                        "name": "Tag",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "originatingDatas",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "originatingData",
+                                    "table": {
+                                        "name": "Element",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "originatingData",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "originatingData",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "originatingData",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -960,6 +1845,36 @@
                                 "conferenceId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "subconferences",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "subconference",
+                                    "table": {
+                                        "name": "Group",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "subconference",
+                                    "table": {
+                                        "name": "SubconferenceMembership",
+                                        "schema": "registrant"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -968,7 +1883,16 @@
                 "name": "conference_VisibilityLevel",
                 "schemaName": "conference",
                 "tableName": "VisibilityLevel",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -1045,6 +1969,71 @@
                                 "id": "elementId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "element",
+                                    "table": {
+                                        "name": "ContentElementStats",
+                                        "schema": "analytics"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "element",
+                                    "table": {
+                                        "name": "ElementTotalViews",
+                                        "schema": "analytics"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "elements",
+                                    "table": {
+                                        "name": "OriginatingData",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "elements",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "element",
+                                    "table": {
+                                        "name": "PublishVideoJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "element",
+                                    "table": {
+                                        "name": "UploadYouTubeVideoJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "element",
+                                    "table": {
+                                        "name": "VideoRenderJob",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "element",
+                                    "table": {
+                                        "name": "YouTubeUpload",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1053,7 +2042,24 @@
                 "name": "content_ElementType",
                 "schemaName": "content",
                 "tableName": "ElementType",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "type",
+                                    "table": {
+                                        "name": "Element",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -1200,6 +2206,99 @@
                                 "typeName": "name"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "item",
+                                    "table": {
+                                        "name": "ContentItemStats",
+                                        "schema": "analytics"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "item",
+                                    "table": {
+                                        "name": "ItemTotalViews",
+                                        "schema": "analytics"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "items",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "descriptiveItem",
+                                    "table": {
+                                        "name": "Exhibition",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "items",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "items",
+                                    "table": {
+                                        "name": "OriginatingData",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "item",
+                                    "table": {
+                                        "name": "Element",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "item",
+                                    "table": {
+                                        "name": "ItemExhibition",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "item",
+                                    "table": {
+                                        "name": "ItemProgramPerson",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "item",
+                                    "table": {
+                                        "name": "ItemTag",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "originatingItem",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "item",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1227,6 +2326,29 @@
                             "columns": {
                                 "itemId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "items",
+                                    "table": {
+                                        "name": "Exhibition",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "itemExhibitions",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -1256,6 +2378,29 @@
                                 "personId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "itemPeople",
+                                    "table": {
+                                        "name": "ProgramPerson",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "itemPeople",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1284,6 +2429,29 @@
                                 "tagId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "itemTags",
+                                    "table": {
+                                        "name": "Tag",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "itemTags",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1292,7 +2460,24 @@
                 "name": "content_ItemType",
                 "schemaName": "content",
                 "tableName": "ItemType",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "type",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -1329,6 +2514,29 @@
                                 "roomId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "channelStackCreateJobs",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "channelStackCreateJob",
+                                    "table": {
+                                        "name": "ChannelStack",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1337,7 +2545,16 @@
                 "name": "job_queues_ChannelStackDeleteJob",
                 "schemaName": "job_queues",
                 "tableName": "ChannelStackDeleteJob",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -1353,6 +2570,22 @@
                             "columns": {
                                 "channelStackId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "channelStackUpdateJobs",
+                                    "table": {
+                                        "name": "ChannelStack",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -1392,6 +2625,14 @@
                                 "createdByRegistrantId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
                     }
                 ]
             },
@@ -1409,6 +2650,14 @@
                             "columns": {
                                 "conferenceId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
                         }
                     }
                 ]
@@ -1428,6 +2677,14 @@
                                 "conferenceId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
                     }
                 ]
             },
@@ -1436,7 +2693,59 @@
                 "name": "job_queues_JobStatus",
                 "schemaName": "job_queues",
                 "tableName": "JobStatus",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "jobStatus",
+                                    "table": {
+                                        "name": "ChannelStackCreateJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "jobStatus",
+                                    "table": {
+                                        "name": "CombineVideosJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "jobStatus",
+                                    "table": {
+                                        "name": "MediaPackageHarvestJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "jobStatus",
+                                    "table": {
+                                        "name": "PrepareJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "jobStatus",
+                                    "table": {
+                                        "name": "UploadYouTubeVideoJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "jobStatus",
+                                    "table": {
+                                        "name": "VideoRenderJob",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -1472,6 +2781,14 @@
                             "columns": {
                                 "jobStatusName": "name"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
                         }
                     }
                 ]
@@ -1511,6 +2828,22 @@
                                 "id": "conferencePrepareJobId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "conferencePrepareJob",
+                                    "table": {
+                                        "name": "VideoRenderJob",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1539,6 +2872,14 @@
                                 "elementId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
                     }
                 ]
             },
@@ -1556,6 +2897,14 @@
                             "columns": {
                                 "personId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
                         }
                     }
                 ]
@@ -1615,6 +2964,14 @@
                                 "id": "uploadYouTubeVideoJobId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
                     }
                 ]
             },
@@ -1643,6 +3000,29 @@
                                 "userId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "emails",
+                                    "table": {
+                                        "name": "User",
+                                        "schema": "public"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "emails",
+                                    "table": {
+                                        "name": "Invitation",
+                                        "schema": "registrant"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1651,7 +3031,16 @@
                 "name": "ForeignKeyIntrospection",
                 "schemaName": "public",
                 "tableName": "ForeignKeyIntrospection",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -1667,6 +3056,22 @@
                             "columns": {
                                 "userId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "pushNotificationSubscriptions",
+                                    "table": {
+                                        "name": "User",
+                                        "schema": "public"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -1746,6 +3151,71 @@
                                 "id": "userId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "creator",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "usedBy",
+                                    "table": {
+                                        "name": "DemoCode",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "user",
+                                    "table": {
+                                        "name": "Email",
+                                        "schema": "public"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "user",
+                                    "table": {
+                                        "name": "PushNotificationSubscription",
+                                        "schema": "public"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "user",
+                                    "table": {
+                                        "name": "Invitation",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "user",
+                                    "table": {
+                                        "name": "Registrant",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "user",
+                                    "table": {
+                                        "name": "ConfigurationPermissionGrant",
+                                        "schema": "system"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "user",
+                                    "table": {
+                                        "name": "SuperUserPermissionGrant",
+                                        "schema": "system"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1773,6 +3243,22 @@
                             "columns": {
                                 "registrantId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "registrantGoogleAccount",
+                                    "table": {
+                                        "name": "UploadYouTubeVideoJob",
+                                        "schema": "job_queues"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -1812,6 +3298,29 @@
                                 "subconferenceId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "group",
+                                    "table": {
+                                        "name": "GroupRegistrant",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "group",
+                                    "table": {
+                                        "name": "RoomGroupMembership",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1839,6 +3348,29 @@
                             "columns": {
                                 "registrantId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "groupRegistrants",
+                                    "table": {
+                                        "name": "Group",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "groupRegistrants",
+                                    "table": {
+                                        "name": "Registrant",
+                                        "schema": "registrant"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -1878,6 +3410,36 @@
                                 "linkToUserId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "invitation",
+                                    "table": {
+                                        "name": "Email",
+                                        "schema": "public"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "invitationsPendingConfirmation",
+                                    "table": {
+                                        "name": "User",
+                                        "schema": "public"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "invitation",
+                                    "table": {
+                                        "name": "Registrant",
+                                        "schema": "registrant"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1896,6 +3458,22 @@
                                 "registrantId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "profile",
+                                    "table": {
+                                        "name": "Registrant",
+                                        "schema": "registrant"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1913,6 +3491,22 @@
                             "columns": {
                                 "registrantId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "badges",
+                                    "table": {
+                                        "name": "Registrant",
+                                        "schema": "registrant"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -2012,6 +3606,183 @@
                                 "userId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "flaggedBy",
+                                    "table": {
+                                        "name": "Flag",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "sender",
+                                    "table": {
+                                        "name": "Message",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "Pin",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "sender",
+                                    "table": {
+                                        "name": "Reaction",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "ReadUpToIndex",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "Subscription",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "ProgramPerson",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrants",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "CombineVideosJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrants",
+                                    "table": {
+                                        "name": "User",
+                                        "schema": "public"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "GoogleAccount",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "GroupRegistrant",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "Invitation",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "Profile",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "ProfileBadges",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "SavedVonageRoomRecording",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "SubconferenceMembership",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "Participant",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "RoomMembership",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "organiser",
+                                    "table": {
+                                        "name": "ShufflePeriod",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "ShuffleQueueEntry",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "StarredEvent",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "VonageParticipantStream",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "initiator",
+                                    "table": {
+                                        "name": "VonageRoomRecording",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2020,7 +3791,16 @@
                 "name": "registrant_RegistrantRole",
                 "schemaName": "registrant",
                 "tableName": "RegistrantRole",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -2046,6 +3826,22 @@
                             "columns": {
                                 "registrantId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "saves",
+                                    "table": {
+                                        "name": "VonageRoomRecording",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -2075,6 +3871,22 @@
                                 "subconferenceId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "subconferenceMemberships",
+                                    "table": {
+                                        "name": "Registrant",
+                                        "schema": "registrant"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2083,7 +3895,16 @@
                 "name": "room_Backend",
                 "schemaName": "room",
                 "tableName": "Backend",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -2109,6 +3930,22 @@
                             "columns": {
                                 "roomId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "chimeMeeting",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -2138,6 +3975,22 @@
                                 "roomId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "livestreamDuration",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2146,7 +3999,24 @@
                 "name": "room_ManagementMode",
                 "schemaName": "room",
                 "tableName": "ManagementMode",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "managementMode",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -2172,6 +4042,29 @@
                             "columns": {
                                 "name": "currentModeName"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "currentMode",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "roomMode",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -2211,6 +4104,29 @@
                                 "roomId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "roomParticipants",
+                                    "table": {
+                                        "name": "Registrant",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "participants",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2219,7 +4135,24 @@
                 "name": "room_PersonRole",
                 "schemaName": "room",
                 "tableName": "PersonRole",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "personRole",
+                                    "table": {
+                                        "name": "RoomMembership",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -2436,6 +4369,155 @@
                                 "publicVonageSessionId": "vonageSessionId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "RoomPresence",
+                                        "schema": "analytics"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "RoomStats",
+                                        "schema": "analytics"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "rooms",
+                                    "table": {
+                                        "name": "Chat",
+                                        "schema": "chat"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "rooms",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "rooms",
+                                    "table": {
+                                        "name": "OriginatingData",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "rooms",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "ChannelStackCreateJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "ChimeMeeting",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "LivestreamDurations",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "rooms",
+                                    "table": {
+                                        "name": "Mode",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "Participant",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "RoomGroupMembership",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "RoomMembership",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "ShuffleRoom",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "ChannelStack",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "RoomRtmpOutput",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "room",
+                                    "table": {
+                                        "name": "VonageRoomRecording",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "rooms",
+                                    "table": {
+                                        "name": "VonageSessionLayout",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2463,6 +4545,14 @@
                             "columns": {
                                 "roomId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
                         }
                     }
                 ]
@@ -2502,6 +4592,22 @@
                                 "roomId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "roomMemberships",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2510,7 +4616,16 @@
                 "name": "room_ShuffleAlgorithm",
                 "schemaName": "room",
                 "tableName": "ShuffleAlgorithm",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -2567,6 +4682,50 @@
                                 "id": "shufflePeriodId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "shufflePeriods",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "shufflePeriod",
+                                    "table": {
+                                        "name": "ShuffleQueueEntry",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "shufflePeriod",
+                                    "table": {
+                                        "name": "ShuffleRoom",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "shufflePeriod",
+                                    "table": {
+                                        "name": "Continuation",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "shufflePeriod",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2604,6 +4763,29 @@
                             "columns": {
                                 "allocatedShuffleRoomId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "queueEntries",
+                                    "table": {
+                                        "name": "ShufflePeriod",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "queueEntries",
+                                    "table": {
+                                        "name": "ShuffleRoom",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -2653,6 +4835,36 @@
                                 "shufflePeriodId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "shuffleRooms",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "shuffleRooms",
+                                    "table": {
+                                        "name": "ShufflePeriod",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "shuffleRoom",
+                                    "table": {
+                                        "name": "ShuffleQueueEntry",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2680,6 +4892,29 @@
                             "columns": {
                                 "fromShuffleQueue": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "continuations",
+                                    "table": {
+                                        "name": "ShuffleRoom",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "continuations",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -2789,6 +5024,120 @@
                                 "shufflePeriodId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "events",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "events",
+                                    "table": {
+                                        "name": "OriginatingData",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "events",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "event",
+                                    "table": {
+                                        "name": "MediaPackageHarvestJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "events",
+                                    "table": {
+                                        "name": "Mode",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "events",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "originatingEvent",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "events",
+                                    "table": {
+                                        "name": "ShufflePeriod",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "event",
+                                    "table": {
+                                        "name": "Continuation",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "event",
+                                    "table": {
+                                        "name": "EventProgramPerson",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "eventX",
+                                    "table": {
+                                        "name": "OverlappingEvents",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "eventY",
+                                    "table": {
+                                        "name": "OverlappingEvents",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "event",
+                                    "table": {
+                                        "name": "StarredEvent",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "event",
+                                    "table": {
+                                        "name": "EventVonageSession",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "event",
+                                    "table": {
+                                        "name": "ImmediateSwitch",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2827,6 +5176,36 @@
                                 "personId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "eventPeople",
+                                    "table": {
+                                        "name": "ProgramPerson",
+                                        "schema": "collection"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "eventPeople",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "eventPeople",
+                                    "table": {
+                                        "name": "EventProgramPersonRole",
+                                        "schema": "schedule"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -2844,6 +5223,22 @@
                             "columns": {
                                 "name": "roleName"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "eventPersonRole",
+                                    "table": {
+                                        "name": "EventProgramPerson",
+                                        "schema": "schedule"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -2883,6 +5278,14 @@
                                 "yId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
                     }
                 ]
             },
@@ -2911,6 +5314,14 @@
                                 "registrantId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
                     }
                 ]
             },
@@ -2929,6 +5340,14 @@
                                 "key": "name"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
                     }
                 ]
             },
@@ -2946,6 +5365,29 @@
                             "columns": {
                                 "name": "configurationKey"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "configurationKey",
+                                    "table": {
+                                        "name": "Configuration",
+                                        "schema": "system"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "targetConfigurationKey",
+                                    "table": {
+                                        "name": "ConfigurationPermissionGrant",
+                                        "schema": "system"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -2985,6 +5427,29 @@
                                 "userId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "grantedPermissions",
+                                    "table": {
+                                        "name": "ConfigurationKey",
+                                        "schema": "system"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "systemConfigurationGrants",
+                                    "table": {
+                                        "name": "SuperUserPermission",
+                                        "schema": "system"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -3022,6 +5487,36 @@
                             "columns": {
                                 "name": "permissionName"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "grantedPermission",
+                                    "table": {
+                                        "name": "ConfigurationPermissionGrant",
+                                        "schema": "system"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "grantedPermission",
+                                    "table": {
+                                        "name": "SuperUserPermissionGrant",
+                                        "schema": "system"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "targetPermission",
+                                    "table": {
+                                        "name": "SuperUserPermissionGrant",
+                                        "schema": "system"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -3061,6 +5556,36 @@
                                 "userId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "superUserPermissionGrants",
+                                    "table": {
+                                        "name": "User",
+                                        "schema": "public"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "superUserGrantTargets",
+                                    "table": {
+                                        "name": "SuperUserPermission",
+                                        "schema": "system"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "superUserGrants",
+                                    "table": {
+                                        "name": "SuperUserPermission",
+                                        "schema": "system"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -3069,7 +5594,16 @@
                 "name": "system_SuperUserState",
                 "schemaName": "system",
                 "tableName": "SuperUserState",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -3125,6 +5659,36 @@
                             "columns": {
                                 "roomId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "channelStack",
+                                    "table": {
+                                        "name": "ChannelStackUpdateJob",
+                                        "schema": "job_queues"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "channelStack",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "channelStack",
+                                    "table": {
+                                        "name": "MediaLiveChannelStatus",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -3184,6 +5748,36 @@
                                 "sessionId": "vonageSessionId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "eventVonageSession",
+                                    "table": {
+                                        "name": "Event",
+                                        "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "eventVonageSession",
+                                    "table": {
+                                        "name": "VonageParticipantStream",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "eventVonageSession",
+                                    "table": {
+                                        "name": "VonageSessionLayout",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -3212,6 +5806,14 @@
                                 "eventId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
                     }
                 ]
             },
@@ -3220,7 +5822,16 @@
                 "name": "video_InputType",
                 "schemaName": "video",
                 "tableName": "InputType",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -3247,6 +5858,22 @@
                                 "conferenceId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "mediaLiveChannelStatus",
+                                    "table": {
+                                        "name": "ChannelStack",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -3265,6 +5892,22 @@
                                 "roomId": "id"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "rtmpOutput",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -3273,14 +5916,32 @@
                 "name": "video_RtmpInput",
                 "schemaName": "video",
                 "tableName": "RtmpInput",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
                 "name": "video_TranscriptionJob",
                 "schemaName": "video",
                 "tableName": "TranscriptionJob",
-                "fields": []
+                "fields": [
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
+                        }
+                    }
+                ]
             },
             {
                 "kind": "OBJECT",
@@ -3327,6 +5988,22 @@
                                 "jobStatusName": "name"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "videoRenderJobs",
+                                    "table": {
+                                        "name": "PrepareJob",
+                                        "schema": "job_queues"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -3364,6 +6041,29 @@
                             "columns": {
                                 "registrantId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "vonageParticipantStreams",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "participantStreams",
+                                    "table": {
+                                        "name": "EventVonageSession",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -3403,6 +6103,36 @@
                                 "id": "recordingId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "recording",
+                                    "table": {
+                                        "name": "SavedVonageRoomRecording",
+                                        "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "vonageRecordings",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "recordings",
+                                    "table": {
+                                        "name": "EventVonageSession",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -3441,6 +6171,29 @@
                                 "vonageSessionId": "publicVonageSessionId"
                             }
                         }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "vonageSessionLayout",
+                                    "table": {
+                                        "name": "Room",
+                                        "schema": "room"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "layouts",
+                                    "table": {
+                                        "name": "EventVonageSession",
+                                        "schema": "video"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -3468,6 +6221,29 @@
                             "columns": {
                                 "elementId": "id"
                             }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "youTubeUploads",
+                                    "table": {
+                                        "name": "Element",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "youTubeUploads",
+                                    "table": {
+                                        "name": "UploadYouTubeVideoJob",
+                                        "schema": "job_queues"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]

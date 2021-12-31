@@ -6,12 +6,14 @@ import {
     Image,
     Menu,
     MenuButton,
+    MenuDivider,
     MenuItem,
     MenuList,
     Portal,
     Text,
     useColorMode,
     useColorModeValue,
+    VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
@@ -122,7 +124,7 @@ export default function MenuHeaderBar({
                     },
                 }}
                 m={0}
-                p={4}
+                p={3}
                 h="auto"
                 minH="0"
                 _hover={{}}
@@ -144,7 +146,7 @@ export default function MenuHeaderBar({
                         }}
                     />
                     {maybeRegistrant ? (
-                        <Menu>
+                        <Menu placement="bottom-start" offset={[-10, 5]}>
                             <MenuButton
                                 as={Button}
                                 aria-label="My profile"
@@ -187,36 +189,54 @@ export default function MenuHeaderBar({
                                 </HStack>
                             </MenuButton>
                             <Portal>
-                                <MenuList color={menuTextColor}>
-                                    <Text px={2} fontSize="sm" fontWeight="bold">
-                                        {maybeRegistrant.displayName}
-                                    </Text>
-                                    {maybeUser ? (
-                                        <Text py={1} px={2} fontSize="sm" fontFamily="monospace">
-                                            {maybeUser?.email}
+                                <MenuList color={menuTextColor} py={0} borderRadius="2xl" overflow="hidden">
+                                    <VStack
+                                        bgColor={bgColor}
+                                        color={textColor}
+                                        jutsifyContent="flex-start"
+                                        alignItems="flex-start"
+                                        p={3}
+                                        spacing={0}
+                                        minW="min(90vw, 300px)"
+                                        maxW="min(90vw, 100%)"
+                                    >
+                                        <Text fontSize="lg" fontWeight="bold">
+                                            {maybeRegistrant.displayName}
                                         </Text>
-                                    ) : undefined}
-                                    <MenuItem as={ReactLink} to={`${conferencePath}/profile`}>
+                                        {maybeUser ? (
+                                            <Text fontSize="md" whiteSpace="normal" w="100%">
+                                                {maybeUser?.email}
+                                            </Text>
+                                        ) : undefined}
+                                    </VStack>
+                                    <MenuItem as={ReactLink} to={`${conferencePath}/profile`} p={3}>
                                         <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
                                         Profile
                                     </MenuItem>
-                                    <MenuItem as={ReactLink} to={`${conferencePath}/recordings`}>
+                                    <MenuItem as={ReactLink} to={`${conferencePath}/recordings`} p={3}>
                                         <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
                                         Recordings
                                     </MenuItem>
-                                    <MenuItem as={ReactLink} to="/">
+                                    <MenuItem as={ReactLink} to="/" p={3}>
                                         <FAIcon iconStyle="s" icon="ticket-alt" mr={2} aria-hidden={true} w="1.2em" />
                                         Conferences
                                     </MenuItem>
-                                    <MenuItem
-                                        onClick={() => {
-                                            toggleColorMode();
-                                        }}
-                                    >
-                                        <FAIcon iconStyle="s" icon="moon" />
-                                        &nbsp;&nbsp;Toggle dark mode
-                                    </MenuItem>
-                                    <LogoutButton asMenuItem />
+                                    <MenuDivider m={0} />
+                                    <HStack w="100%" spacing={0}>
+                                        <MenuItem
+                                            onClick={() => {
+                                                toggleColorMode();
+                                            }}
+                                            flex="0 0 50%"
+                                            whiteSpace="pre"
+                                            p={3}
+                                            overflow="hidden"
+                                        >
+                                            <FAIcon iconStyle="s" icon="moon" mr={2} />
+                                            Dark mode
+                                        </MenuItem>
+                                        <LogoutButton asMenuItem />
+                                    </HStack>
                                 </MenuList>
                             </Portal>
                         </Menu>
@@ -225,11 +245,10 @@ export default function MenuHeaderBar({
                     ) : (
                         <LinkButton
                             to="/join"
-                            fontSize="xl"
+                            fontSize="md"
                             variant="ghost"
                             linkProps={{
                                 m: "3px",
-                                mr: "auto",
                                 p: 0,
                                 borderRadius: 0,
                                 h: "calc(100% - 3px)",
@@ -246,7 +265,7 @@ export default function MenuHeaderBar({
                                 },
                             }}
                             m={0}
-                            p={4}
+                            p={3}
                             h="auto"
                             minH="0"
                             _hover={{}}

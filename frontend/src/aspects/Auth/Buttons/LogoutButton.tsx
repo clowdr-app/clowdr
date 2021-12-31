@@ -51,7 +51,16 @@ export default function LogoutButton({
             Logout
         </Button>
     ) : asMenuItem ? (
-        <MenuItem size="sm" onClick={() => logout({ returnTo })}>
+        <MenuItem
+            size="sm"
+            onClick={() => logout({ returnTo })}
+            w="auto"
+            p={3}
+            overflow="hidden"
+            flex="0 0 50%"
+            justifyContent="flex-end"
+            textAlign="right"
+        >
             <FAIcon iconStyle="s" icon="sign-out-alt" mr={2} aria-hidden={true} /> Log Out
         </MenuItem>
     ) : (

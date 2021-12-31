@@ -3,6 +3,7 @@ import { Button, chakra, useColorModeValue } from "@chakra-ui/react";
 import React, { forwardRef } from "react";
 import FAIcon from "../../Chakra/FAIcon";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
+import useIsNarrowView from "../../Hooks/useIsNarrowView";
 
 type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
     label: string;
@@ -26,6 +27,7 @@ const HeaderBarButton = forwardRef<HTMLButtonElement, Props>(function HeaderBarB
         "MainMenuHeaderBar.buttonFocusBackgroundColor-light",
         "MainMenuHeaderBar.buttonFocusBackgroundColor-dark"
     );
+    const narrowView = useIsNarrowView();
     return (
         <Button
             aria-label={ariaLabel ?? label}
@@ -36,6 +38,7 @@ const HeaderBarButton = forwardRef<HTMLButtonElement, Props>(function HeaderBarB
             h="calc(100% - 3px)"
             p={0}
             m="3px"
+            minW={narrowView ? 8 : 12}
             borderRadius={0}
             _hover={{
                 bgColor: buttonHoverBgColor,

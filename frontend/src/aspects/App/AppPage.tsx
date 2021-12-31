@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
+import useIsNarrowView from "../Hooks/useIsNarrowView";
 import { useRestorableState } from "../Hooks/useRestorableState";
 import MenuHeaderBar from "../Menu/HeaderBar/MenuHeaderBar";
 import LeftMenu from "../Menu/LeftMenu";
@@ -35,15 +36,21 @@ export default function AppPage(): JSX.Element {
 
     const [rightMenuOpen, setRightMenuOpen] = useState<boolean>(false);
 
+    const narrowView = useIsNarrowView();
     const [leftMenu_IsExpanded, leftMenu_SetIsExpanded] = useRestorableState<boolean>(
         "LeftMenu_IsExpanded",
         true,
         (x) => x.toString(),
         (x) => x === "true"
     );
+    const [leftMenu_IsOpen, leftMenu_SetIsOpen] = useState<boolean>(false);
     const leftMenu_ToggleIsExpanded = useCallback(() => {
-        leftMenu_SetIsExpanded((old) => !old);
-    }, [leftMenu_SetIsExpanded]);
+        if (!narrowView) {
+            leftMenu_SetIsExpanded((old) => !old);
+        } else {
+            leftMenu_SetIsOpen((old) => !old);
+        }
+    }, [leftMenu_SetIsExpanded, narrowView]);
 
     return (
         <Flex
@@ -71,7 +78,7 @@ export default function AppPage(): JSX.Element {
                 alignItems="center"
                 backgroundColor={bgColour}
             >
-                {conference ? <LeftMenu isExpanded={leftMenu_IsExpanded} /> : undefined}
+                {conference ? <LeftMenu isExpanded={narrowView ? leftMenu_IsOpen : leftMenu_IsExpanded} /> : undefined}
                 <Box
                     zIndex={1}
                     overflowX="hidden"

@@ -26,6 +26,8 @@ import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import { useMaybeConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../../GQL/AuthParameters";
+import useIsNarrowView from "../../Hooks/useIsNarrowView";
+import useIsVeryNarrowView from "../../Hooks/useIsVeryNarrowView";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import HeaderBarButton from "./HeaderBarButton";
 
@@ -76,8 +78,20 @@ export default function MenuHeaderBar({
 
     const leftMenu_BgColorVal = useToken("colors", leftMenu_BgColor);
 
+    const narrowView = useIsNarrowView();
+    const veryNarrowView = useIsVeryNarrowView();
+
     return (
-        <Flex bgColor={bgColor} color={textColor} w="100%" alignItems="center">
+        <Flex
+            bgColor={bgColor}
+            color={textColor}
+            w="100%"
+            alignItems="center"
+            zIndex={4}
+            minH="calc(6ex + 6px)"
+            overflow="hidden"
+            flexWrap="nowrap"
+        >
             {maybeConference ? (
                 <Button
                     onClick={toggleIsExpanded}
@@ -86,7 +100,6 @@ export default function MenuHeaderBar({
                     fontSize="2xl"
                     w="3rem"
                     minW={0}
-                    minH={0}
                     h="100%"
                     borderTopRadius="2xl"
                     borderBottomRadius="none"
@@ -103,16 +116,18 @@ export default function MenuHeaderBar({
                     }}
                 >
                     <FAIcon iconStyle="s" icon="bars" />
-                    <Box pos="absolute" bottom={0} left={0} w="100%">
-                        <svg height="9" width="100%">
-                            <polygon points="25,0 17,10 33,10" fill={leftMenu_BgColorVal} />
-                        </svg>
-                    </Box>
+                    {!narrowView ? (
+                        <Box pos="absolute" bottom={0} left={0} w="100%">
+                            <svg height="9" width="100%">
+                                <polygon points="25,0 17,10 33,10" fill={leftMenu_BgColorVal} />
+                            </svg>
+                        </Box>
+                    ) : undefined}
                 </Button>
             ) : undefined}
             <LinkButton
                 to={conferencePath ?? "/"}
-                fontSize="xl"
+                fontSize={narrowView ? "lg" : "xl"}
                 variant="ghost"
                 linkProps={{
                     m: "3px",
@@ -139,12 +154,13 @@ export default function MenuHeaderBar({
                 _hover={{}}
                 _focus={{}}
                 _active={{}}
+                whiteSpace="normal"
             >
                 {maybeConference?.shortName ?? "Midspace"}
             </LinkButton>
             {maybeConference ? (
                 <>
-                    <HeaderBarButton label="Search" iconStyle="s" icon="search" />
+                    {!veryNarrowView ? <HeaderBarButton label="Search" iconStyle="s" icon="search" /> : undefined}
                     <HeaderBarButton label="Notifications" iconStyle="s" icon="bell" />
                     <HeaderBarButton
                         label="Chat"
@@ -194,7 +210,7 @@ export default function MenuHeaderBar({
                                             {maybeRegistrant.displayName[0] ?? "A"}
                                         </Circle>
                                     )}
-                                    <FAIcon iconStyle="s" icon="chevron-down" w={6} />
+                                    {!narrowView ? <FAIcon iconStyle="s" icon="chevron-down" w={6} /> : undefined}
                                 </HStack>
                             </MenuButton>
                             <Portal>
@@ -254,7 +270,7 @@ export default function MenuHeaderBar({
                     ) : (
                         <LinkButton
                             to="/join"
-                            fontSize="md"
+                            fontSize="sm"
                             variant="ghost"
                             linkProps={{
                                 m: "3px",

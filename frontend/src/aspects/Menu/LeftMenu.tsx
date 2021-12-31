@@ -10,6 +10,8 @@ import RequireRole from "../Conference/RequireRole";
 import { useConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../GQL/AuthParameters";
+import useIsNarrowView from "../Hooks/useIsNarrowView";
+import useIsVeryNarrowView from "../Hooks/useIsVeryNarrowView";
 import { useLiveEvents } from "../LiveEvents/LiveEvents";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -69,6 +71,8 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
     const showLive = liveRoomCount > 0;
 
     const bgColor = useColorModeValue("LeftMenu.500", "LeftMenu.200");
+    const narrowView = useIsNarrowView();
+    const veryNarrowView = useIsVeryNarrowView();
 
     return (
         <>
@@ -76,12 +80,16 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                 flexDir="column"
                 justifyContent="center"
                 alignItems="flex-start"
-                h="100%"
                 bgColor={bgColor}
-                w={isExpanded ? "9rem" : "3rem"}
                 flex="0 0 auto"
                 transition="width 0.15s cubic-bezier(0.33, 1, 0.68, 1)"
                 overflow="hidden"
+                pos={narrowView ? "absolute" : undefined}
+                w={isExpanded ? (narrowView ? "100%" : "9rem") : narrowView ? "0" : "3rem"}
+                h={narrowView ? "calc(100% - 6ex - 6px)" : "100%"}
+                top={narrowView ? "calc(6ex + 6px)" : undefined}
+                left={narrowView ? 0 : undefined}
+                zIndex={3}
             >
                 {showLive ? (
                     <MenuButton
@@ -124,7 +132,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                     side="left"
                     ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
                     onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
-                    mb={conference.forceSponsorsMenuLink?.[0]?.value || maybeRegistrant ? 1 : "auto"}
+                    mb={1}
                     showLabel={isExpanded}
                 />
                 {conference.forceSponsorsMenuLink?.[0]?.value ? (
@@ -137,7 +145,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                         colorScheme={colorScheme}
                         side="left"
                         onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Sponsors)}
-                        mb={maybeRegistrant ? 1 : "auto"}
+                        mb={1}
                         showLabel={isExpanded}
                     />
                 ) : undefined}
@@ -162,7 +170,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                             pos="relative"
                             ref={socialiseButtonRef as React.RefObject<HTMLButtonElement>}
                             onClick={() => socialise_OnOpen()}
-                            mb={!hasSwagBags ? "auto" : 1}
+                            mb={1}
                             showLabel={isExpanded}
                         >
                             {roomParticipants !== undefined &&
@@ -184,11 +192,26 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                                 side="left"
                                 as={ReactLink}
                                 to={`${conferencePath}/swag`}
-                                mb={"auto"}
+                                mb={1}
                                 showLabel={isExpanded}
                             />
                         ) : undefined}
                     </>
+                ) : undefined}
+                {veryNarrowView ? (
+                    <MenuButton
+                        label="Search"
+                        iconStyle="s"
+                        icon={"search"}
+                        px={0}
+                        borderRadius={0}
+                        colorScheme={colorScheme}
+                        side="left"
+                        ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
+                        onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
+                        mb={1}
+                        showLabel={isExpanded}
+                    />
                 ) : undefined}
                 <RequireRole organizerRole moderatorRole>
                     <MenuButton
@@ -203,6 +226,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                                 history.push(`${conferencePath}/manage`);
                             }
                         }}
+                        mt="auto"
                         mb={1}
                         showLabel={isExpanded}
                     />

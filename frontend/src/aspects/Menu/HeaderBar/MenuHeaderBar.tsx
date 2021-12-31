@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Circle,
     Flex,
@@ -13,6 +14,7 @@ import {
     Text,
     useColorMode,
     useColorModeValue,
+    useToken,
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
@@ -72,6 +74,8 @@ export default function MenuHeaderBar({
 
     const leftMenu_BgColor = useColorModeValue("LeftMenu.500", "LeftMenu.200");
 
+    const leftMenu_BgColorVal = useToken("colors", leftMenu_BgColor);
+
     return (
         <Flex bgColor={bgColor} color={textColor} w="100%" alignItems="center">
             {maybeConference ? (
@@ -99,6 +103,11 @@ export default function MenuHeaderBar({
                     }}
                 >
                     <FAIcon iconStyle="s" icon="bars" />
+                    <Box pos="absolute" bottom={0} left={0} w="100%">
+                        <svg height="9" width="100%">
+                            <polygon points="25,0 17,10 33,10" fill={leftMenu_BgColorVal} />
+                        </svg>
+                    </Box>
                 </Button>
             ) : undefined}
             <LinkButton

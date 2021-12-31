@@ -214,7 +214,7 @@ export default function MenuHeaderBar({
                                 </HStack>
                             </MenuButton>
                             <Portal>
-                                <MenuList color={menuTextColor} py={0} borderRadius="2xl" overflow="hidden">
+                                <MenuList color={menuTextColor} py={0} borderRadius="2xl" overflow="hidden" zIndex={6}>
                                     <VStack
                                         bgColor={bgColor}
                                         color={textColor}

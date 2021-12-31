@@ -1,3 +1,5 @@
+import type { Resolver } from "@urql/exchange-graphcache";
+
 export interface AugmentedIntrospectionData {
     __schema: AugmentedIntrospectionSchema;
 }
@@ -22,7 +24,22 @@ export interface AugmentedIntrospectionField {
     readonly type: AugmentedIntrospectionOutputTypeRef;
 }
 
-export interface AugmentedIntrospectionOutputTypeRef {
+export type AugmentedIntrospectionOutputTypeRef =
+    | AugmentedIntrospectionRelationshipKeyMapRef
+    | AugmentedIntrospectionReferencedByRef;
+
+export interface AugmentedIntrospectionReferencedByRef {
+    kind: "REFERENCE_MAP";
+    values: {
+        relationshipName: string;
+        table: {
+            name: string;
+            schema: string;
+        };
+    }[];
+}
+
+export interface AugmentedIntrospectionRelationshipKeyMapRef {
     kind: "OBJECT_RELATIONSHIP_KEY_MAP" | "ARRAY_RELATIONSHIP_KEY_MAP";
     columns: Record<string, string>;
 }
@@ -180,4 +197,62 @@ export type Uuid_Comparison_Exp = {
     readonly _lte?: InputMaybe<Scalars["uuid"]>;
     readonly _neq?: InputMaybe<Scalars["uuid"]>;
     readonly _nin?: InputMaybe<ReadonlyArray<Scalars["uuid"]>>;
+};
+
+export interface InnerResolverConfig {
+    [fieldName: string]: Resolver;
+}
+
+export enum AggregateOperation {
+    avg = "avg",
+    count = "count",
+    max = "max",
+    min = "min",
+    stddev = "stddev",
+    stddev_pop = "stddev_pop",
+    stddev_samp = "stddev_samp",
+    sum = "sum",
+    var_pop = "var_pop",
+    var_samp = "var_samp",
+    variance = "variance",
+}
+
+export const AggregateOperations: string[] = [];
+for (const key in AggregateOperation) {
+    AggregateOperations.push(key);
+}
+
+export type DiadicBooleanClauses = {
+    _and?: ReadonlyArray<ConditionalClauses> | null;
+    _or?: ReadonlyArray<ConditionalClauses> | null;
+    _not?: ConditionalClauses | null;
+};
+export type FieldClauses =
+    | Bigint_Comparison_Exp
+    | Boolean_Comparison_Exp
+    | Float_Comparison_Exp
+    | Int_Comparison_Exp
+    | Jsonb_Comparison_Exp
+    | Numeric_Comparison_Exp
+    | String_Comparison_Exp
+    | Timestamptz_Comparison_Exp
+    | Uuid_Comparison_Exp;
+
+export enum ScalarComparisonType {
+    Bigint = "bigint",
+    Boolean = "boolean",
+    Float = "float",
+    Int = "int",
+    Jsonb = "jsonb",
+    Numeric = "numeric",
+    String = "string",
+    Timestamptz = "timestamptz",
+    Uuid = "uuid",
+}
+
+export type ConditionalClauses<FieldKeys extends string = any> = DiadicBooleanClauses & {
+    [fieldKey in Exclude<keyof DiadicBooleanClauses | keyof FieldClauses, FieldKeys>]:
+        | FieldClauses
+        | ConditionalClauses
+        | null;
 };

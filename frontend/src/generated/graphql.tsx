@@ -36213,6 +36213,7 @@ export type ConferenceLandingPageItemQuery = {
             readonly name: string;
             readonly typeName: Content_ElementType_Enum;
             readonly isHidden: boolean;
+            readonly hasBeenSubmitted?: boolean | null | undefined;
         }>;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
@@ -36308,6 +36309,7 @@ export type ItemElements_GetItemQuery = {
                   readonly name: string;
                   readonly typeName: Content_ElementType_Enum;
                   readonly isHidden: boolean;
+                  readonly hasBeenSubmitted?: boolean | null | undefined;
               }>;
               readonly itemPeople: ReadonlyArray<{
                   readonly __typename?: "content_ItemProgramPerson";
@@ -36364,6 +36366,7 @@ export type ElementDataFragment = {
     readonly name: string;
     readonly typeName: Content_ElementType_Enum;
     readonly isHidden: boolean;
+    readonly hasBeenSubmitted?: boolean | null | undefined;
 };
 
 export type ItemElements_ItemDataFragment = {
@@ -36393,6 +36396,7 @@ export type ItemElements_ItemDataFragment = {
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
         readonly isHidden: boolean;
+        readonly hasBeenSubmitted?: boolean | null | undefined;
     }>;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
@@ -36624,6 +36628,7 @@ export type GetItemQuery = {
                   readonly name: string;
                   readonly typeName: Content_ElementType_Enum;
                   readonly isHidden: boolean;
+                  readonly hasBeenSubmitted?: boolean | null | undefined;
               }>;
               readonly itemPeople: ReadonlyArray<{
                   readonly __typename?: "content_ItemProgramPerson";
@@ -36800,6 +36805,7 @@ export type ExhibitionItemFragment = {
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
         readonly isHidden: boolean;
+        readonly hasBeenSubmitted?: boolean | null | undefined;
     }>;
     readonly events: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
@@ -36880,6 +36886,7 @@ export type ExhibitionWithContentFragment = {
                   readonly name: string;
                   readonly typeName: Content_ElementType_Enum;
                   readonly isHidden: boolean;
+                  readonly hasBeenSubmitted?: boolean | null | undefined;
               }>;
               readonly itemPeople: ReadonlyArray<{
                   readonly __typename?: "content_ItemProgramPerson";
@@ -36952,6 +36959,7 @@ export type ExhibitionWithContentFragment = {
                 readonly name: string;
                 readonly typeName: Content_ElementType_Enum;
                 readonly isHidden: boolean;
+                readonly hasBeenSubmitted?: boolean | null | undefined;
             }>;
             readonly events: ReadonlyArray<{
                 readonly __typename?: "schedule_Event";
@@ -37041,6 +37049,7 @@ export type SelectExhibitionQuery = {
                             readonly name: string;
                             readonly typeName: Content_ElementType_Enum;
                             readonly isHidden: boolean;
+                            readonly hasBeenSubmitted?: boolean | null | undefined;
                         }>;
                         readonly itemPeople: ReadonlyArray<{
                             readonly __typename?: "content_ItemProgramPerson";
@@ -37113,6 +37122,7 @@ export type SelectExhibitionQuery = {
                           readonly name: string;
                           readonly typeName: Content_ElementType_Enum;
                           readonly isHidden: boolean;
+                          readonly hasBeenSubmitted?: boolean | null | undefined;
                       }>;
                       readonly events: ReadonlyArray<{
                           readonly __typename?: "schedule_Event";
@@ -39950,6 +39960,7 @@ export type SwagBagFragment = {
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
         readonly isHidden: boolean;
+        readonly hasBeenSubmitted?: boolean | null | undefined;
     }>;
 };
 
@@ -39974,6 +39985,7 @@ export type SelectSwagBagsQuery = {
             readonly name: string;
             readonly typeName: Content_ElementType_Enum;
             readonly isHidden: boolean;
+            readonly hasBeenSubmitted?: boolean | null | undefined;
         }>;
     }>;
 };
@@ -47227,6 +47239,7 @@ export const ElementDataFragmentDoc = gql`
         name
         typeName
         isHidden
+        hasBeenSubmitted
     }
 `;
 export const ItemTagDataFragmentDoc = gql`

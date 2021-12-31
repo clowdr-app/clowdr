@@ -32,6 +32,7 @@ gql`
         name
         typeName
         isHidden
+        hasBeenSubmitted
     }
 
     fragment ItemElements_ItemData on content_Item {

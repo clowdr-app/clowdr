@@ -156,6 +156,7 @@ function UrqlProviderInner({
                             schedule_OverlappingEvents: (data) => data.xId + "-" + data.yId,
                             system_Configuration: (data) => data.key as string,
                             GetSlugOutput: (data) => data.url as string,
+                            TranscribeGeneratePresignedUrlOutput: () => null,
                         },
                         schema: schema as any,
                         storage,

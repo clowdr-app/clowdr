@@ -1,6 +1,6 @@
 import { Box, Flex, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useCallback, useMemo, useState } from "react";
-import { useRouteMatch } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
@@ -51,6 +51,11 @@ export default function AppPage(): JSX.Element {
             leftMenu_SetIsOpen((old) => !old);
         }
     }, [leftMenu_SetIsExpanded, narrowView]);
+
+    const location = useLocation();
+    useEffect(() => {
+        leftMenu_SetIsOpen(false);
+    }, [location]);
 
     return (
         <Flex

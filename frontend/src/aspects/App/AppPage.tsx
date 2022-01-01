@@ -2,6 +2,7 @@ import { Box, Flex, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
+import { useAuthParameters } from "../GQL/AuthParameters";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
 import { useRestorableState } from "../Hooks/useRestorableState";
 import MenuHeaderBar from "../Menu/HeaderBar/MenuHeaderBar";
@@ -13,6 +14,7 @@ import Routing from "./AppRouting";
 export default function AppPage(): JSX.Element {
     const user = useMaybeCurrentUser();
     const conference = useMaybeConference();
+    const authParams = useAuthParameters();
 
     const bgColour = useColorModeValue("AppPage.pageBackground-light", "AppPage.pageBackground-dark");
 
@@ -21,12 +23,22 @@ export default function AppPage(): JSX.Element {
         exact: true,
     });
     const isRootPage = locationMatchRoot !== null;
-
     const isAppLandingPage = isRootPage && !user?.user;
 
     const center = useMemo(() => <Routing />, []);
 
     const [rightMenuOpen, setRightMenuOpen] = useState<boolean>(false);
+    const locationMatchRoom = useRouteMatch({
+        path: authParams.conferencePath + "/room",
+        exact: false,
+    });
+    const locationMatchItem = useRouteMatch({
+        path: authParams.conferencePath + "/item",
+        exact: false,
+    });
+    const isRoomPage = locationMatchRoom !== null;
+    const isItemPage = locationMatchItem !== null;
+    const isRoomOrItemPage = isRoomPage || isItemPage;
 
     const narrowView = useIsNarrowView();
     const [leftMenu_IsExpanded, leftMenu_SetIsExpanded] = useRestorableState<boolean>(
@@ -47,7 +59,10 @@ export default function AppPage(): JSX.Element {
     const location = useLocation();
     useEffect(() => {
         leftMenu_SetIsOpen(false);
-    }, [location]);
+        if (isRoomOrItemPage && !narrowView) {
+            setRightMenuOpen(true);
+        }
+    }, [isRoomOrItemPage, location, narrowView]);
 
     return (
         <Flex

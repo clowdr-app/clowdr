@@ -220,16 +220,28 @@ export async function handleVonageArchiveMonitoringWebhook(
             });
 
             if (response.data.video_VonageRoomRecording.length > 0) {
-                const recording = response.data.video_VonageRoomRecording[0];
+                const recording0 = response.data.video_VonageRoomRecording[0];
                 await apolloClient.mutate({
                     mutation: SaveVonageRoomRecordingDocument,
                     variables: {
-                        id: recording.id,
+                        id: recording0.id,
                         endedAt,
                         uploadedAt: new Date().toISOString(),
                         s3Url,
                     },
                 });
+
+                for (const recording of response.data.video_VonageRoomRecording.slice(1)) {
+                    await apolloClient.mutate({
+                        mutation: SaveVonageRoomRecordingDocument,
+                        variables: {
+                            id: recording.id,
+                            endedAt,
+                            uploadedAt: null,
+                            s3Url: null,
+                        },
+                    });
+                }
             }
 
             // Try to save the recording into a content item too?
@@ -343,16 +355,17 @@ export async function handleVonageArchiveMonitoringWebhook(
             });
 
             if (response.data.video_VonageRoomRecording.length > 0) {
-                const recording = response.data.video_VonageRoomRecording[0];
-                await apolloClient.mutate({
-                    mutation: SaveVonageRoomRecordingDocument,
-                    variables: {
-                        id: recording.id,
-                        endedAt,
-                        uploadedAt: null,
-                        s3Url: null,
-                    },
-                });
+                for (const recording of response.data.video_VonageRoomRecording) {
+                    await apolloClient.mutate({
+                        mutation: SaveVonageRoomRecordingDocument,
+                        variables: {
+                            id: recording.id,
+                            endedAt,
+                            uploadedAt: null,
+                            s3Url: null,
+                        },
+                    });
+                }
             }
         }
 

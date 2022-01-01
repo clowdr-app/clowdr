@@ -39,9 +39,11 @@ import HeaderBarButton from "./HeaderBarButton";
 </MenuItem> */
 
 export default function MenuHeaderBar({
+    rightMenuOpen,
     setRightMenuOpen,
     toggleIsExpanded,
 }: {
+    rightMenuOpen: boolean;
     setRightMenuOpen: (value: boolean | ((old: boolean) => boolean)) => void;
     toggleIsExpanded: () => void;
 }): JSX.Element {
@@ -120,9 +122,9 @@ export default function MenuHeaderBar({
                 >
                     <FAIcon iconStyle="s" icon="bars" />
                     {!narrowView ? (
-                        <Box pos="absolute" bottom={0} left={0} w="100%">
+                        <Box pos="absolute" bottom={0} left="calc(50% - 8px)" w="auto">
                             <svg height="9" width="100%">
-                                <polygon points="25,0 17,10 33,10" fill={leftMenu_BgColorVal} />
+                                <polygon points="8,0 0,10 16,10" fill={leftMenu_BgColorVal} />
                             </svg>
                         </Box>
                     ) : undefined}
@@ -176,7 +178,16 @@ export default function MenuHeaderBar({
                         onClick={() => {
                             setRightMenuOpen((old) => !old);
                         }}
-                    />
+                        bgColor={rightMenuOpen ? buttonFocusBgColor : undefined}
+                    >
+                        {rightMenuOpen ? (
+                            <Box pos="absolute" bottom={0} left="calc(50% - 4px)" w="auto">
+                                <svg height="9" width="100%">
+                                    <polygon points="4,0 0,7 8,7" fill="white" />
+                                </svg>
+                            </Box>
+                        ) : undefined}
+                    </HeaderBarButton>
                     {maybeRegistrant ? (
                         <Menu placement="bottom-start" offset={[-10, 5]}>
                             <MenuButton

@@ -77,7 +77,11 @@ export default function AppPage(): JSX.Element {
             backgroundColor={bgColour}
         >
             {!user.user && isAppLandingPage ? undefined : (
-                <MenuHeaderBar setRightMenuOpen={setRightMenuOpen} toggleIsExpanded={leftMenu_ToggleIsExpanded} />
+                <MenuHeaderBar
+                    rightMenuOpen={rightMenuOpen}
+                    setRightMenuOpen={setRightMenuOpen}
+                    toggleIsExpanded={leftMenu_ToggleIsExpanded}
+                />
             )}
             <Flex
                 as="main"

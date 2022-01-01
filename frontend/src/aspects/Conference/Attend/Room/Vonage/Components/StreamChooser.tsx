@@ -101,7 +101,16 @@ export default function StreamChooser({
             right={centered ? 0 : 1}
         >
             <Menu placement="top-end">
-                <MenuButton as={Button} size="xs" colorScheme="gray" opacity={1}>
+                <MenuButton
+                    as={Button}
+                    size="xs"
+                    colorScheme="gray"
+                    opacity={1}
+                    whiteSpace="normal"
+                    h="auto"
+                    minH={0}
+                    py={1}
+                >
                     <HStack spacing={2}>
                         <FAIcon iconStyle="s" icon="sync-alt" />
                         {centered ? <chakra.span>Choose participant</chakra.span> : undefined}

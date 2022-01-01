@@ -20,6 +20,7 @@ export default function RightMenu({ isOpen }: { isOpen: boolean }): JSX.Element 
         [maybeRegistrant, isOpen]
     );
     const sidebarBg = useColorModeValue(`${colorScheme}.50`, `${colorScheme}.900`);
+    const sidebarBorder = useColorModeValue(`${colorScheme}.100`, `${colorScheme}.800`);
 
     return (
         <Box
@@ -28,6 +29,9 @@ export default function RightMenu({ isOpen }: { isOpen: boolean }): JSX.Element 
             h="100%"
             zIndex={0}
             bgColor={sidebarBg}
+            borderLeftColor={sidebarBorder}
+            borderLeftStyle="solid"
+            borderLeftWidth={1}
         >
             {rightSections}
         </Box>

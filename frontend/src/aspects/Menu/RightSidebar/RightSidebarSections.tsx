@@ -1,4 +1,4 @@
-import { TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { useGlobalChatState } from "../../Chat/GlobalChatStateProvider";
@@ -22,15 +22,14 @@ function RightSidebarSections_Inner({
     externalSetPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
-    const { path } = useRouteMatch();
-    const roomMatch = useRouteMatch<{ roomId: string }>(`${path}/room/:roomId`);
-    const itemMatch = useRouteMatch<{ itemId: string }>(`${path}/item/:itemId`);
     const { conferencePath } = useAuthParameters();
+    const roomMatch = useRouteMatch<{ roomId: string }>(`${conferencePath}/room/:roomId`);
+    const itemMatch = useRouteMatch<{ itemId: string }>(`${conferencePath}/item/:itemId`);
     const conferenceLandingPageMatch = useRouteMatch({
         exact: true,
         path: conferencePath ?? "",
     });
-    const exhibitionMatch = useRouteMatch<{ exhibitionId: string }>(`${path}/exhibition/:exhibitionId`);
+    const exhibitionMatch = useRouteMatch<{ exhibitionId: string }>(`${conferencePath}/exhibition/:exhibitionId`);
     const roomId = roomMatch?.params?.roomId;
     const itemOrExhibitionId =
         itemMatch?.params?.itemId ??
@@ -133,7 +132,8 @@ function RightSidebarSections_Inner({
     return (
         <>
             <Tabs
-                variant="solid-rounded"
+                variant="unstyled"
+                isFitted
                 align="center"
                 size="sm"
                 colorScheme="RightMenu"
@@ -144,8 +144,13 @@ function RightSidebarSections_Inner({
                 width="100%"
                 height="100%"
                 onChange={onChangeTab}
-                pt={1}
             >
+                <TabList>
+                    <Tab _selected={{ color: "white", bg: "RightMenu.700" }}>Chat</Tab>
+                    <Tab _selected={{ color: "white", bg: "RightMenu.700" }}>Raise hand</Tab>
+                    <Tab _selected={{ color: "white", bg: "RightMenu.700" }}>Chat List</Tab>
+                    <Tab _selected={{ color: "white", bg: "RightMenu.700" }}>Who&lsquo;s Here</Tab>
+                </TabList>
                 <TabPanels textAlign="left" display="flex" flexDir="row" flex="1" overflow="hidden">
                     {roomPanel ? (
                         <TabPanel p={0} w="100%" h="100%">

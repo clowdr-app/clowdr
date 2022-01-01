@@ -122,8 +122,8 @@ export default function MenuHeaderBar({
                 >
                     <FAIcon iconStyle="s" icon="bars" />
                     {!narrowView ? (
-                        <Box pos="absolute" bottom={0} left="calc(50% - 8px)" w="auto">
-                            <svg height="9" width="100%">
+                        <Box pos="absolute" bottom={0} left={0} w="100%">
+                            <svg height="9" width="100%" viewBox="0 0 16 9">
                                 <polygon points="8,0 0,10 16,10" fill={leftMenu_BgColorVal} />
                             </svg>
                         </Box>
@@ -179,11 +179,12 @@ export default function MenuHeaderBar({
                             setRightMenuOpen((old) => !old);
                         }}
                         bgColor={rightMenuOpen ? buttonFocusBgColor : undefined}
+                        mb={0}
                     >
                         {rightMenuOpen ? (
-                            <Box pos="absolute" bottom={0} left="calc(50% - 4px)" w="auto">
-                                <svg height="9" width="100%">
-                                    <polygon points="4,0 0,7 8,7" fill="white" />
+                            <Box pos="absolute" bottom={0} left={0} w="100%">
+                                <svg height="7" width="100%" viewBox="0 0 10 7">
+                                    <polygon points="5,0 0,8 10,8" fill="white" />
                                 </svg>
                             </Box>
                         ) : undefined}

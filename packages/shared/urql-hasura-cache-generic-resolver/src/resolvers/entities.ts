@@ -12,13 +12,14 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
     function resolver(parent, args, cache, info) {
         const tableSchema = getTableSchema(info.fieldName, schema, augSchema);
         if (!tableSchema) {
-            info.error = new GraphQLError(`Table schema not found! ${info.fieldName}`);
+            info.error = new GraphQLError("Table schema not found");
             return undefined;
         }
 
         const allFields = cache.inspectFields(info.parentKey);
         const fieldInfos = allFields.filter((fieldInfo) => fieldInfo.fieldName === info.fieldName);
         if (fieldInfos.length === 0) {
+            info.partial = true;
             return undefined;
         }
 
@@ -26,7 +27,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
         if (args.where) {
             const whereSchema = tableSchema.tableSchema.args.find((x) => x.name === "where");
             if (!whereSchema || whereSchema.type.kind !== "INPUT_OBJECT") {
-                info.error = new GraphQLError(`Table 'where' schema not found! ${info.fieldName}`);
+                info.error = new GraphQLError("Table 'where' schema not found");
                 return undefined;
             }
             const boolExpSchemaName = whereSchema.type.name;
@@ -49,7 +50,20 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
             }
 
             for (const key of keysToTest) {
-                if (satisfiesConditions(schema, augSchema, boolExpSchemaName, where, key, args, cache)) {
+                const conditionResult = satisfiesConditions(
+                    schema,
+                    augSchema,
+                    boolExpSchemaName,
+                    where,
+                    key,
+                    args,
+                    cache
+                );
+                if (conditionResult === "partial") {
+                    info.partial = true;
+                    return undefined;
+                }
+                if (conditionResult) {
                     result.add(key);
                 }
             }

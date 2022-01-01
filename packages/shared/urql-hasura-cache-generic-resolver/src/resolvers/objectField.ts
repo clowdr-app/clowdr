@@ -1,5 +1,6 @@
 import type { Resolver } from "@urql/exchange-graphcache";
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
+import { GraphQLError } from "graphql";
 import { getObjectTypeName, getTableFieldsSchema } from "../schema";
 import type { AugmentedIntrospectionData } from "../types";
 import { resolveRelation } from "./relation";
@@ -19,6 +20,7 @@ export const objectFieldResolver: (schema: IntrospectionData, augSchema: Augment
 
         const parentTableSchema = getTableFieldsSchema(info.parentTypeName, schema, augSchema);
         if (!parentTableSchema) {
+            info.error = new GraphQLError("Parent table schema not found");
             return undefined;
         }
         const fieldSchema = parentTableSchema.tableSchema.fields.find((x) => x.name === info.fieldName);
@@ -35,10 +37,12 @@ export const objectFieldResolver: (schema: IntrospectionData, augSchema: Augment
                 fieldAugSchema.type.kind === "OBJECT_RELATIONSHIP_KEY_MAP"
             )
         ) {
+            info.error = new GraphQLError("Field schema or field augmented schema not found");
             return undefined;
         }
         const fieldEntityTypeName = getObjectTypeName(fieldSchema.type);
         if (!fieldEntityTypeName) {
+            info.error = new GraphQLError("Field entity type name not found");
             return undefined;
         }
 
@@ -66,5 +70,6 @@ export const objectFieldResolver: (schema: IntrospectionData, augSchema: Augment
                 return possibleResults;
             }
         }
+        info.partial ||= matchingFields.length === 0;
         return matchingFields.length > 0 ? null : undefined;
     };

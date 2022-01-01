@@ -461,7 +461,7 @@ export function satisfiesConditions(
     entityKey: string,
     args: Variables,
     cache: Cache
-): boolean {
+): boolean | "partial" {
     // console.log("Conditions", { where, entityKey });
     const conditionsInputObject = schema.__schema.types?.find((x) => x.name === conditionsInputObjectKey);
     if (!conditionsInputObject || conditionsInputObject.kind !== "INPUT_OBJECT") {
@@ -474,17 +474,19 @@ export function satisfiesConditions(
             if (conditions) {
                 const conditionsArray = conditions instanceof Array ? conditions : Object.values(conditions);
                 for (const innerCondition of conditionsArray) {
-                    if (
-                        !satisfiesConditions(
-                            schema,
-                            augSchema,
-                            conditionsInputObjectKey,
-                            innerCondition,
-                            entityKey,
-                            args,
-                            cache
-                        )
-                    ) {
+                    const result = satisfiesConditions(
+                        schema,
+                        augSchema,
+                        conditionsInputObjectKey,
+                        innerCondition,
+                        entityKey,
+                        args,
+                        cache
+                    );
+                    if (result === "partial") {
+                        return "partial";
+                    }
+                    if (!result) {
                         return false;
                     }
                 }
@@ -495,17 +497,19 @@ export function satisfiesConditions(
                 let ok = false;
                 const conditionsArray = conditions instanceof Array ? conditions : Object.values(conditions);
                 for (const innerCondition of conditionsArray) {
-                    if (
-                        satisfiesConditions(
-                            schema,
-                            augSchema,
-                            conditionsInputObjectKey,
-                            innerCondition,
-                            entityKey,
-                            args,
-                            cache
-                        )
-                    ) {
+                    const result = satisfiesConditions(
+                        schema,
+                        augSchema,
+                        conditionsInputObjectKey,
+                        innerCondition,
+                        entityKey,
+                        args,
+                        cache
+                    );
+                    if (result === "partial") {
+                        return "partial";
+                    }
+                    if (result) {
                         ok = true;
                         break;
                     }
@@ -517,17 +521,19 @@ export function satisfiesConditions(
         } else if (conditionKey === "_not") {
             const innerCondition = where[conditionKey];
             if (innerCondition) {
-                if (
-                    satisfiesConditions(
-                        schema,
-                        augSchema,
-                        conditionsInputObjectKey,
-                        innerCondition,
-                        entityKey,
-                        args,
-                        cache
-                    )
-                ) {
+                const result = satisfiesConditions(
+                    schema,
+                    augSchema,
+                    conditionsInputObjectKey,
+                    innerCondition,
+                    entityKey,
+                    args,
+                    cache
+                );
+                if (result === "partial") {
+                    return "partial";
+                }
+                if (result) {
                     return false;
                 }
             }
@@ -561,17 +567,19 @@ export function satisfiesConditions(
                         if (innerEntityKeys instanceof Array) {
                             let ok = false;
                             for (const innerEntityKey of innerEntityKeys) {
-                                if (
-                                    satisfiesConditions(
-                                        schema,
-                                        augSchema,
-                                        conditionInfo.type.name,
-                                        typedCondition,
-                                        innerEntityKey,
-                                        args,
-                                        cache
-                                    )
-                                ) {
+                                const result = satisfiesConditions(
+                                    schema,
+                                    augSchema,
+                                    conditionInfo.type.name,
+                                    typedCondition,
+                                    innerEntityKey,
+                                    args,
+                                    cache
+                                );
+                                if (result === "partial") {
+                                    return "partial";
+                                }
+                                if (result) {
                                     ok = true;
                                     break;
                                 }
@@ -580,17 +588,19 @@ export function satisfiesConditions(
                                 return false;
                             }
                         } else {
-                            if (
-                                !satisfiesConditions(
-                                    schema,
-                                    augSchema,
-                                    conditionInfo.type.name,
-                                    typedCondition,
-                                    innerEntityKeys,
-                                    args,
-                                    cache
-                                )
-                            ) {
+                            const result = satisfiesConditions(
+                                schema,
+                                augSchema,
+                                conditionInfo.type.name,
+                                typedCondition,
+                                innerEntityKeys,
+                                args,
+                                cache
+                            );
+                            if (result === "partial") {
+                                return "partial";
+                            }
+                            if (!result) {
                                 return false;
                             }
                         }

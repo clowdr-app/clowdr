@@ -13,10 +13,12 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
     function resolver(parent, args, cache, info) {
         const parentTableSchema = getTableFieldsSchema(info.parentTypeName, schema, augSchema);
         if (!parentTableSchema) {
+            info.error = new GraphQLError("Parent table schema not found");
             return undefined;
         }
         const fieldSchema = parentTableSchema.tableSchema.fields.find((x) => x.name === info.fieldName);
         if (!fieldSchema) {
+            info.error = new GraphQLError("Field schema not found");
             return undefined;
         }
         const whereSchema = fieldSchema.args.find((x) => x.name === "where");
@@ -27,22 +29,40 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
         const allExistingFieldValues = matchingFields.flatMap((field) =>
             cache.resolve(parent as Entity, field.fieldKey)
         );
-        const existingFieldValues =
-            boolExpSchemaName && args.where
-                ? allExistingFieldValues.filter((x) =>
-                      typeof x === "string"
-                          ? satisfiesConditions(schema, augSchema, boolExpSchemaName, args.where as any, x, args, cache)
-                          : satisfiesConditions(
-                                schema,
-                                augSchema,
-                                boolExpSchemaName,
-                                args.where as any,
-                                cache.keyOfEntity(x as Entity) as string,
-                                args,
-                                cache
-                            )
-                  )
-                : allExistingFieldValues;
+        let existingFieldValues = [];
+        if (boolExpSchemaName && args.where) {
+            for (const value of allExistingFieldValues) {
+                const conditionResult =
+                    typeof value === "string"
+                        ? satisfiesConditions(
+                              schema,
+                              augSchema,
+                              boolExpSchemaName,
+                              args.where as any,
+                              value,
+                              args,
+                              cache
+                          )
+                        : satisfiesConditions(
+                              schema,
+                              augSchema,
+                              boolExpSchemaName,
+                              args.where as any,
+                              cache.keyOfEntity(value as Entity) as string,
+                              args,
+                              cache
+                          );
+                if (conditionResult === "partial") {
+                    info.partial = true;
+                    return undefined;
+                }
+                if (conditionResult) {
+                    existingFieldValues.push(value);
+                }
+            }
+        } else {
+            existingFieldValues = allExistingFieldValues;
+        }
 
         const fieldAugSchema = parentTableSchema.augTableSchema.fields.find(
             (x) =>
@@ -56,10 +76,12 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
                 fieldAugSchema.type.kind === "OBJECT_RELATIONSHIP_KEY_MAP"
             )
         ) {
+            info.error = new GraphQLError("Field augmented schema not found");
             return undefined;
         }
         const fieldEntityTypeName = getObjectTypeName(fieldSchema.type);
         if (!fieldEntityTypeName) {
+            info.error = new GraphQLError("Field entity type name not found");
             return undefined;
         }
 
@@ -97,6 +119,7 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
         // );
 
         if (!resolvedAny) {
+            info.partial = true;
             return undefined;
         }
 

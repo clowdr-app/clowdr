@@ -127,7 +127,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                         <Box>
                                             <ItemVideos itemData={itemData} />
                                         </Box>
-                                        <Box maxW="100%">
+                                        <Box maxW="100%" px={4}>
                                             <ItemElements itemData={itemData}>
                                                 <RequireRole attendeeRole>
                                                     <ItemLive itemData={itemData} />

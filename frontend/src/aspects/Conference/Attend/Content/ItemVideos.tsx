@@ -79,7 +79,7 @@ export function ItemVideos({ itemData }: { itemData: ItemElements_ItemDataFragme
             justifyContent={["flex-start", "flex-start", "center"]}
             alignItems="center"
             background="gray.900"
-            borderRadius={5}
+            borderRadius={0}
             pb={5}
             flexDir={["column", "column", "row"]}
         >

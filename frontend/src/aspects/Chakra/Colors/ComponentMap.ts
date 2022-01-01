@@ -14,6 +14,16 @@ const componentMap: ComponentMap = {
             dark: "gray.600",
         },
     },
+    RoomControlBar: {
+        backgroundColor: {
+            light: "purple.700",
+            dark: "purple.700",
+        },
+    },
+    RoomControlBarButton: generateColorScheme("purple"),
+    InactiveRoomControlBarButton: generateColorScheme("purple"),
+    ActiveRoomControlBarButton: generateColorScheme("pink"),
+    RoomControlBarNotice: generateColorScheme("gray"),
     MainMenuHeaderBar: {
         backgroundColor: {
             light: "purple.700",

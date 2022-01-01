@@ -1,9 +1,9 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Button, chakra, Menu, MenuButton, MenuItem, MenuList, Portal } from "@chakra-ui/react";
+import { IconButton, Menu, MenuButton, MenuItem, MenuList, Portal } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useGetEventVideosQuery, useGetRoomVideosQuery } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { useVonageGlobalState } from "../VonageGlobalStateProvider";
 
@@ -156,19 +156,17 @@ export default function PlayVideoMenuButton({
     return (
         <Menu>
             <MenuButton
-                as={Button}
+                as={IconButton}
                 size="sm"
-                flexGrow={1}
-                colorScheme="SecondaryActionButton"
+                colorScheme="RoomControlBarButton"
                 onClick={() => {
                     // TODO
                 }}
                 isLoading={eventResponse.fetching}
                 isDisabled={!videoElementIds.length}
-            >
-                <chakra.span>Play pre-recorded video</chakra.span>
-                <ChevronDownIcon ml={2} />
-            </MenuButton>
+                icon={<FAIcon iconStyle="s" icon="play-circle" />}
+                aria-label="Play video"
+            />
             <Portal>
                 <MenuList zIndex="1000000" overflow="auto" maxH="50vh" maxW="50vh">
                     {videoElementMenuItems?.length ? videoElementMenuItems : <MenuItem>No videos available</MenuItem>}

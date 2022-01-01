@@ -2,7 +2,6 @@ import { Box, Flex, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
-import { useAuthParameters } from "../GQL/AuthParameters";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
 import { useRestorableState } from "../Hooks/useRestorableState";
 import MenuHeaderBar from "../Menu/HeaderBar/MenuHeaderBar";
@@ -17,18 +16,11 @@ export default function AppPage(): JSX.Element {
 
     const bgColour = useColorModeValue("AppPage.pageBackground-light", "AppPage.pageBackground-dark");
 
-    const { path } = useRouteMatch();
     const locationMatchRoot = useRouteMatch({
         path: "/",
         exact: true,
     });
-    const locationConferenceMatchRoot = useRouteMatch({
-        path,
-        exact: true,
-    });
-    const { conferenceId } = useAuthParameters();
     const isRootPage = locationMatchRoot !== null;
-    const isConferenceRootPage = !!conferenceId && locationConferenceMatchRoot !== null;
 
     const isAppLandingPage = isRootPage && !user?.user;
 
@@ -84,25 +76,20 @@ export default function AppPage(): JSX.Element {
                 backgroundColor={bgColour}
             >
                 {conference ? <LeftMenu isExpanded={narrowView ? leftMenu_IsOpen : leftMenu_IsExpanded} /> : undefined}
-                <Box
-                    zIndex={1}
-                    overflowX="hidden"
-                    overflowY="auto"
-                    height="100%"
-                    flex="0 1 100%"
-                    p={0}
-                    m={0}
-                    mb="auto"
-                    css={{
-                        ["scrollbarWidth"]: "thin",
-                    }}
-                >
+                <Box zIndex={1} height="100%" flex="0 1 100%" pos="relative">
                     <VStack
                         spacing={5}
+                        overflowX="hidden"
+                        overflowY="auto"
                         width="100%"
-                        mb={isAppLandingPage || isConferenceRootPage ? 0 : "40px"}
+                        height="100%"
+                        p={0}
+                        m={0}
                         role="region"
                         aria-labelledby="page-heading"
+                        css={{
+                            ["scrollbarWidth"]: "thin",
+                        }}
                     >
                         {center}
                     </VStack>

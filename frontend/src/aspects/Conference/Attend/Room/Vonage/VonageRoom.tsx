@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
@@ -618,9 +618,25 @@ function VonageRoomInner({
         userId,
     ]);
 
+    const controlBarBgColor = useColorModeValue(
+        "RoomControlBar.backgroundColor-light",
+        "RoomControlBar.backgroundColor-dark"
+    );
+
     return (
         <Box width="100%" isolation="isolate">
-            <Flex mt={4} justifyContent="center" alignItems="center" flexWrap="wrap" w="100%">
+            <Flex
+                mt={connected ? undefined : 4}
+                justifyContent="center"
+                alignItems="center"
+                flexWrap="wrap"
+                w="100%"
+                pos={connected ? "absolute" : undefined}
+                bottom={0}
+                left={0}
+                bgColor={connected ? controlBarBgColor : undefined}
+                zIndex={2}
+            >
                 {preJoin}
                 {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
                 <VonageRoomControlBar
@@ -640,7 +656,7 @@ function VonageRoomInner({
             </Flex>
             {connected && playVideoElementId ? <VideoChatVideoPlayer elementId={playVideoElementId} /> : undefined}
             {connected ? (
-                <Box position="relative" width="100%">
+                <Box position="relative" width="100%" zIndex={1}>
                     <Layout
                         viewports={viewports}
                         allowedToControlLayout={canControlRecording}

@@ -50,7 +50,7 @@ export function VideoChatRoom({
                     <VideoChatChimeRoom room={roomDetails} enable={enableChime} />
                     {enableChime ? <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} /> : undefined}
                 </Box>
-                <Box pos="relative" display={enableVonage ? "block" : "none"}>
+                <Box display={enableVonage ? "block" : "none"}>
                     <VideoChatVonageRoom
                         room={roomDetails}
                         enable={enableVonage}

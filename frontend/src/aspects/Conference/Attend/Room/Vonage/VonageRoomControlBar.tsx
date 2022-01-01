@@ -10,8 +10,10 @@ import {
     Button,
     ButtonGroup,
     chakra,
+    Flex,
     Heading,
     HStack,
+    IconButton,
     Spinner,
     Tag,
     TagLabel,
@@ -20,7 +22,7 @@ import {
     Tooltip,
     useDisclosure,
     VStack,
-    Wrap,
+    WrapItem,
 } from "@chakra-ui/react";
 import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -428,81 +430,83 @@ export function VonageRoomControlBar({
 
     return (
         <>
-            <Wrap
+            <Flex
                 p={2}
                 direction={buttonsDirection}
-                justifyContent="center"
-                alignItems="center"
+                justifyContent="flex-end"
+                alignItems={vonage.state.type === StateType.Connected ? "center" : "stretch"}
                 flexWrap="wrap"
-                gridRowGap={buttonsDirection === "row" ? 2 : undefined}
+                gridRowGap={2}
+                gridColumnGap={2}
+                w={vonage.state.type === StateType.Connected ? "100%" : "auto"}
             >
-                <Button
-                    size="sm"
-                    flexGrow={buttonsDirection === "row" ? 1 : 0}
-                    isLoading={isOpening}
-                    leftIcon={<SettingsIcon />}
-                    onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
-                    isDisabled={joining}
-                    colorScheme="SecondaryActionButton"
-                >
-                    Choose microphone / camera
-                </Button>
-                {state.microphoneStream && state.microphoneIntendedEnabled ? (
-                    <Button
+                <Tooltip label="Configure mic/cam">
+                    <IconButton
                         size="sm"
-                        flexGrow={buttonsDirection === "row" ? 1 : 0}
-                        onClick={stopMicrophone}
-                        colorScheme="PrimaryActionButton"
-                        isDisabled={joining}
-                    >
-                        <FAIcon icon="microphone" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Mute</span>
-                    </Button>
-                ) : (
-                    <Button
-                        size="sm"
-                        flexGrow={buttonsDirection === "row" ? 1 : 0}
                         isLoading={isOpening}
-                        onClick={startMicrophone}
+                        icon={<SettingsIcon />}
+                        onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
                         isDisabled={joining}
-                        colorScheme="SecondaryActionButton"
-                    >
-                        <FAIcon icon="microphone-slash" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Unmute</span>
-                    </Button>
+                        colorScheme="RoomControlBarButton"
+                        aria-label="Choose microphone / camera"
+                    />
+                </Tooltip>
+                {state.microphoneStream && state.microphoneIntendedEnabled ? (
+                    <Tooltip label="Mute">
+                        <IconButton
+                            size="sm"
+                            onClick={stopMicrophone}
+                            colorScheme="ActiveRoomControlBarButton"
+                            isDisabled={joining}
+                            icon={<FAIcon icon="microphone" iconStyle="s" />}
+                            aria-label="Mute"
+                        />
+                    </Tooltip>
+                ) : (
+                    <Tooltip label="Unmute">
+                        <IconButton
+                            size="sm"
+                            isLoading={isOpening}
+                            onClick={startMicrophone}
+                            isDisabled={joining}
+                            colorScheme="InactiveRoomControlBarButton"
+                            icon={<FAIcon icon="microphone-slash" iconStyle="s" />}
+                            aria-label="Unmute"
+                        />
+                    </Tooltip>
                 )}
                 {state.cameraStream && state.cameraIntendedEnabled ? (
-                    <Button
-                        size="sm"
-                        flexGrow={buttonsDirection === "row" ? 1 : 0}
-                        onClick={stopCamera}
-                        colorScheme="PrimaryActionButton"
-                        isDisabled={joining}
-                    >
-                        <FAIcon icon="video" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Stop video</span>
-                    </Button>
+                    <Tooltip label="Stop camera">
+                        <IconButton
+                            size="sm"
+                            onClick={stopCamera}
+                            colorScheme="ActiveRoomControlBarButton"
+                            isDisabled={joining}
+                            icon={<FAIcon icon="video" iconStyle="s" />}
+                            aria-label="Stop camera"
+                        />
+                    </Tooltip>
                 ) : (
-                    <Button
-                        size="sm"
-                        flexGrow={buttonsDirection === "row" ? 1 : 0}
-                        isLoading={isOpening}
-                        onClick={startCamera}
-                        isDisabled={joining}
-                        colorScheme="SecondaryActionButton"
-                    >
-                        <FAIcon icon="video-slash" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Start video</span>
-                    </Button>
+                    <Tooltip label="Start camera">
+                        <IconButton
+                            size="sm"
+                            isLoading={isOpening}
+                            onClick={startCamera}
+                            isDisabled={joining}
+                            colorScheme="InactiveRoomControlBarButton"
+                            icon={<FAIcon icon="video-slash" iconStyle="s" />}
+                            aria-label="Start camera"
+                        />
+                    </Tooltip>
                 )}
+                <WrapItem flex="1 1 auto" />
                 {settings.maximumSimultaneousScreenShares ? (
                     vonage.state.type === StateType.Connected &&
                     receivingScreenShareCount >= settings.maximumSimultaneousScreenShares ? (
                         <Tag
-                            flexGrow={buttonsDirection === "row" ? 1 : 0}
                             size="sm"
                             variant="outline"
-                            colorScheme="SecondaryActionButton"
+                            colorScheme="RoomControlBarNotice"
                             px={2}
                             py="4px"
                             ml={1}
@@ -517,47 +521,37 @@ export function VonageRoomControlBar({
                             </TagLabel>
                         </Tag>
                     ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
-                        <Button
-                            size="sm"
-                            flexGrow={buttonsDirection === "row" ? 1 : 0}
-                            onClick={stopScreenShare}
-                            mr="auto"
-                            colorScheme="DestructiveActionButton"
-                            isDisabled={joining}
-                        >
-                            <FAIcon icon="desktop" iconStyle="s" />
-                            <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
-                        </Button>
+                        <Tooltip label="Stop sharing">
+                            <IconButton
+                                size="sm"
+                                onClick={stopScreenShare}
+                                mr="auto"
+                                colorScheme="DestructiveActionButton"
+                                isDisabled={joining}
+                                icon={<FAIcon icon="desktop" iconStyle="s" />}
+                                aria-label="Stop sharing"
+                            />
+                        </Tooltip>
                     ) : vonage.state.type === StateType.Connected &&
                       vonage.state.initialisedState.screenSharingSupported ? (
-                        <Button
-                            size="sm"
-                            flexGrow={buttonsDirection === "row" ? 1 : 0}
-                            onClick={startScreenShare}
-                            mr="auto"
-                            isDisabled={joining}
-                            colorScheme="SecondaryActionButton"
-                        >
-                            <FAIcon icon="desktop" iconStyle="s" />
-                            <span style={{ marginLeft: "1rem" }}>Share screen</span>
-                        </Button>
+                        <Tooltip label="Share screen">
+                            <IconButton
+                                size="sm"
+                                onClick={startScreenShare}
+                                mr="auto"
+                                isDisabled={joining}
+                                colorScheme="RoomControlBarButton"
+                                icon={<FAIcon icon="desktop" iconStyle="s" />}
+                                aria-label="Share screen"
+                            />
+                        </Tooltip>
                     ) : vonage.state.type === StateType.Initialised && vonage.state.screenSharingSupported ? (
-                        <Tag
-                            flexGrow={buttonsDirection === "row" ? 1 : 0}
-                            size="sm"
-                            variant="outline"
-                            colorScheme="SecondaryActionButton"
-                        >
+                        <Tag size="sm" variant="outline" colorScheme="RoomControlBarNotice">
                             <TagLeftIcon as={CheckCircleIcon} />
                             <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
                         </Tag>
                     ) : (
-                        <Tag
-                            flexGrow={buttonsDirection === "row" ? 1 : 0}
-                            size="sm"
-                            variant="outline"
-                            colorScheme="SecondaryActionButton"
-                        >
+                        <Tag size="sm" variant="outline" colorScheme="RoomControlBarNotice">
                             <TagLeftIcon as={NotAllowedIcon} />
                             <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
                         </Tag>
@@ -565,30 +559,32 @@ export function VonageRoomControlBar({
                 ) : undefined}
                 {vonage.state.type === StateType.Connected && !isBackstage ? (
                     canControlRecording ? (
-                        <Button
-                            size="sm"
-                            flexGrow={buttonsDirection === "row" ? 1 : 0}
-                            colorScheme="SecondaryActionButton"
-                            onClick={() => {
-                                if (vonage.state.type === StateType.Connected) {
-                                    setRecentlyToggledRecording(true);
-                                    toggleVonageRecording({
-                                        vonageSessionId: vonage.state.session.sessionId,
-                                        recordingActive: !isRecordingActive,
-                                    });
+                        <Tooltip label={isRecordingActive ? "Stop recording" : "Start recording"}>
+                            <IconButton
+                                size="sm"
+                                colorScheme={isRecordingActive ? "DestructiveActionButton" : "RoomControlBarButton"}
+                                onClick={() => {
+                                    if (vonage.state.type === StateType.Connected) {
+                                        setRecentlyToggledRecording(true);
+                                        toggleVonageRecording({
+                                            vonageSessionId: vonage.state.session.sessionId,
+                                            recordingActive: !isRecordingActive,
+                                        });
+                                    }
+                                }}
+                                isLoading={toggleVonageRecordingResponse.fetching}
+                                icon={
+                                    isRecordingActive ? (
+                                        <FAIcon iconStyle="s" icon="circle" />
+                                    ) : (
+                                        <FAIcon iconStyle="r" icon="dot-circle" />
+                                    )
                                 }
-                            }}
-                            isLoading={toggleVonageRecordingResponse.fetching}
-                        >
-                            {isRecordingActive ? "Stop recording" : "Start recording"}
-                        </Button>
+                                aria-label={isRecordingActive ? "Stop recording" : "Start recording"}
+                            />
+                        </Tooltip>
                     ) : (
-                        <Tag
-                            flexGrow={buttonsDirection === "row" ? 1 : 0}
-                            size="sm"
-                            variant="outline"
-                            colorScheme="SecondaryActionButton"
-                        >
+                        <Tag size="sm" variant="outline" colorScheme="RoomControlBarNotice">
                             {isRecordingActive ? (
                                 <TagLabel overflow="visible">Recording</TagLabel>
                             ) : (
@@ -602,22 +598,20 @@ export function VonageRoomControlBar({
                 ) : undefined}
                 {/* TODO: Permissions */}
                 {vonage.state.type === StateType.Connected && (isBackstage || canControlRecording) ? (
-                    <Button
-                        size="sm"
-                        onClick={layoutChooser_isOpen ? layoutChooser_onClose : layoutChooser_onOpen}
-                        colorScheme={layoutChooser_isOpen ? "PrimaryActionButton" : "SecondaryActionButton"}
-                    >
-                        {layoutChooser_isOpen ? "Cancel" : "Layout"}
-                    </Button>
+                    <Tooltip label={layoutChooser_isOpen ? "Cancel" : "Layout"}>
+                        <IconButton
+                            size="sm"
+                            onClick={layoutChooser_isOpen ? layoutChooser_onClose : layoutChooser_onOpen}
+                            colorScheme={layoutChooser_isOpen ? "PrimaryActionButton" : "RoomControlBarButton"}
+                            aria-label={layoutChooser_isOpen ? "Cancel" : "Layout"}
+                            icon={<FAIcon iconStyle="s" icon="th-large" />}
+                        />
+                    </Tooltip>
                 ) : undefined}
+                <WrapItem flex="1 1 auto" />
                 {vonage.state.type === StateType.Connected ? (
-                    <Button
-                        size="sm"
-                        flexGrow={buttonsDirection === "row" ? 1 : 0}
-                        colorScheme="PrimaryActionButton"
-                        onClick={onLeaveRoom}
-                    >
-                        Leave Room
+                    <Button size="sm" colorScheme="DestructiveActionButton" onClick={onLeaveRoom}>
+                        Leave
                     </Button>
                 ) : (
                     <Tooltip
@@ -665,7 +659,7 @@ export function VonageRoomControlBar({
                         </Box>
                     </Tooltip>
                 )}
-            </Wrap>
+            </Flex>
             <DeviceChooserModal
                 cameraId={
                     state.cameraStream?.getVideoTracks()[0].getSettings().deviceId ?? state.preferredCameraId ?? null

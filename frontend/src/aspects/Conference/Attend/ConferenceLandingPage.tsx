@@ -85,7 +85,7 @@ function ConferenceLandingPageInner(): JSX.Element {
     }
 
     return (
-        <Box w="100%" mx={[2, 2, 4]} bgColor={bgColor} pb="40px" minH="100vh">
+        <Box w="100%" mx={[2, 2, 4]} bgColor={bgColor} pb="40px" minH="100%">
             {title}
             {!hasAbstract ? (
                 <Heading as="h1" id="page-heading" mt={2}>

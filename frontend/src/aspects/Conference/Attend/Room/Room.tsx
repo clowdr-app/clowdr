@@ -667,7 +667,15 @@ function RoomInner({
     return (
         <>
             <HStack width="100%" flexWrap="wrap" alignItems="stretch" pr={2}>
-                <VStack textAlign="left" flexGrow={2.5} alignItems="stretch" flexBasis={0} minW="100%" maxW="100%">
+                <VStack
+                    textAlign="left"
+                    flexGrow={2.5}
+                    alignItems="stretch"
+                    flexBasis={0}
+                    minW="100%"
+                    maxW="100%"
+                    pb="8ex"
+                >
                     {controlBarEl}
 
                     {showBackstage ? backStageEl : undefined}
@@ -692,7 +700,7 @@ function RoomInner({
 
                     {!showBackstage ? (
                         <>
-                            <Box bgColor={bgColour}>
+                            <Box bgColor={bgColour} zIndex={2}>
                                 <VideoChatRoom
                                     defaultVideoBackendName={defaultVideoBackend}
                                     roomDetails={roomDetails}

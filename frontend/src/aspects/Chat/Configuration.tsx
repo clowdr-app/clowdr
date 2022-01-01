@@ -131,13 +131,6 @@ export function ChatConfigurationProvider({
     children: React.ReactNode | React.ReactNodeArray;
     config: ChatConfiguration;
 }): JSX.Element {
-    // TODO: Is this actually useful?
-    // const ref = useRef<ChatConfiguration>(deepClone(config));
-
-    // useEffect(() => {
-    //     deepCopyChatConfiguration(config, ref.current);
-    // }, [config]);
-
     return <ConfigurationContext.Provider value={config}>{children}</ConfigurationContext.Provider>;
 }
 

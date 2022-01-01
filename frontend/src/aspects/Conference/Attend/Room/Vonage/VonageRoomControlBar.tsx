@@ -14,6 +14,12 @@ import {
     Heading,
     HStack,
     IconButton,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverContent,
+    PopoverTrigger,
+    Portal,
     Spinner,
     Tag,
     TagLabel,
@@ -27,8 +33,11 @@ import {
 import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gql } from "urql";
-import { useToggleVonageRecordingStateMutation } from "../../../../../generated/graphql";
+import { useGetRoomChatIdQuery, useToggleVonageRecordingStateMutation } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
+import type { ChatState } from "../../../../Chat/ChatGlobalState";
+import QuickSendEmote from "../../../../Chat/Compose/QuickSendEmote";
+import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
 import type { DevicesProps } from "../VideoChat/PermissionInstructionsContext";
@@ -428,8 +437,30 @@ export function VonageRoomControlBar({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vonage.state.type]);
 
+    const globalChatState = useGlobalChatState();
+    const [chat, setChat] = useState<ChatState | null>(null);
+
+    const [roomChatIdResponse] = useGetRoomChatIdQuery({
+        variables: {
+            roomId,
+        },
+    });
+    const chatId = roomChatIdResponse.data?.room_Room_by_pk?.chatId;
+    useEffect(() => {
+        let unsubscribe: undefined | (() => void);
+        if (chatId) {
+            unsubscribe = globalChatState.observeChatId(chatId, setChat);
+        } else {
+            setChat(null);
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [chatId, globalChatState]);
+
     return (
         <>
+            <LayoutChooser />
             <Flex
                 p={2}
                 direction={buttonsDirection}
@@ -596,7 +627,26 @@ export function VonageRoomControlBar({
                 {vonage.state.type === StateType.Connected && canControlRecording && !isBackstage ? (
                     <PlayVideoMenuButton roomId={roomId} eventId={eventId} />
                 ) : undefined}
-                {/* TODO: Permissions */}
+                {vonage.state.type === StateType.Connected && chat ? (
+                    <Popover>
+                        <PopoverTrigger>
+                            <IconButton
+                                size="sm"
+                                colorScheme={isRecordingActive ? "DestructiveActionButton" : "RoomControlBarButton"}
+                                icon={<FAIcon iconStyle="s" icon="smile" />}
+                                aria-label="Send an emote"
+                            />
+                        </PopoverTrigger>
+                        <Portal>
+                            <PopoverContent>
+                                <PopoverArrow />
+                                <PopoverBody p={0}>
+                                    <QuickSendEmote chat={chat} />
+                                </PopoverBody>
+                            </PopoverContent>
+                        </Portal>
+                    </Popover>
+                ) : undefined}
                 {vonage.state.type === StateType.Connected && (isBackstage || canControlRecording) ? (
                     <Tooltip label={layoutChooser_isOpen ? "Cancel" : "Layout"}>
                         <IconButton
@@ -718,7 +768,6 @@ export function VonageRoomControlBar({
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-            <LayoutChooser />
         </>
     );
 }

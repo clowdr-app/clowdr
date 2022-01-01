@@ -29,7 +29,6 @@ import { useComposeContext } from "./ComposeContext";
 import { InsertEmojiButton } from "./InsertEmojiButton";
 import { MessageTypeButtons } from "./MessageTypeButtons";
 import { CreatePollOptionsButton } from "./Poll/CreatePollOptionsButton";
-import QuickSendEmote from "./QuickSendEmote";
 import { SendMessageButton } from "./SendMessageButton";
 
 const StatusBar = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.StatusBar })));
@@ -374,7 +373,6 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
             borderTopColor={borderColour}
             {...rest}
         >
-            <QuickSendEmote />
             <MessageTypeButtons isDisabled={composeCtx.isSending} w="100%" />
             <Box pos="relative" w="100%" h="10vh" borderTop="1px solid" borderTopColor={borderColourFaded} pt="1px">
                 <Textarea

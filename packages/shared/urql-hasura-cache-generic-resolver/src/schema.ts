@@ -23,6 +23,37 @@ export function getTableSchema(
     return undefined;
 }
 
+export function getTableMutationSchema(
+    name: string,
+    schema: IntrospectionData,
+    augSchema: AugmentedIntrospectionData
+): undefined | { tableSchema: IntrospectionField; augTableSchema: AugmentedIntrospectionObjectType } {
+    const mutationSchema = schema.__schema.types?.find(
+        (x) => x.kind === "OBJECT" && x.name === schema.__schema.mutationType?.name
+    );
+    if (mutationSchema?.kind === "OBJECT") {
+        const tableSchema = mutationSchema.fields.find((x) => x.name === name);
+        let entityName = tableSchema && getObjectTypeName(tableSchema.type);
+        if (entityName?.endsWith("_mutation_response")) {
+            const responseSchema = schema.__schema.types?.find((x) => x.kind === "OBJECT" && x.name === entityName);
+            const returningFieldSchema =
+                responseSchema?.kind === "OBJECT"
+                    ? responseSchema.fields.find((x) => x.name === "returning")
+                    : undefined;
+            entityName = returningFieldSchema && getObjectTypeName(returningFieldSchema?.type);
+        }
+        const augTableSchema =
+            entityName && augSchema.__schema.types.find((x) => x.kind === "OBJECT" && x.name === entityName);
+        return tableSchema && augTableSchema
+            ? {
+                  tableSchema,
+                  augTableSchema,
+              }
+            : undefined;
+    }
+    return undefined;
+}
+
 export function getTableFieldsSchema(
     name: string,
     schema: IntrospectionData,

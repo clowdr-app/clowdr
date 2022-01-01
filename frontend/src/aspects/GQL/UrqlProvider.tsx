@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { augSchema } from "@midspace/graphql/graphql-aug-schema";
 import { schema } from "@midspace/graphql/graphql-schema";
 import { genericResolvers } from "@midspace/urql-hasura-cache-generic-resolver/genericResolver";
+import { genericUpdaters } from "@midspace/urql-hasura-cache-generic-resolver/genericUpdater";
 import type { CombinedError, Operation } from "@urql/core";
 import { makeOperation } from "@urql/core";
 import { devtoolsExchange } from "@urql/devtools";
@@ -161,7 +162,7 @@ function UrqlProviderInner({
                         schema: schema as any,
                         storage,
                         resolvers: genericResolvers({}, schema as any, augSchema as any),
-                        // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
+                        updates: genericUpdaters({}, schema as any, augSchema as any),
                     });
 
                     const newClient = createClient({

@@ -16,6 +16,7 @@ import { useLiveEvents } from "../LiveEvents/LiveEvents";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import MenuButton from "./MenuButton";
+import { useNavigationState } from "./NavigationState";
 
 gql`
     query CountSwagBags($conferenceId: uuid!) {
@@ -74,11 +75,13 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
     const narrowView = useIsNarrowView();
     const veryNarrowView = useIsVeryNarrowView();
 
+    const navState = useNavigationState();
+
     return (
         <>
             <Flex
                 flexDir="column"
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="flex-start"
                 bgColor={bgColor}
                 flex="0 0 auto"
@@ -103,6 +106,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                         onClick={liveNow_OnOpen}
                         mb={1}
                         showLabel={isExpanded}
+                        isDisabled={navState.disabled}
                     >
                         <Box pos="absolute" top={1} right={1} fontSize="xs">
                             {liveRoomCount}
@@ -121,6 +125,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                     onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
                     mb={1}
                     showLabel={isExpanded}
+                    isDisabled={navState.disabled}
                 />
                 <MenuButton
                     label="Exhibitions"
@@ -134,6 +139,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                     onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
                     mb={1}
                     showLabel={isExpanded}
+                    isDisabled={navState.disabled}
                 />
                 {conference.forceSponsorsMenuLink?.[0]?.value ? (
                     <MenuButton
@@ -147,6 +153,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                         onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Sponsors)}
                         mb={1}
                         showLabel={isExpanded}
+                        isDisabled={navState.disabled}
                     />
                 ) : undefined}
                 {maybeRegistrant ? (
@@ -172,6 +179,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                             onClick={() => socialise_OnOpen()}
                             mb={1}
                             showLabel={isExpanded}
+                            isDisabled={navState.disabled}
                         >
                             {roomParticipants !== undefined &&
                             roomParticipants !== false &&
@@ -194,6 +202,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                                 to={`${conferencePath}/swag`}
                                 mb={1}
                                 showLabel={isExpanded}
+                                isDisabled={navState.disabled}
                             />
                         ) : undefined}
                     </>
@@ -211,8 +220,10 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                         onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
                         mb={1}
                         showLabel={isExpanded}
+                        isDisabled={navState.disabled}
                     />
                 ) : undefined}
+                <Box flex="1 1 auto" />
                 <RequireRole organizerRole moderatorRole>
                     <MenuButton
                         label="Manage"
@@ -226,9 +237,9 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                                 history.push(`${conferencePath}/manage`);
                             }
                         }}
-                        mt="auto"
                         mb={1}
                         showLabel={isExpanded}
+                        isDisabled={navState.disabled}
                     />
                 </RequireRole>
                 <MenuButton
@@ -242,6 +253,7 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                     href="https://form.asana.com?k=TOpJbWqoZ36fWafSStJ9dQ&d=1198973227684402"
                     showLabel={isExpanded}
                     textDecoration="none"
+                    isDisabled={navState.disabled}
                 />
             </Flex>
         </>

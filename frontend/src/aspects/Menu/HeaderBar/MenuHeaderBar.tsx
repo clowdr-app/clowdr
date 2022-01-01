@@ -29,6 +29,7 @@ import { useAuthParameters } from "../../GQL/AuthParameters";
 import useIsNarrowView from "../../Hooks/useIsNarrowView";
 import useIsVeryNarrowView from "../../Hooks/useIsVeryNarrowView";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
+import { useNavigationState } from "../NavigationState";
 import HeaderBarButton from "./HeaderBarButton";
 
 /* TODO: Alerts box - button for push notifications
@@ -80,6 +81,7 @@ export default function MenuHeaderBar({
 
     const narrowView = useIsNarrowView();
     const veryNarrowView = useIsVeryNarrowView();
+    const navState = useNavigationState();
 
     return (
         <Flex
@@ -114,6 +116,7 @@ export default function MenuHeaderBar({
                         bgColor: leftMenu_BgColor,
                         shadow: defaultOutline_AsBoxShadow,
                     }}
+                    isDisabled={narrowView && navState.disabled}
                 >
                     <FAIcon iconStyle="s" icon="bars" />
                     {!narrowView ? (
@@ -155,12 +158,16 @@ export default function MenuHeaderBar({
                 _focus={{}}
                 _active={{}}
                 whiteSpace="normal"
+                isDisabled={navState.disabled}
+                mr={navState.disabled ? "auto" : undefined}
             >
                 {maybeConference?.shortName ?? "Midspace"}
             </LinkButton>
             {maybeConference ? (
                 <>
-                    {!veryNarrowView ? <HeaderBarButton label="Search" iconStyle="s" icon="search" /> : undefined}
+                    {!veryNarrowView ? (
+                        <HeaderBarButton label="Search" iconStyle="s" icon="search" isDisabled={navState.disabled} />
+                    ) : undefined}
                     <HeaderBarButton label="Notifications" iconStyle="s" icon="bell" />
                     <HeaderBarButton
                         label="Chat"
@@ -218,7 +225,7 @@ export default function MenuHeaderBar({
                                     <VStack
                                         bgColor={bgColor}
                                         color={textColor}
-                                        jutsifyContent="flex-start"
+                                        justifyContent="flex-start"
                                         alignItems="flex-start"
                                         p={3}
                                         spacing={0}
@@ -234,15 +241,25 @@ export default function MenuHeaderBar({
                                             </Text>
                                         ) : undefined}
                                     </VStack>
-                                    <MenuItem as={ReactLink} to={`${conferencePath}/profile`} p={3}>
+                                    <MenuItem
+                                        as={ReactLink}
+                                        to={`${conferencePath}/profile`}
+                                        p={3}
+                                        isDisabled={navState.disabled}
+                                    >
                                         <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
                                         Profile
                                     </MenuItem>
-                                    <MenuItem as={ReactLink} to={`${conferencePath}/recordings`} p={3}>
+                                    <MenuItem
+                                        as={ReactLink}
+                                        to={`${conferencePath}/recordings`}
+                                        p={3}
+                                        isDisabled={navState.disabled}
+                                    >
                                         <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
                                         Recordings
                                     </MenuItem>
-                                    <MenuItem as={ReactLink} to="/" p={3}>
+                                    <MenuItem as={ReactLink} to="/" p={3} isDisabled={navState.disabled}>
                                         <FAIcon iconStyle="s" icon="ticket-alt" mr={2} aria-hidden={true} w="1.2em" />
                                         Conferences
                                     </MenuItem>

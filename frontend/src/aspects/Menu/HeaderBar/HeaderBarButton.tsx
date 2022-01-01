@@ -16,7 +16,7 @@ type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
 };
 
 const HeaderBarButton = forwardRef<HTMLButtonElement, Props>(function HeaderBarButton(
-    { ariaLabel, label, showLabel, iconStyle, icon, children, ...props }: React.PropsWithChildren<Props>,
+    { ariaLabel, label, showLabel, iconStyle, icon, children, isDisabled, ...props }: React.PropsWithChildren<Props>,
     ref
 ): JSX.Element {
     const buttonHoverBgColor = useColorModeValue(
@@ -40,17 +40,30 @@ const HeaderBarButton = forwardRef<HTMLButtonElement, Props>(function HeaderBarB
             m="3px"
             minW={narrowView ? 8 : 12}
             borderRadius={0}
-            _hover={{
-                bgColor: buttonHoverBgColor,
-            }}
-            _focus={{
-                bgColor: buttonFocusBgColor,
-                boxShadow: defaultOutline_AsBoxShadow,
-            }}
-            _active={{
-                bgColor: buttonFocusBgColor,
-                boxShadow: defaultOutline_AsBoxShadow,
-            }}
+            isDisabled={isDisabled}
+            _hover={
+                isDisabled
+                    ? undefined
+                    : {
+                          bgColor: buttonHoverBgColor,
+                      }
+            }
+            _focus={
+                isDisabled
+                    ? undefined
+                    : {
+                          bgColor: buttonFocusBgColor,
+                          boxShadow: defaultOutline_AsBoxShadow,
+                      }
+            }
+            _active={
+                isDisabled
+                    ? undefined
+                    : {
+                          bgColor: buttonFocusBgColor,
+                          boxShadow: defaultOutline_AsBoxShadow,
+                      }
+            }
             {...props}
         >
             {typeof icon === "string" ? (

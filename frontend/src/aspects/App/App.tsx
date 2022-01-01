@@ -26,6 +26,7 @@ import ForceUserRefresh from "../ForceUserRefresh/ForceUserRefresh";
 import { AuthParametersProvider, useAuthParameters } from "../GQL/AuthParameters";
 import UrqlProvider from "../GQL/UrqlProvider";
 import { LiveEventsProvider } from "../LiveEvents/LiveEvents";
+import { NavigationStateProvider } from "../Menu/NavigationState";
 import { RightSidebarCurrentTabProvider } from "../Menu/RightSidebar/RightSidebarCurrentTab";
 import { RaiseHandProvider } from "../RaiseHand/RaiseHandProvider";
 import { EnableRoomParticipantsPollingProvider } from "../Room/EnableRoomParticipantsPollingContext";
@@ -74,11 +75,13 @@ function AppInner(): JSX.Element {
     return (
         <CurrentUserProvider>
             <AppSettingsProvider>
-                <ChimeThemeProvider theme={chimeTheme}>
-                    <MeetingProvider>
-                        <AppInner2 />
-                    </MeetingProvider>
-                </ChimeThemeProvider>
+                <NavigationStateProvider>
+                    <ChimeThemeProvider theme={chimeTheme}>
+                        <MeetingProvider>
+                            <AppInner2 />
+                        </MeetingProvider>
+                    </ChimeThemeProvider>
+                </NavigationStateProvider>
             </AppSettingsProvider>
         </CurrentUserProvider>
     );

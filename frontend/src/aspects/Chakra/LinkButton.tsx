@@ -11,10 +11,17 @@ export interface LinkButtonProps extends ButtonProps {
 }
 
 export const LinkButton = React.forwardRef<HTMLAnchorElement, LinkButtonProps>(function LinkButton(
-    { to, children, isExternal, linkProps, ...remaining }: LinkButtonProps,
+    { to, children, isExternal, linkProps, isDisabled, ...remaining }: LinkButtonProps,
     ref
 ): JSX.Element {
-    return (
+    const button = (
+        <Button as="div" isDisabled={isDisabled} {...remaining}>
+            {children}
+        </Button>
+    );
+    return isDisabled ? (
+        button
+    ) : (
         <Link
             as={ReactLink}
             to={to}
@@ -24,9 +31,7 @@ export const LinkButton = React.forwardRef<HTMLAnchorElement, LinkButtonProps>(f
             {...linkProps}
             ref={ref}
         >
-            <Button as="div" {...remaining}>
-                {children}
-            </Button>
+            {button}
         </Link>
     );
 });

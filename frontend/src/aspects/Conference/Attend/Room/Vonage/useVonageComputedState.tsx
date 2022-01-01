@@ -1,6 +1,7 @@
 import { createStandaloneToast, useToast } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { theme } from "../../../../Chakra/ChakraCustomProvider";
+import { useNavigationState } from "../../../../Menu/NavigationState";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import type { TranscriptData, VonageGlobalState } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
@@ -48,6 +49,8 @@ export function useVonageComputedState({
     joinRoom: () => Promise<void>;
     leaveRoom: () => Promise<void>;
 } {
+    const navState = useNavigationState();
+
     const vonage = useVonageGlobalState();
     const { dispatch } = useVonageRoom();
     const layout = useVonageLayout();
@@ -183,6 +186,7 @@ export function useVonageComputedState({
                         setConnections(connections);
                     },
                     (isConnected: boolean) => {
+                        navState.setDisabled(isConnected);
                         if (!isConnected) {
                             setConnected(false);
                             setStreams([]);

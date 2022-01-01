@@ -629,7 +629,7 @@ export function VonageRoomControlBar({
                                 size="xl"
                                 colorScheme={joining ? "yellow" : "PrimaryActionButton"}
                                 h="auto"
-                                py={4}
+                                p={4}
                                 variant="glowing"
                                 onClick={joining ? onCancelJoinRoom : onJoinRoom}
                                 isLoading={!onCancelJoinRoom && joining}

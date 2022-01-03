@@ -37619,9 +37619,11 @@ export type Registrant_RegistrantCreateRoomMutation = {
         | {
               readonly __typename?: "room_Room";
               readonly id: any;
+              readonly conferenceId: any;
               readonly name: string;
               readonly priority: number;
               readonly managementModeName: Room_ManagementMode_Enum;
+              readonly originatingItemId?: any | null | undefined;
               readonly originatingEventId?: any | null | undefined;
               readonly originatingItem?:
                   | {
@@ -37640,6 +37642,11 @@ export type Registrant_RegistrantCreateRoomMutation = {
                     }
                   | null
                   | undefined;
+              readonly chat?:
+                  | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+                  | null
+                  | undefined;
+              readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
           }
         | null
         | undefined;
@@ -38539,9 +38546,11 @@ export type GetAllRoomsQuery = {
     readonly socialRooms: ReadonlyArray<{
         readonly __typename?: "room_Room";
         readonly id: any;
+        readonly conferenceId: any;
         readonly name: string;
         readonly priority: number;
         readonly managementModeName: Room_ManagementMode_Enum;
+        readonly originatingItemId?: any | null | undefined;
         readonly originatingEventId?: any | null | undefined;
         readonly originatingItem?:
             | {
@@ -38560,13 +38569,20 @@ export type GetAllRoomsQuery = {
               }
             | null
             | undefined;
+        readonly chat?:
+            | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+            | null
+            | undefined;
+        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
     }>;
     readonly programRooms: ReadonlyArray<{
         readonly __typename?: "room_Room";
         readonly id: any;
+        readonly conferenceId: any;
         readonly name: string;
         readonly priority: number;
         readonly managementModeName: Room_ManagementMode_Enum;
+        readonly originatingItemId?: any | null | undefined;
         readonly originatingEventId?: any | null | undefined;
         readonly originatingItem?:
             | {
@@ -38585,6 +38601,11 @@ export type GetAllRoomsQuery = {
               }
             | null
             | undefined;
+        readonly chat?:
+            | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+            | null
+            | undefined;
+        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
     }>;
 };
 
@@ -38599,9 +38620,11 @@ export type GetAllTodaysRoomsQuery = {
     readonly socialOrDiscussionRooms: ReadonlyArray<{
         readonly __typename?: "room_Room";
         readonly id: any;
+        readonly conferenceId: any;
         readonly name: string;
         readonly priority: number;
         readonly managementModeName: Room_ManagementMode_Enum;
+        readonly originatingItemId?: any | null | undefined;
         readonly originatingEventId?: any | null | undefined;
         readonly originatingItem?:
             | {
@@ -38620,13 +38643,20 @@ export type GetAllTodaysRoomsQuery = {
               }
             | null
             | undefined;
+        readonly chat?:
+            | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+            | null
+            | undefined;
+        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
     }>;
     readonly programRooms: ReadonlyArray<{
         readonly __typename?: "room_Room";
         readonly id: any;
+        readonly conferenceId: any;
         readonly name: string;
         readonly priority: number;
         readonly managementModeName: Room_ManagementMode_Enum;
+        readonly originatingItemId?: any | null | undefined;
         readonly originatingEventId?: any | null | undefined;
         readonly originatingItem?:
             | {
@@ -38645,15 +38675,22 @@ export type GetAllTodaysRoomsQuery = {
               }
             | null
             | undefined;
+        readonly chat?:
+            | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+            | null
+            | undefined;
+        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
     }>;
 };
 
 export type RoomListRoomDetailsFragment = {
     readonly __typename?: "room_Room";
     readonly id: any;
+    readonly conferenceId: any;
     readonly name: string;
     readonly priority: number;
     readonly managementModeName: Room_ManagementMode_Enum;
+    readonly originatingItemId?: any | null | undefined;
     readonly originatingEventId?: any | null | undefined;
     readonly originatingItem?:
         | {
@@ -38672,6 +38709,11 @@ export type RoomListRoomDetailsFragment = {
           }
         | null
         | undefined;
+    readonly chat?:
+        | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+        | null
+        | undefined;
+    readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
 };
 
 export type GetSocialRoomsQueryVariables = Exact<{
@@ -47645,9 +47687,11 @@ export const RoomEventDetailsFragmentDoc = gql`
 export const RoomListRoomDetailsFragmentDoc = gql`
     fragment RoomListRoomDetails on room_Room {
         id
+        conferenceId
         name
         priority
         managementModeName
+        originatingItemId
         originatingItem {
             id
             itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
@@ -47660,6 +47704,13 @@ export const RoomListRoomDetailsFragmentDoc = gql`
             }
         }
         originatingEventId
+        chat {
+            id
+            enableMandatoryPin
+        }
+        events(limit: 1) {
+            id
+        }
     }
 `;
 export const SocialRoomFragmentDoc = gql`

@@ -226,7 +226,7 @@ function UrqlProviderInner({
     }, [getAccessTokenSilently]);
 
     if (!client) {
-        return <>Loading... z</>;
+        return <>Loading...</>;
     }
 
     return (

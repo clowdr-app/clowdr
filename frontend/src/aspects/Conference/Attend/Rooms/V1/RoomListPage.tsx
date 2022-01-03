@@ -1,6 +1,6 @@
 import { Button, Heading, HStack, useDisclosure } from "@chakra-ui/react";
 import { gql } from "@urql/core";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import type { RoomListRoomDetailsFragment } from "../../../../../generated/graphql";
 import { useGetAllRoomsQuery } from "../../../../../generated/graphql";
@@ -8,6 +8,7 @@ import FAIcon from "../../../../Chakra/FAIcon";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
+import { makeContext } from "../../../../GQL/make-context";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import usePolling from "../../../../Hooks/usePolling";
 import { useTitle } from "../../../../Hooks/useTitle";
@@ -82,9 +83,11 @@ gql`
 
     fragment RoomListRoomDetails on room_Room {
         id
+        conferenceId
         name
         priority
         managementModeName
+        originatingItemId
         originatingItem {
             id
             itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
@@ -97,6 +100,13 @@ gql`
             }
         }
         originatingEventId
+        chat {
+            id
+            enableMandatoryPin
+        }
+        events(limit: 1) {
+            id
+        }
     }
 `;
 
@@ -106,11 +116,19 @@ export default function RoomListPage(): JSX.Element {
 
     const title = useTitle(`Rooms - ${conference.shortName}`);
 
+    const context = useMemo(
+        () =>
+            makeContext({
+                "X-Auth-Include-Room-Ids": "true",
+            }),
+        []
+    );
     const [result, refetchAllRooms] = useGetAllRoomsQuery({
         variables: {
             conferenceId: conference.id,
         },
         requestPolicy: "cache-and-network",
+        context,
     });
     usePolling(refetchAllRooms, 2.5 * 60 * 1000);
 

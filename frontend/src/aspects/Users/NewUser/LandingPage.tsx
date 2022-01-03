@@ -60,7 +60,9 @@ export default function NewUserLandingPage({ conferenceName }: { conferenceName?
                             to="https://midspace.app"
                             colorScheme="pink"
                             size="lg"
-                            linkProps={{ "aria-label": "Learn more about Midspace on our marketing website" }}
+                            linkProps={{
+                                "aria-label": "Learn more about Midspace on our marketing website"
+                            }}
                         >
                             <FormattedMessage id="users.newuser.landingpage.learnmore" defaultMessage="Learn more" description="learn more text" />
                         </ExternalLinkButton>

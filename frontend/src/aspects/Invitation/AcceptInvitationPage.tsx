@@ -25,6 +25,7 @@ import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { setCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
 import { useTitle } from "../Utils/useTitle";
+import { FormattedMessage, useIntl } from "react-intl";
 
 interface Props {
     inviteCode?: string;
@@ -53,6 +54,7 @@ const Spinner = () => (
 );
 
 function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: string }): JSX.Element {
+    const intl = useIntl();
     const [confirmCurrentMutation, { loading, error, data }] = useInvitation_ConfirmCurrentMutation();
 
     useEffect(() => {
@@ -87,12 +89,17 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
                 fontWeight="thin"
                 marginBottom="2rem"
             >
-                {!error ? "Accepting invitation..." : "Failed to accept invitation"}
+                { !error
+                    ? intl.formatMessage({ id: 'invitation.acceptinvitationpage.acceptinginvitation', defaultMessage: "Accepting invitation..." })
+                    : intl.formatMessage({ id: 'invitation.acceptinvitationpage.failedtoaccept', defaultMessage: "Failed to accept invitation" }) }
             </Heading>
             {loading && !error ? (
                 <Box>
                     <Text fontStyle="italic" marginBottom="0.2rem">
-                        Please wait while we accept this invite:
+                        <FormattedMessage
+                            id="invitation.acceptinvitationpage.pleasewait"
+                            defaultMessage="Please wait while we accept this invite:"
+                        />
                     </Text>
                     <Code padding="1rem" fontSize="1.1rem" aria-label="Your invite code" marginBottom="1rem">
                         {inviteCode}
@@ -119,14 +126,14 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
                         <Box>
                             <Text textAlign="left">
                                 {errorMsg === "Invitation already used"
-                                    ? "The invitation code (shown below) has already been used. If you have an existing account, please try logging in (you don't need to use the invite code a second time). If you believe somebody else has used your invite code, please contact your conference organiser."
-                                    : "We were unable to accept your invitation. Please contact technical support with a copy of the error message (shown above) and your invite code (shown below)."}
+                                    ? intl.formatMessage({ id: 'invitation.acceptinvitationpage.alreadyused', defaultMessage: "The invitation code (shown below) has already been used. If you have an existing account, please try logging in (you don't need to use the invite code a second time). If you believe somebody else has used your invite code, please contact your conference organiser." })
+                                    : intl.formatMessage({ id: 'invitation.acceptinvitationpage.unabletoacept', defaultMessage: "We were unable to accept your invitation. Please contact technical support with a copy of the error message (shown above) and your invite code (shown below)." }) }
                             </Text>
                             <Code
                                 mt={4}
                                 padding="1rem"
                                 fontSize="1.1rem"
-                                aria-label="Your invite code"
+                                aria-label={intl.formatMessage({ id: 'invitation.acceptinvitationpage.invitecode', defaultMessage: "Your invite code" })}
                                 marginBottom="1rem"
                             >
                                 {inviteCode}
@@ -194,10 +201,16 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                     fontWeight="thin"
                     marginBottom="2rem"
                 >
-                    Sign up to Midspace
+                    <FormattedMessage
+                        id="invitation.acceptinvitationpage.signup"
+                        defaultMessage="Sign up to Midspace"
+                    />
                 </Heading>
                 <Heading as="h2" fontSize="2.25rem" lineHeight="2.75rem" fontWeight="thin">
-                    You&apos;re almost ready to join your conference.
+                    <FormattedMessage
+                        id="invitation.acceptinvitationpage.almostready"
+                        defaultMessage="You're almost ready to join your conference."
+                    />
                 </Heading>
                 <List maxW={650} spacing={5}>
                     <ListItem>
@@ -210,8 +223,10 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                             </HStack>
                             <VStack alignItems="flex-start">
                                 <Text fontSize="lg">
-                                    <chakra.span fontWeight="bold">Sign up for a Midspace account</chakra.span> or log
-                                    into an existing one.
+                                    <FormattedMessage
+                                        id="invitation.acceptinvitationpage.signuporlogin"
+                                        defaultMessage="<bold>Sign up for a Midspace account</bold> or log into an existing one."
+                                    />
                                 </Text>
                             </VStack>
                         </HStack>
@@ -226,9 +241,17 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                             </HStack>
                             <VStack alignItems="flex-start">
                                 <Text fontSize="lg" fontWeight="bold">
-                                    Use your invite code
+                                    <FormattedMessage
+                                        id="invitation.acceptinvitationpage.useinvitecode"
+                                        defaultMessage="Use your invite code"
+                                    />
                                 </Text>
-                                <Text fontSize="sm">After logging in, you may be asked for your invite code.</Text>
+                                <Text fontSize="sm">
+                                    <FormattedMessage
+                                        id="invitation.acceptinvitationpage.maybeaskedinvitecode"
+                                        defaultMessage="After logging in, you may be asked for your invite code."
+                                    />
+                                </Text>
                             </VStack>
                         </HStack>
                     </ListItem>
@@ -242,11 +265,16 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                             </HStack>
                             <VStack alignItems="flex-start">
                                 <Text fontSize="lg" fontWeight="bold">
-                                    Join your conference
+                                    <FormattedMessage
+                                        id="invitation.acceptinvitationpage.joinconference"
+                                        defaultMessage="Join your conference"
+                                    />
                                 </Text>
                                 <Text fontSize="sm">
-                                    After using you&apos;re invite code, you&apos;ll be ready to set up your profile and
-                                    start attending your conference.
+                                    <FormattedMessage
+                                        id="invitation.acceptinvitationpage.afterusinginvitemsg"
+                                        defaultMessage="After using you're invite code, you'll be ready to set up your profile and start attending your conference."
+                                    />
                                 </Text>
                             </VStack>
                         </HStack>

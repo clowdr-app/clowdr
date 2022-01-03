@@ -1,4 +1,13 @@
 {
+  "auth.auth0customprovider.loading": {
+    "defaultMessage": ""
+  },
+  "auth.buttons.loginbutton.login": {
+    "defaultMessage": ""
+  },
+  "auth.buttons.logoutbutton.logout": {
+    "defaultMessage": ""
+  },
   "auth.emailverificationrequiredpage.emailinstructions": {
     "defaultMessage": ""
   },
@@ -14,6 +23,9 @@
   "auth.emailverificationrequiredpage.youcanclose": {
     "defaultMessage": "Agora você pode fechar esta página enquanto espera pelo seu e-mail de verificação."
   },
+  "auth.loggedoutpage.hopeyouenjoyed": {
+    "defaultMessage": ""
+  },
   "auth.loggedoutpage.loadinguserinfo": {
     "defaultMessage": "Carregando informações do usuário"
   },
@@ -22,6 +34,9 @@
   },
   "auth.loggedoutpage.title": {
     "defaultMessage": "Desconectado"
+  },
+  "auth.loggedoutpage.tohome": {
+    "defaultMessage": ""
   },
   "auth.passwordresetresultpage.passwordreset": {
     "defaultMessage": "Sua senha foi redefinida"
@@ -92,6 +107,12 @@
   "badges.badgeinput.selectedbadges": {
     "defaultMessage": "Selos selecionados"
   },
+  "chakra.colormodebutton.toggle": {
+    "defaultMessage": ""
+  },
+  "chat.ChatRedirectPage.error": {
+    "defaultMessage": ""
+  },
   "chat.compose.chatcompose.invalidfilename": {
     "defaultMessage": "Nome de arquivo inválido. Os nomes dos arquivos devem conter apenas letras, números, espaços e os seguintes caracteres especiais:! * '() -_"
   },
@@ -113,14 +134,377 @@
   "chat.compose.poll.createpolloptionsmodal.yourquestion": {
     "defaultMessage": "Sua pergunta:"
   },
+  "chat.messages.polloptions.pollclosed": {
+    "defaultMessage": ""
+  },
+  "chat.messages.polloptions.pollcompleted": {
+    "defaultMessage": ""
+  },
+  "chat.messages.polloptions.pollopen": {
+    "defaultMessage": ""
+  },
+  "chat.pin.pinnedbutton.loading": {
+    "defaultMessage": ""
+  },
+  "chat.pin.pinnedbutton.pin": {
+    "defaultMessage": ""
+  },
+  "chat.pin.pinnedbutton.unpin": {
+    "defaultMessage": ""
+  },
+  "conference.attend.conferencelandingpage.unrecognisederror": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.vonage.devicechoosermodal.camera": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.vonage.devicechoosermodal.choosecamera": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.vonage.devicechoosermodal.choosemicrophone": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.vonage.devicechoosermodal.microphone": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.vonage.devicechoosermodal.save": {
+    "defaultMessage": ""
+  },
+  "conference.useinviteorcreateview.create": {
+    "defaultMessage": ""
+  },
+  "conference.useinviteorcreateview.join": {
+    "defaultMessage": ""
+  },
+  "content.elements.editelement.processingsubtitles": {
+    "defaultMessage": ""
+  },
+  "content.oldaccessformatredirectionpage.erroridmatching": {
+    "defaultMessage": ""
+  },
+  "content.oldaccessformatredirectionpage.erroridmatchingdesc": {
+    "defaultMessage": ""
+  },
+  "content.oldaccessformatredirectionpage.nopeoplelisted": {
+    "defaultMessage": ""
+  },
+  "content.oldaccessformatredirectionpage.selectyourself": {
+    "defaultMessage": ""
+  },
+  "content.oldaccessformatredirectionpage.submissionidentification": {
+    "defaultMessage": ""
+  },
+  "content.oldaccessformatredirectionpage.technicalerror": {
+    "defaultMessage": ""
+  },
+  "content.oldaccessformatredirectionpage.technicalerrordesc": {
+    "defaultMessage": ""
+  },
+  "errors.pagefailedtoload.refresh": {
+    "defaultMessage": ""
+  },
+  "errors.pagefailedtoload.sorry": {
+    "defaultMessage": ""
+  },
+  "errors.pagefailedtoload.tryagain": {
+    "defaultMessage": ""
+  },
+  "forceuserrefresh.forceuserrefresh.automaticrefresh": {
+    "defaultMessage": ""
+  },
+  "forceuserrefresh.forceuserrefresh.newversion": {
+    "defaultMessage": ""
+  },
+  "forceuserrefresh.forceuserrefresh.pleaserefresh": {
+    "defaultMessage": ""
+  },
+  "google.googleoauth.datamissing": {
+    "defaultMessage": ""
+  },
+  "google.googleoauth.failedtoconnect": {
+    "defaultMessage": ""
+  },
+  "google.googleoauth.successfullyconnected": {
+    "defaultMessage": ""
+  },
+  "gql.apolloquerywrapper.errorloading": {
+    "defaultMessage": ""
+  },
+  "gql.apolloquerywrapper.mightnothavepermission": {
+    "defaultMessage": ""
+  },
+  "gql.apolloquerywrapper.nodatafound": {
+    "defaultMessage": ""
+  },
+  "gql.usequeryerrortoast.disconnected": {
+    "defaultMessage": ""
+  },
+  "gql.usequeryerrortoast.reconnected": {
+    "defaultMessage": ""
+  },
+  "gql.usequeryerrortoast.successfullyreconnected": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.acceptinginvitation": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.afterusinginvitemsg": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.almostready": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.alreadyused": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.failedtoaccept": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.invitecode": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.joinconference": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.maybeaskedinvitecode": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.pleasewait": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.signup": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.signuporlogin": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.unabletoacept": {
+    "defaultMessage": ""
+  },
+  "invitation.acceptinvitationpage.useinvitecode": {
+    "defaultMessage": ""
+  },
+  "leavingpagewarnings.unsavedchangeswarning.message": {
+    "defaultMessage": ""
+  },
+  "maintenance.downformaintenancepage.checkstatuspage": {
+    "defaultMessage": ""
+  },
+  "maintenance.downformaintenancepage.offline": {
+    "defaultMessage": ""
+  },
+  "maintenance.downformaintenancepage.offlinedesc": {
+    "defaultMessage": ""
+  },
+  "maintenance.downformaintenancepage.viewstatus": {
+    "defaultMessage": ""
+  },
   "menu.v2.collapse": {
     "defaultMessage": "Recolher Menu"
   },
   "menu.v2.expand": {
     "defaultMessage": "Expandir Menu"
   },
+  "menu.v2.leftmenu.checklist": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.collapse": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.conferences": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.content": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.dashboard": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.expand": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.feedback": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.livenow": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.mybackstages": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.myconferenceswag": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.myevents": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.myprofile": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.myrecordings": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.mystuff": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.program": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.programpeople": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.registrants": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.rooms": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.schedule": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.socialise": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.sponsors": {
+    "defaultMessage": ""
+  },
+  "menu.v2.leftmenu.useinvitecode": {
+    "defaultMessage": ""
+  },
+  "menu.v2.moreoptionsmenubutton.yourprofilephoto": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightmenu.chathere": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightmenu.close": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightmenu.collapse": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightmenu.expand": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightmenu.options": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightmenu.pushnotifications": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightmenu.raisehand": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightmenu.toggledarkmode": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightmenu.whoshere": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.backtochatslist": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.backtochatslistdesc": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.couldnotcreatedm": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.gotovideoroom": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.gotovideoroomdesc": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.loadingpinnedchats": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.loadingselectedchat": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.nopinnedchats": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.chatspanel.settingupchat": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.donthavechat": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.errorloading": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.gotovideoroom": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.gotovideoroomdesc": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.panels.itemchatpanel.loadingchatroom": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.togglechatsbutton.closechats": {
+    "defaultMessage": ""
+  },
+  "menu.v2.rightsidebar.togglechatsbutton.openchats": {
+    "defaultMessage": ""
+  },
+  "pronouns.pronouninput.createpronouns": {
+    "defaultMessage": ""
+  },
+  "pronouns.pronouninput.deletepronouns": {
+    "defaultMessage": ""
+  },
+  "pronouns.pronouninput.pronouns": {
+    "defaultMessage": ""
+  },
+  "pronouns.pronouninput.typeapronoun": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.applerant1": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.applerant2": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.browserssupported": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.determiningsubscriptionstate": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.errorhandlingsubscription": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.instructionsforenabling": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.instructionsmac1": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.instructionsmac2": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.notsubscribed": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.subscribe": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.unsubscribe": {
+    "defaultMessage": ""
+  },
+  "pushnotifications.pushnotificationsettings.youresubscribed": {
+    "defaultMessage": ""
+  },
+  "room.permissioninstructionsmodal.issue": {
+    "defaultMessage": ""
+  },
   "signup": {
     "defaultMessage": "Inscrever-se"
+  },
+  "users.currentuser.usecurrentuser.notavaiable": {
+    "defaultMessage": ""
   },
   "users.newuser.landingpage.description": {
     "defaultMessage": "Conferências virtuais e híbridas acessíveis."
@@ -133,6 +517,9 @@
   },
   "users.newuser.landingpage.welcome": {
     "defaultMessage": "Bem-vindo(a) ao Midspace"
+  },
+  "uxchoice.switchuxchoicebutton.changeui": {
+    "defaultMessage": ""
   },
   "uxchoice.uxchoicedialog.buttonmsg": {
     "defaultMessage": "Você pode mudar de ideia a qualquer momento usando o botão 'Alternar UI' no menu Perfil."

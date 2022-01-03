@@ -23,6 +23,9 @@
   "auth.emailverificationrequiredpage.youcanclose": {
     "defaultMessage": "You can now close this page while you wait for your verification email."
   },
+  "auth.loggedoutpage.hopeyouenjoyed": {
+    "defaultMessage": "We hope you enjoyed using Midspace's open-source virtual conference software."
+  },
   "auth.loggedoutpage.loadinguserinfo": {
     "defaultMessage": "Loading user info"
   },
@@ -31,6 +34,9 @@
   },
   "auth.loggedoutpage.title": {
     "defaultMessage": "Logged Out"
+  },
+  "auth.loggedoutpage.tohome": {
+    "defaultMessage": "Go to home page"
   },
   "auth.passwordresetresultpage.passwordreset": {
     "defaultMessage": "Your password was reset"
@@ -212,6 +218,72 @@
   "forceuserrefresh.forceuserrefresh.pleaserefresh": {
     "defaultMessage": "To receive the latest updates please refresh the page"
   },
+  "google.googleoauth.datamissing": {
+    "defaultMessage": "Some expected data from Google was missing"
+  },
+  "google.googleoauth.failedtoconnect": {
+    "defaultMessage": "Failed to connect to Google account"
+  },
+  "google.googleoauth.successfullyconnected": {
+    "defaultMessage": "Successfully connected to Google Account"
+  },
+  "gql.apolloquerywrapper.errorloading": {
+    "defaultMessage": "An error occurred loading in data - please see further information in notifications."
+  },
+  "gql.apolloquerywrapper.mightnothavepermission": {
+    "defaultMessage": "(You might not have permission to access this. Please contact your conference organisers if you think this is a mistake.)"
+  },
+  "gql.apolloquerywrapper.nodatafound": {
+    "defaultMessage": "No data found"
+  },
+  "gql.usequeryerrortoast.disconnected": {
+    "defaultMessage": "Disconnected"
+  },
+  "gql.usequeryerrortoast.reconnected": {
+    "defaultMessage": "Reconnected"
+  },
+  "gql.usequeryerrortoast.successfullyreconnected": {
+    "defaultMessage": "Successfully reconnected to the server."
+  },
+  "invitation.acceptinvitationpage.acceptinginvitation": {
+    "defaultMessage": "Accepting invitation..."
+  },
+  "invitation.acceptinvitationpage.afterusinginvitemsg": {
+    "defaultMessage": "After using you're invite code, you'll be ready to set up your profile and start attending your conference."
+  },
+  "invitation.acceptinvitationpage.almostready": {
+    "defaultMessage": "You're almost ready to join your conference."
+  },
+  "invitation.acceptinvitationpage.alreadyused": {
+    "defaultMessage": "The invitation code (shown below) has already been used. If you have an existing account, please try logging in (you don't need to use the invite code a second time). If you believe somebody else has used your invite code, please contact your conference organiser."
+  },
+  "invitation.acceptinvitationpage.failedtoaccept": {
+    "defaultMessage": "Failed to accept invitation"
+  },
+  "invitation.acceptinvitationpage.invitecode": {
+    "defaultMessage": "Your invite code"
+  },
+  "invitation.acceptinvitationpage.joinconference": {
+    "defaultMessage": "Join your conference"
+  },
+  "invitation.acceptinvitationpage.maybeaskedinvitecode": {
+    "defaultMessage": "After logging in, you may be asked for your invite code."
+  },
+  "invitation.acceptinvitationpage.pleasewait": {
+    "defaultMessage": "Please wait while we accept this invite:"
+  },
+  "invitation.acceptinvitationpage.signup": {
+    "defaultMessage": "Sign up to Midspace"
+  },
+  "invitation.acceptinvitationpage.signuporlogin": {
+    "defaultMessage": "<bold>Sign up for a Midspace account</bold> or log into an existing one."
+  },
+  "invitation.acceptinvitationpage.unabletoacept": {
+    "defaultMessage": "We were unable to accept your invitation. Please contact technical support with a copy of the error message (shown above) and your invite code (shown below)."
+  },
+  "invitation.acceptinvitationpage.useinvitecode": {
+    "defaultMessage": "Use your invite code"
+  },
   "leavingpagewarnings.unsavedchangeswarning.message": {
     "defaultMessage": "You have unsaved changes, are you sure you wish to leave the page?"
   },
@@ -383,12 +455,51 @@
   "pronouns.pronouninput.typeapronoun": {
     "defaultMessage": "Type a pronoun"
   },
+  "pushnotifications.pushnotificationsettings.applerant1": {
+    "defaultMessage": "Apple's decision to obstruct open web standards, by refusing to implement the Push API,prevents Midspace from supporting push notifications in Safari and all browsers on iOS."
+  },
+  "pushnotifications.pushnotificationsettings.applerant2": {
+    "defaultMessage": "(Don't be fooled: all iOS browser apps have to use Apple's web engine, including Firefox and Chrome. Your browser may not be what you think it is.)"
+  },
+  "pushnotifications.pushnotificationsettings.browserssupported": {
+    "defaultMessage": "Please note, push notifications are only supported in Firefox, Chrome, Edge and Opera on desktop, laptop and Android devices."
+  },
+  "pushnotifications.pushnotificationsettings.determiningsubscriptionstate": {
+    "defaultMessage": "Determining subscription state for this browser..."
+  },
+  "pushnotifications.pushnotificationsettings.errorhandlingsubscription": {
+    "defaultMessage": "Error handling subscription"
+  },
+  "pushnotifications.pushnotificationsettings.instructionsforenabling": {
+    "defaultMessage": "Instructions for enabling alerts:"
+  },
+  "pushnotifications.pushnotificationsettings.instructionsmac1": {
+    "defaultMessage": "Mac users will need to allow their browser to show notifications via the operating system's Control Center settings."
+  },
+  "pushnotifications.pushnotificationsettings.instructionsmac2": {
+    "defaultMessage": "Please also remember that if you have Do Not Disturb mode on (which is often automatically enabled when you have a second screen plugged in), notifications will be suppressed by the operating system."
+  },
+  "pushnotifications.pushnotificationsettings.notsubscribed": {
+    "defaultMessage": "You are not currently subscribed to push notifications in this browser."
+  },
+  "pushnotifications.pushnotificationsettings.subscribe": {
+    "defaultMessage": "Subscribe"
+  },
+  "pushnotifications.pushnotificationsettings.unsubscribe": {
+    "defaultMessage": "Unsubscribe"
+  },
+  "pushnotifications.pushnotificationsettings.youresubscribed": {
+    "defaultMessage": "You are subscribed to push notifications in this browser."
+  },
   "room.permissioninstructionsmodal.issue": {
     "defaultMessage": "There seems to be an issue with your"
   },
   "signup": {
     "defaultMessage": "Sign Up",
     "description": "sign up"
+  },
+  "users.currentuser.usecurrentuser.notavaiable": {
+    "defaultMessage": "Current user not available"
   },
   "users.newuser.landingpage.description": {
     "defaultMessage": "Accessible virtual and hybrid conferences.",

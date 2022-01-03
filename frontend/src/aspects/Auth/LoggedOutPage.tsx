@@ -31,13 +31,20 @@ export default function LoggedOutPage(): JSX.Element {
                     />
                 </Heading>
                 <Text fontSize="xl" lineHeight="revert" fontWeight="light">
-                    We hope you enjoyed using Midspace&apos;s{" "}
-                    <Link isExternal href="https://github.com/clowdr-app/">
+                    <FormattedMessage
+                        id="auth.loggedoutpage.hopeyouenjoyed"
+                        defaultMessage="We hope you enjoyed using Midspace's open-source virtual conference software."
+                    />
+                    {/* <Link isExternal href="https://github.com/clowdr-app/">
                         open-source
-                    </Link>{" "}
-                    virtual conference software.
+                    </Link> */}
                 </Text>
-                <LinkButton to="/">Go to home page</LinkButton>
+                <LinkButton to="/">
+                    <FormattedMessage
+                        id="auth.loggedoutpage.tohome"
+                        defaultMessage="Go to home page"
+                    />
+                </LinkButton>
             </>
         );
     }

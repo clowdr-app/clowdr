@@ -563,7 +563,7 @@ export function satisfiesConditions(
                     // Non-scalar condition
                     const typedCondition: ConditionalClauses = condition as ConditionalClauses;
                     const innerEntityKeys = cache.resolve(entityKey, conditionKey) as null | string | string[];
-                    if (innerEntityKeys) {
+                    if (innerEntityKeys !== null) {
                         if (innerEntityKeys instanceof Array) {
                             let ok = false;
                             for (const innerEntityKey of innerEntityKeys) {
@@ -605,7 +605,7 @@ export function satisfiesConditions(
                             }
                         }
                     } else {
-                        return false;
+                        return "partial";
                     }
                 }
             }

@@ -103,7 +103,7 @@ const entityUpdater: (schema: IntrospectionData, augSchema: AugmentedIntrospecti
         const rawNewObjects = parent[info.fieldName];
         let _newObjects: Data[] | null = null;
         if (_entityName?.endsWith("_mutation_response")) {
-            const responseSchema = schema.__schema.types?.find((x) => x.kind === "OBJECT" && x.name === entityName);
+            const responseSchema = schema.__schema.types?.find((x) => x.kind === "OBJECT" && x.name === _entityName);
             const returningFieldSchema =
                 responseSchema?.kind === "OBJECT"
                     ? responseSchema.fields.find((x) => x.name === "returning")
@@ -195,6 +195,11 @@ const entityUpdater: (schema: IntrospectionData, augSchema: AugmentedIntrospecti
                     } as Data;
                 }
             });
+
+            // TODO: Insert links into existing fields...not this update query nonsense
+            //       Need to evaluate "where" conditions before inserting - except Urql
+            //       cache (in its infinite wisdom) will not execute "resolvers" during
+            //       "updaters" so it's likely that our conditionals code will break...
         } else if (operation === "update") {
             const selections: SelectionNode[] = buildSelectionSet(
                 _newObjects,
@@ -230,52 +235,19 @@ const entityUpdater: (schema: IntrospectionData, augSchema: AugmentedIntrospecti
                 cache.writeFragment(fragment, data);
             }
 
-            // TODO: Not sure if this writeFragment approach is sufficient, might need to update queries via inspectFields
+            // TODO: Not sure if this writeFragment approach is sufficient?
         } else if (operation === "delete") {
-            const query: QueryInput = {
-                query: {
-                    kind: "Document",
-                    definitions: [
-                        {
-                            kind: "OperationDefinition",
-                            operation: "query",
-                            selectionSet: {
-                                kind: "SelectionSet",
-                                selections: [
-                                    {
-                                        kind: "Field",
-                                        name: {
-                                            kind: "Name",
-                                            value: entityName,
-                                        },
-                                        selectionSet: {
-                                            kind: "SelectionSet",
-                                            selections: [],
-                                        },
-                                    },
-                                ],
-                            },
-                        },
-                    ],
-                },
-            };
             const keysToDelete = newObjects.map((x) => cache.keyOfEntity(x));
-            cache.updateQuery(query, (existingQueryData): Data | null => {
-                const d = existingQueryData?.[entityName];
-
-                if (!d) {
-                    return null;
-                } else if (d instanceof Array) {
-                    return {
-                        [entityName]: d.filter((x) => !keysToDelete.includes(cache.keyOfEntity(x as Data))),
-                    } as Data;
-                } else {
-                    return {
-                        [entityName]: !keysToDelete.includes(cache.keyOfEntity(d as Data)) ? [d] : [],
-                    } as Data;
+            const allFields = cache.inspectFields(schema.__schema.queryType.name);
+            const fieldInfos = allFields.filter((fieldInfo) => fieldInfo.fieldName === entityName);
+            fieldInfos.forEach((fieldInfo) => {
+                const keys = cache.resolve(schema.__schema.queryType.name, fieldInfo.fieldKey) as string[] | null;
+                if (keys) {
+                    const newKeys = keys.filter((x) => !keysToDelete.includes(x));
+                    cache.link(schema.__schema.queryType.name, fieldInfo.fieldName, fieldInfo.arguments, newKeys);
                 }
             });
-            // TODO: Delete from any other matching queries (inspectFields)
+
             // TODO: Delete links from nested fields?
         }
     };

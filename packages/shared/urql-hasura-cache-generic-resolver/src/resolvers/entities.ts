@@ -1,6 +1,7 @@
 import type { Entity, Resolver } from "@urql/exchange-graphcache";
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import { GraphQLError } from "graphql";
+import _ from "lodash";
 import { satisfiesConditions } from "../conditionals";
 import { getTableSchema } from "../schema";
 import type { AugmentedIntrospectionData, InnerResolverConfig } from "../types";
@@ -37,14 +38,25 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
             const where = args.where;
             const keysToTest = new Set<string>();
             for (const fieldInfo of fieldInfos) {
-                const keys = cache.resolve(parent as Entity, fieldInfo.fieldKey) as string | string[] | null;
-                if (keys) {
-                    if (keys instanceof Array) {
-                        keys.forEach((key) => {
-                            keysToTest.add(key);
-                        });
-                    } else {
-                        keysToTest.add(keys);
+                if (_.isEqual(fieldInfo.arguments, args)) {
+                    const key = cache.resolve(parent as Entity, fieldInfo.fieldKey) as string | string[] | null;
+                    if (key) {
+                        if (key instanceof Array) {
+                            key.forEach((x) => result.add(x));
+                        } else {
+                            result.add(key);
+                        }
+                    }
+                } else {
+                    const keys = cache.resolve(parent as Entity, fieldInfo.fieldKey) as string | string[] | null;
+                    if (keys) {
+                        if (keys instanceof Array) {
+                            keys.forEach((key) => {
+                                keysToTest.add(key);
+                            });
+                        } else {
+                            keysToTest.add(keys);
+                        }
                     }
                 }
             }
@@ -61,7 +73,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
                 );
                 if (conditionResult === "partial") {
                     info.partial = true;
-                    return undefined;
+                    continue;
                 }
                 if (conditionResult) {
                     result.add(key);

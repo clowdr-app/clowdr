@@ -95,7 +95,7 @@ export default function AppPage(): JSX.Element {
                 backgroundColor={bgColour}
             >
                 {conference ? <LeftMenu isExpanded={narrowView ? leftMenu_IsOpen : leftMenu_IsExpanded} /> : undefined}
-                <Box zIndex={1} height="100%" flex="0 1 100%" pos="relative">
+                <Box zIndex={1} height="100%" flex="0 1 100%" pos="relative" overflow="hidden">
                     <VStack
                         spacing={5}
                         overflowX="hidden"

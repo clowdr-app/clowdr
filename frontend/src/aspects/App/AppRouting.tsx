@@ -51,7 +51,7 @@ export default function DetectSlug(): JSX.Element {
     return (
         <Switch>
             <Route
-                path="/conference/:confSlug"
+                path={["/conference/:confSlug", "/c/:confSlug"]}
                 component={(
                     props: RouteComponentProps<{
                         confSlug: string;

@@ -194,7 +194,6 @@ const ManageContent = React.lazy(() => import("./Manage/Content/ManageContent"))
 const ManageEmail = React.lazy(() => import("./Manage/Email/ManageEmail"));
 const ManageExport = React.lazy(() => import("./Manage/Export/ManageExport"));
 const ManageImport = React.lazy(() => import("./Manage/Import/ManageImport"));
-const ManageDetails = React.lazy(() => import("./Manage/ManageDetails"));
 const ManageGroups = React.lazy(() => import("./Manage/ManageGroups"));
 const ManageProgramPeople = React.lazy(() => import("./Manage/ManageProgramPeople"));
 const ManagerLanding = React.lazy(() => import("./Manage/ManagerLanding"));
@@ -222,9 +221,6 @@ function ManageConferenceRoutes(): JSX.Element {
             <Switch>
                 <Route exact path={path}>
                     <ManagerLanding />
-                </Route>
-                <Route path={`${path}/details`}>
-                    <ManageDetails />
                 </Route>
                 <Route path={`${path}/groups`}>
                     <ManageGroups />
@@ -258,9 +254,6 @@ function ManageConferenceRoutes(): JSX.Element {
                 </Route>
                 <Route path={`${path}/chats/moderation`}>
                     <ManageModeration />
-                </Route>
-                <Route path={`${path}/chats`}>
-                    <PageNotImplemented />
                 </Route>
                 <Route path={`${path}/email`}>
                     <ManageEmail />

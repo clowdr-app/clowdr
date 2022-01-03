@@ -1,6 +1,26 @@
-import { Button, Divider, GridItem, Heading, SimpleGrid, Text, VStack } from "@chakra-ui/react";
-import React from "react";
-import { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
+import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
+    Button,
+    Divider,
+    GridItem,
+    Heading,
+    InputLeftAddon,
+    InputRightAddon,
+    SimpleGrid,
+    Text,
+    Tooltip,
+    useToast,
+    VStack,
+} from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import React, { useCallback, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { gql } from "urql";
+import { Conference_ConfigurationKey_Enum, useUpdateConferenceMutation } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import { roleOptions } from "../Content/v2/Submissions/SubmissionRequestsModal";
@@ -13,16 +33,274 @@ import SettingUpdater from "./SettingUpdater";
 import TextAreaSetting from "./TextAreaSetting";
 import TextSetting from "./TextSetting";
 
-export default function ManageConfig(): JSX.Element {
-    // TODO: Read-only FRONTEND_HOST
+gql`
+    mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
+        update_conference_Conference(
+            where: { id: { _eq: $id } }
+            _set: { name: $name, shortName: $shortName, slug: $slug }
+        ) {
+            returning {
+                id
+                name
+                shortName
+                slug
+            }
+        }
+    }
+`;
 
+export function normaliseSlug(value: string | null | undefined): string | undefined {
+    return value?.replace(/\s/g, "");
+}
+
+export function validateSlug(inValue: string | null | undefined): string | undefined {
+    let error;
+
+    const value = inValue ? normaliseSlug(inValue) : undefined;
+    if (!value || value.length === 0) {
+        error = "URL slug is required";
+    } else if (value.length < 5) {
+        error = "URL slug must be at least 5 characters.";
+    }
+
+    return error;
+}
+
+export default function ManageConfig(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Settings of ${conference.shortName}`);
+    const [_updateConferenceMutationResponse, updateConferenceMutation] = useUpdateConferenceMutation();
+
+    const toast = useToast();
+    const history = useHistory();
+    const updateConference = useCallback(
+        async (name: string, shortName: string, slug: string) => {
+            try {
+                const variables = {
+                    id: conference.id,
+                    name: name,
+                    shortName: shortName,
+                    slug: slug,
+                };
+                const result = await updateConferenceMutation(variables, {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                });
+                if (result.error || !result.data) {
+                    throw new Error(JSON.stringify(result.error));
+                } else {
+                    if (conference.slug !== variables.slug) {
+                        toast({
+                            title: "Changes saved. Redirecting to new url.",
+                            status: "success",
+                            duration: 2000,
+                        });
+                        window.localStorage.removeItem("SLUG_CACHE");
+                        history.push(`/conference/${variables.slug}/manage/settings`);
+                    } else {
+                        toast({
+                            title: "Changes saved",
+                            description: "Please refresh the page to see the changes.",
+                            status: "success",
+                            duration: 4000,
+                        });
+                    }
+                }
+            } catch (e: any) {
+                const msg = e.toString();
+                let expectedError: false | string = false;
+                if (msg.includes("Uniqueness violation")) {
+                    if (msg.includes("Conference_name_key")) {
+                        expectedError = "Name already taken.";
+                    } else if (msg.includes("Conference_shortName_key")) {
+                        expectedError = "Short name already taken.";
+                    } else if (msg.includes("Conference_slug_key")) {
+                        expectedError = "URL slug already taken.";
+                    }
+                }
+
+                if (expectedError) {
+                    toast({
+                        title: "Failed to save changes",
+                        description: expectedError,
+                        status: "error",
+                        duration: 7000,
+                        isClosable: true,
+                    });
+                } else {
+                    toast({
+                        title: "Failed to save changes",
+                        description: `An error has occurred while trying to save your changes.
+    Please contact our tech support to investigate the issue shown below.`,
+                        status: "error",
+                        duration: null,
+                        isClosable: true,
+                    });
+                    toast({
+                        title: "Error information",
+                        description: msg,
+                        status: "info",
+                        duration: null,
+                        isClosable: true,
+                    });
+                }
+            }
+        },
+        [conference.id, conference.slug, history, toast, updateConferenceMutation]
+    );
+    const [disableUrlSlug, setDisableUrlSlug] = useState<boolean>(true);
+    const [disableSaveUrlSlug, setDisableSaveUrlSlug] = useState<boolean>(false);
+    const urlSlugWarningText =
+        "Changing this setting will break any existing links to your conference (e.g. links sent to presenters via email or shared on social media).";
+    const [newURLSlug, setNewURLSlug] = useState<string | null>(null);
+    const resetURLSlug = useRef<() => void>(null);
 
     return (
         <DashboardPage title="Settings">
             {title}
             <VStack alignItems="flex-start" spacing={12}>
+                <Section title="Basic" description="Basic information about your conference.">
+                    <Setting title="Name" description="The full name of your conference. Minimum length 5.">
+                        <TextSetting
+                            type="text"
+                            value={conference.name}
+                            settingName="Name"
+                            onChange={(value) => {
+                                if (value?.length >= 5) {
+                                    updateConference(value, conference.shortName, conference.slug);
+                                }
+                            }}
+                            minLength={5}
+                            maxLength={120}
+                        />
+                    </Setting>
+                    <Setting
+                        title="Short Name"
+                        description="The short-form name of your conference (e.g. its acronym and year such as MAC 2022). Minimum length 5."
+                    >
+                        <TextSetting
+                            type="text"
+                            value={conference.shortName}
+                            settingName="Short Name"
+                            onChange={(value) => {
+                                if (value?.length >= 5) {
+                                    updateConference(conference.name, value, conference.slug);
+                                }
+                            }}
+                            minLength={5}
+                            maxLength={12}
+                        />
+                    </Setting>
+                    <Setting title="URL Slug" description="The identifying part of the url for your conference.">
+                        <TextSetting
+                            type="text"
+                            value={conference.slug}
+                            settingName="URL Slug"
+                            onChangeStarted={(value) => {
+                                setDisableSaveUrlSlug(true);
+                                const newSlug = normaliseSlug(value);
+                                if (newSlug && validateSlug(newSlug) === undefined && newSlug !== conference.slug) {
+                                    setNewURLSlug(newSlug);
+                                } else {
+                                    setNewURLSlug(null);
+                                }
+                            }}
+                            onChange={(value) => {
+                                setDisableSaveUrlSlug(false);
+                                const newSlug = normaliseSlug(value);
+                                if (newSlug && validateSlug(newSlug) === undefined && newSlug !== conference.slug) {
+                                    setNewURLSlug(newSlug);
+                                } else {
+                                    setNewURLSlug(null);
+                                }
+                            }}
+                            onReset={resetURLSlug}
+                            isDisabled={disableUrlSlug}
+                            leftAddon={
+                                <InputLeftAddon>
+                                    <FAIcon
+                                        iconStyle="s"
+                                        icon={newURLSlug ? "save" : disableUrlSlug ? "lock" : "unlock"}
+                                    />
+                                </InputLeftAddon>
+                            }
+                            rightAddon={
+                                <InputRightAddon p={0} m={0}>
+                                    <Tooltip label={disableUrlSlug ? urlSlugWarningText : ""}>
+                                        <>
+                                            <Button
+                                                colorScheme={newURLSlug ? "ConfirmButton" : "yellow"}
+                                                onClick={() => {
+                                                    if (newURLSlug) {
+                                                        setDisableUrlSlug(true);
+                                                        updateConference(
+                                                            conference.name,
+                                                            conference.shortName,
+                                                            newURLSlug
+                                                        );
+                                                        setNewURLSlug(null);
+                                                    } else {
+                                                        setDisableUrlSlug((old) => !old);
+                                                    }
+                                                }}
+                                                isDisabled={Boolean(newURLSlug) && disableSaveUrlSlug}
+                                            >
+                                                {newURLSlug ? "Save" : disableUrlSlug ? "Unlock" : "Lock"}
+                                            </Button>
+                                            {newURLSlug ? (
+                                                <Button
+                                                    colorScheme="PrimaryActionButton"
+                                                    onClick={() => {
+                                                        setDisableUrlSlug(true);
+                                                        setNewURLSlug(null);
+                                                        resetURLSlug.current?.();
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                            ) : undefined}
+                                        </>
+                                    </Tooltip>
+                                </InputRightAddon>
+                            }
+                            minLength={5}
+                            maxLength={12}
+                        />
+                        {!disableUrlSlug ? (
+                            <Alert status="warning" alignItems="flex-start">
+                                <AlertIcon />
+                                <VStack alignItems="flex-start" spacing={0}>
+                                    <AlertTitle>Proceed with caution</AlertTitle>
+                                    <AlertDescription>{urlSlugWarningText}</AlertDescription>
+                                </VStack>
+                            </Alert>
+                        ) : undefined}
+                    </Setting>
+                    <Setting
+                        title="Custom domain"
+                        description="Custom domain for your conference. Please contact support to change this."
+                    >
+                        <SettingUpdater<string>
+                            settingName={Conference_ConfigurationKey_Enum.FrontendHost}
+                            defaultValue={""}
+                        >
+                            {({ value, settingName }) => (
+                                <TextSetting
+                                    type="url"
+                                    value={value}
+                                    settingName={settingName}
+                                    onChange={() => {
+                                        // Do nothing
+                                    }}
+                                    isDisabled={true}
+                                />
+                            )}
+                        </SettingUpdater>
+                    </Setting>
+                </Section>
                 <Section
                     title="Contact &amp; Registration"
                     description="Contact and registration details for your conference."
@@ -466,7 +744,7 @@ function Section({
                     </Heading>
                     <Text>{description}</Text>
                 </VStack>
-                <SimpleGrid pl={8} pr={2} columns={2} gridRowGap={8} gridColumnGap={4} w="100%">
+                <SimpleGrid pl={8} pr={2} columns={[1, 1, 2]} gridRowGap={[4, 4, 8]} gridColumnGap={4} w="100%">
                     {children}
                 </SimpleGrid>
             </VStack>
@@ -482,7 +760,7 @@ function Setting({
 }: React.PropsWithChildren<{ title: string; description: string }>): JSX.Element {
     return (
         <>
-            <GridItem>
+            <GridItem paddingTop={[4, 4, 0]}>
                 <VStack spacing={2} alignItems="flex-start">
                     <Heading as="h3" fontSize="lg" textAlign="left">
                         {title}

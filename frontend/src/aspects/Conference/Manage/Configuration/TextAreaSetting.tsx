@@ -1,6 +1,6 @@
 import { Textarea } from "@chakra-ui/react";
 import type { ChangeEventHandler } from "react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
 
 export default function TextSetting({
@@ -15,18 +15,18 @@ export default function TextSetting({
     isDisabled?: boolean;
 }): JSX.Element {
     const [value_Debounce, setValue_Debounce] = useState<string>(value);
-    const [valueChanged, setValueChanged] = useState<boolean>(false);
+    const valueChanged = useRef<boolean>(false);
     const onChange_Debounce: ChangeEventHandler<HTMLTextAreaElement> = useCallback((event) => {
         setValue_Debounce(event.target.value);
     }, []);
     useEffect(() => {
         let tId: number | undefined;
-        if (value !== value_Debounce || valueChanged) {
-            setValueChanged(true);
+        if (value !== value_Debounce || valueChanged.current) {
+            valueChanged.current = true;
             tId = setTimeout(
                 (() => {
-                    if (valueChanged) {
-                        setValueChanged(false);
+                    if (valueChanged.current) {
+                        valueChanged.current = false;
                         onChange(value_Debounce);
                     }
                 }) as TimerHandler,
@@ -46,8 +46,8 @@ export default function TextSetting({
             value={value_Debounce}
             onChange={onChange_Debounce}
             onBlur={() => {
-                if (valueChanged) {
-                    setValueChanged(false);
+                if (valueChanged.current) {
+                    valueChanged.current = false;
                     onChange(value_Debounce);
                 }
             }}

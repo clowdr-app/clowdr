@@ -13,17 +13,31 @@ export function Breadcrumbs(): JSX.Element {
                 breadcrumb: `Manage ${conference.shortName}`,
             },
             {
+                path: "/c/:slug/manage",
+                breadcrumb: `Manage ${conference.shortName}`,
+            },
+            {
                 path: "/conference/:slug/manage/export/youtube",
+                breadcrumb: "YouTube",
+            },
+            {
+                path: "/c/:slug/manage/export/youtube",
                 breadcrumb: "YouTube",
             },
             {
                 path: "/conference/:slug/manage/export/download-videos",
                 breadcrumb: "Download videos",
             },
+            {
+                path: "/c/:slug/manage/export/download-videos",
+                breadcrumb: "Download videos",
+            },
         ],
         [conference.shortName]
     );
-    const breadcrumbs = useBreadcrumbs(routes, { excludePaths: ["/", "/conference", "/conference/:slug"] });
+    const breadcrumbs = useBreadcrumbs(routes, {
+        excludePaths: ["/", "/conference", "/c", "/conference/:slug", "/c/:slug"],
+    });
 
     return (
         <Breadcrumb separator=">">

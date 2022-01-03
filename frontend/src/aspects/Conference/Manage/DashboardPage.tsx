@@ -7,7 +7,7 @@ export function DashboardPage({ title, children }: PropsWithChildren<{ title: st
     const grayBg = useColorModeValue("gray.50", "gray.900");
     const grayBorder = useColorModeValue("gray.300", "gray.600");
     return (
-        <Flex flexDir="column" w={{ base: "100%", xl: "80%" }}>
+        <Flex flexDir="column" w={{ base: "100%", xl: "80%" }} px={[2, 2, 4]}>
             <Box
                 position="sticky"
                 top={0}

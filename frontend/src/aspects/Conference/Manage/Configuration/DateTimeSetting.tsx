@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 
 export default function DateTimeSetting({
@@ -11,18 +11,18 @@ export default function DateTimeSetting({
     isDisabled?: boolean;
 }): JSX.Element {
     const [value_Debounce, setValue_Debounce] = useState<Date | undefined>(value ? new Date(value) : undefined);
-    const [valueChanged, setValueChanged] = useState<boolean>(false);
+    const valueChanged = useRef<boolean>(false);
     const onChange_Debounce = useCallback((newValue: Date | undefined) => {
         setValue_Debounce(newValue);
     }, []);
     useEffect(() => {
         let tId: number | undefined;
-        if (value !== value_Debounce?.getTime() || valueChanged) {
-            setValueChanged(true);
+        if (value !== value_Debounce?.getTime() || valueChanged.current) {
+            valueChanged.current = true;
             tId = setTimeout(
                 (() => {
-                    if (valueChanged) {
-                        setValueChanged(false);
+                    if (valueChanged.current) {
+                        valueChanged.current = false;
                         onChange(value_Debounce?.getTime());
                     }
                 }) as TimerHandler,
@@ -42,8 +42,8 @@ export default function DateTimeSetting({
             value={value_Debounce}
             onChange={onChange_Debounce}
             onBlur={() => {
-                if (valueChanged) {
-                    setValueChanged(false);
+                if (valueChanged.current) {
+                    valueChanged.current = false;
                     onChange(value_Debounce?.getTime());
                 }
             }}

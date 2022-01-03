@@ -38,10 +38,10 @@ export default function RestrictedDashboardButton({
                 overflow="hidden"
                 whiteSpace="normal"
                 linkProps={{
-                    maxWidth: "min(20%, 275px)",
-                    minWidth: "300px",
+                    maxWidth: "290px",
+                    width: "100%",
                 }}
-                colorScheme={colorScheme ?? "blue"}
+                colorScheme={colorScheme ?? "dark-purple"}
                 flexDirection="column"
                 justifyContent="flex-start"
                 alignItems="center"

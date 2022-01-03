@@ -1,22 +1,40 @@
-import { Flex, Heading, VStack } from "@chakra-ui/react";
+import { Flex, Heading, HStack, Link, Spacer, VStack } from "@chakra-ui/react";
 import React from "react";
+import { Link as ReactLink } from "react-router-dom";
+import { useAuthParameters } from "../../GQL/AuthParameters";
 import { useTitle } from "../../Hooks/useTitle";
+import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 
 export default function ManagerLandingPage(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage ${conference.shortName}`);
     return (
         <>
             {title}
-            <VStack w="100%" alignItems="flex-start" px={8} spacing={8}>
+            <VStack
+                w="100%"
+                alignItems="flex-start"
+                px={8}
+                spacing={8}
+                maxW="calc(902px + (2 * var(--chakra-space-8)))"
+            >
                 <Heading as="h1" id="page-heading" mt={4} textAlign="left" w="100%" fontSize="4xl">
                     Manage {conference.shortName}
                 </Heading>
-                <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
-                    Program
-                </Heading>
+                <HStack w="100%" alignItems="flex-end">
+                    <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
+                        Program
+                    </Heading>
+                    <Spacer w="auto" />
+                    <RequireRole organizerRole={true}>
+                        <Link as={ReactLink} to={`${conferencePath}/manage/checklist`} fontSize="lg">
+                            Checklist
+                        </Link>
+                    </RequireRole>
+                </HStack>
                 <Flex
                     flexWrap="wrap"
                     alignItems="stretch"
@@ -31,7 +49,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="align-left"
                         description="Manage your program content: papers, posters, keynotes, etc."
                         organizerRole
-                        colorScheme="purple"
                     />
                     <RestrictedDashboardButton
                         to="schedule"
@@ -39,7 +56,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="calendar"
                         description="Manage your program schedule: your events."
                         organizerRole
-                        colorScheme="purple"
                     />
                     <RestrictedDashboardButton
                         to="people"
@@ -47,7 +63,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="people-arrows"
                         description="Manage people listed in your program (authors, speakers, etc) and their links to registrants."
                         organizerRole
-                        colorScheme="purple"
                     />
                     <RestrictedDashboardButton
                         to="content"
@@ -57,7 +72,6 @@ export default function ManagerLandingPage(): JSX.Element {
                             conference.sponsorsLabel?.[0]?.value ?? "sponsors"
                         }, their booths and representatives.`}
                         organizerRole
-                        colorScheme="purple"
                     />
                 </Flex>
                 <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
@@ -77,7 +91,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="download"
                         description="Import your content, schedule and registrants."
                         organizerRole
-                        colorScheme="purple"
                     />
                     <RestrictedDashboardButton
                         to="export"
@@ -85,7 +98,13 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="upload"
                         description="Export your conference data (events, public chats, analytics, etc)."
                         organizerRole
-                        colorScheme="purple"
+                    />
+                    <RestrictedDashboardButton
+                        to="analytics"
+                        name="Analytics"
+                        icon="chart-line"
+                        description="View activity at your conference."
+                        organizerRole
                     />
                 </Flex>
                 <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
@@ -105,7 +124,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="coffee"
                         description="Manage and prioritise rooms."
                         organizerRole
-                        colorScheme="purple"
                     />
                     <RestrictedDashboardButton
                         to="shuffle"
@@ -113,7 +131,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="random"
                         description="Manage randomised, time-limited networking, aka. shuffle periods."
                         organizerRole
-                        colorScheme="purple"
                     />
                     <RestrictedDashboardButton
                         to="chats/moderation"
@@ -121,7 +138,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="comments"
                         description="Moderate conversations."
                         moderatorRole
-                        colorScheme="purple"
                     />
                 </Flex>
                 <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
@@ -141,7 +157,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="user-cog"
                         description="Manage groups of registrants."
                         organizerRole
-                        colorScheme="purple"
                     />
                     <RestrictedDashboardButton
                         to="registrants"
@@ -149,7 +164,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="users"
                         description="Manage who can log in and access your conference, e.g. registrants, presenters and speakers."
                         organizerRole
-                        colorScheme="purple"
                     />
                 </Flex>
                 <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
@@ -169,7 +183,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="palette"
                         description="Customise the theme for attendees."
                         organizerRole
-                        colorScheme="purple"
                     />
                     <RestrictedDashboardButton
                         to="email"
@@ -177,15 +190,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="envelope-open-text"
                         description="Manage templates for submission requests, invitations, etc."
                         organizerRole
-                        colorScheme="purple"
-                    />
-                    <RestrictedDashboardButton
-                        to="details"
-                        name="Details"
-                        icon="signature"
-                        description="Manage name, short name and url."
-                        organizerRole
-                        colorScheme="purple"
                     />
                     <RestrictedDashboardButton
                         to="settings"
@@ -193,18 +197,8 @@ export default function ManagerLandingPage(): JSX.Element {
                         icon="cog"
                         description="Manage global configuration of your conference."
                         organizerRole
-                        colorScheme="purple"
                     />
                 </Flex>
-                {/* <RestrictedDashboardButton
-                    to="chats"
-                    name="Chats"
-                    icon="comments"
-                    description="Manage and moderate conversations."
-                    organizerRole
-                    colorScheme="purple"
-                /> */}
-
                 {/* <RestrictedDashboardButton
                     to="broadcasts"
                     name="Broadcasts"
@@ -213,34 +207,6 @@ export default function ManagerLandingPage(): JSX.Element {
                     organizerRole
                     colorScheme="gray"
                 /> */}
-                <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
-                    Check &amp; Monitor
-                </Heading>
-                <Flex
-                    flexWrap="wrap"
-                    alignItems="stretch"
-                    justifyContent="flex-start"
-                    w="100%"
-                    gridRowGap="1em"
-                    gridColumnGap="1em"
-                >
-                    <RestrictedDashboardButton
-                        to="checklist"
-                        name="Checklist"
-                        icon="check-circle"
-                        description="Run the automatic checker to see if you're ready for the start of your conference."
-                        organizerRole
-                        colorScheme="purple"
-                    />
-                    <RestrictedDashboardButton
-                        to="analytics"
-                        name="Analytics"
-                        icon="chart-line"
-                        description="View activity at your conference."
-                        organizerRole
-                        colorScheme="purple"
-                    />
-                </Flex>
             </VStack>
             {/* 
                 <RestrictedDashboardButton

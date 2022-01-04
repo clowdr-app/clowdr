@@ -31,6 +31,7 @@ import {
     WrapItem,
 } from "@chakra-ui/react";
 import { Mutex } from "async-mutex";
+import type { MutableRefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gql } from "urql";
 import { useGetRoomChatIdQuery, useToggleVonageRecordingStateMutation } from "../../../../../generated/graphql";
@@ -43,7 +44,9 @@ import { devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
 import type { DevicesProps } from "../VideoChat/PermissionInstructionsContext";
 import LayoutChooser from "./Components/LayoutChooser";
 import PlayVideoMenuButton from "./Components/PlayVideoMenu";
+import SubtitlesPanel from "./Components/SubtitlesPanel";
 import DeviceChooserModal from "./DeviceChooserModal";
+import type { TranscriptData } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { useVonageLayout } from "./VonageLayoutProvider";
@@ -71,6 +74,7 @@ export function VonageRoomControlBar({
     canControlRecording,
     roomId,
     eventId,
+    onTranscriptRef,
 }: {
     onJoinRoom: () => Promise<void>;
     onLeaveRoom: () => void;
@@ -85,6 +89,7 @@ export function VonageRoomControlBar({
     canControlRecording: boolean;
     roomId?: string;
     eventId?: string;
+    onTranscriptRef?: MutableRefObject<((data: TranscriptData) => void) | undefined>;
 }): JSX.Element {
     const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
@@ -458,8 +463,12 @@ export function VonageRoomControlBar({
         };
     }, [chatId, globalChatState]);
 
+    const [subtitlesVisible, setSubtitlesVisible] = useState<boolean>(false);
     return (
         <>
+            {vonage.state.type === StateType.Connected && subtitlesVisible && (
+                <SubtitlesPanel onTranscriptRef={onTranscriptRef} />
+            )}
             <LayoutChooser />
             <Flex
                 p={2}
@@ -486,8 +495,8 @@ export function VonageRoomControlBar({
                     <Tooltip label="Mute">
                         <IconButton
                             size="sm"
-                            onClick={stopMicrophone}
                             colorScheme="ActiveRoomControlBarButton"
+                            onClick={stopMicrophone}
                             isDisabled={joining}
                             icon={<FAIcon icon="microphone" iconStyle="s" />}
                             aria-label="Mute"
@@ -646,6 +655,20 @@ export function VonageRoomControlBar({
                             </PopoverContent>
                         </Portal>
                     </Popover>
+                ) : undefined}
+                {vonage.state.type === StateType.Connected ? (
+                    <Tooltip label={subtitlesVisible ? "Hide subtitles" : "Show subtitles"}>
+                        <IconButton
+                            size="sm"
+                            colorScheme={
+                                subtitlesVisible ? "ActiveRoomControlBarButton" : "InactiveRoomControlBarButton"
+                            }
+                            onClick={() => setSubtitlesVisible((old) => !old)}
+                            isDisabled={joining}
+                            aria-label={subtitlesVisible ? "Hide subtitles" : "Show subtitles"}
+                            icon={<FAIcon iconStyle={subtitlesVisible ? "s" : "r"} icon="closed-captioning" />}
+                        />
+                    </Tooltip>
                 ) : undefined}
                 {vonage.state.type === StateType.Connected && (isBackstage || canControlRecording) ? (
                     <Tooltip label={layoutChooser_isOpen ? "Cancel" : "Layout"}>

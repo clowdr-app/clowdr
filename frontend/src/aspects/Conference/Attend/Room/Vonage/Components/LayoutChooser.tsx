@@ -25,7 +25,7 @@ export default function LayoutChooser(): JSX.Element {
     }, [isOpen, layout]);
 
     return isOpen ? (
-        <VStack py={2} bgColor="purple.600" borderTopColor="purple.500" borderTopStyle="solid" borderTopWidth={1}>
+        <VStack py={2} bgColor="purple.600" borderTopColor="purple.400" borderTopStyle="solid" borderTopWidth={1}>
             <ButtonGroup flexWrap="wrap" alignItems="center" justifyContent="center" gridRowGap={2}>
                 <Button
                     colorScheme="DestructiveActionButton"

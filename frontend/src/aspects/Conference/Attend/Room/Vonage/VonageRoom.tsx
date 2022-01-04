@@ -26,6 +26,7 @@ import SelfCameraComponent from "./Components/SelfCamera";
 import SelfScreenComponent from "./Components/SelfScreen";
 import VideoChatVideoPlayer from "./Components/VideoChatVideoPlayer";
 import { useVonageComputedState } from "./useVonageComputedState";
+import type { TranscriptData } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import type { AvailableStream, VonageLayout } from "./VonageLayoutProvider";
 import { useVonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
@@ -234,6 +235,11 @@ function VonageRoomInner({
         }, 50 + Math.random() * 100);
     }, []);
 
+    const onTranscriptRef = useRef<((data: TranscriptData) => void) | undefined>(undefined);
+    const onTranscript = useCallback((data: TranscriptData) => {
+        onTranscriptRef.current?.(data);
+    }, []);
+
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera, joining, leaveRoom, joinRoom } =
         useVonageComputedState({
@@ -244,6 +250,7 @@ function VonageRoomInner({
             onRecordingStarted,
             onRecordingStopped,
             onRecordingIdReceived,
+            onTranscript,
             isBackstageRoom,
             beginJoin,
             cancelJoin,
@@ -652,6 +659,7 @@ function VonageRoomInner({
                     canControlRecording={canControlRecording}
                     roomId={roomId}
                     eventId={eventId}
+                    onTranscriptRef={onTranscriptRef}
                 />
             </Flex>
             {connected && playVideoElementId ? <VideoChatVideoPlayer elementId={playVideoElementId} /> : undefined}

@@ -2,9 +2,13 @@ import type { EventStreamMarshaller, Message as AWSEventStreamMessage } from "@a
 import * as marshaller from "@aws-sdk/eventstream-marshaller";
 import * as util_utf8_node from "@aws-sdk/util-utf8-node";
 import { datadogLogs } from "@datadog/browser-logs";
-import { useEffect, useMemo, useState } from "react";
-import { gql } from "urql";
-import { useTranscribeGeneratePresignedUrlQuery } from "../../../../../generated/graphql";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { gql, useClient } from "urql";
+import type {
+    TranscribeGeneratePresignedUrlQuery,
+    TranscribeGeneratePresignedUrlQueryVariables,
+} from "../../../../../generated/graphql";
+import { TranscribeGeneratePresignedUrlDocument } from "../../../../../generated/graphql";
 import { downsampleBuffer, pcmEncode } from "./AudioEncoding";
 
 gql`
@@ -98,13 +102,36 @@ export function useAWSTranscription(
         }
     }, [audioContext, camera, processorNode]);
 
-    const [preSignedUrl] = useTranscribeGeneratePresignedUrlQuery({
-        variables: {
-            languageCode,
-            sampleRate: targetSampleRate.toFixed(0),
-        },
-        requestPolicy: "network-only",
-    });
+    const [preSignedUrl, setPreSignedUrl] = useState<string | null>(null);
+    const gqlClient = useClient();
+    const loadingRef = useRef<boolean>(false);
+    useEffect(() => {
+        if (camera && !loadingRef.current) {
+            loadingRef.current = true;
+            (async () => {
+                try {
+                    const response = await gqlClient
+                        .query<TranscribeGeneratePresignedUrlQuery, TranscribeGeneratePresignedUrlQueryVariables>(
+                            TranscribeGeneratePresignedUrlDocument,
+                            {
+                                languageCode,
+                                sampleRate: targetSampleRate.toFixed(0),
+                            },
+                            {
+                                requestPolicy: "network-only",
+                            }
+                        )
+                        .toPromise();
+                    setPreSignedUrl(response.data?.transcribeGeneratePresignedUrl?.url ?? null);
+                } catch (e: any) {
+                    console.error("Error fetching pre-signed url for subtitling", { error: e });
+                } finally {
+                    loadingRef.current = false;
+                }
+            })();
+        }
+    }, [camera, gqlClient]);
+
     const eventStreamMarshaller = useMemo(
         () => new marshaller.EventStreamMarshaller(util_utf8_node.toUtf8, util_utf8_node.fromUtf8),
         []
@@ -120,8 +147,8 @@ export function useAWSTranscription(
             }
         }
 
-        if (camera && preSignedUrl.data?.transcribeGeneratePresignedUrl) {
-            const url = preSignedUrl.data.transcribeGeneratePresignedUrl.url;
+        if (camera && preSignedUrl) {
+            const url = preSignedUrl;
             const newSocket = new WebSocket(url);
             newSocket.binaryType = "arraybuffer";
             setSocket(newSocket);
@@ -176,11 +203,5 @@ export function useAWSTranscription(
             setSocket(null);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        eventStreamMarshaller,
-        camera,
-        preSignedUrl.data?.transcribeGeneratePresignedUrl,
-        processorNode,
-        audioContext.sampleRate,
-    ]);
+    }, [eventStreamMarshaller, camera, preSignedUrl, processorNode, audioContext.sampleRate]);
 }

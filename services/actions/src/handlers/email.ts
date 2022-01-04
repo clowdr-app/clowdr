@@ -19,6 +19,7 @@ import { apolloClient } from "../graphqlClient";
 import type { EmailTemplateContext } from "../lib/email/emailTemplate";
 import { EmailBuilder, getEmailTemplate } from "../lib/email/emailTemplate";
 import { formatSendingReason } from "../lib/email/sendingReasons";
+import { logger } from "../lib/logger";
 import { callWithRetry } from "../utils";
 
 gql`
@@ -427,8 +428,9 @@ export async function processEmailWebhook(payloads: Record<string, any>[]): Prom
                     throw new Error("Unrecognised webhook event");
             }
             if (status !== "processed" || !completedIds.has(midspaceEmailId)) {
-                console.log(
-                    `Email webhook: Setting email status: { "midspaceEmailId": "${midspaceEmailId}", "status": "${status}", "errorMessage": "${errorMessage}" }`
+                logger.log(
+                    { midspaceEmailId: "${midspaceEmailId}", status: "${status}", errorMessage: "${errorMessage}" },
+                    "Email webhook: Setting email status"
                 );
                 await apolloClient.mutate({
                     mutation: UpdateEmailStatusDocument,

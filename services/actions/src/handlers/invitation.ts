@@ -21,6 +21,7 @@ import {
     SetRegistrantUserIdDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { logger } from "../lib/logger";
 import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
 gql`
@@ -447,7 +448,7 @@ export async function handleInvitationInsert_AutomaticSendRepeat(): Promise<void
                     },
                 });
             } catch (e: any) {
-                console.error(
+                logger.error(
                     `Error processing automatic repeat invitations for conference: ${
                         conference.id
                     }. Error: ${e?.toString()}`

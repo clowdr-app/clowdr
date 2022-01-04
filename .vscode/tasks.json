@@ -299,6 +299,22 @@
             "dependsOn": [
                 "Packetriot",
                 "Hasura Console -- Local Development",
+                "Run All -- Local Development -- Subtask, wait for Docker"
+            ],
+            "dependsOrder": "parallel",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All -- Local Development -- Subtask, wait for Docker",
+            "dependsOn": ["Wait for Docker", "Run All -- Local Development -- Subtask, services"],
+            "dependsOrder": "sequence",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All -- Local Development -- Subtask, services",
+            "dependsOn": [
                 "Auth Service -- Local Development",
                 "Actions Service -- Local Development",
                 "Caches Service -- Local Development",
@@ -315,6 +331,22 @@
             "dependsOn": [
                 "Packetriot",
                 "Hasura Console -- Local Development",
+                "Run Minimal -- Local Development -- Subtask, wait for Docker"
+            ],
+            "dependsOrder": "parallel",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Minimal -- Local Development -- Subtask, wait for Docker",
+            "dependsOn": ["Wait for Docker", "Run Minimal -- Local Development -- Subtask, services"],
+            "dependsOrder": "sequence",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Minimal -- Local Development -- Subtask, services",
+            "dependsOn": [
                 "Auth Service -- Local Development",
                 "Caches Service -- Local Development",
                 "Actions Service -- Local Development",
@@ -403,6 +435,16 @@
                 "-s",
                 "XXXXX"
             ]
+        },
+        {
+            "label": "Wait for Docker",
+            "type": "shell",
+            "command": "npx",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "args": ["wait-on", "http-get://localhost:8080/v1/version"]
         }
     ],
     "inputs": [

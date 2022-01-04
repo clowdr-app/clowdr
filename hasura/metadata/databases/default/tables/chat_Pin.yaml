@@ -147,6 +147,15 @@ select_permissions:
               subconferenceId:
                 _in: X-Hasura-Subconference-Ids
   role: subconference-organizer
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - wasManuallyPinned
+    filter:
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: attendee
 delete_permissions:
 - permission:
     filter:

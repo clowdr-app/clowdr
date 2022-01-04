@@ -118,12 +118,13 @@ select_permissions:
     - subconferenceId
     filter:
       _and:
-      - subconferenceId:
-          _is_null: false
+      - _or:
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+        - subconferenceId:
+            _is_null: true
       - conferenceId:
           _in: X-Hasura-Conference-Ids
-      - subconferenceId:
-          _in: X-Hasura-Subconference-Ids
   role: conference-organizer
 - permission:
     columns:
@@ -150,7 +151,7 @@ select_permissions:
   role: subconference-organizer
 update_permissions:
 - permission:
-    check: null
+    check: {}
     columns:
     - enableAutoPin
     - enableAutoSubscribe
@@ -159,12 +160,13 @@ update_permissions:
     - restrictToAdmins
     filter:
       _and:
-      - subconferenceId:
-          _is_null: false
+      - _or:
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+        - subconferenceId:
+            _is_null: true
       - conferenceId:
           _in: X-Hasura-Conference-Ids
-      - subconferenceId:
-          _in: X-Hasura-Subconference-Ids
   role: conference-organizer
 - permission:
     check: null
@@ -197,12 +199,13 @@ delete_permissions:
 - permission:
     filter:
       _and:
-      - subconferenceId:
-          _is_null: false
+      - _or:
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+        - subconferenceId:
+            _is_null: true
       - conferenceId:
           _in: X-Hasura-Conference-Ids
-      - subconferenceId:
-          _in: X-Hasura-Subconference-Ids
   role: conference-organizer
 - permission:
     filter:

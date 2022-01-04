@@ -40815,6 +40815,30 @@ export type PreshowChecklistQuery = {
     }>;
 };
 
+export type UpdateConferenceMutationVariables = Exact<{
+    id: Scalars["uuid"];
+    name?: InputMaybe<Scalars["String"]>;
+    shortName?: InputMaybe<Scalars["String"]>;
+    slug?: InputMaybe<Scalars["String"]>;
+}>;
+
+export type UpdateConferenceMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_conference_Conference?:
+        | {
+              readonly __typename?: "conference_Conference_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "conference_Conference";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly shortName: string;
+                  readonly slug: string;
+              }>;
+          }
+        | null
+        | undefined;
+};
+
 export type MultiSettingUpdater_GetConfigurationsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
     keys: ReadonlyArray<Conference_ConfigurationKey_Enum> | Conference_ConfigurationKey_Enum;
@@ -43271,30 +43295,6 @@ export type ImportRegistrantsMutation = {
         | undefined;
 };
 
-export type UpdateConferenceMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    name?: InputMaybe<Scalars["String"]>;
-    shortName?: InputMaybe<Scalars["String"]>;
-    slug?: InputMaybe<Scalars["String"]>;
-}>;
-
-export type UpdateConferenceMutation = {
-    readonly __typename?: "mutation_root";
-    readonly update_conference_Conference?:
-        | {
-              readonly __typename?: "conference_Conference_mutation_response";
-              readonly returning: ReadonlyArray<{
-                  readonly __typename?: "conference_Conference";
-                  readonly id: any;
-                  readonly name: string;
-                  readonly shortName: string;
-                  readonly slug: string;
-              }>;
-          }
-        | null
-        | undefined;
-};
-
 export type ManageGroups_GroupFragment = {
     readonly __typename?: "registrant_Group";
     readonly conferenceId: any;
@@ -44869,7 +44869,6 @@ export type DeleteEventProgramPersonsMutation = {
 
 export type UpdateEventProgramPersonMutationVariables = Exact<{
     id: Scalars["uuid"];
-    personId: Scalars["uuid"];
     roleName: Schedule_EventProgramPersonRole_Enum;
 }>;
 
@@ -51207,6 +51206,25 @@ export function usePreshowChecklistQuery(
 ) {
     return Urql.useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
 }
+export const UpdateConferenceDocument = gql`
+    mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
+        update_conference_Conference(
+            where: { id: { _eq: $id } }
+            _set: { name: $name, shortName: $shortName, slug: $slug }
+        ) {
+            returning {
+                id
+                name
+                shortName
+                slug
+            }
+        }
+    }
+`;
+
+export function useUpdateConferenceMutation() {
+    return Urql.useMutation<UpdateConferenceMutation, UpdateConferenceMutationVariables>(UpdateConferenceDocument);
+}
 export const MultiSettingUpdater_GetConfigurationsDocument = gql`
     query MultiSettingUpdater_GetConfigurations($conferenceId: uuid!, $keys: [conference_ConfigurationKey_enum!]!) {
         conference_Configuration(where: { conferenceId: { _eq: $conferenceId }, key: { _in: $keys } }) {
@@ -52709,25 +52727,6 @@ export const ImportRegistrantsDocument = gql`
 export function useImportRegistrantsMutation() {
     return Urql.useMutation<ImportRegistrantsMutation, ImportRegistrantsMutationVariables>(ImportRegistrantsDocument);
 }
-export const UpdateConferenceDocument = gql`
-    mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
-        update_conference_Conference(
-            where: { id: { _eq: $id } }
-            _set: { name: $name, shortName: $shortName, slug: $slug }
-        ) {
-            returning {
-                id
-                name
-                shortName
-                slug
-            }
-        }
-    }
-`;
-
-export function useUpdateConferenceMutation() {
-    return Urql.useMutation<UpdateConferenceMutation, UpdateConferenceMutationVariables>(UpdateConferenceDocument);
-}
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
         registrant_Group(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -53738,11 +53737,8 @@ export function useDeleteEventProgramPersonsMutation() {
     );
 }
 export const UpdateEventProgramPersonDocument = gql`
-    mutation UpdateEventProgramPerson($id: uuid!, $personId: uuid!, $roleName: schedule_EventProgramPersonRole_enum!) {
-        update_schedule_EventProgramPerson_by_pk(
-            pk_columns: { id: $id }
-            _set: { personId: $personId, roleName: $roleName }
-        ) {
+    mutation UpdateEventProgramPerson($id: uuid!, $roleName: schedule_EventProgramPersonRole_enum!) {
+        update_schedule_EventProgramPerson_by_pk(pk_columns: { id: $id }, _set: { roleName: $roleName }) {
             ...EventProgramPersonInfo
         }
     }

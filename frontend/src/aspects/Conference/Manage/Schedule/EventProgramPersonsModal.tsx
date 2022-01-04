@@ -88,11 +88,8 @@ gql`
         }
     }
 
-    mutation UpdateEventProgramPerson($id: uuid!, $personId: uuid!, $roleName: schedule_EventProgramPersonRole_enum!) {
-        update_schedule_EventProgramPerson_by_pk(
-            pk_columns: { id: $id }
-            _set: { personId: $personId, roleName: $roleName }
-        ) {
+    mutation UpdateEventProgramPerson($id: uuid!, $roleName: schedule_EventProgramPersonRole_enum!) {
+        update_schedule_EventProgramPerson_by_pk(pk_columns: { id: $id }, _set: { roleName: $roleName }) {
             ...EventProgramPersonInfo
         }
     }
@@ -550,7 +547,6 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 id: record.id,
                                                 roleName: record.roleName,
-                                                personId: record.personId,
                                             },
                                             {
                                                 fetchOptions: {

@@ -96,6 +96,7 @@ router.use(checkEventSecret);
 router.post(
     "/joinEvent",
     json(),
+    parseSessionVariables,
     async (req: Request, res: Response<JoinEventVonageSessionOutput>, next: NextFunction) => {
         try {
             const body = assertType<ActionPayload<joinEventVonageSessionArgs>>(req.body);

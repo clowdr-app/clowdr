@@ -39,6 +39,16 @@ select_permissions:
 - permission:
     columns:
     - cloudFrontDomain
+    - endpointUri
+    - id
+    - roomId
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: attendee
+- permission:
+    columns:
+    - cloudFrontDomain
     - conferenceId
     - endpointUri
     - id

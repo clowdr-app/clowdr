@@ -228,7 +228,7 @@ export default function Backstages({
     return useMemo(
         () =>
             showBackstage ? (
-                <Box pos="relative" display={showBackstage ? "block" : "none"} p={5}>
+                <Box display={showBackstage ? "block" : "none"} p={5}>
                     {heading}
                     {welcomeInfo}
                     {backstages}

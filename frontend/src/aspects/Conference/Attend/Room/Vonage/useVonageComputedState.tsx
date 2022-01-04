@@ -235,9 +235,9 @@ export function useVonageComputedState({
                         onRecordingIdReceived?.(recordingId);
                     },
                     (layoutData) => {
-                        if (layout.layout.createdAt < layoutData.createdAt) {
-                            layout?.updateLayout(layoutData);
-                        }
+                        layout?.updateLayout((old) =>
+                            !old || old.createdAt < layoutData.createdAt ? layoutData : old
+                        );
                     },
                     (elementId) => {
                         onPlayVideoReceived?.(elementId);

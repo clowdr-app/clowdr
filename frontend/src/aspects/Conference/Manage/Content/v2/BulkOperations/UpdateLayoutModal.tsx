@@ -123,7 +123,7 @@ function ModalInner({
         } catch (e) {
             console.error("Failed to element layouts", e);
         }
-    }, [hidden, wide, priority, doUpdate, elementsByItem, onClose]);
+    }, [hidden, wide, priority, doUpdate, elementsByItem, onClose, doUpdateIsHidden]);
 
     return (
         <>

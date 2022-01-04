@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, chakra, Flex, useToken, VStack } from "@chakra-ui/react";
 import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useVonageLayout } from "../VonageLayoutProvider";
 
 export default function LayoutChooser(): JSX.Element {
@@ -17,17 +17,12 @@ export default function LayoutChooser(): JSX.Element {
     const [initialLayout, setInitialLayout] = useState<{ layout: VonageSessionLayoutData; createdAt: number } | null>(
         null
     );
+    const localUpdatedAt = useRef<number | null>(null);
     useEffect(() => {
-        if (isOpen && !initialLayout) {
+        if (isOpen && (!localUpdatedAt.current || layout.createdAt > localUpdatedAt.current)) {
             setInitialLayout(layout);
-        } else if (!isOpen) {
-            if (initialLayout) {
-                updateLayout(initialLayout);
-            }
-
-            setInitialLayout(null);
         }
-    }, [isOpen, initialLayout, layout, updateLayout]);
+    }, [isOpen, layout]);
 
     return isOpen ? (
         <VStack py={2} bgColor="purple.600" borderTopColor="purple.500" borderTopStyle="solid" borderTopWidth={1}>
@@ -36,6 +31,9 @@ export default function LayoutChooser(): JSX.Element {
                     colorScheme="DestructiveActionButton"
                     size="sm"
                     onClick={() => {
+                        if (initialLayout) {
+                            updateLayout(initialLayout);
+                        }
                         onClose();
                     }}
                 >
@@ -47,10 +45,8 @@ export default function LayoutChooser(): JSX.Element {
                     isDisabled={initialLayout === layout}
                     onClick={() => {
                         saveLayout();
-                        setInitialLayout(null);
-                        setTimeout(() => {
-                            onClose();
-                        }, 50);
+                        setInitialLayout(layout);
+                        onClose();
                     }}
                 >
                     Apply layout changes
@@ -93,7 +89,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -142,7 +139,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -182,7 +180,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -225,7 +224,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -285,7 +285,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -342,7 +343,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -409,7 +411,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -476,7 +479,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -543,7 +547,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -611,7 +616,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -678,7 +684,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">
@@ -745,7 +752,8 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
+                        localUpdatedAt.current = Date.now();
+                        updateLayout({ layout: outputLayout, createdAt: localUpdatedAt.current });
                     }}
                 >
                     <chakra.svg w={80} h={45} viewBox="0 0 160 90">

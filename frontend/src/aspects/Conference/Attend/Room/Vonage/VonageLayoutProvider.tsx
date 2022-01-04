@@ -42,7 +42,14 @@ export interface AvailableStream {
 
 export interface VonageLayout {
     layout: { layout: VonageSessionLayoutData; createdAt: number };
-    updateLayout: (layout: { layout: VonageSessionLayoutData; createdAt: number }) => void;
+    updateLayout: (
+        layout:
+            | { layout: VonageSessionLayoutData; createdAt: number }
+            | ((old: { layout: VonageSessionLayoutData; createdAt: number } | null) => {
+                  layout: VonageSessionLayoutData;
+                  createdAt: number;
+              } | null)
+    ) => void;
     saveLayout: (_layoutData?: { layout: VonageSessionLayoutData; createdAt: number }) => Promise<void>;
     refetchLayout: () => void;
 

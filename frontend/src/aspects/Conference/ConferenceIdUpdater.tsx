@@ -29,11 +29,13 @@ export default function useConferenceIdUpdater(): void {
     }, [conferenceSlug]);
 
     const conferenceId = conferenceResponse.data?.conference_Conference[0]?.id;
+    const returnedConferenceSlug = conferenceResponse.data?.conference_Conference[0]?.slug;
+    const loading = conferenceResponse.fetching;
     useEffect(() => {
-        if (conferenceSlug && conferenceSlug !== "" && conferenceId) {
-            setConferenceId(conferenceId);
+        if (!loading && conferenceSlug === returnedConferenceSlug) {
+            setConferenceId(conferenceId ?? "NONE");
         } else {
             setConferenceId(null);
         }
-    }, [conferenceId, conferenceSlug, setConferenceId]);
+    }, [loading, conferenceId, setConferenceId, conferenceSlug, returnedConferenceSlug]);
 }

@@ -98,7 +98,7 @@ function AppInner2(): JSX.Element {
     return (
         <EmojiFloatProvider>
             <RightSidebarCurrentTabProvider>
-                {conferenceId ? (
+                {conferenceId && conferenceId !== "NONE" ? (
                     <ConferenceProvider conferenceId={conferenceId}>
                         <ForceUserRefresh />
                         <CurrentRegistrantProvider>

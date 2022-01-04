@@ -324,7 +324,11 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
                         </Route>
                     </Switch>
                 ) : conferenceId ? (
-                    <ConferenceRoutes />
+                    conferenceId === "NONE" ? (
+                        <PageNotFound />
+                    ) : (
+                        <ConferenceRoutes />
+                    )
                 ) : (
                     <CenteredSpinner centerProps={{ minHeight: "calc(100vh - 40px)" }} caller="AppRouting:329" />
                 )}

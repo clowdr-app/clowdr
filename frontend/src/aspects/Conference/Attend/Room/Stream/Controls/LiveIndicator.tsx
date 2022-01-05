@@ -31,6 +31,7 @@ import { useRealTime } from "../../../../../Generic/useRealTime";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { formatRemainingTime } from "../../formatRemainingTime";
 import StreamPreview from "./StreamPreview";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query LiveIndicator_GetLatest($eventId: uuid!) {
@@ -171,14 +172,24 @@ export function LiveIndicator({
                 return (
                     <>
                         <FAIcon icon="question-circle" iconStyle="s" fontSize="lg" />
-                        <Text>Uncertain input</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.Controls.LiveIndicator.UncertainInput"
+                                defaultMessage="Uncertain input"
+                            />
+                        </Text>
                     </>
                 );
             case "filler":
                 return (
                     <>
                         <FAIcon icon="play" iconStyle="s" fontSize="lg" />
-                        <Text>Filler video</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.Controls.LiveIndicator.FillerVideo"
+                                defaultMessage="Filler video"
+                            />
+                        </Text>
                     </>
                 );
             case "rtmp_push":
@@ -186,8 +197,21 @@ export function LiveIndicator({
                     <>
                         <FAIcon icon="broadcast-tower" iconStyle="s" fontSize="lg" />
                         <VStack>
-                            <Text fontSize={!isConnected ? "xs" : undefined}>Backstage is live</Text>
-                            {!isConnected ? <Text>You are not connected</Text> : undefined}
+                            <Text fontSize={!isConnected ? "xs" : undefined}>
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Stream.Controls.LiveIndicator.BackstageIsLive"
+                                    defaultMessage="Backstage is live"
+                                />
+                            </Text>
+                            {!isConnected
+                                ?
+                                    <Text>
+                                        <FormattedMessage
+                                            id="Conference.Attend.Room.Stream.Controls.LiveIndicator.YoureNotConnected"
+                                            defaultMessage="You are not connected"
+                                        />
+                                    </Text>
+                                : undefined}
                         </VStack>
                     </>
                 );
@@ -195,7 +219,12 @@ export function LiveIndicator({
                 return (
                     <>
                         <FAIcon icon="play" iconStyle="s" fontSize="lg" />
-                        <Text>Video</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.Controls.LiveIndicator.Video"
+                                defaultMessage="Video"
+                            />
+                        </Text>
                     </>
                 );
             case "video_unknown_duration":
@@ -204,7 +233,12 @@ export function LiveIndicator({
                         <VStack>
                             <HStack>
                                 <FAIcon icon="play" iconStyle="s" fontSize="lg" />
-                                <Text>Video or live</Text>
+                                <Text>
+                                    <FormattedMessage
+                                        id="Conference.Attend.Room.Stream.Controls.LiveIndicator.VideoOrLive"
+                                        defaultMessage="Video or live"
+                                    />
+                                </Text>
                             </HStack>
                             <Text fontSize="xs" textTransform="none">
                                 Video duration unknown (not prepared for broadcast);

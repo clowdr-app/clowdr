@@ -25,6 +25,7 @@ import {
 } from "../../generated/graphql";
 import useCurrentUser from "../Users/CurrentUser/useCurrentUser";
 import isValidUUID from "../Utils/isValidUUID";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
@@ -290,12 +291,13 @@ export function normaliseName(value: string, trim = true): string {
  * Returns error message or undefined if no errors.
  */
 export function validateName(inValue: string | null | undefined): string | undefined {
+    const intl = useIntl();
     let error;
     const value = inValue ? normaliseName(inValue) : undefined;
     if (!value || value.length === 0) {
-        error = "Name is required";
+        error = intl.formatMessage({ id: 'Conference.NewConferenceForm.NameRequired', defaultMessage: "Name is required" });
     } else if (value.length < 10) {
-        error = "Name must be at least 10 characters.";
+        error = intl.formatMessage({ id: 'Conference.NewConferenceForm.NameAtLeast', defaultMessage: "Name must be at least 10 characters." });
     }
     return error;
 }
@@ -304,17 +306,19 @@ export function validateName(inValue: string | null | undefined): string | undef
  * Returns error message or undefined if no errors.
  */
 export function validateShortName(inValue: string | null | undefined): string | undefined {
+    const intl = useIntl();
     let error;
     const value = inValue ? normaliseName(inValue) : undefined;
     if (!value || value.length === 0) {
-        error = "Short name is required";
+        error = intl.formatMessage({ id: 'Conference.NewConferenceForm.ShortNameRequired', defaultMessage: "Short name is required" });
     } else if (value.length < 5) {
-        error = "Short name must be at least 5 characters.";
+        error = intl.formatMessage({ id: 'Conference.NewConferenceForm.ShortNameAtLeast', defaultMessage: "Short name must be at least 5 characters." });
     }
     return error;
 }
 
 export default function NewConferenceForm(): JSX.Element {
+    const intl = useIntl();
     const toast = useToast();
     const apolloClient = useApolloClient();
     const history = useHistory();
@@ -327,7 +331,7 @@ export default function NewConferenceForm(): JSX.Element {
         if (!!value && isValidUUID(value)) {
             return undefined;
         } else {
-            return "Not a valid access code.";
+            return intl.formatMessage({ id: 'Conference.NewConferenceForm.InvalidAccessCode', defaultMessage: "Not a valid access code." });
         }
     }
 
@@ -340,8 +344,8 @@ export default function NewConferenceForm(): JSX.Element {
     return (
         <Formik
             initialValues={{
-                new_conf_name: "My Awesome Conference " + year,
-                new_conf_short_name: "MAC " + year,
+                new_conf_name: intl.formatMessage({ id: 'Conference.NewConferenceForm.MyAwesomeConference', defaultMessage: "My Awesome Conference" }) + " " + year,
+                new_conf_short_name: intl.formatMessage({ id: 'Conference.NewConferenceForm.MyAwesomeConferenceShort', defaultMessage: "MAC" }) + " " + year,
                 new_conf_demo_code: "",
             }}
             onSubmit={async (_values, actions) => {
@@ -386,9 +390,8 @@ export default function NewConferenceForm(): JSX.Element {
                             !result.data.insert_conference_Conference.returning.length
                         ) {
                             toast({
-                                title: "Could not create conference",
-                                description:
-                                    "The name or short name may already be taken or your access code may have already been used.",
+                                title: intl.formatMessage({ id: 'Conference.NewConferenceForm.CouldNotCreateConference', defaultMessage: "Could not create conference" }),
+                                description: intl.formatMessage({ id: 'Conference.NewConferenceForm.NameMaybeTaken', defaultMessage: "The name or short name may already be taken or your access code may have already been used." }),
                                 status: "error",
                             });
                             // failed = true;
@@ -400,7 +403,7 @@ export default function NewConferenceForm(): JSX.Element {
                             await createNewConferenceMetaStructureMutation({
                                 variables: {
                                     conferenceId,
-                                    registrantDisplayName: "Conference Creator",
+                                    registrantDisplayName: intl.formatMessage({ id: 'Conference.NewConferenceForm.ConferenceCreator', defaultMessage: "Conference Creator" }),
                                     userId: user.id,
                                     abstractData: [
                                         {
@@ -409,7 +412,7 @@ export default function NewConferenceForm(): JSX.Element {
                                             data: {
                                                 type: "ABSTRACT",
                                                 baseType: "text",
-                                                text: "Welcome to this conference!",
+                                                text: intl.formatMessage({ id: 'Conference.NewConferenceForm.WelcomeToConference', defaultMessage: "Welcome to this conference!" }),
                                             },
                                         },
                                     ],
@@ -424,7 +427,7 @@ export default function NewConferenceForm(): JSX.Element {
                             });
 
                             toast({
-                                title: "Conference created",
+                                title: intl.formatMessage({ id: 'Conference.NewConferenceForm.ConferenceCreated', defaultMessage: "Conference created" }),
                                 status: "success",
                             });
                             history.push(
@@ -437,13 +440,13 @@ export default function NewConferenceForm(): JSX.Element {
                             new_conf_short_name: string;
                         }> = {};
                         if (ok.name === values.name) {
-                            errors.new_conf_name = "Name has already been taken";
+                            errors.new_conf_name = intl.formatMessage({ id: 'Conference.NewConferenceForm.NameTaken', defaultMessage: "Name has already been taken" });
                         }
                         if (ok.shortName === values.shortName) {
-                            errors.new_conf_short_name = "Short name has already been taken";
+                            errors.new_conf_short_name = intl.formatMessage({ id: 'Conference.NewConferenceForm.ShortNameTaken', defaultMessage: "Short name has already been taken" });
                         }
                         if (ok.slug === values.slug) {
-                            errors.new_conf_short_name = "Short name has already been taken";
+                            errors.new_conf_short_name = intl.formatMessage({ id: 'Conference.NewConferenceForm.ShortNameTaken', defaultMessage: "Short name has already been taken" });
                         }
                         actions.setErrors(errors);
                     }
@@ -454,24 +457,22 @@ export default function NewConferenceForm(): JSX.Element {
                 if (failed) {
                     if (failed.includes("Check constraint violation. insert check constraint failed")) {
                         toast({
-                            title: "Failed to create conference",
-                            description:
-                                "We were unable to create your conference as the access code has already been used.",
+                            title: intl.formatMessage({ id: 'Conference.NewConferenceForm.FailedToCreateConference', defaultMessage: "Failed to create conference" }),
+                            description: intl.formatMessage({ id: 'Conference.NewConferenceForm.AccessCodeAlreadyUsed', defaultMessage: "We were unable to create your conference as the access code has already been used." }),
                             status: "error",
                             duration: 7000,
                             isClosable: true,
                         });
                     } else {
                         toast({
-                            title: "Failed to create conference",
-                            description: `An error has occurred while trying to create your conference.
-Please contact our tech support to investigate the issue shown below.`,
+                            title: intl.formatMessage({ id: 'Conference.NewConferenceForm.FailedToCreateConference', defaultMessage: "Failed to create conference" }),
+                            description: intl.formatMessage({ id: 'Conference.NewConferenceForm.ErrorContactTechSupport', defaultMessage: "An error has occurred while trying to create your conference. Please contact our tech support to investigate the issue shown below." }),
                             status: "error",
                             duration: null,
                             isClosable: true,
                         });
                         toast({
-                            title: "Error information",
+                            title: intl.formatMessage({ id: 'Conference.NewConferenceForm.ErrorInformation', defaultMessage: "Error information" }),
                             description: failed,
                             status: "info",
                             duration: null,
@@ -491,7 +492,12 @@ Please contact our tech support to investigate the issue shown below.`,
                                 isInvalid={!!form.errors.new_conf_name && !!form.touched.new_conf_name}
                                 isRequired
                             >
-                                <FormLabel htmlFor="new_conf_name">Name</FormLabel>
+                                <FormLabel htmlFor="new_conf_name">
+                                    <FormattedMessage
+                                        id="Conference.NewConferenceForm.Name"
+                                        defaultMessage="Name"
+                                    />
+                                </FormLabel>
                                 <Input
                                     {...{
                                         ...field,
@@ -531,12 +537,17 @@ Please contact our tech support to investigate the issue shown below.`,
                                 isRequired
                                 marginTop="1em"
                             >
-                                <FormLabel htmlFor="new_conf_demo_code">Access code</FormLabel>
+                                <FormLabel htmlFor="new_conf_demo_code">
+                                    <FormattedMessage
+                                        id="Conference.NewConferenceForm.AccessCode"
+                                        defaultMessage="Access code"
+                                    />
+                                </FormLabel>
                                 <InputGroup>
-                                    <Input {...field} id="new_conf_demo_code" placeholder="Demo code" />
+                                    <Input {...field} id="new_conf_demo_code" placeholder={intl.formatMessage({ id: 'Conference.NewConferenceForm.DemoCode', defaultMessage: "Demo code" })} />
                                     <InputRightAddon>
-                                        <Tooltip label="To create a conference, please contact us at to receive your access code.">
-                                            {"What's this?"}
+                                        <Tooltip label={intl.formatMessage({ id: 'Conference.NewConferenceForm.PleaseContactUs', defaultMessage: "To create a conference, please contact us at to receive your access code." })}>
+                                            {intl.formatMessage({ id: 'Conference.NewConferenceForm.WhatsThis', defaultMessage: "What's this?" })}
                                         </Tooltip>
                                     </InputRightAddon>
                                 </InputGroup>
@@ -551,7 +562,10 @@ Please contact our tech support to investigate the issue shown below.`,
                         type="submit"
                         isDisabled={!props.isValid}
                     >
-                        Create
+                        <FormattedMessage
+                            id="Conference.NewConferenceForm.Create"
+                            defaultMessage="Create"
+                        />
                     </Button>
                 </Form>
             )}

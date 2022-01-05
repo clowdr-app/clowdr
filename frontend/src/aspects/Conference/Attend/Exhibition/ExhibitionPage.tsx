@@ -15,6 +15,7 @@ import { useConference } from "../../useConference";
 import { EventsTable } from "../Content/EventsTable";
 import { ItemElements } from "../Content/ItemElements";
 import ExhibitionLayout from "./ExhibitionLayout";
+import { useIntl } from "react-intl";
 
 gql`
     fragment ExhibitionItem on content_Item {
@@ -104,6 +105,7 @@ function ExhibitionPageInner({
     exhibition: ExhibitionWithContentFragment;
     events: readonly ItemEventFragment[];
 }): JSX.Element {
+    const intl = useIntl();
     const title = useTitle(exhibition.name);
     const conference = useConference();
 
@@ -168,7 +170,7 @@ function ExhibitionPageInner({
                     <>
                         <Text w="auto" textAlign="left" p={0}>
                             <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
-                            Times are shown in your local timezone.
+                            {intl.formatMessage({ id: 'Conference.Attend.Exhibition.ExhibitionPage.LocalTimezone', defaultMessage: "Times are shown in your local timezone." })}
                         </Text>
                         <EventsTable events={events} includeRoom={true} />
                     </>

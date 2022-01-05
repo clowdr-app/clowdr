@@ -1,4 +1,286 @@
 {
+  "Conference.Attend.Continuation.Vonage.ContinuationActiveChoice.WhereTo": {
+    "defaultMessage": "Where would you like to go next?"
+  },
+  "Conference.Attend.Exhibition.ExhibitionPage.LocalTimezone": {
+    "defaultMessage": "Times are shown in your local timezone."
+  },
+  "Conference.Attend.Room.AddRoomPersonModal.AddToRoom": {
+    "defaultMessage": "Add person to room"
+  },
+  "Conference.Attend.Room.AlreadyARoom": {
+    "defaultMessage": "There is already a room with this name"
+  },
+  "Conference.Attend.Room.CouldNotCreate": {
+    "defaultMessage": "Could not create room"
+  },
+  "Conference.Attend.Room.CreateRoomModal.Create": {
+    "defaultMessage": "Create"
+  },
+  "Conference.Attend.Room.CreateRoomModal.CreateNewRoom": {
+    "defaultMessage": "Create new room"
+  },
+  "Conference.Attend.Room.CreateRoomModal.Private": {
+    "defaultMessage": "Private?"
+  },
+  "Conference.Attend.Room.CreateRoomModal.RoomName": {
+    "defaultMessage": "Room Name"
+  },
+  "Conference.Attend.Room.CreatedNewRoom": {
+    "defaultMessage": "Created new room '{name}'"
+  },
+  "Conference.Attend.Room.EndsTime": {
+    "defaultMessage": "Ends {time}"
+  },
+  "Conference.Attend.Room.JoinZoomButton.ClickToJoin": {
+    "defaultMessage": "Click to join"
+  },
+  "Conference.Attend.Room.JoinZoomButton.StartsIn": {
+    "defaultMessage": "Starts in {seconds}"
+  },
+  "Conference.Attend.Room.NoEventsNextHour": {
+    "defaultMessage": "No events in this room in the next hour."
+  },
+  "Conference.Attend.Room.NoVideosAdded": {
+    "defaultMessage": "No videos have been added to this content item yet."
+  },
+  "Conference.Attend.Room.RegistrantSearch.Registrant": {
+    "defaultMessage": "Registrant"
+  },
+  "Conference.Attend.Room.RegistrantSearch.SearchRegistrant": {
+    "defaultMessage": "Search for an registrant by name"
+  },
+  "Conference.Attend.Room.RoomContinuationChoices.MoveToNextBackstage": {
+    "defaultMessage": "Move to your next backstage"
+  },
+  "Conference.Attend.Room.RoomControlBar.AddPeople": {
+    "defaultMessage": "Add people"
+  },
+  "Conference.Attend.Room.RoomControlBar.AddPeopleToRoom": {
+    "defaultMessage": "Add people to room"
+  },
+  "Conference.Attend.Room.RoomControlBar.Members": {
+    "defaultMessage": "Members"
+  },
+  "Conference.Attend.Room.RoomControlBar.MembersOfThisRoom": {
+    "defaultMessage": "Members of this room"
+  },
+  "Conference.Attend.Room.RoomControlBar.RoomMembers": {
+    "defaultMessage": "Room members"
+  },
+  "Conference.Attend.Room.RoomName": {
+    "defaultMessage": "Room Name"
+  },
+  "Conference.Attend.Room.RoomTimeAlert.LivestreamEventStartingIn": {
+    "defaultMessage": "Livestream event starting in"
+  },
+  "Conference.Attend.Room.RoomTimeAlert.ShuffleRoomEndsIn": {
+    "defaultMessage": "Shuffle room ends in"
+  },
+  "Conference.Attend.Room.RoomTimeAlert.VideoChatClosesIn": {
+    "defaultMessage": "Video-chat closes in"
+  },
+  "Conference.Attend.Room.RoomTimeAlert.ZoomEventStartingIn": {
+    "defaultMessage": "Zoom event starting in"
+  },
+  "Conference.Attend.Room.Sponsor.RoomSponsorContent.Error": {
+    "defaultMessage": "An error occurred loading in data."
+  },
+  "Conference.Attend.Room.StartedTime": {
+    "defaultMessage": "Started {time}"
+  },
+  "Conference.Attend.Room.StartsTime": {
+    "defaultMessage": "Starts {time}"
+  },
+  "Conference.Attend.Room.Stream.Backstage.EventFinished": {
+    "defaultMessage": "This event has now finished. Once you close this backstage, you will not be able to rejoin it."
+  },
+  "Conference.Attend.Room.Stream.Backstage.Exit": {
+    "defaultMessage": "Exit this backstage"
+  },
+  "Conference.Attend.Room.Stream.Backstage.Show": {
+    "defaultMessage": "Show this backstage"
+  },
+  "Conference.Attend.Room.Stream.Backstage.Switch": {
+    "defaultMessage": "Switch to this backstage"
+  },
+  "Conference.Attend.Room.Stream.Cancel": {
+    "defaultMessage": "Cancel"
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.BackstageIsLive": {
+    "defaultMessage": "Backstage is live"
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.FillerVideo": {
+    "defaultMessage": "Filler video"
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.UncertainInput": {
+    "defaultMessage": "Uncertain input"
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.Video": {
+    "defaultMessage": "Video"
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.VideoOrLive": {
+    "defaultMessage": "Video or live"
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.YoureNotConnected": {
+    "defaultMessage": "You are not connected"
+  },
+  "Conference.Attend.Room.Stream.EachBackstageAvaiableToJoin": {
+    "defaultMessage": "Each backstage becomes available to join twenty minutes before the associated event starts."
+  },
+  "Conference.Attend.Room.Stream.EachPresHasBackstage": {
+    "defaultMessage": "Each presentation and Q&amp;A event in this room has a backstage."
+  },
+  "Conference.Attend.Room.Stream.ExitBackstage": {
+    "defaultMessage": "Exit backstage"
+  },
+  "Conference.Attend.Room.Stream.EyeOnTheChat": {
+    "defaultMessage": "Keep an eye on the chat for questions!"
+  },
+  "Conference.Attend.Room.Stream.NoEvents": {
+    "defaultMessage": "No current or upcoming events in the backstage."
+  },
+  "Conference.Attend.Room.Stream.UpcomingBackstage.Timer": {
+    "defaultMessage": "{time} until your backstage is available"
+  },
+  "Conference.Attend.Room.Stream.UpcomingBackstage.WillBeAvaiable": {
+    "defaultMessage": "Your backstage for {title} will become available on this page. You will automatically be shown the backstage 20 minutes in advance of the live period of your event."
+  },
+  "Conference.Attend.Room.Stream.VonageBackstage.NoRoomSession": {
+    "defaultMessage": "No room session available."
+  },
+  "Conference.Attend.Room.Stream.WatchLiveStream": {
+    "defaultMessage": "Watch live-stream"
+  },
+  "Conference.Attend.Room.Stream.WatchingWhileSpeakingAlert": {
+    "defaultMessage": "Watching the stream while speaking is discouraged. The stream lag can cause a lot of confusion. Please be aware of the expected stream lag and avoid using a second device to watch the stream while you are active in the backstage."
+  },
+  "Conference.Attend.Room.Stream.WelcomeTo": {
+    "defaultMessage": "Welcome to the backstages for {roomName}"
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.AudioBlocked": {
+    "defaultMessage": "Audio blocked by browser"
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.AudioBlockedClick": {
+    "defaultMessage": "Audio is currently blocked by your browser. Click to unblock."
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.ConnectionTooUnstable": {
+    "defaultMessage": "Connection too unstable to show video"
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.ConnectionUnstable": {
+    "defaultMessage": "Connection unstable"
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.FormatNotSupported": {
+    "defaultMessage": "Video format not supported"
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.FormatNotSupportedDesc": {
+    "defaultMessage": "The video format is not supported in your browser."
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.ProfilePicture": {
+    "defaultMessage": "Profile picture of {name}"
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.ProfileUnavailable": {
+    "defaultMessage": "Profile currently unavailable"
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.TooManyPeople": {
+    "defaultMessage": "There are too many people here to show everyone's video at once. This person is hidden because they haven't spoken recently."
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.VideoHidden": {
+    "defaultMessage": "Video hidden"
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.VideoHiddenDesc": {
+    "defaultMessage": "The video was hidden because the connection is not stable enough at the moment."
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.VideoQualityLimited": {
+    "defaultMessage": "Video quality may be limited due to an unstable connection."
+  },
+  "Conference.Attend.Room.YourRole": {
+    "defaultMessage": "You are {role}"
+  },
+  "Conference.Attend.Schedule.StarEventButton.AddToSchedule": {
+    "defaultMessage": "Add event to your personal schedule"
+  },
+  "Conference.Attend.Schedule.StarEventButton.RemoveFromSchedule": {
+    "defaultMessage": "Remove event from your personal schedule"
+  },
+  "Conference.Attend.Search.SearchPanel.Search": {
+    "defaultMessage": "Search"
+  },
+  "Conference.Attend.Search.SearchPanel.SearchDesc": {
+    "defaultMessage": "Search the schedule, content and people by name, title, affiliation, tag, exhibition or badge."
+  },
+  "Conference.NewConferenceForm.AccessCode": {
+    "defaultMessage": "Access code"
+  },
+  "Conference.NewConferenceForm.AccessCodeAlreadyUsed": {
+    "defaultMessage": "We were unable to create your conference as the access code has already been used."
+  },
+  "Conference.NewConferenceForm.ConferenceCreated": {
+    "defaultMessage": "Conference created"
+  },
+  "Conference.NewConferenceForm.ConferenceCreator": {
+    "defaultMessage": "Conference Creator"
+  },
+  "Conference.NewConferenceForm.CouldNotCreateConference": {
+    "defaultMessage": "Could not create conference"
+  },
+  "Conference.NewConferenceForm.Create": {
+    "defaultMessage": "Create"
+  },
+  "Conference.NewConferenceForm.DemoCode": {
+    "defaultMessage": "Demo code"
+  },
+  "Conference.NewConferenceForm.ErrorContactTechSupport": {
+    "defaultMessage": "An error has occurred while trying to create your conference. Please contact our tech support to investigate the issue shown below."
+  },
+  "Conference.NewConferenceForm.ErrorInformation": {
+    "defaultMessage": "Error information"
+  },
+  "Conference.NewConferenceForm.FailedToCreateConference": {
+    "defaultMessage": "Failed to create conference"
+  },
+  "Conference.NewConferenceForm.InvalidAccessCode": {
+    "defaultMessage": "Not a valid access code."
+  },
+  "Conference.NewConferenceForm.MyAwesomeConference": {
+    "defaultMessage": "My Awesome Conference"
+  },
+  "Conference.NewConferenceForm.MyAwesomeConferenceShort": {
+    "defaultMessage": "MAC"
+  },
+  "Conference.NewConferenceForm.Name": {
+    "defaultMessage": "Name"
+  },
+  "Conference.NewConferenceForm.NameAtLeast": {
+    "defaultMessage": "Name must be at least 10 characters."
+  },
+  "Conference.NewConferenceForm.NameMaybeTaken": {
+    "defaultMessage": "The name or short name may already be taken or your access code may have already been used."
+  },
+  "Conference.NewConferenceForm.NameRequired": {
+    "defaultMessage": "Name is required"
+  },
+  "Conference.NewConferenceForm.NameTaken": {
+    "defaultMessage": "Name has already been taken"
+  },
+  "Conference.NewConferenceForm.PleaseContactUs": {
+    "defaultMessage": "To create a conference, please contact us at to receive your access code."
+  },
+  "Conference.NewConferenceForm.ShortNameAtLeast": {
+    "defaultMessage": "Short name must be at least 5 characters."
+  },
+  "Conference.NewConferenceForm.ShortNameRequired": {
+    "defaultMessage": "Short name is required"
+  },
+  "Conference.NewConferenceForm.ShortNameTaken": {
+    "defaultMessage": "Short name has already been taken"
+  },
+  "Conference.NewConferenceForm.WelcomeToConference": {
+    "defaultMessage": "Welcome to this conference!"
+  },
+  "Conference.NewConferenceForm.WhatsThis": {
+    "defaultMessage": "What's this?"
+  },
   "auth.auth0customprovider.loading": {
     "defaultMessage": "Loading..."
   },
@@ -181,6 +463,12 @@
   },
   "conference.attend.room.room.youreapresenter": {
     "defaultMessage": "You are a presenter of the next event"
+  },
+  "conference.attend.room.roompage.loadingroom": {
+    "defaultMessage": "Loading room"
+  },
+  "conference.attend.room.roompage.unknownroom": {
+    "defaultMessage": "Unknown room"
   },
   "conference.attend.room.vonage.devicechoosermodal.camera": {
     "defaultMessage": "Camera"

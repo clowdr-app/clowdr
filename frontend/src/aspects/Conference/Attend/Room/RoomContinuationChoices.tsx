@@ -13,6 +13,7 @@ import {
 import { useRealTime } from "../../../Generic/useRealTime";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import ContinuationChoices from "../Continuation/ContinuationChoices";
+import { useIntl } from "react-intl";
 
 export default function RoomContinuationChoices({
     currentRoomEvent,
@@ -31,6 +32,7 @@ export default function RoomContinuationChoices({
     currentBackstageEventId: string | null;
     moveToNextBackstage?: () => void;
 }): JSX.Element {
+    const intl = useIntl();
     const now5s = useRealTime(5000);
     const [continuationChoicesFrom, setContinuationChoicesFrom] = useState<
         | { eventId: string; itemId: string | null; endsAt: number }
@@ -90,7 +92,7 @@ export default function RoomContinuationChoices({
                                       {
                                           colour: "#B9095B",
                                           defaultFor: ContinuationDefaultFor.All,
-                                          description: "Move to your next backstage",
+                                          description: intl.formatMessage({ id: 'Conference.Attend.Room.RoomContinuationChoices.MoveToNextBackstage', defaultMessage: "Move to your next backstage" }),
                                           id: uuidv4(),
                                           isActiveChoice: false,
                                           priority: Number.NEGATIVE_INFINITY,

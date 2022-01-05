@@ -19,6 +19,7 @@ import {
 import type { FieldProps} from "formik";
 import { Field, Form, Formik } from "formik";
 import React from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
     RoomListRoomDetailsFragmentDoc,
     Room_ManagementMode_Enum,
@@ -56,6 +57,7 @@ export function CreateRoomModal({
     onClose: () => void;
     onCreated: (id: string, cb: () => void) => Promise<void>;
 }): JSX.Element {
+    const intl = useIntl();
     const [createRegistrantRoomMutation] = useRegistrant_RegistrantCreateRoomMutation();
     const conference = useConference();
     const toast = useToast();
@@ -64,7 +66,12 @@ export function CreateRoomModal({
         <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale">
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader pb={0}>Create new room</ModalHeader>
+                <ModalHeader pb={0}>
+                    <FormattedMessage
+                        id="Conference.Attend.Room.CreateRoomModal.CreateNewRoom"
+                        defaultMessage="Create new room"
+                    />
+                </ModalHeader>
                 <ModalCloseButton />
                 <Formik<{ new_room_name: string; new_room_private: boolean }>
                     initialValues={{
@@ -99,7 +106,7 @@ export function CreateRoomModal({
                             }
 
                             toast({
-                                title: `Created new room '${name}'`,
+                                title: intl.formatMessage({ id: 'Conference.Attend.Room.CreatedNewRoom', defaultMessage: "Created new room '{name}'" }, { name: name }),
                                 status: "success",
                             });
                             const roomId = result.data.insert_room_Room_one.id;
@@ -112,13 +119,13 @@ export function CreateRoomModal({
                         } catch (e) {
                             if ("message" in e && (e.message as string).includes("duplicate")) {
                                 toast({
-                                    title: "Could not create room",
-                                    description: "There is already a room with this name",
+                                    title: intl.formatMessage({ id: 'Conference.Attend.Room.CouldNotCreate', defaultMessage: "Could not create room" }),
+                                    description: intl.formatMessage({ id: 'Conference.Attend.Room.AlreadyARoom', defaultMessage: "There is already a room with this name" }),
                                     status: "error",
                                 });
                             } else {
                                 toast({
-                                    title: "Could not create room",
+                                    title: intl.formatMessage({ id: 'Conference.Attend.Room.CouldNotCreate', defaultMessage: "Could not create room" }),
                                     description: JSON.stringify(e),
                                     status: "error",
                                 });
@@ -141,14 +148,19 @@ export function CreateRoomModal({
                                                     }
                                                     isRequired
                                                 >
-                                                    <FormLabel htmlFor="new_room_name">Room Name</FormLabel>
+                                                    <FormLabel htmlFor="new_room_name">
+                                                        <FormattedMessage
+                                                            id="Conference.Attend.Room.CreateRoomModal.RoomName"
+                                                            defaultMessage="Room Name"
+                                                        />
+                                                    </FormLabel>
                                                     <Input
                                                         {...{
                                                             ...field,
                                                             value: normaliseName(field.value, false),
                                                         }}
                                                         id="new_room_name"
-                                                        placeholder="Room name"
+                                                        placeholder={intl.formatMessage({ id: 'Conference.Attend.Room.RoomName', defaultMessage: "Room Name" })}
                                                     />
                                                     <FormErrorMessage>{form.errors.new_room_name}</FormErrorMessage>
                                                 </FormControl>
@@ -164,7 +176,12 @@ export function CreateRoomModal({
                                                     isRequired
                                                     mt="1em"
                                                 >
-                                                    <FormLabel htmlFor="new_room_private">Private?</FormLabel>
+                                                    <FormLabel htmlFor="new_room_private">
+                                                        <FormattedMessage
+                                                            id="Conference.Attend.Room.CreateRoomModal.Private"
+                                                            defaultMessage="Private?"
+                                                        />
+                                                    </FormLabel>
                                                     <Switch {...field} id="new_room_private" />
                                                     <FormErrorMessage>{form.errors.new_room_private}</FormErrorMessage>
                                                 </FormControl>
@@ -180,7 +197,10 @@ export function CreateRoomModal({
                                         type="submit"
                                         isDisabled={!props.isValid}
                                     >
-                                        Create
+                                        <FormattedMessage
+                                            id="Conference.Attend.Room.CreateRoomModal.Create"
+                                            defaultMessage="Create"
+                                        />
                                     </Button>
                                 </ModalFooter>
                             </Form>

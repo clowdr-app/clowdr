@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import type { MutableRefObject } from "react";
 import React from "react";
+import { FormattedMessage } from "react-intl";
 import {
     useSearchPanel_EventsLazyQuery,
     useSearchPanel_ItemsLazyQuery,
@@ -135,14 +136,25 @@ export default function SearchPanel({
         <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center">
             <VStack maxW={400} spacing={3}>
                 <Heading as="h3" fontSize="xl">
-                    Search
+                    <FormattedMessage
+                        id="Conference.Attend.Search.SearchPanel.Search"
+                        defaultMessage="Search"
+                    />
                 </Heading>
                 <Text whiteSpace="normal">
-                    Search the schedule, content and people by name, title, affiliation, tag, exhibition or badge.
+                    <FormattedMessage
+                        id="Conference.Attend.Search.SearchPanel.SearchDesc"
+                        defaultMessage="Search the schedule, content and people by name, title, affiliation, tag, exhibition or badge."
+                    />
                 </Text>
                 <FormControl>
                     <InputGroup>
-                        <InputLeftAddon>Search</InputLeftAddon>
+                        <InputLeftAddon>
+                            <FormattedMessage
+                                id="Conference.Attend.Search.SearchPanel.Search"
+                                defaultMessage="Search"
+                            />
+                        </InputLeftAddon>
                         <Input
                             value={search}
                             onChange={(ev) => {

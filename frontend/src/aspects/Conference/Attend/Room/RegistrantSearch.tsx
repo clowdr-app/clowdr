@@ -9,6 +9,7 @@ import {
     ListItem,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
+import { FormattedMessage } from "react-intl";
 import { useSearchRegistrantsQuery } from "../../../../generated/graphql";
 import useDebouncedState from "../../../CRUDTable/useDebouncedState";
 import { FAIcon } from "../../../Icons/FAIcon";
@@ -58,7 +59,12 @@ export function RegistrantSearch({
     return (
         <>
             <FormControl>
-                <FormLabel htmlFor="registrant_id">Registrant</FormLabel>
+                <FormLabel htmlFor="registrant_id">
+                    <FormattedMessage
+                        id="Conference.Attend.Room.RegistrantSearch.Registrant"
+                        defaultMessage="Registrant"
+                    />
+                </FormLabel>
                 <Input
                     aria-label={"Search found " + ariaSearchResultStr}
                     type="text"
@@ -71,7 +77,12 @@ export function RegistrantSearch({
                 <InputRightElement>
                     <FAIcon iconStyle="s" icon="search" />
                 </InputRightElement>
-                <FormHelperText>Search for an registrant by name</FormHelperText>
+                <FormHelperText>
+                    <FormattedMessage
+                        id="Conference.Attend.Room.RegistrantSearch.SearchRegistrant"
+                        defaultMessage="Search for an registrant by name"
+                    />
+                </FormHelperText>
             </FormControl>
             <List>
                 {options.map((option) => (

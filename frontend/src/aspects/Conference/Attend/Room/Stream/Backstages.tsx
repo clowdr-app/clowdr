@@ -25,6 +25,7 @@ import { useRealTime } from "../../../../Generic/useRealTime";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import Backstage from "./Backstage";
 import { isEventNow, isEventSoon } from "./isEventAt";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export function Backstages({
     showBackstage,
@@ -99,7 +100,10 @@ export function Backstages({
 
                 {activeEvents?.length === 0 ? (
                     <Text textAlign="center" my={8} fontSize="lg">
-                        No current or upcoming events in the backstage.
+                        <FormattedMessage
+                            id="Conference.Attend.Room.Stream.NoEvents"
+                            defaultMessage="No current or upcoming events in the backstage."
+                        />
                     </Text>
                 ) : undefined}
             </Box>
@@ -125,15 +129,35 @@ export function Backstages({
             <Alert status="info" my={4}>
                 <AlertIcon />
                 <Box flex="1">
-                    <AlertTitle>Welcome to the backstages for {roomName}</AlertTitle>
+                    <AlertTitle>
+                        <FormattedMessage
+                            id="Conference.Attend.Room.Stream.WelcomeTo"
+                            defaultMessage="Welcome to the backstages for {roomName}"
+                            values={{
+                                roomName: roomName
+                            }}
+                        />
+                    </AlertTitle>
                     <AlertDescription display="block">
                         <UnorderedList>
-                            <ListItem>Each presentation and Q&amp;A event in this room has a backstage.</ListItem>
                             <ListItem>
-                                Each backstage becomes available to join twenty minutes before the associated event
-                                starts.
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Stream.EachPresHasBackstage"
+                                    defaultMessage="Each presentation and Q&amp;A event in this room has a backstage."
+                                />
                             </ListItem>
-                            <ListItem>Keep an eye on the chat for questions!</ListItem>
+                            <ListItem>
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Stream.EachBackstageAvaiableToJoin"
+                                    defaultMessage="Each backstage becomes available to join twenty minutes before the associated event starts."
+                                />
+                            </ListItem>
+                            <ListItem>
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Stream.EyeOnTheChat"
+                                    defaultMessage="Keep an eye on the chat for questions!"
+                                />
+                            </ListItem>
                         </UnorderedList>
                     </AlertDescription>
                 </Box>
@@ -171,7 +195,10 @@ export function Backstages({
                             onClick={() => setIsWatchStreamConfirmOpen(true)}
                             mt={4}
                         >
-                            Watch live-stream
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.WatchLiveStream"
+                                defaultMessage="Watch live-stream"
+                            />
                         </Button>
                         <AlertDialog
                             isOpen={isWatchStreamConfirmOpen}
@@ -181,18 +208,27 @@ export function Backstages({
                             <AlertDialogOverlay>
                                 <AlertDialogContent>
                                     <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                        Watch live-stream
+                                        <FormattedMessage
+                                            id="Conference.Attend.Room.Stream.WatchLiveStream"
+                                            defaultMessage="Watch live-stream"
+                                        />
                                     </AlertDialogHeader>
 
                                     <AlertDialogBody>
-                                        Watching the stream while speaking is discouraged. The stream lag can cause a
-                                        lot of confusion. Please be aware of the expected stream lag and avoid using a
-                                        second device to watch the stream while you are active in the backstage.
+                                        <FormattedMessage
+                                            id="Conference.Attend.Room.Stream.WatchingWhileSpeakingAlert"
+                                            defaultMessage="Watching the stream while speaking is discouraged. The stream lag can cause a
+                                            lot of confusion. Please be aware of the expected stream lag and avoid using a
+                                            second device to watch the stream while you are active in the backstage."
+                                        />
                                     </AlertDialogBody>
 
                                     <AlertDialogFooter>
                                         <Button ref={cancelRef} onClick={() => setIsWatchStreamConfirmOpen(false)}>
-                                            Cancel
+                                            <FormattedMessage
+                                                id="Conference.Attend.Room.Stream.Cancel"
+                                                defaultMessage="Cancel"
+                                            />
                                         </Button>
                                         <Button
                                             colorScheme="DestructiveActionButton"
@@ -203,7 +239,10 @@ export function Backstages({
                                             }
                                             ml={3}
                                         >
-                                            Watch live-stream
+                                            <FormattedMessage
+                                                id="Conference.Attend.Room.Stream.WatchLiveStream"
+                                                defaultMessage="Watch live-stream"
+                                            />
                                         </Button>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -218,7 +257,10 @@ export function Backstages({
                         onClick={() => setWatchStreamForEventId(nextRoomEventId)}
                         mt={4}
                     >
-                        Exit backstage
+                        <FormattedMessage
+                            id="Conference.Attend.Room.Stream.ExitBackstage"
+                            defaultMessage="Exit backstage"
+                        />
                     </Button>
                 )
             ) : undefined,

@@ -1,5 +1,6 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
+import { FormattedMessage } from "react-intl";
 import type {
     GetRoomMembersQuery,
     GetRoomMembersQueryVariables,
@@ -85,7 +86,12 @@ export function AddRoomPersonModal({
         <Modal scrollBehavior="outside" onClose={onClose} isOpen={isOpen} motionPreset="scale">
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader pb={0}>Add person to room</ModalHeader>
+                <ModalHeader pb={0}>
+                    <FormattedMessage
+                        id="Conference.Attend.Room.AddRoomPersonModal.AddToRoom"
+                        defaultMessage="Add person to room"
+                    />
+                </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                     <RegistrantSearch selectedRegistrantIds={selectedRegistrantIds} onSelect={addMember} />

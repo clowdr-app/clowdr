@@ -1,4 +1,265 @@
 {
+  "Conference.Attend.Continuation.Vonage.ContinuationActiveChoice.WhereTo": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Exhibition.ExhibitionPage.LocalTimezone": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.AddRoomPersonModal.AddToRoom": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.AlreadyARoom": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.CouldNotCreate": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.CreateRoomModal.Create": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.CreateRoomModal.CreateNewRoom": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.CreateRoomModal.Private": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.CreateRoomModal.RoomName": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.CreatedNewRoom": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.EndsTime": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.JoinZoomButton.ClickToJoin": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.JoinZoomButton.StartsIn": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.NoEventsNextHour": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.NoVideosAdded": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.RegistrantSearch.Registrant": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.RegistrantSearch.SearchRegistrant": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.RoomContinuationChoices.MoveToNextBackstage": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.RoomName": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.RoomTimeAlert.LivestreamEventStartingIn": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.RoomTimeAlert.ShuffleRoomEndsIn": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.RoomTimeAlert.VideoChatClosesIn": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.RoomTimeAlert.ZoomEventStartingIn": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Sponsor.RoomSponsorContent.Error": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.StartedTime": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.StartsTime": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Backstage.EventFinished": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Backstage.Exit": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Backstage.Show": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Backstage.Switch": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Cancel": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.BackstageIsLive": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.FillerVideo": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.UncertainInput": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.Video": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.VideoOrLive": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.Controls.LiveIndicator.YoureNotConnected": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.EachBackstageAvaiableToJoin": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.EachPresHasBackstage": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.ExitBackstage": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.EyeOnTheChat": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.NoEvents": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.UpcomingBackstage.Timer": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.UpcomingBackstage.WillBeAvaiable": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.VonageBackstage.NoRoomSession": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.WatchLiveStream": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.WatchingWhileSpeakingAlert": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Stream.WelcomeTo": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.AudioBlocked": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.AudioBlockedClick": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.ConnectionTooUnstable": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.ConnectionUnstable": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.FormatNotSupported": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.FormatNotSupportedDesc": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.ProfilePicture": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.ProfileUnavailable": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.TooManyPeople": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.VideoHidden": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.VideoHiddenDesc": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.Vonage.VonageOverlay.VideoQualityLimited": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Room.YourRole": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Schedule.StarEventButton.AddToSchedule": {
+    "defaultMessage": ""
+  },
+  "Conference.Attend.Schedule.StarEventButton.RemoveFromSchedule": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.AccessCode": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.AccessCodeAlreadyUsed": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.ConferenceCreated": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.ConferenceCreator": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.CouldNotCreateConference": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.Create": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.DemoCode": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.ErrorContactTechSupport": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.ErrorInformation": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.FailedToCreateConference": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.InvalidAccessCode": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.MyAwesomeConference": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.MyAwesomeConferenceShort": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.Name": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.NameAtLeast": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.NameMaybeTaken": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.NameRequired": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.NameTaken": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.PleaseContactUs": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.ShortNameAtLeast": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.ShortNameRequired": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.ShortNameTaken": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.WelcomeToConference": {
+    "defaultMessage": ""
+  },
+  "Conference.NewConferenceForm.WhatsThis": {
+    "defaultMessage": ""
+  },
   "auth.auth0customprovider.loading": {
     "defaultMessage": ""
   },
@@ -143,6 +404,12 @@
   "chat.messages.polloptions.pollopen": {
     "defaultMessage": ""
   },
+  "chat.messages.profilebox.profilepicture": {
+    "defaultMessage": ""
+  },
+  "chat.messages.profilebox.profileunavaiable": {
+    "defaultMessage": ""
+  },
   "chat.pin.pinnedbutton.loading": {
     "defaultMessage": ""
   },
@@ -152,7 +419,34 @@
   "chat.pin.pinnedbutton.unpin": {
     "defaultMessage": ""
   },
+  "chat.subscribe.subscribedbutton.loading": {
+    "defaultMessage": ""
+  },
+  "chat.subscribe.subscribedbutton.subscribe": {
+    "defaultMessage": ""
+  },
+  "chat.subscribe.subscribedbutton.unsubscribe": {
+    "defaultMessage": ""
+  },
   "conference.attend.conferencelandingpage.unrecognisederror": {
+    "defaultMessage": ""
+  },
+  "conference.attend.exhibition.exhibitionpage.discussionroom": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.prejoin.cameraoff": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.room.selectavideo": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.room.youreapresenter": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.roompage.loadingroom": {
+    "defaultMessage": ""
+  },
+  "conference.attend.room.roompage.unknownroom": {
     "defaultMessage": ""
   },
   "conference.attend.room.vonage.devicechoosermodal.camera": {
@@ -168,6 +462,21 @@
     "defaultMessage": ""
   },
   "conference.attend.room.vonage.devicechoosermodal.save": {
+    "defaultMessage": ""
+  },
+  "conference.attend.rooms.v2.socialisemodal.networking": {
+    "defaultMessage": ""
+  },
+  "conference.attend.rooms.v2.socialisemodal.newroom": {
+    "defaultMessage": ""
+  },
+  "conference.attend.rooms.v2.socialisemodal.people": {
+    "defaultMessage": ""
+  },
+  "conference.attend.rooms.v2.socialisemodal.rooms": {
+    "defaultMessage": ""
+  },
+  "conference.attend.schedule.v2.schedule.earlyprototype": {
     "defaultMessage": ""
   },
   "conference.useinviteorcreateview.create": {
@@ -207,6 +516,9 @@
     "defaultMessage": ""
   },
   "errors.pagefailedtoload.tryagain": {
+    "defaultMessage": ""
+  },
+  "example": {
     "defaultMessage": ""
   },
   "forceuserrefresh.forceuserrefresh.automaticrefresh": {
@@ -298,12 +610,6 @@
   },
   "maintenance.downformaintenancepage.viewstatus": {
     "defaultMessage": ""
-  },
-  "menu.v2.collapse": {
-    "defaultMessage": "Recolher Menu"
-  },
-  "menu.v2.expand": {
-    "defaultMessage": "Expandir Menu"
   },
   "menu.v2.leftmenu.checklist": {
     "defaultMessage": ""
@@ -497,11 +803,92 @@
   "pushnotifications.pushnotificationsettings.youresubscribed": {
     "defaultMessage": ""
   },
+  "realtime.pagecountbox.userscounter": {
+    "defaultMessage": ""
+  },
+  "realtime.pagecounttext.userscounter": {
+    "defaultMessage": ""
+  },
   "room.permissioninstructionsmodal.issue": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.allocatedtorooms": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.ends": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.gotoallocatedroom": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.initialising": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.inqueue": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.joinnetworkingqueue": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.joinqueue": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.networking": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.noactiveshufflespaces": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.nomatch": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.noroomsavaiable": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.peoplequeued": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.pleasewait": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.pleasewaitwhile": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.rejoinqueue": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.room": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.shuffleperiodended": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.shuffleperiodending": {
+    "defaultMessage": ""
+  },
+  "shufflerooms.waitingpage.starts": {
     "defaultMessage": ""
   },
   "signup": {
     "defaultMessage": "Inscrever-se"
+  },
+  "users.currentuser.listconferencesview.chooseaconference": {
+    "defaultMessage": ""
+  },
+  "users.currentuser.listconferencesview.loginemail": {
+    "defaultMessage": ""
+  },
+  "users.currentuser.listconferencesview.myconferences": {
+    "defaultMessage": ""
+  },
+  "users.currentuser.listconferencesview.noconferences": {
+    "defaultMessage": ""
+  },
+  "users.currentuser.listconferencesview.useinvitecode": {
+    "defaultMessage": ""
+  },
+  "users.currentuser.listconferencesview.yourloginemail": {
+    "defaultMessage": ""
   },
   "users.currentuser.usecurrentuser.notavaiable": {
     "defaultMessage": ""

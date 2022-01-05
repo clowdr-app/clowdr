@@ -27,16 +27,28 @@ import { useRegistrants } from "../../RegistrantsContext";
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export function RoomControlBar({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
+    const intl = useIntl();
     const listModal = useDisclosure();
 
     return (
         <HStack justifyContent="flex-end">
-            <Button aria-label="Members of this room" title="Members of this room" onClick={listModal.onOpen} size="sm">
+            <Button
+                aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.RoomControlBar.MembersOfThisRoom', defaultMessage: "Members of this room" })}
+                title={intl.formatMessage({ id: 'Conference.Attend.Room.RoomControlBar.MembersOfThisRoom', defaultMessage: "Members of this room" })}
+                onClick={listModal.onOpen}
+                size="sm"
+            >
                 <>
                     <FAIcon icon="users" iconStyle="s" mr={3} />
-                    <Text>Members</Text>
+                    <Text>
+                        <FormattedMessage
+                            id="Conference.Attend.Room.RoomControlBar.Members"
+                            defaultMessage="Members"
+                        />
+                    </Text>
                 </>
             </Button>
             <RoomMembersModal isOpen={listModal.isOpen} onClose={listModal.onClose} roomDetails={roomDetails} />
@@ -63,12 +75,13 @@ function RoomMembersModal({
     onClose: () => void;
     roomDetails: RoomPage_RoomDetailsFragment;
 }): JSX.Element {
+    const intl = useIntl();
     return (
         <Modal scrollBehavior="inside" isOpen={isOpen} onClose={onClose} size="md">
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
-                    Room members <ModalCloseButton />
+                    {intl.formatMessage({ id: 'Conference.Attend.Room.RoomControlBar.RoomMembers', defaultMessage: "Room members" }) + " "}<ModalCloseButton />
                 </ModalHeader>
                 <ModalBody>
                     <RoomMembersProvider roomId={roomDetails.id}>
@@ -81,6 +94,7 @@ function RoomMembersModal({
 }
 
 function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
+    const intl = useIntl();
     const roomMembers = useRoomMembers();
     const conference = useConference();
     const addMemberModal = useDisclosure();
@@ -134,12 +148,15 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
                         mt={2}
                         size="sm"
                         colorScheme="PrimaryActionButton"
-                        aria-label="Add people to room"
-                        title="Add people to room"
+                        aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.RoomControlBar.AddPeopleToRoom', defaultMessage: "Add people to room" })}
+                        title={intl.formatMessage({ id: 'Conference.Attend.Room.RoomControlBar.AddPeopleToRoom', defaultMessage: "Add people to room" })}
                         onClick={addMemberModal.onOpen}
                     >
                         <FAIcon icon="plus" iconStyle="s" mr={3} />
-                        Add people
+                        <FormattedMessage
+                            id="Conference.Attend.Room.RoomControlBar.AddPeople"
+                            defaultMessage="Add people"
+                        />
                     </Button>
                 </Box>
             ) : (

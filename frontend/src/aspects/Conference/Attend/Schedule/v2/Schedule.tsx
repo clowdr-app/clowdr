@@ -3,6 +3,7 @@ import { Box, Table, Text, Th, Tr, useColorModeValue, useToken, VStack } from "@
 import * as luxon from "luxon";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
+import { FormattedMessage } from "react-intl";
 import type {
     ScheduleV2_RoomFragment,
     ScheduleV2_TagFragment,
@@ -163,9 +164,12 @@ export default function Schedule({
     return (
         <VStack w="100%" overflow="hidden">
             <Text py={2}>
-                This schedule view is an early prototype we are using to gather user feedback and to demonstrate the
-                direction we are headed in. Important features like accessibility properties, jump-to-day/jump-to-now
-                and other features are yet to be implemented.
+                <FormattedMessage
+                    id="conference.attend.schedule.v2.schedule.earlyprototype"
+                    defaultMessage="This schedule view is an early prototype we are using to gather user feedback and to demonstrate the
+                    direction we are headed in. Important features like accessibility properties, jump-to-day/jump-to-now
+                    and other features are yet to be implemented."
+                />
             </Text>
             <Box
                 pos="relative"

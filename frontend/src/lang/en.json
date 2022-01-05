@@ -143,6 +143,12 @@
   "chat.messages.polloptions.pollopen": {
     "defaultMessage": "Poll is open."
   },
+  "chat.messages.profilebox.profilepicture": {
+    "defaultMessage": "Profile picture of {name}"
+  },
+  "chat.messages.profilebox.profileunavaiable": {
+    "defaultMessage": "Profile currently unavailable"
+  },
   "chat.pin.pinnedbutton.loading": {
     "defaultMessage": "Loading pinned status"
   },
@@ -152,8 +158,29 @@
   "chat.pin.pinnedbutton.unpin": {
     "defaultMessage": "Unpin this chat from the sidebar"
   },
+  "chat.subscribe.subscribedbutton.loading": {
+    "defaultMessage": "Loading subscribed status"
+  },
+  "chat.subscribe.subscribedbutton.subscribe": {
+    "defaultMessage": "Subscribe to notifications for this chat"
+  },
+  "chat.subscribe.subscribedbutton.unsubscribe": {
+    "defaultMessage": "Unsubscribe from notifications for this chat"
+  },
   "conference.attend.conferencelandingpage.unrecognisederror": {
     "defaultMessage": "Sorry, we were unable to load the page due to an unrecognised error. Please try again later or contact our support teams if this error persists."
+  },
+  "conference.attend.exhibition.exhibitionpage.discussionroom": {
+    "defaultMessage": "Discussion room"
+  },
+  "conference.attend.room.prejoin.cameraoff": {
+    "defaultMessage": "Your camera is not switched on."
+  },
+  "conference.attend.room.room.selectavideo": {
+    "defaultMessage": "Select a video below"
+  },
+  "conference.attend.room.room.youreapresenter": {
+    "defaultMessage": "You are a presenter of the next event"
   },
   "conference.attend.room.vonage.devicechoosermodal.camera": {
     "defaultMessage": "Camera"
@@ -169,6 +196,21 @@
   },
   "conference.attend.room.vonage.devicechoosermodal.save": {
     "defaultMessage": "Save"
+  },
+  "conference.attend.rooms.v2.socialisemodal.networking": {
+    "defaultMessage": "Networking"
+  },
+  "conference.attend.rooms.v2.socialisemodal.newroom": {
+    "defaultMessage": "Create new room"
+  },
+  "conference.attend.rooms.v2.socialisemodal.people": {
+    "defaultMessage": "People"
+  },
+  "conference.attend.rooms.v2.socialisemodal.rooms": {
+    "defaultMessage": "Rooms"
+  },
+  "conference.attend.schedule.v2.schedule.earlyprototype": {
+    "defaultMessage": "This schedule view is an early prototype we are using to gather user feedback and to demonstrate the direction we are headed in. Important features like accessibility properties, jump-to-day/jump-to-now and other features are yet to be implemented."
   },
   "conference.useinviteorcreateview.create": {
     "defaultMessage": "Create a conference"
@@ -208,6 +250,9 @@
   },
   "errors.pagefailedtoload.tryagain": {
     "defaultMessage": "Try again"
+  },
+  "example": {
+    "defaultMessage": "Example"
   },
   "forceuserrefresh.forceuserrefresh.automaticrefresh": {
     "defaultMessage": "Automatic refresh in"
@@ -491,12 +536,93 @@
   "pushnotifications.pushnotificationsettings.youresubscribed": {
     "defaultMessage": "You are subscribed to push notifications in this browser."
   },
+  "realtime.pagecountbox.userscounter": {
+    "defaultMessage": "{number} user(s) with an open tab here"
+  },
+  "realtime.pagecounttext.userscounter": {
+    "defaultMessage": "{number} user(s) with an open tab here"
+  },
   "room.permissioninstructionsmodal.issue": {
     "defaultMessage": "There seems to be an issue with your"
+  },
+  "shufflerooms.waitingpage.allocatedtorooms": {
+    "defaultMessage": "allocated to rooms"
+  },
+  "shufflerooms.waitingpage.ends": {
+    "defaultMessage": "Ends"
+  },
+  "shufflerooms.waitingpage.gotoallocatedroom": {
+    "defaultMessage": "Go to your allocated room"
+  },
+  "shufflerooms.waitingpage.initialising": {
+    "defaultMessage": "Initialising..."
+  },
+  "shufflerooms.waitingpage.inqueue": {
+    "defaultMessage": "You are in the queue, please wait."
+  },
+  "shufflerooms.waitingpage.joinnetworkingqueue": {
+    "defaultMessage": "Join a networking queue to be randomly grouped and meet new people!"
+  },
+  "shufflerooms.waitingpage.joinqueue": {
+    "defaultMessage": "Join the queue"
+  },
+  "shufflerooms.waitingpage.networking": {
+    "defaultMessage": "Networking"
+  },
+  "shufflerooms.waitingpage.noactiveshufflespaces": {
+    "defaultMessage": "No active shuffle spaces at the moment, please come back later."
+  },
+  "shufflerooms.waitingpage.nomatch": {
+    "defaultMessage": "Sorry, it may not be possible to match you with anyone at the moment."
+  },
+  "shufflerooms.waitingpage.noroomsavaiable": {
+    "defaultMessage": "No rooms are available at the moment. There are either not enough people active in the queue or the available rooms are full."
+  },
+  "shufflerooms.waitingpage.peoplequeued": {
+    "defaultMessage": "people queued"
+  },
+  "shufflerooms.waitingpage.pleasewait": {
+    "defaultMessage": "Please wait"
+  },
+  "shufflerooms.waitingpage.pleasewaitwhile": {
+    "defaultMessage": "Please wait while we allocate rooms"
+  },
+  "shufflerooms.waitingpage.rejoinqueue": {
+    "defaultMessage": "Rejoin the queue"
+  },
+  "shufflerooms.waitingpage.room": {
+    "defaultMessage": "Room"
+  },
+  "shufflerooms.waitingpage.shuffleperiodended": {
+    "defaultMessage": "This shuffle period has ended."
+  },
+  "shufflerooms.waitingpage.shuffleperiodending": {
+    "defaultMessage": "This shuffle period is coming to an end."
+  },
+  "shufflerooms.waitingpage.starts": {
+    "defaultMessage": "Starts"
   },
   "signup": {
     "defaultMessage": "Sign Up",
     "description": "sign up"
+  },
+  "users.currentuser.listconferencesview.chooseaconference": {
+    "defaultMessage": "<strong>Choose a conference</strong> or use an invite code to join a new one."
+  },
+  "users.currentuser.listconferencesview.loginemail": {
+    "defaultMessage": "Login email address"
+  },
+  "users.currentuser.listconferencesview.myconferences": {
+    "defaultMessage": "My conferences"
+  },
+  "users.currentuser.listconferencesview.noconferences": {
+    "defaultMessage": "No conferences."
+  },
+  "users.currentuser.listconferencesview.useinvitecode": {
+    "defaultMessage": "Use invite code"
+  },
+  "users.currentuser.listconferencesview.yourloginemail": {
+    "defaultMessage": "Your login email address is:"
   },
   "users.currentuser.usecurrentuser.notavaiable": {
     "defaultMessage": "Current user not available"

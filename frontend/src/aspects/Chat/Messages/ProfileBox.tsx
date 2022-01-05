@@ -4,6 +4,7 @@ import React from "react";
 import type { RegistrantDataFragment } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
 import { useChatProfileModal } from "../Frame/ChatProfileModalProvider";
+import { useIntl } from "react-intl";
 
 export default function ProfilePictureBox({
     registrant,
@@ -15,6 +16,7 @@ export default function ProfilePictureBox({
     showPlaceholderProfilePictures: boolean;
     showProfilePictures: boolean;
 } & ButtonProps): JSX.Element {
+    const intl = useIntl();
     const profileModal = useChatProfileModal();
     const toast = useToast();
 
@@ -40,7 +42,7 @@ export default function ProfilePictureBox({
                 } else {
                     toast({
                         status: "warning",
-                        title: "Profile currently unavailable",
+                        title: intl.formatMessage({ id: 'chat.messages.profilebox.profileunavaiable', defaultMessage: "Profile currently unavailable" }),
                         duration: 2000,
                     });
                 }
@@ -56,7 +58,7 @@ export default function ProfilePictureBox({
                     objectPosition="center"
                     src={registrant.profile.photoURL_50x50}
                     overflow="hidden"
-                    alt={`Profile picture of ${registrant.displayName}`}
+                    alt={intl.formatMessage({ id: 'chat.messages.profilebox.profilepicture', defaultMessage: "Profile picture of {name}" }, { name: registrant.displayName })}
                 />
             ) : showPlaceholderProfilePictures && registrant !== null ? (
                 <FAIcon iconStyle="s" icon="cat" fontSize={((props.w ?? 35) as number) * 0.8 + "px"} />

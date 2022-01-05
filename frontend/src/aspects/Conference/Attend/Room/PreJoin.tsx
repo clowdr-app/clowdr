@@ -2,6 +2,7 @@ import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
 import { Box, Center, chakra, HStack, useToast, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
+import { FormattedMessage } from "react-intl";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { backgroundImage } from "../../../Vonage/resources";
 import { useVonageRoom } from "../../../Vonage/useVonageRoom";
@@ -37,7 +38,11 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                     />
                     <Center position="absolute" w="100%" h="100%" t="0" l="0">
                         <Box bgColor="rgba(0,0,0,0.5)" p={4} fontSize="lg" color="white" whiteSpace="normal">
-                            Your camera is not switched on.
+                            <FormattedMessage
+                                id="conference.attend.room.prejoin.cameraoff"
+                                defaultMessage="Your camera is not switched on."
+                            />
+                            
                         </Box>
                     </Center>
                 </Box>

@@ -4,8 +4,10 @@ import { useLocation } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
 import FAIcon from "../Icons/FAIcon";
 import { usePresenceState } from "./PresenceStateProvider";
+import { useIntl } from "react-intl";
 
 export default function PageCountBox(): JSX.Element {
+    const intl = useIntl();
     const presence = usePresenceState();
     const [pageCount, setPageCount] = useState<number | null>(null);
     const mConference = useMaybeConference();
@@ -18,7 +20,7 @@ export default function PageCountBox(): JSX.Element {
     }, [location.pathname, mConference?.slug, presence]);
 
     const pageCountLabel = pageCount
-        ? `${pageCount} user${pageCount !== 1 ? "s" : ""} with an open tab here`
+        ? intl.formatMessage({ id: 'realtime.pagecountbox.userscounter', defaultMessage: "{number} user(s) with an open tab here" }, { number: pageCount })
         : undefined;
 
     return pageCountLabel ? (

@@ -4,17 +4,19 @@ import React from "react";
 import FAIcon from "../../Icons/FAIcon";
 import { useChatConfiguration } from "../Configuration";
 import { useChatSubscribedQuery } from "./SubscribedQuery";
+import { useIntl } from "react-intl";
 
 export function SubscribedButton(props: ButtonProps): JSX.Element {
+    const intl = useIntl();
     const config = useChatConfiguration();
     const subscribedQ = useChatSubscribedQuery();
     const isLoading = subscribedQ.loading;
     const isSubscribed = !!subscribedQ.data?.isSubscribed;
     const label = isLoading
-        ? "Loading subscribed status"
+        ? intl.formatMessage({ id: 'chat.subscribe.subscribedbutton.loading', defaultMessage: "Loading subscribed status" })
         : isSubscribed
-        ? "Unsubscribe from notifications for this chat"
-        : "Subscribe to notifications for this chat";
+        ? intl.formatMessage({ id: 'chat.subscribe.subscribedbutton.unsubscribe', defaultMessage: "Unsubscribe from notifications for this chat" })
+        : intl.formatMessage({ id: 'chat.subscribe.subscribedbutton.subscribe', defaultMessage: "Subscribe to notifications for this chat" });
 
     return subscribedQ.data?.allowedToUnsubscribe &&
         ((config.permissions.canSubscribe && !isSubscribed) || (config.permissions.canUnsubscribe && isSubscribed)) ? (

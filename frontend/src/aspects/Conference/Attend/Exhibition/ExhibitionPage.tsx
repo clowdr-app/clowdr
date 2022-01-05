@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { FormattedMessage } from "react-intl";
 import type { ExhibitionWithContentFragment, ItemEventFragment } from "../../../../generated/graphql";
 import { Permissions_Permission_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
@@ -148,7 +149,10 @@ function ExhibitionPageInner({
                                                 verticalAlign="middle"
                                             />{" "}
                                             <chakra.span verticalAlign="middle" pb={0.7}>
-                                                Discussion room
+                                                <FormattedMessage
+                                                    id="conference.attend.exhibition.exhibitionpage.discussionroom"
+                                                    defaultMessage="Discussion room"
+                                                />
                                             </chakra.span>
                                         </Text>
                                         <PageCountText

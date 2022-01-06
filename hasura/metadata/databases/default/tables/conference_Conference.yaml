@@ -129,6 +129,7 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
+    - announcementsChatId
     - conferenceVisibilityLevel
     - createdBy
     - created_at
@@ -144,6 +145,7 @@ select_permissions:
   role: attendee
 - permission:
     columns:
+    - announcementsChatId
     - conferenceVisibilityLevel
     - createdBy
     - created_at
@@ -163,16 +165,17 @@ select_permissions:
   role: conference-organizer
 - permission:
     columns:
+    - announcementsChatId
+    - conferenceVisibilityLevel
+    - createdBy
+    - created_at
+    - defaultProgramVisibilityLevel
+    - demoCodeId
     - id
     - name
     - shortName
     - slug
-    - createdBy
-    - demoCodeId
-    - created_at
     - updated_at
-    - conferenceVisibilityLevel
-    - defaultProgramVisibilityLevel
     filter:
       id:
         _in: X-Hasura-Conference-Ids
@@ -246,3 +249,16 @@ event_triggers:
     num_retries: 0
     timeout_sec: 60
   webhook: "{{CACHES_BASE_URL}}/cache/update/conference"
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: X-Hasura-Event-Secret
+    value_from_env: EVENT_SECRET
+  name: Realtime_Conference_Inserted
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{REALTIME_BASE_URL}}/conference/inserted"

@@ -1274,6 +1274,7 @@ export class ChatState {
 
 export class GlobalChatState {
     public openChatInSidebar: ((chatId: string) => void) | null = null;
+    public openAnnouncements: (() => void) | null = null;
     public showSidebar: (() => void) | null = null;
 
     public socket: SocketIOClient.Socket | null = null;
@@ -1284,6 +1285,7 @@ export class GlobalChatState {
             slug: string;
             name: string;
             shortName: string;
+            announcementsChatId?: string;
         },
         public readonly registrant: Registrant,
         public readonly client: Client
@@ -1354,7 +1356,11 @@ export class GlobalChatState {
                             // console.info("Notification", notification);
 
                             const openChatInSidebar = this.openChatInSidebar;
+                            const openAnnouncements = this.openAnnouncements;
                             const showSidebar = this.showSidebar;
+
+                            const isAnnouncement =
+                                notification.chatId && this.conference.announcementsChatId === notification.chatId;
 
                             const notificationId = this.toast({
                                 position: "top-right",
@@ -1397,35 +1403,47 @@ export class GlobalChatState {
                                             <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
                                                 <Markdown restrictHeadingSize>{notification.description}</Markdown>
                                             </Box>
-                                            <ButtonGroup isAttached>
-                                                {openChatInSidebar && notification.chatId ? (
-                                                    <Button
-                                                        colorScheme="PrimaryActionButton"
-                                                        onClick={() => {
-                                                            props.onClose();
-                                                            if (notification.chatId) {
-                                                                openChatInSidebar?.(notification.chatId);
-                                                                showSidebar?.();
-                                                            }
-                                                        }}
-                                                    >
-                                                        Go to chat
-                                                    </Button>
-                                                ) : undefined}
-                                                {notification.linkURL ? (
-                                                    <Button
-                                                        colorScheme="SecondaryActionButton"
-                                                        onClick={() => {
-                                                            props.onClose();
-                                                            if (notification.linkURL) {
-                                                                window.open(notification.linkURL, "_blank");
-                                                            }
-                                                        }}
-                                                    >
-                                                        <ExternalLinkIcon />
-                                                    </Button>
-                                                ) : undefined}
-                                            </ButtonGroup>
+                                            {isAnnouncement ? (
+                                                <Button
+                                                    colorScheme="PrimaryActionButton"
+                                                    onClick={() => {
+                                                        props.onClose();
+                                                        openAnnouncements?.();
+                                                    }}
+                                                >
+                                                    Read more
+                                                </Button>
+                                            ) : (
+                                                <ButtonGroup isAttached>
+                                                    {openChatInSidebar && notification.chatId ? (
+                                                        <Button
+                                                            colorScheme="PrimaryActionButton"
+                                                            onClick={() => {
+                                                                props.onClose();
+                                                                if (notification.chatId) {
+                                                                    openChatInSidebar?.(notification.chatId);
+                                                                    showSidebar?.();
+                                                                }
+                                                            }}
+                                                        >
+                                                            Open chat
+                                                        </Button>
+                                                    ) : undefined}
+                                                    {notification.linkURL ? (
+                                                        <Button
+                                                            colorScheme="SecondaryActionButton"
+                                                            onClick={() => {
+                                                                props.onClose();
+                                                                if (notification.linkURL) {
+                                                                    window.open(notification.linkURL, "_blank");
+                                                                }
+                                                            }}
+                                                        >
+                                                            <ExternalLinkIcon />
+                                                        </Button>
+                                                    ) : undefined}
+                                                </ButtonGroup>
+                                            )}
                                         </VStack>
                                     );
                                 },

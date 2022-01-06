@@ -31,7 +31,7 @@ export default function PushNotificationSettings(): JSX.Element {
     }, []);
 
     return (
-        <Center as={VStack} flexDir="column" spacing={8} maxW={600}>
+        <Center as={VStack} flexDir="column" spacing={8} maxW={600} py={8}>
             {isSubscribed === null ? (
                 <>
                     <Text>Determining subscription state for this browser...</Text>

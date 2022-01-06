@@ -67,6 +67,11 @@ export function ChatsPanel({
     const unreadCountsRef = React.useRef<Map<string, string>>(new Map());
     const [createDMMutationResponse, createDmMutation] = useCreateDmMutation();
 
+    const announcementsChatId: string | undefined = useMemo(
+        () => ("announcementsChatId" in conference ? conference.announcementsChatId : undefined),
+        [conference]
+    );
+
     useEffect(() => {
         let unsubs: (() => void)[] = [];
 
@@ -168,7 +173,7 @@ export function ChatsPanel({
 
     const mandatoryPinnedChats = useMemo(() => {
         if (pinnedChats) {
-            const chats = pinnedChats.filter((chat) => chat.EnableMandatoryPin);
+            const chats = pinnedChats.filter((chat) => chat.EnableMandatoryPin && chat.Id !== announcementsChatId);
             if (chats.length > 0) {
                 return (
                     <List m={0} mb={2} ml={4}>
@@ -190,11 +195,13 @@ export function ChatsPanel({
             }
         }
         return undefined;
-    }, [pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
+    }, [announcementsChatId, pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
     const dmPinnedChats = useMemo(() => {
         if (pinnedChats) {
-            const chats = pinnedChats.filter((chat) => !chat.EnableMandatoryPin && chat.IsDM);
+            const chats = pinnedChats.filter(
+                (chat) => !chat.EnableMandatoryPin && chat.IsDM && chat.Id !== announcementsChatId
+            );
             if (chats) {
                 return (
                     <List my={2} ml={4}>
@@ -216,11 +223,13 @@ export function ChatsPanel({
             }
         }
         return undefined;
-    }, [pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
+    }, [announcementsChatId, pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
     const nonDMPinnedChats = useMemo(() => {
         if (pinnedChats) {
-            const chats = pinnedChats.filter((chat) => !chat.EnableMandatoryPin && !chat.IsDM);
+            const chats = pinnedChats.filter(
+                (chat) => !chat.EnableMandatoryPin && !chat.IsDM && chat.Id !== announcementsChatId
+            );
             if (chats.length > 0) {
                 return (
                     <List my={2} ml={4}>
@@ -242,7 +251,7 @@ export function ChatsPanel({
             }
         }
         return undefined;
-    }, [pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
+    }, [announcementsChatId, pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
     const peopleSearch = useMemo(
         () => (

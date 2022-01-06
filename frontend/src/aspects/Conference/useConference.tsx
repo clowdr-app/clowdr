@@ -26,6 +26,8 @@ gql`
     }
 
     fragment AuthdConferenceInfo on conference_Conference {
+        announcementsChatId
+
         registrants(where: { userId: { _eq: $userId } }) {
             ...RegistrantData
         }

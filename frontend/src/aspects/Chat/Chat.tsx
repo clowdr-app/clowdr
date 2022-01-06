@@ -15,6 +15,7 @@ export interface ChatProps {
     customHeadingElements?: React.ReactNodeArray;
     chat: ChatState;
     isVisible: RefObject<boolean>;
+    noHeader?: boolean;
 
     onProfileModalOpened?: (registrantId: string, close: () => void) => void;
     onEmoteReceived?: (emote: EmoteMessageData) => void;

@@ -9486,6 +9486,7 @@ input collection_searchProgramPerson_args {
 columns and relationships of "conference.Conference"
 """
 type conference_Conference {
+    announcementsChatId: uuid
     """
     An array relationship
     """
@@ -10154,6 +10155,7 @@ input conference_Conference_bool_exp {
     _and: [conference_Conference_bool_exp!]
     _not: conference_Conference_bool_exp
     _or: [conference_Conference_bool_exp!]
+    announcementsChatId: uuid_comparison_exp
     chats: chat_Chat_bool_exp
     completedRegistrationsStat: analytics_CompletedRegistrations_bool_exp
     conferenceVisibilityLevel: conference_VisibilityLevel_enum_comparison_exp
@@ -10211,6 +10213,7 @@ enum conference_Conference_constraint {
 input type for inserting data into table "conference.Conference"
 """
 input conference_Conference_insert_input {
+    announcementsChatId: uuid
     chats: chat_Chat_arr_rel_insert_input
     completedRegistrationsStat: analytics_CompletedRegistrations_obj_rel_insert_input
     conferenceVisibilityLevel: conference_VisibilityLevel_enum
@@ -10242,6 +10245,7 @@ input conference_Conference_insert_input {
 aggregate max on columns
 """
 type conference_Conference_max_fields {
+    announcementsChatId: uuid
     createdAt: timestamptz
     createdBy: String
     defaultProgramVisibilityLevel: String
@@ -10257,6 +10261,7 @@ type conference_Conference_max_fields {
 order by max() on columns of table "conference.Conference"
 """
 input conference_Conference_max_order_by {
+    announcementsChatId: order_by
     createdAt: order_by
     createdBy: order_by
     defaultProgramVisibilityLevel: order_by
@@ -10272,6 +10277,7 @@ input conference_Conference_max_order_by {
 aggregate min on columns
 """
 type conference_Conference_min_fields {
+    announcementsChatId: uuid
     createdAt: timestamptz
     createdBy: String
     defaultProgramVisibilityLevel: String
@@ -10287,6 +10293,7 @@ type conference_Conference_min_fields {
 order by min() on columns of table "conference.Conference"
 """
 input conference_Conference_min_order_by {
+    announcementsChatId: order_by
     createdAt: order_by
     createdBy: order_by
     defaultProgramVisibilityLevel: order_by
@@ -10336,6 +10343,7 @@ input conference_Conference_on_conflict {
 Ordering options when selecting data from "conference.Conference".
 """
 input conference_Conference_order_by {
+    announcementsChatId: order_by
     chats_aggregate: chat_Chat_aggregate_order_by
     completedRegistrationsStat: analytics_CompletedRegistrations_order_by
     conferenceVisibilityLevel: order_by
@@ -10374,6 +10382,10 @@ input conference_Conference_pk_columns_input {
 select columns of table "conference.Conference"
 """
 enum conference_Conference_select_column {
+    """
+    column name
+    """
+    announcementsChatId
     """
     column name
     """
@@ -10420,6 +10432,7 @@ enum conference_Conference_select_column {
 input type for updating data in table "conference.Conference"
 """
 input conference_Conference_set_input {
+    announcementsChatId: uuid
     conferenceVisibilityLevel: conference_VisibilityLevel_enum
     createdAt: timestamptz
     createdBy: String
@@ -10436,6 +10449,10 @@ input conference_Conference_set_input {
 update columns of table "conference.Conference"
 """
 enum conference_Conference_update_column {
+    """
+    column name
+    """
+    announcementsChatId
     """
     column name
     """

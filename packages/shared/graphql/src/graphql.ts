@@ -7053,6 +7053,7 @@ export type Collection_SearchProgramPerson_Args = {
 /** columns and relationships of "conference.Conference" */
 export type Conference_Conference = {
     __typename?: "conference_Conference";
+    announcementsChatId?: Maybe<Scalars["uuid"]>;
     /** An array relationship */
     chats: Array<Chat_Chat>;
     /** An aggregate relationship */
@@ -7375,6 +7376,7 @@ export type Conference_Conference_Bool_Exp = {
     _and?: Maybe<Array<Conference_Conference_Bool_Exp>>;
     _not?: Maybe<Conference_Conference_Bool_Exp>;
     _or?: Maybe<Array<Conference_Conference_Bool_Exp>>;
+    announcementsChatId?: Maybe<Uuid_Comparison_Exp>;
     chats?: Maybe<Chat_Chat_Bool_Exp>;
     completedRegistrationsStat?: Maybe<Analytics_CompletedRegistrations_Bool_Exp>;
     conferenceVisibilityLevel?: Maybe<Conference_VisibilityLevel_Enum_Comparison_Exp>;
@@ -7418,6 +7420,7 @@ export enum Conference_Conference_Constraint {
 
 /** input type for inserting data into table "conference.Conference" */
 export type Conference_Conference_Insert_Input = {
+    announcementsChatId?: Maybe<Scalars["uuid"]>;
     chats?: Maybe<Chat_Chat_Arr_Rel_Insert_Input>;
     completedRegistrationsStat?: Maybe<Analytics_CompletedRegistrations_Obj_Rel_Insert_Input>;
     conferenceVisibilityLevel?: Maybe<Conference_VisibilityLevel_Enum>;
@@ -7448,6 +7451,7 @@ export type Conference_Conference_Insert_Input = {
 /** aggregate max on columns */
 export type Conference_Conference_Max_Fields = {
     __typename?: "conference_Conference_max_fields";
+    announcementsChatId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     createdBy?: Maybe<Scalars["String"]>;
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
@@ -7461,6 +7465,7 @@ export type Conference_Conference_Max_Fields = {
 
 /** order by max() on columns of table "conference.Conference" */
 export type Conference_Conference_Max_Order_By = {
+    announcementsChatId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     createdBy?: Maybe<Order_By>;
     defaultProgramVisibilityLevel?: Maybe<Order_By>;
@@ -7475,6 +7480,7 @@ export type Conference_Conference_Max_Order_By = {
 /** aggregate min on columns */
 export type Conference_Conference_Min_Fields = {
     __typename?: "conference_Conference_min_fields";
+    announcementsChatId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     createdBy?: Maybe<Scalars["String"]>;
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
@@ -7488,6 +7494,7 @@ export type Conference_Conference_Min_Fields = {
 
 /** order by min() on columns of table "conference.Conference" */
 export type Conference_Conference_Min_Order_By = {
+    announcementsChatId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     createdBy?: Maybe<Order_By>;
     defaultProgramVisibilityLevel?: Maybe<Order_By>;
@@ -7524,6 +7531,7 @@ export type Conference_Conference_On_Conflict = {
 
 /** Ordering options when selecting data from "conference.Conference". */
 export type Conference_Conference_Order_By = {
+    announcementsChatId?: Maybe<Order_By>;
     chats_aggregate?: Maybe<Chat_Chat_Aggregate_Order_By>;
     completedRegistrationsStat?: Maybe<Analytics_CompletedRegistrations_Order_By>;
     conferenceVisibilityLevel?: Maybe<Order_By>;
@@ -7559,6 +7567,8 @@ export type Conference_Conference_Pk_Columns_Input = {
 /** select columns of table "conference.Conference" */
 export enum Conference_Conference_Select_Column {
     /** column name */
+    AnnouncementsChatId = "announcementsChatId",
+    /** column name */
     ConferenceVisibilityLevel = "conferenceVisibilityLevel",
     /** column name */
     CreatedAt = "createdAt",
@@ -7582,6 +7592,7 @@ export enum Conference_Conference_Select_Column {
 
 /** input type for updating data in table "conference.Conference" */
 export type Conference_Conference_Set_Input = {
+    announcementsChatId?: Maybe<Scalars["uuid"]>;
     conferenceVisibilityLevel?: Maybe<Conference_VisibilityLevel_Enum>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     createdBy?: Maybe<Scalars["String"]>;
@@ -7596,6 +7607,8 @@ export type Conference_Conference_Set_Input = {
 
 /** update columns of table "conference.Conference" */
 export enum Conference_Conference_Update_Column {
+    /** column name */
+    AnnouncementsChatId = "announcementsChatId",
     /** column name */
     ConferenceVisibilityLevel = "conferenceVisibilityLevel",
     /** column name */

@@ -31,12 +31,7 @@ import useIsVeryNarrowView from "../../Hooks/useIsVeryNarrowView";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import { useNavigationState } from "../NavigationState";
 import HeaderBarButton from "./HeaderBarButton";
-
-/* TODO: Alerts box - button for push notifications
- <MenuItem as={ReactLink} to="/user/pushNotifications">
-    <FAIcon iconStyle="s" icon="envelope-open-text" />
-    &nbsp;&nbsp;Push notifications
-</MenuItem> */
+import NotificationsPopover from "./NotificationsPopover";
 
 export default function MenuHeaderBar({
     rightMenuOpen,
@@ -170,7 +165,7 @@ export default function MenuHeaderBar({
                     {!veryNarrowView ? (
                         <HeaderBarButton label="Search" iconStyle="s" icon="search" isDisabled={navState.disabled} />
                     ) : undefined}
-                    <HeaderBarButton label="Notifications" iconStyle="s" icon="bell" />
+                    <NotificationsPopover />
                     <HeaderBarButton
                         label="Chat"
                         iconStyle="s"

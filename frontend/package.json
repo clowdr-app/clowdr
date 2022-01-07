@@ -6,8 +6,8 @@
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
         "graphql-codegen": "graphql-codegen --config codegen.js",
-        "lang-extract": "formatjs extract 'src/aspects/**/*.ts*' '--out-file' 'src/lang/en.json' '--id-interpolation-pattern' '[sha512:contenthash:base64:6]'",
-        "lang-compile": "formatjs compile-folder '--ast' 'src/lang' 'src/lang-compiled'"
+        "lang-extract": "formatjs extract 'src/aspects/**/*.ts*' '--out-file' 'lang/en.json' '--id-interpolation-pattern' '[sha512:contenthash:base64:6]'",
+        "lang-compile": "formatjs compile-folder '--ast' 'lang' 'src/lang-compiled'"
     },
     "dependencies": {
         "@ahanapediatrics/ahana-fp": "^2.6.0",

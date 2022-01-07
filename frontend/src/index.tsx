@@ -15,23 +15,23 @@ import { UXChoiceProvider } from "./aspects/UXChoice/UXChoice";
 import UXChoiceDialog from "./aspects/UXChoice/UXChoiceDialog";
 import "./index.css";
 import { IntlProvider } from 'react-intl';
-import messages_pt from "./lang-compiled/pt.json";
 import messages_en from "./lang-compiled/en.json";
-import messages_de from "./lang-compiled/de.json";
-import messages_it from "./lang-compiled/it.json";
+// import messages_pt from "./lang-compiled/pt.json";
+// import messages_de from "./lang-compiled/de.json";
+// import messages_it from "./lang-compiled/it.json";
 
 function loadLocaleData(locale: string) {
     switch (locale) {
         case 'pt':
         case 'pt-br':
         case 'pt-BR':
-            return messages_pt;
+            // return messages_pt;
         case 'de':
         case 'de-DE':
-            return messages_de;
+            // return messages_de;
         case 'it':
         case 'it-IT':
-            return messages_it;
+            // return messages_it;
         default:
             return messages_en;
     }

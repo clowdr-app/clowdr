@@ -57,7 +57,11 @@ export default function CameraOverlay({
                 borderRadius={5}
                 overflow="hidden"
                 display="block"
-                aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.ViewRegistrantsProfile', defaultMessage: "View {registrant}'s profile" }, { registrant: registrant?.displayName ?? "<Loading name>" })}
+                aria-label={intl.formatMessage({
+                    id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.ViewRegistrantsProfile',
+                    defaultMessage: "View {registrant}'s profile" },{
+                    registrant: registrant?.displayName ?? intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.LoadingName', defaultMessage: "(Loading name...)" })
+                })}
                 onClick={() => {
                     if (registrant && registrant.profile) {
                         profileModal.open({
@@ -96,7 +100,7 @@ export default function CameraOverlay({
                         />
                     )}
                     <Text display="block" color={"gray.100"} noOfLines={1}>
-                        {registrant?.displayName ?? intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.LoadingName', defaultMessage: "<Loading name>" })}
+                        {registrant?.displayName ?? intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.LoadingName', defaultMessage: "(Loading name...)" })}
                     </Text>
                     {microphoneEnabled ? (
                         <FAIcon

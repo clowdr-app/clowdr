@@ -855,7 +855,7 @@
     "defaultMessage": "The video was hidden because the connection is not stable enough at the moment."
   },
   "Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.LoadingName": {
-    "defaultMessage": "<Loading name>"
+    "defaultMessage": "(Loading name...)"
   },
   "Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.ProfilePicture": {
     "defaultMessage": "Profile picture of {registrant}"

@@ -22,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
+import { FormattedMessage, useIntl } from "react-intl";
 import Color from "tinycolor2";
 import type {
     ItemList_ItemDataFragment,
@@ -206,6 +207,7 @@ function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Elemen
 }
 
 function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded: boolean }): JSX.Element {
+    const intl = useIntl();
     const [search, setSearch] = useRestorableState<string>(
         "ItemList_Search_" + tag.id,
         "",
@@ -287,12 +289,15 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
                 <InputGroup>
                     <InputLeftAddon aria-hidden>
                         <FAIcon iconStyle="s" icon="search" mr={2} />
-                        Search
+                        <FormattedMessage
+                            id="Conference.Attend.Content.ItemList.Search"
+                            defaultMessage="Search"
+                        />
                     </InputLeftAddon>
                     <Input
-                        aria-label={"Search found " + ariaSearchResultStr}
+                        aria-label={intl.formatMessage({ id: "Conference.Attend.Content.ItemList.SearchFound", defaultMessage: "Search found" }) + " " + ariaSearchResultStr}
                         type="text"
-                        placeholder="Search"
+                        placeholder={intl.formatMessage({ id: "Conference.Attend.Content.ItemList.Search", defaultMessage: "Search" })}
                         value={search}
                         onChange={(ev) => {
                             setSearch(ev.target.value);
@@ -311,10 +316,15 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
                         <FAIcon iconStyle="s" icon="times-circle" />
                     </InputRightElement>
                 </InputGroup>
-                <FormHelperText>Search for an item by title or a person&apos;s name or affiliation.</FormHelperText>
+                <FormHelperText>
+                    <FormattedMessage
+                        id="Conference.Attend.Content.ItemList.SearchInstructions"
+                        defaultMessage="Search for an item by title or a person's name or affiliation."
+                    />
+                </FormHelperText>
             </FormControl>
             {!filteredElements ? (
-                <Spinner label="Loading content" />
+                <Spinner label={intl.formatMessage({ id: "Conference.Attend.Content.ItemList.LoadingContent", defaultMessage: "Loading content" })} />
             ) : (
                 <SimpleGrid
                     columns={[1, Math.min(2, filteredElements.length), Math.min(3, filteredElements.length)]}
@@ -379,7 +389,12 @@ export default function ItemList(
 
     return (
         <VStack px={4} spacing={4} {...remainingProps}>
-            <Text>Select a tag to browse papers, posters, keynotes, and more.</Text>
+            <Text>
+                <FormattedMessage
+                    id="Conference.Attend.Content.ItemList.SelectATag"
+                    defaultMessage="Select a tag to browse papers, posters, keynotes, and more."
+                />
+            </Text>
             <Center flexDirection="column">
                 <SimpleGrid
                     aria-describedby="content-groups-accordion-header"

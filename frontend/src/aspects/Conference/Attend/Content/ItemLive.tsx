@@ -12,6 +12,7 @@ import usePolling from "../../../Generic/usePolling";
 import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { useConference } from "../../useConference";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export function ItemLive({
     itemData,
@@ -61,14 +62,20 @@ export function ItemLive({
                                 <>
                                     <FAIcon iconStyle="s" icon="video" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
                                     <chakra.span verticalAlign="middle" pb={0.7}>
-                                        Booth
+                                        <FormattedMessage
+                                            id="Conference.Attend.Content.ItemLive.Booth"
+                                            defaultMessage="Booth"
+                                        />
                                     </chakra.span>
                                 </>
                             ) : (
                                 <>
                                     <FAIcon iconStyle="s" icon="video" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
                                     <chakra.span verticalAlign="middle" pb={0.7}>
-                                        Discussion room
+                                        <FormattedMessage
+                                            id="Conference.Attend.Content.ItemLive.Discussion"
+                                            defaultMessage="Discussion room"
+                                        />
                                     </chakra.span>
                                 </>
                             )}
@@ -92,7 +99,10 @@ export function ItemLive({
                     <VStack spacing={0}>
                         <FAIcon iconStyle="s" icon="calendar" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
                         <chakra.span verticalAlign="middle" pb={0.7}>
-                            Live now
+                            <FormattedMessage
+                                id="Conference.Attend.Content.ItemLive.LiveNow"
+                                defaultMessage="Live now"
+                            />
                         </chakra.span>
                     </VStack>
                 </LinkButton>

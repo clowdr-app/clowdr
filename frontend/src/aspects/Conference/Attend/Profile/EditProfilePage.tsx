@@ -46,6 +46,7 @@ import { useConference } from "../../useConference";
 import type { Profile, RegistrantContextT } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import EditProfilePitureForm from "./EditProfilePictureForm";
+import { FormattedMessage, useIntl } from "react-intl";
 
 function arraysEqual<T>(
     x: T[] | null | undefined,
@@ -119,6 +120,7 @@ gql`
 `;
 
 function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }): JSX.Element {
+    const intl = useIntl();
     const conference = useConference();
     const currentUser = useCurrentUser();
 
@@ -151,7 +153,12 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 description: (
                     <>
                         <Spinner mr={4} />
-                        <Text as="span">Saving changes…</Text>
+                        <Text as="span">
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.SavingChanges"
+                                defaultMessage="Saving changes…"
+                            />
+                        </Text>
                     </>
                 ),
                 status: "info",
@@ -260,8 +267,8 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             >
                                 <NumberInputField />
                                 <NumberInputStepper>
-                                    <NumberIncrementStepper aria-label="Increment" />
-                                    <NumberDecrementStepper aria-label="Decrement" />
+                                    <NumberIncrementStepper aria-label={intl.formatMessage({ id: 'Conference.Attend.Profile.EditProfilePage.Increment', defaultMessage: "Increment" })} />
+                                    <NumberDecrementStepper aria-label={intl.formatMessage({ id: 'Conference.Attend.Profile.EditProfilePage.Decrement', defaultMessage: "Decrement" })} />
                                 </NumberInputStepper>
                             </NumberInput>
                         </InputGroup>
@@ -281,14 +288,15 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                 }}
                             />
                             <FormHelperText>
-                                Use{" "}
                                 <Link isExternal href="https://www.markdownguide.org/getting-started/">
-                                    Markdown syntax
+                                    <FormattedMessage
+                                        id="Conference.Attend.Profile.EditProfilePage.MarkdownSyntax"
+                                        defaultMessage="Use Markdown syntax to format your text."
+                                    />
                                     <sup>
                                         <ExternalLinkIcon />
                                     </sup>
-                                </Link>{" "}
-                                to format your text.
+                                </Link>
                             </FormHelperText>
                         </>
                     ) : (
@@ -381,7 +389,10 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 "timezone",
                 "UTC",
                 undefined,
-                "This does not change how the schedule is shown to you in Midspace. The schedule always displays in your local timezone according to your computer's settings."
+                intl.formatMessage({
+                    id: 'Conference.Attend.Profile.EditProfilePage.DoesNotChangeScheduleDisplay',
+                    defaultMessage: "This does not change how the schedule is shown to you in Midspace. The schedule always displays in your local timezone according to your computer's settings."
+                })
             ),
         [textField]
     );
@@ -398,7 +409,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     },
                 });
                 toast({
-                    title: "Name saved",
+                    title: intl.formatMessage({ id: 'Conference.Attend.Profile.EditProfilePage.NameSaved', defaultMessage: "Name saved" }),
                     status: "success",
                     position: "top",
                     duration: 500,
@@ -408,7 +419,9 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
     }, [registrant, editingRegistrant.displayName, isEditingName, toast, updateRegistrantDisplayName]);
 
     const title = useTitle(
-        currentUser.user.id === registrant.userId ? "Edit your profile" : `Edit ${registrant.displayName}`
+        currentUser.user.id === registrant.userId
+            ? intl.formatMessage({ id: 'Conference.Attend.Profile.EditProfilePage.EditYourProfile', defaultMessage: "Edit your profile" })
+            : intl.formatMessage({ id: 'Conference.Attend.Profile.EditProfilePage.EditRegistrant', defaultMessage: "Edit {name}" }, { name: registrant.displayName })
     );
 
     const invitation = useRegistrantInvitedEmailAddressQuery({
@@ -427,16 +440,28 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 !registrant.profile.photoURL_350x350 ? (
                     <Alert status="warning" variant="top-accent" flexWrap="wrap">
                         <AlertIcon />
-                        <AlertTitle>Please make an edit</AlertTitle>
+                        <AlertTitle>
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.PleaseEdit"
+                                defaultMessage="Please make an edit"
+                            />
+                        </AlertTitle>
                         <AlertDescription mt={2}>
-                            Please edit at least one part of your profile before proceeding. For example, you might like
-                            to upload a profile picture or add a badge.
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.PleaseEditDesc"
+                                defaultMessage="Please edit at least one part of your profile before proceeding. For example, you might like
+                                to upload a profile picture or add a badge."
+                            />
                         </AlertDescription>
                     </Alert>
                 ) : (
                     <ButtonGroup variant="outline">
                         <LinkButton to={`/conference/${conference.slug}`} colorScheme="PrimaryActionButton">
-                            Continue to {conference.shortName}
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.ContinueToConference"
+                                defaultMessage="Continue to {conference}"
+                                values={{ conference: conference.shortName }}
+                            />
                         </LinkButton>
                         <LinkButton
                             to={
@@ -446,7 +471,10 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             }
                             colorScheme="PrimaryActionButton"
                         >
-                            View profile
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.ViewProfile"
+                                defaultMessage="View profile"
+                            />
                         </LinkButton>
                     </ButtonGroup>
                 )}
@@ -454,7 +482,10 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     <VStack alignItems="flex-start" w="100%" maxW={350}>
                         <FormControl>
                             <FormLabel fontWeight="bold" fontSize="1.2rem">
-                                Name
+                                <FormattedMessage
+                                    id="Conference.Attend.Profile.EditProfilePage.Name"
+                                    defaultMessage="Name"
+                                />
                             </FormLabel>
                             <Input
                                 minLength={2}
@@ -468,7 +499,10 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             />
                         </FormControl>
                         <Button colorScheme="ConfirmButton" onClick={() => setIsEditingName(false)}>
-                            Save
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.Save"
+                                defaultMessage="Save"
+                            />
                         </Button>
                     </VStack>
                 ) : (
@@ -479,7 +513,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                         <IconButton
                             verticalAlign="top"
                             size="sm"
-                            aria-label="Edit name"
+                            aria-label={intl.formatMessage({ id: 'Conference.Attend.Profile.EditProfilePage.EditName', defaultMessage: "Edit name" })}
                             icon={<EditIcon />}
                             variant="outline"
                             colorScheme="PrimaryActionButton"
@@ -490,22 +524,38 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 {errorUpdateRegistrantDisplayName || errorUpdateProfile ? (
                     <Alert status="error">
                         <AlertIcon />
-                        <AlertTitle mr={2}>Error saving changes</AlertTitle>
+                        <AlertTitle mr={2}>
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.ErrorSavingChanges"
+                                defaultMessage="Error saving changes"
+                            />
+                        </AlertTitle>
                         <AlertDescription>{errorUpdateProfile || errorUpdateRegistrantDisplayName}</AlertDescription>
                     </Alert>
                 ) : undefined}
                 <EditProfilePitureForm registrant={registrant} />
                 <FormControl>
                     <FormLabel fontWeight="bold" fontSize="1.2rem">
-                        Account login email address
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.EditProfilePage.AccountLoginEmailAddress"
+                            defaultMessage="Account login email address"
+                        />
                     </FormLabel>
                     <Input type="text" value={currentUser.user.email ?? ""} isDisabled />
-                    <FormHelperText>The email address you use to log in to your account.</FormHelperText>
+                    <FormHelperText>
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.EditProfilePage.AccountLoginEmailAddressHelper"
+                            defaultMessage="The email address you use to log in to your account."
+                        />
+                    </FormHelperText>
                 </FormControl>
                 {invitation.data?.registrant_Invitation.length ? (
                     <FormControl>
                         <FormLabel fontWeight="bold" fontSize="1.2rem">
-                            Invitation email address
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.InvitationEmailAddress"
+                                defaultMessage="Invitation email address"
+                            />
                         </FormLabel>
                         <Input
                             type="text"
@@ -513,8 +563,11 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             isDisabled
                         />
                         <FormHelperText>
-                            Your invitation for this conference was originally sent to this address. It is okay if this
-                            is different from your login address.
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.InvitationEmailAddressHelper"
+                                defaultMessage="Your invitation for this conference was originally sent to this address. It is okay if this
+                                is different from your login address."
+                            />
                         </FormHelperText>
                     </FormControl>
                 ) : undefined}
@@ -547,7 +600,11 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 {registrant.profile.hasBeenEdited ? (
                     <ButtonGroup variant="solid">
                         <LinkButton to={`/conference/${conference.slug}`} colorScheme="EditProfilePage-ContinueButton">
-                            Continue to {conference.shortName}
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.ContinueToConference"
+                                defaultMessage="Continue to {conference}"
+                                values={{ conference: conference.shortName }}
+                            />
                         </LinkButton>
                         <LinkButton
                             to={
@@ -557,7 +614,10 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             }
                             colorScheme="SecondaryActionButton"
                         >
-                            View profile
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.EditProfilePage.ViewProfile"
+                                defaultMessage="View profile"
+                            />
                         </LinkButton>
                     </ButtonGroup>
                 ) : undefined}

@@ -31,6 +31,7 @@ import { StateType } from "./VonageGlobalState";
 import type { AvailableStream, VonageLayout } from "./VonageLayoutProvider";
 import { useVonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
+import { useIntl } from "react-intl";
 
 gql`
     mutation DeleteEventParticipant($eventId: uuid!, $registrantId: uuid!) {
@@ -88,6 +89,7 @@ export function VonageRoom({
     canControlRecording: boolean;
     layout?: VonageLayout;
 }): JSX.Element {
+    const intl = useIntl();
     const mRegistrant = useMaybeCurrentRegistrant();
 
     const location = useLocation();
@@ -118,8 +120,8 @@ export function VonageRoom({
                             joinRoomButtonText={
                                 isBackstageRoom
                                     ? raiseHandPrejoinEventId
-                                        ? "I'm ready"
-                                        : "Connect to the backstage"
+                                        ? intl.formatMessage({ id: 'Conference.Attend.Room.VideoChat.VonageRoom.ImReady', defaultMessage: "I'm ready" })
+                                        : intl.formatMessage({ id: 'Conference.Attend.Room.VideoChat.VonageRoom.ConnectToBackstage', defaultMessage: "Connect to the backstage" })
                                     : undefined
                             }
                             overrideJoining={

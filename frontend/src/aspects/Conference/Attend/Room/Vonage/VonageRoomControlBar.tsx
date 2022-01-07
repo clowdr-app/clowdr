@@ -36,6 +36,7 @@ import DeviceChooserModal from "./DeviceChooserModal";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { useVonageLayout } from "./VonageLayoutProvider";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     mutation ToggleVonageRecordingState($vonageSessionId: String!, $recordingActive: Boolean!) {
@@ -75,6 +76,7 @@ export function VonageRoomControlBar({
     roomId?: string;
     eventId?: string;
 }): JSX.Element {
+    const intl = useIntl();
     const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
     const { layoutChooser_isOpen, layoutChooser_onOpen, layoutChooser_onClose } = useVonageLayout();
@@ -445,7 +447,10 @@ export function VonageRoomControlBar({
                     isDisabled={joining}
                     colorScheme="SecondaryActionButton"
                 >
-                    Choose microphone / camera
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Vonage.VonageRoomControlBar.ChooseMicCam"
+                        defaultMessage="Choose microphone / camera"
+                    />
                 </Button>
                 {state.microphoneStream && state.microphoneIntendedEnabled ? (
                     <Button
@@ -456,7 +461,12 @@ export function VonageRoomControlBar({
                         isDisabled={joining}
                     >
                         <FAIcon icon="microphone" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Mute</span>
+                        <span style={{ marginLeft: "1rem" }}>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Vonage.VonageRoomControlBar.Mute"
+                                defaultMessage="Mute"
+                            />
+                        </span>
                     </Button>
                 ) : (
                     <Button
@@ -468,7 +478,12 @@ export function VonageRoomControlBar({
                         colorScheme="SecondaryActionButton"
                     >
                         <FAIcon icon="microphone-slash" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Unmute</span>
+                        <span style={{ marginLeft: "1rem" }}>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Vonage.VonageRoomControlBar.Unmute"
+                                defaultMessage="Unmute"
+                            />
+                        </span>
                     </Button>
                 )}
                 {state.cameraStream && state.cameraIntendedEnabled ? (
@@ -480,7 +495,12 @@ export function VonageRoomControlBar({
                         isDisabled={joining}
                     >
                         <FAIcon icon="video" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Stop video</span>
+                        <span style={{ marginLeft: "1rem" }}>
+                            <FormattedMessage
+                                    id="Conference.Attend.Room.Vonage.VonageRoomControlBar.StopVideo"
+                                    defaultMessage="Stop video"
+                            />
+                        </span>
                     </Button>
                 ) : (
                     <Button
@@ -492,7 +512,12 @@ export function VonageRoomControlBar({
                         colorScheme="SecondaryActionButton"
                     >
                         <FAIcon icon="video-slash" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Start video</span>
+                        <span style={{ marginLeft: "1rem" }}>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Vonage.VonageRoomControlBar.StartVideo"
+                                defaultMessage="Star video"
+                            />
+                        </span>
                     </Button>
                 )}
                 {settings.maximumSimultaneousScreenShares ? (
@@ -512,8 +537,8 @@ export function VonageRoomControlBar({
                             <TagLeftIcon as={CheckCircleIcon} />
                             <TagLabel whiteSpace="normal">
                                 {settings.maximumSimultaneousScreenShares === 1
-                                    ? "Someone else is sharing their screen at the moment"
-                                    : "No more screens can be shared at the moment"}
+                                    ? intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.VonageRoomControlBar.SomeoneElseSharing', defaultMessage: "Someone else is sharing their screen at the moment" })
+                                    : intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.VonageRoomControlBar.NoMoreScreens', defaultMessage: "No more screens can be shared at the moment" })}
                             </TagLabel>
                         </Tag>
                     ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
@@ -526,7 +551,12 @@ export function VonageRoomControlBar({
                             isDisabled={joining}
                         >
                             <FAIcon icon="desktop" iconStyle="s" />
-                            <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
+                            <span style={{ marginLeft: "1rem" }}>
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Vonage.VonageRoomControlBar.StopSharing"
+                                    defaultMessage="Stop sharing"
+                                />
+                            </span>
                         </Button>
                     ) : vonage.state.type === StateType.Connected &&
                       vonage.state.initialisedState.screenSharingSupported ? (
@@ -539,7 +569,12 @@ export function VonageRoomControlBar({
                             colorScheme="SecondaryActionButton"
                         >
                             <FAIcon icon="desktop" iconStyle="s" />
-                            <span style={{ marginLeft: "1rem" }}>Share screen</span>
+                            <span style={{ marginLeft: "1rem" }}>
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Vonage.VonageRoomControlBar.ShareScreen"
+                                    defaultMessage="Share screen"
+                                />
+                            </span>
                         </Button>
                     ) : vonage.state.type === StateType.Initialised && vonage.state.screenSharingSupported ? (
                         <Tag
@@ -549,7 +584,12 @@ export function VonageRoomControlBar({
                             colorScheme="SecondaryActionButton"
                         >
                             <TagLeftIcon as={CheckCircleIcon} />
-                            <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
+                            <TagLabel whiteSpace="normal">
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Vonage.VonageRoomControlBar.ScreenSharingAvaliablity"
+                                    defaultMessage="Screen sharing available after you join"
+                                />
+                            </TagLabel>
                         </Tag>
                     ) : (
                         <Tag
@@ -559,7 +599,12 @@ export function VonageRoomControlBar({
                             colorScheme="SecondaryActionButton"
                         >
                             <TagLeftIcon as={NotAllowedIcon} />
-                            <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
+                            <TagLabel whiteSpace="normal">
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Vonage.VonageRoomControlBar.ScreenSharingNotSupported"
+                                    defaultMessage="Screen sharing is not supported by your browser"
+                                />
+                            </TagLabel>
                         </Tag>
                     )
                 ) : undefined}
@@ -582,7 +627,9 @@ export function VonageRoomControlBar({
                             }}
                             isLoading={toggleVonageRecordingResponse.loading}
                         >
-                            {isRecordingActive ? "Stop recording" : "Start recording"}
+                            {isRecordingActive
+                                ? intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.VonageRoomControlBar.StopRecording', defaultMessage: "Stop recording" })
+                                : intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.VonageRoomControlBar.StartRecording', defaultMessage: "Start recording" })}
                         </Button>
                     ) : (
                         <Tag
@@ -592,9 +639,19 @@ export function VonageRoomControlBar({
                             colorScheme="SecondaryActionButton"
                         >
                             {isRecordingActive ? (
-                                <TagLabel overflow="visible">Recording</TagLabel>
+                                <TagLabel overflow="visible">
+                                    <FormattedMessage
+                                        id="Conference.Attend.Room.Vonage.VonageRoomControlBar.Recording"
+                                        defaultMessage="Recording"
+                                    />
+                                </TagLabel>
                             ) : (
-                                <TagLabel overflow="visible">Not recording</TagLabel>
+                                <TagLabel overflow="visible">
+                                    <FormattedMessage
+                                        id="Conference.Attend.Room.Vonage.VonageRoomControlBar.NotRecording"
+                                        defaultMessage="Not Recording"
+                                    />
+                                </TagLabel>
                             )}
                         </Tag>
                     )
@@ -619,7 +676,10 @@ export function VonageRoomControlBar({
                         colorScheme="PrimaryActionButton"
                         onClick={onLeaveRoom}
                     >
-                        Leave Room
+                        <FormattedMessage
+                            id="Conference.Attend.Room.Vonage.VonageRoomControlBar.LeaveRoom"
+                            defaultMessage="Leave room"
+                        />
                     </Button>
                 ) : (
                     <Tooltip
@@ -627,7 +687,7 @@ export function VonageRoomControlBar({
                             requireMicrophoneOrCamera &&
                             !state.microphoneIntendedEnabled &&
                             !state.cameraIntendedEnabled
-                                ? "Microphone or camera required"
+                                ? intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.VonageRoomControlBar.MicrophoneCameraRequired', defaultMessage: "Microphone or camera required" })
                                 : undefined
                         }
                     >
@@ -660,7 +720,10 @@ export function VonageRoomControlBar({
                                 </HStack>
                                 {joining ? (
                                     <chakra.span mt={2} fontSize="xs">
-                                        (Click to cancel)
+                                        <FormattedMessage
+                                            id="Conference.Attend.Room.Vonage.VonageRoomControlBar.ClickToCancel"
+                                            defaultMessage="(Click to cancel)"
+                                        />
                                     </chakra.span>
                                 ) : undefined}
                             </Button>
@@ -692,17 +755,28 @@ export function VonageRoomControlBar({
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <Heading as="h1" fontSize="md">
-                            Recording has started
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Vonage.VonageRoomControlBar.RecordingStarted"
+                                defaultMessage="Recording has started"
+                            />
                         </Heading>
                     </AlertDialogHeader>
                     <AlertDialogBody>
                         <VStack>
                             <Text>
-                                Recording of the video-call in this room has started. The recording will be managed by
-                                the conference and be made available to you when recording ends. For further
-                                information, please contact your conference organizers.
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Vonage.VonageRoomControlBar.RecordingStartedDesc"
+                                    defaultMessage="Recording of the video-call in this room has started. The recording will be managed by
+                                    the conference and be made available to you when recording ends. For further
+                                    information, please contact your conference organizers."
+                                /> 
                             </Text>
-                            <Text>You can find recordings under the My Stuff menu on the left.</Text>
+                            <Text>
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Vonage.VonageRoomControlBar.FindRecordings"
+                                    defaultMessage="You can find recordings under the My Stuff menu on the left."
+                                />
+                            </Text>
                         </VStack>
                     </AlertDialogBody>
                     <AlertDialogFooter>
@@ -713,14 +787,20 @@ export function VonageRoomControlBar({
                                     onRecordingAlertClose();
                                 }}
                             >
-                                Disconnect
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Vonage.VonageRoomControlBar.Disconnect"
+                                    defaultMessage="Disconnect"
+                                />
                             </Button>
                             <Button
                                 ref={recordingAlert_LeastDestructiveRef}
                                 colorScheme="PrimaryActionButton"
                                 onClick={() => onRecordingAlertClose()}
                             >
-                                Ok, stay connected
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Vonage.VonageRoomControlBar.StayConnected"
+                                    defaultMessage="Ok, stay connected"
+                                />
                             </Button>
                         </ButtonGroup>
                     </AlertDialogFooter>

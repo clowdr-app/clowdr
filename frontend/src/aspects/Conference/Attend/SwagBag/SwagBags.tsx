@@ -26,6 +26,7 @@ import { maybeCompare } from "../../../Utils/maybeSort";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import { Element } from "../Content/Element/Element";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     fragment SwagBag on content_Item {
@@ -59,6 +60,7 @@ export default function SwagBags(): JSX.Element {
 }
 
 function SwagBagsInner({ bags }: { bags: readonly SwagBagFragment[] }): JSX.Element {
+    const intl = useIntl();
     const title = useTitle("Swag Bags");
 
     const sortedItems = useMemo(() => [...bags].sort((x, y) => x.title.localeCompare(y.title)), [bags]);
@@ -67,9 +69,9 @@ function SwagBagsInner({ bags }: { bags: readonly SwagBagFragment[] }): JSX.Elem
         <>
             {title}
             <Heading as="h1" id="page-heading" pt={2}>
-                My Conference Swag
+            {intl.formatMessage({ id: "Conference.Attend.SwagBag.SwagBags.MyConference", defaultMessage: "My Conference Swag" })};
             </Heading>
-            <Text>Gifts, goodies and freebies from the conference organisers and sponsors. Enjoy!</Text>
+            <Text>{intl.formatMessage({ id: "Conference.Attend.SwagBag.SwagBags.Gifts", defaultMessage: "Gifts, goodies and freebies from the conference organisers and sponsors. Enjoy!" })}</Text>
             <Flex
                 w="100%"
                 flexWrap="wrap"
@@ -342,7 +344,10 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
                     <LinkButton colorScheme="PrimaryActionButton" to={itemUrl} textDecoration="none">
                         <FAIcon iconStyle="s" icon="link" mr={2} />
                         <Text as="span" ml={1}>
-                            Find out more
+                            <FormattedMessage
+                                id="Conference.Attend.SwagBag.SwagBags.FindOutMore"
+                                defaultMessage="Find out more"
+                            />
                         </Text>
                         <PageCountText path={itemUrl} fontSize="inherit" />
                     </LinkButton>

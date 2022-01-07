@@ -7,6 +7,7 @@ import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import { EventsTable } from "./EventsTable";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     fragment ItemRoomEvent on schedule_Event {
@@ -58,11 +59,17 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
                 {!conference.disableAllTimesForThisItem?.[0]?.value ? (
                     <VStack flex="1 1 48%" alignItems="flex-start" maxW="max-content">
                         <Heading as="h4" size="md" textAlign="left" w="100%" pt={8}>
-                            All times for this content
+                            <FormattedMessage
+                                id="Conference.Attend.Content.ItemEvents.TimezoneAll"
+                                defaultMessage="All times for this content"
+                            />
                         </Heading>
                         <Text my={3} w="auto" textAlign="left" p={0}>
                             <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
-                            Times are shown in your local timezone.
+                            <FormattedMessage
+                                id="Conference.Attend.Content.ItemEvents.TimesShownTimezone"
+                                defaultMessage="Times are shown in your local timezone."
+                            />
                         </Text>
                         {thisPaperTable}
                     </VStack>
@@ -70,11 +77,17 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
                 {!conference.disableNearbyEvents?.[0]?.value ? (
                     <VStack mr={2} flex="1 1 48%" alignItems="flex-start" maxW="max-content">
                         <Heading as="h4" size="md" textAlign="left" pt={8}>
-                            Nearby events
+                            <FormattedMessage
+                                id="Conference.Attend.Content.ItemEvents.NearbyEvents"
+                                defaultMessage="Nearby events"
+                            />
                         </Heading>
                         <Text my={3} w="auto" textAlign="left" p={0}>
                             <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
-                            Times are shown in your local timezone.
+                            <FormattedMessage
+                                id="Conference.Attend.Content.ItemEvents.TimesShownTimezoneNearby"
+                                defaultMessage="Times are shown in your local timezone."
+                            />
                         </Text>
                         {rooms.length > 1 ? (
                             <Tabs variant="enclosed" isLazy>
@@ -95,7 +108,12 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
                         ) : rooms.length > 0 ? (
                             <RoomEventsSummary roomId={rooms[0][0]} events={rooms[0][1].events} thisItemId={itemId} />
                         ) : (
-                            <Text>No events for this item</Text>
+                            <Text>
+                                <FormattedMessage
+                                    id="Conference.Attend.Content.ItemEvents.NoEvents"
+                                    defaultMessage="No events for this item"
+                                />
+                            </Text>
                         )}
                     </VStack>
                 ) : undefined}
@@ -115,6 +133,7 @@ function RoomEventsSummary({
     thisItemId: string;
     events: ItemEventFragment[];
 }): JSX.Element {
+    const intl = useIntl();
     const queryString = useMemo(
         () => `
 fragment ItemRoomEvent on schedule_Event {
@@ -178,7 +197,7 @@ query ItemEvent_RoomNearbyEvents {
                               ...event,
                               item: {
                                   id: "",
-                                  title: "This item",
+                                  title: intl.formatMessage({ id: 'Conference.Attend.Content.ItemEvents.ThisItem', defaultMessage: "This item" }),
                               },
                           })),
                           ...(Object.values(query.data) as any[][])
@@ -189,7 +208,7 @@ query ItemEvent_RoomNearbyEvents {
                                             ...event,
                                             item: {
                                                 id: "",
-                                                title: "This item",
+                                                title: intl.formatMessage({ id: 'Conference.Attend.Content.ItemEvents.ThisItem', defaultMessage: "This item" }),
                                             },
                                         }
                                       : { ...event }
@@ -203,6 +222,6 @@ query ItemEvent_RoomNearbyEvents {
         () => <EventsTable events={fullEventsList} includeRoom={false} roomId={roomId} />,
         [fullEventsList, roomId]
     );
-
-    return query.loading ? <Spinner label="Loading room schedule" /> : table;
+      
+    return query.loading ? <Spinner label={intl.formatMessage({ id: 'Conference.Attend.Content.ItemEvents.LoadingRoomSchedule', defaultMessage: "Loading room schedule" })} /> : table;
 }

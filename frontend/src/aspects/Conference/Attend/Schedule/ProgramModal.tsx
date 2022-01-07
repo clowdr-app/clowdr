@@ -37,6 +37,7 @@ import { SponsorBoothsInner } from "../Rooms/V2/SponsorBooths";
 import SearchPanel from "../Search/SearchPanel";
 import { ScheduleFetchWrapper, ScheduleInner } from "./v1/Schedule";
 import WholeSchedule from "./v2/WholeSchedule";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
@@ -184,6 +185,7 @@ export function ScheduleModal({
     setSelectedTag: (tagId: string | null) => void;
     changeSearch: MutableRefObject<null | ((term: string) => void)>;
 }): JSX.Element {
+    const intl = useIntl();
     const conference = useConference();
     const closeRef = useRef<HTMLButtonElement | null>(null);
 
@@ -370,35 +372,64 @@ export function ScheduleModal({
                             {anyHappeningSoon ? (
                                 <Tab>
                                     <FAIcon iconStyle="s" icon="clock" />
-                                    &nbsp;&nbsp;Happening soon
+                                    &nbsp;&nbsp;
+                                    <FormattedMessage
+                                        id="Conference.Attend.Schedule.ProgramModal.HappeningSoon"
+                                        defaultMessage="Happening soon"
+                                    />
+                                    
                                 </Tab>
                             ) : undefined}
                             <Tab>
                                 <FAIcon iconStyle="s" icon="tags" />
-                                &nbsp;&nbsp;Browse content
+                                &nbsp;&nbsp;
+                                <FormattedMessage
+                                    id="Conference.Attend.Schedule.ProgramModal.BrowseContent"
+                                    defaultMessage="Browse Content"
+                                />
                             </Tab>
                             <Tab>
                                 <FAIcon iconStyle="s" icon="puzzle-piece" />
-                                &nbsp;&nbsp;{conference.visibleExhibitionsLabel[0]?.value ?? "Exhibition"}s
+                                &nbsp;&nbsp;
+                                {
+                                    conference.visibleExhibitionsLabel[0]?.value + "s"
+                                    ?? intl.formatMessage({ id: 'Conference.Attend.Schedule.ProgramModal.Exhibition', defaultMessage: "Exhibition" })
+                                }
                             </Tab>
                             {anySponsors ? (
                                 <Tab>
                                     <FAIcon iconStyle="s" icon="star" />
-                                    &nbsp;&nbsp;{conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
+                                    &nbsp;&nbsp;
+                                    {
+                                        conference.sponsorsLabel?.[0]?.value
+                                        ?? intl.formatMessage({ id: 'Conference.Attend.Schedule.ProgramModal.Sponsors', defaultMessage: "Sponsors" })
+                                    }
                                 </Tab>
                             ) : undefined}
                             <Tab>
                                 <FAIcon iconStyle="s" icon="search" />
-                                &nbsp;&nbsp;Search
+                                &nbsp;&nbsp;
+                                <FormattedMessage
+                                    id="Conference.Attend.Schedule.ProgramModal.Search"
+                                    defaultMessage="Search"
+                                />
                             </Tab>
                             <Tab>
                                 <FAIcon iconStyle="s" icon="calendar" />
-                                &nbsp;&nbsp;Full schedule
+                                &nbsp;&nbsp;
+                                <FormattedMessage
+                                    id="Conference.Attend.Schedule.ProgramModal.FullSchedule"
+                                    defaultMessage="Full schedule"
+                                />
                             </Tab>
                             {enableScheduleViewV2 ? (
                                 <Tab>
                                     <FAIcon iconStyle="s" icon="calendar" />
-                                    &nbsp;&nbsp;Schedule V2: Early preview
+                                    &nbsp;&nbsp;
+                                    <FormattedMessage
+                                        id="Conference.Attend.Schedule.ProgramModal.ScheduleV2"
+                                        defaultMessage="Schedule V2: Early preview"
+                                    />
                                 </Tab>
                             ) : undefined}
                         </TabList>

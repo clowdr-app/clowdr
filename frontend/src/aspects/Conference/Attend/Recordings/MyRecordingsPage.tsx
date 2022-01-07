@@ -24,6 +24,7 @@ import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query MyRecordings($registrantId: uuid!) {
@@ -47,7 +48,8 @@ gql`
 `;
 
 export default function MyRecordingsPage(): JSX.Element {
-    const title = useTitle("Recordings");
+    const intl = useIntl();
+    const title = useTitle(intl.formatMessage({ id: 'Conference.Attend.Recordings.Recordings', defaultMessage: "Recordings" }));
 
     const conference = useConference();
     const registrant = useCurrentRegistrant();
@@ -68,24 +70,38 @@ export default function MyRecordingsPage(): JSX.Element {
             {title}
             <VStack mt={4} spacing={6}>
                 <Heading as="h1" fontSize="4xl">
-                    My Recordings
+                <FormattedMessage
+                        id="Conference.Attend.Recordings.MyRecordings"
+                        defaultMessage="My Recordings"
+                    />
                 </Heading>
                 <Text>
-                    This page lists any recordings of video-chat events or social rooms that you have participated in.
+                    <FormattedMessage
+                        id="Conference.Attend.Recordings.ThisPageLists"
+                        defaultMessage="This page lists any recordings of video-chat events or social rooms that you have participated in."
+                    />
                 </Text>
                 {response.loading && !response.data ? (
                     <HStack spacing={2}>
                         <Box>
                             <Spinner />
                         </Box>
-                        <Text>Loading your recordings</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Recordings.LoadingRecordings"
+                                defaultMessage="Loading your recordings"
+                            />
+                        </Text>
                     </HStack>
                 ) : undefined}
                 {response.error ? (
                     <Alert status="error">
                         <AlertTitle>
                             <AlertIcon />
-                            Error loading recordings
+                            <FormattedMessage
+                                id="Conference.Attend.Recordings.ErrorLoadingRecordings"
+                                defaultMessage="Error loading recordings"
+                            />
                         </AlertTitle>
                         <AlertDescription>{response.error.message}</AlertDescription>
                     </Alert>
@@ -129,17 +145,27 @@ export default function MyRecordingsPage(): JSX.Element {
                                                 <VStack alignItems="flex-start" mr={12}>
                                                     {save.recording.endedAt ? (
                                                         <Text>
-                                                            Ended at{" "}
-                                                            {new Date(save.recording.endedAt).toLocaleTimeString(
-                                                                undefined,
-                                                                {
-                                                                    hour: "2-digit",
-                                                                    minute: "2-digit",
-                                                                }
-                                                            )}
+                                                            <FormattedMessage
+                                                                id="Conference.Attend.Recordings.EndedAt"
+                                                                defaultMessage="Ended at {time}"
+                                                                values={{
+                                                                    time: new Date(save.recording.endedAt).toLocaleTimeString(
+                                                                        undefined,
+                                                                        {
+                                                                            hour: "2-digit",
+                                                                            minute: "2-digit",
+                                                                        }
+                                                                    )
+                                                                }}
+                                                            />
                                                         </Text>
                                                     ) : (
-                                                        <Text>Ongoing meeting</Text>
+                                                        <Text>
+                                                            <FormattedMessage
+                                                                id="Conference.Attend.Recordings.OngoingMeeting"
+                                                                defaultMessage="Ongoing meeting"
+                                                            />
+                                                        </Text>
                                                     )}
                                                 </VStack>
                                                 <VStack ml="auto" alignItems="flex-end">
@@ -152,7 +178,10 @@ export default function MyRecordingsPage(): JSX.Element {
                                                             }.amazonaws.com/${key}`}
                                                             colorScheme="PrimaryActionButton"
                                                         >
-                                                            Download
+                                                            <FormattedMessage
+                                                                id="Conference.Attend.Recordings.Download"
+                                                                defaultMessage="Download"
+                                                            />
                                                         </ExternalLinkButton>
                                                     ) : save.recording.endedAt ? (
                                                         <Tag
@@ -162,7 +191,10 @@ export default function MyRecordingsPage(): JSX.Element {
                                                             whiteSpace="nowrap"
                                                             overflow="hidden"
                                                         >
-                                                            Processing
+                                                            <FormattedMessage
+                                                                id="Conference.Attend.Recordings.Processing"
+                                                                defaultMessage="Processing"
+                                                            />
                                                         </Tag>
                                                     ) : save.recording.room ? (
                                                         <LinkButton
@@ -170,7 +202,10 @@ export default function MyRecordingsPage(): JSX.Element {
                                                             to={`/conference/${conference.slug}/room/${save.recording.room.id}`}
                                                             colorScheme="PrimaryActionButton"
                                                         >
-                                                            Go to room
+                                                            <FormattedMessage
+                                                                id="Conference.Attend.Recordings.GoToRoom"
+                                                                defaultMessage="Go to room"
+                                                            />
                                                         </LinkButton>
                                                     ) : undefined}
                                                 </VStack>
@@ -181,7 +216,12 @@ export default function MyRecordingsPage(): JSX.Element {
                             })}
                         </List>
                     ) : (
-                        <Text>You do not currently have any saved recordings.</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Recordings.NoRecordings"
+                                defaultMessage="You do not currently have any saved recordings."
+                            />
+                        </Text>
                     )
                 ) : undefined}
             </VStack>

@@ -4,6 +4,7 @@ import React from "react";
 import type { RegistrantDataFragment } from "../../../../../../../generated/graphql";
 import { useChatProfileModal } from "../../../../../../Chat/Frame/ChatProfileModalProvider";
 import { FAIcon } from "../../../../../../Icons/FAIcon";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function CameraOverlay({
     registrant,
@@ -26,6 +27,7 @@ export default function CameraOverlay({
 }): JSX.Element {
     const profileModal = useChatProfileModal();
     const toast = useToast();
+    const intl = useIntl();
 
     return (
         <VStack
@@ -55,7 +57,7 @@ export default function CameraOverlay({
                 borderRadius={5}
                 overflow="hidden"
                 display="block"
-                aria-label={`View ${registrant?.displayName ?? "<Loading name>"}'s profile`}
+                aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.ViewRegistrantsProfile', defaultMessage: "View {registrant}'s profile" }, { registrant: registrant?.displayName ?? "<Loading name>" })}
                 onClick={() => {
                     if (registrant && registrant.profile) {
                         profileModal.open({
@@ -65,7 +67,7 @@ export default function CameraOverlay({
                     } else {
                         toast({
                             status: "warning",
-                            title: "Profile currently unavailable",
+                            title: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.ProfileUnavaliable', defaultMessage: "Profile currently unavailable" }),
                             duration: 2000,
                         });
                     }
@@ -80,7 +82,7 @@ export default function CameraOverlay({
                             objectPosition="center"
                             src={registrant?.profile.photoURL_50x50}
                             overflow="hidden"
-                            alt={`Profile picture of ${registrant?.displayName}`}
+                            alt={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.ProfilePicture', defaultMessage: "Profile picture of {registrant}" }, { registrant: registrant?.displayName })}
                         />
                     ) : (
                         <FAIcon
@@ -94,7 +96,7 @@ export default function CameraOverlay({
                         />
                     )}
                     <Text display="block" color={"gray.100"} noOfLines={1}>
-                        {registrant?.displayName ?? "<Loading name>"}
+                        {registrant?.displayName ?? intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.LoadingName', defaultMessage: "<Loading name>" })}
                     </Text>
                     {microphoneEnabled ? (
                         <FAIcon
@@ -115,20 +117,20 @@ export default function CameraOverlay({
             </Button>
             <HStack>
                 {cameraHidden ? (
-                    <Tooltip label="There are too many people here to show everyone's video at once. This person is hidden because they haven't spoken recently.">
+                    <Tooltip label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.TooManyPeopleTooltip', defaultMessage: "There are too many people here to show everyone's video at once. This person is hidden because they haven't spoken recently." })}>
                         <ViewOffIcon
                             w={6}
                             h={6}
                             bgColor="rgba(0,0,0,0.6)"
                             color="white"
                             p={1}
-                            aria-label="Video hidden"
+                            aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.VideoHidden', defaultMessage: "Video hidden" })}
                             borderRadius={5}
                         />
                     </Tooltip>
                 ) : undefined}
                 {videoStatus?.error === "codec-not-supported" ? (
-                    <Tooltip label="The video format is not supported in your browser.">
+                    <Tooltip label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.VideoFormatUnsupported', defaultMessage: "The video format is not supported in your browser." })}>
                         <WarningTwoIcon
                             w={6}
                             h={6}
@@ -141,40 +143,40 @@ export default function CameraOverlay({
                     </Tooltip>
                 ) : undefined}
                 {videoStatus?.error === "quality" ? (
-                    <Tooltip label="The video was hidden because the connection is not stable enough at the moment.">
+                    <Tooltip label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.ConnectionUnstableHidden', defaultMessage: "The video was hidden because the connection is not stable enough at the moment." })}>
                         <WarningTwoIcon
                             w={6}
                             h={6}
                             bgColor="rgba(0,0,0,0.6)"
                             color="red.500"
                             p={1}
-                            aria-label="Connection too unstable to show video"
+                            aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.ConnectionTooUnstable', defaultMessage: "Connection too unstable to show video" })}
                             borderRadius={5}
                         />
                     </Tooltip>
                 ) : undefined}
                 {videoStatus?.warning === "quality" && videoStatus.error !== "quality" ? (
-                    <Tooltip label="Video quality may be limited due to an unstable connection.">
+                    <Tooltip label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.VideoQualityLimited', defaultMessage: "Video quality may be limited due to an unstable connection." })}>
                         <WarningTwoIcon
                             w={6}
                             h={6}
                             bgColor="rgba(0,0,0,0.6)"
                             color="orange.500"
                             p={1}
-                            aria-label="Connection unstable"
+                            aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.ConnectionUnstable', defaultMessage: "Connection unstable" })}
                             borderRadius={5}
                         />
                     </Tooltip>
                 ) : undefined}
                 {audioBlocked ? (
-                    <Tooltip label="Audio is currently blocked by your browser. Click to unblock.">
+                    <Tooltip label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.AudioBlockedLabel', defaultMessage: "Audio is currently blocked by your browser. Click to unblock." })}>
                         <WarningTwoIcon
                             w={6}
                             h={6}
                             bgColor="rgba(0,0,0,0.6)"
                             color="orange.500"
                             p={1}
-                            aria-label="Audio blocked by browser"
+                            aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.Overlays.StatusOverlay.AudioBlockedAriaLabel', defaultMessage: "Audio blocked by browser" })}
                             onClick={() => {
                                 OT.unblockAudio();
                             }}

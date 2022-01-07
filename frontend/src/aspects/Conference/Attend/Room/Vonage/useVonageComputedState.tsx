@@ -6,6 +6,7 @@ import type { VonageGlobalState } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { useVonageLayout } from "./VonageLayoutProvider";
+import { FormattedMessage, useIntl } from "react-intl";
 
 const standaloneToast = createStandaloneToast({ theme });
 
@@ -56,6 +57,7 @@ export function useVonageComputedState({
     const [camera, setCamera] = useState<OT.Publisher | null>(null);
     const [screen, setScreen] = useState<OT.Publisher | null>(null);
     const toast = useToast();
+    const intl = useIntl();
 
     const onCameraStreamDestroyed = useCallback(
         (reason: string) => {
@@ -76,8 +78,8 @@ export function useVonageComputedState({
 
             if (reason === "forceUnpublished") {
                 standaloneToast({
-                    title: "Muted",
-                    description: "You have been muted by a moderator.",
+                    title: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.UseVonageComputedState.Muted', defaultMessage: "Muted" }),
+                    description: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.UseVonageComputedState.YouMuted', defaultMessage: "You have been muted by a moderator." }),
                     status: "warning",
                     duration: 20000,
                     isClosable: true,
@@ -99,8 +101,8 @@ export function useVonageComputedState({
 
             if (reason === "forceUnpublished") {
                 standaloneToast({
-                    title: "Screenshare stopped",
-                    description: "Your screenshare has been stopped by a moderator.",
+                    title: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.UseVonageComputedState.ScreenStopped', defaultMessage: "Screenshare stopped" }),
+                    description: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.UseVonageComputedState.YourScreenStopped', defaultMessage: "Your screenshare has been stopped by a moderator." }),
                     status: "warning",
                     duration: 20000,
                     isClosable: true,
@@ -126,7 +128,7 @@ export function useVonageComputedState({
                     console.error("Failed to join room", e);
                     toast({
                         status: "error",
-                        description: "Cannot connect to room",
+                        description: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.UseVonageComputedState.CannotConnect', defaultMessage: "Cannot connect to room" }),
                     });
                 }
             } finally {
@@ -212,8 +214,8 @@ export function useVonageComputedState({
                     },
                     () => {
                         standaloneToast({
-                            title: "Muted",
-                            description: "You have been muted by a moderator.",
+                            title: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.UseVonageComputedState.Muted2', defaultMessage: "Muted" }),
+                            description: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.UseVonageComputedState.YouMuted2', defaultMessage: "You have been muted by a moderator." }),
                             status: "warning",
                             duration: 20000,
                             isClosable: true,

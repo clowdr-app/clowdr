@@ -20,6 +20,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
 import { defaultOutline_AsBoxShadow } from "../../../Chakra/Outline";
 import ContinuationChoiceList from "./ContinuationChoiceList";
+import { FormattedMessage, useIntl } from "react-intl";
 
 const closedTopPos = "calc(100vh - 13ex)";
 export default function ContinuationPassiveChoice({
@@ -43,6 +44,7 @@ export default function ContinuationPassiveChoice({
     onChoiceSelected: (choiceId: string | null, isDefault: boolean) => void;
     activate: () => void;
 }): JSX.Element {
+    const intl = useIntl();
     const dropUpBoxBorderColor = useColorModeValue("gray.400", "gray.500");
     const borderColor = useColorModeValue("gray.300", "gray.600");
     const [vertical, setVertical] = useState<string>("50vh");
@@ -180,7 +182,10 @@ export default function ContinuationPassiveChoice({
                         {vertical !== closedTopPos ? (
                             <Flex mb={2} alignItems="flex-start" justifyContent="flex-start" w="100%">
                                 <Text id="passive-continuation-choices-description" userSelect="none" mr={2}>
-                                    This event is ending soon. Please choose one of these options:
+                                    <FormattedMessage
+                                        id="Conference.Attend.Continuation.ContinuationPassiveChoices.EventEndingSoon"
+                                        defaultMessage="This event is ending soon. Please choose one of these options:"
+                                    />
                                 </Text>
                             </Flex>
                         ) : (

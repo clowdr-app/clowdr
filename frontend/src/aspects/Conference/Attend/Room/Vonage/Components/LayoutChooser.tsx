@@ -3,8 +3,10 @@ import type { VonageSessionLayoutData} from "@clowdr-app/shared-types/build/vona
 import { VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import React, { useEffect, useState } from "react";
 import { useVonageLayout } from "../VonageLayoutProvider";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function LayoutChooser(): JSX.Element {
+    const intl = useIntl();
     const boxFill = useToken("colors", "gray.400");
     const insetBoxFillStroke = useToken("colors", "gray.600");
     const {
@@ -39,7 +41,10 @@ export default function LayoutChooser(): JSX.Element {
                         onClose();
                     }}
                 >
-                    Cancel layout changes
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Vonage.Components.LayoutChooser.CancelChanges"
+                        defaultMessage="Cancel layout changes"
+                    />
                 </Button>
                 <Button
                     size="lg"
@@ -53,12 +58,15 @@ export default function LayoutChooser(): JSX.Element {
                         }, 50);
                     }}
                 >
-                    Apply layout changes
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Vonage.Components.LayoutChooser.ApplyChanges"
+                        defaultMessage="Apply layout changes"
+                    />
                 </Button>
             </ButtonGroup>
             <Flex w="100%" m={2} flexWrap="wrap">
                 <Button
-                    aria-label="Automatic best-fit mode"
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.AutoBestFit', defaultMessage: "Automatic best-fit mode" })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -110,7 +118,7 @@ export default function LayoutChooser(): JSX.Element {
                     </chakra.svg>
                 </Button>
                 <Button
-                    aria-label="Single-feed mode: A full-screen camera or screenshare"
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.SingleFeedFit', defaultMessage: "Single-feed mode: A full-screen camera or screenshare" })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -150,7 +158,7 @@ export default function LayoutChooser(): JSX.Element {
                     </chakra.svg>
                 </Button>
                 <Button
-                    aria-label="Side-by-side mode: Two camera or screenshare feeds each 50% of the area of the video"
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.SideBySide', defaultMessage: "Side-by-side mode: Two camera or screenshare feeds each 50% of the area of the video" })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -191,7 +199,7 @@ export default function LayoutChooser(): JSX.Element {
                     </chakra.svg>
                 </Button>
                 <Button
-                    aria-label="Picture-in-picture mode: Two camera or screenshare feeds, one full screen, the other overlayed in the bottom right corner"
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.PipMode', defaultMessage: "Picture-in-picture mode: Two camera or screenshare feeds, one full screen, the other overlayed in the bottom right corner" })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -242,7 +250,7 @@ export default function LayoutChooser(): JSX.Element {
                     </chakra.svg>
                 </Button>
                 <Button
-                    aria-label="Fitted-4 mode: Stack of 4 cameras to the left of a screenshare"
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.FittedFour', defaultMessage: "Fitted-4 mode: Stack of 4 cameras to the left of a screenshare" })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -297,7 +305,7 @@ export default function LayoutChooser(): JSX.Element {
                     </chakra.svg>
                 </Button>
                 <Button
-                    aria-label="Fitted-4 mode: Row of 4 cameras underneath a screenshare"
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.FittedFourRow', defaultMessage: "Fitted-4 mode: Row of 4 cameras underneath a screenshare" })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -355,7 +363,7 @@ export default function LayoutChooser(): JSX.Element {
                 </Button>
 
                 <Button
-                    aria-label="Dual-screenshare mode: Vertical split. Two screenshares side by side, 50/50 split, with 4 cameras underneath."
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.DualScreen', defaultMessage: "Dual-screenshare mode: Vertical split. Two screenshares side by side, 50/50 split, with 4 cameras underneath." })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -422,7 +430,7 @@ export default function LayoutChooser(): JSX.Element {
                     </chakra.svg>
                 </Button>
                 <Button
-                    aria-label="Dual-screenshare mode: Vertical split, narrow left. Two screenshares side by side, 25/75% split, with 4 cameras underneath."
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.DualScreenMode', defaultMessage: "Dual-screenshare mode: Vertical split, narrow left. Two screenshares side by side, 25/75% split, with 4 cameras underneath." })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -489,7 +497,7 @@ export default function LayoutChooser(): JSX.Element {
                     </chakra.svg>
                 </Button>
                 <Button
-                    aria-label="Dual-screenshare mode: Vertical split, narrow right. Two screenshares side by side, 75/25% split, with 4 cameras underneath."
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.DualScreenModeUndersearch', defaultMessage: "Dual-screenshare mode: Vertical split, narrow right. Two screenshares side by side, 75/25% split, with 4 cameras underneath." })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -557,7 +565,7 @@ export default function LayoutChooser(): JSX.Element {
                 </Button>
 
                 <Button
-                    aria-label="Dual-screenshare mode: Horizontal split. Two screenshares one above the other, 50/50% split, with 4 cameras to the left."
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.DualScreenSplit1', defaultMessage: "Dual-screenshare mode: Horizontal split. Two screenshares one above the other, 50/50% split, with 4 cameras to the left." })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -624,7 +632,7 @@ export default function LayoutChooser(): JSX.Element {
                     </chakra.svg>
                 </Button>
                 <Button
-                    aria-label="Dual-screenshare mode: Horizontal split, narrow bottom. Two screenshares one above the other, 75/25% split, with 4 cameras to the left."
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.DualScreenSplit2', defaultMessage: "Dual-screenshare mode: Horizontal split, narrow bottom. Two screenshares one above the other, 75/25% split, with 4 cameras to the left." })}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"
@@ -691,7 +699,7 @@ export default function LayoutChooser(): JSX.Element {
                     </chakra.svg>
                 </Button>
                 <Button
-                    aria-label="Dual-screenshare mode: Horizontal split, narrow top. Two screenshares one above the other, 75/25% split, with 4 cameras to the left."
+                    aria-label={intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.LayoutChooser.DualScreenSplit3', defaultMessage: "Dual-screenshare mode: Horizontal split, narrow top. Two screenshares one above the other, 75/25% split, with 4 cameras to the left."})}
                     flex="0 0 170px"
                     h="100px"
                     maxH="auto"

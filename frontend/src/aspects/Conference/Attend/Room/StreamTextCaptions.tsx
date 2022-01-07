@@ -1,4 +1,4 @@
-import { ChevronDownIcon, ChevronUpIcon, ExternalLinkIcon } from "@chakra-ui/iconStreamTextCaptions";
+import { ChevronDownIcon, ChevronUpIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Heading, Link, Text, useColorModeValue, useToken } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";

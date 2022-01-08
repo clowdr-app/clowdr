@@ -10,10 +10,10 @@ gql`
             id
             restrictToAdmins
             conferenceId
-            items {
+            item {
                 id
             }
-            rooms {
+            room {
                 id
             }
         }
@@ -24,8 +24,8 @@ export interface ChatEntity {
     id: string;
     restrictToAdmins: boolean;
     conferenceId: string;
-    itemIds: string[];
-    roomIds: string[];
+    itemId: string | null;
+    roomId: string | null;
 }
 
 class ChatCache {
@@ -42,8 +42,8 @@ class ChatCache {
                 id: data.id,
                 restrictToAdmins: data.restrictToAdmins ? "true" : "false",
                 conferenceId: data.conferenceId,
-                itemIds: JSON.stringify(data.items.map((x) => x.id)),
-                roomIds: JSON.stringify(data.rooms.map((x) => x.id)),
+                itemId: data.item?.id ?? "null",
+                roomId: data.room?.id ?? "null",
             };
         }
         return undefined;
@@ -56,8 +56,8 @@ class ChatCache {
                 id: rawEntity.id,
                 restrictToAdmins: rawEntity.restrictToAdmins === "true",
                 conferenceId: rawEntity.conferenceId,
-                itemIds: JSON.parse(rawEntity.itemIds) as string[],
-                roomIds: JSON.parse(rawEntity.roomIds) as string[],
+                itemId: rawEntity.itemId === "null" ? null : rawEntity.itemId,
+                roomId: rawEntity.roomId === "null" ? null : rawEntity.roomId,
             };
         }
         return undefined;
@@ -70,12 +70,10 @@ class ChatCache {
     ): Promise<ChatEntity[FieldKey] | undefined> {
         const rawField = await this.cache.getField(id, field, fetchIfNotFound);
         if (rawField) {
-            if (field === "id" || field === "conferenceId") {
-                return rawField as ChatEntity[FieldKey];
+            if (field === "id" || field === "conferenceId" || field === "itemId" || field === "roomId") {
+                return (rawField === "null" ? null : rawField) as ChatEntity[FieldKey];
             } else if (field === "restrictToAdmins") {
                 return (rawField === "true") as ChatEntity[FieldKey];
-            } else if (field === "itemIds" || field === "roomIds") {
-                return JSON.parse(rawField) as ChatEntity[FieldKey];
             }
         }
         return undefined;
@@ -88,8 +86,8 @@ class ChatCache {
                 id: value.id,
                 conferenceId: value.conferenceId,
                 restrictToAdmins: value.restrictToAdmins ? "true" : "false",
-                itemIds: JSON.stringify(value.itemIds),
-                roomIds: JSON.stringify(value.roomIds),
+                itemId: value.itemId ?? "null",
+                roomId: value.roomId ?? "null",
             }
         );
     }
@@ -102,12 +100,10 @@ class ChatCache {
         if (value === undefined) {
             await this.cache.setField(id, field, undefined);
         } else {
-            if (field === "id" || field === "conferenceId") {
-                await this.cache.setField(id, field, value as string);
+            if (field === "id" || field === "conferenceId" || field === "itemId" || field === "roomId") {
+                await this.cache.setField(id, field, (value ?? "null") as string);
             } else if (field === "restrictToAdmins") {
                 await this.cache.setField(id, field, value ? "true" : "false");
-            } else if (field === "itemIds" || field === "roomIds") {
-                await this.cache.setField(id, field, JSON.stringify(value));
             }
         }
     }

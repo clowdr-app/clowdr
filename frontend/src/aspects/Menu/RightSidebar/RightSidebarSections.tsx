@@ -144,6 +144,7 @@ function RightSidebarSections_Inner({
                 width="100%"
                 height="100%"
                 onChange={onChangeTab}
+                zIndex={0}
             >
                 <TabList>
                     <Tab _selected={{ color: "white", bg: "RightMenu.700" }}>Chat</Tab>

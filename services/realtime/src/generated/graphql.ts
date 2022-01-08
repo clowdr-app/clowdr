@@ -3253,10 +3253,8 @@ export type Chat_Chat = {
     /** An aggregate relationship */
     flags_aggregate: Chat_Flag_Aggregate;
     id: Scalars["uuid"];
-    /** An array relationship */
-    items: Array<Content_Item>;
-    /** An aggregate relationship */
-    items_aggregate: Content_Item_Aggregate;
+    /** An object relationship */
+    item?: Maybe<Content_Item>;
     /** An array relationship */
     messages: Array<Chat_Message>;
     /** An aggregate relationship */
@@ -3271,10 +3269,8 @@ export type Chat_Chat = {
     readUpToIndices_aggregate: Chat_ReadUpToIndex_Aggregate;
     remoteServiceId?: Maybe<Scalars["String"]>;
     restrictToAdmins: Scalars["Boolean"];
-    /** An array relationship */
-    rooms: Array<Room_Room>;
-    /** An aggregate relationship */
-    rooms_aggregate: Room_Room_Aggregate;
+    /** An object relationship */
+    room?: Maybe<Room_Room>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     /** An array relationship */
     subscriptions: Array<Chat_Subscription>;
@@ -3317,24 +3313,6 @@ export type Chat_ChatFlags_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Chat_Flag_Order_By>>;
     where?: Maybe<Chat_Flag_Bool_Exp>;
-};
-
-/** columns and relationships of "chat.Chat" */
-export type Chat_ChatItemsArgs = {
-    distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_Item_Order_By>>;
-    where?: Maybe<Content_Item_Bool_Exp>;
-};
-
-/** columns and relationships of "chat.Chat" */
-export type Chat_ChatItems_AggregateArgs = {
-    distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_Item_Order_By>>;
-    where?: Maybe<Content_Item_Bool_Exp>;
 };
 
 /** columns and relationships of "chat.Chat" */
@@ -3389,24 +3367,6 @@ export type Chat_ChatReadUpToIndices_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Chat_ReadUpToIndex_Order_By>>;
     where?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
-};
-
-/** columns and relationships of "chat.Chat" */
-export type Chat_ChatRoomsArgs = {
-    distinct_on?: Maybe<Array<Room_Room_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Room_Room_Order_By>>;
-    where?: Maybe<Room_Room_Bool_Exp>;
-};
-
-/** columns and relationships of "chat.Chat" */
-export type Chat_ChatRooms_AggregateArgs = {
-    distinct_on?: Maybe<Array<Room_Room_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Room_Room_Order_By>>;
-    where?: Maybe<Room_Room_Bool_Exp>;
 };
 
 /** columns and relationships of "chat.Chat" */
@@ -3479,13 +3439,13 @@ export type Chat_Chat_Bool_Exp = {
     enableMandatorySubscribe?: Maybe<Boolean_Comparison_Exp>;
     flags?: Maybe<Chat_Flag_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
-    items?: Maybe<Content_Item_Bool_Exp>;
+    item?: Maybe<Content_Item_Bool_Exp>;
     messages?: Maybe<Chat_Message_Bool_Exp>;
     pins?: Maybe<Chat_Pin_Bool_Exp>;
     readUpToIndices?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
     remoteServiceId?: Maybe<String_Comparison_Exp>;
     restrictToAdmins?: Maybe<Boolean_Comparison_Exp>;
-    rooms?: Maybe<Room_Room_Bool_Exp>;
+    room?: Maybe<Room_Room_Bool_Exp>;
     subconferenceId?: Maybe<Uuid_Comparison_Exp>;
     subscriptions?: Maybe<Chat_Subscription_Bool_Exp>;
     updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -3511,13 +3471,13 @@ export type Chat_Chat_Insert_Input = {
     enableMandatorySubscribe?: Maybe<Scalars["Boolean"]>;
     flags?: Maybe<Chat_Flag_Arr_Rel_Insert_Input>;
     id?: Maybe<Scalars["uuid"]>;
-    items?: Maybe<Content_Item_Arr_Rel_Insert_Input>;
+    item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
     messages?: Maybe<Chat_Message_Arr_Rel_Insert_Input>;
     pins?: Maybe<Chat_Pin_Arr_Rel_Insert_Input>;
     readUpToIndices?: Maybe<Chat_ReadUpToIndex_Arr_Rel_Insert_Input>;
     remoteServiceId?: Maybe<Scalars["String"]>;
     restrictToAdmins?: Maybe<Scalars["Boolean"]>;
-    rooms?: Maybe<Room_Room_Arr_Rel_Insert_Input>;
+    room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     subscriptions?: Maybe<Chat_Subscription_Arr_Rel_Insert_Input>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -3606,13 +3566,13 @@ export type Chat_Chat_Order_By = {
     enableMandatorySubscribe?: Maybe<Order_By>;
     flags_aggregate?: Maybe<Chat_Flag_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
-    items_aggregate?: Maybe<Content_Item_Aggregate_Order_By>;
+    item?: Maybe<Content_Item_Order_By>;
     messages_aggregate?: Maybe<Chat_Message_Aggregate_Order_By>;
     pins_aggregate?: Maybe<Chat_Pin_Aggregate_Order_By>;
     readUpToIndices_aggregate?: Maybe<Chat_ReadUpToIndex_Aggregate_Order_By>;
     remoteServiceId?: Maybe<Order_By>;
     restrictToAdmins?: Maybe<Order_By>;
-    rooms_aggregate?: Maybe<Room_Room_Aggregate_Order_By>;
+    room?: Maybe<Room_Room_Order_By>;
     subconferenceId?: Maybe<Order_By>;
     subscriptions_aggregate?: Maybe<Chat_Subscription_Aggregate_Order_By>;
     updated_at?: Maybe<Order_By>;
@@ -9741,10 +9701,6 @@ export type Content_Item = {
     originatingDataId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     room?: Maybe<Room_Room>;
-    /** An array relationship */
-    rooms: Array<Room_Room>;
-    /** An aggregate relationship */
-    rooms_aggregate: Room_Room_Aggregate;
     shortTitle?: Maybe<Scalars["String"]>;
     /** An array relationship */
     stats: Array<Analytics_ContentItemStats>;
@@ -9867,24 +9823,6 @@ export type Content_ItemItemTags_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Content_ItemTag_Order_By>>;
     where?: Maybe<Content_ItemTag_Bool_Exp>;
-};
-
-/** columns and relationships of "content.Item" */
-export type Content_ItemRoomsArgs = {
-    distinct_on?: Maybe<Array<Room_Room_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Room_Room_Order_By>>;
-    where?: Maybe<Room_Room_Bool_Exp>;
-};
-
-/** columns and relationships of "content.Item" */
-export type Content_ItemRooms_AggregateArgs = {
-    distinct_on?: Maybe<Array<Room_Room_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Room_Room_Order_By>>;
-    where?: Maybe<Room_Room_Bool_Exp>;
 };
 
 /** columns and relationships of "content.Item" */
@@ -10909,7 +10847,6 @@ export type Content_Item_Bool_Exp = {
     originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
     originatingDataId?: Maybe<Uuid_Comparison_Exp>;
     room?: Maybe<Room_Room_Bool_Exp>;
-    rooms?: Maybe<Room_Room_Bool_Exp>;
     shortTitle?: Maybe<String_Comparison_Exp>;
     stats?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
     subconferenceId?: Maybe<Uuid_Comparison_Exp>;
@@ -10923,6 +10860,8 @@ export type Content_Item_Bool_Exp = {
 
 /** unique or primary key constraints on table "content.Item" */
 export enum Content_Item_Constraint {
+    /** unique or primary key constraint */
+    ItemChatIdKey = "Item_chatId_key",
     /** unique or primary key constraint */
     ItemPkey = "Item_pkey",
 }
@@ -10944,7 +10883,6 @@ export type Content_Item_Insert_Input = {
     originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
     room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
-    rooms?: Maybe<Room_Room_Arr_Rel_Insert_Input>;
     shortTitle?: Maybe<Scalars["String"]>;
     stats?: Maybe<Analytics_ContentItemStats_Arr_Rel_Insert_Input>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -11051,7 +10989,6 @@ export type Content_Item_Order_By = {
     originatingData?: Maybe<Conference_OriginatingData_Order_By>;
     originatingDataId?: Maybe<Order_By>;
     room?: Maybe<Room_Room_Order_By>;
-    rooms_aggregate?: Maybe<Room_Room_Aggregate_Order_By>;
     shortTitle?: Maybe<Order_By>;
     stats_aggregate?: Maybe<Analytics_ContentItemStats_Aggregate_Order_By>;
     subconferenceId?: Maybe<Order_By>;
@@ -24705,6 +24642,9 @@ export type Room_Room = {
     /** A computed field, executes function "room.IsProgramRoom" */
     isProgramRoom?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
+    item?: Maybe<Content_Item>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
     livestreamDuration?: Maybe<Room_LivestreamDurations>;
     /** An object relationship */
     managementMode: Room_ManagementMode;
@@ -24713,12 +24653,6 @@ export type Room_Room = {
     /** An object relationship */
     originatingData?: Maybe<Conference_OriginatingData>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
-    /** An object relationship */
-    originatingEvent?: Maybe<Schedule_Event>;
-    originatingEventId?: Maybe<Scalars["uuid"]>;
-    /** An object relationship */
-    originatingItem?: Maybe<Content_Item>;
-    originatingItemId?: Maybe<Scalars["uuid"]>;
     /** An array relationship */
     participants: Array<Room_Participant>;
     /** An aggregate relationship */
@@ -25364,16 +25298,14 @@ export type Room_Room_Bool_Exp = {
     events?: Maybe<Schedule_Event_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     isProgramRoom?: Maybe<Boolean_Comparison_Exp>;
+    item?: Maybe<Content_Item_Bool_Exp>;
+    itemId?: Maybe<Uuid_Comparison_Exp>;
     livestreamDuration?: Maybe<Room_LivestreamDurations_Bool_Exp>;
     managementMode?: Maybe<Room_ManagementMode_Bool_Exp>;
     managementModeName?: Maybe<Room_ManagementMode_Enum_Comparison_Exp>;
     name?: Maybe<String_Comparison_Exp>;
     originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
     originatingDataId?: Maybe<Uuid_Comparison_Exp>;
-    originatingEvent?: Maybe<Schedule_Event_Bool_Exp>;
-    originatingEventId?: Maybe<Uuid_Comparison_Exp>;
-    originatingItem?: Maybe<Content_Item_Bool_Exp>;
-    originatingItemId?: Maybe<Uuid_Comparison_Exp>;
     participants?: Maybe<Room_Participant_Bool_Exp>;
     presenceCounts?: Maybe<Analytics_RoomPresence_Bool_Exp>;
     priority?: Maybe<Int_Comparison_Exp>;
@@ -25392,7 +25324,9 @@ export type Room_Room_Bool_Exp = {
 /** unique or primary key constraints on table "room.Room" */
 export enum Room_Room_Constraint {
     /** unique or primary key constraint */
-    RoomOriginatingEventIdKey = "Room_originatingEventId_key",
+    RoomChatIdKey = "Room_chatId_key",
+    /** unique or primary key constraint */
+    RoomItemIdKey = "Room_itemId_key",
     /** unique or primary key constraint */
     RoomPkey = "Room_pkey",
 }
@@ -25420,16 +25354,14 @@ export type Room_Room_Insert_Input = {
     currentModeName?: Maybe<Room_Mode_Enum>;
     events?: Maybe<Schedule_Event_Arr_Rel_Insert_Input>;
     id?: Maybe<Scalars["uuid"]>;
+    item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
+    itemId?: Maybe<Scalars["uuid"]>;
     livestreamDuration?: Maybe<Room_LivestreamDurations_Obj_Rel_Insert_Input>;
     managementMode?: Maybe<Room_ManagementMode_Obj_Rel_Insert_Input>;
     managementModeName?: Maybe<Room_ManagementMode_Enum>;
     name?: Maybe<Scalars["String"]>;
     originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
-    originatingEvent?: Maybe<Schedule_Event_Obj_Rel_Insert_Input>;
-    originatingEventId?: Maybe<Scalars["uuid"]>;
-    originatingItem?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
-    originatingItemId?: Maybe<Scalars["uuid"]>;
     participants?: Maybe<Room_Participant_Arr_Rel_Insert_Input>;
     presenceCounts?: Maybe<Analytics_RoomPresence_Arr_Rel_Insert_Input>;
     priority?: Maybe<Scalars["Int"]>;
@@ -25454,10 +25386,9 @@ export type Room_Room_Max_Fields = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
-    originatingEventId?: Maybe<Scalars["uuid"]>;
-    originatingItemId?: Maybe<Scalars["uuid"]>;
     priority?: Maybe<Scalars["Int"]>;
     publicVonageSessionId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -25472,10 +25403,9 @@ export type Room_Room_Max_Order_By = {
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    itemId?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
-    originatingEventId?: Maybe<Order_By>;
-    originatingItemId?: Maybe<Order_By>;
     priority?: Maybe<Order_By>;
     publicVonageSessionId?: Maybe<Order_By>;
     subconferenceId?: Maybe<Order_By>;
@@ -25491,10 +25421,9 @@ export type Room_Room_Min_Fields = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
-    originatingEventId?: Maybe<Scalars["uuid"]>;
-    originatingItemId?: Maybe<Scalars["uuid"]>;
     priority?: Maybe<Scalars["Int"]>;
     publicVonageSessionId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -25509,10 +25438,9 @@ export type Room_Room_Min_Order_By = {
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    itemId?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
-    originatingEventId?: Maybe<Order_By>;
-    originatingItemId?: Maybe<Order_By>;
     priority?: Maybe<Order_By>;
     publicVonageSessionId?: Maybe<Order_By>;
     subconferenceId?: Maybe<Order_By>;
@@ -25560,16 +25488,14 @@ export type Room_Room_Order_By = {
     events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
     isProgramRoom?: Maybe<Order_By>;
+    item?: Maybe<Content_Item_Order_By>;
+    itemId?: Maybe<Order_By>;
     livestreamDuration?: Maybe<Room_LivestreamDurations_Order_By>;
     managementMode?: Maybe<Room_ManagementMode_Order_By>;
     managementModeName?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingData?: Maybe<Conference_OriginatingData_Order_By>;
     originatingDataId?: Maybe<Order_By>;
-    originatingEvent?: Maybe<Schedule_Event_Order_By>;
-    originatingEventId?: Maybe<Order_By>;
-    originatingItem?: Maybe<Content_Item_Order_By>;
-    originatingItemId?: Maybe<Order_By>;
     participants_aggregate?: Maybe<Room_Participant_Aggregate_Order_By>;
     presenceCounts_aggregate?: Maybe<Analytics_RoomPresence_Aggregate_Order_By>;
     priority?: Maybe<Order_By>;
@@ -25609,15 +25535,13 @@ export enum Room_Room_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
+    ItemId = "itemId",
+    /** column name */
     ManagementModeName = "managementModeName",
     /** column name */
     Name = "name",
     /** column name */
     OriginatingDataId = "originatingDataId",
-    /** column name */
-    OriginatingEventId = "originatingEventId",
-    /** column name */
-    OriginatingItemId = "originatingItemId",
     /** column name */
     Priority = "priority",
     /** column name */
@@ -25638,11 +25562,10 @@ export type Room_Room_Set_Input = {
     created_at?: Maybe<Scalars["timestamptz"]>;
     currentModeName?: Maybe<Room_Mode_Enum>;
     id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
     managementModeName?: Maybe<Room_ManagementMode_Enum>;
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
-    originatingEventId?: Maybe<Scalars["uuid"]>;
-    originatingItemId?: Maybe<Scalars["uuid"]>;
     priority?: Maybe<Scalars["Int"]>;
     publicVonageSessionId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -25720,15 +25643,13 @@ export enum Room_Room_Update_Column {
     /** column name */
     Id = "id",
     /** column name */
+    ItemId = "itemId",
+    /** column name */
     ManagementModeName = "managementModeName",
     /** column name */
     Name = "name",
     /** column name */
     OriginatingDataId = "originatingDataId",
-    /** column name */
-    OriginatingEventId = "originatingEventId",
-    /** column name */
-    OriginatingItemId = "originatingItemId",
     /** column name */
     Priority = "priority",
     /** column name */

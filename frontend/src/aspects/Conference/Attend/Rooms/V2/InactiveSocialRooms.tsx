@@ -16,8 +16,7 @@ gql`
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-                originatingItemId: { _is_null: true }
-                originatingEventId: { _is_null: true }
+                itemId: { _is_null: true }
             }
             order_by: { name: asc }
         ) {
@@ -31,8 +30,7 @@ gql`
         priority
         chatId
         conferenceId
-        originatingItemId
-        originatingEventId
+        itemId
     }
 `;
 

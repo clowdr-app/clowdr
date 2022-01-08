@@ -11,12 +11,12 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
-import FAIcon from "../../Chakra/FAIcon";
-import { LinkButton } from "../../Chakra/LinkButton";
-import { Chat } from "../../Chat/Chat";
-import type { ChatState } from "../../Chat/ChatGlobalState";
-import { useGlobalChatState } from "../../Chat/GlobalChatStateProvider";
-import { useConference } from "../../Conference/useConference";
+import FAIcon from "../Chakra/FAIcon";
+import { LinkButton } from "../Chakra/LinkButton";
+import { Chat } from "../Chat/Chat";
+import type { ChatState } from "../Chat/ChatGlobalState";
+import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
+import { useConference } from "../Conference/useConference";
 import HeaderBarButton from "./HeaderBarButton";
 
 export default function NotificationsPopover(): JSX.Element {

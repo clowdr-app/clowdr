@@ -69,21 +69,20 @@ gql`
 
     fragment InitialChatState_Chat on chat_Chat {
         id
-        items {
+        item {
             id
             title
             shortTitle
         }
-        nonDMRoom: rooms(where: { managementModeName: { _neq: DM } }) {
+        room {
             id
             name
             priority
             managementModeName
-        }
-        DMRoom: rooms(where: { managementModeName: { _eq: DM } }) {
-            id
-            name
-            roomMemberships {
+            # For DMs, we know there will only be 2 members, so we can limit the
+            # impact of loading members when it's not a DM room by limiting the
+            # number that are fetched
+            roomMemberships(limit: 2) {
                 id
                 registrant {
                     id
@@ -474,14 +473,16 @@ export class ChatState {
         private readonly initialState: InitialChatState_ChatFragment
     ) {
         this.name =
-            (initialState.items.length > 0
-                ? initialState.items[0].shortTitle ?? initialState.items[0].title
-                : initialState.nonDMRoom.length > 0
-                ? initialState.nonDMRoom[0].name
-                : initialState.DMRoom.length > 0
-                ? initialState.DMRoom[0].roomMemberships.find((x) => x?.registrant?.id !== globalState.registrant.id)
-                      ?.registrant?.displayName
-                : undefined) ?? "<No name available>";
+            (initialState.item
+                ? initialState.item.shortTitle ?? initialState.item.title
+                : initialState.room
+                ? initialState.room.managementModeName !== Room_ManagementMode_Enum.Dm
+                    ? initialState.room.name
+                    : initialState.room.managementModeName === Room_ManagementMode_Enum.Dm
+                    ? initialState.room.roomMemberships.find((x) => x?.registrant?.id !== globalState.registrant.id)
+                          ?.registrant?.displayName
+                    : undefined
+                : undefined) ?? "<Name removed>";
 
         this.isPinned = initialState.pins.length > 0;
         this.isSubscribed = initialState.subscriptions.length > 0;
@@ -516,21 +517,22 @@ export class ChatState {
     public get IsPrivate(): boolean {
         return (
             this.IsDM ||
-            (this.initialState.nonDMRoom.length > 0 &&
-                this.initialState.nonDMRoom[0].managementModeName !== Room_ManagementMode_Enum.Public)
+            Boolean(
+                this.initialState.room && this.initialState.room.managementModeName !== Room_ManagementMode_Enum.Public
+            )
         );
     }
 
     public get DMRoomId(): string | undefined {
-        if (this.initialState.DMRoom.length > 0) {
-            return this.initialState.DMRoom[0].id;
+        if (this.initialState.room?.managementModeName === Room_ManagementMode_Enum.Dm) {
+            return this.initialState.room.id;
         }
         return undefined;
     }
 
     public get NonDMRoomId(): string | undefined {
-        if (this.initialState.nonDMRoom.length > 0) {
-            return this.initialState.nonDMRoom[0].id;
+        if (this.initialState.room?.managementModeName !== Room_ManagementMode_Enum.Dm) {
+            return this.initialState.room?.id;
         }
         return undefined;
     }

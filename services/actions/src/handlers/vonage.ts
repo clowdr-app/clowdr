@@ -501,7 +501,7 @@ gql`
     query VonageJoinRoom_GetInfo($roomId: uuid!, $registrantId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             id
-            originatingItem {
+            item {
                 id
                 itemPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
                     id
@@ -583,7 +583,7 @@ export async function handleJoinRoom(
     }
 
     const isPresenterOrChairOrConferenceOrganizerOrConferenceModerator =
-        !!roomInfo.data.room_Room_by_pk.originatingItem?.itemPeople.some(
+        !!roomInfo.data.room_Room_by_pk.item?.itemPeople.some(
             (person) =>
                 person.roleName.toUpperCase() === "AUTHOR" ||
                 person.roleName.toUpperCase() === "PRESENTER" ||

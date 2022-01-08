@@ -10,11 +10,11 @@ import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql
 export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
     const sponsorLogoUrl = useMemo((): string | null => {
         try {
-            if (!roomDetails.originatingItem?.elements || !roomDetails.originatingItem.elements.length) {
+            if (!roomDetails.item?.elements || !roomDetails.item.elements.length) {
                 return null;
             }
 
-            const dataBlob = roomDetails.originatingItem.elements[0].data;
+            const dataBlob = roomDetails.item.elements[0].data;
 
             if (!isElementDataBlob(dataBlob)) {
                 return null;
@@ -44,14 +44,14 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
         } catch {
             return null;
         }
-    }, [roomDetails.originatingItem?.elements]);
+    }, [roomDetails.item?.elements]);
 
-    return roomDetails.originatingItem ? (
+    return roomDetails.item ? (
         <>
             {sponsorLogoUrl ? (
                 <Image
                     src={sponsorLogoUrl}
-                    alt={`${roomDetails.originatingItem.title} logo`}
+                    alt={`${roomDetails.item.title} logo`}
                     ml={5}
                     maxWidth="20rem"
                     mt={5}
@@ -61,7 +61,7 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
                 />
             ) : (
                 <Heading as="h2" textAlign="left" mt={5} ml={5}>
-                    <Twemoji className="twemoji" text={roomDetails.originatingItem.title} />
+                    <Twemoji className="twemoji" text={roomDetails.item.title} />
                 </Heading>
             )}
         </>

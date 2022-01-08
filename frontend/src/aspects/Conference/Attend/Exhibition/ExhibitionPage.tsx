@@ -55,13 +55,8 @@ gql`
         itemTags {
             ...ItemTagData
         }
-        discussionRoom: rooms(
-            where: { originatingEventId: { _is_null: true } }
-            limit: 1
-            order_by: { created_at: asc }
-        ) {
+        discussionRoom: room {
             id
-            originatingEventId
             created_at
         }
     }
@@ -110,8 +105,8 @@ function ExhibitionPageInner({
     const { conferencePath } = useAuthParameters();
 
     const descriptiveItemDiscussionRoom = useMemo(
-        () => exhibition.descriptiveItem?.rooms[0],
-        [exhibition.descriptiveItem?.rooms]
+        () => exhibition.descriptiveItem?.room,
+        [exhibition.descriptiveItem?.room]
     );
 
     return (

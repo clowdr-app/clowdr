@@ -16,7 +16,7 @@ export async function canSelectChat(userId: string, chatId: string, respectAdmin
             if (userRegistrant) {
                 const registrant = await registrantCache.getEntity(userRegistrant.id);
                 if (registrant) {
-                    if ((!chat.restrictToAdmins || !respectAdminRestriction) && chat.itemIds.length > 0) {
+                    if ((!chat.restrictToAdmins || !respectAdminRestriction) && chat.itemId) {
                         return true;
                     }
 
@@ -27,25 +27,24 @@ export async function canSelectChat(userId: string, chatId: string, respectAdmin
                         return true;
                     }
 
-                    if (chat.roomIds.length) {
-                        for (const roomId of chat.roomIds) {
-                            const room = await roomCache.getEntity(roomId);
-                            if (room) {
+                    if (chat.roomId) {
+                        const roomId = chat.roomId;
+                        const room = await roomCache.getEntity(roomId);
+                        if (room) {
+                            if (
+                                (!chat.restrictToAdmins || !respectAdminRestriction) &&
+                                room.managementModeName === Room_ManagementMode_Enum.Public
+                            ) {
+                                return true;
+                            }
+                            const membership = await roomMembershipsCache.getField(roomId, registrant.id);
+                            if (membership) {
                                 if (
-                                    (!chat.restrictToAdmins || !respectAdminRestriction) &&
-                                    room.managementModeName === Room_ManagementMode_Enum.Public
+                                    !chat.restrictToAdmins ||
+                                    !respectAdminRestriction ||
+                                    membership === Room_PersonRole_Enum.Admin
                                 ) {
                                     return true;
-                                }
-                                const membership = await roomMembershipsCache.getField(roomId, registrant.id);
-                                if (membership) {
-                                    if (
-                                        !chat.restrictToAdmins ||
-                                        !respectAdminRestriction ||
-                                        membership === Room_PersonRole_Enum.Admin
-                                    ) {
-                                        return true;
-                                    }
                                 }
                             }
                         }

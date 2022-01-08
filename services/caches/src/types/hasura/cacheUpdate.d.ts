@@ -57,7 +57,7 @@ declare namespace CacheUpdate {
     interface EventData {
         id: string;
         conferenceId: string;
-        subconferenceId: string;
+        subconferenceId?: string | null;
         roomId: string;
     }
 

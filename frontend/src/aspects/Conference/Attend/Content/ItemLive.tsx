@@ -38,7 +38,7 @@ export function ItemLive({
     usePolling(computeLiveEvent, 30000, true);
     useEffect(() => computeLiveEvent(), [computeLiveEvent]);
 
-    const currentRoom = useMemo(() => (itemData.rooms.length > 0 ? itemData.rooms[0] : undefined), [itemData.rooms]);
+    const currentRoom = useMemo(() => (itemData.room ? itemData.room : undefined), [itemData.room]);
 
     return (
         <Flex mb={2} flexWrap="wrap">

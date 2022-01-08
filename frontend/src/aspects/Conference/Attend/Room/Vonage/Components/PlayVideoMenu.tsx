@@ -49,7 +49,7 @@ gql`
     query GetRoomVideos($roomId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             id
-            originatingItem {
+            item {
                 id
                 title
                 elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }) {
@@ -129,8 +129,8 @@ export default function PlayVideoMenuButton({
         }
 
         if (roomResponse.data?.room_Room_by_pk) {
-            if (roomResponse.data.room_Room_by_pk.originatingItem) {
-                const item = roomResponse.data.room_Room_by_pk.originatingItem;
+            if (roomResponse.data.room_Room_by_pk.item) {
+                const item = roomResponse.data.room_Room_by_pk.item;
                 for (const element of item.elements) {
                     ids.push(element.id);
                     videoElementMenuItems.push(

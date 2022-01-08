@@ -1,4 +1,4 @@
-import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Button,
     Code,
@@ -9,11 +9,6 @@ import {
     DrawerHeader,
     DrawerOverlay,
     HStack,
-    Link,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
     Text,
     useClipboard,
     VStack,
@@ -138,10 +133,10 @@ function SecondaryEditorInner({
                 </LinkButton>
                 {itemResponse.data?.content_Item_by_pk ? (
                     <>
-                        {itemResponse.data.content_Item_by_pk.rooms.length === 1 ? (
+                        {itemResponse.data.content_Item_by_pk.room ? (
                             <LinkButton
                                 size="sm"
-                                to={`${conferencePath}/room/${itemResponse.data.content_Item_by_pk.rooms[0].id}`}
+                                to={`${conferencePath}/room/${itemResponse.data.content_Item_by_pk.room.id}`}
                                 isExternal
                                 aria-label={
                                     itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
@@ -161,30 +156,6 @@ function SecondaryEditorInner({
                                 &nbsp;
                                 <ExternalLinkIcon />
                             </LinkButton>
-                        ) : itemResponse.data.content_Item_by_pk.rooms.length >= 1 ? (
-                            <Menu size="sm">
-                                <MenuButton as={Button} rightIcon={<ChevronDownIcon />} size="sm">
-                                    View discussion rooms
-                                </MenuButton>
-                                <MenuList>
-                                    {itemResponse.data.content_Item_by_pk.rooms.map((room, idx) => (
-                                        <MenuItem key={room.id}>
-                                            <Link
-                                                size="sm"
-                                                href={`${conferencePath}/room/${room.id}`}
-                                                isExternal
-                                                aria-label="View discussion room"
-                                                title="View discussion room"
-                                                textDecoration="none"
-                                            >
-                                                {idx}. {room.name}
-                                                &nbsp;
-                                                <ExternalLinkIcon />
-                                            </Link>
-                                        </MenuItem>
-                                    ))}
-                                </MenuList>
-                            </Menu>
                         ) : (
                             <CreateRoomButton
                                 size="sm"

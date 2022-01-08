@@ -292,13 +292,10 @@ function EditableScheduleTable(): JSX.Element {
                 ? [...wholeSchedule.data.room_Room]
                       .filter(
                           (room) =>
-                              (!room.originatingItemId ||
+                              (!room.itemId ||
                                   wholeSchedule.data?.content_Item.some(
-                                      (x) =>
-                                          x.id === room.originatingItemId &&
-                                          x.typeName === Content_ItemType_Enum.Sponsor
+                                      (x) => x.id === room.itemId && x.typeName === Content_ItemType_Enum.Sponsor
                                   )) &&
-                              !room.originatingEventId &&
                               room.managementModeName !== Room_ManagementMode_Enum.Dm &&
                               room.managementModeName !== Room_ManagementMode_Enum.Managed
                       )

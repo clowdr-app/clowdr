@@ -115,7 +115,7 @@ export async function handleRoomCacheUpdate(payload: Payload<CacheUpdate.RoomDat
 
                 await chatCache.updateEntity(newEntity.chatId, (old) => ({
                     ...old,
-                    roomIds: [...old.roomIds, newEntity.id],
+                    roomId: newEntity.id,
                 }));
             }
             break;
@@ -131,11 +131,11 @@ export async function handleRoomCacheUpdate(payload: Payload<CacheUpdate.RoomDat
                 }));
                 await chatCache.updateEntity(oldEntity.chatId, (old) => ({
                     ...old,
-                    roomIds: old.roomIds.filter((x) => x !== oldEntity.chatId),
+                    roomId: null,
                 }));
                 await chatCache.updateEntity(newEntity.chatId, (old) => ({
                     ...old,
-                    roomIds: [...old.roomIds.filter((x) => x !== oldEntity.chatId), newEntity.id],
+                    roomId: newEntity.id,
                 }));
                 if (oldEntity.subconferenceId && !newEntity.subconferenceId) {
                     await subconferenceRoomsCache.invalidateField(oldEntity.subconferenceId, oldEntity.id);
@@ -590,7 +590,7 @@ export async function handleContentItemCacheUpdate(payload: Payload<CacheUpdate.
                 if (newEntity.chatId) {
                     await chatCache.updateEntity(newEntity.chatId, (old) => ({
                         ...old,
-                        itemIds: [...old.itemIds, newEntity.id],
+                        itemId: newEntity.id,
                     }));
                 }
             }
@@ -599,16 +599,16 @@ export async function handleContentItemCacheUpdate(payload: Payload<CacheUpdate.
             {
                 const newEntity = payload.event.data.new;
                 const oldEntity = payload.event.data.old;
-                if (oldEntity.chatId) {
+                if (oldEntity.chatId && oldEntity.chatId !== newEntity.chatId) {
                     await chatCache.updateEntity(oldEntity.chatId, (old) => ({
                         ...old,
-                        itemIds: old.itemIds.filter((x) => x !== oldEntity.id),
+                        itemId: old.itemId === oldEntity.id ? null : old.itemId,
                     }));
                 }
                 if (newEntity.chatId) {
                     await chatCache.updateEntity(newEntity.chatId, (old) => ({
                         ...old,
-                        itemIds: [...old.itemIds, newEntity.id],
+                        itemId: newEntity.id,
                     }));
                 }
             }
@@ -619,7 +619,7 @@ export async function handleContentItemCacheUpdate(payload: Payload<CacheUpdate.
                 if (oldEntity.chatId) {
                     await chatCache.updateEntity(oldEntity.chatId, (old) => ({
                         ...old,
-                        itemIds: old.itemIds.filter((x) => x !== oldEntity.id),
+                        itemId: old.itemId === oldEntity.id ? null : old.itemId,
                     }));
                 }
             }
@@ -627,10 +627,11 @@ export async function handleContentItemCacheUpdate(payload: Payload<CacheUpdate.
         case "MANUAL":
             if (payload.event.data.old) {
                 const oldEntity = payload.event.data.old;
-                if (oldEntity.chatId) {
+                const newEntity = payload.event.data.new;
+                if (oldEntity.chatId && oldEntity.chatId !== newEntity?.chatId) {
                     await chatCache.updateEntity(oldEntity.chatId, (old) => ({
                         ...old,
-                        itemIds: old.itemIds.filter((x) => x !== oldEntity.id),
+                        itemId: old.itemId === oldEntity.id ? null : old.itemId,
                     }));
                 }
             }
@@ -639,7 +640,7 @@ export async function handleContentItemCacheUpdate(payload: Payload<CacheUpdate.
                 if (newEntity.chatId) {
                     await chatCache.updateEntity(newEntity.chatId, (old) => ({
                         ...old,
-                        itemIds: [...old.itemIds, newEntity.id],
+                        itemId: newEntity.id,
                     }));
                 }
             }

@@ -36,9 +36,8 @@ gql`
     }
 
     fragment ItemPage_ItemRooms on content_Item {
-        rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
+        room {
             id
-            originatingEventId
             created_at
         }
     }
@@ -97,8 +96,8 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                         );
                     }
 
-                    if (itemData.typeName === Content_ItemType_Enum.Sponsor && itemData.rooms.length > 0) {
-                        return <Redirect to={`${conferencePath}/room/${itemData.rooms[0].id}`} />;
+                    if (itemData.typeName === Content_ItemType_Enum.Sponsor && itemData.room) {
+                        return <Redirect to={`${conferencePath}/room/${itemData.room.id}`} />;
                     }
 
                     if (itemData.typeName === Content_ItemType_Enum.LandingPage && conferencePath) {

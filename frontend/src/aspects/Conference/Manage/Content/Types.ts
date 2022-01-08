@@ -70,9 +70,7 @@ export type ItemDescriptor = {
     people: ItemPersonDescriptor[];
     exhibitions: ItemExhibitionDescriptor[];
     originatingDataId?: string;
-    rooms: {
-        id: string;
-    }[];
+    roomId?: string | null;
 };
 
 export type RenderEditorProps = {

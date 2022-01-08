@@ -162,23 +162,22 @@ export function RoomContent({
             {!currentRoomEvent &&
             !nextRoomEvent &&
             roomDetails.isProgramRoom &&
-            roomDetails.originatingItem?.typeName !== Content_ItemType_Enum.Sponsor ? (
+            roomDetails.item?.typeName !== Content_ItemType_Enum.Sponsor ? (
                 <Text p={5}>No events in this room in the next hour.</Text>
             ) : (
                 <></>
             )}
 
-            {roomDetails.originatingItem?.id &&
-            roomDetails.originatingItem.typeName !== Content_ItemType_Enum.Sponsor ? (
+            {roomDetails.item?.id && roomDetails.item.typeName !== Content_ItemType_Enum.Sponsor ? (
                 <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                    <ItemElementsWrapper itemId={roomDetails.originatingItem.id} linkToItem={true} />
+                    <ItemElementsWrapper itemId={roomDetails.item.id} linkToItem={true} />
                 </Box>
             ) : (
                 <></>
             )}
 
-            {roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor ? (
-                <RoomSponsorContent itemId={roomDetails.originatingItem.id} />
+            {roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor ? (
+                <RoomSponsorContent itemId={roomDetails.item.id} />
             ) : (
                 <></>
             )}

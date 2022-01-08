@@ -40,8 +40,7 @@ gql`
         name
         priority
         originatingDataId
-        originatingEventId
-        originatingItemId
+        itemId
         managementModeName
         isProgramRoom
         originatingData {

@@ -80,19 +80,19 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
     return (
         <>
             <Flex
-                flexDir="column"
-                justifyContent="flex-start"
-                alignItems="flex-start"
-                bgColor={bgColor}
-                flex="0 0 auto"
-                transition="width 0.15s cubic-bezier(0.33, 1, 0.68, 1)"
-                overflow="hidden"
                 pos={narrowView ? "absolute" : undefined}
                 w={isExpanded ? (narrowView ? "100%" : "9rem") : narrowView ? "0" : "3rem"}
                 h={narrowView ? "calc(100% - 6ex - 6px)" : "100%"}
                 top={narrowView ? "calc(6ex + 6px)" : undefined}
                 left={narrowView ? 0 : undefined}
                 zIndex={3}
+                flexDir="column"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                bgColor={bgColor}
+                flex="0 0 auto"
+                overflow="hidden"
+                transition="width 0.15s cubic-bezier(0.33, 1, 0.68, 1)"
             >
                 {showLive ? (
                     <MenuButton

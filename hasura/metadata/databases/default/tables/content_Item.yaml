@@ -20,7 +20,7 @@ object_relationships:
   using:
     manual_configuration:
       column_mapping:
-        id: originatingItemId
+        id: itemId
       insertion_order: null
       remote_table:
         name: Room
@@ -82,13 +82,6 @@ array_relationships:
       table:
         name: ItemTag
         schema: content
-- name: rooms
-  using:
-    foreign_key_constraint_on:
-      column: originatingItemId
-      table:
-        name: Room
-        schema: room
 - name: stats
   using:
     manual_configuration:

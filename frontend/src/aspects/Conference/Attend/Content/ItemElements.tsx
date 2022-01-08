@@ -42,7 +42,8 @@ gql`
         typeName
         chatId
         chat {
-            rooms {
+            id
+            room {
                 id
                 name
             }

@@ -138,7 +138,7 @@ async function distributeMessageToSubscribedUsers(action: Action<Message>) {
 
             const chatInfo = await chatCache.getEntity(chatId);
             if (chatInfo) {
-                const roomId = chatInfo.roomIds.length > 0 ? chatInfo.roomIds[0] : undefined;
+                const roomId = chatInfo.roomId;
                 let registrantDisplayName: string | undefined;
                 let room: RoomEntity | undefined;
                 if (roomId) {

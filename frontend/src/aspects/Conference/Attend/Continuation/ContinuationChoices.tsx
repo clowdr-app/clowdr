@@ -62,9 +62,8 @@ gql`
     query ContinuationChoices_Rooms($ids: [uuid!]!) {
         content_Item(where: { id: { _in: $ids } }) {
             id
-            rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
+            room {
                 id
-                originatingEventId
                 created_at
             }
         }
@@ -332,9 +331,9 @@ function ContinuationChoices_Inner({
                                     });
                                     const toItemId = to.id ?? ("eventId" in from ? from.itemId : null);
                                     const item = roomsResponse.data?.content_Item.find((item) => item.id === toItemId);
-                                    if (item && item.rooms.length > 0) {
-                                        if (currentRoomId !== item.rooms[0].id) {
-                                            history.push(`${conferencePath}/room/${item.rooms[0].id}`);
+                                    if (item && item.room) {
+                                        if (currentRoomId !== item.room.id) {
+                                            history.push(`${conferencePath}/room/${item.room.id}`);
                                         }
                                     } else {
                                         if (roomsResponse.error) {

@@ -115,8 +115,7 @@ gql`
         currentModeName
         capacity
         priority
-        originatingEventId
-        originatingItemId
+        itemId
         managementModeName
         isProgramRoom
         participants {
@@ -194,7 +193,7 @@ gql`
         $capacity: Int
         $priority: Int!
         $managementModeName: room_ManagementMode_enum!
-        $originatingItemId: uuid
+        $itemId: uuid
         $chatId: uuid!
         $enableMandatoryPin: Boolean!
         $enableAutoPin: Boolean!
@@ -208,7 +207,7 @@ gql`
                 capacity: $capacity
                 priority: $priority
                 managementModeName: $managementModeName
-                originatingItemId: $originatingItemId
+                itemId: $itemId
             }
         ) {
             ...RoomWithParticipantInfo
@@ -939,7 +938,7 @@ function EditableRoomsCRUDTable() {
                 },
             },
             {
-                id: "originatingItemId",
+                id: "itemId",
                 header: function ContentHeader({
                     isInCreate,
                     onClick,
@@ -953,9 +952,9 @@ function EditableRoomsCRUDTable() {
                         </Button>
                     );
                 },
-                get: (data) => items.data?.content_Item.find((group) => group.id === data.originatingItemId),
+                get: (data) => items.data?.content_Item.find((group) => group.id === data.itemId),
                 set: (record, value: { id: string; title: string } | undefined) => {
-                    record.originatingItemId = value?.id as any as DeepWriteable<any> | undefined;
+                    record.itemId = value?.id as any as DeepWriteable<any> | undefined;
                 },
                 sortType: (rowA: { id: string; title: string }, rowB: { id: string; title: string }) => {
                     const compared = rowA && rowB ? rowA.title.localeCompare(rowB.title) : rowA ? 1 : rowB ? -1 : 0;
@@ -963,13 +962,13 @@ function EditableRoomsCRUDTable() {
                 },
                 filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: string) => {
                     if (filterValue === "") {
-                        return rows.filter((row) => !row.originatingItemId);
+                        return rows.filter((row) => !row.itemId);
                     } else {
                         return rows.filter((row) => {
                             return (
-                                (row.originatingItemId &&
+                                (row.itemId &&
                                     items.data?.content_Item
-                                        .find((group) => group.id === row.originatingItemId)
+                                        .find((group) => group.id === row.itemId)
                                         ?.title.toLowerCase()
                                         .includes(filterValue.toLowerCase())) ??
                                 false
@@ -1279,9 +1278,8 @@ function EditableRoomsCRUDTable() {
                                 Priority: room.priority,
                                 Privacy: room.managementModeName,
 
-                                "Externally Sourced Data Id": room.originatingData?.id ?? "",
-                                "Associated Content Id": room.originatingItemId ?? "",
-                                "Associated Event Id": room.originatingEventId ?? "",
+                                "Externally Sourced Data Id": room.originatingData?.sourceId ?? "",
+                                "Associated Content Id": room.itemId ?? "",
 
                                 "Created At": room.created_at,
                                 "Current Mode Name": room.currentModeName,
@@ -1481,7 +1479,7 @@ function EditableRoomsCRUDTable() {
                                     currentModeName: record.currentModeName,
                                     name: record.name,
                                     managementModeName: record.managementModeName,
-                                    originatingItemId: record.originatingItemId,
+                                    itemId: record.itemId,
                                 },
                             },
                             {
@@ -1504,7 +1502,7 @@ function EditableRoomsCRUDTable() {
                                 priority: record.priority,
                                 capacity: record.capacity,
                                 managementModeName: record.managementModeName,
-                                originatingItemId: record.originatingItemId,
+                                itemId: record.itemId,
                                 chatId: record.chat?.id ?? "00000000-00000000-00000000-00000000",
                                 enableMandatoryPin: !!record.chat?.enableMandatoryPin,
                                 enableAutoPin: !!record.chat?.enableAutoPin,

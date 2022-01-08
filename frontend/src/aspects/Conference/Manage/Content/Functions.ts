@@ -96,7 +96,7 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
             priority: groupExhibition.priority,
         })),
         originatingDataId: group.originatingDataId,
-        rooms: [...group.rooms],
+        roomId: group.room?.id,
     };
 }
 
@@ -133,6 +133,6 @@ export function deepCloneItemDescriptor(group: ItemDescriptor): ItemDescriptor {
         typeName: group.typeName,
         tagIds: new Set(group.tagIds),
         originatingDataId: group.originatingDataId,
-        rooms: [...group.rooms],
+        roomId: group.roomId,
     };
 }

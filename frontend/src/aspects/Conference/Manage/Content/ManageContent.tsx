@@ -149,7 +149,7 @@ gql`
 
     fragment ManageContent_ItemSecondary on content_Item {
         typeName
-        rooms {
+        room {
             ...ManageContent_Room
         }
         chatId
@@ -177,7 +177,7 @@ gql`
             exhibitionId
             priority
         }
-        rooms {
+        room {
             id
             conferenceId
         }
@@ -601,18 +601,6 @@ export default function ManageContentV2(): JSX.Element {
                     );
                 },
             },
-            // itemExhibitions { -- Secondary editor
-            //     id
-            //     conferenceId
-            //     itemId
-            //     exhibitionId
-            //     priority
-            //     layout
-            // }
-            // rooms { -- Secondary editor, Link to each room
-            //     id
-            //     name
-            // }
         ];
         return result;
     }, [tagOptions, typeOptions]);
@@ -905,7 +893,7 @@ export default function ManageContentV2(): JSX.Element {
                                         Exhibitions: item.itemExhibitions.map(
                                             (itemExh) => `${itemExh.priority ?? "N"}: ${itemExh.exhibitionId}`
                                         ),
-                                        "Discussion Room Ids": item.rooms.map((room) => room.id),
+                                        "Discussion Room Id": item.room?.id ?? "",
                                         "Chat Id": item.chatId ?? "",
 
                                         People: item.itemPeople.map(

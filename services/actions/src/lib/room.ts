@@ -27,7 +27,7 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
                 chatId
                 conferenceId
                 subconferenceId
-                rooms(where: { originatingEventId: { _is_null: true } }, order_by: { created_at: asc }, limit: 1) {
+                room {
                     id
                 }
                 title
@@ -46,8 +46,8 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
         throw new Error("Could not find specified content group in the conference");
     }
 
-    if (itemResult.data.content_Item_by_pk.rooms.length > 0) {
-        return itemResult.data.content_Item_by_pk.rooms[0].id;
+    if (itemResult.data.content_Item_by_pk.room) {
+        return itemResult.data.content_Item_by_pk.room.id;
     }
 
     gql`
@@ -55,7 +55,7 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
             $chatId: uuid = null
             $conferenceId: uuid!
             $name: String!
-            $originatingItemId: uuid!
+            $itemId: uuid!
             $subconferenceId: uuid = null
         ) {
             insert_room_Room_one(
@@ -65,7 +65,7 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
                     conferenceId: $conferenceId
                     currentModeName: VIDEO_CHAT
                     name: $name
-                    originatingItemId: $originatingItemId
+                    itemId: $itemId
                     managementModeName: PUBLIC
                     subconferenceId: $subconferenceId
                 }
@@ -82,7 +82,7 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
         variables: {
             conferenceId: conferenceId,
             name: `${itemResult.data.content_Item_by_pk.title}`,
-            originatingItemId: itemId,
+            itemId,
             chatId: itemResult.data.content_Item_by_pk.chatId,
         },
     });

@@ -29,6 +29,9 @@ object_relationships:
 - name: currentMode
   using:
     foreign_key_constraint_on: currentModeName
+- name: item
+  using:
+    foreign_key_constraint_on: itemId
 - name: livestreamDuration
   using:
     manual_configuration:
@@ -44,12 +47,6 @@ object_relationships:
 - name: originatingData
   using:
     foreign_key_constraint_on: originatingDataId
-- name: originatingEvent
-  using:
-    foreign_key_constraint_on: originatingEventId
-- name: originatingItem
-  using:
-    foreign_key_constraint_on: originatingItemId
 - name: rtmpOutput
   using:
     manual_configuration:
@@ -192,8 +189,7 @@ insert_permissions:
     - managementModeName
     - name
     - originatingDataId
-    - originatingEventId
-    - originatingItemId
+    - itemId
     - priority
     - subconferenceId
   role: conference-organizer
@@ -243,8 +239,7 @@ insert_permissions:
     - managementModeName
     - name
     - originatingDataId
-    - originatingEventId
-    - originatingItemId
+    - itemId
     - priority
     - subconferenceId
   role: subconference-organizer
@@ -262,8 +257,7 @@ select_permissions:
     - managementModeName
     - name
     - originatingDataId
-    - originatingEventId
-    - originatingItemId
+    - itemId
     - priority
     - publicVonageSessionId
     - subconferenceId
@@ -307,8 +301,7 @@ select_permissions:
     - conferenceId
     - id
     - originatingDataId
-    - originatingEventId
-    - originatingItemId
+    - itemId
     - subconferenceId
     computed_fields:
     - isProgramRoom
@@ -336,8 +329,7 @@ select_permissions:
     - conferenceId
     - id
     - originatingDataId
-    - originatingEventId
-    - originatingItemId
+    - itemId
     - subconferenceId
     computed_fields:
     - isProgramRoom
@@ -378,8 +370,7 @@ select_permissions:
     - conferenceId
     - id
     - originatingDataId
-    - originatingEventId
-    - originatingItemId
+    - itemId
     - subconferenceId
     computed_fields:
     - isProgramRoom
@@ -420,8 +411,7 @@ select_permissions:
     - conferenceId
     - id
     - originatingDataId
-    - originatingEventId
-    - originatingItemId
+    - itemId
     - subconferenceId
     computed_fields:
     - isProgramRoom
@@ -445,8 +435,7 @@ update_permissions:
     - managementModeName
     - name
     - originatingDataId
-    - originatingEventId
-    - originatingItemId
+    - itemId
     - priority
     - subconferenceId
     filter:
@@ -493,8 +482,7 @@ update_permissions:
     - managementModeName
     - name
     - originatingDataId
-    - originatingEventId
-    - originatingItemId
+    - itemId
     - priority
     - subconferenceId
     filter:

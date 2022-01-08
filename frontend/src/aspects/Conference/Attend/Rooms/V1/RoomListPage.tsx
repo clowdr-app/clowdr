@@ -23,8 +23,7 @@ gql`
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-                originatingItemId: { _is_null: true }
-                originatingEventId: { _is_null: true }
+                itemId: { _is_null: true }
             }
             order_by: { name: asc }
         ) {
@@ -34,8 +33,8 @@ gql`
         #     where: {
         #         conferenceId: { _eq: $conferenceId }
         #         _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-        #         _or: [{ originatingItemId: { _is_null: false } }, { originatingEventId: { _is_null: false } }]
-        #         originatingItem: { typeName: { _neq: SPONSOR } }
+        #         itemId: { _is_null: false }
+        #         item: { typeName: { _neq: SPONSOR } }
         #         managementModeName: { _in: [PUBLIC, PRIVATE] }
         #     }
         #     order_by: { name: asc }
@@ -47,7 +46,7 @@ gql`
                 conferenceId: { _eq: $conferenceId }
                 events: {}
                 managementModeName: { _in: [PUBLIC, PRIVATE] }
-                _or: [{ originatingItemId: { _is_null: true } }, { originatingItem: { typeName: { _neq: SPONSOR } } }]
+                _or: [{ itemId: { _is_null: true } }, { item: { typeName: { _neq: SPONSOR } } }]
             }
             order_by: { name: asc }
         ) {
@@ -60,7 +59,7 @@ gql`
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _and: [
-                    { originatingItem: { typeName: { _neq: SPONSOR } } }
+                    { item: { typeName: { _neq: SPONSOR } } }
                     { _not: { _or: [{ events: {} }, { chat: { enableMandatorySubscribe: { _eq: true } } }] } }
                 ]
             }
@@ -72,7 +71,7 @@ gql`
             where: {
                 conferenceId: { _eq: $conferenceId }
                 events: { startTime: { _lte: $todayEnd }, endTime: { _gte: $todayStart } }
-                _or: [{ originatingItemId: { _is_null: true } }, { originatingItem: { typeName: { _neq: SPONSOR } } }]
+                _or: [{ itemId: { _is_null: true } }, { item: { typeName: { _neq: SPONSOR } } }]
                 managementModeName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }
@@ -87,8 +86,8 @@ gql`
         name
         priority
         managementModeName
-        originatingItemId
-        originatingItem {
+        itemId
+        item {
             id
             itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
                 id
@@ -99,7 +98,6 @@ gql`
                 }
             }
         }
-        originatingEventId
         chat {
             id
             enableMandatoryPin

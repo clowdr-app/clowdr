@@ -4340,55 +4340,9 @@ type chat_Chat {
     ): chat_Flag_aggregate!
     id: uuid!
     """
-    An array relationship
+    An object relationship
     """
-    items(
-        """
-        distinct select on columns
-        """
-        distinct_on: [content_Item_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [content_Item_order_by!]
-        """
-        filter the rows returned
-        """
-        where: content_Item_bool_exp
-    ): [content_Item!]!
-    """
-    An aggregate relationship
-    """
-    items_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [content_Item_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [content_Item_order_by!]
-        """
-        filter the rows returned
-        """
-        where: content_Item_bool_exp
-    ): content_Item_aggregate!
+    item: content_Item
     """
     An array relationship
     """
@@ -4542,55 +4496,9 @@ type chat_Chat {
     remoteServiceId: String
     restrictToAdmins: Boolean!
     """
-    An array relationship
+    An object relationship
     """
-    rooms(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Room_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Room_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Room_bool_exp
-    ): [room_Room!]!
-    """
-    An aggregate relationship
-    """
-    rooms_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Room_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Room_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Room_bool_exp
-    ): room_Room_aggregate!
+    room: room_Room
     subconferenceId: uuid
     """
     An array relationship
@@ -4701,13 +4609,13 @@ input chat_Chat_bool_exp {
     enableMandatorySubscribe: Boolean_comparison_exp
     flags: chat_Flag_bool_exp
     id: uuid_comparison_exp
-    items: content_Item_bool_exp
+    item: content_Item_bool_exp
     messages: chat_Message_bool_exp
     pins: chat_Pin_bool_exp
     readUpToIndices: chat_ReadUpToIndex_bool_exp
     remoteServiceId: String_comparison_exp
     restrictToAdmins: Boolean_comparison_exp
-    rooms: room_Room_bool_exp
+    room: room_Room_bool_exp
     subconferenceId: uuid_comparison_exp
     subscriptions: chat_Subscription_bool_exp
     updated_at: timestamptz_comparison_exp
@@ -4739,13 +4647,13 @@ input chat_Chat_insert_input {
     enableMandatorySubscribe: Boolean
     flags: chat_Flag_arr_rel_insert_input
     id: uuid
-    items: content_Item_arr_rel_insert_input
+    item: content_Item_obj_rel_insert_input
     messages: chat_Message_arr_rel_insert_input
     pins: chat_Pin_arr_rel_insert_input
     readUpToIndices: chat_ReadUpToIndex_arr_rel_insert_input
     remoteServiceId: String
     restrictToAdmins: Boolean
-    rooms: room_Room_arr_rel_insert_input
+    room: room_Room_obj_rel_insert_input
     subconferenceId: uuid
     subscriptions: chat_Subscription_arr_rel_insert_input
     updated_at: timestamptz
@@ -4853,13 +4761,13 @@ input chat_Chat_order_by {
     enableMandatorySubscribe: order_by
     flags_aggregate: chat_Flag_aggregate_order_by
     id: order_by
-    items_aggregate: content_Item_aggregate_order_by
+    item: content_Item_order_by
     messages_aggregate: chat_Message_aggregate_order_by
     pins_aggregate: chat_Pin_aggregate_order_by
     readUpToIndices_aggregate: chat_ReadUpToIndex_aggregate_order_by
     remoteServiceId: order_by
     restrictToAdmins: order_by
-    rooms_aggregate: room_Room_aggregate_order_by
+    room: room_Room_order_by
     subconferenceId: order_by
     subscriptions_aggregate: chat_Subscription_aggregate_order_by
     updated_at: order_by
@@ -13792,56 +13700,6 @@ type content_Item {
     An object relationship
     """
     room: room_Room
-    """
-    An array relationship
-    """
-    rooms(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Room_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Room_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Room_bool_exp
-    ): [room_Room!]!
-    """
-    An aggregate relationship
-    """
-    rooms_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Room_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Room_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Room_bool_exp
-    ): room_Room_aggregate!
     shortTitle: String
     """
     An array relationship
@@ -15218,7 +15076,6 @@ input content_Item_bool_exp {
     originatingData: conference_OriginatingData_bool_exp
     originatingDataId: uuid_comparison_exp
     room: room_Room_bool_exp
-    rooms: room_Room_bool_exp
     shortTitle: String_comparison_exp
     stats: analytics_ContentItemStats_bool_exp
     subconferenceId: uuid_comparison_exp
@@ -15234,6 +15091,10 @@ input content_Item_bool_exp {
 unique or primary key constraints on table "content.Item"
 """
 enum content_Item_constraint {
+    """
+    unique or primary key constraint
+    """
+    Item_chatId_key
     """
     unique or primary key constraint
     """
@@ -15259,7 +15120,6 @@ input content_Item_insert_input {
     originatingData: conference_OriginatingData_obj_rel_insert_input
     originatingDataId: uuid
     room: room_Room_obj_rel_insert_input
-    rooms: room_Room_arr_rel_insert_input
     shortTitle: String
     stats: analytics_ContentItemStats_arr_rel_insert_input
     subconferenceId: uuid
@@ -15385,7 +15245,6 @@ input content_Item_order_by {
     originatingData: conference_OriginatingData_order_by
     originatingDataId: order_by
     room: room_Room_order_by
-    rooms_aggregate: room_Room_aggregate_order_by
     shortTitle: order_by
     stats_aggregate: analytics_ContentItemStats_aggregate_order_by
     subconferenceId: order_by
@@ -36452,6 +36311,11 @@ type room_Room {
     """
     An object relationship
     """
+    item: content_Item
+    itemId: uuid
+    """
+    An object relationship
+    """
     livestreamDuration: room_LivestreamDurations
     """
     An object relationship
@@ -36464,16 +36328,6 @@ type room_Room {
     """
     originatingData: conference_OriginatingData
     originatingDataId: uuid
-    """
-    An object relationship
-    """
-    originatingEvent: schedule_Event
-    originatingEventId: uuid
-    """
-    An object relationship
-    """
-    originatingItem: content_Item
-    originatingItemId: uuid
     """
     An array relationship
     """
@@ -37406,16 +37260,14 @@ input room_Room_bool_exp {
     events: schedule_Event_bool_exp
     id: uuid_comparison_exp
     isProgramRoom: Boolean_comparison_exp
+    item: content_Item_bool_exp
+    itemId: uuid_comparison_exp
     livestreamDuration: room_LivestreamDurations_bool_exp
     managementMode: room_ManagementMode_bool_exp
     managementModeName: room_ManagementMode_enum_comparison_exp
     name: String_comparison_exp
     originatingData: conference_OriginatingData_bool_exp
     originatingDataId: uuid_comparison_exp
-    originatingEvent: schedule_Event_bool_exp
-    originatingEventId: uuid_comparison_exp
-    originatingItem: content_Item_bool_exp
-    originatingItemId: uuid_comparison_exp
     participants: room_Participant_bool_exp
     presenceCounts: analytics_RoomPresence_bool_exp
     priority: Int_comparison_exp
@@ -37438,7 +37290,11 @@ enum room_Room_constraint {
     """
     unique or primary key constraint
     """
-    Room_originatingEventId_key
+    Room_chatId_key
+    """
+    unique or primary key constraint
+    """
+    Room_itemId_key
     """
     unique or primary key constraint
     """
@@ -37472,16 +37328,14 @@ input room_Room_insert_input {
     currentModeName: room_Mode_enum
     events: schedule_Event_arr_rel_insert_input
     id: uuid
+    item: content_Item_obj_rel_insert_input
+    itemId: uuid
     livestreamDuration: room_LivestreamDurations_obj_rel_insert_input
     managementMode: room_ManagementMode_obj_rel_insert_input
     managementModeName: room_ManagementMode_enum
     name: String
     originatingData: conference_OriginatingData_obj_rel_insert_input
     originatingDataId: uuid
-    originatingEvent: schedule_Event_obj_rel_insert_input
-    originatingEventId: uuid
-    originatingItem: content_Item_obj_rel_insert_input
-    originatingItemId: uuid
     participants: room_Participant_arr_rel_insert_input
     presenceCounts: analytics_RoomPresence_arr_rel_insert_input
     priority: Int
@@ -37507,10 +37361,9 @@ type room_Room_max_fields {
     conferenceId: uuid
     created_at: timestamptz
     id: uuid
+    itemId: uuid
     name: String
     originatingDataId: uuid
-    originatingEventId: uuid
-    originatingItemId: uuid
     priority: Int
     publicVonageSessionId: String
     subconferenceId: uuid
@@ -37527,10 +37380,9 @@ input room_Room_max_order_by {
     conferenceId: order_by
     created_at: order_by
     id: order_by
+    itemId: order_by
     name: order_by
     originatingDataId: order_by
-    originatingEventId: order_by
-    originatingItemId: order_by
     priority: order_by
     publicVonageSessionId: order_by
     subconferenceId: order_by
@@ -37547,10 +37399,9 @@ type room_Room_min_fields {
     conferenceId: uuid
     created_at: timestamptz
     id: uuid
+    itemId: uuid
     name: String
     originatingDataId: uuid
-    originatingEventId: uuid
-    originatingItemId: uuid
     priority: Int
     publicVonageSessionId: String
     subconferenceId: uuid
@@ -37567,10 +37418,9 @@ input room_Room_min_order_by {
     conferenceId: order_by
     created_at: order_by
     id: order_by
+    itemId: order_by
     name: order_by
     originatingDataId: order_by
-    originatingEventId: order_by
-    originatingItemId: order_by
     priority: order_by
     publicVonageSessionId: order_by
     subconferenceId: order_by
@@ -37631,16 +37481,14 @@ input room_Room_order_by {
     events_aggregate: schedule_Event_aggregate_order_by
     id: order_by
     isProgramRoom: order_by
+    item: content_Item_order_by
+    itemId: order_by
     livestreamDuration: room_LivestreamDurations_order_by
     managementMode: room_ManagementMode_order_by
     managementModeName: order_by
     name: order_by
     originatingData: conference_OriginatingData_order_by
     originatingDataId: order_by
-    originatingEvent: schedule_Event_order_by
-    originatingEventId: order_by
-    originatingItem: content_Item_order_by
-    originatingItemId: order_by
     participants_aggregate: room_Participant_aggregate_order_by
     presenceCounts_aggregate: analytics_RoomPresence_aggregate_order_by
     priority: order_by
@@ -37702,6 +37550,10 @@ enum room_Room_select_column {
     """
     column name
     """
+    itemId
+    """
+    column name
+    """
     managementModeName
     """
     column name
@@ -37711,14 +37563,6 @@ enum room_Room_select_column {
     column name
     """
     originatingDataId
-    """
-    column name
-    """
-    originatingEventId
-    """
-    column name
-    """
-    originatingItemId
     """
     column name
     """
@@ -37749,11 +37593,10 @@ input room_Room_set_input {
     created_at: timestamptz
     currentModeName: room_Mode_enum
     id: uuid
+    itemId: uuid
     managementModeName: room_ManagementMode_enum
     name: String
     originatingDataId: uuid
-    originatingEventId: uuid
-    originatingItemId: uuid
     priority: Int
     publicVonageSessionId: String
     subconferenceId: uuid
@@ -37863,6 +37706,10 @@ enum room_Room_update_column {
     """
     column name
     """
+    itemId
+    """
+    column name
+    """
     managementModeName
     """
     column name
@@ -37872,14 +37719,6 @@ enum room_Room_update_column {
     column name
     """
     originatingDataId
-    """
-    column name
-    """
-    originatingEventId
-    """
-    column name
-    """
-    originatingItemId
     """
     column name
     """

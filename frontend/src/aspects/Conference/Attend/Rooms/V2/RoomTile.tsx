@@ -21,8 +21,8 @@ gql`
         id
         name
         managementModeName
-        originatingItemId
-        originatingItem {
+        itemId
+        item {
             id
             title
         }
@@ -104,7 +104,7 @@ export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?
                         <Box></Box>
                     )}
                     <Heading px={4} as="h2" fontSize="lg" textAlign="left" w="100%" whiteSpace="normal">
-                        {response.data.room_Room_by_pk.originatingItem?.title ?? response.data.room_Room_by_pk.name}
+                        {response.data.room_Room_by_pk.item?.title ?? response.data.room_Room_by_pk.name}
                     </Heading>
                     <RoomPresenceGrid roomId={roomId} />
                 </>

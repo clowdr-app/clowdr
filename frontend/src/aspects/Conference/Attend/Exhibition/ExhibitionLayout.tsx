@@ -149,9 +149,7 @@ function ItemTile({
     }, [item.events, now]);
     const liveRoomUrl = liveEvent ? `${conferencePath}/room/${liveEvent.roomId}` : undefined;
 
-    const discussionRoomUrl = item.discussionRoom?.length
-        ? `${conferencePath}/room/${item.discussionRoom[0].id}`
-        : undefined;
+    const discussionRoomUrl = item.discussionRoom ? `${conferencePath}/room/${item.discussionRoom.id}` : undefined;
     const zoomInfo = useMemo(() => {
         if (discussionRoomUrl) {
             return undefined;

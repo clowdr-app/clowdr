@@ -40,8 +40,8 @@ insert_permissions:
                   _in: X-Hasura-Subconference-Ids
           - _or:
             - _not:
-                rooms: {}
-            - rooms:
+                room: {}
+            - room:
                 id:
                   _in: X-Hasura-Room-Ids
       - registrantId:

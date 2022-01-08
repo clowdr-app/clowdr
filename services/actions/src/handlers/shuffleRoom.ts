@@ -153,7 +153,7 @@ gql`
     }
 
     mutation SetAutoPinOnManagedRoom($roomId: uuid!) {
-        update_chat_Chat(where: { rooms: { id: { _eq: $roomId } } }, _set: { enableAutoPin: true }) {
+        update_chat_Chat(where: { room: { id: { _eq: $roomId } } }, _set: { enableAutoPin: true }) {
             affected_rows
         }
     }

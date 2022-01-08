@@ -56,16 +56,16 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
             m="3px"
             overflow="hidden"
             onClick={() => {
-                if (sponsor.rooms.length > 0) {
-                    history.push(`${conferencePath}/room/${sponsor.rooms[0].id}`);
+                if (sponsor.room) {
+                    history.push(`${conferencePath}/room/${sponsor.room.id}`);
                 } else {
                     history.push(`${conferencePath}/item/${sponsor.id}`);
                 }
             }}
             onKeyUp={(ev) => {
                 if (ev.key === "Enter") {
-                    if (sponsor.rooms.length > 0) {
-                        history.push(`${conferencePath}/room/${sponsor.rooms[0].id}`);
+                    if (sponsor.room) {
+                        history.push(`${conferencePath}/room/${sponsor.room.id}`);
                     } else {
                         history.push(`${conferencePath}/item/${sponsor.id}`);
                     }
@@ -100,7 +100,7 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
                 )}
             </Tooltip>
             <FAIcon iconStyle="s" icon="star" color="gold" pos="absolute" top={0} left={2} fontSize="xl" />
-            {sponsor.rooms.length > 0 ? <RoomPresenceGrid roomId={sponsor.rooms[0].id} noGapFill /> : undefined}
+            {sponsor.room ? <RoomPresenceGrid roomId={sponsor.room.id} noGapFill /> : undefined}
         </Button>
     );
 }

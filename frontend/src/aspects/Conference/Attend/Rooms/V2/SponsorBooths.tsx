@@ -22,7 +22,7 @@ gql`
         id
         conferenceId
         typeName
-        rooms(limit: 1, order_by: { created_at: asc }, where: { conferenceId: { _eq: $conferenceId } }) {
+        room {
             id
             priority
             created_at
@@ -66,7 +66,7 @@ export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (va
     }, [setAnySponsors, result.data]);
 
     if (result.fetching && !result?.data) {
-        return <Spinner label="Loading rooms" />;
+        return <Spinner label="Loading booths" />;
     }
 
     return <SponsorBoothsInner sponsors={result.data?.content_Item ?? []} />;
@@ -77,7 +77,7 @@ export function SponsorBoothsInner({ sponsors }: { sponsors: readonly SponsorBoo
         () =>
             R.sortWith<SponsorBoothsList_ItemFragment>(
                 [
-                    (x, y) => maybeCompare(x.rooms[0]?.priority, y.rooms[0]?.priority, (a, b) => a - b),
+                    (x, y) => maybeCompare(x.room?.priority, y.room?.priority, (a, b) => a - b),
                     (x, y) => x.title.localeCompare(y.title),
                 ],
                 sponsors

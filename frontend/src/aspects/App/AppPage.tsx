@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
+import HeaderBar from "../HeaderBar/HeaderBar";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
 import { useRestorableState } from "../Hooks/useRestorableState";
-import MenuHeaderBar from "../Menu/HeaderBar/MenuHeaderBar";
 import LeftMenu from "../Menu/LeftMenu";
 import RightMenu from "../Menu/RightMenu";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -77,10 +77,10 @@ export default function AppPage(): JSX.Element {
             backgroundColor={bgColour}
         >
             {!user.user && isAppLandingPage ? undefined : (
-                <MenuHeaderBar
+                <HeaderBar
                     rightMenuOpen={rightMenuOpen}
                     setRightMenuOpen={setRightMenuOpen}
-                    toggleIsExpanded={leftMenu_ToggleIsExpanded}
+                    toggleLeftMenu={leftMenu_ToggleIsExpanded}
                 />
             )}
             <Flex

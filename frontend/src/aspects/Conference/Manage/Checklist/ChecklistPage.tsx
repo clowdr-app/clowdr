@@ -305,7 +305,7 @@ gql`
                 endTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [EXHIBITION, NONE] }
-                exhibition: { items: { item: { _not: { rooms: {} } } } }
+                exhibition: { items: { item: { _not: { room: {} } } } }
             }
         ) {
             id
@@ -319,7 +319,7 @@ gql`
             exhibition {
                 id
                 name
-                items(where: { item: { _not: { rooms: {} } } }) {
+                items(where: { item: { _not: { room: {} } } }) {
                     id
                     item {
                         id

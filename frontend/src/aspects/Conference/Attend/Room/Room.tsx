@@ -275,13 +275,13 @@ function RoomInner({
                     nextRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Zoom ||
                     zoomEventStartsAt - now30s > 10 * 60 * 1000)) ||
             currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat ||
-            (!currentRoomEvent && roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor),
+            (!currentRoomEvent && roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor),
         [
             currentRoomEvent,
             nextRoomEvent,
             now30s,
             roomDetails.isProgramRoom,
-            roomDetails.originatingItem?.typeName,
+            roomDetails.item?.typeName,
             zoomEventStartsAt,
         ]
     );
@@ -729,7 +729,7 @@ function RoomInner({
                                                       person.roleName !==
                                                           Schedule_EventProgramPersonRole_Enum.Participant
                                               )
-                                            : !!roomDetails.originatingItem?.selfPeople.some(
+                                            : !!roomDetails.item?.selfPeople.some(
                                                   (itemPerson) =>
                                                       itemPerson.roleName.toUpperCase() === "AUTHOR" ||
                                                       itemPerson.roleName.toUpperCase() === "PRESENTER" ||

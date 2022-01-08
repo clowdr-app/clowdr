@@ -119,9 +119,8 @@ gql`
             ...ItemPersonInfo
         }
         originatingDataId
-        rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
+        room {
             id
-            originatingEventId
             created_at
         }
     }

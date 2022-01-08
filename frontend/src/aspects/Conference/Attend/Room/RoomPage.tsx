@@ -25,8 +25,8 @@ gql`
         isProgramRoom
         publicVonageSessionId
         chatId
-        originatingItemId
-        originatingItem {
+        itemId
+        item {
             id
             typeName
             elements(

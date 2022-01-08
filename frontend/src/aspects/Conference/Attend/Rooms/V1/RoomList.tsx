@@ -82,7 +82,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                         <Participants
                             roomId={room.id}
                             highlightPeople={
-                                room.originatingItem?.itemPeople.map((x) => ({
+                                room.item?.itemPeople.map((x) => ({
                                     registrantId: x.person.registrantId,
                                     role: x.roleName,
                                 })) ?? []
@@ -116,7 +116,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                         <Participants
                             roomId={room.id}
                             highlightPeople={
-                                room.originatingItem?.itemPeople.map((x) => ({
+                                room.item?.itemPeople.map((x) => ({
                                     registrantId: x.person.registrantId,
                                     role: x.roleName,
                                 })) ?? []

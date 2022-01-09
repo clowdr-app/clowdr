@@ -94,6 +94,7 @@ gql`
         enableAutoSubscribe
         enableMandatoryPin
         enableMandatorySubscribe
+        restrictToAdmins
         pins(where: { registrantId: { _eq: $registrantId } }) {
             registrantId
             chatId
@@ -521,6 +522,10 @@ export class ChatState {
                 this.initialState.room && this.initialState.room.managementModeName !== Room_ManagementMode_Enum.Public
             )
         );
+    }
+
+    public get IsRestrictedToAdmins(): boolean {
+        return this.initialState.restrictToAdmins;
     }
 
     public get DMRoomId(): string | undefined {

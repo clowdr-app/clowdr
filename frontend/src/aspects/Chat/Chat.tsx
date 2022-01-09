@@ -46,9 +46,7 @@ export function Chat({
     const isMod =
         currentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
         currentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
-    const canCompose =
-        // TODO: This is a temporary hack
-        chat.Name !== "Announcements" || isMod;
+    const canCompose = !chat.IsRestrictedToAdmins || isMod;
     const config = useMemo<ChatConfiguration>(
         () => ({
             customHeadingElements,

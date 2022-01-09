@@ -48,6 +48,8 @@ export async function canSelectChat(userId: string, chatId: string, respectAdmin
                                 }
                             }
                         }
+                    } else {
+                        return !chat.restrictToAdmins || !respectAdminRestriction;
                     }
                 }
             }

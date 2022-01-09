@@ -35676,6 +35676,7 @@ export type InitialChatState_ChatFragment = {
     readonly enableAutoSubscribe: boolean;
     readonly enableMandatoryPin: boolean;
     readonly enableMandatorySubscribe: boolean;
+    readonly restrictToAdmins: boolean;
     readonly item?:
         | {
               readonly __typename?: "content_Item";
@@ -35735,6 +35736,7 @@ export type InitialChatStateQuery = {
             readonly enableAutoSubscribe: boolean;
             readonly enableMandatoryPin: boolean;
             readonly enableMandatorySubscribe: boolean;
+            readonly restrictToAdmins: boolean;
             readonly item?:
                 | {
                       readonly __typename?: "content_Item";
@@ -35794,6 +35796,7 @@ export type SelectInitialChatStateQuery = {
               readonly enableAutoSubscribe: boolean;
               readonly enableMandatoryPin: boolean;
               readonly enableMandatorySubscribe: boolean;
+              readonly restrictToAdmins: boolean;
               readonly item?:
                   | {
                         readonly __typename?: "content_Item";
@@ -35853,6 +35856,7 @@ export type SelectInitialChatStatesQuery = {
         readonly enableAutoSubscribe: boolean;
         readonly enableMandatoryPin: boolean;
         readonly enableMandatorySubscribe: boolean;
+        readonly restrictToAdmins: boolean;
         readonly item?:
             | {
                   readonly __typename?: "content_Item";
@@ -47050,6 +47054,7 @@ export const InitialChatState_ChatFragmentDoc = gql`
         enableAutoSubscribe
         enableMandatoryPin
         enableMandatorySubscribe
+        restrictToAdmins
         pins(where: { registrantId: { _eq: $registrantId } }) {
             registrantId
             chatId

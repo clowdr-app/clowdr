@@ -4493,7 +4493,6 @@ type chat_Chat {
         """
         where: chat_ReadUpToIndex_bool_exp
     ): chat_ReadUpToIndex_aggregate!
-    remoteServiceId: String
     restrictToAdmins: Boolean!
     """
     An object relationship
@@ -4613,7 +4612,6 @@ input chat_Chat_bool_exp {
     messages: chat_Message_bool_exp
     pins: chat_Pin_bool_exp
     readUpToIndices: chat_ReadUpToIndex_bool_exp
-    remoteServiceId: String_comparison_exp
     restrictToAdmins: Boolean_comparison_exp
     room: room_Room_bool_exp
     subconferenceId: uuid_comparison_exp
@@ -4651,7 +4649,6 @@ input chat_Chat_insert_input {
     messages: chat_Message_arr_rel_insert_input
     pins: chat_Pin_arr_rel_insert_input
     readUpToIndices: chat_ReadUpToIndex_arr_rel_insert_input
-    remoteServiceId: String
     restrictToAdmins: Boolean
     room: room_Room_obj_rel_insert_input
     subconferenceId: uuid
@@ -4667,7 +4664,6 @@ type chat_Chat_max_fields {
     created_at: timestamptz
     duplicateToId: uuid
     id: uuid
-    remoteServiceId: String
     subconferenceId: uuid
     updated_at: timestamptz
 }
@@ -4680,7 +4676,6 @@ input chat_Chat_max_order_by {
     created_at: order_by
     duplicateToId: order_by
     id: order_by
-    remoteServiceId: order_by
     subconferenceId: order_by
     updated_at: order_by
 }
@@ -4693,7 +4688,6 @@ type chat_Chat_min_fields {
     created_at: timestamptz
     duplicateToId: uuid
     id: uuid
-    remoteServiceId: String
     subconferenceId: uuid
     updated_at: timestamptz
 }
@@ -4706,7 +4700,6 @@ input chat_Chat_min_order_by {
     created_at: order_by
     duplicateToId: order_by
     id: order_by
-    remoteServiceId: order_by
     subconferenceId: order_by
     updated_at: order_by
 }
@@ -4765,7 +4758,6 @@ input chat_Chat_order_by {
     messages_aggregate: chat_Message_aggregate_order_by
     pins_aggregate: chat_Pin_aggregate_order_by
     readUpToIndices_aggregate: chat_ReadUpToIndex_aggregate_order_by
-    remoteServiceId: order_by
     restrictToAdmins: order_by
     room: room_Room_order_by
     subconferenceId: order_by
@@ -4819,10 +4811,6 @@ enum chat_Chat_select_column {
     """
     column name
     """
-    remoteServiceId
-    """
-    column name
-    """
     restrictToAdmins
     """
     column name
@@ -4846,7 +4834,6 @@ input chat_Chat_set_input {
     enableMandatoryPin: Boolean
     enableMandatorySubscribe: Boolean
     id: uuid
-    remoteServiceId: String
     restrictToAdmins: Boolean
     subconferenceId: uuid
     updated_at: timestamptz
@@ -4888,10 +4875,6 @@ enum chat_Chat_update_column {
     column name
     """
     id
-    """
-    column name
-    """
-    remoteServiceId
     """
     column name
     """

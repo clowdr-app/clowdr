@@ -77,7 +77,6 @@ select_permissions:
     - enableMandatoryPin
     - enableMandatorySubscribe
     - restrictToAdmins
-    - remoteServiceId
     - created_at
     - updated_at
     - conferenceId
@@ -113,7 +112,6 @@ select_permissions:
     - enableMandatoryPin
     - enableMandatorySubscribe
     - restrictToAdmins
-    - remoteServiceId
     - created_at
     - updated_at
     - conferenceId
@@ -140,7 +138,6 @@ select_permissions:
     - enableMandatoryPin
     - enableMandatorySubscribe
     - id
-    - remoteServiceId
     - restrictToAdmins
     - subconferenceId
     - updated_at
@@ -233,7 +230,6 @@ event_triggers:
       - restrictToAdmins
       - conferenceId
       - enableMandatoryPin
-      - remoteServiceId
       - enableAutoSubscribe
       - enableMandatorySubscribe
       - subconferenceId

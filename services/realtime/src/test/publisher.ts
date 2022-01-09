@@ -114,7 +114,6 @@ async function Main(
                     updated_at: new Date().toISOString(),
                     duplicatedMessageSId: undefined,
                     isPinned: false,
-                    remoteServiceId: undefined,
                     systemId: undefined,
                     type: Chat_MessageType_Enum.Message,
                 },

@@ -11,7 +11,6 @@ export interface Message {
     isPinned: boolean;
     duplicatedMessageSId?: string | null | undefined;
     systemId?: string | null | undefined;
-    remoteServiceId?: string | null | undefined;
     sId: string;
 }
 

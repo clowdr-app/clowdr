@@ -3276,7 +3276,6 @@ export type Chat_Chat = {
     readonly readUpToIndices: ReadonlyArray<Chat_ReadUpToIndex>;
     /** An aggregate relationship */
     readonly readUpToIndices_aggregate: Chat_ReadUpToIndex_Aggregate;
-    readonly remoteServiceId?: Maybe<Scalars["String"]>;
     readonly restrictToAdmins: Scalars["Boolean"];
     /** An object relationship */
     readonly room?: Maybe<Room_Room>;
@@ -3452,7 +3451,6 @@ export type Chat_Chat_Bool_Exp = {
     readonly messages?: InputMaybe<Chat_Message_Bool_Exp>;
     readonly pins?: InputMaybe<Chat_Pin_Bool_Exp>;
     readonly readUpToIndices?: InputMaybe<Chat_ReadUpToIndex_Bool_Exp>;
-    readonly remoteServiceId?: InputMaybe<String_Comparison_Exp>;
     readonly restrictToAdmins?: InputMaybe<Boolean_Comparison_Exp>;
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -3484,7 +3482,6 @@ export type Chat_Chat_Insert_Input = {
     readonly messages?: InputMaybe<Chat_Message_Arr_Rel_Insert_Input>;
     readonly pins?: InputMaybe<Chat_Pin_Arr_Rel_Insert_Input>;
     readonly readUpToIndices?: InputMaybe<Chat_ReadUpToIndex_Arr_Rel_Insert_Input>;
-    readonly remoteServiceId?: InputMaybe<Scalars["String"]>;
     readonly restrictToAdmins?: InputMaybe<Scalars["Boolean"]>;
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
@@ -3499,7 +3496,6 @@ export type Chat_Chat_Max_Fields = {
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
     readonly duplicateToId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly remoteServiceId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
@@ -3510,7 +3506,6 @@ export type Chat_Chat_Max_Order_By = {
     readonly created_at?: InputMaybe<Order_By>;
     readonly duplicateToId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly remoteServiceId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
 };
@@ -3522,7 +3517,6 @@ export type Chat_Chat_Min_Fields = {
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
     readonly duplicateToId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly remoteServiceId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
@@ -3533,7 +3527,6 @@ export type Chat_Chat_Min_Order_By = {
     readonly created_at?: InputMaybe<Order_By>;
     readonly duplicateToId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly remoteServiceId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
 };
@@ -3579,7 +3572,6 @@ export type Chat_Chat_Order_By = {
     readonly messages_aggregate?: InputMaybe<Chat_Message_Aggregate_Order_By>;
     readonly pins_aggregate?: InputMaybe<Chat_Pin_Aggregate_Order_By>;
     readonly readUpToIndices_aggregate?: InputMaybe<Chat_ReadUpToIndex_Aggregate_Order_By>;
-    readonly remoteServiceId?: InputMaybe<Order_By>;
     readonly restrictToAdmins?: InputMaybe<Order_By>;
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
@@ -3611,8 +3603,6 @@ export enum Chat_Chat_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
-    RemoteServiceId = "remoteServiceId",
-    /** column name */
     RestrictToAdmins = "restrictToAdmins",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -3630,7 +3620,6 @@ export type Chat_Chat_Set_Input = {
     readonly enableMandatoryPin?: InputMaybe<Scalars["Boolean"]>;
     readonly enableMandatorySubscribe?: InputMaybe<Scalars["Boolean"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly remoteServiceId?: InputMaybe<Scalars["String"]>;
     readonly restrictToAdmins?: InputMaybe<Scalars["Boolean"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -3654,8 +3643,6 @@ export enum Chat_Chat_Update_Column {
     EnableMandatorySubscribe = "enableMandatorySubscribe",
     /** column name */
     Id = "id",
-    /** column name */
-    RemoteServiceId = "remoteServiceId",
     /** column name */
     RestrictToAdmins = "restrictToAdmins",
     /** column name */
@@ -60572,11 +60559,6 @@ export type GraphCacheResolvers = {
             Chat_ChatReadUpToIndices_AggregateArgs,
             WithTypename<Chat_ReadUpToIndex_Aggregate> | string
         >;
-        remoteServiceId?: GraphCacheResolver<
-            WithTypename<Chat_Chat>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
         restrictToAdmins?: GraphCacheResolver<
             WithTypename<Chat_Chat>,
             Record<string, never>,
@@ -60646,11 +60628,6 @@ export type GraphCacheResolvers = {
             Scalars["uuid"] | string
         >;
         id?: GraphCacheResolver<WithTypename<Chat_Chat_Max_Fields>, Record<string, never>, Scalars["uuid"] | string>;
-        remoteServiceId?: GraphCacheResolver<
-            WithTypename<Chat_Chat_Max_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
         subconferenceId?: GraphCacheResolver<
             WithTypename<Chat_Chat_Max_Fields>,
             Record<string, never>,
@@ -60679,11 +60656,6 @@ export type GraphCacheResolvers = {
             Scalars["uuid"] | string
         >;
         id?: GraphCacheResolver<WithTypename<Chat_Chat_Min_Fields>, Record<string, never>, Scalars["uuid"] | string>;
-        remoteServiceId?: GraphCacheResolver<
-            WithTypename<Chat_Chat_Min_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
         subconferenceId?: GraphCacheResolver<
             WithTypename<Chat_Chat_Min_Fields>,
             Record<string, never>,

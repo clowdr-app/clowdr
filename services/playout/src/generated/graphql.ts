@@ -3267,7 +3267,6 @@ export type Chat_Chat = {
     readUpToIndices: Array<Chat_ReadUpToIndex>;
     /** An aggregate relationship */
     readUpToIndices_aggregate: Chat_ReadUpToIndex_Aggregate;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     restrictToAdmins: Scalars["Boolean"];
     /** An object relationship */
     room?: Maybe<Room_Room>;
@@ -3443,7 +3442,6 @@ export type Chat_Chat_Bool_Exp = {
     messages?: InputMaybe<Chat_Message_Bool_Exp>;
     pins?: InputMaybe<Chat_Pin_Bool_Exp>;
     readUpToIndices?: InputMaybe<Chat_ReadUpToIndex_Bool_Exp>;
-    remoteServiceId?: InputMaybe<String_Comparison_Exp>;
     restrictToAdmins?: InputMaybe<Boolean_Comparison_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -3475,7 +3473,6 @@ export type Chat_Chat_Insert_Input = {
     messages?: InputMaybe<Chat_Message_Arr_Rel_Insert_Input>;
     pins?: InputMaybe<Chat_Pin_Arr_Rel_Insert_Input>;
     readUpToIndices?: InputMaybe<Chat_ReadUpToIndex_Arr_Rel_Insert_Input>;
-    remoteServiceId?: InputMaybe<Scalars["String"]>;
     restrictToAdmins?: InputMaybe<Scalars["Boolean"]>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
@@ -3490,7 +3487,6 @@ export type Chat_Chat_Max_Fields = {
     created_at?: Maybe<Scalars["timestamptz"]>;
     duplicateToId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
@@ -3501,7 +3497,6 @@ export type Chat_Chat_Max_Order_By = {
     created_at?: InputMaybe<Order_By>;
     duplicateToId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
-    remoteServiceId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     updated_at?: InputMaybe<Order_By>;
 };
@@ -3513,7 +3508,6 @@ export type Chat_Chat_Min_Fields = {
     created_at?: Maybe<Scalars["timestamptz"]>;
     duplicateToId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
@@ -3524,7 +3518,6 @@ export type Chat_Chat_Min_Order_By = {
     created_at?: InputMaybe<Order_By>;
     duplicateToId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
-    remoteServiceId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     updated_at?: InputMaybe<Order_By>;
 };
@@ -3570,7 +3563,6 @@ export type Chat_Chat_Order_By = {
     messages_aggregate?: InputMaybe<Chat_Message_Aggregate_Order_By>;
     pins_aggregate?: InputMaybe<Chat_Pin_Aggregate_Order_By>;
     readUpToIndices_aggregate?: InputMaybe<Chat_ReadUpToIndex_Aggregate_Order_By>;
-    remoteServiceId?: InputMaybe<Order_By>;
     restrictToAdmins?: InputMaybe<Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
@@ -3602,8 +3594,6 @@ export enum Chat_Chat_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
-    RemoteServiceId = "remoteServiceId",
-    /** column name */
     RestrictToAdmins = "restrictToAdmins",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -3621,7 +3611,6 @@ export type Chat_Chat_Set_Input = {
     enableMandatoryPin?: InputMaybe<Scalars["Boolean"]>;
     enableMandatorySubscribe?: InputMaybe<Scalars["Boolean"]>;
     id?: InputMaybe<Scalars["uuid"]>;
-    remoteServiceId?: InputMaybe<Scalars["String"]>;
     restrictToAdmins?: InputMaybe<Scalars["Boolean"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -3645,8 +3634,6 @@ export enum Chat_Chat_Update_Column {
     EnableMandatorySubscribe = "enableMandatorySubscribe",
     /** column name */
     Id = "id",
-    /** column name */
-    RemoteServiceId = "remoteServiceId",
     /** column name */
     RestrictToAdmins = "restrictToAdmins",
     /** column name */

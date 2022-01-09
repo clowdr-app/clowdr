@@ -1,5 +1,6 @@
 import {
     Box,
+    chakra,
     Popover,
     PopoverBody,
     PopoverCloseButton,
@@ -16,6 +17,7 @@ import { LinkButton } from "../Chakra/LinkButton";
 import { Chat } from "../Chat/Chat";
 import type { ChatState } from "../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
+import useUnreadCount from "../Chat/Hooks/useUnreadCount";
 import { useConference } from "../Conference/useConference";
 import HeaderBarButton from "./HeaderBarButton";
 
@@ -69,6 +71,8 @@ export default function NotificationsPopover(): JSX.Element {
         };
     }, [chat, isOpen]);
 
+    const unreadCount = useUnreadCount(chat);
+
     return (
         <Popover isLazy isOpen={isOpen} onClose={onClose} placement="bottom" offset={[0, 6]}>
             <PopoverTrigger>
@@ -86,7 +90,11 @@ export default function NotificationsPopover(): JSX.Element {
                                 <polygon points="5,0 0,8 10,8" fill="white" />
                             </svg>
                         </Box>
-                    ) : undefined}
+                    ) : (
+                        <chakra.span fontSize="xs" alignSelf="flex-start" mt="2ex">
+                            {unreadCount}
+                        </chakra.span>
+                    )}
                 </HeaderBarButton>
             </PopoverTrigger>
             <PopoverContent
@@ -103,7 +111,7 @@ export default function NotificationsPopover(): JSX.Element {
                 </PopoverHeader>
                 <PopoverCloseButton color={textColor} />
                 <PopoverBody flex="1 1 100%" overflow="hidden" display="flex" flexDir="column" p={0}>
-                    {chat ? (
+                    {chat && isOpen ? (
                         <Chat chat={chat} isVisible={isVisibleRef} noHeader />
                     ) : (
                         <>Your notification list is currently unavailable.</>

@@ -12,13 +12,9 @@ import { RoomChatPanel } from "./Panels/RoomChatPanel";
 import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebarCurrentTab";
 
 function RightSidebarSections_Inner({
-    externalSetPageChatUnreadCount,
-    externalSetChatsUnreadCount,
     externalSetPageChatAvailable,
     isVisible,
 }: {
-    externalSetPageChatUnreadCount?: (count: string) => void;
-    externalSetChatsUnreadCount?: (count: string) => void;
     externalSetPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
@@ -67,10 +63,9 @@ function RightSidebarSections_Inner({
 
     useEffect(() => {
         if (!roomId && !itemOrExhibitionId) {
-            externalSetPageChatUnreadCount?.("");
             externalSetPageChatAvailable?.(false);
         }
-    }, [itemOrExhibitionId, roomId, externalSetPageChatUnreadCount, externalSetPageChatAvailable]);
+    }, [itemOrExhibitionId, roomId, externalSetPageChatAvailable]);
 
     const roomPanel = useMemo(
         () =>
@@ -78,12 +73,11 @@ function RightSidebarSections_Inner({
                 <RoomChatPanel
                     roomId={roomId}
                     onChatIdLoaded={setPageChatId}
-                    setUnread={externalSetPageChatUnreadCount}
                     isVisible={isVisible && !!roomId && currentTab === RightSidebarTabs.PageChat}
                     setPageChatAvailable={externalSetPageChatAvailable}
                 />
             ),
-        [currentTab, roomId, externalSetPageChatUnreadCount, isVisible, externalSetPageChatAvailable]
+        [currentTab, roomId, isVisible, externalSetPageChatAvailable]
     );
     const itemPanel = useMemo(
         () =>
@@ -91,12 +85,11 @@ function RightSidebarSections_Inner({
                 <ItemChatPanel
                     itemOrExhibitionId={itemOrExhibitionId}
                     onChatIdLoaded={setPageChatId}
-                    setUnread={externalSetPageChatUnreadCount}
                     isVisible={isVisible && !!itemOrExhibitionId && currentTab === RightSidebarTabs.PageChat}
                     setPageChatAvailable={externalSetPageChatAvailable}
                 />
             ),
-        [currentTab, itemOrExhibitionId, externalSetPageChatUnreadCount, isVisible, externalSetPageChatAvailable]
+        [currentTab, itemOrExhibitionId, isVisible, externalSetPageChatAvailable]
     );
     const switchToPageChat = useCallback(() => {
         setCurrentTab(RightSidebarTabs.PageChat);
@@ -109,11 +102,10 @@ function RightSidebarSections_Inner({
                 switchToPageChat={switchToPageChat}
                 openChat={openChatCb}
                 closeChat={closeChatCb}
-                setUnread={externalSetChatsUnreadCount}
                 isVisible={isVisible && currentTab === RightSidebarTabs.Chats}
             />
         ),
-        [currentTab, pageChatId, switchToPageChat, isVisible, externalSetChatsUnreadCount]
+        [currentTab, pageChatId, switchToPageChat, isVisible]
     );
     const presencePanel = useMemo(
         () => <PresencePanel roomId={roomId} isOpen={currentTab === RightSidebarTabs.Presence} />,
@@ -180,14 +172,10 @@ function RightSidebarSections_Inner({
 }
 
 export default function RightSidebarSections({
-    externalSetPageChatUnreadCount,
-    externalSetChatsUnreadCount,
     externalSetPageChatAvailable,
     isVisible,
 }: {
     onClose: () => void;
-    externalSetPageChatUnreadCount?: (count: string) => void;
-    externalSetChatsUnreadCount?: (count: string) => void;
     externalSetPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
@@ -195,8 +183,6 @@ export default function RightSidebarSections({
     if (registrant) {
         return (
             <RightSidebarSections_Inner
-                externalSetPageChatUnreadCount={externalSetPageChatUnreadCount}
-                externalSetChatsUnreadCount={externalSetChatsUnreadCount}
                 externalSetPageChatAvailable={externalSetPageChatAvailable}
                 isVisible={isVisible}
             />

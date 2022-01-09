@@ -19,13 +19,11 @@ gql`
 export function RoomChatPanel({
     roomId,
     onChatIdLoaded,
-    setUnread,
     setPageChatAvailable,
     isVisible,
 }: {
     roomId: string;
     onChatIdLoaded: (chatId: string) => void;
-    setUnread?: (v: string) => void;
     setPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
@@ -56,16 +54,6 @@ export function RoomChatPanel({
             onChatIdLoaded(chat.Id);
         }
     }, [onChatIdLoaded, chat?.Id]);
-
-    useEffect(() => {
-        let unsubscribe: (() => void) | undefined;
-        if (chat && setUnread) {
-            unsubscribe = chat.UnreadCount.subscribe(setUnread);
-        }
-        return () => {
-            unsubscribe?.();
-        };
-    }, [chat, setUnread]);
 
     const isVisibleRef = React.useRef<boolean>(false);
     useEffect(() => {

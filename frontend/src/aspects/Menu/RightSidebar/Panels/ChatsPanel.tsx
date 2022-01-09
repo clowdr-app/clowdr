@@ -9,6 +9,7 @@ import FAIcon from "../../../Chakra/FAIcon";
 import { Chat } from "../../../Chat/Chat";
 import { ChatState } from "../../../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
+import usePinnedChats from "../../../Chat/Hooks/usePinnedChats";
 import { useConference } from "../../../Conference/useConference";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { PeopleSearch } from "./PeopleSearch";
@@ -50,21 +51,17 @@ export function ChatsPanel({
     switchToPageChat,
     openChat,
     closeChat,
-    setUnread,
     isVisible,
 }: {
     pageChatId: string | null;
     switchToPageChat: () => void;
     openChat: React.MutableRefObject<((chatId: string) => void) | null>;
     closeChat: React.MutableRefObject<(() => void) | null>;
-    setUnread?: (v: string) => void;
     isVisible: boolean;
 }): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
     const toast = useToast();
-    const [pinnedChatsMap, setPinnedChatsMap] = useState<Map<string, ChatState> | null>(null);
-    const unreadCountsRef = React.useRef<Map<string, string>>(new Map());
     const [createDMMutationResponse, createDmMutation] = useCreateDmMutation();
 
     const announcementsChatId: string | undefined = useMemo(
@@ -72,66 +69,8 @@ export function ChatsPanel({
         [conference]
     );
 
-    useEffect(() => {
-        let unsubs: (() => void)[] = [];
-
-        if (pinnedChatsMap) {
-            unsubs = [...pinnedChatsMap.values()].map((chat) =>
-                chat.UnreadCount.subscribe((count) => {
-                    unreadCountsRef.current.set(chat.Id, count);
-
-                    const total = [...unreadCountsRef.current.values()].reduce(
-                        (acc, x) =>
-                            !x?.length ? acc : x.includes("+") ? Number.POSITIVE_INFINITY : acc + parseInt(x, 10),
-                        0
-                    );
-                    setUnread?.(total === Number.POSITIVE_INFINITY ? "10+" : total > 0 ? total.toString() : "");
-                })
-            );
-        }
-
-        return () => {
-            unsubs.forEach((unsub) => unsub());
-        };
-    }, [pinnedChatsMap, setUnread]);
-
     const globalChatState = useGlobalChatState();
-    useEffect(() => {
-        const unsubscribeIsPinned = new Map<string, () => void>();
-
-        const unsubscribeChatStates = globalChatState.Chats.subscribe((chatStates) => {
-            if (chatStates.size > 0) {
-                chatStates.forEach((chatState) => {
-                    if (!unsubscribeIsPinned.has(chatState.Id)) {
-                        unsubscribeIsPinned.set(
-                            chatState.Id,
-                            chatState.IsPinned.subscribe((isPinned) => {
-                                setPinnedChatsMap((oldPinnedChats) => {
-                                    if (isPinned && !oldPinnedChats?.has(chatState.Id)) {
-                                        const newPinnedChats = new Map(oldPinnedChats ?? []);
-                                        newPinnedChats.set(chatState.Id, chatState);
-                                        return newPinnedChats;
-                                    } else if (!isPinned && oldPinnedChats?.has(chatState.Id)) {
-                                        const newPinnedChats = new Map(oldPinnedChats ?? []);
-                                        newPinnedChats.delete(chatState.Id);
-                                        return newPinnedChats;
-                                    }
-                                    return oldPinnedChats;
-                                });
-                            })
-                        );
-                    }
-                });
-            } else {
-                setPinnedChatsMap(new Map());
-            }
-        });
-
-        return () => {
-            unsubscribeIsPinned.forEach((unsubscribe) => unsubscribe());
-            unsubscribeChatStates();
-        };
-    }, [globalChatState]);
+    const pinnedChatsMap = usePinnedChats();
     const pinnedChats = useMemo(
         () => (pinnedChatsMap !== null ? [...pinnedChatsMap.values()] : undefined),
         [pinnedChatsMap]

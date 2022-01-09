@@ -1,5 +1,7 @@
-import { Box, useColorModeValue } from "@chakra-ui/react";
+import { Box, chakra, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
+import usePinnedChats from "../Chat/Hooks/usePinnedChats";
+import useUnreadCount from "../Chat/Hooks/useUnreadCount";
 import HeaderBarButton from "./HeaderBarButton";
 
 export default function RightMenuToggleButton({
@@ -14,6 +16,9 @@ export default function RightMenuToggleButton({
         "MainMenuHeaderBar.buttonFocusBackgroundColor-dark"
     );
 
+    const pinnedChats = usePinnedChats();
+    const unreadCount = useUnreadCount(pinnedChats);
+
     return (
         <HeaderBarButton
             label="Chat"
@@ -25,6 +30,9 @@ export default function RightMenuToggleButton({
             bgColor={isOpen ? buttonFocusBgColor : undefined}
             mb={0}
         >
+            <chakra.span fontSize="xs" alignSelf="flex-start" ml="2px" mt="2ex">
+                {unreadCount}
+            </chakra.span>
             {isOpen ? (
                 <Box pos="absolute" bottom={0} left={0} w="100%">
                     <svg height="7" width="100%" viewBox="0 0 10 7">

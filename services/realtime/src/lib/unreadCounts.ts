@@ -3,7 +3,7 @@ import { redisClientP, redisClientPool } from "@midspace/component-clients/redis
 import { emitter } from "../socket-emitter/socket-emitter";
 import { generateChatRecentMessagesSetKey, notificationsRoomName } from "./chat";
 
-export const maxUnreadMessages = 10;
+export const maxUnreadMessages = 30;
 
 export async function sendUnreadCount(chatId: string, userId: string): Promise<void> {
     const readUpToIndexMessageSId = await readUpToIndicesCache.getField(chatId, userId);

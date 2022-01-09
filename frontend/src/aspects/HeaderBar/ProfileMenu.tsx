@@ -45,6 +45,14 @@ export default function ProfileMenu(): JSX.Element {
     );
     const textColor = useColorModeValue("MainMenuHeaderBar.textColor-light", "MainMenuHeaderBar.textColor-dark");
     const menuTextColor = useColorModeValue("black", "white");
+    const placeholderBgColor = useColorModeValue(
+        "MainMenuHeaderBar.profilePlaceholderBackgroundColor-light",
+        "MainMenuHeaderBar.profilePlaceholderBackgroundColor-dark"
+    );
+    const placeholderTextColor = useColorModeValue(
+        "MainMenuHeaderBar.profilePlaceholderTextColor-light",
+        "MainMenuHeaderBar.profilePlaceholderTextColor-dark"
+    );
 
     const { toggleColorMode } = useColorMode();
 
@@ -87,7 +95,7 @@ export default function ProfileMenu(): JSX.Element {
                             borderRadius="100%"
                         />
                     ) : (
-                        <Circle size="40px" bg="pink.400" color="white" m={0}>
+                        <Circle size="40px" bg={placeholderBgColor} color={placeholderTextColor} m={0}>
                             {registrant.displayName[0] ?? "A"}
                         </Circle>
                     )}

@@ -1008,7 +1008,7 @@ export class ChatState {
                 });
 
                 if (this.unreadCountFixedToZero <= 0) {
-                    if (this.unreadCount !== "10+") {
+                    if (this.unreadCount !== "30+") {
                         const existingCount = this.unreadCount === "" ? 0 : parseInt(this.unreadCount, 10);
                         const addedCount = newMessageStates.filter(
                             (x) =>
@@ -1016,8 +1016,8 @@ export class ChatState {
                                 x.type !== Chat_MessageType_Enum.Emote
                         ).length;
                         const newCount = existingCount + addedCount;
-                        if (newCount >= 10) {
-                            this.unreadCount = "10+";
+                        if (newCount >= 30) {
+                            this.unreadCount = "30+";
                         } else if (newCount === 0) {
                             this.unreadCount = "";
                         } else {
@@ -1129,8 +1129,7 @@ export class ChatState {
                 op: "INSERT",
                 data: newMsg,
             };
-            socket.emit("chat.messages.send", action);
-            const ackdSId = await new Promise<string>((resolve, reject) => {
+            const ackdSIdP = new Promise<string>((resolve, reject) => {
                 const tId = setTimeout(() => {
                     this.ackSendMessage = undefined;
                     this.nackSendMessage = undefined;
@@ -1147,6 +1146,8 @@ export class ChatState {
                     }
                 };
             });
+            socket.emit("chat.messages.send", action);
+            const ackdSId = await ackdSIdP;
             assert.truthy(
                 ackdSId === sId,
                 `Message failed to send - ack received for wrong message: (ackd) ${ackdSId} !== ${sId} (expected)`
@@ -1517,9 +1518,11 @@ export class GlobalChatState {
                                     try {
                                         this.chatStates = this.chatStates ?? new Map();
                                         for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
-                                            const newState = new ChatState(this, pinSubChat);
-                                            setTimeout(() => newState.requestUnreadCount(), Math.random() * 2000);
-                                            this.chatStates.set(pinSubChat.id, newState);
+                                            if (!this.chatStates?.has(pinSubChat.id)) {
+                                                const newState = new ChatState(this, pinSubChat);
+                                                setTimeout(() => newState.requestUnreadCount(), Math.random() * 2000);
+                                                this.chatStates.set(pinSubChat.id, newState);
+                                            }
                                         }
                                         this.chatStatesObs.publish(this.chatStates);
                                     } finally {
@@ -1639,7 +1642,7 @@ export class GlobalChatState {
                     }
                     await Promise.all(
                         initialData.data.chat_Pin.map(async (item) => {
-                            if (item.chat) {
+                            if (item.chat && !this.chatStates?.has(item.chatId)) {
                                 const newState = new ChatState(this, item.chat);
                                 setTimeout(() => newState.requestUnreadCount(), Math.random() * 2000);
                                 this.chatStates?.set(item.chat.id, newState);

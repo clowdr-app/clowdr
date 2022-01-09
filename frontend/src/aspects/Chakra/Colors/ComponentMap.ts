@@ -49,6 +49,14 @@ const componentMap: ComponentMap = {
             light: "white",
             dark: "white",
         },
+        profilePlaceholderBackgroundColor: {
+            light: "pink.400",
+            dark: "pink.400",
+        },
+        profilePlaceholderTextColor: {
+            light: "white",
+            dark: "white",
+        },
     },
     ProtectedRoute: generateColorScheme("red"),
     LeftMenu: generateColorScheme("pink"),

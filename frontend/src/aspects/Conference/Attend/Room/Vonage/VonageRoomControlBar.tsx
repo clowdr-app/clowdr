@@ -449,6 +449,7 @@ export function VonageRoomControlBar({
         variables: {
             roomId,
         },
+        pause: !roomId,
     });
     const chatId = roomChatIdResponse.data?.room_Room_by_pk?.chatId;
     useEffect(() => {

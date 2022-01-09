@@ -5,7 +5,7 @@ import { defaultOutline_AsBoxShadow } from "../Chakra/Outline";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
 import { useNavigationState } from "../Menu/NavigationState";
 
-export default function LeftMenuToggleButton({ toggle }: { toggle: () => void }): JSX.Element {
+export default function LeftMenuToggleButton({ isOpen, toggle }: { isOpen: boolean; toggle: () => void }): JSX.Element {
     const leftMenu_BgColor = useColorModeValue("LeftMenu.500", "LeftMenu.200");
     const leftMenu_BgColorVal = useToken("colors", leftMenu_BgColor);
 
@@ -23,6 +23,7 @@ export default function LeftMenuToggleButton({ toggle }: { toggle: () => void })
             h="100%"
             borderTopRadius="2xl"
             borderBottomRadius="none"
+            bgColor={isOpen ? leftMenu_BgColor : undefined}
             _hover={{
                 bgColor: leftMenu_BgColor,
             }}

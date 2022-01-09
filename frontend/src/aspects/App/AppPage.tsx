@@ -61,6 +61,8 @@ export default function AppPage(): JSX.Element {
         leftMenu_SetIsOpen(false);
         if (isRoomOrItemPage && !narrowView) {
             setRightMenuOpen(true);
+        } else if (narrowView) {
+            setRightMenuOpen(false);
         }
     }, [isRoomOrItemPage, location, narrowView]);
 
@@ -78,6 +80,7 @@ export default function AppPage(): JSX.Element {
         >
             {!user.user && isAppLandingPage ? undefined : (
                 <HeaderBar
+                    leftMenuOpen={leftMenu_IsOpen}
                     rightMenuOpen={rightMenuOpen}
                     setRightMenuOpen={setRightMenuOpen}
                     toggleLeftMenu={leftMenu_ToggleIsExpanded}

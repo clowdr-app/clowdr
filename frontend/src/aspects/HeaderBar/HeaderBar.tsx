@@ -15,10 +15,12 @@ import RightMenuToggleButton from "./RightMenuToggleButton";
 import SearchPopover from "./SearchPopover";
 
 export default function HeaderBar({
+    leftMenuOpen,
     rightMenuOpen,
     setRightMenuOpen,
     toggleLeftMenu,
 }: {
+    leftMenuOpen: boolean;
     rightMenuOpen: boolean;
     setRightMenuOpen: (value: boolean | ((old: boolean) => boolean)) => void;
     toggleLeftMenu: () => void;
@@ -48,7 +50,7 @@ export default function HeaderBar({
             overflow="hidden"
             flexWrap="nowrap"
         >
-            {maybeConference ? <LeftMenuToggleButton toggle={toggleLeftMenu} /> : undefined}
+            {maybeConference ? <LeftMenuToggleButton isOpen={leftMenuOpen} toggle={toggleLeftMenu} /> : undefined}
             {isVeryNarrowView || !isNarrowView || !maybeConference || !searchIsActive ? <NameButton /> : undefined}
             {maybeConference ? (
                 <>

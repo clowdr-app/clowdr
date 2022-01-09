@@ -9,7 +9,7 @@ export default function RequireRole({
     attendeeRole,
     componentIfDenied,
 }: {
-    children: React.ReactNode | React.ReactNodeArray;
+    children: React.ReactNode | React.ReactNode[];
     organizerRole?: boolean;
     moderatorRole?: boolean;
     attendeeRole?: boolean;

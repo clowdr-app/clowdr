@@ -481,62 +481,82 @@ export function VonageRoomControlBar({
                 w={vonage.state.type === StateType.Connected ? "100%" : "auto"}
             >
                 <Tooltip label="Configure mic/cam">
-                    <IconButton
+                    <Button
                         size="sm"
                         isLoading={isOpening}
-                        icon={<SettingsIcon />}
+                        leftIcon={<SettingsIcon />}
+                        iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
                         onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
                         isDisabled={joining}
                         colorScheme="RoomControlBarButton"
                         aria-label="Choose microphone / camera"
-                    />
+                        w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
+                    >
+                        {vonage.state.type === StateType.Connected ? "" : "Settings"}
+                    </Button>
                 </Tooltip>
                 {state.microphoneStream && state.microphoneIntendedEnabled ? (
                     <Tooltip label="Mute">
-                        <IconButton
+                        <Button
                             size="sm"
                             colorScheme="ActiveRoomControlBarButton"
                             onClick={stopMicrophone}
                             isDisabled={joining}
-                            icon={<FAIcon icon="microphone" iconStyle="s" />}
+                            leftIcon={<FAIcon icon="microphone" iconStyle="s" />}
+                            iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
                             aria-label="Mute"
-                        />
+                            w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
+                        >
+                            {vonage.state.type === StateType.Connected ? "" : "Mute"}
+                        </Button>
                     </Tooltip>
                 ) : (
                     <Tooltip label="Unmute">
-                        <IconButton
+                        <Button
                             size="sm"
                             isLoading={isOpening}
                             onClick={startMicrophone}
                             isDisabled={joining}
                             colorScheme="InactiveRoomControlBarButton"
-                            icon={<FAIcon icon="microphone-slash" iconStyle="s" />}
+                            leftIcon={<FAIcon icon="microphone-slash" iconStyle="s" />}
+                            iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
                             aria-label="Unmute"
-                        />
+                            w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
+                        >
+                            {vonage.state.type === StateType.Connected ? "" : "Unmute"}
+                        </Button>
                     </Tooltip>
                 )}
                 {state.cameraStream && state.cameraIntendedEnabled ? (
                     <Tooltip label="Stop camera">
-                        <IconButton
+                        <Button
                             size="sm"
                             onClick={stopCamera}
                             colorScheme="ActiveRoomControlBarButton"
                             isDisabled={joining}
-                            icon={<FAIcon icon="video" iconStyle="s" />}
+                            leftIcon={<FAIcon icon="video" iconStyle="s" />}
+                            iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
                             aria-label="Stop camera"
-                        />
+                            w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
+                        >
+                            {vonage.state.type === StateType.Connected ? "" : "Stop camera"}
+                        </Button>
                     </Tooltip>
                 ) : (
                     <Tooltip label="Start camera">
-                        <IconButton
+                        <Button
                             size="sm"
                             isLoading={isOpening}
                             onClick={startCamera}
                             isDisabled={joining}
                             colorScheme="InactiveRoomControlBarButton"
-                            icon={<FAIcon icon="video-slash" iconStyle="s" />}
+                            leftIcon={<FAIcon icon="video-slash" iconStyle="s" />}
+                            iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
                             aria-label="Start camera"
-                        />
+                            w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
+                        >
+                            {vonage.state.type === StateType.Connected ? "" : "Start camera"}
+                        </Button>
                     </Tooltip>
                 )}
                 <WrapItem flex="1 1 auto" />

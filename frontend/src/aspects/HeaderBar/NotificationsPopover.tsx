@@ -77,7 +77,7 @@ export default function NotificationsPopover(): JSX.Element {
         <Popover isLazy isOpen={isOpen} onClose={onClose} placement="bottom" offset={[0, 6]}>
             <PopoverTrigger>
                 <HeaderBarButton
-                    label="Notifications"
+                    label="Announcements"
                     iconStyle="s"
                     icon="bell"
                     onClick={onToggle}

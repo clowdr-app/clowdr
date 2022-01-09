@@ -1394,9 +1394,9 @@ export class GlobalChatState {
                                                 onClick={props.onClose}
                                             />
                                             <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
-                                                {notification.title}
+                                                {isAnnouncement ? "Announcement" : notification.title}
                                             </Heading>
-                                            {notification.subtitle ? (
+                                            {!isAnnouncement && notification.subtitle ? (
                                                 <Heading
                                                     textAlign="left"
                                                     as="h3"

@@ -20,10 +20,10 @@ export default function RequireRole({
     if (
         registrant &&
         ((organizerRole && registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) ||
-            ((moderatorRole || organizerRole) &&
+            (moderatorRole &&
                 (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator ||
                     registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer)) ||
-            ((attendeeRole || moderatorRole || organizerRole) &&
+            (attendeeRole &&
                 (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Attendee ||
                     registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator ||
                     registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer)))

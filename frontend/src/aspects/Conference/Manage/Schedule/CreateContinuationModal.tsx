@@ -279,9 +279,6 @@ export default function CreateContinuationModal({
             <option key={NavigationView.Exhibitions} value={NavigationView.Exhibitions}>
                 Exhibitions
             </option>,
-            <option key={NavigationView.Search} value={NavigationView.Search}>
-                Search
-            </option>,
             <option key={NavigationView.Schedule} value={NavigationView.Schedule}>
                 Schedule
             </option>,
@@ -418,13 +415,6 @@ export default function CreateContinuationModal({
                                         view: NavigationView.Exhibitions,
                                     });
                                     break;
-                                case NavigationView.Search:
-                                    setTo({
-                                        type: ContinuationType.NavigationView,
-                                        view: NavigationView.Search,
-                                        term: "",
-                                    });
-                                    break;
                                 case NavigationView.Schedule:
                                     setTo({
                                         type: ContinuationType.NavigationView,
@@ -496,25 +486,6 @@ export default function CreateContinuationModal({
                                 type: ContinuationType.URL,
                                 url: to.url,
                                 text: ev.target.value,
-                            });
-                        }}
-                    />
-                </FormControl>
-            ) : undefined,
-        [to]
-    );
-    const toSearchInput = useMemo(
-        () =>
-            to.type === ContinuationType.NavigationView && to.view === NavigationView.Search ? (
-                <FormControl>
-                    <FormLabel>Search term (optional)</FormLabel>
-                    <Input
-                        value={to.term}
-                        onChange={(ev) => {
-                            setTo({
-                                type: ContinuationType.NavigationView,
-                                view: NavigationView.Search,
-                                term: ev.target.value,
                             });
                         }}
                     />
@@ -1025,8 +996,6 @@ export default function CreateContinuationModal({
                         return to.tagId === "" ? "Chosen tag is invalid" : true;
                     case NavigationView.Exhibitions:
                         return true;
-                    case NavigationView.Search:
-                        return true;
                     case NavigationView.Schedule:
                         return true;
                     case NavigationView.SocialRooms:
@@ -1073,7 +1042,6 @@ export default function CreateContinuationModal({
                             {toViewSelect}
                             {toURLInput}
                             {toTextInput}
-                            {toSearchInput}
                             {toRoomsSelect}
                             {toEventsSelect}
                             {toItemsSelect}

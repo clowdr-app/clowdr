@@ -19,14 +19,13 @@ import { useLocation } from "react-router-dom";
 import FAIcon from "../Chakra/FAIcon";
 import { LinkButton } from "../Chakra/LinkButton";
 import { defaultOutline_AsBoxShadow } from "../Chakra/Outline";
-import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
 import { useConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import HeaderBarButton from "../HeaderBar/HeaderBarButton";
 import { useRestorableState } from "../Hooks/useRestorableState";
 import SearchResults from "./SearchResults";
 
-export default function NotificationsPopover({
+export default function SearchPopover({
     isActive,
     setIsActive,
 }: {
@@ -37,9 +36,6 @@ export default function NotificationsPopover({
     const { conferencePath } = useAuthParameters();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
-
-    const globalChatState = useGlobalChatState();
-    globalChatState.openAnnouncements = onOpen;
 
     const bgColor = useColorModeValue(
         "MainMenuHeaderBar.backgroundColor-light",
@@ -180,7 +176,7 @@ export default function NotificationsPopover({
                     />
                 </PopoverBody>
                 <PopoverFooter flex="0 0 auto">
-                    <LinkButton to={`${conferencePath}/search`} size="xs">
+                    <LinkButton to={`${conferencePath}/search/${encodeURIComponent(searchTerm)}`} size="xs">
                         See more results
                     </LinkButton>
                 </PopoverFooter>

@@ -376,9 +376,6 @@ function ContinuationChoices_Inner({
                                     case NavigationView.Exhibitions:
                                         scheduleModal.onOpen(undefined, ProgramModalTab.Exhibitions);
                                         break;
-                                    case NavigationView.Search:
-                                        scheduleModal.onOpen(undefined, ProgramModalTab.Search, to.term);
-                                        break;
                                     case NavigationView.Schedule:
                                         scheduleModal.onOpen(undefined, ProgramModalTab.Schedule);
                                         break;

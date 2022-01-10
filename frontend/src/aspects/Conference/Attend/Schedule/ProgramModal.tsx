@@ -38,14 +38,13 @@ export enum ProgramModalTab {
     HappeningSoon = "HappeningSoon",
     Exhibitions = "Exhibitions",
     Sponsors = "Sponsors",
-    Search = "Search",
     Schedule = "Schedule",
     SchedulePreview = "ScheduleV2",
 }
 
 interface ScheduleModalContext {
     isOpen: boolean;
-    onOpen: (tagId?: string, tab?: ProgramModalTab, searchTerm?: string) => void;
+    onOpen: (tagId?: string, tab?: ProgramModalTab) => void;
     onClose: () => void;
     finalFocusRef: React.RefObject<FocusableElement>;
 }
@@ -77,10 +76,8 @@ export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>
         (s) => (s === "null" ? null : s)
     );
 
-    const changeSearch = useRef<null | ((term: string) => void)>(null);
-
     const doOnOpen = useCallback(
-        (tagId?: string, tab?: ProgramModalTab, searchTerm?: string) => {
+        (tagId?: string, tab?: ProgramModalTab) => {
             onOpen();
             if (tab) {
                 setSelectedTab(tab);
@@ -90,18 +87,6 @@ export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>
                 if (!tab) {
                     setSelectedTab(ProgramModalTab.Tags);
                 }
-            }
-            if (searchTerm) {
-                let attempts = 0;
-                const applySearch = () => {
-                    if (changeSearch.current) {
-                        changeSearch.current?.(searchTerm);
-                    } else if (attempts < 3) {
-                        attempts++;
-                        setTimeout(applySearch, 100);
-                    }
-                };
-                applySearch();
             }
         },
         [onOpen, setSelectedTab, setSelectedTag]
@@ -129,7 +114,6 @@ export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>
                     setSelectedTab={setSelectedTab}
                     selectedTagId={selectedTagId}
                     setSelectedTag={setSelectedTag}
-                    changeSearch={changeSearch}
                 />
             </Suspense>
         </ScheduleModalContext.Provider>

@@ -27,6 +27,7 @@ const SwagBags = React.lazy(() => import("./Attend/SwagBag/SwagBags"));
 const ChatRedirectPage = React.lazy(() => import("../Chat/ChatRedirectPage"));
 const WaitingPage = React.lazy(() => import("../ShuffleRooms/WaitingPage"));
 const PageNotFound = React.lazy(() => import("../Errors/PageNotFound"));
+const SearchPage = React.lazy(() => import("../Search/SearchPage"));
 
 export default function ConferenceRoutes(): JSX.Element {
     const conference = useConference();
@@ -172,6 +173,16 @@ export default function ConferenceRoutes(): JSX.Element {
                     <RequireRole componentIfDenied={<PageNotFound />} attendeeRole>
                         <MyRecordingsPage />
                     </RequireRole>
+                </Route>
+
+                <Route path={`${path}/search/:searchTerm?`}>
+                    {(props: RouteComponentProps<{ searchTerm?: string }>) => (
+                        <SearchPage
+                            searchTerm={
+                                props.match.params.searchTerm && decodeURIComponent(props.match.params.searchTerm)
+                            }
+                        />
+                    )}
                 </Route>
 
                 <Route exact path={`${path}`}>

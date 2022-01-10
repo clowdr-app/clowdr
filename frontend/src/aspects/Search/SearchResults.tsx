@@ -5,7 +5,6 @@ import type { OperationResult } from "urql";
 import { gql, useClient } from "urql";
 import type { SearchAllQuery, SearchAllQueryVariables } from "../../generated/graphql";
 import { SearchAllDocument } from "../../generated/graphql";
-import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { LinkButton } from "../Chakra/LinkButton";
 import { useConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
@@ -160,8 +159,11 @@ export default function SearchResults({
         );
     }, [data, error, fetching, setNumberOfResults]);
 
+    // TODO: Display tags on stuff
+    // TODO: Filter by tags
+
     return fetching ? (
-        <CenteredSpinner caller="SearchResults.tsx" />
+        <></>
     ) : error ? (
         <Box>Sorry, an error has occurred. Please try again later.</Box>
     ) : (

@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
 import * as R from "ramda";
-import type { MutableRefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
     Schedule_EventSummaryFragment,
@@ -31,7 +30,6 @@ import { useConference } from "../../useConference";
 import ItemList from "../Content/ItemList";
 import { ExhibitionsGrid } from "../Exhibition/ExhibitionsPage";
 import { SponsorBoothsInner } from "../Rooms/V2/SponsorBooths";
-import SearchPanel from "../Search/SearchPanel";
 import { ProgramModalTab } from "./ProgramModal";
 import { ScheduleFetchWrapper, ScheduleInner } from "./v1/Schedule";
 import WholeSchedule from "./v2/WholeSchedule";
@@ -44,7 +42,6 @@ export default function ScheduleModal({
     setSelectedTab,
     selectedTagId,
     setSelectedTag,
-    changeSearch,
 }: {
     isOpen: boolean;
     onClose: () => void;
@@ -53,7 +50,6 @@ export default function ScheduleModal({
     setSelectedTab: (tab: ProgramModalTab) => void;
     selectedTagId: string | null;
     setSelectedTag: (tagId: string | null) => void;
-    changeSearch: MutableRefObject<null | ((term: string) => void)>;
 }): JSX.Element {
     const conference = useConference();
     const closeRef = useRef<HTMLButtonElement | null>(null);
@@ -135,10 +131,8 @@ export default function ScheduleModal({
             case ProgramModalTab.HappeningSoon:
                 return 0;
             case ProgramModalTab.SchedulePreview:
-                return offset2 + 4;
-            case ProgramModalTab.Schedule:
                 return offset2 + 3;
-            case ProgramModalTab.Search:
+            case ProgramModalTab.Schedule:
                 return offset2 + 2;
             case ProgramModalTab.Sponsors:
                 return offset1 + 2;
@@ -170,35 +164,26 @@ export default function ScheduleModal({
                     } else if (anySponsors) {
                         setSelectedTab(ProgramModalTab.Sponsors);
                     } else {
-                        setSelectedTab(ProgramModalTab.Search);
+                        setSelectedTab(ProgramModalTab.Schedule);
                     }
                     break;
                 case 3:
                     if (anyHappeningSoon && anySponsors) {
                         setSelectedTab(ProgramModalTab.Sponsors);
                     } else if (anyHappeningSoon || anySponsors) {
-                        setSelectedTab(ProgramModalTab.Search);
-                    } else {
                         setSelectedTab(ProgramModalTab.Schedule);
+                    } else {
+                        setSelectedTab(ProgramModalTab.SchedulePreview);
                     }
                     break;
                 case 4:
                     if (anyHappeningSoon && anySponsors) {
-                        setSelectedTab(ProgramModalTab.Search);
-                    } else if (anyHappeningSoon || anySponsors) {
                         setSelectedTab(ProgramModalTab.Schedule);
                     } else {
                         setSelectedTab(ProgramModalTab.SchedulePreview);
                     }
                     break;
                 case 5:
-                    if (anyHappeningSoon && anySponsors) {
-                        setSelectedTab(ProgramModalTab.Schedule);
-                    } else {
-                        setSelectedTab(ProgramModalTab.SchedulePreview);
-                    }
-                    break;
-                case 6:
                     setSelectedTab(ProgramModalTab.SchedulePreview);
                     break;
             }
@@ -257,10 +242,6 @@ export default function ScheduleModal({
                                 </Tab>
                             ) : undefined}
                             <Tab>
-                                <FAIcon iconStyle="s" icon="search" />
-                                &nbsp;&nbsp;Search
-                            </Tab>
-                            <Tab>
                                 <FAIcon iconStyle="s" icon="calendar" />
                                 &nbsp;&nbsp;Full schedule
                             </Tab>
@@ -288,9 +269,6 @@ export default function ScheduleModal({
                                     {sponsors}
                                 </TabPanel>
                             ) : undefined}
-                            <TabPanel w="100%" h="100%" overflowY="auto">
-                                <SearchPanel changeSearch={changeSearch} />
-                            </TabPanel>
                             <TabPanel w="100%" h="100%" display="flex" flexDir="column" alignItems="center">
                                 <ScheduleFetchWrapper />
                             </TabPanel>

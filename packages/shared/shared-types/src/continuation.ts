@@ -17,7 +17,6 @@ export enum NavigationView {
     HappeningSoon = "HappeningSoon",
     Tags = "Tags",
     Exhibitions = "Exhibitions",
-    Search = "Search",
     Schedule = "Schedule",
     SocialRooms = "SocialRooms",
     People = "People",
@@ -59,11 +58,6 @@ export type ContinuationTo =
               | NavigationView.Schedule
               | NavigationView.ShufflePeriods
               | NavigationView.SocialRooms;
-      }
-    | {
-          type: ContinuationType.NavigationView;
-          view: NavigationView.Search;
-          term: string;
       }
     | {
           type: ContinuationType.NavigationView;

@@ -102,8 +102,11 @@ export default function SearchPopover({
                                 if (ev.key === "Escape") {
                                     ev.preventDefault();
                                     ev.stopPropagation();
-                                    setIsActive(false);
-                                    setSearchTerm("");
+                                    if (searchTerm.length > 0) {
+                                        setSearchTerm("");
+                                    } else {
+                                        setIsActive(false);
+                                    }
                                 } else if (ev.key === "Enter" && searchTerm.length > 0) {
                                     ev.preventDefault();
                                     ev.stopPropagation();

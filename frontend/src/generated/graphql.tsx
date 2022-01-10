@@ -46220,6 +46220,148 @@ export type RoomParticipantDetailsFragment = {
     readonly registrantId: any;
 };
 
+export type SearchedItemPersonFragment = {
+    readonly __typename?: "content_ItemProgramPerson";
+    readonly id: any;
+    readonly itemId: any;
+    readonly personId: any;
+    readonly priority?: number | null | undefined;
+    readonly roleName: string;
+    readonly person: {
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly name: string;
+    };
+};
+
+export type SearchedItemFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly title: string;
+    readonly conferenceId: any;
+    readonly itemPeople: ReadonlyArray<{
+        readonly __typename?: "content_ItemProgramPerson";
+        readonly id: any;
+        readonly itemId: any;
+        readonly personId: any;
+        readonly priority?: number | null | undefined;
+        readonly roleName: string;
+        readonly person: {
+            readonly __typename?: "collection_ProgramPerson";
+            readonly id: any;
+            readonly conferenceId: any;
+            readonly name: string;
+        };
+    }>;
+};
+
+export type SearchedEventFragment = {
+    readonly __typename?: "schedule_Event";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly name: string;
+    readonly itemId?: any | null | undefined;
+    readonly startTime: any;
+    readonly endTime?: any | null | undefined;
+    readonly roomId: any;
+    readonly roomName?: string | null | undefined;
+};
+
+export type SearchedPerson_ReducedFragment = {
+    readonly __typename?: "collection_ProgramPerson";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly name: string;
+};
+
+export type SearchedPersonFragment = {
+    readonly __typename?: "collection_ProgramPerson";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly name: string;
+    readonly affiliation?: string | null | undefined;
+    readonly registrant?:
+        | {
+              readonly __typename?: "registrant_Registrant";
+              readonly id: any;
+              readonly profile?:
+                  | {
+                        readonly __typename?: "registrant_Profile";
+                        readonly registrantId: any;
+                        readonly photoURL_50x50?: string | null | undefined;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
+};
+
+export type SearchAllQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    search: Scalars["String"];
+    limit: Scalars["Int"];
+    offset: Scalars["Int"];
+}>;
+
+export type SearchAllQuery = {
+    readonly __typename?: "query_root";
+    readonly content_searchItems: ReadonlyArray<{
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly title: string;
+        readonly conferenceId: any;
+        readonly itemPeople: ReadonlyArray<{
+            readonly __typename?: "content_ItemProgramPerson";
+            readonly id: any;
+            readonly itemId: any;
+            readonly personId: any;
+            readonly priority?: number | null | undefined;
+            readonly roleName: string;
+            readonly person: {
+                readonly __typename?: "collection_ProgramPerson";
+                readonly id: any;
+                readonly conferenceId: any;
+                readonly name: string;
+            };
+        }>;
+    }>;
+    readonly schedule_searchEvents: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly name: string;
+        readonly itemId?: any | null | undefined;
+        readonly startTime: any;
+        readonly endTime?: any | null | undefined;
+        readonly roomId: any;
+        readonly roomName?: string | null | undefined;
+    }>;
+    readonly collection_searchProgramPerson: ReadonlyArray<{
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly name: string;
+        readonly affiliation?: string | null | undefined;
+        readonly registrant?:
+            | {
+                  readonly __typename?: "registrant_Registrant";
+                  readonly id: any;
+                  readonly profile?:
+                      | {
+                            readonly __typename?: "registrant_Profile";
+                            readonly registrantId: any;
+                            readonly photoURL_50x50?: string | null | undefined;
+                        }
+                      | null
+                      | undefined;
+              }
+            | null
+            | undefined;
+    }>;
+};
+
 export type ShufflePeriodDataFragment = {
     readonly __typename?: "room_ShufflePeriod";
     readonly id: any;
@@ -48898,6 +49040,67 @@ export const RoomParticipantDetailsFragmentDoc = gql`
         id
         roomId
         registrantId
+    }
+`;
+export const SearchedPerson_ReducedFragmentDoc = gql`
+    fragment SearchedPerson_Reduced on collection_ProgramPerson {
+        id
+        conferenceId
+        name
+    }
+`;
+export const SearchedItemPersonFragmentDoc = gql`
+    fragment SearchedItemPerson on content_ItemProgramPerson {
+        id
+        itemId
+        personId
+        priority
+        roleName
+        person {
+            ...SearchedPerson_Reduced
+        }
+    }
+    ${SearchedPerson_ReducedFragmentDoc}
+`;
+export const SearchedItemFragmentDoc = gql`
+    fragment SearchedItem on content_Item {
+        id
+        title
+        conferenceId
+        itemPeople(
+            where: { roleName: { _neq: "REVIEWER" } }
+            order_by: [{ priority: asc }, { person: { name: asc } }]
+        ) {
+            ...SearchedItemPerson
+        }
+    }
+    ${SearchedItemPersonFragmentDoc}
+`;
+export const SearchedEventFragmentDoc = gql`
+    fragment SearchedEvent on schedule_Event {
+        id
+        conferenceId
+        name
+        itemId
+        startTime
+        endTime
+        roomId
+        roomName
+    }
+`;
+export const SearchedPersonFragmentDoc = gql`
+    fragment SearchedPerson on collection_ProgramPerson {
+        id
+        conferenceId
+        name
+        affiliation
+        registrant {
+            id
+            profile {
+                registrantId
+                photoURL_50x50
+            }
+        }
     }
 `;
 export const SubdShuffleQueueEntryDataFragmentDoc = gql`
@@ -54405,6 +54608,31 @@ export function useGetAllRoomParticipantsQuery(
     options: Omit<Urql.UseQueryArgs<GetAllRoomParticipantsQueryVariables>, "query"> = {}
 ) {
     return Urql.useQuery<GetAllRoomParticipantsQuery>({ query: GetAllRoomParticipantsDocument, ...options });
+}
+export const SearchAllDocument = gql`
+    query SearchAll($conferenceId: uuid!, $search: String!, $limit: Int!, $offset: Int!) {
+        content_searchItems(args: { conferenceId: $conferenceId, search: $search }, limit: $limit, offset: $offset) {
+            ...SearchedItem
+        }
+        schedule_searchEvents(args: { conferenceId: $conferenceId, search: $search }, limit: $limit, offset: $offset) {
+            ...SearchedEvent
+        }
+        collection_searchProgramPerson(
+            args: { conferenceid: $conferenceId, search: $search }
+            limit: $limit
+            offset: $offset
+            where: { registrantId: { _is_null: false } }
+        ) {
+            ...SearchedPerson
+        }
+    }
+    ${SearchedItemFragmentDoc}
+    ${SearchedEventFragmentDoc}
+    ${SearchedPersonFragmentDoc}
+`;
+
+export function useSearchAllQuery(options: Omit<Urql.UseQueryArgs<SearchAllQueryVariables>, "query"> = {}) {
+    return Urql.useQuery<SearchAllQuery>({ query: SearchAllDocument, ...options });
 }
 export const MyShuffleQueueEntryDocument = gql`
     query MyShuffleQueueEntry($id: bigint!) {

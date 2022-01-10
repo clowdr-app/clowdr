@@ -83,6 +83,7 @@ export default function ProfileMenu(): JSX.Element {
                     bgColor: buttonFocusBgColor,
                     boxShadow: defaultOutline_AsBoxShadow,
                 }}
+                flex="0 0 auto"
             >
                 <HStack spacing={1}>
                     {registrant.profile.photoURL_50x50 ? (
@@ -90,9 +91,9 @@ export default function ProfileMenu(): JSX.Element {
                             display="inline-block"
                             title="Your profile photo"
                             src={registrant.profile.photoURL_50x50}
-                            w={6}
-                            mr={1}
-                            borderRadius="100%"
+                            w="40px"
+                            mr={!narrowView ? 1 : 0}
+                            borderRadius="2xl"
                         />
                     ) : (
                         <Circle size="40px" bg={placeholderBgColor} color={placeholderTextColor} m={0}>

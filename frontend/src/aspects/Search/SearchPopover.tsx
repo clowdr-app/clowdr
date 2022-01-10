@@ -6,19 +6,25 @@ import {
     InputRightElement,
     Popover,
     PopoverBody,
-    PopoverCloseButton,
     PopoverContent,
     PopoverFooter,
     PopoverHeader,
     PopoverTrigger,
+    Spinner,
     useColorModeValue,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import FAIcon from "../Chakra/FAIcon";
+import { LinkButton } from "../Chakra/LinkButton";
 import { defaultOutline_AsBoxShadow } from "../Chakra/Outline";
 import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
-import HeaderBarButton from "./HeaderBarButton";
+import { useConference } from "../Conference/useConference";
+import { useAuthParameters } from "../GQL/AuthParameters";
+import HeaderBarButton from "../HeaderBar/HeaderBarButton";
+import { useRestorableState } from "../Hooks/useRestorableState";
+import SearchResults from "./SearchResults";
 
 export default function NotificationsPopover({
     isActive,
@@ -27,7 +33,8 @@ export default function NotificationsPopover({
     isActive: boolean;
     setIsActive: (value: boolean | ((old: boolean) => boolean)) => void;
 }): JSX.Element {
-    // const conference = useConference();
+    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -51,10 +58,37 @@ export default function NotificationsPopover({
 
     const toggleIsActive = useCallback(() => setIsActive((old) => !old), [setIsActive]);
 
-    const [_searchTerm, setSearchTerm] = useState<string>("");
+    const [searchTerm, setSearchTerm] = useRestorableState<string>(
+        `SearchTerm:${conference.id}`,
+        "",
+        (x) => x,
+        (x) => x
+    );
+    const [numResults, setNumResults] = useState<number | null>(null);
+    const [isSearching, setIsSearching] = useState<boolean>(false);
+    useEffect(() => {
+        if (!isActive) {
+            onClose();
+        } else if (numResults !== null) {
+            onOpen();
+        }
+    }, [isActive, numResults, onClose, onOpen]);
+
+    const location = useLocation();
+    useEffect(() => {
+        setIsActive(false);
+    }, [location, setIsActive]);
 
     return (
-        <Popover isLazy isOpen={isOpen} onClose={onClose} placement="bottom" offset={[0, 6]}>
+        <Popover
+            isLazy
+            isOpen={isOpen}
+            onClose={onClose}
+            placement="bottom-start"
+            offset={[0, 6]}
+            autoFocus={false}
+            matchWidth
+        >
             <PopoverTrigger>
                 {isActive ? (
                     <InputGroup ml="auto" mr={2} maxW="30em">
@@ -63,14 +97,21 @@ export default function NotificationsPopover({
                             autoFocus
                             aria-label="Search"
                             placeholder="Search events, people and more"
+                            value={searchTerm}
                             onChange={(ev) => {
                                 setSearchTerm(ev.target.value);
+                                onOpen();
                             }}
                             onKeyUp={(ev) => {
                                 if (ev.key === "Escape") {
                                     ev.preventDefault();
                                     ev.stopPropagation();
                                     setIsActive(false);
+                                    setSearchTerm("");
+                                } else if (ev.key === "Enter" && searchTerm.length > 0) {
+                                    ev.preventDefault();
+                                    ev.stopPropagation();
+                                    onOpen();
                                 }
                             }}
                         />
@@ -83,7 +124,7 @@ export default function NotificationsPopover({
                                 variant="ghost"
                                 aria-label="Clear search"
                                 onClick={toggleIsActive}
-                                icon={<FAIcon iconStyle="s" icon="times" />}
+                                icon={!isSearching ? <FAIcon iconStyle="s" icon="times" /> : <Spinner />}
                                 _hover={{
                                     bgColor: buttonHoverBgColor,
                                 }}
@@ -123,17 +164,26 @@ export default function NotificationsPopover({
                 borderRadius="2xl"
                 overflow="hidden"
                 minH="min(80vh - 6ex - 6px - 9px, 400px)"
-                maxH="min(700px, calc(100vh - 6ex - 6px - 9px))"
+                maxH="min(500px, calc(100vh - 6ex - 6px - 9px))"
                 h="100%"
+                w="inherit"
             >
                 <PopoverHeader bgColor={bgColor} color={textColor} flex="0 0 auto">
-                    100 results {/*TODO*/}
+                    {numResults !== null ? `${numResults} results` : "Searching…"}
                 </PopoverHeader>
-                <PopoverCloseButton color={textColor} />
                 <PopoverBody flex="1 1 100%" overflowX="hidden" overflowY="auto" display="flex" flexDir="column" p={0}>
-                    TODO
+                    <SearchResults
+                        search={searchTerm}
+                        setNumberOfResults={setNumResults}
+                        isActive={isActive}
+                        setIsSearching={setIsSearching}
+                    />
                 </PopoverBody>
-                <PopoverFooter flex="0 0 auto">See more results {/*TODO*/}</PopoverFooter>
+                <PopoverFooter flex="0 0 auto">
+                    <LinkButton to={`${conferencePath}/search`} size="xs">
+                        See more results
+                    </LinkButton>
+                </PopoverFooter>
             </PopoverContent>
         </Popover>
     );

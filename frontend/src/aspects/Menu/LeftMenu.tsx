@@ -1,7 +1,7 @@
 import { Box, Flex, Link, useColorModeValue } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import React, { useEffect } from "react";
-import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
+import { Link as ReactLink, useLocation } from "react-router-dom";
 import { useCountSwagBagsQuery } from "../../generated/graphql";
 import { useLiveProgramRoomsModal } from "../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { useSocialiseModal } from "../Conference/Attend/Rooms/V2/SocialiseModalProvider";
@@ -28,12 +28,17 @@ gql`
     }
 `;
 
-export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.Element {
+export default function LeftMenu({
+    isExpanded,
+    setIsExpanded,
+}: {
+    isExpanded: boolean;
+    setIsExpanded: (value: boolean | ((old: boolean) => boolean)) => void;
+}): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
     const maybeUser = useMaybeCurrentUser()?.user;
     const maybeRegistrant = useMaybeCurrentRegistrant();
-    const history = useHistory();
     const colorScheme = "LeftMenuButton";
 
     const [swagBagsResponse] = useCountSwagBagsQuery({
@@ -103,7 +108,12 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                         colorScheme="LiveActionButton"
                         side="left"
                         ref={liveNowButtonRef as React.RefObject<HTMLButtonElement>}
-                        onClick={liveNow_OnOpen}
+                        onClick={() => {
+                            liveNow_OnOpen();
+                            if (narrowView) {
+                                setIsExpanded(false);
+                            }
+                        }}
                         mb={1}
                         showLabel={isExpanded}
                         isDisabled={navState.disabled}
@@ -122,7 +132,9 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                     colorScheme={colorScheme}
                     side="left"
                     ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
-                    onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
+                    onClick={!narrowView ? () => schedule_OnOpen(undefined, ProgramModalTab.Schedule) : undefined}
+                    as={narrowView ? ReactLink : undefined}
+                    to={narrowView ? `${conferencePath}/schedule` : undefined}
                     mb={1}
                     showLabel={isExpanded}
                     isDisabled={navState.disabled}
@@ -136,7 +148,9 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                     colorScheme={colorScheme}
                     side="left"
                     ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
-                    onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
+                    onClick={!narrowView ? () => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions) : undefined}
+                    as={narrowView ? ReactLink : undefined}
+                    to={narrowView ? `${conferencePath}/exhibitions` : undefined}
                     mb={1}
                     showLabel={isExpanded}
                     isDisabled={navState.disabled}
@@ -150,7 +164,9 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                         borderRadius={0}
                         colorScheme={colorScheme}
                         side="left"
-                        onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Sponsors)}
+                        onClick={!narrowView ? () => schedule_OnOpen(undefined, ProgramModalTab.Sponsors) : undefined}
+                        as={narrowView ? ReactLink : undefined}
+                        to={narrowView ? `${conferencePath}/sponsors` : undefined}
                         mb={1}
                         showLabel={isExpanded}
                         isDisabled={navState.disabled}
@@ -176,7 +192,9 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                             side="left"
                             pos="relative"
                             ref={socialiseButtonRef as React.RefObject<HTMLButtonElement>}
-                            onClick={() => socialise_OnOpen()}
+                            onClick={!narrowView ? () => socialise_OnOpen() : undefined}
+                            as={narrowView ? ReactLink : undefined}
+                            to={narrowView ? `${conferencePath}/socialise` : undefined}
                             mb={1}
                             showLabel={isExpanded}
                             isDisabled={navState.disabled}
@@ -217,7 +235,8 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                         colorScheme={colorScheme}
                         side="left"
                         ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
-                        onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions)}
+                        as={ReactLink}
+                        to={`${conferencePath}/search`}
                         mb={1}
                         showLabel={isExpanded}
                         isDisabled={navState.disabled}
@@ -232,11 +251,8 @@ export default function LeftMenu({ isExpanded }: { isExpanded: boolean }): JSX.E
                         borderRadius={0}
                         colorScheme={colorScheme}
                         side="left"
-                        onClick={() => {
-                            if (conferencePath) {
-                                history.push(`${conferencePath}/manage`);
-                            }
-                        }}
+                        as={ReactLink}
+                        to={`${conferencePath}/manage`}
                         mb={1}
                         showLabel={isExpanded}
                         isDisabled={navState.disabled}

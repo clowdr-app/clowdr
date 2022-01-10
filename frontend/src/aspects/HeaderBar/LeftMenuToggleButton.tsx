@@ -19,6 +19,7 @@ export default function LeftMenuToggleButton({ isOpen, toggle }: { isOpen: boole
             p={0}
             fontSize="2xl"
             w="3rem"
+            flex="0 0 3rem"
             minW={0}
             h="100%"
             borderTopRadius="2xl"

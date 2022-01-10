@@ -5,6 +5,7 @@ import { useMaybeConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
 import useIsVeryNarrowView from "../Hooks/useIsVeryNarrowView";
+import SearchPopover from "../Search/SearchPopover";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import JoinButton from "./JoinButton";
 import LeftMenuToggleButton from "./LeftMenuToggleButton";
@@ -12,7 +13,6 @@ import NameButton from "./NameButton";
 import NotificationsPopover from "./NotificationsPopover";
 import ProfileMenu from "./ProfileMenu";
 import RightMenuToggleButton from "./RightMenuToggleButton";
-import SearchPopover from "./SearchPopover";
 
 export default function HeaderBar({
     leftMenuOpen,

@@ -9,8 +9,8 @@
         "build": "tsc",
         "watch": "tsc -w",
         "test": "jest",
-        "deploy:all": "cdk deploy --all",
-        "bootstrap": "cdk bootstrap"
+        "deploy:all": "pnpm exec -- cdk deploy --all",
+        "bootstrap": "pnpm exec -- cdk bootstrap"
     },
     "devDependencies": {
         "@aws-cdk/assert": "^1.129.0",

@@ -239,7 +239,7 @@ function ManageTagsModalBody(): JSX.Element {
                     return isInCreate ? (
                         <FormLabel>Colour</FormLabel>
                     ) : (
-                        <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                        <Text fontSize="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
                             Colour
                         </Text>
                     );

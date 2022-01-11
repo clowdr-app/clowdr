@@ -583,7 +583,7 @@ export default function ManageRegistrants(): JSX.Element {
                         return undefined;
                     } else {
                         return (
-                            <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                            <Text fontSize="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
                                 Invite code
                             </Text>
                         );
@@ -628,7 +628,7 @@ export default function ManageRegistrants(): JSX.Element {
                     return isInCreate ? (
                         <FormLabel>Groups</FormLabel>
                     ) : (
-                        <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                        <Text fontSize="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
                             Groups
                         </Text>
                     );

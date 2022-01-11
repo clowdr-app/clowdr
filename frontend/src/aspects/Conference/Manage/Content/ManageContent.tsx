@@ -549,7 +549,7 @@ export default function ManageContentV2(): JSX.Element {
                     return isInCreate ? (
                         <FormLabel>Tags</FormLabel>
                     ) : (
-                        <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                        <Text fontSize="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
                             Tags
                         </Text>
                     );

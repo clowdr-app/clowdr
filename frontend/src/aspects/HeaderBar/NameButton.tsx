@@ -25,9 +25,12 @@ export default function NameButton(): JSX.Element {
     return (
         <LinkButton
             to={conferencePath ?? "/"}
-            fontSize={narrowView ? "lg" : "xl"}
+            fontSize={narrowView ? "md" : "xl"}
             variant="ghost"
             linkProps={{
+                justifyContent: "flex-start",
+                alignItems: "center",
+                display: "flex",
                 m: "3px",
                 mr: "auto",
                 p: 0,
@@ -46,7 +49,7 @@ export default function NameButton(): JSX.Element {
                 },
             }}
             m={0}
-            p={3}
+            p={narrowView ? 1 : 3}
             h="auto"
             minH="0"
             _hover={{}}

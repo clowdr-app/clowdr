@@ -46,9 +46,10 @@ export default function HeaderBar({
             w="100%"
             alignItems="center"
             zIndex={4}
-            minH="calc(6ex + 6px)"
+            h="calc(6ex + 6px)"
             overflow="hidden"
             flexWrap="nowrap"
+            flex="0 0 auto"
         >
             {maybeConference ? <LeftMenuToggleButton isOpen={leftMenuOpen} toggle={toggleLeftMenu} /> : undefined}
             {isVeryNarrowView || !isNarrowView || !maybeConference || !searchIsActive ? <NameButton /> : undefined}

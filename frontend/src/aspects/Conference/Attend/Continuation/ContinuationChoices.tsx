@@ -13,8 +13,8 @@ import {
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import { useMyBackstagesModal } from "../Profile/MyBackstages";
-import { useLiveProgramRoomsModal } from "../Rooms/V2/LiveProgramRoomsModal";
 import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModalProvider";
+import { useLiveProgramRooms } from "../Rooms/V2/useLiveProgramRooms";
 import { ProgramModalTab, useScheduleModal } from "../Schedule/ProgramModal";
 import ContinuationActiveChoice from "./ContinuationActiveChoice";
 import ContinuationPassiveChoice from "./ContinuationPassiveChoice";
@@ -269,7 +269,7 @@ function ContinuationChoices_Inner({
     const scheduleModal = useScheduleModal();
     const socialiseModal = useSocialiseModal();
     const myBackstages = useMyBackstagesModal();
-    const liveProgramRooms = useLiveProgramRoomsModal();
+    const liveProgramRooms = useLiveProgramRooms();
     useEffect(() => {
         if (activateChoice && !activatedChoice) {
             const activateChosenOption = () => {

@@ -98,6 +98,7 @@ const baseThemeExtensions = {
         "light-md": "0 4px 6px -1px rgba(255, 255, 255, 0.1),0 2px 4px -1px rgba(255, 255, 255, 0.04)",
         "bottom-popup-light": "0px -1px 4px 0px rgba(0,0,0,0.25)",
         "bottom-popup-dark": "0px -1px 4px 0px rgba(255,255,255,0.25)",
+        "left-pullout": "2px 0px 5px rgba(0, 0, 0, 0.2)",
     },
     components: {
         Toast: {

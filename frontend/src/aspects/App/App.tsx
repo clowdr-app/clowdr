@@ -13,8 +13,8 @@ import { GlobalChatStateProvider } from "../Chat/GlobalChatStateProvider";
 import { MyBackstagesModalProvider } from "../Conference/Attend/Profile/MyBackstages";
 import { PermissionInstructionsProvider } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 import { VonageGlobalStateProvider } from "../Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
-import { LiveProgramRoomsModalProvider } from "../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { SocialiseModalProvider } from "../Conference/Attend/Rooms/V2/SocialiseModalProvider";
+import { LiveProgramRoomsProvider } from "../Conference/Attend/Rooms/V2/useLiveProgramRooms";
 import { ScheduleModalProvider } from "../Conference/Attend/Schedule/ProgramModal";
 import StarredEventsModalProvider from "../Conference/Attend/Schedule/StarredEventsModal";
 import useConferenceIdUpdater from "../Conference/ConferenceIdUpdater";
@@ -109,7 +109,7 @@ function AppInner2(): JSX.Element {
                                             <EnableRoomParticipantsPollingProvider>
                                                 <RoomParticipantsProvider>
                                                     <ScheduleModalProvider>
-                                                        <LiveProgramRoomsModalProvider>
+                                                        <LiveProgramRoomsProvider>
                                                             <StarredEventsModalProvider>
                                                                 <MyBackstagesModalProvider>
                                                                     <SocialiseModalProvider>
@@ -122,7 +122,7 @@ function AppInner2(): JSX.Element {
                                                                     </SocialiseModalProvider>
                                                                 </MyBackstagesModalProvider>
                                                             </StarredEventsModalProvider>
-                                                        </LiveProgramRoomsModalProvider>
+                                                        </LiveProgramRoomsProvider>
                                                     </ScheduleModalProvider>
                                                 </RoomParticipantsProvider>
                                             </EnableRoomParticipantsPollingProvider>

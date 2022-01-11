@@ -81,8 +81,8 @@ export default function RightMenu({ isOpen }: { isOpen: boolean }): JSX.Element 
             w={widthStr}
             flexBasis={widthStr}
             h={narrowView ? "calc(100% - 6ex - 6px)" : "100%"}
-            top={narrowView ? "calc(6ex + 6px)" : undefined}
-            left={narrowView ? 0 : undefined}
+            top={narrowView ? "calc(6ex + 6px)" : "0"}
+            left={0}
             bgColor={bgColor}
             zIndex={2}
             transition="width 0.05s cubic-bezier(0.33, 1, 0.68, 1), flex-basis 0.05s cubic-bezier(0.33, 1, 0.68, 1)"

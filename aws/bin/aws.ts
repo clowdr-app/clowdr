@@ -22,6 +22,7 @@ new ImageStack(app, `${stackPrefix}-img`, {
     tags: { environment: stackPrefix },
     stackPrefix,
     bucket: awsStack.bucket,
+    actionsUser: awsStack.actionsUser,
 });
 
 new ChimeStack(app, `${stackPrefix}-chime`, {

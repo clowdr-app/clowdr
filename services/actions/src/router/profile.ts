@@ -1,25 +1,23 @@
 import { gql } from "@apollo/client/core";
+import { GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
+import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
+import type { ActionPayload } from "@midspace/hasura/action";
 import type { updateProfilePhotoArgs, UpdateProfilePhotoResponse } from "@midspace/hasura/actionTypes";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { json } from "body-parser";
 import crypto from "crypto";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import express from "express";
-import { assertType } from "typescript-is";
+import pMemoize from "p-memoize";
+import { assertType, TypeGuardError } from "typescript-is";
 import type { Maybe } from "../generated/graphql";
 import { UpdateProfilePhotoDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { S3 } from "../lib/aws/awsClient";
-
-assert(process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID, "AWS_ACTIONS_USER_ACCESS_KEY_ID environment variable not provided.");
-assert(
-    process.env.AWS_ACTIONS_USER_SECRET_ACCESS_KEY,
-    "AWS_ACTIONS_USER_SECRET_ACCESS_KEY environment variable not provided."
-);
-assert(process.env.AWS_REGION, "AWS_REGION environment variable not provided.");
+import { S3, SecretsManager } from "../lib/aws/awsClient";
+import { BadRequestError, UnexpectedServerError } from "../lib/errors";
 
 export const router = express.Router();
 
@@ -92,6 +90,24 @@ async function checkS3Url(
     return { result: "success", key };
 }
 
+async function getImagesSecretValue(): Promise<string> {
+    const response = await SecretsManager.send(
+        new GetSecretValueCommand({
+            SecretId: process.env.AWS_IMAGES_SECRET_ARN,
+        })
+    );
+
+    const secretValue = response.SecretString;
+    assert(secretValue);
+
+    const secretJson = JSON.parse(secretValue);
+
+    assert(secretJson["secret"]);
+    return secretJson["secret"];
+}
+
+const getImagesSecretValueMemoized = pMemoize(getImagesSecretValue);
+
 async function handleUpdateProfilePhoto(
     userId: string,
     registrantId: string,
@@ -120,8 +136,29 @@ async function handleUpdateProfilePhoto(
 
         assert(process.env.AWS_CONTENT_BUCKET_ID);
 
-        photoURL_350x350 = generateSignedImageURL(process.env.AWS_CONTENT_BUCKET_ID, validatedS3URL.key, 350, 350);
-        photoURL_50x50 = generateSignedImageURL(process.env.AWS_CONTENT_BUCKET_ID, validatedS3URL.key, 50, 50);
+        assert(
+            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+            "AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME not provided."
+        );
+        assert(process.env.AWS_IMAGES_SECRET_ARN, "AWS_IMAGES_SECRET_ARN not provided.");
+
+        const secret = await getImagesSecretValueMemoized();
+        photoURL_350x350 = generateSignedImageURL(
+            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+            secret,
+            process.env.AWS_CONTENT_BUCKET_ID,
+            validatedS3URL.key,
+            350,
+            350
+        );
+        photoURL_50x50 = generateSignedImageURL(
+            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+            secret,
+            process.env.AWS_CONTENT_BUCKET_ID,
+            validatedS3URL.key,
+            50,
+            50
+        );
 
         await apolloClient.mutate({
             mutation: UpdateProfilePhotoDocument,
@@ -144,41 +181,41 @@ async function handleUpdateProfilePhoto(
     };
 }
 
-router.post("/photo/update", async (req: Request, res: Response) => {
-    const params: updateProfilePhotoArgs = req.body.input;
-    try {
-        assertType<updateProfilePhotoArgs>(params);
-    } catch (e: any) {
-        req.log.error({ params }, "Invalid request");
-        return res.status(200).json({
-            ok: false,
-        });
+router.post(
+    "/photo/update",
+    parseSessionVariables,
+    async (req: Request, res: Response<UpdateProfilePhotoResponse>, next: NextFunction) => {
+        try {
+            const body = assertType<ActionPayload<updateProfilePhotoArgs>>(req.body);
+            if (!req.userId) {
+                throw new BadRequestError("Invalid request", { privateMessage: "No User ID available" });
+            }
+            const result = await handleUpdateProfilePhoto(req.userId, body.input.registrantId, body.input.s3URL);
+            res.status(200).json(result);
+        } catch (err: unknown) {
+            if (err instanceof TypeGuardError) {
+                next(new BadRequestError("Invalid request", { originalError: err }));
+            } else if (err instanceof Error) {
+                next(err);
+            } else {
+                next(new UnexpectedServerError("Server error", undefined, err));
+            }
+        }
     }
-
-    try {
-        req.log.info("Profile photo upload requested");
-        const userId = req.body.session_variables["x-hasura-user-id"];
-        const result = await handleUpdateProfilePhoto(userId, params.registrantId, params.s3URL);
-        return res.status(200).json(result);
-    } catch (e: any) {
-        req.log.error("Profile photo upload failed");
-        return res.status(200).json({
-            ok: false,
-        });
-    }
-});
+);
 
 function btoa(str: string) {
     return Buffer.from(str, "binary").toString("base64");
 }
 
-function generateSignedImageURL(bucketName: string, objectName: string, width: number, height: number): string {
-    assert(
-        process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
-        "AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME not provided."
-    );
-    assert(process.env.AWS_IMAGES_SECRET_VALUE, "AWS_IMAGES_SECRET_VALUE not provided.");
-
+function generateSignedImageURL(
+    cloudFrontDistributionName: string,
+    secret: string,
+    bucketName: string,
+    objectName: string,
+    width: number,
+    height: number
+): string {
     const imageRequest = JSON.stringify({
         bucket: bucketName,
         key: objectName,
@@ -192,8 +229,7 @@ function generateSignedImageURL(bucketName: string, objectName: string, width: n
     });
 
     const path = `/${btoa(imageRequest)}`;
-    const secret = process.env.AWS_IMAGES_SECRET_VALUE;
     assert(secret);
     const signature = crypto.createHmac("sha256", secret).update(path).digest("hex");
-    return `https://${process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME}.cloudfront.net${path}?signature=${signature}`;
+    return `https://${cloudFrontDistributionName}.cloudfront.net${path}?signature=${signature}`;
 }

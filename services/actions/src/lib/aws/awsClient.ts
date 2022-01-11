@@ -5,9 +5,11 @@ import { IAM } from "@aws-sdk/client-iam";
 import { MediaConvert } from "@aws-sdk/client-mediaconvert";
 import { MediaPackage } from "@aws-sdk/client-mediapackage";
 import { S3 } from "@aws-sdk/client-s3";
+import { SecretsManager } from "@aws-sdk/client-secrets-manager";
 import { SNS } from "@aws-sdk/client-sns";
 import { AssumeRoleCommand, STS } from "@aws-sdk/client-sts";
 import { Transcribe } from "@aws-sdk/client-transcribe";
+import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
 import type { Credentials } from "@aws-sdk/types";
 import assert from "assert";
 import { customAlphabet } from "nanoid";
@@ -55,6 +57,7 @@ assert(
     process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN,
     "Missing AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN environment variable"
 );
+assert(process.env.AWS_IMAGES_SECRET_ACCESS_ROLE_ARN, "Missing AWS_IMAGES_SECRET_ACCESS_ROLE_ARN environment variable");
 
 const credentials = fromEnv({
     envKey: "AWS_ACTIONS_USER_ACCESS_KEY_ID",
@@ -109,6 +112,20 @@ const cloudFront = new CloudFront({
 
 const sts = new STS({
     credentials,
+    region,
+});
+
+const secretsManager = new SecretsManager({
+    credentials: fromTemporaryCredentials({
+        masterCredentials: credentials,
+        params: {
+            RoleArn: process.env.AWS_IMAGES_SECRET_ACCESS_ROLE_ARN,
+            DurationSeconds: 3600,
+        },
+        clientConfig: {
+            region,
+        },
+    }),
     region,
 });
 
@@ -275,6 +292,7 @@ export {
     cloudFront as CloudFront,
     sts as STS,
     chime as Chime,
+    secretsManager as SecretsManager,
     initialiseAwsClient,
     shortId,
 };

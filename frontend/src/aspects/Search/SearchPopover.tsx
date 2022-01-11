@@ -65,10 +65,13 @@ export default function SearchPopover({
     useEffect(() => {
         if (!isActive) {
             onClose();
+            if (searchTerm.length === 0) {
+                setNumResults(null);
+            }
         } else if (numResults !== null) {
             onOpen();
         }
-    }, [isActive, numResults, onClose, onOpen]);
+    }, [isActive, numResults, onClose, onOpen, searchTerm.length]);
 
     const location = useLocation();
     useEffect(() => {

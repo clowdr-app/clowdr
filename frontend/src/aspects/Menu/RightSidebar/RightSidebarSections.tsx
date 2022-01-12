@@ -108,8 +108,8 @@ function RightSidebarSections_Inner({
         [currentTab, pageChatId, switchToPageChat, isVisible]
     );
     const presencePanel = useMemo(
-        () => <PresencePanel roomId={roomId} isOpen={currentTab === RightSidebarTabs.Presence} />,
-        [currentTab, roomId]
+        () => <PresencePanel isOpen={currentTab === RightSidebarTabs.Presence} />,
+        [currentTab]
     );
     const raiseHandPanel = useMemo(() => <RaiseHandPanel />, []);
 

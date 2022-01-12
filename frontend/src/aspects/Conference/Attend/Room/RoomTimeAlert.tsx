@@ -24,9 +24,18 @@ export default function RoomTimeAlert({
     const secondsUntilZoomEvent = Math.round((zoomStartsAt - now) / 1000);
     const secondsUntilBroadcastEvent = Math.round((broadcastStartsAt - now) / 1000);
 
+    const isLivestreamStarting = secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180;
+    const isZoomStarting = secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180;
+
+    const showShuffleRoomEndingAlert = secondsUntilShuffleEnds <= 24 * 60 * 60 * 1000;
+    const showVideoChatClosesAlert =
+        showDefaultVideoChatRoom && secondsUntilVideoChatRoomCloses > 0 && secondsUntilVideoChatRoomCloses <= 180;
+    const showLivestreamStartingAlert = !eventIsOngoing && isLivestreamStarting && !showVideoChatClosesAlert;
+    const showZoomStartingAlert = !eventIsOngoing && isZoomStarting && !showVideoChatClosesAlert;
+
     return (
         <>
-            {secondsUntilShuffleEnds <= 24 * 60 * 60 * 1000 ? (
+            {showShuffleRoomEndingAlert ? (
                 <Alert
                     status={secondsUntilShuffleEnds <= 3 ? "error" : secondsUntilShuffleEnds <= 30 ? "warning" : "info"}
                     pos="sticky"
@@ -42,13 +51,16 @@ export default function RoomTimeAlert({
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {showDefaultVideoChatRoom &&
-            secondsUntilVideoChatRoomCloses > 0 &&
-            secondsUntilVideoChatRoomCloses <= 180 ? (
+            {showVideoChatClosesAlert ? (
                 <Alert status="warning" pos="sticky" top={0} zIndex={1000} alignItems="flex-start">
                     <AlertIcon />
                     <AlertDescription as={VStack} w="100%">
                         <Text>
+                            {isLivestreamStarting
+                                ? "A livestream will soon be starting in this room. "
+                                : isZoomStarting
+                                ? "An external event will soon be starting. "
+                                : ""}
                             Video-chat closes in{" "}
                             <chakra.span fontWeight="bold">
                                 {formatRemainingTime(secondsUntilVideoChatRoomCloses, false)}
@@ -57,7 +69,7 @@ export default function RoomTimeAlert({
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !eventIsOngoing ? (
+            {showZoomStartingAlert ? (
                 <Alert status="info" pos="sticky" top={0} zIndex={1000}>
                     <AlertIcon />
                     <AlertDescription>
@@ -66,7 +78,7 @@ export default function RoomTimeAlert({
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 && !eventIsOngoing ? (
+            {showLivestreamStartingAlert ? (
                 <Alert status="info" pos="sticky" top={0} zIndex={1000}>
                     <AlertIcon />
                     <AlertDescription>

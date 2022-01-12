@@ -53,7 +53,7 @@ export default function StreamChooser({
             if (!layoutChooser_isOpen) {
                 saveLayout({ layout: newLayout, createdAt: Date.now() });
             } else {
-                updateLayout({ layout: newLayout, createdAt: Date.now() });
+                updateLayout((old) => ({ layout: newLayout, createdAt: old?.createdAt ?? Date.now() }));
             }
         },
         [layout, layoutChooser_isOpen, positionKey, saveLayout, updateLayout]

@@ -50,7 +50,7 @@ export interface VonageLayout {
                   createdAt: number;
               } | null)
     ) => void;
-    saveLayout: (_layoutData?: { layout: VonageSessionLayoutData; createdAt: number }) => Promise<void>;
+    saveLayout: (layoutData?: { layout: VonageSessionLayoutData; createdAt: number }) => Promise<void>;
     refetchLayout: () => void;
 
     availableStreams: AvailableStream[];

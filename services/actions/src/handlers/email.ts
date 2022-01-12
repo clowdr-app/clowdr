@@ -428,7 +428,7 @@ export async function processEmailWebhook(payloads: Record<string, any>[]): Prom
                     throw new Error("Unrecognised webhook event");
             }
             if (status !== "processed" || !completedIds.has(midspaceEmailId)) {
-                logger.log(
+                logger.info(
                     { midspaceEmailId: "${midspaceEmailId}", status: "${status}", errorMessage: "${errorMessage}" },
                     "Email webhook: Setting email status"
                 );

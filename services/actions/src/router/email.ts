@@ -1,7 +1,8 @@
 import { EventWebhook, EventWebhookHeader } from "@sendgrid/eventwebhook";
 import { text } from "body-parser";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { initSGMail, processEmailWebhook } from "../handlers/email";
+import { UnexpectedServerError } from "../lib/errors";
 import { logger } from "../lib/logger";
 
 export const router = express.Router();
@@ -14,7 +15,7 @@ function verifyRequest(publicKey: string, payload: string | Buffer, signature: s
 
 router.use(text({ type: "application/json" }));
 
-router.post("/webhook", async (req, resp) => {
+router.post("/webhook", async (req: Request, resp: Response, next: NextFunction) => {
     try {
         const sgMailParams = await initSGMail(logger);
         if (sgMailParams) {
@@ -32,7 +33,11 @@ router.post("/webhook", async (req, resp) => {
         } else {
             resp.sendStatus(204);
         }
-    } catch (error) {
-        resp.status(500).send(error);
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            next(err);
+        } else {
+            next(new UnexpectedServerError("Server error", undefined, err));
+        }
     }
 });

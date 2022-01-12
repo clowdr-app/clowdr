@@ -59,7 +59,7 @@ export function BackstageControls({
     return (
         <>
             <LiveIndicator event={event} isConnected={isConnected} hlsUri={hlsUri} />
-            <HStack flexWrap="wrap" w="100%" justifyContent="center" alignItems="flex-end" my={2}>
+            <HStack flexWrap="wrap" w="100%" justifyContent="flex-start" my={2}>
                 {immediateSwitchControls}
             </HStack>
         </>

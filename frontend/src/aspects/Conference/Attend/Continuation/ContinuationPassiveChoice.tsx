@@ -21,7 +21,7 @@ import type { ContinuationChoices_ContinuationFragment } from "../../../../gener
 import { defaultOutline_AsBoxShadow } from "../../../Chakra/Outline";
 import ContinuationChoiceList from "./ContinuationChoiceList";
 
-const closedTopPos = "calc(100vh - 13ex)";
+const closedTopPos = "0vh";
 export default function ContinuationPassiveChoice({
     choices,
     isBackstage,

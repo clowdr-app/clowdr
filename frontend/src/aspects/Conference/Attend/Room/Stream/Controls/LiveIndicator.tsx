@@ -400,7 +400,7 @@ export function LiveIndicator({
         <HStack
             alignItems="flex-start"
             justifyContent="flex-start"
-            mx="auto"
+            mx={0}
             flexWrap="wrap"
             pos="sticky"
             top={0}
@@ -414,13 +414,13 @@ export function LiveIndicator({
                 bgColor={bgColor}
                 alignItems="flex-start"
                 justifyContent="flex-start"
-                mx="auto"
                 flexWrap="wrap"
                 pos="sticky"
                 top={0}
                 zIndex={10000}
                 overflow="visible"
                 gridRowGap={2}
+                mx={0}
             >
                 {liveIndicactor}
                 {infoModal}

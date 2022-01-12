@@ -127,7 +127,7 @@ export function EventVonageRoomInner({
     );
 
     return (
-        <VStack justifyContent="stretch" w="100%">
+        <VStack justifyContent="stretch" w="100%" alignItems="flex-start">
             {!isRaiseHandPreJoin ? <BackstageControls event={event} hlsUri={hlsUri} /> : undefined}
             <Box w="100%">
                 {event.eventVonageSession && sharedRoomContext ? (

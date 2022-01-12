@@ -52,21 +52,19 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
                 <Image
                     src={sponsorLogoUrl}
                     alt={`${roomDetails.item.title} logo`}
-                    ml={5}
                     maxWidth="20rem"
-                    mt={5}
                     bgColor="Room.sponsorLogoBackgroundColor"
                     p={5}
                     borderRadius="md"
                 />
             ) : (
-                <Heading as="h2" textAlign="left" mt={5} ml={5}>
+                <Heading as="h2" textAlign="left">
                     <Twemoji className="twemoji" text={roomDetails.item.title} />
                 </Heading>
             )}
         </>
     ) : (
-        <Heading as="h1" id="page-heading" textAlign="left" mt={5} ml={5}>
+        <Heading as="h1" id="page-heading" textAlign="left">
             {roomDetails.name}
         </Heading>
     );

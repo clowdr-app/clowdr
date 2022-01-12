@@ -667,7 +667,7 @@ function RoomInner({
 
     return (
         <>
-            <HStack width="100%" flexWrap="wrap" alignItems="stretch" pr={2}>
+            <HStack width="100%" flexWrap="wrap" alignItems="stretch">
                 <VStack
                     textAlign="left"
                     flexGrow={2.5}

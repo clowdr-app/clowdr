@@ -90,7 +90,7 @@ export function RoomContent({
     );
 
     return (
-        <Box flexGrow={1} zIndex={1}>
+        <Box flexGrow={1} zIndex={1} px={[2, 2, 4]}>
             <RoomTitle roomDetails={roomDetails} />
 
             {currentRoomEvent ? (

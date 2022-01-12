@@ -59,10 +59,12 @@ function SwagBagsInner({ bags }: { bags: readonly SwagBagFragment[] }): JSX.Elem
     return (
         <>
             {title}
-            <Heading as="h1" id="page-heading" pt={2}>
-                My Conference Swag
+            <Heading as="h1" id="page-heading" pt={2} alignSelf="flex-start" px={[2, 2, 4]}>
+                Conference Swag
             </Heading>
-            <Text>Gifts, goodies and freebies from the conference organisers and sponsors. Enjoy!</Text>
+            <Text alignSelf="flex-start" px={[2, 2, 4]}>
+                Gifts, goodies and freebies from the conference organisers and sponsors. Enjoy!
+            </Text>
             <Flex
                 w="100%"
                 flexWrap="wrap"
@@ -71,6 +73,7 @@ function SwagBagsInner({ bags }: { bags: readonly SwagBagFragment[] }): JSX.Elem
                 flexDir="row"
                 gridColumnGap={[4, 4, 8]}
                 gridRowGap={[4, 4, 8]}
+                px={[2, 2, 4]}
             >
                 {sortedItems.map((bag) => (
                     <BagTile key={bag.id} bag={bag} />

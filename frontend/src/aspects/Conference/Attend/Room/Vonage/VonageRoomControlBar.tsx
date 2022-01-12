@@ -691,7 +691,7 @@ export function VonageRoomControlBar({
                         />
                     </Tooltip>
                 ) : undefined}
-                {vonage.state.type === StateType.Connected && (isBackstage || canControlRecording) ? (
+                {vonage.state.type === StateType.Connected && canControlRecording ? (
                     <Tooltip label={layoutChooser_isOpen ? "Cancel" : "Layout"}>
                         <IconButton
                             size="sm"

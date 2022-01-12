@@ -38152,6 +38152,17 @@ export type GetEventDetailsQuery = {
                     }
                   | null
                   | undefined;
+              readonly eventPeople: ReadonlyArray<{
+                  readonly __typename?: "schedule_EventProgramPerson";
+                  readonly id: any;
+                  readonly personId: any;
+                  readonly roleName: Schedule_EventProgramPersonRole_Enum;
+                  readonly person: {
+                      readonly __typename?: "collection_ProgramPerson";
+                      readonly id: any;
+                      readonly registrantId?: any | null | undefined;
+                  };
+              }>;
           }
         | null
         | undefined;
@@ -38175,6 +38186,17 @@ export type RoomEventDetailsFragment = {
           }
         | null
         | undefined;
+    readonly eventPeople: ReadonlyArray<{
+        readonly __typename?: "schedule_EventProgramPerson";
+        readonly id: any;
+        readonly personId: any;
+        readonly roleName: Schedule_EventProgramPersonRole_Enum;
+        readonly person: {
+            readonly __typename?: "collection_ProgramPerson";
+            readonly id: any;
+            readonly registrantId?: any | null | undefined;
+        };
+    }>;
 };
 
 export type TranscribeGeneratePresignedUrlQueryVariables = Exact<{
@@ -47712,6 +47734,15 @@ export const RoomEventDetailsFragmentDoc = gql`
             id
             sessionId
             eventId
+        }
+        eventPeople {
+            id
+            personId
+            person {
+                id
+                registrantId
+            }
+            roleName
         }
     }
 `;

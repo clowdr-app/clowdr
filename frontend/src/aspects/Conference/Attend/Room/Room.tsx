@@ -17,6 +17,7 @@ import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } fr
 import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
+    Registrant_RegistrantRole_Enum,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
@@ -714,7 +715,8 @@ function RoomInner({
                                     }
                                     eventIsFuture={!currentRoomEvent}
                                     isPresenterOrChairOrOrganizer={
-                                        currentRoomEvent
+                                        currentRegistrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+                                        (currentRoomEvent
                                             ? currentRoomEvent.eventPeople.some(
                                                   (person) =>
                                                       person.person?.registrantId === currentRegistrant.id &&
@@ -736,7 +738,7 @@ function RoomInner({
                                                       itemPerson.roleName.toUpperCase() === "CHAIR" ||
                                                       itemPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
                                                       itemPerson.roleName.toUpperCase() === "ORGANIZER"
-                                              )
+                                              ))
                                     }
                                 />
                             </Box>

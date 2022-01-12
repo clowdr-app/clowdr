@@ -1,9 +1,14 @@
 import { Box, VStack } from "@chakra-ui/react";
 import { gql } from "@urql/core";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import * as portals from "react-reverse-portal";
 import type { RoomEventDetailsFragment } from "../../../../../generated/graphql";
-import { useGetEventDetailsQuery, useGetEventVonageTokenMutation } from "../../../../../generated/graphql";
+import {
+    Registrant_RegistrantRole_Enum,
+    Schedule_EventProgramPersonRole_Enum,
+    useGetEventDetailsQuery,
+    useGetEventVonageTokenMutation,
+} from "../../../../../generated/graphql";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
@@ -28,6 +33,15 @@ gql`
             id
             sessionId
             eventId
+        }
+        eventPeople {
+            id
+            personId
+            person {
+                id
+                registrantId
+            }
+            roleName
         }
     }
 `;
@@ -101,6 +115,17 @@ export function EventVonageRoomInner({
 
     const sharedRoomContext = useSharedRoomContext();
 
+    const isPresenterOrChairOrOrganizer = useMemo(
+        () =>
+            registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+            event.eventPeople.some(
+                (person) =>
+                    person.person?.registrantId === registrant.id &&
+                    person.roleName !== Schedule_EventProgramPersonRole_Enum.Participant
+            ),
+        [event.eventPeople, registrant.conferenceRole, registrant.id]
+    );
+
     return (
         <VStack justifyContent="stretch" w="100%">
             {!isRaiseHandPreJoin ? <BackstageControls event={event} hlsUri={hlsUri} /> : undefined}
@@ -118,6 +143,8 @@ export function EventVonageRoomInner({
                         requireMicrophoneOrCamera={isRaiseHandPreJoin}
                         completeJoinRef={completeJoinRef}
                         onLeave={onLeave}
+                        canControlRecording={isPresenterOrChairOrOrganizer}
+                        isPresenterOrChairOrOrganizer={isPresenterOrChairOrOrganizer}
                     />
                 ) : (
                     <>No room session available.</>

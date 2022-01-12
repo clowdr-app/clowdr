@@ -247,7 +247,7 @@ export default function LeftMenu({
                                     px={0}
                                     borderRadius={0}
                                     colorScheme={colorScheme}
-                                    as={ReactLink}
+                                    as={navState.disabled ? undefined : ReactLink}
                                     to={`${conferencePath}/swag`}
                                     mb={1}
                                     showLabel={isExpanded}
@@ -280,7 +280,7 @@ export default function LeftMenu({
                             icon="cog"
                             borderRadius={0}
                             colorScheme={colorScheme}
-                            as={ReactLink}
+                            as={navState.disabled ? undefined : ReactLink}
                             to={`${conferencePath}/manage`}
                             mb={1}
                             showLabel={isExpanded}
@@ -293,7 +293,7 @@ export default function LeftMenu({
                         icon="comment-medical"
                         borderTopRadius={0}
                         colorScheme={colorScheme}
-                        as={Link}
+                        as={navState.disabled ? undefined : Link}
                         href="https://form.asana.com?k=TOpJbWqoZ36fWafSStJ9dQ&d=1198973227684402"
                         showLabel={isExpanded}
                         textDecoration="none"

@@ -1,4 +1,15 @@
-import { Box, Center, Flex, Heading, Text, Tooltip, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Center,
+    Flex,
+    Heading,
+    Text,
+    Tooltip,
+    useColorMode,
+    useColorModeValue,
+    useToken,
+} from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
 import { DateTime } from "luxon";
@@ -15,12 +26,16 @@ import type {
     Schedule_SelectSummariesQuery,
     Schedule_TagFragment,
 } from "../../../../../generated/graphql";
-import { useSchedule_SelectSummariesQuery } from "../../../../../generated/graphql";
+import {
+    useSchedule_SelectSummariesQuery,
+    useStarredEvents_SelectEventIdsQuery,
+} from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { useTitle } from "../../../../Hooks/useTitle";
 import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
+import { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import type { TimelineEvent } from "./DayList";
 import DayList from "./DayList";
 import DownloadCalendarButton from "./DownloadCalendarButton";
@@ -141,6 +156,15 @@ gql`
         }
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...Schedule_Tag
+        }
+    }
+
+    query StarredEvents_SelectEventIds($registrantId: uuid!) {
+        schedule_StarredEvent(where: { registrantId: { _eq: $registrantId } }) {
+            ...StarredEvent
+        }
+        schedule_Event(where: { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
+            id
         }
     }
 `;
@@ -474,7 +498,7 @@ function ScheduleFrame({
 
 export function ScheduleInner({
     rooms,
-    events: rawEvents,
+    events: inputEvents,
     items,
     people,
     tags,
@@ -489,6 +513,26 @@ export function ScheduleInner({
     titleStr?: string;
     noEventsText?: string;
 }): JSX.Element {
+    const registrant = useMaybeCurrentRegistrant();
+    const [filterToStarredEvents, setFilterToStarredEvents] = useState<boolean>(false);
+    const [starredEventsResponse] = useStarredEvents_SelectEventIdsQuery({
+        variables: {
+            registrantId: registrant?.id,
+        },
+        pause: !registrant || !filterToStarredEvents,
+    });
+    const rawEvents = useMemo(
+        () =>
+            filterToStarredEvents && starredEventsResponse.data
+                ? inputEvents.filter(
+                      (x) =>
+                          starredEventsResponse.data?.schedule_Event.some((y) => x.id === y.id) ||
+                          starredEventsResponse.data?.schedule_StarredEvent.some((y) => x.id === y.eventId)
+                  )
+                : inputEvents,
+        [filterToStarredEvents, inputEvents, starredEventsResponse.data]
+    );
+
     const eventsByRoom = useMemo(
         () =>
             R.groupBy<Schedule_EventSummaryExt>(
@@ -676,15 +720,6 @@ export function ScheduleInner({
             overflow="hidden"
         >
             <Flex w="100%" direction="row" justify="flex-start" alignItems="stretch" flexWrap="wrap" px={2}>
-                {dayList}
-                <Tooltip label="Download the calendar and import it to your preferred calendar app to receive reminders.">
-                    <DownloadCalendarButton
-                        events={eventsWithItems}
-                        mr={2}
-                        mb={2}
-                        calendarName={titleStr ?? "Complete Schedule"}
-                    />
-                </Tooltip>
                 <Center
                     fontSize="sm"
                     mb={2}
@@ -693,10 +728,39 @@ export function ScheduleInner({
                     borderColor={grey}
                     borderRadius={5}
                     p={1}
+                    mr={2}
                 >
                     <FAIcon icon="clock" iconStyle="s" mr={2} />
                     <Text as="span">Timezone: {localTimeZone}</Text>
                 </Center>
+                {dayList}
+                <Button
+                    onClick={() => {
+                        setFilterToStarredEvents((old) => !old);
+                    }}
+                    colorScheme={filterToStarredEvents ? "SecondaryActionButton" : "PrimaryActionButton"}
+                    size="sm"
+                    mr={2}
+                >
+                    <FAIcon iconStyle={filterToStarredEvents ? "s" : "r"} icon="star" />
+                    &nbsp;&nbsp;{filterToStarredEvents ? "Show full schedule" : "Show my schedule"}
+                </Button>
+                <Tooltip
+                    label={
+                        filterToStarredEvents
+                            ? "Download the calendar and import it to your preferred calendar app to receive reminders."
+                            : "Filter to your schedule to download the calendar."
+                    }
+                >
+                    <div>
+                        <DownloadCalendarButton
+                            events={eventsWithItems}
+                            mb={2}
+                            calendarName={titleStr ?? "My Schedule"}
+                            isDisabled={!filterToStarredEvents}
+                        />
+                    </div>
+                </Tooltip>
             </Flex>
             <Box
                 cursor="pointer"

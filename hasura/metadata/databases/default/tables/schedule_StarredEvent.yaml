@@ -14,6 +14,27 @@ object_relationships:
       remote_table:
         name: Registrant
         schema: registrant
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - registrantId:
+          _in: X-Hasura-Registrant-Ids
+      - event:
+          _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - _or:
+            - subconferenceId:
+                _is_null: true
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+    columns:
+    - eventId
+    - id
+    - registrantId
+  role: attendee
 select_permissions:
 - permission:
     columns:
@@ -60,3 +81,9 @@ select_permissions:
           - subconferenceId:
               _in: X-Hasura-Subconference-Ids
   role: subconference-organizer
+delete_permissions:
+- permission:
+    filter:
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: attendee

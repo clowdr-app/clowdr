@@ -140,7 +140,7 @@ function StarEventButtonInner({
                     }
                 }}
                 variant="ghost"
-                size="xs"
+                size="sm"
                 m={0}
                 p={0}
                 w="auto"
@@ -153,6 +153,8 @@ function StarEventButtonInner({
                 _hover={{
                     bgColor: "gold",
                 }}
+                fontWeight="bold"
+                flex="0 0 auto"
             >
                 <FAIcon iconStyle="s" icon="star" color="gold" aria-hidden />
             </Button>
@@ -173,7 +175,7 @@ function StarEventButtonInner({
                     });
                 }}
                 variant="ghost"
-                size="xs"
+                size="sm"
                 m={0}
                 p={0}
                 w="auto"
@@ -186,6 +188,8 @@ function StarEventButtonInner({
                 _hover={{
                     bgColor: "gold",
                 }}
+                fontWeight="bold"
+                flex="0 0 auto"
             >
                 <FAIcon iconStyle="r" icon="star" color="gold" aria-hidden />
             </Button>

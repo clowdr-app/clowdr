@@ -229,15 +229,16 @@ export default function ExhibitionsPage(): JSX.Element {
                 />
             ) : (
                 <>
-                    <Heading as="h1" id="page-heading" py={6}>
+                    <Heading as="h1" id="page-heading" mt={[2, 2, 4]} px={[2, 2, 4]} alignSelf="flex-start">
                         {conference.visibleExhibitionsLabel[0]?.value ?? "Exhibitions"}
                     </Heading>
                     <Grid
                         templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
-                        gap={4}
+                        gap={[2, 2, 4]}
                         w="100%"
                         h="auto"
                         overflow="hidden"
+                        px={[2, 2, 4]}
                     >
                         {sortedExhibitions.map((exhibition) => (
                             <ExhibitionTile key={exhibition.id} exhibition={exhibition} />

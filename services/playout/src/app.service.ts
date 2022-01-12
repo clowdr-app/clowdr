@@ -57,7 +57,6 @@ export class AppService {
         name: "SyncChannelStacks",
         payload: {},
     })
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleSyncChannelStacks(_evt: any): void {
         this.logger.info({ event: "SyncChannelStacks", data: _evt });
         this.channelStackSync
@@ -70,7 +69,6 @@ export class AppService {
         name: "SyncChannels",
         payload: {},
     })
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleSyncChannels(_evt: any): void {
         this.logger.info({ event: "SyncChannels", data: _evt });
         this.scheduleSync

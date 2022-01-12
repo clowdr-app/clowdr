@@ -31,6 +31,9 @@ const SearchPage = React.lazy(() => import("../Search/SearchPage"));
 const SponsorsPage = React.lazy(() =>
     import("./Attend/Rooms/V2/SponsorBooths").then((x) => ({ default: x.SponsorsPage }))
 );
+const SocialisePage = React.lazy(() =>
+    import("./Attend/Rooms/V2/SocialiseModal").then((x) => ({ default: x.SocialisePage }))
+);
 
 export default function ConferenceRoutes(): JSX.Element {
     const conference = useConference();
@@ -93,6 +96,9 @@ export default function ConferenceRoutes(): JSX.Element {
 
                 <Route path={`${path}/sponsors`}>
                     <SponsorsPage />
+                </Route>
+                <Route path={`${path}/socialise`}>
+                    <SocialisePage />
                 </Route>
 
                 <Route path={`${path}/registrants`}>

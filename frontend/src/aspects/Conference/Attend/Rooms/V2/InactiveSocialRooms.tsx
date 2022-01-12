@@ -34,7 +34,7 @@ gql`
     }
 `;
 
-export default function InactiveSocialRooms(): JSX.Element {
+export default function InactiveSocialRooms({ alignLeft }: { alignLeft?: boolean }): JSX.Element {
     const conference = useConference();
     const context = useMemo(
         () =>
@@ -60,15 +60,23 @@ export default function InactiveSocialRooms(): JSX.Element {
         return <Spinner label="Loading rooms" />;
     }
 
-    return <InactiveSocialRoomsInner roomParticipants={roomParticipants} rooms={result.data?.socialRooms ?? []} />;
+    return (
+        <InactiveSocialRoomsInner
+            roomParticipants={roomParticipants}
+            rooms={result.data?.socialRooms ?? []}
+            alignLeft={alignLeft}
+        />
+    );
 }
 
 function InactiveSocialRoomsInner({
     rooms,
     roomParticipants,
+    alignLeft,
 }: {
     rooms: readonly SocialRoomFragment[];
     roomParticipants: readonly RoomParticipantDetailsFragment[];
+    alignLeft?: boolean;
 }): JSX.Element {
     const activeRoomIds = useMemo(() => R.uniq(roomParticipants.map((x) => x.roomId)), [roomParticipants]);
     const sortedRooms = useMemo(
@@ -83,5 +91,5 @@ function InactiveSocialRoomsInner({
         [rooms, activeRoomIds]
     );
 
-    return <RoomSummary rooms={sortedRooms} />;
+    return <RoomSummary rooms={sortedRooms} alignLeft={alignLeft} />;
 }

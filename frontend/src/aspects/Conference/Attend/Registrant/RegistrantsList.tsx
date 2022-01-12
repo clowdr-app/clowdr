@@ -130,6 +130,7 @@ export default function RegistrantsList({
                 spacing={[2, 2, 4]}
                 maxW="5xl"
                 overflow="auto"
+                w="100%"
             >
                 {registrantsEls}
                 {moreAvailable ? (

@@ -84,7 +84,7 @@ export default function DayList({
     );
 
     return (
-        <HStack zIndex={1000}>
+        <HStack zIndex={1000} mb={2} mr={2}>
             {scrollToNow ? (
                 <Button
                     m={0}
@@ -100,14 +100,7 @@ export default function DayList({
                 </Button>
             ) : undefined}
             <Menu>
-                <MenuButton
-                    as={Button}
-                    size="sm"
-                    mb={2}
-                    mr={2}
-                    colorScheme="PrimaryActionButton"
-                    rightIcon={<ChevronDownIcon />}
-                >
+                <MenuButton as={Button} size="sm" colorScheme="PrimaryActionButton" rightIcon={<ChevronDownIcon />}>
                     Jump to day
                 </MenuButton>
                 <MenuList maxH="30vh" overflow="auto">

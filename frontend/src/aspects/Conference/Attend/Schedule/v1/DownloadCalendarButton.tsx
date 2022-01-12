@@ -8,19 +8,22 @@ import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { useConference } from "../../../useConference";
 import type { TimelineEvent } from "./DayList";
 
-export default function DownloadCalendarButton({
-    events,
-    calendarName,
-    ...props
-}: {
+type Props = {
     events: () => ReadonlyArray<TimelineEvent>;
     calendarName: string;
-} & ButtonProps): JSX.Element {
+} & ButtonProps;
+
+const DownloadCalendarButton = React.forwardRef<HTMLButtonElement, Props>(function DownloadCalendarButton(
+    { events, calendarName, ...props }: Props,
+    ref
+): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
     const toast = useToast();
     return (
         <Button
+            ref={ref}
+            size="sm"
             aria-label="Download calendar file"
             colorScheme="PrimaryActionButton"
             {...props}
@@ -97,4 +100,6 @@ export default function DownloadCalendarButton({
             Download calendar
         </Button>
     );
-}
+});
+
+export default DownloadCalendarButton;

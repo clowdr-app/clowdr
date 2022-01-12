@@ -207,46 +207,48 @@ export default function ScheduleModal({
             onClose={onClose}
         >
             <ModalOverlay />
-            <ModalContent minH="70vh" overflow="hidden">
+            <ModalContent h="100vh" overflow="hidden">
                 <ModalCloseButton ref={closeRef} />
-                <ModalBody display="flex" justifyContent="center" overflow="hidden">
+                <ModalBody display="flex" justifyContent="center" overflow="hidden" p={0}>
                     <Tabs
                         isLazy
                         w="100%"
                         display="flex"
                         flexDir="column"
-                        variant="enclosed-colored"
+                        variant="solid-rounded"
                         colorScheme="PrimaryActionButton"
                         index={selectedTabIndex}
                         onChange={setSelectedTabFromIndex}
+                        size="sm"
+                        pt={1}
                     >
                         <TabList justifyContent="center">
                             {anyHappeningSoon ? (
-                                <Tab>
+                                <Tab alignItems="center">
                                     <FAIcon iconStyle="s" icon="clock" />
                                     &nbsp;&nbsp;Happening soon
                                 </Tab>
                             ) : undefined}
-                            <Tab>
+                            <Tab alignItems="center">
                                 <FAIcon iconStyle="s" icon="tags" />
                                 &nbsp;&nbsp;Browse content
                             </Tab>
-                            <Tab>
+                            <Tab alignItems="center">
                                 <FAIcon iconStyle="s" icon="puzzle-piece" />
                                 &nbsp;&nbsp;{conference.visibleExhibitionsLabel[0]?.value ?? "Exhibition"}s
                             </Tab>
                             {anySponsors ? (
-                                <Tab>
+                                <Tab alignItems="center">
                                     <FAIcon iconStyle="s" icon="star" />
                                     &nbsp;&nbsp;{conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
                                 </Tab>
                             ) : undefined}
-                            <Tab>
+                            <Tab alignItems="center">
                                 <FAIcon iconStyle="s" icon="calendar" />
                                 &nbsp;&nbsp;Full schedule
                             </Tab>
                             {enableScheduleViewV2 ? (
-                                <Tab>
+                                <Tab alignItems="center">
                                     <FAIcon iconStyle="s" icon="calendar" />
                                     &nbsp;&nbsp;Schedule V2: Early preview
                                 </Tab>
@@ -269,7 +271,15 @@ export default function ScheduleModal({
                                     {sponsors}
                                 </TabPanel>
                             ) : undefined}
-                            <TabPanel w="100%" h="100%" display="flex" flexDir="column" alignItems="center">
+                            <TabPanel
+                                w="100%"
+                                h="100%"
+                                display="flex"
+                                flexDir="column"
+                                alignItems="center"
+                                p={0}
+                                pt={2}
+                            >
                                 <ScheduleFetchWrapper />
                             </TabPanel>
                             {enableScheduleViewV2 ? (

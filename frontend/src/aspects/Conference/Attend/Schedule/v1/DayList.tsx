@@ -94,12 +94,20 @@ export default function DayList({
                         scrollToNow?.f();
                     }}
                     aria-label="Scroll schedule to now"
+                    size="sm"
                 >
                     Now
                 </Button>
             ) : undefined}
             <Menu>
-                <MenuButton as={Button} colorScheme="PrimaryActionButton" rightIcon={<ChevronDownIcon />}>
+                <MenuButton
+                    as={Button}
+                    size="sm"
+                    mb={2}
+                    mr={2}
+                    colorScheme="PrimaryActionButton"
+                    rightIcon={<ChevronDownIcon />}
+                >
                     Jump to day
                 </MenuButton>
                 <MenuList maxH="30vh" overflow="auto">

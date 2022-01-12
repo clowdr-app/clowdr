@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
+import { Box, Center, Flex, Heading, Text, Tooltip, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
 import { DateTime } from "luxon";
@@ -658,28 +658,46 @@ export function ScheduleInner({
         [rawEvents, items, people]
     );
 
+    const grey = useColorModeValue("gray.200", "gray.600");
+    const localTimeZone = useMemo(() => {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }, []);
+
     /*Plus 30 to the width to account for scrollbars!*/
     return (
-        <Flex h="100%" w="100%" minW="100%" maxW={timeBarWidth + maxParallelRooms * roomColWidth + 30} flexDir="column">
-            <Flex w="100%" direction="row" justify="center" alignItems="center" flexWrap="wrap">
-                <Heading as="h1" id="page-heading" mx={4} mb={2}>
-                    {titleStr ?? "Schedule"}
-                </Heading>
+        <Flex
+            h="100%"
+            w="100%"
+            minW="100%"
+            maxW={timeBarWidth + maxParallelRooms * roomColWidth + 30}
+            flexDir="column"
+            flex="0 1 100%"
+            mt={2}
+            overflow="hidden"
+        >
+            <Flex w="100%" direction="row" justify="flex-start" alignItems="stretch" flexWrap="wrap" px={2}>
                 {dayList}
-                <DownloadCalendarButton
-                    events={eventsWithItems}
-                    ml={2}
-                    calendarName={titleStr ?? "Complete Schedule"}
-                />
+                <Tooltip label="Download the calendar and import it to your preferred calendar app to receive reminders.">
+                    <DownloadCalendarButton
+                        events={eventsWithItems}
+                        mr={2}
+                        mb={2}
+                        calendarName={titleStr ?? "Complete Schedule"}
+                    />
+                </Tooltip>
+                <Center
+                    fontSize="sm"
+                    mb={2}
+                    borderStyle="solid"
+                    borderWidth={1}
+                    borderColor={grey}
+                    borderRadius={5}
+                    p={1}
+                >
+                    <FAIcon icon="clock" iconStyle="s" mr={2} />
+                    <Text as="span">Timezone: {localTimeZone}</Text>
+                </Center>
             </Flex>
-            <Text w="auto" textAlign="left" p={0} my={1}>
-                <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
-                Dates and times are shown in your local timezone.
-            </Text>
-            <Text w="auto" textAlign="left" p={0} my={1}>
-                <FAIcon iconStyle="s" icon="bell" mr={2} mb={1} />
-                Download the calendar and import it to your preferred calendar app to receive reminders.
-            </Text>
             <Box
                 cursor="pointer"
                 as={ScrollContainer}
@@ -745,7 +763,20 @@ export default function Schedule(): JSX.Element {
     return (
         <RequireRole attendeeRole>
             {title}
-            <ScheduleFetchWrapper />
+            <Flex pos="absolute" top={0} left={0} w="100%" h="100%" flexDir="column" overflow="hidden">
+                <Heading
+                    as="h1"
+                    id="page-heading"
+                    textAlign="left"
+                    alignSelf="flex-start"
+                    px={2}
+                    pt={2}
+                    flex="0 0 auto"
+                >
+                    Schedule
+                </Heading>
+                <ScheduleFetchWrapper />
+            </Flex>
         </RequireRole>
     );
 }

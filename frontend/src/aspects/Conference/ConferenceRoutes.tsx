@@ -28,6 +28,9 @@ const ChatRedirectPage = React.lazy(() => import("../Chat/ChatRedirectPage"));
 const WaitingPage = React.lazy(() => import("../ShuffleRooms/WaitingPage"));
 const PageNotFound = React.lazy(() => import("../Errors/PageNotFound"));
 const SearchPage = React.lazy(() => import("../Search/SearchPage"));
+const SponsorsPage = React.lazy(() =>
+    import("./Attend/Rooms/V2/SponsorBooths").then((x) => ({ default: x.SponsorsPage }))
+);
 
 export default function ConferenceRoutes(): JSX.Element {
     const conference = useConference();
@@ -86,6 +89,10 @@ export default function ConferenceRoutes(): JSX.Element {
 
                 <Route path={`${path}/rooms`}>
                     <RoomListPageV1 />
+                </Route>
+
+                <Route path={`${path}/sponsors`}>
+                    <SponsorsPage />
                 </Route>
 
                 <Route path={`${path}/registrants`}>

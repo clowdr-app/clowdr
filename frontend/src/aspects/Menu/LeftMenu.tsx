@@ -187,7 +187,7 @@ export default function LeftMenu({
                         showLabel={isExpanded}
                         isDisabled={navState.disabled}
                     />
-                    {conference.forceSponsorsMenuLink?.[0]?.value ? (
+                    {conference.forceSponsorsMenuLink?.[0]?.value || narrowView ? (
                         <MenuButton
                             label={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
                             iconStyle="s"

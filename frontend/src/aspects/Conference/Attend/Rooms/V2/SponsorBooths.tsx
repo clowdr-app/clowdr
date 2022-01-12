@@ -1,9 +1,10 @@
-import { Spinner } from "@chakra-ui/react";
+import { Heading, Spinner } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
 import type { SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
 import { useGetSponsorBoothsQuery } from "../../../../../generated/graphql";
+import { useTitle } from "../../../../Hooks/useTitle";
 import { maybeCompare } from "../../../../Utils/maybeCompare";
 import { useConference } from "../../../useConference";
 import SponsorsSummary from "./SponsorsSummary";
@@ -53,7 +54,13 @@ gql`
     }
 `;
 
-export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (value: boolean) => void }): JSX.Element {
+export default function SponsorBooths({
+    setAnySponsors,
+    leftAlign,
+}: {
+    setAnySponsors?: (value: boolean) => void;
+    leftAlign?: boolean;
+}): JSX.Element {
     const conference = useConference();
     const [result] = useGetSponsorBoothsQuery({
         variables: {
@@ -69,10 +76,16 @@ export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (va
         return <Spinner label="Loading booths" />;
     }
 
-    return <SponsorBoothsInner sponsors={result.data?.content_Item ?? []} />;
+    return <SponsorBoothsInner sponsors={result.data?.content_Item ?? []} leftAlign={leftAlign} />;
 }
 
-export function SponsorBoothsInner({ sponsors }: { sponsors: readonly SponsorBoothsList_ItemFragment[] }): JSX.Element {
+export function SponsorBoothsInner({
+    sponsors,
+    leftAlign,
+}: {
+    sponsors: readonly SponsorBoothsList_ItemFragment[];
+    leftAlign?: boolean;
+}): JSX.Element {
     const sortedSponsors = useMemo(
         () =>
             R.sortWith<SponsorBoothsList_ItemFragment>(
@@ -85,5 +98,19 @@ export function SponsorBoothsInner({ sponsors }: { sponsors: readonly SponsorBoo
         [sponsors]
     );
 
-    return <SponsorsSummary sponsors={sortedSponsors} />;
+    return <SponsorsSummary sponsors={sortedSponsors} leftAlign={leftAlign} />;
+}
+
+export function SponsorsPage(): JSX.Element {
+    const conference = useConference();
+    const title = useTitle(conference.sponsorsLabel[0]?.value ?? "Sponsors");
+    return (
+        <>
+            {title}
+            <Heading as="h1" id="page-heading" mt={[2, 2, 4]} px={[2, 2, 4]} alignSelf="flex-start">
+                {conference.sponsorsLabel[0]?.value ?? "Sponsors"}
+            </Heading>
+            <SponsorBooths leftAlign />
+        </>
+    );
 }

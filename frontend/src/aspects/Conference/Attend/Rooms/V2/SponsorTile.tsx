@@ -7,7 +7,6 @@ import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import type { SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
-import FAIcon from "../../../../Chakra/FAIcon";
 import { defaultOutline_AsBoxShadow } from "../../../../Chakra/Outline";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import RoomPresenceGrid from "./RoomPresenceGrid";
@@ -99,7 +98,7 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
                     </AspectRatio>
                 )}
             </Tooltip>
-            <FAIcon iconStyle="s" icon="star" color="gold" pos="absolute" top={0} left={2} fontSize="xl" />
+            {/* <FAIcon iconStyle="s" icon="star" color="gold" pos="absolute" top={0} left={2} fontSize="xl" /> */}
             {sponsor.room ? <RoomPresenceGrid roomId={sponsor.room.id} noGapFill /> : undefined}
         </Button>
     );

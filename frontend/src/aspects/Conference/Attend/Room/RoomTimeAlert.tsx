@@ -42,7 +42,9 @@ export default function RoomTimeAlert({
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {showDefaultVideoChatRoom && secondsUntilVideoChatRoomCloses <= 180 ? (
+            {showDefaultVideoChatRoom &&
+            secondsUntilVideoChatRoomCloses > 0 &&
+            secondsUntilVideoChatRoomCloses <= 180 ? (
                 <Alert status="warning" pos="sticky" top={0} zIndex={1000} alignItems="flex-start">
                     <AlertIcon />
                     <AlertDescription as={VStack} w="100%">

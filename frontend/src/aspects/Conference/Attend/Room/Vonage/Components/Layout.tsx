@@ -352,15 +352,19 @@ export default function Layout({
                         top={idx * 25 + "%"}
                         left="0px"
                         pos="absolute"
-                        key={viewport.streamId ?? viewport.connectionId}
+                        key={viewport?.streamId ?? viewport?.connectionId ?? "position" + idx}
                     >
                         <Box>
-                            <portals.OutPortal
-                                node={viewport.component}
-                                enableVideo={true}
-                                resolution="high"
-                                framerate={30}
-                            />
+                            {viewport ? (
+                                <portals.OutPortal
+                                    node={viewport.component}
+                                    enableVideo={true}
+                                    resolution="high"
+                                    framerate={30}
+                                />
+                            ) : (
+                                <CameraPlaceholderImage />
+                            )}
                             {allowedToControlLayout ? (
                                 <StreamChooser
                                     positionKey={"position" + (idx + 2)}
@@ -440,15 +444,19 @@ export default function Layout({
                         top="75%"
                         left={(100 - 4 * 14) / 2 + idx * 14 + "%"}
                         pos="absolute"
-                        key={viewport.streamId ?? viewport.connectionId}
+                        key={viewport?.streamId ?? viewport?.connectionId ?? "position" + idx}
                     >
                         <Box>
-                            <portals.OutPortal
-                                node={viewport.component}
-                                enableVideo={true}
-                                resolution="high"
-                                framerate={30}
-                            />
+                            {viewport ? (
+                                <portals.OutPortal
+                                    node={viewport.component}
+                                    enableVideo={true}
+                                    resolution="high"
+                                    framerate={30}
+                                />
+                            ) : (
+                                <CameraPlaceholderImage />
+                            )}
                             {allowedToControlLayout ? (
                                 <StreamChooser
                                     positionKey={"position" + (idx + 2)}
@@ -528,15 +536,19 @@ export default function Layout({
                         top={idx * 25 + "%"}
                         left="0px"
                         pos="absolute"
-                        key={viewport.streamId ?? viewport.connectionId}
+                        key={viewport?.streamId ?? viewport?.connectionId ?? "position" + idx}
                     >
                         <Box>
-                            <portals.OutPortal
-                                node={viewport.component}
-                                enableVideo={true}
-                                resolution="high"
-                                framerate={30}
-                            />
+                            {viewport ? (
+                                <portals.OutPortal
+                                    node={viewport.component}
+                                    enableVideo={true}
+                                    resolution="high"
+                                    framerate={30}
+                                />
+                            ) : (
+                                <CameraPlaceholderImage />
+                            )}
                             {allowedToControlLayout ? (
                                 <StreamChooser
                                     positionKey={"position" + (idx + 3)}
@@ -647,15 +659,19 @@ export default function Layout({
                         top="75%"
                         left={(100 - 4 * 14) / 2 + idx * 14 + "%"}
                         pos="absolute"
-                        key={viewport.streamId ?? viewport.connectionId}
+                        key={viewport?.streamId ?? viewport?.connectionId ?? "position" + idx}
                     >
                         <Box>
-                            <portals.OutPortal
-                                node={viewport.component}
-                                enableVideo={true}
-                                resolution="high"
-                                framerate={30}
-                            />
+                            {viewport ? (
+                                <portals.OutPortal
+                                    node={viewport.component}
+                                    enableVideo={true}
+                                    resolution="high"
+                                    framerate={30}
+                                />
+                            ) : (
+                                <CameraPlaceholderImage />
+                            )}
                             {allowedToControlLayout ? (
                                 <StreamChooser
                                     positionKey={"position" + (idx + 3)}
@@ -817,29 +833,38 @@ export default function Layout({
     }, [streamActivities, visualLayout.overflowViewports, isPresentationLayout]);
     usePolling(computeEnabledStreamIds, 1500);
     const overflowArea = useMemo(() => {
-        const cameraFeeds = visualLayout.overflowViewports.filter((x) => x.type === "camera");
+        const cameraFeeds =
+            visualLayout.type !== VisualLayoutType.BestFit_NoScreenshare &&
+            visualLayout.type !== VisualLayoutType.BestFit_Screenshare_HorizontalSplit &&
+            visualLayout.type !== VisualLayoutType.BestFit_Screenshare_VerticalSplit
+                ? visualLayout.overflowViewports
+                : visualLayout.overflowViewports.filter((x) => x.type === "camera");
+        const screenFeeds =
+            visualLayout.type !== VisualLayoutType.BestFit_NoScreenshare &&
+            visualLayout.type !== VisualLayoutType.BestFit_Screenshare_HorizontalSplit &&
+            visualLayout.type !== VisualLayoutType.BestFit_Screenshare_VerticalSplit
+                ? []
+                : visualLayout.overflowViewports.filter((x) => x.type === "screen");
         return visualLayout.overflowViewports.length > 0 ? (
             <SimpleGrid columns={overflowAreaColumns} gap={2} mt={2}>
-                {visualLayout.overflowViewports
-                    .filter((x) => x.type === "screen")
-                    .map((viewport) => (
-                        <GridItem
-                            as={AspectRatio}
-                            ratio={16 / 9}
-                            maxH="calc(90vh - 350px)"
-                            key={viewport.streamId ?? viewport.connectionId}
-                            pos="relative"
-                            width="100%"
-                            colSpan={overflowAreaColumns}
-                        >
-                            <portals.OutPortal
-                                node={viewport.component}
-                                enableVideo={true}
-                                resolution="high"
-                                framerate={30}
-                            />
-                        </GridItem>
-                    ))}
+                {screenFeeds.map((viewport) => (
+                    <GridItem
+                        as={AspectRatio}
+                        ratio={16 / 9}
+                        maxH="calc(90vh - 350px)"
+                        key={viewport.streamId ?? viewport.connectionId}
+                        pos="relative"
+                        width="100%"
+                        colSpan={overflowAreaColumns}
+                    >
+                        <portals.OutPortal
+                            node={viewport.component}
+                            enableVideo={true}
+                            resolution="high"
+                            framerate={30}
+                        />
+                    </GridItem>
+                ))}
                 {cameraFeeds.map((viewport) => (
                     <GridItem
                         as={AspectRatio}
@@ -854,7 +879,8 @@ export default function Layout({
                                 !!viewport.streamId &&
                                 (viewport.isSelf ||
                                     cameraFeeds.length <= 1 ||
-                                    enabledStreamIds.includes(viewport.streamId))
+                                    enabledStreamIds.includes(viewport.streamId) ||
+                                    viewport.type === "screen")
                             }
                             resolution={
                                 isPresentationLayout || enabledStreamIds.length > 10
@@ -875,7 +901,13 @@ export default function Layout({
                 ))}
             </SimpleGrid>
         ) : undefined;
-    }, [overflowAreaColumns, visualLayout.overflowViewports, isPresentationLayout, enabledStreamIds]);
+    }, [
+        visualLayout.type,
+        visualLayout.overflowViewports,
+        overflowAreaColumns,
+        enabledStreamIds,
+        isPresentationLayout,
+    ]);
 
     return (
         <Box w="100%" h="auto" display="block" ref={containerRef} overflow="hidden">

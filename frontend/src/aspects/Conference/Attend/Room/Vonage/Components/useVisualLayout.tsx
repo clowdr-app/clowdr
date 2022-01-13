@@ -183,7 +183,7 @@ export default function useVisualLayout(
             }
             case VonageSessionLayoutType.Fitted4: {
                 let largeAreaViewport: Viewport | undefined;
-                const sideAreaViewports: Viewport[] = [];
+                const sideAreaViewports: (Viewport | undefined)[] = [];
                 if (layout.position1) {
                     if ("streamId" in layout.position1) {
                         const streamId = layout.position1.streamId;
@@ -215,7 +215,11 @@ export default function useVisualLayout(
                             !sideAreaViewports.includes(tempViewport)
                         ) {
                             sideAreaViewports.push(tempViewport);
+                        } else {
+                            sideAreaViewports.push(undefined);
                         }
+                    } else {
+                        sideAreaViewports.push(undefined);
                     }
                 }
 
@@ -238,7 +242,7 @@ export default function useVisualLayout(
             case VonageSessionLayoutType.DualScreen: {
                 let largeAreaViewport1: Viewport | undefined;
                 let largeAreaViewport2: Viewport | undefined;
-                const sideAreaViewports: Viewport[] = [];
+                const sideAreaViewports: (Viewport | undefined)[] = [];
                 if (layout.position1) {
                     if ("streamId" in layout.position1) {
                         const streamId = layout.position1.streamId;
@@ -282,7 +286,11 @@ export default function useVisualLayout(
                             !sideAreaViewports.includes(tempViewport)
                         ) {
                             sideAreaViewports.push(tempViewport);
+                        } else {
+                            sideAreaViewports.push(undefined);
                         }
+                    } else {
+                        sideAreaViewports.push(undefined);
                     }
                 }
 

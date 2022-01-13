@@ -321,7 +321,7 @@ function VonageRoomInner({
         const result: AvailableStream[] = [];
         if (vonage.state.type === StateType.Connected) {
             if (vonage.state.session?.connection) {
-                if (screen) {
+                if (screen?.stream && screen.stream.hasVideo) {
                     result.push({
                         connectionId: vonage.state.session.connection.connectionId,
                         streamId: screen.stream?.streamId,
@@ -330,59 +330,69 @@ function VonageRoomInner({
                     });
                 }
 
-                result.push({
-                    connectionId: vonage.state.session.connection.connectionId,
-                    streamId: camera?.stream?.streamId,
-                    type: "camera",
-                    registrantName: registrant.displayName,
-                });
+                if (camera?.stream && camera.stream.hasVideo) {
+                    result.push({
+                        connectionId: vonage.state.session.connection.connectionId,
+                        streamId: camera?.stream?.streamId,
+                        type: "camera",
+                        registrantName: registrant.displayName,
+                    });
+                }
             }
         }
         for (const stream of streams) {
-            let registrantId: string | undefined;
-            try {
-                const data = JSON.parse(stream.connection.data);
-                registrantId =
-                    data["registrantId"] && validate(data["registrantId"]) ? data["registrantId"] : undefined;
-            } catch {
-                // None
-            }
-            result.push({
-                connectionId: stream.connection.connectionId,
-                streamId: stream.streamId,
-                registrantName: registrantId
-                    ? registrants.find((reg) => reg.id === registrantId)?.displayName
-                    : undefined,
-                type: stream.videoType ?? "camera",
-            });
-        }
-        for (const connection of connections) {
-            if (
-                userId &&
-                !connection.data.includes(userId) &&
-                !streams.find(
-                    (stream) =>
-                        stream.connection.connectionId === connection.connectionId &&
-                        (!stream.videoType || stream.videoType === "camera")
-                )
-            ) {
+            // TODO: As and when we can support putting a profile picture/placeholder image
+            //       in the recorded layout, AND auto-swapping in/out a video feed when camera
+            //       is enabled / disabled, then we can remove this condition
+            if (stream.hasVideo) {
                 let registrantId: string | undefined;
                 try {
-                    const data = JSON.parse(connection.data);
+                    const data = JSON.parse(stream.connection.data);
                     registrantId =
                         data["registrantId"] && validate(data["registrantId"]) ? data["registrantId"] : undefined;
                 } catch {
                     // None
                 }
                 result.push({
-                    connectionId: connection.connectionId,
+                    connectionId: stream.connection.connectionId,
+                    streamId: stream.streamId,
                     registrantName: registrantId
                         ? registrants.find((reg) => reg.id === registrantId)?.displayName
                         : undefined,
-                    type: "camera",
+                    type: stream.videoType ?? "camera",
                 });
             }
         }
+        // TODO: As and when we can support putting a profile picture/placeholder image
+        //       in the recorded layout, AND auto-swapping in/out a video feed when camera
+        //       is enabled / disabled, then we can re-enable this code
+        // for (const connection of connections) {
+        //     if (
+        //         userId &&
+        //         !connection.data.includes(userId) &&
+        //         !streams.find(
+        //             (stream) =>
+        //                 stream.connection.connectionId === connection.connectionId &&
+        //                 (!stream.videoType || stream.videoType === "camera")
+        //         )
+        //     ) {
+        //         let registrantId: string | undefined;
+        //         try {
+        //             const data = JSON.parse(connection.data);
+        //             registrantId =
+        //                 data["registrantId"] && validate(data["registrantId"]) ? data["registrantId"] : undefined;
+        //         } catch {
+        //             // None
+        //         }
+        //         result.push({
+        //             connectionId: connection.connectionId,
+        //             registrantName: registrantId
+        //                 ? registrants.find((reg) => reg.id === registrantId)?.displayName
+        //                 : undefined,
+        //             type: "camera",
+        //         });
+        //     }
+        // }
         setAvailableStreams(result);
     }, [
         connections,
@@ -391,8 +401,8 @@ function VonageRoomInner({
         streams,
         userId,
         vonage.state,
-        screen,
-        camera?.stream?.streamId,
+        screen?.stream,
+        camera?.stream,
         registrant.displayName,
     ]);
 

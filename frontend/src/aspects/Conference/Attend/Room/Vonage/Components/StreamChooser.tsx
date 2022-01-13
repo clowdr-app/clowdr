@@ -30,7 +30,7 @@ export default function StreamChooser({
                 [positionKey]: !connectionId ? null : streamId ? { streamId } : { connectionId },
             };
             if (connectionId) {
-                for (let idx = 0; idx < 6; idx++) {
+                for (let idx = 1; idx < 7; idx++) {
                     const key = "position" + idx;
                     if (key in newLayout && key !== positionKey) {
                         const placement: ParticipantPlacement = newLayout[key];

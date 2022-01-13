@@ -123,7 +123,7 @@ const baseThemeExtensions = {
                 popper: {
                     zIndex: 10,
                     maxW: props.width ? props.width : "xs",
-                    w: "100%",
+                    // w: "100%",
                 },
             }),
         },

@@ -4,7 +4,7 @@ export default function useIsNarrowView(): boolean {
     return (
         useBreakpointValue({
             base: true,
-            md: false,
+            lg: false,
         }) ?? false
     );
 }

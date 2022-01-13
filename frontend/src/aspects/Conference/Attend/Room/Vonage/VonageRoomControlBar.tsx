@@ -1,4 +1,4 @@
-import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -481,227 +481,124 @@ export function VonageRoomControlBar({
                 gridColumnGap={2}
                 w={vonage.state.type === StateType.Connected ? "100%" : "auto"}
             >
-                <Tooltip label="Configure mic/cam">
-                    <Button
-                        size="sm"
+                <ControlBarButtonGroup>
+                    <ControlBarButton
+                        label="Configure mic/cam"
+                        text="Settings"
                         isLoading={isOpening}
-                        leftIcon={<SettingsIcon />}
-                        iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
+                        icon="cog"
                         onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
-                        isDisabled={joining}
-                        colorScheme="RoomControlBarButton"
-                        aria-label="Choose microphone / camera"
-                        w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
-                    >
-                        {vonage.state.type === StateType.Connected ? "" : "Settings"}
-                    </Button>
-                </Tooltip>
-                {state.microphoneStream && state.microphoneIntendedEnabled ? (
-                    <Tooltip label="Mute">
-                        <Button
-                            size="sm"
-                            colorScheme="ActiveRoomControlBarButton"
-                            onClick={stopMicrophone}
-                            isDisabled={joining}
-                            leftIcon={<FAIcon icon="microphone" iconStyle="s" />}
-                            iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
-                            aria-label="Mute"
-                            w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
-                        >
-                            {vonage.state.type === StateType.Connected ? "" : "Mute"}
-                        </Button>
-                    </Tooltip>
-                ) : (
-                    <Tooltip label="Unmute">
-                        <Button
-                            size="sm"
-                            isLoading={isOpening}
-                            onClick={startMicrophone}
-                            isDisabled={joining}
-                            colorScheme="InactiveRoomControlBarButton"
-                            leftIcon={<FAIcon icon="microphone-slash" iconStyle="s" />}
-                            iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
-                            aria-label="Unmute"
-                            w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
-                        >
-                            {vonage.state.type === StateType.Connected ? "" : "Unmute"}
-                        </Button>
-                    </Tooltip>
-                )}
-                {state.cameraStream && state.cameraIntendedEnabled ? (
-                    <Tooltip label="Stop camera">
-                        <Button
-                            size="sm"
-                            onClick={stopCamera}
-                            colorScheme="ActiveRoomControlBarButton"
-                            isDisabled={joining}
-                            leftIcon={<FAIcon icon="video" iconStyle="s" />}
-                            iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
-                            aria-label="Stop camera"
-                            w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
-                        >
-                            {vonage.state.type === StateType.Connected ? "" : "Stop camera"}
-                        </Button>
-                    </Tooltip>
-                ) : (
-                    <Tooltip label="Start camera">
-                        <Button
-                            size="sm"
-                            isLoading={isOpening}
-                            onClick={startCamera}
-                            isDisabled={joining}
-                            colorScheme="InactiveRoomControlBarButton"
-                            leftIcon={<FAIcon icon="video-slash" iconStyle="s" />}
-                            iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
-                            aria-label="Start camera"
-                            w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
-                        >
-                            {vonage.state.type === StateType.Connected ? "" : "Start camera"}
-                        </Button>
-                    </Tooltip>
-                )}
+                        isEnabled={!joining}
+                    />
+                    <ControlBarButton
+                        label={{ active: "Mute", inactive: "Unmute" }}
+                        text={{ active: "Mute", inactive: "Unmute" }}
+                        icon={{ active: "microphone", inactive: "microphone-slash" }}
+                        isActive={Boolean(state.microphoneStream) && state.microphoneIntendedEnabled}
+                        onClick={{ active: stopMicrophone, inactive: startMicrophone }}
+                        isEnabled={!joining}
+                    />
+                    <ControlBarButton
+                        label={{ active: "Stop camera", inactive: "Start camera" }}
+                        text={{ active: "Stop camera", inactive: "Start camera" }}
+                        icon={{ active: "video", inactive: "video-slash" }}
+                        isActive={Boolean(state.cameraStream) && state.cameraIntendedEnabled}
+                        onClick={{ active: stopCamera, inactive: startCamera }}
+                        isEnabled={!joining}
+                    />
+                </ControlBarButtonGroup>
                 <WrapItem flex="1 1 auto" />
-                {settings.maximumSimultaneousScreenShares ? (
-                    vonage.state.type === StateType.Connected &&
-                    receivingScreenShareCount >= settings.maximumSimultaneousScreenShares ? (
-                        <Tag
-                            size="sm"
-                            variant="outline"
-                            colorScheme="RoomControlBarNotice"
-                            px={2}
-                            py="4px"
-                            ml={1}
-                            mr="auto"
-                            maxW="190px"
-                        >
-                            <TagLeftIcon as={CheckCircleIcon} />
-                            <TagLabel whiteSpace="normal">
-                                {settings.maximumSimultaneousScreenShares === 1
-                                    ? "Someone else is sharing their screen at the moment"
-                                    : "No more screens can be shared at the moment"}
-                            </TagLabel>
-                        </Tag>
-                    ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
-                        <Tooltip label="Stop sharing">
-                            <IconButton
-                                size="sm"
-                                onClick={stopScreenShare}
-                                mr="auto"
-                                colorScheme="DestructiveActionButton"
-                                isDisabled={joining}
-                                icon={<FAIcon icon="desktop" iconStyle="s" />}
-                                aria-label="Stop sharing"
-                            />
-                        </Tooltip>
-                    ) : vonage.state.type === StateType.Connected &&
-                      vonage.state.initialisedState.screenSharingSupported ? (
-                        <Tooltip label="Share screen">
-                            <IconButton
-                                size="sm"
-                                onClick={startScreenShare}
-                                mr="auto"
-                                isDisabled={joining}
-                                colorScheme="RoomControlBarButton"
-                                icon={<FAIcon icon="desktop" iconStyle="s" />}
-                                aria-label="Share screen"
-                            />
-                        </Tooltip>
-                    ) : vonage.state.type === StateType.Initialised && vonage.state.screenSharingSupported ? (
-                        <Tag size="sm" variant="outline" colorScheme="RoomControlBarNotice">
-                            <TagLeftIcon as={CheckCircleIcon} />
-                            <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
-                        </Tag>
-                    ) : (
-                        <Tag size="sm" variant="outline" colorScheme="RoomControlBarNotice">
-                            <TagLeftIcon as={NotAllowedIcon} />
-                            <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
-                        </Tag>
-                    )
-                ) : undefined}
-                {vonage.state.type === StateType.Connected && !isBackstage ? (
-                    canControlRecording ? (
-                        <Tooltip label={isRecordingActive ? "Stop recording" : "Start recording"}>
-                            <IconButton
-                                size="sm"
-                                colorScheme={isRecordingActive ? "DestructiveActionButton" : "RoomControlBarButton"}
-                                onClick={() => {
-                                    if (vonage.state.type === StateType.Connected) {
-                                        setRecentlyToggledRecording(true);
-                                        toggleVonageRecording({
-                                            vonageSessionId: vonage.state.session.sessionId,
-                                            recordingActive: !isRecordingActive,
-                                        });
-                                    }
-                                }}
-                                isLoading={toggleVonageRecordingResponse.fetching}
-                                icon={
-                                    isRecordingActive ? (
-                                        <FAIcon iconStyle="s" icon="circle" />
-                                    ) : (
-                                        <FAIcon iconStyle="r" icon="dot-circle" />
-                                    )
-                                }
-                                aria-label={isRecordingActive ? "Stop recording" : "Start recording"}
-                            />
-                        </Tooltip>
-                    ) : (
-                        <Tag size="sm" variant="outline" colorScheme="RoomControlBarNotice">
-                            {isRecordingActive ? (
-                                <TagLabel overflow="visible">Recording</TagLabel>
-                            ) : (
-                                <TagLabel overflow="visible">Not recording</TagLabel>
-                            )}
-                        </Tag>
-                    )
-                ) : undefined}
-                {vonage.state.type === StateType.Connected && canControlRecording && !isBackstage ? (
-                    <PlayVideoMenuButton roomId={roomId} eventId={eventId} />
-                ) : undefined}
-                {vonage.state.type === StateType.Connected && chat ? (
-                    <Popover>
-                        <PopoverTrigger>
-                            <IconButton
-                                size="sm"
-                                colorScheme={isRecordingActive ? "DestructiveActionButton" : "RoomControlBarButton"}
-                                icon={<FAIcon iconStyle="s" icon="smile" />}
-                                aria-label="Send an emote"
-                            />
-                        </PopoverTrigger>
-                        <Portal>
-                            <PopoverContent>
-                                <PopoverArrow />
-                                <PopoverBody p={0}>
-                                    <QuickSendEmote chat={chat} />
-                                </PopoverBody>
-                            </PopoverContent>
-                        </Portal>
-                    </Popover>
-                ) : undefined}
-                {vonage.state.type === StateType.Connected ? (
-                    <Tooltip label={subtitlesVisible ? "Hide subtitles" : "Show subtitles"}>
-                        <IconButton
-                            size="sm"
-                            colorScheme={
-                                subtitlesVisible ? "ActiveRoomControlBarButton" : "InactiveRoomControlBarButton"
+                <ControlBarButtonGroup>
+                    <ControlBarButton
+                        label={{ active: "Stop sharing screen", inactive: "Start sharing screen" }}
+                        icon="desktop"
+                        isLimited={
+                            vonage.state.type === StateType.Connected
+                                ? receivingScreenShareCount >= settings.maximumSimultaneousScreenShares
+                                    ? settings.maximumSimultaneousScreenShares === 1
+                                        ? "Someone else is sharing their screen at the moment"
+                                        : "No more screens can be shared at the moment"
+                                    : state.screenShareIntendedEnabled
+                                    ? false
+                                    : vonage.state.initialisedState.screenSharingSupported
+                                    ? false
+                                    : "Your browser does not support sharing your screen."
+                                : vonage.state.type === StateType.Initialised
+                                ? vonage.state.screenSharingSupported
+                                    ? "Screen sharing available after you join"
+                                    : "Your browser does not support sharing your screen."
+                                : false
+                        }
+                        isVisible={
+                            Boolean(settings.maximumSimultaneousScreenShares) &&
+                            (vonage.state.type === StateType.Initialised || vonage.state.type === StateType.Connected)
+                        }
+                        isActive={state.screenShareIntendedEnabled}
+                        onClick={{ active: stopScreenShare, inactive: startScreenShare }}
+                        isEnabled={!joining}
+                    />
+                    <ControlBarButton
+                        label={{ active: "Stop recording", inactive: "Start recording" }}
+                        icon={{ active: "circle", inactive: { style: "r", icon: "dot-circle" } }}
+                        isVisible={vonage.state.type === StateType.Connected && !isBackstage}
+                        isLimited={!canControlRecording ? (isRecordingActive ? "Recording" : "Not recording") : false}
+                        isLoading={toggleVonageRecordingResponse.fetching}
+                        isActive={isRecordingActive}
+                        isDestructive
+                        onClick={() => {
+                            if (vonage.state.type === StateType.Connected) {
+                                setRecentlyToggledRecording(true);
+                                toggleVonageRecording({
+                                    vonageSessionId: vonage.state.session.sessionId,
+                                    recordingActive: !isRecordingActive,
+                                });
                             }
-                            onClick={() => setSubtitlesVisible((old) => !old)}
-                            isDisabled={joining}
-                            aria-label={subtitlesVisible ? "Hide subtitles" : "Show subtitles"}
-                            icon={<FAIcon iconStyle={subtitlesVisible ? "s" : "r"} icon="closed-captioning" />}
-                        />
-                    </Tooltip>
-                ) : undefined}
-                {vonage.state.type === StateType.Connected && canControlRecording ? (
-                    <Tooltip label={layoutChooser_isOpen ? "Cancel" : "Layout"}>
-                        <IconButton
-                            size="sm"
-                            onClick={layoutChooser_isOpen ? layoutChooser_onClose : layoutChooser_onOpen}
-                            colorScheme={layoutChooser_isOpen ? "PrimaryActionButton" : "RoomControlBarButton"}
-                            aria-label={layoutChooser_isOpen ? "Cancel" : "Layout"}
-                            icon={<FAIcon iconStyle="s" icon="th-large" />}
-                        />
-                    </Tooltip>
-                ) : undefined}
+                        }}
+                        isEnabled={!joining}
+                    />
+                    {vonage.state.type === StateType.Connected && canControlRecording && !isBackstage ? (
+                        <PlayVideoMenuButton roomId={roomId} eventId={eventId} />
+                    ) : undefined}
+                    {vonage.state.type === StateType.Connected && chat ? (
+                        <Popover>
+                            <PopoverTrigger>
+                                <IconButton
+                                    size="sm"
+                                    colorScheme="RoomControlBarButton"
+                                    icon={<FAIcon iconStyle="s" icon="smile" />}
+                                    aria-label="Send an emote"
+                                />
+                            </PopoverTrigger>
+                            <Portal>
+                                <PopoverContent>
+                                    <PopoverArrow />
+                                    <PopoverBody p={0}>
+                                        <QuickSendEmote chat={chat} />
+                                    </PopoverBody>
+                                </PopoverContent>
+                            </Portal>
+                        </Popover>
+                    ) : undefined}
+                    <ControlBarButton
+                        label={{ active: "Hide subtitles", inactive: "Show subtitles" }}
+                        icon={{
+                            active: { style: "s", icon: "closed-captioning" },
+                            inactive: { style: "r", icon: "closed-captioning" },
+                        }}
+                        isVisible={vonage.state.type === StateType.Connected}
+                        isActive={subtitlesVisible}
+                        onClick={() => setSubtitlesVisible((old) => !old)}
+                        isEnabled={!joining}
+                    />
+                    <ControlBarButton
+                        label={{ active: "Cancel", inactive: "Layout" }}
+                        icon="th-large"
+                        isVisible={vonage.state.type === StateType.Connected}
+                        isActive={layoutChooser_isOpen}
+                        onClick={layoutChooser_isOpen ? layoutChooser_onClose : layoutChooser_onOpen}
+                        isEnabled={!joining}
+                    />
+                </ControlBarButtonGroup>
                 <WrapItem flex="1 1 auto" />
                 {vonage.state.type === StateType.Connected ? (
                     <Button size="sm" colorScheme="DestructiveActionButton" onClick={onLeaveRoom}>
@@ -813,5 +710,114 @@ export function VonageRoomControlBar({
                 </AlertDialogContent>
             </AlertDialog>
         </>
+    );
+}
+
+function ControlBarButtonGroup({ children }: React.PropsWithChildren<Record<string, unknown>>): JSX.Element {
+    return <>{children}</>;
+}
+
+interface IconProps {
+    icon: string;
+    style: "b" | "s" | "r";
+}
+
+function ControlBarButton({
+    label,
+    text,
+    icon,
+    isVisible = true,
+    isLoading = false,
+    isActive,
+    isEnabled = true,
+    isLimited = false,
+    isDestructive = false,
+    onClick,
+}: {
+    label:
+        | string
+        | {
+              active: string;
+              inactive: string;
+          };
+    text?:
+        | string
+        | {
+              active: string;
+              inactive: string;
+          };
+    icon: string | IconProps | { active: string | IconProps; inactive: string | IconProps };
+
+    isVisible?: boolean;
+    isLoading?: boolean;
+    isActive?: boolean;
+    isEnabled?: boolean;
+    isLimited?: false | string;
+    isDestructive?: boolean;
+
+    onClick: (() => void) | { active: () => void; inactive: () => void };
+}): JSX.Element {
+    const iconProps = useMemo(
+        () =>
+            typeof icon === "string"
+                ? ({ icon, style: "s" } as IconProps)
+                : "active" in icon
+                ? isActive
+                    ? typeof icon.active === "string"
+                        ? ({ icon: icon.active, style: "s" } as IconProps)
+                        : icon.active
+                    : typeof icon.inactive === "string"
+                    ? ({ icon: icon.inactive, style: "s" } as IconProps)
+                    : icon.inactive
+                : icon,
+        [icon, isActive]
+    );
+    const labelValue = typeof label === "string" ? label : isActive ? label.active : label.inactive;
+    const textValue = text && (typeof text === "string" ? text : isActive ? text.active : text.inactive);
+    const onClickValue = typeof onClick === "function" ? onClick : isActive ? onClick.active : onClick.inactive;
+    const vonage = useVonageGlobalState();
+
+    return isVisible ? (
+        isLimited ? (
+            <Tag
+                size="sm"
+                variant="outline"
+                colorScheme="RoomControlBarNotice"
+                px={2}
+                py="4px"
+                ml={1}
+                mr="auto"
+                maxW="190px"
+            >
+                <TagLeftIcon as={CheckCircleIcon} />
+                <TagLabel whiteSpace="normal">{isLimited}</TagLabel>
+            </Tag>
+        ) : (
+            <Tooltip label={labelValue}>
+                <Button
+                    size="sm"
+                    isLoading={isLoading}
+                    leftIcon={<FAIcon iconStyle={iconProps.style} icon={iconProps.icon} />}
+                    iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
+                    onClick={onClickValue}
+                    isDisabled={!isEnabled}
+                    colorScheme={
+                        isActive === undefined
+                            ? "RoomControlBarButton"
+                            : isActive
+                            ? isDestructive
+                                ? "DestructiveActionButton"
+                                : "ActiveRoomControlBarButton"
+                            : "InactiveRoomControlBarButton"
+                    }
+                    aria-label={labelValue}
+                    w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
+                >
+                    {vonage.state.type === StateType.Connected ? "" : textValue}
+                </Button>
+            </Tooltip>
+        )
+    ) : (
+        <></>
     );
 }

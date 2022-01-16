@@ -50,7 +50,9 @@ export async function addRoomParticipant(
             : { chimeRegistrantId: identifier.chimeRegistrantId };
 
     try {
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: CreateRoomParticipantDocument,
             variables: {
                 registrantId,
@@ -74,7 +76,9 @@ export async function addRoomParticipant(
             );
             await kickRegistrantFromRoom(logger, roomId, registrantId);
 
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: CreateRoomParticipantDocument,
                 variables: {
                     registrantId,
@@ -138,7 +142,9 @@ export async function removeRoomParticipant(
     vonageSessionId?: string
 ): Promise<void> {
     try {
-        const removeResult = await apolloClient.mutate({
+        const removeResult = await (
+            await apolloClient
+        ).mutate({
             mutation: RemoveRoomParticipantDocument,
             variables: {
                 registrantId,
@@ -153,14 +159,18 @@ export async function removeRoomParticipant(
         ) {
             logger.warn({ roomId, registrantId }, "Could not find participant to remove for room");
         } else if (vonageSessionId) {
-            const response = await apolloClient.query({
+            const response = await (
+                await apolloClient
+            ).query({
                 query: CountRoomParticipantsDocument,
                 variables: {
                     roomId,
                 },
             });
             if (response.data.room_Participant_aggregate.aggregate?.count === 0) {
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: InsertVonageSessionLayoutDocument,
                     variables: {
                         object: {
@@ -208,7 +218,9 @@ export async function getRoomParticipantDetails(
         }
     `;
 
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetRoomParticipantDetailsDocument,
         variables: {
             registrantId,
@@ -228,7 +240,9 @@ export async function deleteRoomParticipantsCreatedBefore(date: Date): Promise<n
         }
     `;
 
-    const result = await apolloClient.mutate({
+    const result = await (
+        await apolloClient
+    ).mutate({
         mutation: DeleteRoomParticipantsCreatedBeforeDocument,
         variables: {
             before: date.toISOString(),

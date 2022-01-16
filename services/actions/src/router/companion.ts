@@ -1,51 +1,47 @@
 import companion from "@uppy/companion";
-import assert from "assert";
 import { json } from "body-parser";
 import cors from "cors";
 import express from "express";
 import { extname } from "path";
 import { v4 as uuidv4 } from "uuid";
-import { getHostUrl } from "../utils";
+import { awsClient, getAWSParameter, getHostUrl } from "../lib/aws/awsClient";
 
-assert(process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID, "AWS_ACTIONS_USER_ACCESS_KEY_ID environment variable not provided.");
-assert(
-    process.env.AWS_ACTIONS_USER_SECRET_ACCESS_KEY,
-    "AWS_ACTIONS_USER_SECRET_ACCESS_KEY environment variable not provided."
-);
-assert(process.env.AWS_REGION, "AWS_REGION environment variable not provided.");
-assert(process.env.AWS_CONTENT_BUCKET_ID, "AWS_CONTENT_BUCKET_ID environment variable not provided.");
-assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
+export async function createRouter(): Promise<express.Router> {
+    const router = express.Router();
 
-export const router = express.Router();
+    const credentials = await awsClient.credentials();
 
-router.use(
-    cors({
-        origin: process.env.CORS_ORIGIN.split(","),
-    })
-);
-router.use(json());
-router.use(
-    companion.app({
-        providerOptions: {
-            s3: {
-                bucket: process.env.AWS_CONTENT_BUCKET_ID,
-                key: process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID,
-                secret: process.env.AWS_ACTIONS_USER_SECRET_ACCESS_KEY,
-                region: process.env.AWS_REGION,
-                getKey(_req, filename, _metadata) {
-                    const extension = extname(filename);
-                    return `${uuidv4()}${extension}`;
-                },
-                acl: "private",
-                awsClientOptions: {
-                    logger: console,
+    router.use(
+        cors({
+            origin: (await getAWSParameter(`${process.env.SERVICE_NAME}_CORS_ORIGIN`)).split(","),
+        })
+    );
+    router.use(json());
+    router.use(
+        companion.app({
+            providerOptions: {
+                s3: {
+                    bucket: await getAWSParameter("CONTENT_BUCKET_ID"),
+                    key: credentials.accessKeyId,
+                    secret: credentials.secretAccessKey,
+                    region: awsClient.region,
+                    getKey(_req, filename, _metadata) {
+                        const extension = extname(filename);
+                        return `${uuidv4()}${extension}`;
+                    },
+                    acl: "private",
+                    awsClientOptions: {
+                        logger: console,
+                    },
                 },
             },
-        },
-        server: {
-            host: getHostUrl(),
-        },
-        filePath: "./",
-        secret: "foo",
-    })
-);
+            server: {
+                host: await getHostUrl(),
+            },
+            filePath: "./",
+            secret: "foo",
+        })
+    );
+
+    return router;
+}

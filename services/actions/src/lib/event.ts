@@ -18,11 +18,13 @@ export async function createEventStartTrigger(
         return;
     }
     logger.info({ eventId, startTime }, "Creating new start time trigger for event");
-    await hasura.createScheduledEvent({
+    await (
+        await hasura
+    ).createScheduledEvent({
         schedule_at: new Date(startTimeMillis - 70000).toISOString(),
         webhook: "{{ACTION_BASE_URL}}/event/notifyStart",
         comment: `Event ${eventId} starts at ${startTime}`,
-        headers: [{ name: "x-hasura-event-secret", value_from_env: "EVENT_SECRET" }],
+        headers: [{ name: "x-hasura-event-secret", value_from_env: `${process.env.SERVICE_NAME}_EVENT_SECRET` }],
         payload: {
             eventId,
             startTime,
@@ -44,11 +46,13 @@ export async function createEventEndTrigger(
         return;
     }
     logger.info({ eventId, endTime }, "Creating new end time trigger for event");
-    await hasura.createScheduledEvent({
+    await (
+        await hasura
+    ).createScheduledEvent({
         schedule_at: new Date(endTimeMillis - 70000).toISOString(),
         webhook: "{{ACTION_BASE_URL}}/event/notifyEnd",
         comment: `Event ${eventId} ends at ${endTime}`,
-        headers: [{ name: "x-hasura-event-secret", value_from_env: "EVENT_SECRET" }],
+        headers: [{ name: "x-hasura-event-secret", value_from_env: `${process.env.SERVICE_NAME}_EVENT_SECRET` }],
         payload: {
             eventId,
             endTime,
@@ -66,7 +70,9 @@ export async function eventHasVonageSession(eventId: string): Promise<boolean> {
         }
     `;
 
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetEventVonageSessionDocument,
         variables: {
             eventId,
@@ -95,7 +101,9 @@ export async function createEventVonageSession(logger: P.Logger, eventId: string
         }
     `;
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: SetEventVonageSessionIdDocument,
         variables: {
             eventId,

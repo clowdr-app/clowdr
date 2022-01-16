@@ -17,11 +17,12 @@ import {
     handleRemoveOldRoomParticipants,
     handleRoomCreated,
 } from "../handlers/room";
+import { awsClient } from "../lib/aws/awsClient";
 
 export const router = express.Router();
 
 // Protected routes
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 
 router.post("/created", json(), async (req: Request, res: Response) => {
     try {
@@ -53,7 +54,7 @@ router.post("/removeOldParticipants", json(), async (req: Request, res: Response
 });
 
 router.use(json());
-router.use(checkJwt);
+router.use(checkJwt(awsClient));
 
 router.post("/createDm", async (req: Request, res: Response<CreateRoomDmOutput>) => {
     try {

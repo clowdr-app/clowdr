@@ -16,6 +16,7 @@ import {
     GetUploadAgreementDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { awsClient } from "../lib/aws/awsClient";
 import {
     getEmailTemplatesSubtitlesGenerated,
     getRecordingEmailNotificationsEnabled,
@@ -91,7 +92,9 @@ export async function handleElementUpdated(logger: P.Logger, payload: Payload<El
                 updatedTimestamp: transcodeResult.timestamp.getTime(),
             };
 
-            const mutateResult = await apolloClient.mutate({
+            const mutateResult = await (
+                await apolloClient
+            ).mutate({
                 mutation: ElementAddNewVersionDocument,
                 variables: {
                     id: newRow.id,
@@ -217,7 +220,9 @@ async function getElementDetails(elementId: string): Promise<{
     emailTemplates: EmailTemplate_BaseConfig;
     elementDetails: ElementUpdateNotification_ElementDetailsFragment;
 }> {
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetElementDetailsDocument,
         variables: {
             elementId,
@@ -326,6 +331,10 @@ async function trySendTranscriptionFailedEmail(logger: P.Logger, elementData: El
         });
 
     {
+        const FAILURE_NOTIFICATIONS_EMAIL_ADDRESS = await awsClient.getAWSParameter(
+            "FAILURE_NOTIFICATIONS_EMAIL_ADDRESS"
+        );
+
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
         <pre>
 failure         Failed to generate subtitles
@@ -340,7 +349,7 @@ path            /item/${elementDetails.item.id}/element/${elementData.id}
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",
-            emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
+            emailAddress: FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: EmailReason.FailureNotification,
             subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${elementData.name} at ${elementDetails.conference.name}`,
             htmlContents,
@@ -382,6 +391,10 @@ async function trySendTranscodeFailedEmail(logger: P.Logger, elementData: Elemen
         });
 
     {
+        const FAILURE_NOTIFICATIONS_EMAIL_ADDRESS = await awsClient.getAWSParameter(
+            "FAILURE_NOTIFICATIONS_EMAIL_ADDRESS"
+        );
+
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
         <pre>
 failure         Failed to transcode video
@@ -396,7 +409,7 @@ path            /item/${elementDetails.item.id}/element/${elementData.id}
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",
-            emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
+            emailAddress: FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: EmailReason.ItemTranscodeFailed,
             subject: `URGENT: SYSTEM ERROR: Failed to process ${elementData.name} at ${elementDetails.conference.name}`,
             htmlContents,
@@ -421,7 +434,9 @@ gql`
 `;
 
 export async function handleGetUploadAgreement(magicToken: string): Promise<GetUploadAgreementOutput> {
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetUploadAgreementDocument,
         variables: {
             accessToken: magicToken,

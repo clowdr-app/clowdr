@@ -52,7 +52,9 @@ gql`
 `;
 
 export async function handleGetGoogleOAuthUrl(params: getGoogleOAuthUrlArgs): Promise<GetGoogleOAuthUrlOutput> {
-    const configResponse = await apolloClient.query({
+    const configResponse = await (
+        await apolloClient
+    ).query({
         query: GoogleOAuth_ConferenceConfig_FrontendHostDocument,
         variables: {
             registrantId: params.registrantId,
@@ -114,7 +116,9 @@ export async function handleSubmitGoogleOAuthToken(
         const validRegistrant = await registrantBelongsToUser(params.state, userId);
         assert(validRegistrant, "Registrant does not belong to the user");
 
-        const configResponse = await apolloClient.query({
+        const configResponse = await (
+            await apolloClient
+        ).query({
             query: GoogleOAuth_ConferenceConfig_FrontendHostDocument,
             variables: {
                 registrantId: validRegistrant.id,
@@ -151,7 +155,9 @@ export async function handleSubmitGoogleOAuthToken(
         const tokenData = jwt_decode<GoogleIdToken>(token.tokens.id_token);
 
         logger.info({ userId, registrantId: params.state }, "Saving Google OAuth tokens");
-        const result = await apolloClient.mutate({
+        const result = await (
+            await apolloClient
+        ).mutate({
             mutation: Google_CreateRegistrantGoogleAccountDocument,
             variables: {
                 registrantId: params.state,
@@ -284,7 +290,9 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                 logger.error({ jobId: job.id, err: error }, "YouTube upload failed");
                 try {
                     await callWithRetry(async () => {
-                        await apolloClient.mutate({
+                        await (
+                            await apolloClient
+                        ).mutate({
                             mutation: FailUploadYouTubeVideoJobDocument,
                             variables: {
                                 id: job.id,
@@ -304,7 +312,9 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                             "Missing data from YouTube API on completion of video upload"
                         );
                         await callWithRetry(async () => {
-                            await apolloClient.mutate({
+                            await (
+                                await apolloClient
+                            ).mutate({
                                 mutation: FailUploadYouTubeVideoJobDocument,
                                 variables: {
                                     id: job.id,
@@ -318,7 +328,9 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                     logger.info({ jobId: job.id, data: result.data }, "Finished uploading YouTube video");
 
                     await callWithRetry(async () => {
-                        await apolloClient.mutate({
+                        await (
+                            await apolloClient
+                        ).mutate({
                             mutation: CompleteUploadYouTubeVideoJobDocument,
                             variables: {
                                 id: job.id,
@@ -331,7 +343,9 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                         assert(result.data.status);
                         assert(result.data.status?.uploadStatus);
                         assert(result.data.status?.privacyStatus);
-                        await apolloClient.mutate({
+                        await (
+                            await apolloClient
+                        ).mutate({
                             mutation: CreateYouTubeUploadDocument,
                             variables: {
                                 elementId: job.element.id,
@@ -401,7 +415,9 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                     logger.error({ err: e, jobId: job.id }, "Failure while recording completion of YouTube upload");
                     try {
                         await callWithRetry(async () => {
-                            await apolloClient.mutate({
+                            await (
+                                await apolloClient
+                            ).mutate({
                                 mutation: FailUploadYouTubeVideoJobDocument,
                                 variables: {
                                     id: job.id,
@@ -496,10 +512,14 @@ gql`
 export async function handleUploadYouTubeVideoJobQueue(logger: P.Logger): Promise<void> {
     logger.info("Processing UploadYouTubeVideoJob queue");
 
-    const newJobs = await apolloClient.query({
+    const newJobs = await (
+        await apolloClient
+    ).query({
         query: SelectNewUploadYouTubeVideoJobsDocument,
     });
-    const jobs = await apolloClient.mutate({
+    const jobs = await (
+        await apolloClient
+    ).mutate({
         mutation: MarkAndSelectNewUploadYouTubeVideoJobsDocument,
         variables: {
             ids: newJobs.data.job_queues_UploadYouTubeVideoJob.map((x) => x.id),
@@ -528,7 +548,9 @@ export async function handleUploadYouTubeVideoJobQueue(logger: P.Logger): Promis
 
     try {
         await callWithRetry(async () => {
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: UnmarkUploadYouTubeVideoJobsDocument,
                 variables: {
                     ids: unsuccesssfulJobs.filter((x) => !!x),

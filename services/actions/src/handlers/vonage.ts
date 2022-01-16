@@ -30,6 +30,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getRegistrantDetails } from "../lib/authorisation";
+import { getAWSParameter } from "../lib/aws/awsClient";
 import { BadRequestError, ForbiddenError, NotFoundError, ServerError } from "../lib/errors";
 import { getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
 import {
@@ -202,8 +203,9 @@ export async function handleVonageArchiveMonitoringWebhook(
 
     if (payload.status === "uploaded") {
         if (payload.duration > 0) {
-            assert(process.env.AWS_CONTENT_BUCKET_ID, "AWS_CONTENT_BUCKET_ID environment variable missing!");
-            const s3Url = `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${payload.partnerId}/${payload.id}/archive.mp4`;
+            const s3Url = `s3://${await getAWSParameter("CONTENT_BUCKET_ID")}/${payload.partnerId}/${
+                payload.id
+            }/archive.mp4`;
 
             const endedAt = new Date(payload.createdAt + 1000 * payload.duration).toISOString();
 
@@ -211,7 +213,9 @@ export async function handleVonageArchiveMonitoringWebhook(
 
             // Always try to save the recording into our Vonage Room Recording table
             // (This is also what enables users to access the list of recordings they've participated in)
-            const response = await apolloClient.query({
+            const response = await (
+                await apolloClient
+            ).query({
                 query: CheckForVonageRoomRecordingNotUploadedDocument,
                 variables: {
                     roomId,
@@ -221,7 +225,9 @@ export async function handleVonageArchiveMonitoringWebhook(
 
             if (response.data.video_VonageRoomRecording.length > 0) {
                 const recording0 = response.data.video_VonageRoomRecording[0];
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: SaveVonageRoomRecordingDocument,
                     variables: {
                         id: recording0.id,
@@ -232,7 +238,9 @@ export async function handleVonageArchiveMonitoringWebhook(
                 });
 
                 for (const recording of response.data.video_VonageRoomRecording.slice(1)) {
-                    await apolloClient.mutate({
+                    await (
+                        await apolloClient
+                    ).mutate({
                         mutation: SaveVonageRoomRecordingDocument,
                         variables: {
                             id: recording.id,
@@ -250,7 +258,9 @@ export async function handleVonageArchiveMonitoringWebhook(
                     throw new Error(`Event Id is not valid: ${eventId}`);
                 }
 
-                const eventResponse = await apolloClient.query({
+                const eventResponse = await (
+                    await apolloClient
+                ).query({
                     query: GetEventForArchiveDocument,
                     variables: {
                         eventId,
@@ -305,7 +315,9 @@ export async function handleVonageArchiveMonitoringWebhook(
 
                 const startTime = formatRFC7231(Date.parse(event.startTime));
                 try {
-                    await apolloClient.mutate({
+                    await (
+                        await apolloClient
+                    ).mutate({
                         mutation: InsertVonageArchiveElementDocument,
                         variables: {
                             object: {
@@ -346,7 +358,9 @@ export async function handleVonageArchiveMonitoringWebhook(
         }
 
         if (payload.duration > 0) {
-            const response = await apolloClient.query({
+            const response = await (
+                await apolloClient
+            ).query({
                 query: CheckForVonageRoomRecordingDocument,
                 variables: {
                     roomId,
@@ -356,7 +370,9 @@ export async function handleVonageArchiveMonitoringWebhook(
 
             if (response.data.video_VonageRoomRecording.length > 0) {
                 for (const recording of response.data.video_VonageRoomRecording) {
-                    await apolloClient.mutate({
+                    await (
+                        await apolloClient
+                    ).mutate({
                         mutation: SaveVonageRoomRecordingDocument,
                         variables: {
                             id: recording.id,
@@ -420,7 +436,9 @@ export async function handleJoinEvent(
         });
     }
 
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: Vonage_GetEventDetailsDocument,
         variables: {
             eventId: payload.eventId,
@@ -567,7 +585,9 @@ export async function handleJoinRoom(
         userId,
     };
 
-    const roomInfo = await apolloClient.query({
+    const roomInfo = await (
+        await apolloClient
+    ).query({
         query: VonageJoinRoom_GetInfoDocument,
         variables: {
             roomId: payload.roomId,
@@ -630,7 +650,9 @@ export async function addRegistrantToVonageRecording(
     vonageSessionId: string,
     registrantId: string
 ): Promise<string | null> {
-    const response = await apolloClient.query({
+    const response = await (
+        await apolloClient
+    ).query({
         query: CheckForVonageRoomRecordingDocument,
         variables: {
             roomId,
@@ -639,7 +661,9 @@ export async function addRegistrantToVonageRecording(
     });
 
     if (response.data.video_VonageRoomRecording.length > 0) {
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: AddVonageRoomRecordingToUserListDocument,
             variables: {
                 recordingId: response.data.video_VonageRoomRecording[0].id,
@@ -692,7 +716,9 @@ export async function handleToggleVonageRecordingState(
 
     const ongoingArchive = existingSessionArchives.some((x) => x.status === "started" || x.status === "paused");
     if (ongoingArchive !== args.recordingActive) {
-        const response = await apolloClient.query({
+        const response = await (
+            await apolloClient
+        ).query({
             query: FindRoomByVonageSessionIdDocument,
             variables: {
                 vonageSessionId: args.vonageSessionId,

@@ -8,11 +8,12 @@ import {
     handleInvitationInsert_AutomaticSend,
     handleInvitationInsert_AutomaticSendRepeat,
 } from "../handlers/invitation";
+import { awsClient } from "../lib/aws/awsClient";
 
 export const router = express.Router();
 
 // Protected routes
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 
 router.post("/automatic", json(), async (req: Request, res: Response) => {
     try {

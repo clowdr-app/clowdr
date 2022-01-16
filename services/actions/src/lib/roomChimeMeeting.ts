@@ -10,7 +10,9 @@ export async function deleteRoomChimeMeeting(chimeMeetingId: string): Promise<vo
             }
         }
     `;
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: DeleteRoomChimeMeetingDocument,
         variables: {
             chimeMeetingId,
@@ -27,7 +29,9 @@ export async function deleteRoomChimeMeetingForRoom(roomId: string, chimeMeeting
         }
     `;
 
-    const result = await apolloClient.mutate({
+    const result = await (
+        await apolloClient
+    ).mutate({
         mutation: DeleteRoomChimeMeetingForRoomDocument,
         variables: {
             roomId,

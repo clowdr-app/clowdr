@@ -57,7 +57,9 @@ export async function handleConferencePrepareJobInserted(
 
     try {
         // get list of other in-progress jobs. If any are in progress, set this new one to failed and return.
-        const otherJobs = await apolloClient.query({
+        const otherJobs = await (
+            await apolloClient
+        ).query({
             query: OtherConferencePrepareJobsDocument,
             variables: {
                 conferenceId: newRow.conferenceId,
@@ -82,7 +84,9 @@ export async function handleConferencePrepareJobInserted(
 
         if (!createdJob) {
             await callWithRetry(async () => {
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: CompleteConferencePrepareJobDocument,
                     variables: {
                         id: newRow.id,
@@ -107,7 +111,9 @@ async function createBroadcastTranscodes(
     conferencePrepareJobId: string,
     conferenceId: string
 ): Promise<boolean> {
-    const videoBroadcastItems = await apolloClient.query({
+    const videoBroadcastItems = await (
+        await apolloClient
+    ).query({
         query: GetVideoBroadcastElementsDocument,
         variables: {
             conferenceId,
@@ -199,7 +205,9 @@ async function createBroadcastTranscodes(
                 };
 
                 // Create a video render job to populate the broadcast content item
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: CreateVideoRenderJobDocument,
                     variables: {
                         conferenceId,
@@ -249,7 +257,9 @@ async function createEventVonageSessionsBroadcastItems(logger: P.Logger, confere
         }
     `;
 
-    const eventsWithoutSessionResult = await apolloClient.query({
+    const eventsWithoutSessionResult = await (
+        await apolloClient
+    ).query({
         query: GetEventsWithoutVonageSessionDocument,
         variables: {
             conferenceId,

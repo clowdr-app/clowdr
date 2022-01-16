@@ -50,7 +50,9 @@ interface EventBroadcastDetails {
 }
 
 export async function getEventBroadcastDetails(eventId: string): Promise<EventBroadcastDetails> {
-    const eventResult = await apolloClient.query({
+    const eventResult = await (
+        await apolloClient
+    ).query({
         query: GetEventBroadcastDetailsDocument,
         variables: {
             eventId,
@@ -264,7 +266,9 @@ interface RoomArchiveDetails {
 }
 
 export async function getRoomArchiveDetails(roomId: string): Promise<RoomArchiveDetails> {
-    const eventResult = await apolloClient.query({
+    const eventResult = await (
+        await apolloClient
+    ).query({
         query: GetRoomArchiveDetailsDocument,
         variables: {
             roomId,
@@ -354,7 +358,9 @@ export async function startRoomVonageArchiving(
                 ? await sanitizeLayout(logger, archiveDetails.vonageSessionId, dirtyLayout)
                 : null;
 
-            const recordingResponse = await apolloClient.mutate({
+            const recordingResponse = await (
+                await apolloClient
+            ).mutate({
                 mutation: CreateVonageRoomRecordingDocument,
                 variables: {
                     object: {
@@ -580,7 +586,9 @@ export async function addVonageParticipantStream(
             throw new Error("Could not find registrant!");
         }
 
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: CreateVonageParticipantStreamDocument,
             variables: {
                 registrantId,
@@ -634,7 +642,9 @@ export async function removeVonageParticipantStream(
         throw new Error("Could not find registrant!");
     }
 
-    const removeResult = await apolloClient.mutate({
+    const removeResult = await (
+        await apolloClient
+    ).mutate({
         mutation: RemoveVonageParticipantStreamDocument,
         variables: {
             registrantId,
@@ -673,7 +683,9 @@ gql`
 `;
 
 export async function getVonageLayout(vonageSessionId: string): Promise<VonageSessionLayoutData | null> {
-    const response = await apolloClient.query({
+    const response = await (
+        await apolloClient
+    ).query({
         query: GetVonageSessionLayoutDocument,
         variables: {
             vonageSessionId,

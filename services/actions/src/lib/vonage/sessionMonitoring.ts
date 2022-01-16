@@ -25,7 +25,9 @@ export async function startBroadcastIfOngoingEvent(
     logger: P.Logger,
     payload: SessionMonitoringWebhookReqBody
 ): Promise<boolean> {
-    const ongoingMatchingEvents = await apolloClient.query({
+    const ongoingMatchingEvents = await (
+        await apolloClient
+    ).query({
         query: OngoingBroadcastableVideoRoomEventsDocument,
         variables: {
             sessionId: payload.sessionId,
@@ -61,7 +63,9 @@ export async function startArchiveIfOngoingEvent(
     logger: P.Logger,
     payload: SessionMonitoringWebhookReqBody
 ): Promise<boolean> {
-    const ongoingMatchingEvents = await apolloClient.query({
+    const ongoingMatchingEvents = await (
+        await apolloClient
+    ).query({
         query: OngoingArchivableVideoRoomEventsDocument,
         variables: {
             sessionId: payload.sessionId,
@@ -128,7 +132,9 @@ export async function startVonageArchive(
 
         try {
             if (registrantId) {
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: AddVonageRoomRecordingToUserListDocument,
                     variables: {
                         recordingId,
@@ -187,7 +193,9 @@ export async function stopArchiveIfNoOngoingEvent(
             return true;
         }
 
-        const ongoingMatchingEvents = await apolloClient.query({
+        const ongoingMatchingEvents = await (
+            await apolloClient
+        ).query({
             query: OngoingArchivableVideoRoomEventsWithRoomInfoDocument,
             variables: {
                 sessionId: payload.sessionId,

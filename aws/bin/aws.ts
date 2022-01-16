@@ -1,32 +1,46 @@
 #!/usr/bin/env node
 import * as cdk from "@aws-cdk/core";
-import assert from "assert";
 import "dotenv/config";
 import "source-map-support/register";
 import { AwsStack } from "../lib/aws-stack";
 import { ChimeStack } from "../lib/chime-stack";
+import { env } from "../lib/env";
 import { ImageStack } from "../lib/image-stack";
+import { S3Stack } from "../lib/s3-stack";
+import { VonageStack } from "../lib/vonage-stack";
 
-assert(process.env.DOTENV_CONFIG_PATH, "Must specify DOTENV_CONFIG_PATH");
 const app = new cdk.App();
-const stackPrefix = process.env.STACK_PREFIX || "dev";
-const vonageApiKey = process.env.VONAGE_API_KEY || null;
 
-const awsStack = new AwsStack(app, `${stackPrefix}-main`, {
-    tags: { environment: stackPrefix },
-    stackPrefix,
-    vonageApiKey,
+const s3Stack = new S3Stack(app, `${env.STACK_PREFIX}-s3`, {
+    tags: { environment: env.STACK_PREFIX },
+    stackPrefix: env.STACK_PREFIX,
+    vars: env,
 });
 
-new ImageStack(app, `${stackPrefix}-img`, {
-    tags: { environment: stackPrefix },
-    stackPrefix,
-    bucket: awsStack.bucket,
+const vonageStack = new VonageStack(app, `${env.STACK_PREFIX}-vonage`, {
+    tags: { environment: env.STACK_PREFIX },
+    stackPrefix: env.STACK_PREFIX,
+    vars: env,
+    bucket: s3Stack.bucket,
+});
+
+const awsStack = new AwsStack(app, `${env.STACK_PREFIX}-main`, {
+    tags: { environment: env.STACK_PREFIX },
+    stackPrefix: env.STACK_PREFIX,
+    vars: env,
+    vonageWebhookSecret: vonageStack.webhookSecret,
+    bucket: s3Stack.bucket,
+});
+
+new ImageStack(app, `${env.STACK_PREFIX}-img`, {
+    tags: { environment: env.STACK_PREFIX },
+    stackPrefix: env.STACK_PREFIX,
+    bucket: s3Stack.bucket,
     actionsUser: awsStack.actionsUser,
 });
 
-new ChimeStack(app, `${stackPrefix}-chime`, {
+new ChimeStack(app, `${env.STACK_PREFIX}-chime`, {
     env: { region: "us-east-1" },
-    tags: { environment: stackPrefix },
-    stackPrefix,
+    tags: { environment: env.STACK_PREFIX },
+    stackPrefix: env.STACK_PREFIX,
 });

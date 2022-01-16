@@ -1,4 +1,4 @@
-import { CloudFront, shortId } from "./awsClient";
+import { awsClient, CloudFront, shortId } from "./awsClient";
 import type { OriginEndpoint } from "./mediaPackage";
 
 export interface Distribution {
@@ -96,7 +96,7 @@ export async function createDistribution(roomId: string, originEndpoint: OriginE
             Items: [
                 {
                     Key: "environment",
-                    Value: process.env.AWS_PREFIX ?? "unknown",
+                    Value: awsClient.prefix ?? "unknown",
                 },
             ],
         },

@@ -1,3 +1,4 @@
+import { tryConfirmSubscription, validateSNSNotification } from "@midspace/component-clients/aws/sns";
 import type { MediaConvertEvent } from "@midspace/shared-types/sns/mediaconvert";
 import { TranscodeMode } from "@midspace/shared-types/sns/mediaconvert";
 import { text } from "body-parser";
@@ -5,7 +6,7 @@ import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { completeCombineVideosJob, failCombineVideosJob } from "../handlers/combineVideosJob";
-import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
+import { awsClient, getAWSParameter } from "../lib/aws/awsClient";
 import { completePreviewTranscode, failPreviewTranscode } from "../lib/transcode";
 
 export const router = express.Router();
@@ -21,7 +22,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
             return;
         }
 
-        if (message.TopicArn !== process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN) {
+        if (message.TopicArn !== (await getAWSParameter("TRANSCODE_NOTIFICATIONS_TOPIC_ARN"))) {
             req.log.info({ TopicArn: message.TopicArn }, "Received SNS notification for the wrong topic");
             res.status(403).json("Access denied");
             return;
@@ -46,12 +47,9 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                 return;
             }
 
-            if (
-                event.detail.userMetadata.environment &&
-                event.detail.userMetadata.environment !== process.env.AWS_PREFIX
-            ) {
+            if (event.detail.userMetadata.environment && event.detail.userMetadata.environment !== awsClient.prefix) {
                 req.log.warn(
-                    { environment: event.detail.userMetadata.environment, AWS_PREFIX: process.env.AWS_PREFIX },
+                    { environment: event.detail.userMetadata.environment, AWS_PREFIX: awsClient.prefix },
                     "Received MediaConvert event for AWS environment that does not match this one"
                 );
                 res.status(200).json("Environment mismatch");

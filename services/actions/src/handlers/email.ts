@@ -80,7 +80,9 @@ export async function insertEmails(
     conferenceId: string | undefined,
     jobId: string | undefined
 ): Promise<number | undefined> {
-    const configResponse = await apolloClient.query({
+    const configResponse = await (
+        await apolloClient
+    ).query({
         query: ConferenceEmailConfigurationDocument,
         variables: {
             conferenceId,
@@ -183,7 +185,9 @@ export async function insertEmails(
 
     for (let i = 0; i < batches; i++) {
         const batch = emailsToInsert.slice(i * batchSize, (i + 1) * batchSize);
-        const r = await apolloClient.mutate({
+        const r = await (
+            await apolloClient
+        ).mutate({
             mutation: InsertEmailsDocument,
             variables: {
                 objects: batch,
@@ -277,7 +281,9 @@ export async function initSGMail(logger: P.Logger): Promise<
 > {
     if (!sgMailInitialised) {
         try {
-            const response = await apolloClient.query({
+            const response = await (
+                await apolloClient
+            ).query({
                 query: GetSendGridConfigDocument,
             });
             if (!response.data.apiKey) {
@@ -322,10 +328,14 @@ export async function processEmailsJobQueue(logger: P.Logger): Promise<void> {
         const sender = sgConfig.sender;
         const replyToAddress = sgConfig.replyTo;
 
-        const unsentEmailIds = await apolloClient.query({
+        const unsentEmailIds = await (
+            await apolloClient
+        ).query({
             query: SelectUnsentEmailIdsDocument,
         });
-        const emailsToSend = await apolloClient.mutate({
+        const emailsToSend = await (
+            await apolloClient
+        ).mutate({
             mutation: MarkAndSelectUnsentEmailsDocument,
             variables: {
                 ids: unsentEmailIds.data.Email.map((x) => x.id),
@@ -363,7 +373,9 @@ export async function processEmailsJobQueue(logger: P.Logger): Promise<void> {
 
         try {
             await callWithRetry(async () => {
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: UnmarkUnsentEmailsDocument,
                     variables: {
                         ids: unsuccessfulEmailIds.filter((x) => !!x),
@@ -432,7 +444,9 @@ export async function processEmailWebhook(payloads: Record<string, any>[]): Prom
                     { midspaceEmailId: "${midspaceEmailId}", status: "${status}", errorMessage: "${errorMessage}" },
                     "Email webhook: Setting email status"
                 );
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: UpdateEmailStatusDocument,
                     variables: {
                         id: midspaceEmailId,

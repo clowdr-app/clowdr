@@ -138,7 +138,9 @@ async function sendInviteEmails(
         return;
     }
 
-    const registrants = await apolloClient.query({
+    const registrants = await (
+        await apolloClient
+    ).query({
         query: SelectRegistrantsWithInvitationDocument,
         variables: {
             registrantIds,
@@ -191,7 +193,9 @@ your account and access the conference.</p>
 }
 
 export async function processInvitationEmailsQueue(logger: P.Logger): Promise<void> {
-    const jobs = await apolloClient.query({
+    const jobs = await (
+        await apolloClient
+    ).query({
         query: SelectUnprocessedInvitationEmailJobsDocument,
         variables: {},
     });
@@ -216,7 +220,9 @@ export async function processInvitationEmailsQueue(logger: P.Logger): Promise<vo
         }
     }
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: CompleteInvitationEmailJobsDocument,
         variables: {
             ids: completedJobIds,
@@ -231,7 +237,9 @@ async function getInvitationAndUser(
     invitation: InvitationPartsFragment;
     user: InvitedUserPartsFragment;
 }> {
-    const invitationQ = await apolloClient.query({
+    const invitationQ = await (
+        await apolloClient
+    ).query({
         query: SelectInvitationAndUserDocument,
         variables: {
             inviteCode,
@@ -265,7 +273,9 @@ async function confirmUser(
 
         if (ok === true) {
             try {
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: SetRegistrantUserIdDocument,
                     variables: {
                         registrantId: invitation.registrantId,
@@ -366,7 +376,9 @@ gql`
 export async function handleInvitationInsert_AutomaticSend(payload: Payload<InvitationData>): Promise<void> {
     if (payload.event.data.new) {
         const conferenceId = payload.event.data.new.conferenceId;
-        const configResponse = await apolloClient.query({
+        const configResponse = await (
+            await apolloClient
+        ).query({
             query: GetAutomaticInvitationsConfigurationDocument,
             variables: {
                 conferenceId,
@@ -381,7 +393,9 @@ export async function handleInvitationInsert_AutomaticSend(payload: Payload<Invi
             initialStartMs <= now &&
             now < initialEndMs
         ) {
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: InsertInvitationEmailJobDocument,
                 variables: {
                     conferenceId,
@@ -394,7 +408,9 @@ export async function handleInvitationInsert_AutomaticSend(payload: Payload<Invi
 }
 
 export async function handleInvitationInsert_AutomaticSendRepeat(): Promise<void> {
-    const conferencesResponse = await apolloClient.query({
+    const conferencesResponse = await (
+        await apolloClient
+    ).query({
         query: GetAutomaticInvitationsRepeatConfigurationsDocument,
     });
     for (const conference of conferencesResponse.data.conference_Conference) {
@@ -417,7 +433,9 @@ export async function handleInvitationInsert_AutomaticSendRepeat(): Promise<void
             now < repeatEndMs;
         if (sendInitial || sendRepeats) {
             try {
-                const registrantsResponse = await apolloClient.query({
+                const registrantsResponse = await (
+                    await apolloClient
+                ).query({
                     query: GetAutomaticInvitations_ToBeRepeatedDocument,
                     variables: {
                         conferenceId: conference.id,
@@ -439,7 +457,9 @@ export async function handleInvitationInsert_AutomaticSendRepeat(): Promise<void
                         }
                     })
                     .map((x) => x.id);
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: InsertInvitationEmailJobDocument,
                     variables: {
                         conferenceId: conference.id,

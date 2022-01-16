@@ -1,6 +1,7 @@
 import * as iam from "@aws-cdk/aws-iam";
 import type * as s3 from "@aws-cdk/aws-s3";
 import * as sm from "@aws-cdk/aws-secretsmanager";
+import * as ssm from "@aws-cdk/aws-ssm";
 import * as cfninc from "@aws-cdk/cloudformation-include";
 import * as cdk from "@aws-cdk/core";
 
@@ -30,7 +31,7 @@ export class ImageStack extends cdk.Stack {
 
         secret.grantRead(secretRole);
 
-        new cfninc.CfnInclude(this, "ImgHandler", {
+        const imgHandler = new cfninc.CfnInclude(this, "ImgHandler", {
             templateFile: "vendor/serverless-image-handler.template",
             parameters: {
                 CorsEnabled: "Yes",
@@ -46,12 +47,25 @@ export class ImageStack extends cdk.Stack {
             },
         });
 
-        new cdk.CfnOutput(this, "SecretArn", {
-            value: secret.secretArn,
+        const cloudfrontDomainName = imgHandler.getResource("ImageHandlerDistribution").getAtt("DomainName").toString();
+        new ssm.StringParameter(this, "/EnvVars/AWS_IMAGES_CLOUDFRONT_DOMAIN_NAME", {
+            allowedPattern: ".*",
+            parameterName: "IMAGES_CLOUDFRONT_DOMAIN_NAME",
+            stringValue: cloudfrontDomainName,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
         });
 
-        new cdk.CfnOutput(this, "SecretAccessRoleArn", {
-            value: secretRole.roleArn,
+        new ssm.StringParameter(this, "/EnvVars/AWS_IMAGES_SECRET_ARN", {
+            allowedPattern: ".*",
+            parameterName: "IMAGES_SECRET_ARN",
+            stringValue: secret.secretArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_IMAGES_SECRET_ACCESS_ROLE_ARN", {
+            allowedPattern: ".*",
+            parameterName: "IMAGES_SECRET_ACCESS_ROLE_ARN",
+            stringValue: secretRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
         });
     }
 }

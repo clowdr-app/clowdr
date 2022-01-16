@@ -11,11 +11,12 @@ import {
     handleEventUpdated,
     handleStopEventBroadcasts,
 } from "../handlers/event";
+import { awsClient } from "../lib/aws/awsClient";
 
 export const router = express.Router();
 
 // Protected routes
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 
 router.post("/updated", json(), async (req: Request, res: Response) => {
     try {

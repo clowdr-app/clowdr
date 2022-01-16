@@ -24,7 +24,9 @@ export async function getConferenceConfiguration<T = any>(
     conferenceId: string,
     key: Conference_ConfigurationKey_Enum
 ): Promise<any | null> {
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetConfigurationValueDocument,
         variables: {
             conferenceId,

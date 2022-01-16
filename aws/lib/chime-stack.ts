@@ -2,6 +2,7 @@ import * as events from "@aws-cdk/aws-events";
 import * as targets from "@aws-cdk/aws-events-targets";
 import * as iam from "@aws-cdk/aws-iam";
 import * as sns from "@aws-cdk/aws-sns";
+import * as ssm from "@aws-cdk/aws-ssm";
 import * as cdk from "@aws-cdk/core";
 
 export interface ChimeStackProps extends cdk.StackProps {
@@ -13,6 +14,7 @@ export class ChimeStack extends cdk.Stack {
         super(scope, id, props);
 
         const chimeActionsUser = new iam.User(this, "ChimeActionsUser", {});
+        chimeActionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
 
         // Chime notifications
         const chimeNotificationsTopic = new sns.Topic(this, "ChimeNotifications", {});
@@ -42,16 +44,19 @@ export class ChimeStack extends cdk.Stack {
             userName: chimeActionsUser.userName,
         });
 
+        new ssm.StringParameter(this, "/EnvVars/AWS_CHIME_NOTIFICATIONS_TOPIC_ARN", {
+            allowedPattern: ".*",
+            parameterName: "CHIME_NOTIFICATIONS_TOPIC_ARN",
+            stringValue: chimeNotificationsTopic.topicArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
         new cdk.CfnOutput(this, "ChimeActionsUserAccessKeyId", {
             value: accessKey.ref,
         });
 
         new cdk.CfnOutput(this, "ChimeActionsUserSecretAccessKey", {
             value: accessKey.attrSecretAccessKey,
-        });
-
-        new cdk.CfnOutput(this, "ChimeNotificationsTopic", {
-            value: chimeNotificationsTopic.topicArn,
         });
     }
 }

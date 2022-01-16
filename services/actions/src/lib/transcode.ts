@@ -27,7 +27,7 @@ import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
 import { ElementAddNewVersionDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { ElasticTranscoder, MediaConvert } from "./aws/awsClient";
+import { awsClient, ElasticTranscoder, getAWSParameter, MediaConvert } from "./aws/awsClient";
 import { addNewElementVersion, createNewVersionFromPreviewTranscode, getLatestVersion } from "./element";
 
 interface StartTranscodeOutput {
@@ -76,11 +76,11 @@ export async function startPreviewTranscode(
     const { dir } = path.parse(key);
 
     const result = await MediaConvert.createJob({
-        Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
+        Role: await getAWSParameter("MEDIACONVERT_SERVICE_ROLE_ARN"),
         UserMetadata: {
             elementId,
             mode: TranscodeMode.PREVIEW,
-            environment: process.env.AWS_PREFIX ?? "unknown",
+            environment: awsClient.prefix ?? "unknown",
         },
         Settings: {
             Inputs: [
@@ -98,7 +98,9 @@ export async function startPreviewTranscode(
                     CustomName: "File Group",
                     OutputGroupSettings: {
                         FileGroupSettings: {
-                            Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${dir.length > 0 ? `${dir}/` : ""}`,
+                            Destination: `s3://${await getAWSParameter("CONTENT_BUCKET_ID")}/${
+                                dir.length > 0 ? `${dir}/` : ""
+                            }`,
                         },
                         Type: OutputGroupType.FILE_GROUP_SETTINGS,
                     },
@@ -154,19 +156,19 @@ export async function startElasticBroadcastTranscode(
         allPipelines.push(...(page.Pipelines ?? []));
     }
 
-    pipeline = allPipelines.find((pipeline) => pipeline.Name === process.env.AWS_PREFIX);
+    pipeline = allPipelines.find((pipeline) => pipeline.Name === awsClient.prefix);
 
     if (!pipeline) {
         const output = await ElasticTranscoder.createPipeline({
-            InputBucket: process.env.AWS_CONTENT_BUCKET_ID,
-            Name: process.env.AWS_PREFIX,
-            Role: process.env.AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN,
-            OutputBucket: process.env.AWS_CONTENT_BUCKET_ID,
+            InputBucket: await getAWSParameter("CONTENT_BUCKET_ID"),
+            Name: awsClient.prefix,
+            Role: await getAWSParameter("ELASTIC_TRANSCODER_SERVICE_ROLE_ARN"),
+            OutputBucket: await getAWSParameter("CONTENT_BUCKET_ID"),
             Notifications: {
-                Completed: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
-                Error: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
-                Progressing: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
-                Warning: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
+                Completed: await getAWSParameter("ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN"),
+                Error: await getAWSParameter("ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN"),
+                Progressing: await getAWSParameter("ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN"),
+                Warning: await getAWSParameter("ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN"),
             },
         });
         pipeline = output.Pipeline;
@@ -174,12 +176,14 @@ export async function startElasticBroadcastTranscode(
 
     assert(
         pipeline,
-        `Failed to get or create AWS Elastic Transcoder pipeline for bucket ${process.env.AWS_CONTENT_BUCKET_ID}`
+        `Failed to get or create AWS Elastic Transcoder pipeline for bucket ${await getAWSParameter(
+            "CONTENT_BUCKET_ID"
+        )}`
     );
 
     const { bucket: videoBucket, key: videoKey } = new AmazonS3URI(s3VideoUrl);
     assert(
-        process.env.AWS_CONTENT_BUCKET_ID === videoBucket,
+        (await getAWSParameter("CONTENT_BUCKET_ID")) === videoBucket,
         `Cannot transcode a video that is not in the expected content bucket: ${s3VideoUrl}`
     );
     assert(videoKey, `Could not retrieve key from video S3 URL: ${s3VideoUrl}`);
@@ -189,7 +193,7 @@ export async function startElasticBroadcastTranscode(
     if (s3CaptionsUrl) {
         const { bucket: captionsBucket, key: captionsKey } = new AmazonS3URI(s3CaptionsUrl);
         assert(
-            process.env.AWS_CONTENT_BUCKET_ID === captionsBucket,
+            (await getAWSParameter("CONTENT_BUCKET_ID")) === captionsBucket,
             `Cannot use captions that are not in the expected content bucket: ${s3CaptionsUrl}`
         );
         assert(captionsKey, `Could not retrieve key from captions S3 URL: ${s3CaptionsUrl}`);
@@ -229,7 +233,7 @@ export async function startElasticBroadcastTranscode(
         },
         UserMetadata: {
             videoRenderJobId,
-            bucket: process.env.AWS_CONTENT_BUCKET_ID,
+            bucket: await getAWSParameter("CONTENT_BUCKET_ID"),
         },
     });
 
@@ -281,7 +285,7 @@ export async function startBroadcastTranscode(
         : [];
 
     const result = await MediaConvert.createJob({
-        Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
+        Role: await getAWSParameter("MEDIACONVERT_SERVICE_ROLE_ARN"),
         UserMetadata: {
             videoRenderJobId,
             mode: TranscodeMode.BROADCAST,
@@ -303,7 +307,7 @@ export async function startBroadcastTranscode(
                     CustomName: "File Group",
                     OutputGroupSettings: {
                         FileGroupSettings: {
-                            Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/`,
+                            Destination: `s3://${await getAWSParameter("CONTENT_BUCKET_ID")}/`,
                         },
                         Type: OutputGroupType.FILE_GROUP_SETTINGS,
                     },
@@ -383,7 +387,9 @@ export async function failPreviewTranscode(
     newVersion.createdAt = new Date().getTime();
     newVersion.createdBy = "system";
 
-    const result = await apolloClient.mutate({
+    const result = await (
+        await apolloClient
+    ).mutate({
         mutation: ElementAddNewVersionDocument,
         variables: {
             id: elementId,

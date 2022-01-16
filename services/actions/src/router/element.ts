@@ -8,12 +8,13 @@ import express from "express";
 import { assertType, TypeGuardError } from "typescript-is";
 import { handleElementUpdated, handleGetUploadAgreement } from "../handlers/content";
 import { handleElementSubmitted, handleUpdateSubtitles } from "../handlers/upload";
+import { awsClient } from "../lib/aws/awsClient";
 import { BadRequestError, UnexpectedServerError } from "../lib/errors";
 
 export const router = express.Router();
 
 // Protected routes
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 
 router.post("/updated", json(), async (req: Request, res: Response) => {
     try {

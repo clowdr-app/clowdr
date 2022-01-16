@@ -1,10 +1,11 @@
+import { tryConfirmSubscription, validateSNSNotification } from "@midspace/component-clients/aws/sns";
 import type { MediaPackageEvent } from "@midspace/shared-types/sns/mediaPackage";
 import { text } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { completeMediaPackageHarvestJob, failMediaPackageHarvestJob } from "../handlers/recording";
-import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
+import { getAWSParameter } from "../lib/aws/awsClient";
 
 export const router = express.Router();
 
@@ -19,7 +20,7 @@ router.post("/harvest/notify", text(), async (req: Request, res: Response) => {
             return;
         }
 
-        if (message.TopicArn !== process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN) {
+        if (message.TopicArn !== (await getAWSParameter("MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN"))) {
             req.log.info({ TopicArn: message.TopicArn }, "Received SNS notification for the wrong topic");
             res.status(403).json("Access denied");
             return;

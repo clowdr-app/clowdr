@@ -29,7 +29,9 @@ export async function handleGetSlug(args: getSlugArgs): Promise<string | null> {
     const originMatch = args.url.match(/(https:\/\/[^/]+).*/i);
     if (originMatch?.length === 2) {
         const origin = originMatch[1];
-        const response = await apolloClient.query({
+        const response = await (
+            await apolloClient
+        ).query({
             query: CheckForFrontendHostsDocument,
             variables: {
                 host: origin,

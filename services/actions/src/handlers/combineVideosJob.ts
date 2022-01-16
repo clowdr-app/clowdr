@@ -29,7 +29,7 @@ import {
     MediaConvert_GetCombineVideosJobDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { MediaConvert } from "../lib/aws/awsClient";
+import { awsClient, getAWSParameter, MediaConvert } from "../lib/aws/awsClient";
 import { audioDescription, videoDescription } from "../lib/transcode";
 import { callWithRetry } from "../utils";
 
@@ -58,7 +58,9 @@ gql`
 `;
 
 export async function processCombineVideosJobQueue(logger: P.Logger): Promise<void> {
-    const jobsResponse = await apolloClient.query({
+    const jobsResponse = await (
+        await apolloClient
+    ).query({
         query: CombineVideosJob_GetJobsDocument,
     });
 
@@ -76,7 +78,9 @@ export async function processCombineVideosJobQueue(logger: P.Logger): Promise<vo
         try {
             const data = assertType<CombineVideosJobDataBlob>(row.data);
 
-            const result = await apolloClient.query({
+            const result = await (
+                await apolloClient
+            ).query({
                 query: CombineVideosJob_GetElementsDocument,
                 variables: {
                     conferenceId: row.conferenceId,
@@ -145,12 +149,12 @@ export async function processCombineVideosJobQueue(logger: P.Logger): Promise<vo
 
             assert(MediaConvert, "AWS MediaConvert client is not initialised");
             const mediaConvertJobResult = await MediaConvert.createJob({
-                Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
+                Role: await getAWSParameter("MEDIACONVERT_SERVICE_ROLE_ARN"),
                 UserMetadata: {
                     mode: TranscodeMode.COMBINE,
                     combineVideosJobId: row.id,
                     itemId: itemIds[0],
-                    environment: process.env.AWS_PREFIX ?? "unknown",
+                    environment: awsClient.prefix ?? "unknown",
                 },
                 Settings: {
                     Inputs: inputs,
@@ -159,7 +163,7 @@ export async function processCombineVideosJobQueue(logger: P.Logger): Promise<vo
                             CustomName: "File Group",
                             OutputGroupSettings: {
                                 FileGroupSettings: {
-                                    Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${destinationKey}`,
+                                    Destination: `s3://${await getAWSParameter("CONTENT_BUCKET_ID")}/${destinationKey}`,
                                 },
                                 Type: OutputGroupType.FILE_GROUP_SETTINGS,
                             },
@@ -229,7 +233,9 @@ export async function failCombineVideosJob(
     logger.info({ combineVideosJobId, message }, "Recording CombineVideosJob as failed");
     await callWithRetry(
         async () =>
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: CombineVideosJob_FailJobDocument,
                 variables: {
                     combineVideosJobId,
@@ -254,7 +260,9 @@ async function startCombineVideosJob(logger: P.Logger, combineVideosJobId: strin
     logger.info({ combineVideosJobId, mediaConvertJobId }, "Recording CombineVideosJob as started");
     await callWithRetry(
         async () =>
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: CombineVideosJob_StartJobDocument,
                 variables: {
                     combineVideosJobId,
@@ -321,7 +329,9 @@ export async function completeCombineVideosJob(
     try {
         const combineVideosJobResult = await callWithRetry(
             async () =>
-                await apolloClient.query({
+                await (
+                    await apolloClient
+                ).query({
                     query: MediaConvert_GetCombineVideosJobDocument,
                     variables: {
                         combineVideosJobId,
@@ -368,7 +378,9 @@ export async function completeCombineVideosJob(
 
         await callWithRetry(
             async () =>
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: CombineVideosJob_CreateElementDocument,
                     variables: {
                         conferenceId: combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk?.conferenceId,
@@ -384,7 +396,9 @@ export async function completeCombineVideosJob(
 
         await callWithRetry(
             async () =>
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: CombineVideosJob_CompleteJobDocument,
                     variables: {
                         combineVideosJobId,

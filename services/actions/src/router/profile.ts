@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client/core";
-import { GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
 import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
@@ -16,15 +15,15 @@ import { assertType, TypeGuardError } from "typescript-is";
 import type { Maybe } from "../generated/graphql";
 import { UpdateProfilePhotoDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { S3, SecretsManager } from "../lib/aws/awsClient";
+import { awsClient, getAWSParameter, ImagesSecretsManager, S3 } from "../lib/aws/awsClient";
 import { BadRequestError, UnexpectedServerError } from "../lib/errors";
 
 export const router = express.Router();
 
 // Protected routes
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 router.use(json());
-router.use(checkJwt);
+router.use(checkJwt(awsClient));
 
 gql`
     mutation UpdateProfilePhoto(
@@ -65,10 +64,10 @@ async function checkS3Url(
     url: string
 ): Promise<{ result: "success"; key: string } | { result: "error"; message: string }> {
     const { region, bucket, key } = AmazonS3URI(url);
-    if (region !== process.env.AWS_REGION) {
+    if (region !== awsClient.region) {
         return { result: "error", message: "Invalid S3 URL (region mismatch)" };
     }
-    if (bucket !== process.env.AWS_CONTENT_BUCKET_ID) {
+    if (bucket !== (await getAWSParameter("CONTENT_BUCKET_ID"))) {
         return { result: "error", message: "Invalid S3 URL (bucket mismatch)" };
     }
     if (!key) {
@@ -91,11 +90,11 @@ async function checkS3Url(
 }
 
 async function getImagesSecretValue(): Promise<string> {
-    const response = await SecretsManager.send(
-        new GetSecretValueCommand({
-            SecretId: process.env.AWS_IMAGES_SECRET_ARN,
-        })
-    );
+    const response = await (
+        await ImagesSecretsManager()
+    ).getSecretValue({
+        SecretId: await getAWSParameter("IMAGES_SECRET_ARN"),
+    });
 
     const secretValue = response.SecretString;
     assert(secretValue);
@@ -116,7 +115,9 @@ async function handleUpdateProfilePhoto(
     let photoURL_350x350: string | undefined;
     let photoURL_50x50: string | undefined;
     if (!s3URL || s3URL.length === 0) {
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: UpdateProfilePhotoDocument,
             variables: {
                 registrantId,
@@ -134,40 +135,34 @@ async function handleUpdateProfilePhoto(
             throw new Error("Invalid S3 URL");
         }
 
-        assert(process.env.AWS_CONTENT_BUCKET_ID);
-
-        assert(
-            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
-            "AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME not provided."
-        );
-        assert(process.env.AWS_IMAGES_SECRET_ARN, "AWS_IMAGES_SECRET_ARN not provided.");
-
         const secret = await getImagesSecretValueMemoized();
         photoURL_350x350 = generateSignedImageURL(
-            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+            await getAWSParameter("IMAGES_CLOUDFRONT_DOMAIN_NAME"),
             secret,
-            process.env.AWS_CONTENT_BUCKET_ID,
+            await getAWSParameter("CONTENT_BUCKET_ID"),
             validatedS3URL.key,
             350,
             350
         );
         photoURL_50x50 = generateSignedImageURL(
-            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+            await getAWSParameter("IMAGES_CLOUDFRONT_DOMAIN_NAME"),
             secret,
-            process.env.AWS_CONTENT_BUCKET_ID,
+            await getAWSParameter("CONTENT_BUCKET_ID"),
             validatedS3URL.key,
             50,
             50
         );
 
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: UpdateProfilePhotoDocument,
             variables: {
                 registrantId,
                 userId,
-                bucket: process.env.AWS_CONTENT_BUCKET_ID,
+                bucket: await getAWSParameter("CONTENT_BUCKET_ID"),
                 objectName: validatedS3URL.key,
-                region: process.env.AWS_REGION,
+                region: awsClient.region,
                 photoURL_350x350,
                 photoURL_50x50,
             },
@@ -209,7 +204,7 @@ function btoa(str: string) {
 }
 
 function generateSignedImageURL(
-    cloudFrontDistributionName: string,
+    cloudFrontDomainName: string,
     secret: string,
     bucketName: string,
     objectName: string,
@@ -231,5 +226,5 @@ function generateSignedImageURL(
     const path = `/${btoa(imageRequest)}`;
     assert(secret);
     const signature = crypto.createHmac("sha256", secret).update(path).digest("hex");
-    return `https://${cloudFrontDistributionName}.cloudfront.net${path}?signature=${signature}`;
+    return `https://${cloudFrontDomainName}${path}?signature=${signature}`;
 }

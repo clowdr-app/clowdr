@@ -37,7 +37,9 @@ export async function getRegistrant(userId: string, conferenceId: string): Promi
     `;
 
     // Check that the requesting user actually attends the conference
-    const myRegistrantResult = await apolloClient.query({
+    const myRegistrantResult = await (
+        await apolloClient
+    ).query({
         query: GetRegistrantDocument,
         variables: {
             userId,
@@ -73,7 +75,9 @@ export async function getRegistrantWithPermissions(
     `;
 
     // Check that the requesting user actually attends the conference
-    const myRegistrantResult = await apolloClient.query({
+    const myRegistrantResult = await (
+        await apolloClient
+    ).query({
         query: GetRegistrantWithPermissionsDocument,
         variables: {
             userId,
@@ -101,7 +105,9 @@ export async function getRegistrantByConferenceSlug(
     `;
 
     // Check that the requesting user actually attends the conference
-    const myRegistrantResult = await apolloClient.query({
+    const myRegistrantResult = await (
+        await apolloClient
+    ).query({
         query: GetRegistrantByConferenceSlugDocument,
         variables: {
             userId,
@@ -135,7 +141,9 @@ export async function registrantBelongsToUser(
     userId: string
 ): Promise<false | GetRegistrant_RegistrantFragment> {
     try {
-        const result = await apolloClient.query({
+        const result = await (
+            await apolloClient
+        ).query({
             query: Authorisation_FindRegistrantDocument,
             variables: {
                 registrantId,
@@ -155,7 +163,9 @@ export async function registrantBelongsToUser(
 
 export async function getRegistrantDetails(registrantId: string): Promise<false | GetRegistrant_RegistrantFragment> {
     try {
-        const result = await apolloClient.query({
+        const result = await (
+            await apolloClient
+        ).query({
             query: Authorisation_GetRegistrantDocument,
             variables: {
                 registrantId,

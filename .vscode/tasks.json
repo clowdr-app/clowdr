@@ -377,6 +377,13 @@
         {
             "label": "AWS -- Deploy stacks",
             "detail": "Deploy all CDK stacks to an AWS account. You will be asked which profile you want to deploy to.",
+            "dependsOn": ["Packetriot", "(Hidden) AWS -- Deploy stacks inner function"],
+            "dependsOrder": "parallel",
+            "problemMatcher": []
+        },
+        {
+            "label": "(Hidden) AWS -- Deploy stacks inner function",
+            "detail": "Inner functionality to get around VSCode tasks dependencies nonsense. Don't run this one directly.",
             "type": "shell",
             "command": "pnpm",
             "problemMatcher": [],
@@ -390,7 +397,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["deploy:all"]
+            "args": ["deploy:all", "--", "--profile", "${input:aws-profile-name}"]
         },
         {
             "label": "AWS -- Open console",

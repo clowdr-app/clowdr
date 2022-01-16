@@ -6,11 +6,12 @@ import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { handleGeneratePresignedTranscribeWebsocketURL } from "../handlers/transcibe";
+import { awsClient } from "../lib/aws/awsClient";
 
 export const router = express.Router();
 
 // Protected routes
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 router.use(json());
 
 router.post("/generatePresignedUrl", async (req: Request, res: Response) => {

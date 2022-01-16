@@ -6,139 +6,89 @@ import { MediaConvert } from "@aws-sdk/client-mediaconvert";
 import { MediaPackage } from "@aws-sdk/client-mediapackage";
 import { S3 } from "@aws-sdk/client-s3";
 import { SecretsManager } from "@aws-sdk/client-secrets-manager";
-import { SNS } from "@aws-sdk/client-sns";
 import { AssumeRoleCommand, STS } from "@aws-sdk/client-sts";
 import { Transcribe } from "@aws-sdk/client-transcribe";
 import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
 import type { Credentials } from "@aws-sdk/types";
+import { createAWSClient, subscribeToSNSNotifications } from "@midspace/component-clients/aws/client";
 import assert from "assert";
 import { customAlphabet } from "nanoid";
-import type { P } from "pino";
-import { getHostUrl } from "../../utils";
+import pMemoize from "p-memoize";
 import { logger } from "../logger";
-import { fromEnv } from "./credentialProviders";
 
-assert(process.env.AWS_PREFIX, "Missing AWS_PREFIX environment variable");
-assert(process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID, "Missing AWS_ACTIONS_USER_ACCESS_KEY_ID environment variable");
-assert(
-    process.env.AWS_ACTIONS_USER_SECRET_ACCESS_KEY,
-    "Missing AWS_ACTIONS_USER_SECRET_ACCESS_KEY environment variable"
-);
-assert(
-    process.env.AWS_CHIME_ACTIONS_USER_ACCESS_KEY_ID,
-    "Missing AWS_CHIME_ACTIONS_USER_ACCESS_KEY_ID environment variable"
-);
-assert(
-    process.env.AWS_CHIME_ACTIONS_USER_SECRET_ACCESS_KEY,
-    "Missing AWS_CHIME_ACTIONS_USER_SECRET_ACCESS_KEY environment variable"
-);
+assert(process.env.SERVICE_NAME, "Missing SERVICE_NAME environment variable");
 
-assert(process.env.AWS_REGION, "Missing AWS_REGION environment variable");
-assert(process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN, "Missing AWS_MEDIACONVERT_SERVICE_ROLE_ARN environment variable");
-assert(
-    process.env.AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN,
-    "Missing AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN environment variable"
-);
-assert(process.env.AWS_TRANSCRIBE_SERVICE_ROLE_ARN, "Missing AWS_TRANSCRIBE_SERVICE_ROLE_ARN environment variable");
-assert(
-    process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
-    "Missing AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN environment variable"
-);
-assert(
-    process.env.AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN,
-    "Missing AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN environment variable"
-);
-assert(
-    process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
-    "Missing AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN environment variable"
-);
-assert(process.env.AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN, "Missing AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN environment variable");
-assert(
-    process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN,
-    "Missing AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN environment variable"
-);
-assert(process.env.AWS_IMAGES_SECRET_ACCESS_ROLE_ARN, "Missing AWS_IMAGES_SECRET_ACCESS_ROLE_ARN environment variable");
+const awsClient = createAWSClient(process.env.SERVICE_NAME, logger);
+const chimeClient = createAWSClient("CHIME_" + process.env.SERVICE_NAME, logger);
 
-const credentials = fromEnv({
-    envKey: "AWS_ACTIONS_USER_ACCESS_KEY_ID",
-    envSecret: "AWS_ACTIONS_USER_SECRET_ACCESS_KEY",
-});
-const chimeUserCredentials = fromEnv({
-    envKey: "AWS_CHIME_ACTIONS_USER_ACCESS_KEY_ID",
-    envSecret: "AWS_CHIME_ACTIONS_USER_SECRET_ACCESS_KEY",
-});
-const region = process.env.AWS_REGION;
+async function getImagesSecretsManagerClient(): Promise<SecretsManager> {
+    const AWS_IMAGES_SECRET_ACCESS_ROLE_ARN = await awsClient.getAWSParameter("IMAGES_SECRET_ACCESS_ROLE_ARN");
+
+    return new SecretsManager({
+        credentials: fromTemporaryCredentials({
+            masterCredentials: awsClient.credentials,
+            params: {
+                RoleArn: AWS_IMAGES_SECRET_ACCESS_ROLE_ARN,
+                DurationSeconds: 3600,
+            },
+            clientConfig: {
+                region: awsClient.region,
+            },
+        }),
+        region: awsClient.region,
+    });
+}
+
+const imagesSecretsManager = pMemoize(getImagesSecretsManagerClient);
 
 const iam = new IAM({
-    credentials,
-    region,
+    credentials: awsClient.credentials,
+    region: awsClient.region,
 });
 
 const s3 = new S3({
-    credentials,
-    region,
-    signingRegion: region,
-});
-
-const sns = new SNS({
-    credentials,
-    region,
-});
-
-const snsChime = new SNS({
-    credentials: chimeUserCredentials,
-    region: "us-east-1",
+    credentials: awsClient.credentials,
+    region: awsClient.region,
+    signingRegion: awsClient.region,
 });
 
 const transcribe = new Transcribe({
-    credentials,
-    region,
+    credentials: awsClient.credentials,
+    region: awsClient.region,
 });
 
 const transcoder = new ElasticTranscoder({
-    credentials,
-    region,
+    credentials: awsClient.credentials,
+    region: awsClient.region,
 });
 
 const mediaPackage = new MediaPackage({
-    credentials,
-    region,
+    credentials: awsClient.credentials,
+    region: awsClient.region,
 });
 
 const cloudFront = new CloudFront({
-    credentials,
-    region,
+    credentials: awsClient.credentials,
+    region: awsClient.region,
 });
 
 const sts = new STS({
-    credentials,
-    region,
-});
-
-const secretsManager = new SecretsManager({
-    credentials: fromTemporaryCredentials({
-        masterCredentials: credentials,
-        params: {
-            RoleArn: process.env.AWS_IMAGES_SECRET_ACCESS_ROLE_ARN,
-            DurationSeconds: 3600,
-        },
-        clientConfig: {
-            region,
-        },
-    }),
-    region,
-});
-
-const assumeChimeRoleCommand = new AssumeRoleCommand({
-    RoleArn: process.env.AWS_CHIME_MANAGER_ROLE_ARN,
-    RoleSessionName: "chime-session",
-    DurationSeconds: 3600,
+    credentials: awsClient.credentials,
+    region: awsClient.region,
 });
 
 let chimeCredentials: Credentials | null;
 const chime = new Chime({
     credentials: async () => {
         if (!chimeCredentials?.expiration || chimeCredentials.expiration.getTime() - Date.now() < 300000) {
+            const AWS_CHIME_MANAGER_ROLE_ARN = await awsClient.getAWSParameter("CHIME_MANAGER_ROLE_ARN");
+
+            const assumeChimeRoleCommand = new AssumeRoleCommand({
+                RoleArn: AWS_CHIME_MANAGER_ROLE_ARN,
+                RoleSessionName: "chime-session",
+                DurationSeconds: 3600,
+            });
+
             const assumeRoleOutput = await sts.send(assumeChimeRoleCommand);
             const Credentials = assumeRoleOutput.Credentials;
 
@@ -153,12 +103,12 @@ const chime = new Chime({
                 sessionToken: Credentials.SessionToken,
             };
 
-            logger.info({ roleArn: process.env.AWS_CHIME_MANAGER_ROLE_ARN }, "Generated new Chime credentials");
+            logger.info({ roleArn: AWS_CHIME_MANAGER_ROLE_ARN }, "Generated new Chime credentials");
         }
 
         return chimeCredentials;
     },
-    region,
+    region: awsClient.region,
     // endpoint: "https://service.chime.aws.amazon.com/console",
 });
 
@@ -167,13 +117,13 @@ let mediaconvert: MediaConvert | null = null;
 const shortId = customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", 5);
 
 async function getMediaConvertClient(): Promise<MediaConvert> {
-    let mediaConvertEndpoint = process.env.AWS_MEDIACONVERT_API_ENDPOINT;
+    let mediaConvertEndpoint = await awsClient.getAWSOptionalParameter("MEDIACONVERT_API_ENDPOINT");
 
     if (!mediaConvertEndpoint) {
         const mediaConvertEndpointDescription = await new MediaConvert({
             apiVersion: "2017-08-29",
-            credentials,
-            region,
+            credentials: awsClient.credentials,
+            region: awsClient.region,
         }).describeEndpoints({});
 
         if (
@@ -181,106 +131,79 @@ async function getMediaConvertClient(): Promise<MediaConvert> {
             mediaConvertEndpointDescription.Endpoints.length < 1 ||
             !mediaConvertEndpointDescription.Endpoints[0].Url
         ) {
-            throw new Error("Could not retrieve customer-specific endpoint for MediaConvert");
+            throw new Error("Could not retrieve endpoint for MediaConvert");
         }
         mediaConvertEndpoint = mediaConvertEndpointDescription.Endpoints[0].Url;
     }
 
     return new MediaConvert({
         apiVersion: "2017-08-29",
-        credentials,
-        region,
+        credentials: awsClient.credentials,
+        region: awsClient.region,
         endpoint: mediaConvertEndpoint,
     });
 }
 
-async function initialiseAwsClient(logger: P.Logger): Promise<void> {
+async function initialiseAwsClient(): Promise<void> {
     mediaconvert = await getMediaConvertClient();
 
-    // Subscribe to transcode SNS topic
-    const transcodeNotificationUrl = new URL(getHostUrl());
-    transcodeNotificationUrl.pathname = "/mediaConvert/notify";
-
-    logger.info("Subscribing to SNS topic: transcode notifications");
-    const transcodeSubscribeResult = await sns.subscribe({
-        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
-        TopicArn: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
-        Endpoint: transcodeNotificationUrl.toString(),
-    });
-    logger.info("Subscribed to SNS topic: transcode notifications");
-
-    if (!transcodeSubscribeResult.SubscriptionArn) {
-        throw new Error("Could not subscribe to transcode notifications");
-    }
-
-    // Subscribe to transcribe SNS topic
-    const transcribeNotificationUrl = new URL(getHostUrl());
-    transcribeNotificationUrl.pathname = "/amazonTranscribe/notify";
-
-    logger.info("Subscribing to SNS topic: transcribe notifications");
-    const transcribeSubscribeResult = await sns.subscribe({
-        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
-        TopicArn: process.env.AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN,
-        Endpoint: transcribeNotificationUrl.toString(),
-    });
-    logger.info("Subscribed to SNS topic: transcribe notifications");
-
-    if (!transcribeSubscribeResult.SubscriptionArn) {
-        throw new Error("Could not subscribe to transcribe notifications");
-    }
-
-    // Subscribe to Elastic Transcoder SNS topic
-    const elasticTranscoderNotificationUrl = new URL(getHostUrl());
-    elasticTranscoderNotificationUrl.pathname = "/elasticTranscoder/notify";
-
-    logger.info("Subscribing to SNS topic: Elastic Transcoder notifications");
-    const elasticTranscoderSubscribeResult = await sns.subscribe({
-        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
-        TopicArn: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
-        Endpoint: elasticTranscoderNotificationUrl.toString(),
-    });
-    logger.info("Subscribed to SNS topic: Elastic Transcoder notifications");
-
-    if (!elasticTranscoderSubscribeResult.SubscriptionArn) {
-        throw new Error("Could not subscribe to Elastic Transcoder notifications");
-    }
-
-    // Subscribe to MediaPackage Harvest SNS topic
-    const mediaPackageHarvestNotificationUrl = new URL(getHostUrl());
-    mediaPackageHarvestNotificationUrl.pathname = "/mediaPackage/harvest/notify";
-
-    logger.info("Subscribing to SNS topic: MediaPackage harvest job notifications");
-    const mediaPackageHarvestSubscribeResult = await sns.subscribe({
-        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
-        TopicArn: process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN,
-        Endpoint: mediaPackageHarvestNotificationUrl.toString(),
-    });
-    logger.info("Subscribed to SNS topic: MediaPackage harvest notifications");
-
-    if (!mediaPackageHarvestSubscribeResult.SubscriptionArn) {
-        throw new Error("Could not subscribe to MediaPackage harvest notifications");
-    }
-
-    // Subscribe to Chime SNS topic
-    const chimeNotificationUrl = new URL(getHostUrl());
-    chimeNotificationUrl.pathname = "/chime/notify";
-
-    if (process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN) {
-        logger.info("Subscribing to SNS topic: Chime notifications");
-        const chimeSubscribeResult = await snsChime.subscribe({
-            Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
-            TopicArn: process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN,
-            Endpoint: chimeNotificationUrl.toString(),
-        });
-        logger.info("Subscribed to SNS topic: Chime notifications");
-
-        if (!chimeSubscribeResult.SubscriptionArn) {
-            throw new Error("Could not subscribe to Chime notifications");
-        }
-    } else {
-        logger.warn("Not subscribing to SNS topic: Chime notifications (AWS_CHIME_NOTIFICATIONS_TOPIC_ARN not set)");
-    }
+    await subscribeToSNSNotifications(
+        awsClient,
+        logger,
+        "Systems Manager Parameter Store notifications",
+        "PARAMETER_STORE_NOTIFICATIONS_TOPIC_ARN",
+        "/systemsManager/parameterStore/notify"
+    );
+    await subscribeToSNSNotifications(
+        awsClient,
+        logger,
+        "Secrets Manager notifications",
+        "SECRETS_MANAGER_NOTIFICATIONS_TOPIC_ARN",
+        "/secretsManager/notify"
+    );
+    await subscribeToSNSNotifications(
+        awsClient,
+        logger,
+        "transcode notifications",
+        "TRANSCODE_NOTIFICATIONS_TOPIC_ARN",
+        "/mediaConvert/notify"
+    );
+    await subscribeToSNSNotifications(
+        awsClient,
+        logger,
+        "transcribe notifications",
+        "TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN",
+        "/amazonTranscribe/notify"
+    );
+    await subscribeToSNSNotifications(
+        awsClient,
+        logger,
+        "Elastic Transcoder notifications",
+        "ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN",
+        "/elasticTranscoder/notify"
+    );
+    await subscribeToSNSNotifications(
+        awsClient,
+        logger,
+        "MediaPackage harvest job notifications",
+        "MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN",
+        "/mediaPackage/harvest/notify"
+    );
+    await subscribeToSNSNotifications(
+        awsClient,
+        logger,
+        "Chime notifications",
+        "CHIME_NOTIFICATIONS_TOPIC_ARN",
+        "/chime/notify",
+        true,
+        "us-east-1",
+        chimeClient
+    );
 }
+
+const getAWSOptionalParameter = awsClient.getAWSOptionalParameter;
+const getAWSParameter = awsClient.getAWSParameter;
+const getHostUrl = awsClient.getHostUrl;
 
 export {
     iam as IAM,
@@ -292,7 +215,11 @@ export {
     cloudFront as CloudFront,
     sts as STS,
     chime as Chime,
-    secretsManager as SecretsManager,
+    imagesSecretsManager as ImagesSecretsManager,
     initialiseAwsClient,
     shortId,
+    getAWSOptionalParameter,
+    getAWSParameter,
+    getHostUrl,
+    awsClient,
 };

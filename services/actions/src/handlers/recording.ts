@@ -61,7 +61,9 @@ export async function handleMediaPackageHarvestJobUpdated(
             (payload.event.data.old && payload.event.data.old.jobStatusName !== Job_Queues_JobStatus_Enum.New)
         ) {
             logger.info({ jobId: newRow.id, eventId: newRow.eventId }, "Creating new MediaPackage harvest job");
-            const eventResult = await apolloClient.query({
+            const eventResult = await (
+                await apolloClient
+            ).query({
                 query: Recording_GetEventDocument,
                 variables: {
                     eventId: newRow.eventId,
@@ -82,7 +84,9 @@ export async function handleMediaPackageHarvestJobUpdated(
                 eventResult.data.schedule_Event_by_pk.endTime
             );
 
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: StartMediaPackageHarvestJobDocument,
                 variables: {
                     id: newRow.id,
@@ -116,7 +120,9 @@ export async function createMediaPackageHarvestJob(
 ): Promise<void> {
     logger.info({ eventId }, "Creating MediaPackage harvest job");
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: CreateMediaPackageHarvestJobDocument,
         variables: {
             conferenceId,
@@ -186,7 +192,9 @@ export async function completeMediaPackageHarvestJob(
 
     const result = await callWithRetry(
         async () =>
-            await apolloClient.query({
+            await (
+                await apolloClient
+            ).query({
                 query: Recording_GetMediaPackageHarvestJobDocument,
                 variables: {
                     mediaPackageHarvestJobId: awsHarvestJobId,
@@ -239,7 +247,9 @@ export async function completeMediaPackageHarvestJob(
     const startTime = formatRFC7231(Date.parse(job.event.startTime));
     await callWithRetry(
         async () =>
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: Recording_CompleteMediaPackageHarvestJobDocument,
                 variables: {
                     id: job.id,
@@ -275,7 +285,9 @@ export async function ignoreMediaPackageHarvestJob(
     logger.info({ jobId: id }, "Ignoring result of MediaPackage harvest job");
     await callWithRetry(
         async () =>
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: Recording_IgnoreMediaPackageHarvestJobDocument,
                 variables: {
                     id,
@@ -304,7 +316,9 @@ export async function failMediaPackageHarvestJob(
     logger.info({ awsHarvestJobId, message }, "Recording failure of MediaPackage harvest job");
     await callWithRetry(
         async () =>
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: FailMediaPackageHarvestJobDocument,
                 variables: {
                     awsJobId: awsHarvestJobId,

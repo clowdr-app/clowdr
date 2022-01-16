@@ -1,13 +1,13 @@
 import type { Attendee, Meeting } from "@aws-sdk/client-chime";
 import { CreateAttendeeCommand, CreateMeetingCommand, GetMeetingCommand } from "@aws-sdk/client-chime";
 import { callWithRetry } from "../../utils";
-import { Chime } from "./awsClient";
+import { awsClient, Chime } from "./awsClient";
 
 export async function createChimeMeeting(roomId: string): Promise<Meeting> {
     const query = new CreateMeetingCommand({
         ExternalMeetingId: roomId,
-        Tags: [{ Key: "environment", Value: process.env.AWS_PREFIX }],
-        MediaRegion: process.env.AWS_REGION,
+        Tags: [{ Key: "environment", Value: awsClient.prefix }],
+        MediaRegion: awsClient.region,
     });
 
     const result = await Chime.send(query);

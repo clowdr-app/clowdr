@@ -37,7 +37,9 @@ interface EmailTemplate {
 }
 
 export async function getEmailTemplate(logger: P.Logger): Promise<EmailTemplate> {
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetEmailTemplatesDocument,
     });
 

@@ -58,7 +58,9 @@ async function createRoomVonageSession(roomId: string): Promise<string> {
         }
     `;
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: SetRoomVonageSessionIdDocument,
         variables: {
             roomId: roomId,
@@ -85,7 +87,9 @@ export async function addUserToRoomMemberships(
         }
     `;
 
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetRegistrantsForRoomAndUserDocument,
         variables: {
             roomId,
@@ -114,7 +118,9 @@ export async function addUserToRoomMemberships(
         }
     `;
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: AddRegistrantToRoomMembershipsDocument,
         variables: {
             registrantId,
@@ -146,7 +152,9 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
     }
 
     // Check that the other registrants also attend the conference
-    const otherRegistrantsResult = await apolloClient.query({
+    const otherRegistrantsResult = await (
+        await apolloClient
+    ).query({
         query: CreateDmRoom_GetRegistrantsDocument,
         variables: {
             registrantIds: filteredRegistrants,
@@ -181,7 +189,9 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
         }
     `;
 
-    const existingRoomsResult = await apolloClient.query({
+    const existingRoomsResult = await (
+        await apolloClient
+    ).query({
         query: CreateDmRoom_GetExistingRoomsDocument,
         variables: {
             conferenceId: params.conferenceId,
@@ -231,7 +241,9 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
         }
     `;
 
-    const result = await apolloClient.mutate({
+    const result = await (
+        await apolloClient
+    ).mutate({
         mutation: CreateDmRoomDocument,
         variables: {
             capacity: filteredRegistrants.length + 1,

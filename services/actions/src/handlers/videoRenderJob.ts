@@ -107,7 +107,9 @@ async function startVideoRenderJob(logger: P.Logger, job: VideoRenderJobDataFrag
     switch (data.type) {
         case "BroadcastRenderJob": {
             logger.info({ jobId: job.id }, "Starting new broadcast render job");
-            const result = await apolloClient.query({
+            const result = await (
+                await apolloClient
+            ).query({
                 query: GetElementIdForVideoRenderJobDocument,
                 variables: {
                     videoRenderJobId: job.id,
@@ -171,7 +173,9 @@ gql`
 export async function handleProcessVideoRenderJobQueue(logger: P.Logger): Promise<void> {
     logger.info("Processing VideoRenderJob queue");
 
-    const newVideoRenderJobIds = await apolloClient.query({
+    const newVideoRenderJobIds = await (
+        await apolloClient
+    ).query({
         query: SelectNewVideoRenderJobsDocument,
     });
 
@@ -180,7 +184,9 @@ export async function handleProcessVideoRenderJobQueue(logger: P.Logger): Promis
     if (!jobIdsToMark.length) {
         return;
     }
-    const videoRenderJobs = await apolloClient.mutate({
+    const videoRenderJobs = await (
+        await apolloClient
+    ).mutate({
         mutation: MarkAndSelectNewVideoRenderJobsDocument,
         variables: {
             ids: jobIdsToMark,
@@ -214,7 +220,9 @@ export async function handleProcessVideoRenderJobQueue(logger: P.Logger): Promis
         try {
             logger.info({ jobIdsToUnmark, count: jobIdsToUnmark.length }, "Unmarking unsuccessful video render jobs");
             await callWithRetry(async () => {
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: UnmarkVideoRenderJobsDocument,
                     variables: {
                         ids: jobIdsToUnmark,

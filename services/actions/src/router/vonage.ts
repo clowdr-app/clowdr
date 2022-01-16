@@ -9,7 +9,6 @@ import type {
     toggleVonageRecordingStateArgs,
     ToggleVonageRecordingStateOutput,
 } from "@midspace/hasura/actionTypes";
-import assert from "assert";
 import { json } from "body-parser";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
@@ -21,17 +20,17 @@ import {
     handleVonageArchiveMonitoringWebhook,
     handleVonageSessionMonitoringWebhook,
 } from "../handlers/vonage";
+import { awsClient } from "../lib/aws/awsClient";
 import { BadRequestError, UnexpectedServerError } from "../lib/errors";
 import type { ArchiveMonitoringWebhookReqBody, SessionMonitoringWebhookReqBody } from "../types/vonage";
-
-assert(process.env.VONAGE_WEBHOOK_SECRET, "VONAGE_WEBHOOK_SECRET environment variable must be set");
 
 export const router = express.Router();
 
 // Unprotected routes
 router.post("/sessionMonitoring/:token", json(), async (req: Request, res: Response) => {
     // Validate token
-    if (!req.params.token || req.params.token !== process.env.VONAGE_WEBHOOK_SECRET) {
+    const VONAGE_WEBHOOK_SECRET = await awsClient.getSecret("VONAGE_WEBHOOK_SECRET");
+    if (!req.params.token || req.params.token !== VONAGE_WEBHOOK_SECRET) {
         req.log.error({ token: req.params.token }, "Received Vonage Session Monitoring webhook with invalid token");
         res.status(403).json("Access denied");
         return;
@@ -61,7 +60,8 @@ router.post("/sessionMonitoring/:token", json(), async (req: Request, res: Respo
 
 router.post("/archiveMonitoring/:token", json(), async (req: Request, res: Response) => {
     // Validate token
-    if (!req.params.token || req.params.token !== process.env.VONAGE_WEBHOOK_SECRET) {
+    const VONAGE_WEBHOOK_SECRET = await awsClient.getSecret("VONAGE_WEBHOOK_SECRET");
+    if (!req.params.token || req.params.token !== VONAGE_WEBHOOK_SECRET) {
         req.log.error({ token: req.params.token }, "Received Vonage Archive Monitoring webhook with invalid token");
         res.status(403).json("Access denied");
         return;
@@ -91,7 +91,7 @@ router.post("/archiveMonitoring/:token", json(), async (req: Request, res: Respo
 
 // Protected routes
 
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 
 router.post(
     "/joinEvent",

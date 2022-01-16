@@ -96,7 +96,9 @@ export async function handleRefreshYouTubeData(
     payload: refreshYouTubeDataArgs
 ): Promise<RefreshYouTubeDataOutput> {
     logger.info({ registrantId: payload.registrantId }, "Refreshing YouTube data");
-    const registrantGoogleAccount = await apolloClient.query({
+    const registrantGoogleAccount = await (
+        await apolloClient
+    ).query({
         query: RegistrantGoogleAccount_GetRegistrantGoogleAccountDocument,
         variables: {
             id: payload.registrantGoogleAccountId,
@@ -172,7 +174,9 @@ export async function handleRefreshYouTubeData(
             }) ?? [],
     };
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: RegistrantGoogleAccount_UpdateRegistrantGoogleAccountDocument,
         variables: {
             registrantGoogleAccountId: payload.registrantGoogleAccountId,

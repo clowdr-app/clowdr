@@ -31,7 +31,7 @@ import { VonageModule } from "./vonage/vonage.module";
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
                 webhookConfig: {
-                    secretFactory: configService.get<string>("EVENT_SECRET") ?? uuidv4(),
+                    secretFactory: configService.get<string>(`${process.env.SERVICE_NAME}_EVENT_SECRET`) ?? uuidv4(),
                     secretHeader: "x-hasura-event-secret",
                 },
             }),

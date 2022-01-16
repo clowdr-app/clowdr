@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { getAWSParameter } from "../lib/aws/awsClient";
 import { createPresignedURL } from "../lib/aws/awsSignatureV4";
 
 export async function handleGeneratePresignedTranscribeWebsocketURL(
@@ -7,7 +8,7 @@ export async function handleGeneratePresignedTranscribeWebsocketURL(
 ): Promise<{ url: string }> {
     const accessKeyId = process.env.AWS_PUBLIC_TRANSCRIBE_USER_ACCESS_KEY_ID;
     const secretAccessKey = process.env.AWS_PUBLIC_TRANSCRIBE_USER_SECRET_ACCESS_KEY;
-    const region = process.env.AWS_PUBLIC_TRANSCRIBE_REGION;
+    const region = await getAWSParameter("PUBLIC_TRANSCRIBE_REGION");
     if (!accessKeyId || !secretAccessKey || !region) {
         throw new Error("Transcribe not configured.");
     }

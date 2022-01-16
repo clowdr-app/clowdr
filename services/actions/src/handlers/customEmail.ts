@@ -55,7 +55,9 @@ async function sendCustomEmails(
     subject: string,
     jobId: string
 ): Promise<void> {
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: CustomEmail_SelectRegistrantsDocument,
         variables: {
             registrantIds: R.uniq(registrantIds),
@@ -137,7 +139,9 @@ gql`
 `;
 
 export async function processCustomEmailsJobQueue(logger: P.Logger): Promise<void> {
-    const jobs = await apolloClient.query({
+    const jobs = await (
+        await apolloClient
+    ).query({
         query: SelectUnprocessedCustomEmailJobsDocument,
         variables: {},
     });
@@ -155,7 +159,9 @@ export async function processCustomEmailsJobQueue(logger: P.Logger): Promise<voi
 
     callWithRetry(
         async () =>
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: CompleteCustomEmailJobsDocument,
                 variables: {
                     ids: completedJobIds,

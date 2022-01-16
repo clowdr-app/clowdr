@@ -3,25 +3,25 @@ import * as targets from "@aws-cdk/aws-events-targets";
 import * as iam from "@aws-cdk/aws-iam";
 import * as logs from "@aws-cdk/aws-logs";
 import * as ml from "@aws-cdk/aws-medialive";
-import * as s3 from "@aws-cdk/aws-s3";
-import { HttpMethods } from "@aws-cdk/aws-s3";
+import type * as s3 from "@aws-cdk/aws-s3";
+import * as sm from "@aws-cdk/aws-secretsmanager";
 import * as sns from "@aws-cdk/aws-sns";
+import * as ssm from "@aws-cdk/aws-ssm";
 import * as cdk from "@aws-cdk/core";
+import type { Env } from "./env";
 
 export interface AwsStackProps extends cdk.StackProps {
     stackPrefix: string;
-    vonageApiKey: string | null;
+    vars: Env;
+    vonageWebhookSecret: sm.Secret;
+    bucket: s3.Bucket;
 }
 
 export class AwsStack extends cdk.Stack {
-    public readonly bucket: s3.Bucket;
     public readonly actionsUser: iam.User;
 
     constructor(scope: cdk.Construct, id: string, props: AwsStackProps) {
         super(scope, id, props);
-
-        /* S3 */
-        this.bucket = this.createContentS3Bucket();
 
         /* IAM */
 
@@ -30,30 +30,78 @@ export class AwsStack extends cdk.Stack {
         const transcribeWebsocketStreamingPolicy = this.createTranscribeWebsocketStreamingPolicy();
         const channelStackAdministratorPolicy = this.createChannelStackAdministratorPolicy();
 
-        // Service roles
-        const mediaLiveServiceRole = this.createMediaLiveServiceRole(this.bucket);
-        const mediaPackageServiceRole = this.createMediaPackageServiceRole(this.bucket);
-        const mediaConvertServiceRole = this.createMediaConvertServiceRole(this.bucket);
-        const transcribeServiceRole = this.createTranscribeServiceRole(this.bucket);
-        const elasticTranscoderServiceRole = this.createElasticTranscoderServiceRole(this.bucket);
-
         // IAM user
         this.actionsUser = new iam.User(this, "ActionsUser", {});
-        const vonageUser = new iam.User(this, "VonageUser", {});
+        const authServiceUser = new iam.User(this, "Service-AuthUser", {});
+        const cachesServiceUser = new iam.User(this, "Service-CachesUser", {});
+        const playoutServiceUser = new iam.User(this, "Service-PlayoutUser", {});
+        const realtimeServiceUser = new iam.User(this, "Service-RealtimeUser", {});
+        const ddProxyServiceUser = new iam.User(this, "Service-DDProxyUser", {});
         const publicTranscribeUser = new iam.User(this, "PublicTranscribeUser", {});
+
+        // Service roles
+        const mediaLiveServiceRole = this.createMediaLiveServiceRole(props.bucket);
+        const mediaPackageServiceRole = this.createMediaPackageServiceRole(props.bucket);
+        const mediaConvertServiceRole = this.createMediaConvertServiceRole(props.bucket);
+        const transcribeServiceRole = this.createTranscribeServiceRole(props.bucket);
+        const elasticTranscoderServiceRole = this.createElasticTranscoderServiceRole(props.bucket);
+
+        const actionsServiceSecretsRole = new iam.Role(this, "ActionsServiceSecretsAccessRole", {
+            assumedBy: this.actionsUser,
+            description: "Has access to secrets used by the Actions Service.",
+        });
+        const authServiceSecretsRole = new iam.Role(this, "AuthServiceSecretsAccessRole", {
+            assumedBy: authServiceUser,
+            description: "Has access to secrets used by the Auth Service.",
+        });
+        const cachesServiceSecretsRole = new iam.Role(this, "CachesServiceSecretsAccessRole", {
+            assumedBy: cachesServiceUser,
+            description: "Has access to secrets used by the Caches Service.",
+        });
+        const playoutServiceSecretsRole = new iam.Role(this, "PlayoutServiceSecretsAccessRole", {
+            assumedBy: playoutServiceUser,
+            description: "Has access to secrets used by the Playout Service.",
+        });
+        const realtimeServiceSecretsRole = new iam.Role(this, "RealtimeServiceSecretsAccessRole", {
+            assumedBy: realtimeServiceUser,
+            description: "Has access to secrets used by the Realtime Service.",
+        });
+        const ddProxyServiceSecretsRole = new iam.Role(this, "DDProxyServiceSecretsAccessRole", {
+            assumedBy: ddProxyServiceUser,
+            description: "Has access to secrets used by the DataDog Proxy Service.",
+        });
 
         // IAM User Access Keys
         const actionsUserAccessKey = new iam.CfnAccessKey(this, "accessKey", {
             userName: this.actionsUser.userName,
         });
-        const vonageUserAccessKey = new iam.CfnAccessKey(this, "VonageUserAccessKey", {
-            userName: vonageUser.userName,
-        });
         const publicTranscribeUserAccessKey = new iam.CfnAccessKey(this, "PublicTranscribeUserAccessKey", {
             userName: publicTranscribeUser.userName,
         });
+        const authServiceUserAccessKey = new iam.CfnAccessKey(this, "Service-AuthUserAccessKey", {
+            userName: authServiceUser.userName,
+        });
+        const cachesServiceUserAccessKey = new iam.CfnAccessKey(this, "Service-CachesUserAccessKey", {
+            userName: cachesServiceUser.userName,
+        });
+        const playoutServiceUserAccessKey = new iam.CfnAccessKey(this, "Service-PlayoutUserAccessKey", {
+            userName: playoutServiceUser.userName,
+        });
+        const realtimeServiceUserAccessKey = new iam.CfnAccessKey(this, "Service-RealtimeUserAccessKey", {
+            userName: realtimeServiceUser.userName,
+        });
+        const ddProxyServiceUserAccessKey = new iam.CfnAccessKey(this, "Service-DDProxyUserAccessKey", {
+            userName: ddProxyServiceUser.userName,
+        });
 
         // Attach policies
+        this.actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
+        authServiceUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
+        cachesServiceUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
+        playoutServiceUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
+        realtimeServiceUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
+        ddProxyServiceUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
+
         this.actionsUser.addManagedPolicy(
             iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess")
         );
@@ -75,11 +123,8 @@ export class AwsStack extends cdk.Stack {
         const chimeManagerRole = this.createChimeManagerRole(this.actionsUser);
 
         /* S3 */
-        this.bucket.grantPut(this.actionsUser);
-        this.bucket.grantReadWrite(this.actionsUser);
-
-        this.bucket.grantPut(vonageUser, props.vonageApiKey ? `${props.vonageApiKey}/*` : "*");
-        this.bucket.grantRead(vonageUser, props.vonageApiKey ? `${props.vonageApiKey}/*` : "*");
+        props.bucket.grantPut(this.actionsUser);
+        props.bucket.grantReadWrite(this.actionsUser);
 
         /* Service Roles */
         mediaLiveServiceRole.grantPassRole(this.actionsUser);
@@ -97,6 +142,9 @@ export class AwsStack extends cdk.Stack {
         const elasticTranscoderNotificationsTopic =
             this.createElasticTranscoderNotificationTopic(elasticTranscoderServiceRole);
 
+        const ssmParameterNotificationsTopic = new sns.Topic(this, "SSMParameterNotifications");
+        const secretsManagerNotificationsTopic = new sns.Topic(this, "SecretsManagerNotifications");
+
         this.createAndAddSubscriptionPolicy(this.actionsUser.node.id, this.actionsUser, [
             cloudFormationNotificationsTopic,
             mediaConvertNotificationsTopic,
@@ -104,6 +152,25 @@ export class AwsStack extends cdk.Stack {
             mediaPackageHarvestNotificationsTopic,
             transcribeNotificationsTopic,
             elasticTranscoderNotificationsTopic,
+            ssmParameterNotificationsTopic,
+            secretsManagerNotificationsTopic,
+        ]);
+        this.createAndAddSubscriptionPolicy(authServiceUser.node.id, authServiceUser, [ssmParameterNotificationsTopic]);
+        this.createAndAddSubscriptionPolicy(cachesServiceUser.node.id, cachesServiceUser, [
+            ssmParameterNotificationsTopic,
+            secretsManagerNotificationsTopic,
+        ]);
+        this.createAndAddSubscriptionPolicy(playoutServiceUser.node.id, playoutServiceUser, [
+            ssmParameterNotificationsTopic,
+            secretsManagerNotificationsTopic,
+        ]);
+        this.createAndAddSubscriptionPolicy(realtimeServiceUser.node.id, realtimeServiceUser, [
+            ssmParameterNotificationsTopic,
+            secretsManagerNotificationsTopic,
+        ]);
+        this.createAndAddSubscriptionPolicy(ddProxyServiceUser.node.id, ddProxyServiceUser, [
+            ssmParameterNotificationsTopic,
+            secretsManagerNotificationsTopic,
         ]);
 
         cloudFormationNotificationsTopic.grantPublish(this.actionsUser);
@@ -112,76 +179,354 @@ export class AwsStack extends cdk.Stack {
         this.addMediaLiveEventRule(mediaLiveNotificationsTopic);
         this.addMediaPackageEventRule(mediaPackageHarvestNotificationsTopic);
         this.addTranscribeEventRule(transcribeNotificationsTopic);
+        this.addSSMParametersUpdatedEventRule(ssmParameterNotificationsTopic);
+        this.addSecretsManagerSecretUpdatedEventRule(secretsManagerNotificationsTopic);
 
         /* MediaLive */
         const inputSecurityGroup = new ml.CfnInputSecurityGroup(this, "InputSecurityGroup", {
             whitelistRules: [{ cidr: "0.0.0.1/0" }],
         });
 
-        /* Outputs */
+        /* Secrets */
+        props.vonageWebhookSecret.grantRead(actionsServiceSecretsRole);
 
-        // S3
-        this.createOutput("ContentBucketId", this.bucket.bucketName);
+        /* Output Parameters / Secrets */
+
+        new ssm.StringParameter(this, "/EnvVars/AUTH0_API_DOMAIN", {
+            allowedPattern: ".*",
+            parameterName: "AUTH0_API_DOMAIN",
+            stringValue: props.vars.AUTH0_API_DOMAIN,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        new ssm.StringParameter(this, "/EnvVars/AUTH0_AUDIENCE", {
+            allowedPattern: ".*",
+            parameterName: "AUTH0_AUDIENCE",
+            stringValue: props.vars.AUTH0_AUDIENCE,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AUTH0_ISSUER_DOMAIN", {
+            allowedPattern: ".*",
+            parameterName: "AUTH0_ISSUER_DOMAIN",
+            stringValue: props.vars.AUTH0_ISSUER_DOMAIN,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        // TODO: The Redis URL may contain authentication parameters, which is annoying
+        //       because it means this needs to be secret
+        // TODO: Other secrets: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+        // new ssm.StringParameter(this, "/EnvVars/ACTIONS_REDIS_URL", {
+        //     allowedPattern: ".*",
+        //     parameterName: "ACTIONS_REDIS_URL",
+        //     stringValue: props.vars.ACTIONS_REDIS_URL,
+        //     tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        // });
+        // TODO: How do we update this? Manually?
+        // const redisURLSecret = new sm.Secret(this, "ACTIONS_REDIS_URL", {
+        //     secretName: "ACTIONS_REDIS_URL",
+        //     description: "Sensitive connection URL for Redis for the Actions service",
+        //     generateSecretString: {
+        //         secretStringTemplate: JSON.stringify({ url: "" }),
+        //         generateStringKey: "password",
+        //     },
+        // });
+
+        // N.B. This is not an access key
+        new ssm.StringParameter(this, "/EnvVars/ACTIONS_REDIS_KEY", {
+            allowedPattern: ".*",
+            parameterName: "ACTIONS_REDIS_KEY",
+            stringValue: props.vars.ACTIONS_REDIS_KEY,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        const actionsEventSecret = new sm.Secret(this, "ACTIONS_EVENT_SECRET", {
+            secretName: "ACTIONS_EVENT_SECRET",
+            description: "Secret for Hasura calls to the Actions service",
+            generateSecretString: {
+                secretStringTemplate: "{}",
+                generateStringKey: "secret",
+            },
+        });
+        actionsEventSecret.grantRead(actionsServiceSecretsRole);
+
+        const authEventSecret = new sm.Secret(this, "AUTH_EVENT_SECRET", {
+            secretName: "AUTH_EVENT_SECRET",
+            description: "Secret for Hasura calls to the Auth service",
+            generateSecretString: {
+                secretStringTemplate: "{}",
+                generateStringKey: "secret",
+            },
+        });
+        authEventSecret.grantRead(authServiceSecretsRole);
+
+        const cachesEventSecret = new sm.Secret(this, "CACHES_EVENT_SECRET", {
+            secretName: "CACHES_EVENT_SECRET",
+            description: "Secret for Hasura calls to the Caches service",
+            generateSecretString: {
+                secretStringTemplate: "{}",
+                generateStringKey: "secret",
+            },
+        });
+        cachesEventSecret.grantRead(cachesServiceSecretsRole);
+
+        const playoutEventSecret = new sm.Secret(this, "PLAYOUT_EVENT_SECRET", {
+            secretName: "PLAYOUT_EVENT_SECRET",
+            description: "Secret for Hasura calls to the Playout service",
+            generateSecretString: {
+                secretStringTemplate: "{}",
+                generateStringKey: "secret",
+            },
+        });
+        playoutEventSecret.grantRead(playoutServiceSecretsRole);
+
+        const realtimeEventSecret = new sm.Secret(this, "REALTIME_EVENT_SECRET", {
+            secretName: "REALTIME_EVENT_SECRET",
+            description: "Secret for Hasura calls to the Realtime service",
+            generateSecretString: {
+                secretStringTemplate: "{}",
+                generateStringKey: "secret",
+            },
+        });
+        realtimeEventSecret.grantRead(realtimeServiceSecretsRole);
+
+        new ssm.StringParameter(this, "/EnvVars/ACTIONS_CORS_ORIGIN", {
+            allowedPattern: ".*",
+            parameterName: "ACTIONS_CORS_ORIGIN",
+            stringValue: props.vars.ACTIONS_CORS_ORIGIN,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/ACTIONS_PORT", {
+            allowedPattern: ".*",
+            parameterName: "ACTIONS_PORT",
+            stringValue: props.vars.ACTIONS_PORT.toString(),
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/ACTIONS_HOST_SECURE_PROTOCOLS", {
+            allowedPattern: ".*",
+            parameterName: "ACTIONS_HOST_SECURE_PROTOCOLS",
+            stringValue: props.vars.ACTIONS_HOST_SECURE_PROTOCOLS.toString(),
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/ACTIONS_HOST_DOMAIN", {
+            allowedPattern: ".*",
+            parameterName: "ACTIONS_HOST_DOMAIN",
+            stringValue: props.vars.ACTIONS_HOST_DOMAIN,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/ACTIONS_LOG_LEVEL", {
+            allowedPattern: ".*",
+            parameterName: "ACTIONS_LOG_LEVEL",
+            stringValue: props.vars.ACTIONS_LOG_LEVEL,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        if (props.vars.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS) {
+            new ssm.StringParameter(this, "/EnvVars/FAILURE_NOTIFICATIONS_EMAIL_ADDRESS", {
+                allowedPattern: ".*",
+                parameterName: "FAILURE_NOTIFICATIONS_EMAIL_ADDRESS",
+                stringValue: props.vars.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
+                tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+            });
+        }
+
+        const hasuraAdminSecret = new sm.Secret(this, "HASURA_ADMIN_SECRET", {
+            secretName: "HASURA_ADMIN_SECRET",
+            description: "Secret for Hasura Admin calls",
+            generateSecretString: {
+                secretStringTemplate: "{}",
+                generateStringKey: "secret",
+            },
+        });
+        hasuraAdminSecret.grantRead(actionsServiceSecretsRole);
+        hasuraAdminSecret.grantRead(authServiceSecretsRole);
+        hasuraAdminSecret.grantRead(cachesServiceSecretsRole);
+        hasuraAdminSecret.grantRead(playoutServiceSecretsRole);
+        hasuraAdminSecret.grantRead(realtimeServiceSecretsRole);
+
+        new ssm.StringParameter(this, "/EnvVars/GRAPHQL_API_SECURE_PROTOCOLS", {
+            allowedPattern: ".*",
+            parameterName: "GRAPHQL_API_SECURE_PROTOCOLS",
+            stringValue: props.vars.GRAPHQL_API_SECURE_PROTOCOLS,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/GRAPHQL_API_DOMAIN", {
+            allowedPattern: ".*",
+            parameterName: "GRAPHQL_API_DOMAIN",
+            stringValue: props.vars.GRAPHQL_API_DOMAIN,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        new ssm.StringParameter(this, "/EnvVars/AWS_CONTENT_BUCKET_ID", {
+            allowedPattern: ".*",
+            parameterName: "CONTENT_BUCKET_ID",
+            stringValue: props.bucket.bucketName,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        // Service roles
+        new ssm.StringParameter(this, "/EnvVars/AWS_CHIME_MANAGER_ROLE_ARN", {
+            allowedPattern: ".*",
+            parameterName: "CHIME_MANAGER_ROLE_ARN",
+            stringValue: chimeManagerRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        new ssm.StringParameter(this, "/EnvVars/AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN", {
+            allowedPattern: ".*",
+            parameterName: "ELASTIC_TRANSCODER_SERVICE_ROLE_ARN",
+            stringValue: elasticTranscoderServiceRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_MEDIACONVERT_SERVICE_ROLE_ARN", {
+            allowedPattern: ".*",
+            parameterName: "MEDIACONVERT_SERVICE_ROLE_ARN",
+            stringValue: mediaConvertServiceRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN", {
+            allowedPattern: ".*",
+            parameterName: "MEDIAPACKAGE_SERVICE_ROLE_ARN",
+            stringValue: mediaPackageServiceRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_TRANSCRIBE_SERVICE_ROLE_ARN", {
+            allowedPattern: ".*",
+            parameterName: "TRANSCRIBE_SERVICE_ROLE_ARN",
+            stringValue: transcribeServiceRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_MEDIALIVE_SERVICE_ROLE_ARN", {
+            allowedPattern: ".*",
+            parameterName: "MEDIALIVE_SERVICE_ROLE_ARN",
+            stringValue: mediaLiveServiceRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        new ssm.StringParameter(this, "SecretsManager/AccessRoleARNs/ActionsService", {
+            allowedPattern: ".*",
+            parameterName: "/SecretsManager/AccessRoleARNs/ACTIONS_SERVICE",
+            stringValue: actionsServiceSecretsRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "SecretsManager/AccessRoleARNs/AuthService", {
+            allowedPattern: ".*",
+            parameterName: "/SecretsManager/AccessRoleARNs/AUTH_SERVICE",
+            stringValue: authServiceSecretsRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "SecretsManager/AccessRoleARNs/CachesService", {
+            allowedPattern: ".*",
+            parameterName: "/SecretsManager/AccessRoleARNs/CACHES_SERVICE",
+            stringValue: cachesServiceSecretsRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "SecretsManager/AccessRoleARNs/PlayoutService", {
+            allowedPattern: ".*",
+            parameterName: "/SecretsManager/AccessRoleARNs/PLAYOUT_SERVICE",
+            stringValue: playoutServiceSecretsRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "SecretsManager/AccessRoleARNs/RealtimeService", {
+            allowedPattern: ".*",
+            parameterName: "/SecretsManager/AccessRoleARNs/REALTIME_SERVICE",
+            stringValue: realtimeServiceSecretsRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "SecretsManager/AccessRoleARNs/DDProxyService", {
+            allowedPattern: ".*",
+            parameterName: "/SecretsManager/AccessRoleARNs/DDPROXY_SERVICE",
+            stringValue: ddProxyServiceSecretsRole.roleArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        // SNS topics
+        new ssm.StringParameter(this, "/EnvVars/AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN", {
+            allowedPattern: ".*",
+            parameterName: "ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN",
+            stringValue: elasticTranscoderNotificationsTopic.topicArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN", {
+            allowedPattern: ".*",
+            parameterName: "MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN",
+            stringValue: mediaPackageHarvestNotificationsTopic.topicArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN", {
+            allowedPattern: ".*",
+            parameterName: "MEDIALIVE_NOTIFICATIONS_TOPIC_ARN",
+            stringValue: mediaLiveNotificationsTopic.topicArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN", {
+            allowedPattern: ".*",
+            parameterName: "CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN",
+            stringValue: cloudFormationNotificationsTopic.topicArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN", {
+            allowedPattern: ".*",
+            parameterName: "TRANSCODE_NOTIFICATIONS_TOPIC_ARN",
+            stringValue: mediaConvertNotificationsTopic.topicArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN", {
+            allowedPattern: ".*",
+            parameterName: "TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN",
+            stringValue: transcribeNotificationsTopic.topicArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_SSM_PARAMETER_STORE_NOTIFICATIONS_TOPIC_ARN", {
+            allowedPattern: ".*",
+            parameterName: "PARAMETER_STORE_NOTIFICATIONS_TOPIC_ARN",
+            stringValue: ssmParameterNotificationsTopic.topicArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+        new ssm.StringParameter(this, "/EnvVars/AWS_SECRETS_MANAGER_NOTIFICATIONS_TOPIC_ARN", {
+            allowedPattern: ".*",
+            parameterName: "SECRETS_MANAGER_NOTIFICATIONS_TOPIC_ARN",
+            stringValue: secretsManagerNotificationsTopic.topicArn,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        // MediaLive
+        new ssm.StringParameter(this, "/EnvVars/AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID", {
+            allowedPattern: ".*",
+            parameterName: "MEDIALIVE_INPUT_SECURITY_GROUP_ID",
+            stringValue: inputSecurityGroup.ref,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        new ssm.StringParameter(this, "/EnvVars/AWS_PUBLIC_TRANSCRIBE_REGION", {
+            allowedPattern: ".*",
+            parameterName: "PUBLIC_TRANSCRIBE_REGION",
+            stringValue: this.region,
+            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
+        });
+
+        /* Outputs */
 
         // IAM
         this.createOutput("ActionsUserAccessKeyId", actionsUserAccessKey.ref);
         this.createOutput("ActionsUserSecretAccessKey", actionsUserAccessKey.attrSecretAccessKey);
-        this.createOutput("VonageUserAccessKeyId", vonageUserAccessKey.ref);
-        this.createOutput("VonageUserSecretAccessKey", vonageUserAccessKey.attrSecretAccessKey);
+
+        this.createOutput("AuthServiceUserAccessKey", authServiceUserAccessKey.ref);
+        this.createOutput("AuthServiceUserSecretAccessKey", authServiceUserAccessKey.attrSecretAccessKey);
+
+        this.createOutput("CachesServiceUserAccessKey", cachesServiceUserAccessKey.ref);
+        this.createOutput("CachesServiceUserSecretAccessKey", cachesServiceUserAccessKey.attrSecretAccessKey);
+
+        this.createOutput("PlayoutServiceUserAccessKey", playoutServiceUserAccessKey.ref);
+        this.createOutput("PlayoutServiceUserSecretAccessKey", playoutServiceUserAccessKey.attrSecretAccessKey);
+
+        this.createOutput("RealtimeServiceUserAccessKey", realtimeServiceUserAccessKey.ref);
+        this.createOutput("RealtimeServiceUserSecretAccessKey", realtimeServiceUserAccessKey.attrSecretAccessKey);
+
+        this.createOutput("DDProxyServiceUserAccessKey", ddProxyServiceUserAccessKey.ref);
+        this.createOutput("DDProxyServiceUserSecretAccessKey", ddProxyServiceUserAccessKey.attrSecretAccessKey);
+
         this.createOutput("PublicTranscribeUserAccessKeyId", publicTranscribeUserAccessKey.ref);
         this.createOutput("PublicTranscribeUserSecretAccessKey", publicTranscribeUserAccessKey.attrSecretAccessKey);
-
-        // Service roles
-        this.createOutput("ChimeManagerRoleArn", chimeManagerRole.roleArn);
-        this.createOutput("MediaConvertServiceRoleArn", mediaConvertServiceRole.roleArn);
-        this.createOutput("MediaLiveServiceRoleArn", mediaLiveServiceRole.roleArn);
-        this.createOutput("MediaPackageServiceRoleArn", mediaPackageServiceRole.roleArn);
-        this.createOutput("TranscribeServiceRoleArn", transcribeServiceRole.roleArn);
-        this.createOutput("ElasticTranscoderServiceRoleArn", elasticTranscoderServiceRole.roleArn);
-
-        // SNS topics
-        this.createOutput("CloudFormationNotificationsTopicArn", cloudFormationNotificationsTopic.topicArn);
-        this.createOutput("TranscodeNotificationsTopicArn", mediaConvertNotificationsTopic.topicArn);
-        this.createOutput("TranscribeNotificationsTopicArn", transcribeNotificationsTopic.topicArn);
-        this.createOutput("ElasticTranscoderNotificationsTopicArn", elasticTranscoderNotificationsTopic.topicArn);
-        this.createOutput("MediaLiveNotificationsTopicArn", mediaLiveNotificationsTopic.topicArn);
-        this.createOutput("MediaPackageHarvestNotificationsTopicArn", mediaPackageHarvestNotificationsTopic.topicArn);
-
-        // MediaLive
-        this.createOutput("MediaLiveInputSecurityGroupId", inputSecurityGroup.ref);
-    }
-
-    /**
-     * @returns a publicly-accessible S3 bucket for content storage.
-     */
-    private createContentS3Bucket(): s3.Bucket {
-        const bucket = new s3.Bucket(this, "ContentBucket", {
-            blockPublicAccess: {
-                blockPublicAcls: true,
-                blockPublicPolicy: false,
-                ignorePublicAcls: true,
-                restrictPublicBuckets: false,
-            },
-        });
-
-        bucket.grantPublicAccess();
-
-        bucket.addCorsRule({
-            allowedMethods: [HttpMethods.GET, HttpMethods.PUT, HttpMethods.POST],
-            allowedOrigins: ["*"],
-            exposedHeaders: ["ETag"],
-            maxAge: 3000,
-            allowedHeaders: ["Authorization", "x-amz-date", "x-amz-content-sha256", "content-type"],
-        });
-        bucket.addCorsRule({
-            allowedHeaders: [],
-            allowedMethods: [HttpMethods.GET],
-            allowedOrigins: ["*"],
-            exposedHeaders: [],
-            maxAge: 3000,
-        });
-
-        return bucket;
     }
 
     /**
@@ -555,6 +900,43 @@ export class AwsStack extends cdk.Stack {
         rule.addTarget(new targets.SnsTopic(transcribeNotificationTopic));
         const transcribeLogGroup = new logs.LogGroup(this, "TranscribeLogGroup", {});
         rule.addTarget(new targets.CloudWatchLogGroup(transcribeLogGroup));
+    }
+
+    private addSSMParametersUpdatedEventRule(topic: sns.ITopic): void {
+        topic.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
+        });
+        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("ssm.amazonaws.com"));
+        const rule = new events.Rule(this, "ParameterChangedRule", {
+            enabled: true,
+        });
+        rule.addEventPattern({
+            source: ["aws.ssm"],
+            detailType: ["Parameter Store Change"],
+            detail: {
+                operation: ["Create", "Update", "Delete"],
+            },
+        });
+        rule.addTarget(new targets.SnsTopic(topic));
+        const logGroup = new logs.LogGroup(this, "ParameterStoreLogGroup");
+        rule.addTarget(new targets.CloudWatchLogGroup(logGroup));
+    }
+
+    private addSecretsManagerSecretUpdatedEventRule(topic: sns.ITopic): void {
+        topic.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
+        });
+        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("secretsmanager.amazonaws.com"));
+        const rule = new events.Rule(this, "SecretChangedRule", {
+            enabled: true,
+        });
+        rule.addEventPattern({
+            source: ["aws.secretsmanager"],
+            detailType: ["AWS API Call via CloudTrail"],
+        });
+        rule.addTarget(new targets.SnsTopic(topic));
+        const logGroup = new logs.LogGroup(this, "SecretsManagerLogGroup");
+        rule.addTarget(new targets.CloudWatchLogGroup(logGroup));
     }
 
     private createOutput(id: string, value: string): void {

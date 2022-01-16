@@ -1,23 +1,28 @@
 import * as amqplib from "amqplib";
 import { Mutex } from "async-mutex";
+import type { AWSClient } from "./aws/client";
 
-const url =
-    process.env.CLOUDAMQP_URL ||
-    `amqp://${
-        process.env.RABBITMQ_USERNAME
-            ? `${encodeURIComponent(process.env.RABBITMQ_USERNAME)}${
-                  process.env.RABBITMQ_PASSWORD ? `:${encodeURIComponent(process.env.RABBITMQ_PASSWORD)}` : ""
-              }@`
-            : ""
-    }localhost:5672`;
+async function url(awsClient: AWSClient) {
+    return awsClient.getSecret(`${process.env.SERVICE_NAME}_RABBITMQ_URL`);
+
+    // return process  .  env  .  CLOUDAMQP_URL ||
+    // `amqp://${
+    //     process  .  env  .   RABBITMQ_USERNAME
+    //         ? `${encodeURIComponent(process  .  env  .  RABBITMQ_USERNAME)}${
+    //               process  .  env  .  RABBITMQ_PASSWORD ? `:${encodeURIComponent(process  .  env  .  RABBITMQ_PASSWORD)}` : ""
+    //           }@`
+    //         : ""
+    //     }localhost:5672`;
+}
 
 let _uplink: amqplib.Connection | undefined;
 const uplinkMutex = new Mutex();
-export async function uplink(): Promise<amqplib.Connection> {
+export async function uplink(awsClient: AWSClient): Promise<amqplib.Connection> {
     const release = await uplinkMutex.acquire();
     try {
         if (!_uplink) {
-            _uplink = await amqplib.connect(url);
+            const _url = await url(awsClient);
+            _uplink = await amqplib.connect(_url);
 
             _uplink.on("error", function (err) {
                 if (err.message !== "Connection closing") {
@@ -39,11 +44,12 @@ export async function uplink(): Promise<amqplib.Connection> {
 
 let _downlink: amqplib.Connection | undefined;
 const downlinkMutex = new Mutex();
-export async function downlink(): Promise<amqplib.Connection> {
+export async function downlink(awsClient: AWSClient): Promise<amqplib.Connection> {
     const release = await downlinkMutex.acquire();
     try {
         if (!_downlink) {
-            _downlink = await amqplib.connect(url);
+            const _url = await url(awsClient);
+            _downlink = await amqplib.connect(_url);
 
             _downlink.on("error", function (err) {
                 if (err.message !== "Connection closing") {

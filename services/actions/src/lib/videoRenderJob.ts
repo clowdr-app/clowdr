@@ -42,7 +42,9 @@ export async function completeVideoRenderJob(
     durationSeconds: number | undefined
 ): Promise<CompleteVideoRenderJobResult> {
     // Check whether the job is currently in progress
-    const broadcastRenderJobResult = await apolloClient.query({
+    const broadcastRenderJobResult = await (
+        await apolloClient
+    ).query({
         query: GetBroadcastVideoRenderJobDetailsDocument,
         variables: {
             videoRenderJobId,
@@ -95,7 +97,9 @@ export async function completeVideoRenderJob(
         broadcastContentItemData: mp4BroadcastElementData,
     };
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: CompleteVideoRenderJobDocument,
         variables: {
             videoRenderJobId,
@@ -121,7 +125,9 @@ gql`
 `;
 
 export async function failVideoRenderJob(videoRenderJobId: string, message: string): Promise<void> {
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: FailVideoRenderJobDocument,
         variables: {
             message: message,
@@ -142,7 +148,9 @@ gql`
 `;
 
 export async function expireVideoRenderJob(videoRenderJobId: string, message: string): Promise<void> {
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: ExpireVideoRenderJobDocument,
         variables: {
             message,
@@ -160,7 +168,9 @@ gql`
 `;
 
 export async function updateVideoRenderJob(videoRenderJobId: string, data: VideoRenderJobDataBlob): Promise<void> {
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: UpdateVideoRenderJobDocument,
         variables: {
             videoRenderJobId,
@@ -185,7 +195,9 @@ gql`
 `;
 
 export async function allVideoRenderJobsCompleted(logger: P.Logger, conferencePrepareJobId: string): Promise<boolean> {
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: CountUnfinishedVideoRenderJobsDocument,
         variables: {
             conferencePrepareJobId,

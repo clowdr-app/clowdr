@@ -1,15 +1,15 @@
 import Hasura from "@aaronhayes/hasura-sdk";
-import assert from "assert";
+import { awsClient } from "../aws/awsClient";
 
-assert(process.env.GRAPHQL_API_DOMAIN, "GRAPHQL_API_DOMAIN environment variable must be specified");
-assert(process.env.GRAPHQL_API_SECURE_PROTOCOLS, "GRAPHQL_API_SECURE_PROTOCOLS environment variable must be specified");
-assert(process.env.HASURA_ADMIN_SECRET, "HASURA_ADMIN_SECRET environment variable must be specified");
+async function createHasuraClient() {
+    const GRAPHQL_API_SECURE_PROTOCOLS = await awsClient.getAWSParameter("GRAPHQL_API_SECURE_PROTOCOLS");
+    const GRAPHQL_API_DOMAIN = await awsClient.getAWSParameter("GRAPHQL_API_DOMAIN");
+    const HASURA_ADMIN_SECRET = await awsClient.getSecret("HASURA_ADMIN_SECRET");
 
-const hasura = new Hasura({
-    endpoint: `${process.env.GRAPHQL_API_SECURE_PROTOCOLS !== "false" ? "https" : "http"}://${
-        process.env.GRAPHQL_API_DOMAIN
-    }`,
-    adminSecret: process.env.HASURA_ADMIN_SECRET,
-});
+    return new Hasura({
+        endpoint: `${GRAPHQL_API_SECURE_PROTOCOLS !== "false" ? "https" : "http"}://${GRAPHQL_API_DOMAIN}`,
+        adminSecret: HASURA_ADMIN_SECRET,
+    });
+}
 
-export { hasura };
+export const hasura = createHasuraClient();

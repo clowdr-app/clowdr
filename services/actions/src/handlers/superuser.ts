@@ -140,7 +140,9 @@ gql`
 
 export async function handleInitialiseSuperUser(logger: P.Logger): Promise<InitialiseSuperUserOutput> {
     try {
-        const queryResponse = await apolloClient.query({
+        const queryResponse = await (
+            await apolloClient
+        ).query({
             query: SuperUserStateDocument,
         });
 
@@ -166,7 +168,9 @@ export async function handleInitialiseSuperUser(logger: P.Logger): Promise<Initi
             };
         }
 
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: InitialiseSuperUserStateDocument,
             variables: {
                 userId: queryResponse.data.User[0].id,

@@ -1,7 +1,7 @@
 import type { OriginEndpoint as ClientOriginEndpoint } from "@aws-sdk/client-mediapackage";
 import { paginateListOriginEndpoints } from "@aws-sdk/client-mediapackage";
 import { v4 as uuidv4 } from "uuid";
-import { MediaPackage } from "./awsClient";
+import { getAWSParameter, MediaPackage } from "./awsClient";
 
 export interface OriginEndpoint {
     id: string;
@@ -36,15 +36,18 @@ export async function createHarvestJob(
 
     const originEndpoint = originEndpoints[0];
 
+    const AWS_CONTENT_BUCKET_ID = await getAWSParameter("CONTENT_BUCKET_ID");
+    const AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN = await getAWSParameter("MEDIAPACKAGE_SERVICE_ROLE_ARN");
+
     const result = await MediaPackage.createHarvestJob({
         EndTime: endTime,
         StartTime: startTime,
         Id: id,
         OriginEndpointId: originEndpoint.Id,
         S3Destination: {
-            BucketName: process.env.AWS_CONTENT_BUCKET_ID,
+            BucketName: AWS_CONTENT_BUCKET_ID,
             ManifestKey: `${id}/index.m3u8`,
-            RoleArn: process.env.AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN,
+            RoleArn: AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN,
         },
     });
 

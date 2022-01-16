@@ -3,12 +3,13 @@ import { json } from "body-parser";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
 import { gatherPresenceStats } from "../lib/analytics";
+import { awsClient } from "../lib/aws/awsClient";
 import { UnexpectedServerError } from "../lib/errors";
 
 export const router = express.Router();
 
 // Protected routes
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 
 router.post("/gatherPresenceStats", json(), async (req: Request, res: Response, next: NextFunction) => {
     try {

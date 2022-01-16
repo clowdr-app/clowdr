@@ -6,11 +6,12 @@ import { processCustomEmailsJobQueue } from "../handlers/customEmail";
 import { processEmailsJobQueue } from "../handlers/email";
 import { processInvitationEmailsQueue } from "../handlers/invitation";
 import { processSendSubmissionRequestsJobQueue } from "../handlers/upload";
+import { awsClient } from "../lib/aws/awsClient";
 
 export const router = express.Router();
 
 // Protected routes
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 
 router.post("/processEmailsJobQueue", json(), async (req: Request, res: Response) => {
     try {

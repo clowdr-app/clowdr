@@ -164,7 +164,9 @@ gql`
 `;
 
 async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): Promise<void> {
-    const chatInfo = await apolloClient.query({
+    const chatInfo = await (
+        await apolloClient
+    ).query({
         query: GetEventChatInfoDocument,
         variables: {
             eventId,
@@ -176,7 +178,9 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
             const chatId1 = chatInfo.data.schedule_Event_by_pk.item.chatId;
             const chatId2 = chatInfo.data.schedule_Event_by_pk.room.chatId;
             if (chatId1 && chatId2 && (!isStart || chatId1 !== chatId2)) {
-                await apolloClient.mutate({
+                await (
+                    await apolloClient
+                ).mutate({
                     mutation: isStart ? StartChatDuplicationDocument : EndChatDuplicationDocument,
                     variables: {
                         chatId1,
@@ -223,7 +227,9 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
 }
 
 async function notifyRealtimeServiceEventEnded(eventId: string): Promise<void> {
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: NotifyRealtimeEventEndedDocument,
         variables: {
             eventId,
@@ -269,7 +275,9 @@ export async function handleEventStartNotification(
     logger.info({ eventId, startTime }, "Handling event start");
     const result = await callWithRetry(
         async () =>
-            await apolloClient.query({
+            await (
+                await apolloClient
+            ).query({
                 query: GetEventTimingsDocument,
                 variables: {
                     eventId,
@@ -403,7 +411,9 @@ export async function handleEventEndNotification(
     logger.info({ eventId, endTime }, "Handling event end");
     const result = await callWithRetry(
         async () =>
-            await apolloClient.query({
+            await (
+                await apolloClient
+            ).query({
                 query: GetEventTimingsDocument,
                 variables: {
                     eventId,
@@ -488,7 +498,9 @@ export async function handleStopEventBroadcasts(
 ): Promise<StopEventBroadcastOutput> {
     logger.info({ eventId: params.eventId }, "Stopping broadcasts for event");
 
-    const eventDetails = await apolloClient.query({
+    const eventDetails = await (
+        await apolloClient
+    ).query({
         query: Event_GetEventVonageSessionDocument,
         variables: {
             eventId: params.eventId,

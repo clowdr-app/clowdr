@@ -33,7 +33,9 @@ async function removeInvalidEventParticipantStreams(
 
     logger.info({ vonageSessionId }, "Attempting to remove invalid VonageParticipantStreams");
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: VonageSession_RemoveInvalidStreamsDocument,
         variables: {
             validStreamIds,

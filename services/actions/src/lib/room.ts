@@ -35,7 +35,9 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
         }
     `;
 
-    const itemResult = await apolloClient.query({
+    const itemResult = await (
+        await apolloClient
+    ).query({
         query: CreateItemRoom_GetItemDocument,
         variables: {
             id: itemId,
@@ -77,7 +79,9 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
 
     logger.info({ itemId, conferenceId }, "Creating new breakout room for content group");
 
-    const createResult = await apolloClient.mutate({
+    const createResult = await (
+        await apolloClient
+    ).mutate({
         mutation: Item_CreateRoomDocument,
         variables: {
             conferenceId: conferenceId,
@@ -102,7 +106,9 @@ export async function getRoomConferenceId(
         }
     `;
 
-    const room = await apolloClient.query({
+    const room = await (
+        await apolloClient
+    ).query({
         query: GetRoomConferenceIdDocument,
         variables: {
             roomId,
@@ -180,7 +186,9 @@ export async function createRoomChimeMeeting(logger: P.Logger, roomId: string, c
 
     try {
         assert(chimeMeetingData.MeetingId);
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: CreateRoomChimeMeetingDocument,
             variables: {
                 conferenceId,
@@ -207,7 +215,9 @@ export async function getExistingRoomChimeMeeting(logger: P.Logger, roomId: stri
         }
     `;
 
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetRoomChimeMeetingDocument,
         variables: {
             roomId,
@@ -271,7 +281,9 @@ export async function getExistingRoomVonageMeeting(roomId: string): Promise<stri
         }
     `;
 
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetRoomVonageMeetingDocument,
         variables: {
             roomId,
@@ -327,7 +339,9 @@ export async function getRoomByVonageSessionId(
         }
     `;
 
-    const roomResult = await apolloClient.query({
+    const roomResult = await (
+        await apolloClient
+    ).query({
         query: GetRoomBySessionIdDocument,
         variables: {
             sessionId,
@@ -351,7 +365,9 @@ export async function getRoomByChimeMeetingId(
         }
     `;
 
-    const roomResult = await apolloClient.query({
+    const roomResult = await (
+        await apolloClient
+    ).query({
         query: GetRoomByChimeMeetingIdDocument,
         variables: {
             meetingId,

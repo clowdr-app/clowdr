@@ -40,7 +40,9 @@ export function extractLatestVersion(data: any): Maybe<ElementVersionData> {
 export async function getLatestVersion(
     elementId: string
 ): Promise<{ latestVersion: Maybe<ElementVersionData>; typeName: Content_ElementType_Enum }> {
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: GetElementByIdDocument,
         variables: {
             elementId,
@@ -107,7 +109,9 @@ export async function addNewElementVersion(
     elementId: string,
     version: ElementVersionData
 ): Promise<void> {
-    const result = await apolloClient.mutate({
+    const result = await (
+        await apolloClient
+    ).mutate({
         mutation: ElementAddNewVersionDocument,
         variables: {
             id: elementId,

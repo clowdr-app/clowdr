@@ -4,6 +4,7 @@ import assert from "assert";
 import type { P } from "pino";
 import { FlagInserted_GetSupportAddressDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { awsClient } from "../lib/aws/awsClient";
 import { insertEmails } from "./email";
 
 gql`
@@ -30,7 +31,9 @@ gql`
 export async function handleFlagInserted(logger: P.Logger, data: Payload<FlagData>): Promise<void> {
     const newFlag = data.event.data.new;
     if (newFlag) {
-        const response = await apolloClient.query({
+        const response = await (
+            await apolloClient
+        ).query({
             query: FlagInserted_GetSupportAddressDocument,
             variables: {
                 messageSId: newFlag.messageSId,
@@ -61,12 +64,15 @@ to view and resolve the report.</p>
                 `flag-inserted-organiser:${data.id}`
             );
         } else {
+            const FAILURE_NOTIFICATIONS_EMAIL_ADDRESS = await awsClient.getAWSParameter(
+                "FAILURE_NOTIFICATIONS_EMAIL_ADDRESS"
+            );
             await insertEmails(
                 logger,
                 [
                     {
                         recipientName: "System Administrator",
-                        emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
+                        emailAddress: FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
                         reason: "chat_moderation_report",
                         subject: "[HIGH PRIORITY] Chat message reported in " + conference.shortName,
                         htmlContents: `<p>This is an automated email. A message has been reported

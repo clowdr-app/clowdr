@@ -181,7 +181,9 @@ async function allocateToExistingRoom(
     room: ShuffleRoomAllocationInfo,
     unallocatedQueueEntries: Map<number, UnallocatedShuffleQueueEntryFragment>
 ): Promise<void> {
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: AddPeopleToExistingShuffleRoomDocument,
         variables: {
             queueEntryIds: entries.map((x) => x.id),
@@ -212,7 +214,9 @@ async function allocateToNewRoom(
     entries: UnallocatedShuffleQueueEntryFragment[],
     unallocatedQueueEntries: Map<number, UnallocatedShuffleQueueEntryFragment>
 ): Promise<ShuffleRoomAllocationInfo> {
-    const managedRoom = await apolloClient.mutate({
+    const managedRoom = await (
+        await apolloClient
+    ).mutate({
         mutation: InsertManagedRoomDocument,
         variables: {
             capacity,
@@ -226,7 +230,9 @@ async function allocateToNewRoom(
         throw new Error("Could not insert a new managed room for shuffle space! Room came back null.");
     }
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: SetAutoPinOnManagedRoomDocument,
         variables: {
             roomId: managedRoom.data.insert_room_Room_one.id,
@@ -234,7 +240,9 @@ async function allocateToNewRoom(
     });
 
     const startedAt = new Date().toISOString();
-    const shuffleRoom = await apolloClient.mutate({
+    const shuffleRoom = await (
+        await apolloClient
+    ).mutate({
         mutation: InsertShuffleRoomDocument,
         variables: {
             durationMinutes,
@@ -416,7 +424,9 @@ async function attemptToMatchEntries(
             expiredIds.push(entry.id);
         }
     });
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: ExpireShuffleQueueEntriesDocument,
         variables: {
             queueEntryIds: expiredIds,
@@ -456,7 +466,9 @@ export async function handleShuffleQueueEntered(
     }
     const entry = payload.event.data.new;
 
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: SelectShufflePeriodDocument,
         variables: {
             id: entry.shufflePeriodId,
@@ -504,7 +516,9 @@ async function endRooms(logger: P.Logger, period: ActiveShufflePeriodFragment): 
             })
         );
 
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: SetShuffleRoomsEndedDocument,
             variables: {
                 ids: endedRooms.map((x) => x.id),
@@ -520,7 +534,9 @@ export async function processShuffleQueues(logger: P.Logger): Promise<void> {
 
     logger.info("Shuffle rooms: Fetching");
 
-    const result = await apolloClient.query({
+    const result = await (
+        await apolloClient
+    ).query({
         query: SelectActiveShufflePeriodsDocument,
         variables: {
             from: new Date(now - 24 * 60 * 60 * 1000).toISOString(),

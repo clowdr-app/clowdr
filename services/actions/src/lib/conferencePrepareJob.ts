@@ -17,7 +17,9 @@ gql`
 
 export async function failConferencePrepareJob(id: string, message: string): Promise<void> {
     // Mark this job as failed
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: FailConferencePrepareJobDocument,
         variables: {
             id,
@@ -37,7 +39,9 @@ gql`
 export async function updateStatusOfConferencePrepareJob(logger: P.Logger, id: string): Promise<void> {
     const renderJobsEnded = await allVideoRenderJobsCompleted(logger, id);
     if (renderJobsEnded) {
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: CompleteConferencePrepareJobDocument,
             variables: {
                 id,

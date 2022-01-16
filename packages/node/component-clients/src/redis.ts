@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import assert from "assert";
 import genericPool from "generic-pool";
 import type { Callback, RedisClient } from "redis";
 import redis from "redis";
 import Redlock from "redlock";
 import { promisify } from "util";
+import type { AWSClient } from "./aws/client";
 
-export function createRedisClient() {
-    assert(process.env.REDIS_URL, "REDIS_URL env var not defined.");
+export async function createRedisClient(awsClient: AWSClient) {
+    const REDIS_URL = await awsClient.getSecret(`${process.env.SERVICE_NAME}_REDIS_URL`);
 
     let redisExists = false;
-    return redis.createClient(process.env.REDIS_URL, {
+    return redis.createClient(REDIS_URL, {
         retry_strategy: (options) => {
             // Waiting 75 attempts = ~3 hours of re-attempting to connect before giving up
             if (options.error && options.error.code === "ECONNREFUSED" && (!redisExists || options.attempt >= 75)) {
@@ -38,39 +38,49 @@ export function createRedisClient() {
     });
 }
 
-const clientFactory = {
-    create: async function () {
-        return createRedisClient();
-    },
-    destroy: async function (client: RedisClient) {
-        client.quit();
-    },
-};
+export async function createRedisClientPool(awsClient: AWSClient) {
+    const clientFactory = {
+        create: async function () {
+            return createRedisClient(awsClient);
+        },
+        destroy: async function (client: RedisClient) {
+            client.quit();
+        },
+    };
 
-const poolOpts = {
-    max: process.env.MAX_REDIS_CONNECTIONS ? parseInt(process.env.MAX_REDIS_CONNECTIONS, 10) : 10,
-    min: process.env.MIN_REDIS_CONNECTIONS ? parseInt(process.env.MIN_REDIS_CONNECTIONS, 10) : 2,
-};
+    const MAX_REDIS_CONNECTIONS = await awsClient.getAWSOptionalParameter(
+        `${process.env.SERVICE_NAME}_MAX_REDIS_CONNECTIONS`
+    );
+    const MIN_REDIS_CONNECTIONS = await awsClient.getAWSOptionalParameter(
+        `${process.env.SERVICE_NAME}_MAX_REDIS_CONNECTIONS`
+    );
+    const poolOpts = {
+        max: MAX_REDIS_CONNECTIONS ? parseInt(MAX_REDIS_CONNECTIONS, 10) : 10,
+        min: MIN_REDIS_CONNECTIONS ? parseInt(MIN_REDIS_CONNECTIONS, 10) : 2,
+    };
 
-const _redisClientPool = genericPool.createPool<RedisClient>(clientFactory, poolOpts);
-export const redisClientPool = {
-    acquire: (_caller: string) => {
-        // console.info(`Acquiring redis client for ${caller}`);
-        return _redisClientPool.acquire();
-    },
-    release: (_caller: string, client: RedisClient) => {
-        // console.info(`Releasing redis client for ${caller}`);
-        return _redisClientPool.release(client);
-    },
-};
+    const _redisClientPool = genericPool.createPool<RedisClient>(clientFactory, poolOpts);
+    return {
+        acquire: (_caller: string) => {
+            // console.info(`Acquiring redis client for ${caller}`);
+            return _redisClientPool.acquire();
+        },
+        release: (_caller: string, client: RedisClient) => {
+            // console.info(`Releasing redis client for ${caller}`);
+            return _redisClientPool.release(client);
+        },
+    };
+}
 
-const redlockRedisClient = createRedisClient();
-export const redlock = new Redlock([redlockRedisClient], {
-    driftFactor: 0.01,
-    retryCount: 10,
-    retryDelay: 1000,
-    retryJitter: 500,
-});
+export async function createRedlockClient(awsClient: AWSClient) {
+    const redlockRedisClient = await createRedisClient(awsClient);
+    return new Redlock([redlockRedisClient], {
+        driftFactor: 0.01,
+        retryCount: 10,
+        retryDelay: 1000,
+        retryJitter: 500,
+    });
+}
 
 export const redisClientP = {
     get: (redisClient: RedisClient) => promisify(redisClient.get).bind(redisClient),

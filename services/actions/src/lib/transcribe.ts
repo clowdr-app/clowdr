@@ -15,7 +15,7 @@ import {
     GetTranscriptionJobDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { S3, Transcribe } from "./aws/awsClient";
+import { getAWSParameter, S3, Transcribe } from "./aws/awsClient";
 import { getS3TextObject } from "./aws/s3";
 import { getLatestVersion } from "./element";
 import type { AmazonTranscribeOutput } from "./subtitleConvert";
@@ -63,7 +63,9 @@ function replaceExtension(key: string, extension: string): string {
 
 export async function completeTranscriptionJob(logger: P.Logger, awsTranscribeJobName: string): Promise<void> {
     // Find our stored record of this transcription job
-    const transcriptionJobResult = await apolloClient.query({
+    const transcriptionJobResult = await (
+        await apolloClient
+    ).query({
         query: GetTranscriptionJobDocument,
         variables: {
             awsTranscribeJobName,
@@ -115,7 +117,9 @@ export async function completeTranscriptionJob(logger: P.Logger, awsTranscribeJo
     newVersion.createdAt = new Date().getTime();
     newVersion.createdBy = "system";
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: ElementAddNewVersionDocument,
         variables: {
             id: job.elementId,
@@ -134,7 +138,9 @@ export async function completeTranscriptionJob(logger: P.Logger, awsTranscribeJo
 
 export async function failTranscriptionJob(logger: P.Logger, awsTranscribeJobName: string): Promise<void> {
     // Find our stored record of this transcription job
-    const transcriptionJobResult = await apolloClient.query({
+    const transcriptionJobResult = await (
+        await apolloClient
+    ).query({
         query: GetTranscriptionJobDocument,
         variables: {
             awsTranscribeJobName,
@@ -167,7 +173,9 @@ export async function failTranscriptionJob(logger: P.Logger, awsTranscribeJobNam
     newVersion.createdAt = new Date().getTime();
     newVersion.createdBy = "system";
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: ElementAddNewVersionDocument,
         variables: {
             id: job.elementId,
@@ -188,7 +196,7 @@ export async function startTranscribe(logger: P.Logger, transcodeS3Url: string, 
     logger.info({ transcodeS3Url, elementId }, "Starting transcribe");
     const { bucket, key } = AmazonS3URI(transcodeS3Url);
 
-    if (bucket !== process.env.AWS_CONTENT_BUCKET_ID) {
+    if (bucket !== (await getAWSParameter("CONTENT_BUCKET_ID"))) {
         logger.error({ bucket, elementId }, "Unexpected S3 bucket");
         throw new Error(`Unexpected S3 bucket: ${bucket}`);
     }
@@ -210,20 +218,22 @@ export async function startTranscribe(logger: P.Logger, transcodeS3Url: string, 
         LanguageCode: LanguageCode.EN_US,
         IdentifyLanguage: false,
         JobExecutionSettings: {
-            DataAccessRoleArn: process.env.AWS_TRANSCRIBE_SERVICE_ROLE_ARN,
+            DataAccessRoleArn: await getAWSParameter("TRANSCRIBE_SERVICE_ROLE_ARN"),
         },
-        OutputBucketName: process.env.AWS_CONTENT_BUCKET_ID,
+        OutputBucketName: await getAWSParameter("CONTENT_BUCKET_ID"),
         OutputKey: outputKey,
     });
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: CreateTranscriptionJobDocument,
         variables: {
             awsTranscribeJobName: transcriptionJobName,
             elementId,
             videoS3Url: transcodeS3Url,
             languageCode: "en_US",
-            transcriptionS3Url: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${outputKey}`,
+            transcriptionS3Url: `s3://${await getAWSParameter("CONTENT_BUCKET_ID")}/${outputKey}`,
         },
     });
 

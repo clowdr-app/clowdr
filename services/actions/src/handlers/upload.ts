@@ -35,7 +35,7 @@ import {
     UploadableElementDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { S3 } from "../lib/aws/awsClient";
+import { awsClient, getAWSParameter, S3 } from "../lib/aws/awsClient";
 import { getConferenceConfiguration, getSubmissionNotificationRoles } from "../lib/conferenceConfiguration";
 import { extractLatestVersion } from "../lib/element";
 import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
@@ -74,10 +74,10 @@ async function checkS3Url(
     url: string
 ): Promise<{ result: "success"; url: string } | { result: "error"; message: string }> {
     const { region, bucket, key } = AmazonS3URI(url);
-    if (region !== process.env.AWS_REGION) {
+    if (region !== awsClient.region) {
         return { result: "error", message: "Invalid S3 URL (region mismatch)" };
     }
-    if (bucket !== process.env.AWS_CONTENT_BUCKET_ID) {
+    if (bucket !== (await getAWSParameter("CONTENT_BUCKET_ID"))) {
         return { result: "error", message: "Invalid S3 URL (bucket mismatch)" };
     }
     if (!key) {
@@ -224,7 +224,9 @@ async function getElementsByToken(magicToken: string): Promise<ElementsByToken |
         };
     }
 
-    const response = await apolloClient.query({
+    const response = await (
+        await apolloClient
+    ).query({
         query: UploadableElementDocument,
         variables: {
             accessToken: magicToken,
@@ -284,7 +286,9 @@ async function sendSubmittedEmail(
     itemTitle: string,
     conferenceName: string
 ) {
-    const uploaders = await apolloClient.query({
+    const uploaders = await (
+        await apolloClient
+    ).query({
         query: GetUploadersDocument,
         variables: {
             elementId,
@@ -408,7 +412,9 @@ export async function handleElementSubmitted(logger: P.Logger, args: submitEleme
                 data: newVersionData,
             };
 
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: ElementAddNewVersionDocument,
                 variables: {
                     id: uploadableElement.id,
@@ -440,7 +446,9 @@ export async function handleElementSubmitted(logger: P.Logger, args: submitEleme
     `;
 
     if (uploadableElement.uploadsRemaining) {
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: SetUploadableElementUploadsRemainingDocument,
             variables: {
                 id: uploadableElement.id,
@@ -493,7 +501,7 @@ export async function handleUpdateSubtitles(
         "Content element is not a video or audio file."
     );
 
-    const bucket = process.env.AWS_CONTENT_BUCKET_ID;
+    const bucket = await getAWSParameter("CONTENT_BUCKET_ID");
     const key = `${uuidv4()}.srt`;
 
     try {
@@ -520,7 +528,9 @@ export async function handleUpdateSubtitles(
     };
 
     try {
-        await apolloClient.mutate({
+        await (
+            await apolloClient
+        ).mutate({
             mutation: ElementAddNewVersionDocument,
             variables: {
                 id: uploadableElement.id,
@@ -593,7 +603,9 @@ function generateIdempotencyKey(jobId: string): string {
 }
 
 export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): Promise<void> {
-    const jobsToProcess = await apolloClient.mutate({
+    const jobsToProcess = await (
+        await apolloClient
+    ).mutate({
         mutation: SelectUnprocessedSubmissionRequestEmailJobsDocument,
         variables: {},
     });
@@ -665,7 +677,9 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
                 await insertEmails(logger, emailsToInsert, conferenceId, undefined);
             }
 
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: InsertSubmissionRequestEmailsDocument,
                 variables: {
                     // uploaderIds: emailsRecords
@@ -676,7 +690,9 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
                         .filter(isNotUndefined),
                 },
             });
-            await apolloClient.mutate({
+            await (
+                await apolloClient
+            ).mutate({
                 mutation: CompleteSubmissionRequestEmailJobsDocument,
                 variables: {
                     ids: emailsRecords.map((x) => x.jobId),

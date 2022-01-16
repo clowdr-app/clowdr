@@ -1,4 +1,3 @@
-import type { Maybe } from "@midspace/hasura/actionTypes";
 import type { SNSNotification } from "@midspace/shared-types/sns/index";
 import axios from "axios";
 import type { P } from "pino";
@@ -6,7 +5,10 @@ import MessageValidator from "sns-validator";
 import { assertType } from "typescript-is";
 import { promisify } from "util";
 
-export async function validateSNSNotification(logger: P.Logger, body: string): Promise<Maybe<SNSNotification<any>>> {
+export async function validateSNSNotification(
+    logger: P.Logger,
+    body: string
+): Promise<null | undefined | SNSNotification<any>> {
     const validator = new MessageValidator();
     const validate = promisify(validator.validate.bind(validator));
 

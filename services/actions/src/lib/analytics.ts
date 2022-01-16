@@ -19,7 +19,9 @@ gql`
 `;
 
 export async function gatherPresenceStats(): Promise<void> {
-    const stats = await apolloClient.query({
+    const stats = await (
+        await apolloClient
+    ).query({
         query: FetchPresenceSummaryDocument,
     });
 
@@ -27,7 +29,9 @@ export async function gatherPresenceStats(): Promise<void> {
         throw new Error("Failed to fetch presence summary");
     }
 
-    await apolloClient.mutate({
+    await (
+        await apolloClient
+    ).mutate({
         mutation: InsertAppStatsDocument,
         variables: {
             object: {

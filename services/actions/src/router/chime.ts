@@ -1,4 +1,5 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import { tryConfirmSubscription, validateSNSNotification } from "@midspace/component-clients/aws/sns";
 import type { ActionPayload } from "@midspace/hasura/action";
 import type { joinRoomChimeSessionArgs, JoinRoomChimeSessionOutput } from "@midspace/hasura/actionTypes";
 import { json, text } from "body-parser";
@@ -11,8 +12,8 @@ import {
     handleChimeRegistrantLeftNotification,
     handleJoinRoom,
 } from "../handlers/chime";
+import { awsClient, getAWSParameter } from "../lib/aws/awsClient";
 import { BadRequestError, UnexpectedServerError } from "../lib/errors";
-import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import type {
     ChimeEventBase,
     ChimeMeetingEndedDetail,
@@ -33,7 +34,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
             return;
         }
 
-        if (message.TopicArn !== process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN) {
+        if (message.TopicArn !== (await getAWSParameter("CHIME_NOTIFICATIONS_TOPIC_ARN"))) {
             req.log.info(
                 {
                     topicArn: message.TopicArn,
@@ -156,7 +157,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
 });
 
 // Protected routes
-router.use(checkEventSecret);
+router.use(checkEventSecret(awsClient));
 
 router.post(
     "/joinRoom",

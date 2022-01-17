@@ -1,5 +1,7 @@
-import { gqlClient } from "@midspace/component-clients/graphqlClient";
-import { gql } from "@urql/core";
+import type { RedisClientPool } from "@midspace/component-clients/redis";
+import type { Client as GQLClient } from "@urql/core";
+import { gql } from "graphql-tag";
+import type Redlock from "redlock";
 import type {
     GetRegistrantQuery,
     GetRegistrantQueryVariables,
@@ -38,9 +40,15 @@ export interface RegistrantEntity {
     subconferenceMemberships: SubconferenceMembership[];
 }
 
-class RegistrantCache {
-    private readonly cache = new TableCache("Registrant", async (id) => {
-        const response = await gqlClient
+export class RegistrantCache {
+    constructor(
+        private readonly redisClientPool: RedisClientPool,
+        private readonly redlock: Redlock,
+        private readonly gqlClient: GQLClient
+    ) {}
+
+    private readonly cache = new TableCache("Registrant", this.redisClientPool, this.redlock, async (id) => {
+        const response = await this.gqlClient
             ?.query<GetRegistrantQuery, GetRegistrantQueryVariables>(GetRegistrantDocument, {
                 id,
             })
@@ -146,5 +154,3 @@ class RegistrantCache {
         }
     }
 }
-
-export const registrantCache = new RegistrantCache();

@@ -1,7 +1,9 @@
-import { gqlClient } from "@midspace/component-clients/graphqlClient";
-import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
+import type { RedisClientPool } from "@midspace/component-clients/redis";
+import { redisClientP } from "@midspace/component-clients/redis";
+import type { Client as GQLClient } from "@urql/core";
 import { gql } from "graphql-tag";
 import type { Callback } from "redis";
+import type Redlock from "redlock";
 import { promisify } from "util";
 import type { GetReadUpToIndicesQuery, GetReadUpToIndicesQueryVariables } from "./generated/graphql";
 import { GetReadUpToIndicesDocument } from "./generated/graphql";
@@ -21,9 +23,15 @@ gql`
 
 export type ReadUpToIndicesEntity = Record<string, string>;
 
-class ReadUpToIndexCache {
-    private readonly cache = new TableCache("ReadUpToIndex", async (chatId) => {
-        const response = await gqlClient
+export class ReadUpToIndexCache {
+    constructor(
+        private readonly redisClientPool: RedisClientPool,
+        private readonly redlock: Redlock,
+        private readonly gqlClient: GQLClient
+    ) {}
+
+    private readonly cache = new TableCache("ReadUpToIndex", this.redisClientPool, this.redlock, async (chatId) => {
+        const response = await this.gqlClient
             ?.query<GetReadUpToIndicesQuery, GetReadUpToIndicesQueryVariables>(GetReadUpToIndicesDocument, {
                 chatId,
             })
@@ -62,11 +70,11 @@ class ReadUpToIndexCache {
     public async setField(id: string, field: string, value: string | undefined): Promise<void> {
         await this.cache.setField(id, field, value);
         try {
-            const redisClient = await redisClientPool.acquire("caches/readUpToIndex.setField");
+            const redisClient = await this.redisClientPool.acquire("caches/readUpToIndex.setField");
             try {
                 redisClientP.sadd(redisClient)(this.modifiedSetKey, `${id}¦${field}¦${value}`);
             } finally {
-                redisClientPool.release("caches/readUpToIndex.setField", redisClient);
+                this.redisClientPool.release("caches/readUpToIndex.setField", redisClient);
             }
         } catch (e: any) {
             console.error("Error adding to modified set for readUpToIndex cache");
@@ -101,7 +109,7 @@ class ReadUpToIndexCache {
         }[]
     > {
         try {
-            const redisClient = await redisClientPool.acquire("caches/readUpToIndex.getAndClearModified");
+            const redisClient = await this.redisClientPool.acquire("caches/readUpToIndex.getAndClearModified");
             try {
                 let multi = redisClient.multi();
                 multi = multi.smembers(this.modifiedSetKey);
@@ -118,7 +126,7 @@ class ReadUpToIndexCache {
                     });
                 }
             } finally {
-                redisClientPool.release("caches/readUpToIndex.getAndClearModified", redisClient);
+                this.redisClientPool.release("caches/readUpToIndex.getAndClearModified", redisClient);
             }
         } catch (e: any) {
             console.error("Error getting and clearing the modified set for readUpToIndex cache");
@@ -126,4 +134,3 @@ class ReadUpToIndexCache {
         return [];
     }
 }
-export const readUpToIndicesCache = new ReadUpToIndexCache();

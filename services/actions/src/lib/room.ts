@@ -148,8 +148,10 @@ export async function canUserJoinRoom(registrantId: string, roomId: string, conf
             }
         }
     `;
-    const result = await callWithRetry(() =>
-        apolloClient.query({
+    const result = await callWithRetry(async () =>
+        (
+            await apolloClient
+        ).query({
             query: GetRoomThatRegistrantCanJoinDocument,
             variables: {
                 roomId,

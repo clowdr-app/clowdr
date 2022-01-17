@@ -106,7 +106,9 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
 
     const existingSessionBroadcasts = await callWithRetry(
         async () =>
-            await Vonage.listBroadcasts({
+            await (
+                await Vonage
+            ).listBroadcasts({
                 sessionId: broadcastDetails.vonageSessionId,
             })
     );
@@ -138,7 +140,7 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
         );
         for (const broadcast of startedSessionBroadcasts) {
             try {
-                await Vonage.stopBroadcast(broadcast.id);
+                await (await Vonage).stopBroadcast(broadcast.id);
             } catch (e: any) {
                 logger.error(
                     { err: e, vonageSessionId: broadcastDetails.vonageSessionId, status: broadcast.status },
@@ -171,7 +173,9 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
                 ? await sanitizeLayout(logger, broadcastDetails.vonageSessionId, dirtyLayout)
                 : null;
 
-            const broadcast = await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
+            const broadcast = await (
+                await Vonage
+            ).startBroadcast(broadcastDetails.vonageSessionId, {
                 layout: cleanLayout
                     ? cleanLayout.layout.layout
                     : {
@@ -219,7 +223,9 @@ export async function stopEventBroadcasts(logger: P.Logger, eventId: string): Pr
 
     const existingSessionBroadcasts = await callWithRetry(
         async () =>
-            await Vonage.listBroadcasts({
+            await (
+                await Vonage
+            ).listBroadcasts({
                 sessionId: broadcastDetails.vonageSessionId,
             })
     );
@@ -235,7 +241,7 @@ export async function stopEventBroadcasts(logger: P.Logger, eventId: string): Pr
     for (const existingBroadcast of existingSessionBroadcasts) {
         try {
             if (existingBroadcast.status === "started" || existingBroadcast.status === "paused") {
-                await callWithRetry(async () => await Vonage.stopBroadcast(existingBroadcast.id));
+                await callWithRetry(async () => await (await Vonage).stopBroadcast(existingBroadcast.id));
             }
         } catch (e: any) {
             logger.error(
@@ -302,8 +308,10 @@ export async function startRoomVonageArchiving(
         return null;
     }
 
-    const existingSessionArchives = await callWithRetry(() =>
-        Vonage.listArchives({
+    const existingSessionArchives = await callWithRetry(async () =>
+        (
+            await Vonage
+        ).listArchives({
             sessionId: archiveDetails.vonageSessionId,
         })
     );
@@ -334,7 +342,7 @@ export async function startRoomVonageArchiving(
 
         for (const archive of startedSessionArchives) {
             try {
-                await callWithRetry(() => Vonage.stopArchive(archive.id));
+                await callWithRetry(async () => (await Vonage).stopArchive(archive.id));
             } catch (e: any) {
                 logger.error(
                     { vonageSessionId: archiveDetails.vonageSessionId, status: archive.status, err: e },
@@ -372,8 +380,10 @@ export async function startRoomVonageArchiving(
                 },
             });
 
-            const archive = await callWithRetry(() =>
-                Vonage.startArchive(archiveDetails.vonageSessionId, {
+            const archive = await callWithRetry(async () =>
+                (
+                    await Vonage
+                ).startArchive(archiveDetails.vonageSessionId, {
                     name: roomId + (eventId ? "/" + eventId : ""),
                     resolution: "1280x720",
                     outputMode: "composed",
@@ -403,7 +413,9 @@ export async function startRoomVonageArchiving(
             const recordingId = recordingResponse.data?.insert_video_VonageRoomRecording_one?.id ?? null;
 
             if (recordingId) {
-                await Vonage.signal(archiveDetails.vonageSessionId, null, {
+                await (
+                    await Vonage
+                ).signal(archiveDetails.vonageSessionId, null, {
                     type: "recordingId",
                     data: recordingId,
                 });
@@ -450,7 +462,9 @@ export async function stopRoomVonageArchiving(
 
     const existingSessionArchives = await callWithRetry(
         async () =>
-            await Vonage.listArchives({
+            await (
+                await Vonage
+            ).listArchives({
                 sessionId: archiveDetails.vonageSessionId,
             })
     );
@@ -466,8 +480,10 @@ export async function stopRoomVonageArchiving(
     for (const existingArchive of existingSessionArchives) {
         if (eventId && disableRecording) {
             try {
-                await callWithRetry(() =>
-                    apolloClient.mutate({
+                await callWithRetry(async () =>
+                    (
+                        await apolloClient
+                    ).mutate({
                         mutation: DisableEventRecordingFlagDocument,
                         variables: {
                             eventId,
@@ -482,7 +498,7 @@ export async function stopRoomVonageArchiving(
         try {
             if (existingArchive.status === "started" || existingArchive.status === "paused") {
                 if (existingArchive.name.startsWith(roomId) && existingArchive.name.split("/")[1] === eventId) {
-                    await callWithRetry(() => Vonage.stopArchive(existingArchive.id));
+                    await callWithRetry(async () => (await Vonage).stopArchive(existingArchive.id));
                 }
             }
         } catch (e: any) {
@@ -510,10 +526,9 @@ export async function kickRegistrantFromRoom(logger: P.Logger, roomId: string, r
         } else {
             logger.info({ roomId, registrantId }, "Forcing Vonage disconnection of registrant");
             try {
-                await Vonage.forceDisconnect(
-                    roomParticipant.room.publicVonageSessionId,
-                    roomParticipant.vonageConnectionId
-                );
+                await (
+                    await Vonage
+                ).forceDisconnect(roomParticipant.room.publicVonageSessionId, roomParticipant.vonageConnectionId);
             } catch (err) {
                 logger.error({ roomId, registrantId, err }, "Failed to force Vonage disconnection of registrant");
                 throw new Error("Failed to force Vonage disconnection of registrant");
@@ -714,7 +729,9 @@ export interface VonageLayoutBuiltin {
 
 async function getOngoingBroadcastIds(logger: P.Logger, vonageSessionId: string): Promise<string[]> {
     logger.info({ vonageSessionId }, "Getting list of Vonage broadcasts");
-    const broadcasts = await Vonage.listBroadcasts({
+    const broadcasts = await (
+        await Vonage
+    ).listBroadcasts({
         sessionId: vonageSessionId,
     });
 
@@ -727,7 +744,9 @@ async function getOngoingBroadcastIds(logger: P.Logger, vonageSessionId: string)
 
 async function getOngoingArchiveIds(logger: P.Logger, vonageSessionId: string): Promise<string[]> {
     logger.info({ vonageSessionId }, "Getting list of Vonage archives");
-    const archives = await Vonage.listArchives({
+    const archives = await (
+        await Vonage
+    ).listArchives({
         sessionId: vonageSessionId,
     });
 
@@ -761,7 +780,7 @@ export async function applyVonageSessionLayout(
         if (allStreamsTransform.length > 0) {
             logger.info({ vonageSessionId, classListArray: allStreamsTransform }, "Setting Vonage stream class list");
 
-            await Vonage.setStreamClassLists(vonageSessionId, allStreamsTransform);
+            await (await Vonage).setStreamClassLists(vonageSessionId, allStreamsTransform);
         }
     } catch (err) {
         logger.error(
@@ -784,15 +803,14 @@ export async function applyVonageSessionLayout(
             try {
                 switch (layout.layout.type) {
                     case "bestFit":
-                        await Vonage.setBroadcastLayout(
-                            startedBroadcastId,
-                            "bestFit",
-                            null,
-                            layout.layout.screenShareType
-                        );
+                        await (
+                            await Vonage
+                        ).setBroadcastLayout(startedBroadcastId, "bestFit", null, layout.layout.screenShareType);
                         break;
                     case "custom":
-                        await Vonage.setBroadcastLayout(startedBroadcastId, "custom", layout.layout.stylesheet, null);
+                        await (
+                            await Vonage
+                        ).setBroadcastLayout(startedBroadcastId, "custom", layout.layout.stylesheet, null);
                         break;
                 }
             } catch (err) {
@@ -816,10 +834,14 @@ export async function applyVonageSessionLayout(
             try {
                 switch (layout.layout.type) {
                     case "bestFit":
-                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, layout.layout.screenShareType);
+                        await (
+                            await Vonage
+                        ).setArchiveLayout(startedArchiveId, "bestFit", null, layout.layout.screenShareType);
                         break;
                     case "custom":
-                        await Vonage.setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);
+                        await (
+                            await Vonage
+                        ).setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);
                         break;
                 }
             } catch (err) {
@@ -848,7 +870,7 @@ export async function sanitizeLayout(
         streamClasses: { ...layout.streamClasses },
     };
 
-    const streams = await Vonage.listStreams(vonageSessionId);
+    const streams = await (await Vonage).listStreams(vonageSessionId);
     if (!streams) {
         logger.error({ vonageSessionId }, "Could not retrieve list of streams from Vonage");
         throw new Error("Could not retrieve list of streams from Vonage");

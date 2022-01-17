@@ -11,27 +11,30 @@ import { router as testRouter } from "../http-routers/test";
 import { router as vapidRouter } from "../http-routers/vapid";
 import { logger } from "../lib/logger";
 
-assert(process.env.REDIS_KEY, "REDIS_KEY env var not defined.");
-assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN env var not defined");
-assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
+async function main() {
+    // TODO:
+    assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
 
-const PORT = process.env.PORT || 3002;
-const server = express();
-server.use(
-    cors({
-        origin: process.env.CORS_ORIGIN.split(","),
-    })
-);
+    const PORT = process.env.PORT || 3002;
+    const server = express();
+    server.use(
+        cors({
+            origin: process.env.CORS_ORIGIN.split(","),
+        })
+    );
 
-server.use(presenceRouter);
-server.use("/test", testRouter);
-server.use("/chat", chatRouter);
-server.use("/conference", conferenceRouter);
-server.use("/vapid", vapidRouter);
-server.use("/event", eventRouter);
-server.use("/analytics", analyticsRouter);
+    server.use(presenceRouter);
+    server.use("/test", testRouter);
+    server.use("/chat", chatRouter);
+    server.use("/conference", conferenceRouter);
+    server.use("/vapid", vapidRouter);
+    server.use("/event", eventRouter);
+    server.use("/analytics", analyticsRouter);
 
-const INDEX_FILE = "../resources/index.html";
-server.use((_req, res) => res.sendFile(path.resolve(path.join(__dirname, INDEX_FILE))));
+    const INDEX_FILE = "../resources/index.html";
+    server.use((_req, res) => res.sendFile(path.resolve(path.join(__dirname, INDEX_FILE))));
 
-export const httpServer = server.listen(PORT, () => logger.info({ port: PORT }, `Listening on ${PORT}`));
+    server.listen(PORT, () => logger.info({ port: PORT }, `Listening on ${PORT}`));
+}
+
+main();

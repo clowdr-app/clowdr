@@ -60,7 +60,7 @@ export async function handleVonageSessionLayoutCreated(
 
     // At the moment, there seems to be no easy way to figure out who is publishing a stream if we didn't
     // record/receive the callback. So we'll just settle for removing invalid ones.
-    const streams = await Vonage.listStreams(newRow.vonageSessionId);
+    const streams = await (await Vonage).listStreams(newRow.vonageSessionId);
     if (!streams) {
         logger.error({ vonageSessionId: newRow.vonageSessionId }, "Could not retrieve list of streams from Vonage");
         throw new Error("Could not retrieve list of streams from Vonage");
@@ -89,7 +89,9 @@ export async function handleVonageSessionLayoutCreated(
 
     try {
         if (streamCount) {
-            await Vonage.signal(newRow.vonageSessionId, null, {
+            await (
+                await Vonage
+            ).signal(newRow.vonageSessionId, null, {
                 data: { layout: layoutData, createdAt: Date.parse(newRow.created_at) },
                 type: "layout-signal",
             });

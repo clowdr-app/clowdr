@@ -1122,6 +1122,8 @@ importers:
   services/auth:
     specifiers:
       '@midspace/auth': workspace:*
+      '@midspace/caches': workspace:*
+      '@midspace/component-clients': workspace:*
       '@midspace/server-utils': workspace:*
       '@socket.io/redis-emitter': ^4.1.0
       '@types/amqplib': ^0.8.2
@@ -1151,6 +1153,7 @@ importers:
       jwks-rsa: ^2.0.5
       node-env-run: ^4.0.2
       node-fetch: ^2.6.6
+      p-memoize: ^4.0.4
       pino: ^7.2.0
       pino-http: ^6.0.0
       pino-pretty: ^7.2.0
@@ -1165,6 +1168,8 @@ importers:
       uuid: ^8.3.2
     dependencies:
       '@midspace/auth': link:../../packages/node/auth
+      '@midspace/caches': link:../../packages/node/caches
+      '@midspace/component-clients': link:../../packages/node/component-clients
       '@midspace/server-utils': link:../../packages/node/server-utils
       '@socket.io/redis-emitter': 4.1.0
       '@types/amqplib': 0.8.2
@@ -1194,6 +1199,7 @@ importers:
       jwks-rsa: 2.0.5
       node-env-run: 4.0.2
       node-fetch: 2.6.6
+      p-memoize: 4.0.4
       pino: 7.2.0
       pino-http: 6.0.0
       redis: 3.1.2

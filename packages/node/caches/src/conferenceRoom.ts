@@ -1,5 +1,7 @@
-import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import type { RedisClientPool } from "@midspace/component-clients/redis";
+import type { Client as GQLClient } from "@urql/core";
 import { gql } from "@urql/core";
+import type Redlock from "redlock";
 import type {
     GetConferenceRoomsQuery,
     GetConferenceRoomsQueryVariables,
@@ -19,19 +21,23 @@ gql`
 
 export type ConferenceRoomsEntity = Record<string, Room_ManagementMode_Enum>;
 
-export const conferenceRoomsCache = new TableCache("ConferenceRoom", async (conferenceId) => {
-    const response = await gqlClient
-        ?.query<GetConferenceRoomsQuery, GetConferenceRoomsQueryVariables>(GetConferenceRoomsDocument, {
-            conferenceId,
-        })
-        .toPromise();
+export class ConferenceRoomsCache extends TableCache {
+    constructor(redisClientPool: RedisClientPool, redlock: Redlock, gqlClient: GQLClient) {
+        super("ConferenceRoom", redisClientPool, redlock, async (conferenceId) => {
+            const response = await gqlClient
+                ?.query<GetConferenceRoomsQuery, GetConferenceRoomsQueryVariables>(GetConferenceRoomsDocument, {
+                    conferenceId,
+                })
+                .toPromise();
 
-    const data = response?.data?.room_Room;
-    if (data) {
-        return data.reduce<Record<string, string>>((acc, x) => {
-            acc[x.id] = x.managementModeName;
-            return acc;
-        }, {});
+            const data = response?.data?.room_Room;
+            if (data) {
+                return data.reduce<Record<string, string>>((acc, x) => {
+                    acc[x.id] = x.managementModeName;
+                    return acc;
+                }, {});
+            }
+            return undefined;
+        });
     }
-    return undefined;
-});
+}

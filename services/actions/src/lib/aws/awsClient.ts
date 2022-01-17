@@ -145,22 +145,10 @@ async function getMediaConvertClient(): Promise<MediaConvert> {
 }
 
 async function initialiseAwsClient(): Promise<void> {
+    await awsClient.initialize();
+
     mediaconvert = await getMediaConvertClient();
 
-    await subscribeToSNSNotifications(
-        awsClient,
-        logger,
-        "Systems Manager Parameter Store notifications",
-        "PARAMETER_STORE_NOTIFICATIONS_TOPIC_ARN",
-        "/systemsManager/parameterStore/notify"
-    );
-    await subscribeToSNSNotifications(
-        awsClient,
-        logger,
-        "Secrets Manager notifications",
-        "SECRETS_MANAGER_NOTIFICATIONS_TOPIC_ARN",
-        "/secretsManager/notify"
-    );
     await subscribeToSNSNotifications(
         awsClient,
         logger,

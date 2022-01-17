@@ -5,6 +5,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import jwksRsa from "jwks-rsa";
 import fetch from "node-fetch";
+import { caches } from "./caches";
 
 export const router = express.Router();
 
@@ -76,6 +77,7 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
 
         const result = await computeAuthHeaders(
             req.log,
+            await caches,
             { userId },
             {
                 conferenceId,

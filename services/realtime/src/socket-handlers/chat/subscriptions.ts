@@ -1,4 +1,3 @@
-import { userCache } from "@midspace/caches/user";
 import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
@@ -15,7 +14,7 @@ export function onListenForSubscriptionsChanged(
             try {
                 assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const registrants = await userCache.getField(userId, "registrants");
+                const registrants = await caches.user.getField(userId, "registrants");
                 if (registrants?.some((x) => x.id === registrantId)) {
                     socket.join(generateChatSubscriptionsChangedRoomName(registrantId));
                 }
@@ -39,7 +38,7 @@ export function onUnlistenForSubscriptionsChanged(
             try {
                 assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const registrants = await userCache.getField(userId, "registrants");
+                const registrants = await caches.user.getField(userId, "registrants");
                 if (registrants?.some((x) => x.id === registrantId)) {
                     socket.leave(generateChatSubscriptionsChangedRoomName(registrantId));
                 }

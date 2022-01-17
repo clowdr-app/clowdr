@@ -180,7 +180,7 @@ export async function stopArchiveIfNoOngoingEvent(
     payload: SessionMonitoringWebhookReqBody
 ): Promise<boolean> {
     try {
-        const streams = await callWithRetry(() => Vonage.listStreams(payload.sessionId));
+        const streams = await callWithRetry(async () => (await Vonage).listStreams(payload.sessionId));
         if (!streams) {
             logger.error(
                 { sessionId: payload.sessionId },

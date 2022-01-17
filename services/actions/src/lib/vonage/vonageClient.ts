@@ -2,7 +2,7 @@ import OpenTok from "opentok";
 import { promisify } from "util";
 import { awsClient } from "../aws/awsClient";
 
-export async function createVonageClient() {
+async function createVonageClient() {
     const apiKey = await awsClient.getSecret("/VonageProject/ProjectAPICredentials", "ProjectAPIKey");
     const apiSecret = await awsClient.getSecret("/VonageProject/ProjectAPICredentials", "ProjectAPISecret");
 
@@ -30,3 +30,7 @@ export async function createVonageClient() {
         signal: promisify(vonage.signal.bind(vonage)),
     };
 }
+
+const Vonage = createVonageClient();
+
+export default Vonage;

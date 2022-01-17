@@ -1,18 +1,11 @@
+import type { Caches } from "@midspace/caches/caches";
 import type { ConferenceEntity } from "@midspace/caches/conference";
-import { conferenceCache } from "@midspace/caches/conference";
-import { conferenceRoomsCache } from "@midspace/caches/conferenceRoom";
 import {
     Conference_VisibilityLevel_Enum,
     Registrant_RegistrantRole_Enum,
     Room_ManagementMode_Enum,
     Room_PersonRole_Enum,
 } from "@midspace/caches/generated/graphql";
-import { registrantCache } from "@midspace/caches/registrant";
-import { roomCache } from "@midspace/caches/room";
-import { roomMembershipsCache } from "@midspace/caches/roomMembership";
-import { subconferenceCache } from "@midspace/caches/subconference";
-import { subconferenceRoomsCache } from "@midspace/caches/subconferenceRoom";
-import { userCache } from "@midspace/caches/user";
 import { HasuraRoleName } from "@midspace/shared-types/auth";
 import type { P } from "pino";
 
@@ -101,6 +94,7 @@ function formatArrayForHasuraHeader(values: string | string[]): string {
 
 export async function computeAuthHeaders(
     logger: P.Logger,
+    caches: Caches,
     verifiedParams: Partial<{ userId: string }>,
     unverifiedParams: Partial<{
         conferenceId: string;
@@ -154,10 +148,10 @@ export async function computeAuthHeaders(
         };
 
         if (unverifiedParams.conferenceId) {
-            const conference = await conferenceCache.getEntity(unverifiedParams.conferenceId);
+            const conference = await caches.conference.getEntity(unverifiedParams.conferenceId);
 
             if (conference) {
-                await evaluateUnauthenticatedConference(conference, result, unverifiedParams);
+                await evaluateUnauthenticatedConference(caches, conference, result, unverifiedParams);
             }
         }
 
@@ -167,7 +161,7 @@ export async function computeAuthHeaders(
         const allowedRoles: HasuraRoleName[] = [];
         let requestedRole = (unverifiedParams.role ?? HasuraRoleName.User) as HasuraRoleName;
 
-        const user = await userCache.getEntity(verifiedParams.userId);
+        const user = await caches.user.getEntity(verifiedParams.userId);
         if (user) {
             result[AuthSessionVariables.UserId] = user.id;
             allowedRoles.push(HasuraRoleName.User);
@@ -175,8 +169,8 @@ export async function computeAuthHeaders(
             if (unverifiedParams.conferenceId) {
                 const registrantId = user.registrants.find((x) => x.conferenceId === unverifiedParams.conferenceId);
                 if (registrantId) {
-                    const registrant = await registrantCache.getEntity(registrantId.id);
-                    const conference = await conferenceCache.getEntity(unverifiedParams.conferenceId);
+                    const registrant = await caches.registrant.getEntity(registrantId.id);
+                    const conference = await caches.conference.getEntity(unverifiedParams.conferenceId);
 
                     if (registrant && conference) {
                         result[AuthSessionVariables.RegistrantIds] = formatArrayForHasuraHeader(registrant.id);
@@ -191,7 +185,7 @@ export async function computeAuthHeaders(
                                 allowedRoles.push(HasuraRoleName.Moderator);
 
                                 for (const subconferenceId of conference.subconferenceIds) {
-                                    const subconference = await subconferenceCache.getEntity(subconferenceId);
+                                    const subconference = await caches.subconference.getEntity(subconferenceId);
                                     if (
                                         subconference?.conferenceVisibilityLevel ===
                                             Conference_VisibilityLevel_Enum.Public ||
@@ -209,7 +203,7 @@ export async function computeAuthHeaders(
                                 availableSubconferenceIds = conference.subconferenceIds;
                             } else {
                                 for (const subconferenceId of conference.subconferenceIds) {
-                                    const subconference = await subconferenceCache.getEntity(subconferenceId);
+                                    const subconference = await caches.subconference.getEntity(subconferenceId);
                                     if (
                                         subconference?.conferenceVisibilityLevel ===
                                             Conference_VisibilityLevel_Enum.Public ||
@@ -225,7 +219,7 @@ export async function computeAuthHeaders(
                                 formatArrayForHasuraHeader(availableSubconferenceIds);
 
                             if (unverifiedParams.roomId) {
-                                const room = await roomCache.getEntity(unverifiedParams.roomId);
+                                const room = await caches.room.getEntity(unverifiedParams.roomId);
                                 if (room) {
                                     if (room.conferenceId === conference.id && !room.subconferenceId) {
                                         if (
@@ -240,7 +234,7 @@ export async function computeAuthHeaders(
                                             result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
                                             allowedRoles.push(HasuraRoleName.RoomMember);
                                         } else {
-                                            const role = await roomMembershipsCache.getField(room.id, registrant.id);
+                                            const role = await caches.roomMemberships.getField(room.id, registrant.id);
                                             if (role) {
                                                 result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
                                                     room.id
@@ -264,10 +258,10 @@ export async function computeAuthHeaders(
                                 allowedRoles.push(HasuraRoleName.RoomMember);
 
                                 const allRooms: Record<string, string> | undefined =
-                                    await conferenceRoomsCache.getEntity(conference.id);
+                                    await caches.conferenceRooms.getEntity(conference.id);
                                 if (allRooms) {
                                     for (const subconferenceId of availableSubconferenceIds) {
-                                        const allSubconfRooms = await subconferenceRoomsCache.getEntity(
+                                        const allSubconfRooms = await caches.subconferenceRooms.getEntity(
                                             subconferenceId
                                         );
                                         for (const roomId in allSubconfRooms) {
@@ -307,7 +301,7 @@ export async function computeAuthHeaders(
                                                 roomManagementMode === Room_ManagementMode_Enum.Managed ||
                                                 roomManagementMode === Room_ManagementMode_Enum.Dm
                                             ) {
-                                                const roomMembership = await roomMembershipsCache.getField(
+                                                const roomMembership = await caches.roomMemberships.getField(
                                                     roomId,
                                                     registrant.id
                                                 );
@@ -342,7 +336,7 @@ export async function computeAuthHeaders(
                                 }
 
                                 if (unverifiedParams.roomId) {
-                                    const room = await roomCache.getEntity(unverifiedParams.roomId);
+                                    const room = await caches.room.getEntity(unverifiedParams.roomId);
                                     if (room) {
                                         if (
                                             room.conferenceId === conference.id &&
@@ -363,7 +357,7 @@ export async function computeAuthHeaders(
                                                 );
                                                 allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else {
-                                                const role = await roomMembershipsCache.getField(
+                                                const role = await caches.roomMemberships.getField(
                                                     room.id,
                                                     registrant.id
                                                 );
@@ -389,7 +383,7 @@ export async function computeAuthHeaders(
                                 } else if (unverifiedParams.includeRoomIds) {
                                     allowedRoles.push(HasuraRoleName.RoomMember);
 
-                                    const allRooms = await subconferenceRoomsCache.getEntity(
+                                    const allRooms = await caches.subconferenceRooms.getEntity(
                                         subconferenceMembership.subconferenceId
                                     );
                                     if (allRooms) {
@@ -424,7 +418,7 @@ export async function computeAuthHeaders(
                                                     roomManagementMode === Room_ManagementMode_Enum.Managed ||
                                                     roomManagementMode === Room_ManagementMode_Enum.Dm
                                                 ) {
-                                                    const roomMembership = await roomMembershipsCache.getField(
+                                                    const roomMembership = await caches.roomMemberships.getField(
                                                         roomId,
                                                         registrant.id
                                                     );
@@ -450,7 +444,7 @@ export async function computeAuthHeaders(
                         return false;
                     }
                 } else {
-                    const conference = await conferenceCache.getEntity(unverifiedParams.conferenceId);
+                    const conference = await caches.conference.getEntity(unverifiedParams.conferenceId);
                     if (conference) {
                         if (conference.createdBy === user.id) {
                             allowedRoles.push(HasuraRoleName.SubconferenceOrganizer);
@@ -459,7 +453,7 @@ export async function computeAuthHeaders(
                         } else {
                             result[AuthSessionVariables.ConferenceIds] = formatArrayForHasuraHeader([]);
                             result[AuthSessionVariables.SubconferenceIds] = formatArrayForHasuraHeader([]);
-                            if (await evaluateUnauthenticatedConference(conference, result, unverifiedParams)) {
+                            if (await evaluateUnauthenticatedConference(caches, conference, result, unverifiedParams)) {
                                 allowedRoles.push(HasuraRoleName.Unauthenticated);
                                 requestedRole = HasuraRoleName.Unauthenticated;
                             } else {
@@ -492,6 +486,7 @@ export async function computeAuthHeaders(
     return false;
 }
 async function evaluateUnauthenticatedConference(
+    caches: Caches,
     conference: ConferenceEntity,
     result: Partial<Record<AuthSessionVariables, string>>,
     unverifiedParams: Partial<{
@@ -508,7 +503,7 @@ async function evaluateUnauthenticatedConference(
         result[AuthSessionVariables.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
 
         if (unverifiedParams.subconferenceId) {
-            const conferenceVisibilityLevel = await subconferenceCache.getField(
+            const conferenceVisibilityLevel = await caches.subconference.getField(
                 unverifiedParams.subconferenceId,
                 "conferenceVisibilityLevel"
             );
@@ -523,7 +518,7 @@ async function evaluateUnauthenticatedConference(
             // All public subconferences
             const publicSubconferenceIds: string[] = [];
             for (const subconferenceId of conference.subconferenceIds) {
-                const conferenceVisibilityLevel = await subconferenceCache.getField(
+                const conferenceVisibilityLevel = await caches.subconference.getField(
                     subconferenceId,
                     "conferenceVisibilityLevel"
                 );

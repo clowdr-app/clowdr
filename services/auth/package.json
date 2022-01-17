@@ -15,6 +15,8 @@
     "license": "AGPL-3.0-or-later",
     "dependencies": {
         "@midspace/auth": "workspace:*",
+        "@midspace/caches": "workspace:*",
+        "@midspace/component-clients": "workspace:*",
         "@midspace/server-utils": "workspace:*",
         "@socket.io/redis-emitter": "^4.1.0",
         "@types/amqplib": "^0.8.2",
@@ -44,6 +46,7 @@
         "jwks-rsa": "^2.0.5",
         "node-env-run": "^4.0.2",
         "node-fetch": "^2.6.6",
+        "p-memoize": "^4.0.4",
         "pino": "^7.2.0",
         "pino-http": "^6.0.0",
         "redis": "^3.1.2",

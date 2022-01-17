@@ -1,5 +1,7 @@
-import { gqlClient } from "@midspace/component-clients/graphqlClient";
-import { gql } from "@urql/core";
+import type { RedisClientPool } from "@midspace/component-clients/redis";
+import type { Client as GQLClient } from "@urql/core";
+import { gql } from "graphql-tag";
+import type Redlock from "redlock";
 import type { GetRoomQuery, GetRoomQueryVariables, Room_ManagementMode_Enum } from "./generated/graphql";
 import { GetRoomDocument } from "./generated/graphql";
 import { TableCache } from "./generic/table";
@@ -24,9 +26,15 @@ export interface RoomEntity {
     managementModeName: Room_ManagementMode_Enum;
 }
 
-class RoomCache {
-    private readonly cache = new TableCache("Room", async (id) => {
-        const response = await gqlClient
+export class RoomCache {
+    constructor(
+        private readonly redisClientPool: RedisClientPool,
+        private readonly redlock: Redlock,
+        private readonly gqlClient: GQLClient
+    ) {}
+
+    private readonly cache = new TableCache("Room", this.redisClientPool, this.redlock, async (id) => {
+        const response = await this.gqlClient
             ?.query<GetRoomQuery, GetRoomQueryVariables>(GetRoomDocument, {
                 id,
             })
@@ -119,5 +127,3 @@ class RoomCache {
         }
     }
 }
-
-export const roomCache = new RoomCache();

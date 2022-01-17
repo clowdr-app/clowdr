@@ -23,6 +23,8 @@ export interface AWSClient {
     getAWSParameter: (name: string, region?: string) => Promise<string>;
     getSecret: (secretName: string, secretKey?: string) => Promise<string>;
     getHostUrl: () => Promise<string>;
+
+    initialize: () => Promise<void>;
 }
 
 export function createAWSClient(serviceName: string, logger: P.Logger): AWSClient {
@@ -130,7 +132,7 @@ export function createAWSClient(serviceName: string, logger: P.Logger): AWSClien
         return `${HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http"}://${HOST_DOMAIN}`;
     }
 
-    return {
+    const client: Omit<AWSClient, "initialize"> = {
         serviceName,
         prefix,
         region,
@@ -143,17 +145,39 @@ export function createAWSClient(serviceName: string, logger: P.Logger): AWSClien
         getSecret,
         getHostUrl,
     };
+
+    async function initialize() {
+        await subscribeToSNSNotifications(
+            client,
+            logger,
+            "Systems Manager Parameter Store notifications",
+            "PARAMETER_STORE_NOTIFICATIONS_TOPIC_ARN",
+            "/systemsManager/parameterStore/notify"
+        );
+        await subscribeToSNSNotifications(
+            client,
+            logger,
+            "Secrets Manager notifications",
+            "SECRETS_MANAGER_NOTIFICATIONS_TOPIC_ARN",
+            "/secretsManager/notify"
+        );
+    }
+
+    return {
+        initialize,
+        ...client,
+    };
 }
 
 export async function subscribeToSNSNotifications(
-    client: AWSClient,
+    client: Omit<AWSClient, "initialize">,
     logger: P.Logger,
     name: string,
     arnParameterName: string,
     pathName: string,
     isOptional = false,
     overrideRegion?: string,
-    clientForSNS = client
+    clientForSNS: Omit<AWSClient, "initialize"> = client
 ): Promise<void> {
     const HOST_SECURE_PROTOCOLS = await client.getAWSParameter("ACTIONS_HOST_SECURE_PROTOCOLS");
     const hostUrl = await client.getHostUrl();

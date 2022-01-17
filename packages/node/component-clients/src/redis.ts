@@ -38,7 +38,12 @@ export async function createRedisClient(awsClient: AWSClient) {
     });
 }
 
-export async function createRedisClientPool(awsClient: AWSClient) {
+export interface RedisClientPool {
+    acquire: (caller: string) => Promise<RedisClient>;
+    release: (caller: string, client: RedisClient) => Promise<void>;
+}
+
+export async function createRedisClientPool(awsClient: AWSClient): Promise<RedisClientPool> {
     const clientFactory = {
         create: async function () {
             return createRedisClient(awsClient);
@@ -72,7 +77,7 @@ export async function createRedisClientPool(awsClient: AWSClient) {
     };
 }
 
-export async function createRedlockClient(awsClient: AWSClient) {
+export async function createRedlockClient(awsClient: AWSClient): Promise<Redlock> {
     const redlockRedisClient = await createRedisClient(awsClient);
     return new Redlock([redlockRedisClient], {
         driftFactor: 0.01,

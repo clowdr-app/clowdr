@@ -84,7 +84,7 @@ export async function eventHasVonageSession(eventId: string): Promise<boolean> {
 
 export async function createEventVonageSession(logger: P.Logger, eventId: string, conferenceId: string): Promise<void> {
     logger.info({ eventId, conferenceId }, "Creating EventVonageSession for event");
-    const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
+    const sessionResult = await (await Vonage).createSession({ mediaMode: "routed" });
 
     if (!sessionResult) {
         throw new Error("No session ID returned from Vonage");

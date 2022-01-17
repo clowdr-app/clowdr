@@ -517,7 +517,9 @@ export async function handleStopEventBroadcasts(
         return { broadcastsStopped: 0 };
     }
 
-    const broadcasts = await Vonage.listBroadcasts({
+    const broadcasts = await (
+        await Vonage
+    ).listBroadcasts({
         sessionId: eventDetails.data.schedule_Event_by_pk.eventVonageSession.sessionId,
     });
 
@@ -530,7 +532,7 @@ export async function handleStopEventBroadcasts(
     for (const broadcast of broadcasts) {
         try {
             logger.info({ eventId: params.eventId, broadcastId: broadcast.id }, "Attempting to stop broadcast");
-            await Vonage.stopBroadcast(broadcast.id);
+            await (await Vonage).stopBroadcast(broadcast.id);
             broadcastsStopped++;
         } catch (e: any) {
             logger.warn(

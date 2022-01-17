@@ -1,5 +1,7 @@
-import { gqlClient } from "@midspace/component-clients/graphqlClient";
-import { gql } from "@urql/core";
+import type { RedisClientPool } from "@midspace/component-clients/redis";
+import type { Client as GQLClient } from "@urql/core";
+import { gql } from "graphql-tag";
+import type Redlock from "redlock";
 import type {
     Conference_VisibilityLevel_Enum,
     GetSubconferenceQuery,
@@ -22,9 +24,15 @@ export interface SubconferenceEntity {
     conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
 }
 
-class SubconferenceCache {
-    private readonly cache = new TableCache("Subconference", async (id) => {
-        const response = await gqlClient
+export class SubconferenceCache {
+    constructor(
+        private readonly redisClientPool: RedisClientPool,
+        private readonly redlock: Redlock,
+        private readonly gqlClient: GQLClient
+    ) {}
+
+    private readonly cache = new TableCache("Subconference", this.redisClientPool, this.redlock, async (id) => {
+        const response = await this.gqlClient
             ?.query<GetSubconferenceQuery, GetSubconferenceQueryVariables>(GetSubconferenceDocument, {
                 id,
             })
@@ -109,5 +117,3 @@ class SubconferenceCache {
         }
     }
 }
-
-export const subconferenceCache = new SubconferenceCache();

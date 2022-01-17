@@ -1,5 +1,7 @@
-import { gqlClient } from "@midspace/component-clients/graphqlClient";
-import { gql } from "@urql/core";
+import type { RedisClientPool } from "@midspace/component-clients/redis";
+import type { Client as GQLClient } from "@urql/core";
+import { gql } from "graphql-tag";
+import type Redlock from "redlock";
 import type { GetUserQuery, GetUserQueryVariables } from "./generated/graphql";
 import { GetUserDocument } from "./generated/graphql";
 import { TableCache } from "./generic/table";
@@ -24,9 +26,15 @@ export interface UserEntity {
     }[];
 }
 
-class UserCache {
-    private readonly cache = new TableCache("User", async (id) => {
-        const response = await gqlClient
+export class UserCache {
+    constructor(
+        private readonly redisClientPool: RedisClientPool,
+        private readonly redlock: Redlock,
+        private readonly gqlClient: GQLClient
+    ) {}
+
+    private readonly cache = new TableCache("User", this.redisClientPool, this.redlock, async (id) => {
+        const response = await this.gqlClient
             ?.query<GetUserQuery, GetUserQueryVariables>(GetUserDocument, {
                 id,
             })
@@ -115,5 +123,3 @@ class UserCache {
         }
     }
 }
-
-export const userCache = new UserCache();

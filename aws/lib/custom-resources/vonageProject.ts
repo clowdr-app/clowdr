@@ -53,6 +53,7 @@ export class VonageProjectResource extends Construct {
                 ProjectCredentialsARN: this.projectAPICredentials.secretArn,
                 Name: props.Name,
             },
+            resourceType: "Custom::Vonage::Project",
         });
 
         this.vonageProjectId = resource.getAttString("ProjectId");

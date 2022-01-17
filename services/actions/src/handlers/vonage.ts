@@ -489,7 +489,7 @@ export async function handleJoinEvent(
     };
 
     try {
-        const accessToken = Vonage.vonage.generateToken(vonageSessionId, {
+        const accessToken = (await Vonage).vonage.generateToken(vonageSessionId, {
             data: JSON.stringify(connectionData),
             role: isPresenterOrChairOrConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
         });
@@ -613,7 +613,7 @@ export async function handleJoinRoom(
         ) ||
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
-    const accessToken = Vonage.vonage.generateToken(sessionId, {
+    const accessToken = (await Vonage).vonage.generateToken(sessionId, {
         data: JSON.stringify(connectionData),
         role: isPresenterOrChairOrConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
     });
@@ -708,7 +708,9 @@ export async function handleToggleVonageRecordingState(
 ): Promise<ToggleVonageRecordingStateOutput> {
     const existingSessionArchives = await callWithRetry(
         async () =>
-            await Vonage.listArchives({
+            await (
+                await Vonage
+            ).listArchives({
                 sessionId: args.vonageSessionId,
             })
     );

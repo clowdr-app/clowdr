@@ -1,10 +1,14 @@
-import { redisClientP, redisClientPool, redlock } from "@midspace/component-clients/redis";
+import type { RedisClientPool } from "@midspace/component-clients/redis";
+import { redisClientP } from "@midspace/component-clients/redis";
 import type { Callback, RedisClient } from "redis";
+import type Redlock from "redlock";
 import { promisify } from "util";
 
 export class TableCache {
     constructor(
         private readonly redisRootKey: string,
+        private readonly redisClientPool: RedisClientPool,
+        private readonly redlock: Redlock,
         private readonly fetch: (key: string) => Promise<Record<string, string> | undefined>,
         private readonly ttlSeconds = 7 * 24 * 60 * 60
     ) {}
@@ -33,7 +37,7 @@ export class TableCache {
     public async getEntity(entityKey: string, fetchIfNotFound = true): Promise<Record<string, string> | undefined> {
         try {
             const cacheKey = this.generateEntityKey(entityKey);
-            const redisClient = await redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
+            const redisClient = await this.redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
             try {
                 await redisClientP.watch(redisClient)(cacheKey);
                 const exists = await redisClientP.exists(redisClient)(cacheKey);
@@ -44,7 +48,7 @@ export class TableCache {
                         return results[0];
                     }
                 } else if (fetchIfNotFound) {
-                    const lease = await redlock.acquire(`locks:${cacheKey}`, 30000);
+                    const lease = await this.redlock.acquire(`locks:${cacheKey}`, 30000);
 
                     try {
                         const value = await this.fetch(entityKey);
@@ -62,7 +66,7 @@ export class TableCache {
                 await redisClientP.unwatch(redisClient)();
                 console.error("Error getting field from cache", e);
             } finally {
-                await redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
+                await this.redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
             }
         } catch (e: any) {
             console.error("Error acquiring redis client in order to fetch field from cache", e);
@@ -72,7 +76,7 @@ export class TableCache {
 
     public async getField(entityKey: string, fieldKey: string, fetchIfNotFound = true): Promise<string | undefined> {
         try {
-            const redisClient = await redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
+            const redisClient = await this.redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
             const cacheKey = this.generateEntityKey(entityKey);
             try {
                 await redisClientP.watch(redisClient)(cacheKey);
@@ -88,7 +92,7 @@ export class TableCache {
                 // It is possible that just the one field is missing
 
                 if (fetchIfNotFound) {
-                    const lease = await redlock.acquire(`locks:${cacheKey}`, 30000);
+                    const lease = await this.redlock.acquire(`locks:${cacheKey}`, 30000);
 
                     try {
                         const value = await this.fetch(entityKey);
@@ -106,7 +110,7 @@ export class TableCache {
                 await redisClientP.unwatch(redisClient)();
                 console.error("Error getting entity from cache", e);
             } finally {
-                await redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
+                await this.redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
             }
         } catch (e: any) {
             console.error("Error acquiring redis client in order to fetch entity from cache", e);
@@ -116,10 +120,10 @@ export class TableCache {
 
     public async setEntity(entityKey: string, value: Record<string, string> | undefined): Promise<void> {
         try {
-            const redisClient = await redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
+            const redisClient = await this.redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
             const cacheKey = this.generateEntityKey(entityKey);
             try {
-                const lease = await redlock.acquire(`locks:${cacheKey}`, 5000);
+                const lease = await this.redlock.acquire(`locks:${cacheKey}`, 5000);
                 try {
                     if (value) {
                         await this.rawSet(cacheKey, value, redisClient);
@@ -132,7 +136,7 @@ export class TableCache {
             } catch (e: any) {
                 console.error("Error setting entity in cache", e);
             } finally {
-                await redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
+                await this.redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
             }
         } catch (e: any) {
             console.error("Error acquiring redis client in order to set entity in cache", e);
@@ -141,10 +145,10 @@ export class TableCache {
 
     public async setField(entityKey: string, fieldKey: string, value: string | undefined): Promise<void> {
         try {
-            const redisClient = await redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
+            const redisClient = await this.redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
             const cacheKey = this.generateEntityKey(entityKey);
             try {
-                const lease = await redlock.acquire(`locks:${cacheKey}`, 5000);
+                const lease = await this.redlock.acquire(`locks:${cacheKey}`, 5000);
                 try {
                     if (value) {
                         await redisClientP.hset(redisClient)(cacheKey, fieldKey, value);
@@ -157,7 +161,7 @@ export class TableCache {
             } catch (e: any) {
                 console.error("Error setting field in cache", e);
             } finally {
-                await redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
+                await this.redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
             }
         } catch (e: any) {
             console.error("Error acquiring redis client in order to set field in cache", e);

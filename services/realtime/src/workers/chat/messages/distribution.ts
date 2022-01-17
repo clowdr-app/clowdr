@@ -1,11 +1,5 @@
-import { chatCache } from "@midspace/caches/chat";
-import { conferenceCache } from "@midspace/caches/conference";
-import { chatPinsCache } from "@midspace/caches/pin";
-import { readUpToIndicesCache } from "@midspace/caches/readUpToIndex";
 import { registrantCache } from "@midspace/caches/registrant";
 import type { RoomEntity } from "@midspace/caches/room";
-import { roomCache } from "@midspace/caches/room";
-import { chatSubscriptionsCache } from "@midspace/caches/subscription";
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import { Chat_MessageType_Enum, Room_ManagementMode_Enum } from "../../../generated/graphql";
 import { chatListenersKeyName, generateChatRecentMessagesSetKey, generateChatRoomName } from "../../../lib/chat";
@@ -84,14 +78,14 @@ async function onMessage(action: Action<Message>) {
 async function updateRecentMessagesAndUnreadCounts(action: Action<Message>) {
     const chatId = action.data.chatId;
 
-    const pins = await chatPinsCache.getEntity(chatId);
+    const pins = await caches.chatPins.getEntity(chatId);
     if (pins) {
         const infos = await Promise.all(
             Object.keys(pins).map((registrantId) => registrantCache.getEntity(registrantId))
         );
         const senderInfo = infos.find((x) => x?.id === action.data.senderId);
         if (senderInfo?.userId) {
-            await readUpToIndicesCache.setField(chatId, senderInfo.userId, action.data.sId);
+            await caches.readUpToIndices.setField(chatId, senderInfo.userId, action.data.sId);
         }
         const pinnedUserIds = new Set(infos.filter((x) => !!x?.userId).map((x) => x?.userId) as string[]);
 
@@ -111,7 +105,7 @@ async function updateRecentMessagesAndUnreadCounts(action: Action<Message>) {
 async function distributeMessageToSubscribedUsers(action: Action<Message>) {
     const chatId = action.data.chatId;
 
-    const subscriptions = await chatSubscriptionsCache.getEntity(chatId);
+    const subscriptions = await caches.chatSubscriptions.getEntity(chatId);
     if (subscriptions) {
         const client = await redisClientPool.acquire(
             "workers/chat/messages/distribution/distributeMessageToSubscribedUsers"
@@ -136,21 +130,21 @@ async function distributeMessageToSubscribedUsers(action: Action<Message>) {
                     .map((x) => x?.userId) as string[]
             );
 
-            const chatInfo = await chatCache.getEntity(chatId);
+            const chatInfo = await caches.chat.getEntity(chatId);
             if (chatInfo) {
                 const roomId = chatInfo.roomId;
                 let registrantDisplayName: string | undefined;
                 let room: RoomEntity | undefined;
                 if (roomId) {
-                    room = await roomCache.getEntity(roomId);
+                    room = await caches.room.getEntity(roomId);
                     registrantDisplayName =
                         (!room || room.managementModeName === Room_ManagementMode_Enum.Dm) && action.data.senderId
-                            ? await registrantCache.getField(action.data.senderId, "displayName")
+                            ? await caches.registrant.getField(action.data.senderId, "displayName")
                             : undefined;
                 }
 
                 const chatName = room?.name ?? "";
-                const conference = await conferenceCache.getEntity(chatInfo.conferenceId);
+                const conference = await caches.conference.getEntity(chatInfo.conferenceId);
 
                 if (conference) {
                     sendNotifications(subscribedUserIds, {

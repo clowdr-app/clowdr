@@ -1,5 +1,7 @@
-import { gqlClient } from "@midspace/component-clients/graphqlClient";
-import { gql } from "graphql-tag";
+import type { RedisClientPool } from "@midspace/component-clients/redis";
+import type { Client as GQLClient } from "@urql/core";
+import { gql } from "@urql/core";
+import type Redlock from "redlock";
 import type webPush from "web-push";
 import type {
     GetPushNotificationSubscriptionsQuery,
@@ -24,34 +26,45 @@ export interface PushNotificationSubscriptionsEntity {
     subscriptions: webPush.PushSubscription[];
 }
 
-class PushNotificationSubscriptionsCache {
-    private readonly cache = new TableCache("PushNotificationSubscriptions", async (userId) => {
-        const response = await gqlClient
-            ?.query<GetPushNotificationSubscriptionsQuery, GetPushNotificationSubscriptionsQueryVariables>(
-                GetPushNotificationSubscriptionsDocument,
-                {
-                    userId,
-                }
-            )
-            .toPromise();
+export class PushNotificationSubscriptionsCache {
+    constructor(
+        private readonly redisClientPool: RedisClientPool,
+        private readonly redlock: Redlock,
+        private readonly gqlClient: GQLClient
+    ) {}
 
-        const data = response?.data?.PushNotificationSubscription;
-        if (data) {
-            return {
-                userId,
-                subscriptions: JSON.stringify(
-                    data.map((x) => ({
-                        endpoint: x.endpoint,
-                        keys: {
-                            p256dh: x.p256dh,
-                            auth: x.auth,
-                        },
-                    }))
-                ),
-            };
+    private readonly cache = new TableCache(
+        "PushNotificationSubscriptions",
+        this.redisClientPool,
+        this.redlock,
+        async (userId) => {
+            const response = await this.gqlClient
+                ?.query<GetPushNotificationSubscriptionsQuery, GetPushNotificationSubscriptionsQueryVariables>(
+                    GetPushNotificationSubscriptionsDocument,
+                    {
+                        userId,
+                    }
+                )
+                .toPromise();
+
+            const data = response?.data?.PushNotificationSubscription;
+            if (data) {
+                return {
+                    userId,
+                    subscriptions: JSON.stringify(
+                        data.map((x) => ({
+                            endpoint: x.endpoint,
+                            keys: {
+                                p256dh: x.p256dh,
+                                auth: x.auth,
+                            },
+                        }))
+                    ),
+                };
+            }
+            return undefined;
         }
-        return undefined;
-    });
+    );
 
     public async getEntity(
         id: string,
@@ -131,5 +144,3 @@ class PushNotificationSubscriptionsCache {
         }
     }
 }
-
-export const pushNotificationSubscriptionsCache = new PushNotificationSubscriptionsCache();

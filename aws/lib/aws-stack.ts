@@ -231,14 +231,6 @@ export class AwsStack extends cdk.Stack {
         //     },
         // });
 
-        // N.B. This is not an access key
-        new ssm.StringParameter(this, "/EnvVars/ACTIONS_REDIS_KEY", {
-            allowedPattern: ".*",
-            parameterName: "ACTIONS_REDIS_KEY",
-            stringValue: props.vars.ACTIONS_REDIS_KEY,
-            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
-        });
-
         const actionsEventSecret = new sm.Secret(this, "ACTIONS_EVENT_SECRET", {
             secretName: "ACTIONS_EVENT_SECRET",
             description: "Secret for Hasura calls to the Actions service",
@@ -295,12 +287,6 @@ export class AwsStack extends cdk.Stack {
             stringValue: props.vars.ACTIONS_CORS_ORIGIN,
             tier: ssm.ParameterTier.INTELLIGENT_TIERING,
         });
-        new ssm.StringParameter(this, "/EnvVars/ACTIONS_PORT", {
-            allowedPattern: ".*",
-            parameterName: "ACTIONS_PORT",
-            stringValue: props.vars.ACTIONS_PORT.toString(),
-            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
-        });
         new ssm.StringParameter(this, "/EnvVars/ACTIONS_HOST_SECURE_PROTOCOLS", {
             allowedPattern: ".*",
             parameterName: "ACTIONS_HOST_SECURE_PROTOCOLS",
@@ -311,12 +297,6 @@ export class AwsStack extends cdk.Stack {
             allowedPattern: ".*",
             parameterName: "ACTIONS_HOST_DOMAIN",
             stringValue: props.vars.ACTIONS_HOST_DOMAIN,
-            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
-        });
-        new ssm.StringParameter(this, "/EnvVars/ACTIONS_LOG_LEVEL", {
-            allowedPattern: ".*",
-            parameterName: "ACTIONS_LOG_LEVEL",
-            stringValue: props.vars.ACTIONS_LOG_LEVEL,
             tier: ssm.ParameterTier.INTELLIGENT_TIERING,
         });
 

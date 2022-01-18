@@ -13,7 +13,6 @@
 import { SecretsManager } from "@aws-sdk/client-secrets-manager";
 import prompt from "prompt";
 
-console.log("Args", process.argv);
 const noUpdateCheck = process.argv.some((x) => x === "--no-update-check");
 
 async function initializeCredentials(
@@ -144,13 +143,29 @@ async function main() {
 
     const sm = new SecretsManager({});
 
-    // TODO: SendGrid
-
     await initializeCredentials(sm, "Auth0", "https://manage.auth0.com/dashboard", true, "Auth0Management", [
         "Domain",
         "ClientID",
         "ClientSecret",
     ]);
+
+    await initializeCredentials(
+        sm,
+        "DataDog",
+        "https://app.datadoghq.eu/organization-settings/api-keys",
+        false,
+        "DataDog",
+        ["APIKeyID", "APIKeySecret", "ApplicationKeyID", "ApplicationKeySecret"]
+    );
+
+    await initializeCredentials(
+        sm,
+        "Google Cloud",
+        "https://console.cloud.google.com/apis/credentials",
+        false,
+        "GoogleCloudWebApplication",
+        ["ClientID", "ClientSecret"]
+    );
 
     await initializeCredentials(
         sm,

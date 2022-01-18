@@ -9,7 +9,8 @@
         "build": "tsc",
         "watch": "tsc -w",
         "test": "jest",
-        "deploy:all": "pnpm exec -- cdk deploy --all",
+        "deploy:all": "pnpm deploy:init -- --no-update-check && pnpm exec -- cdk deploy --all",
+        "deploy:init": "pnpm build && node ./lib/initialize.js",
         "bootstrap": "pnpm exec -- cdk bootstrap"
     },
     "devDependencies": {
@@ -50,10 +51,12 @@
         "@aws-sdk/client-secrets-manager": "^3.47.0",
         "@types/aws-lambda": "^8.10.89",
         "@types/opentok": "workspace:^2.12.0",
+        "@types/prompt": "^1.1.2",
         "aws-lambda": "^1.0.7",
         "axios": "^0.24.0",
         "njwt": "^1.2.0",
         "opentok": "^2.12.1",
+        "prompt": "^1.2.1",
         "source-map-support": "^0.5.21"
     },
     "engines": {

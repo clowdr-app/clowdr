@@ -372,7 +372,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["bootstrap"]
+            "args": ["bootstrap", "--", "--profile", "${input:aws-profile-name}"]
         },
         {
             "label": "AWS -- Deploy stacks",
@@ -380,6 +380,24 @@
             "dependsOn": ["Packetriot", "(Hidden) AWS -- Deploy stacks inner function"],
             "dependsOrder": "parallel",
             "problemMatcher": []
+        },
+        {
+            "label": "AWS -- Initialize Cloud Services Credentials",
+            "detail": "Initializes AWS secrets for the management API credentials for the various cloud services Midspace can or needs to deploy.",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/aws",
+                "env": {
+                    "DOTENV_CONFIG_PATH": ".env.${input:aws-profile-name}",
+                    "AWS_PROFILE": "${input:aws-profile-name}"
+                }
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["deploy:init", "--", "--profile", "${input:aws-profile-name}"]
         },
         {
             "label": "(Hidden) AWS -- Deploy stacks inner function",

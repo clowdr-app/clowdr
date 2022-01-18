@@ -52,7 +52,7 @@ export class VonageSessionMonitorResource extends Construct {
                 WebhookSecretARN: props.WebhookSecret.secretArn,
                 MonitoringURL: props.MonitoringURL,
             },
-            resourceType: "Custom::Vonage::SessionMonitor",
+            resourceType: "Custom::VonageSessionMonitor",
         });
     }
 }

@@ -2,10 +2,10 @@ import * as iam from "@aws-cdk/aws-iam";
 import type * as s3 from "@aws-cdk/aws-s3";
 import * as sm from "@aws-cdk/aws-secretsmanager";
 import * as cdk from "@aws-cdk/core";
-import { VonageArchiveMonitorResource } from "./custom-resources/vonageArchiveMonitor";
-import { VonageArchiveToS3Resource } from "./custom-resources/vonageArchiveToS3";
-import { VonageProjectResource } from "./custom-resources/vonageProject";
-import { VonageSessionMonitorResource } from "./custom-resources/vonageSessionMonitor";
+import { VonageArchiveMonitorResource } from "./custom-resources/vonage/vonageArchiveMonitor";
+import { VonageArchiveToS3Resource } from "./custom-resources/vonage/vonageArchiveToS3";
+import { VonageProjectResource } from "./custom-resources/vonage/vonageProject";
+import { VonageSessionMonitorResource } from "./custom-resources/vonage/vonageSessionMonitor";
 import type { Env } from "./env";
 
 export interface VonageStackProps extends cdk.StackProps {

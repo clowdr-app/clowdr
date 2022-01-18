@@ -44,7 +44,7 @@ export class VonageArchiveToS3Resource extends Construct {
                 SecretKey: props.AccessKey.attrSecretAccessKey,
                 BucketName: props.Bucket.bucketName,
             },
-            resourceType: "Custom::Vonage::ArchiveToS3",
+            resourceType: "Custom::VonageArchiveToS3",
         });
     }
 }

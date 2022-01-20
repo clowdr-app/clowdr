@@ -1,0 +1,7 @@
+{
+    "syntax": "liquid",
+    "body": "./welcome_email.html",
+    "subject": "Welcome to Midspace",
+    "template": "welcome_email",
+    "enabled": false
+}

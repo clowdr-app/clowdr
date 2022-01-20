@@ -1,4 +1,3 @@
-*.js
 !jest.config.js
 *.d.ts
 node_modules
@@ -10,3 +9,23 @@ cdk.out
 
 .env.*
 !.env.*.example
+
+**/stacks/*.js
+test/**/*.js
+bin/**/*.js
+lib/*.js
+lib/custom-resources/**/lambdas/**/*.js
+lib/custom-resources/datadog/**/*.js
+lib/custom-resources/hasura/**/*.js
+lib/custom-resources/heroku/**/*.js
+lib/custom-resources/netlify/**/*.js
+lib/custom-resources/sendgrid/**/*.js
+lib/custom-resources/vonage/**/*.js
+lib/custom-resources/auth0/*.js
+lib/custom-resources/auth0/lambdas/*.js
+
+**/stacks/*.d.ts
+test/**/*.d.ts
+bin/**/*.d.ts
+lib/*.d.ts
+lib/custom-resources/**/lambdas/**/*.d.ts

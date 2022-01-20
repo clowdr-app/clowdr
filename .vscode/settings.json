@@ -20,5 +20,24 @@
     },
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "aws/**/stacks/*.js": true,
+        "aws/lib/*.js": true,
+        "aws/lib/custom-resources/datadog/**/*.js": true,
+        "aws/lib/custom-resources/hasura/**/*.js": true,
+        "aws/lib/custom-resources/heroku/**/*.js": true,
+        "aws/lib/custom-resources/netlify/**/*.js": true,
+        "aws/lib/custom-resources/sendgrid/**/*.js": true,
+        "aws/lib/custom-resources/vonage/**/*.js": true,
+        "aws/lib/custom-resources/auth0/*.js": true,
+        "aws/lib/custom-resources/auth0/lambdas/*.js": true,
+        "aws/**/*.d.ts": true
     }
 }

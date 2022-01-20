@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "script": "./Hasura User Sync.js",
+  "name": "Hasura User Sync",
+  "order": 3,
+  "stage": "login_success"
+}

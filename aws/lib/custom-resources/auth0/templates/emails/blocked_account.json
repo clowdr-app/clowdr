@@ -1,0 +1,9 @@
+{
+    "syntax": "liquid",
+    "body": "./blocked_account.html",
+    "subject": "Midspace account blocked",
+    "resultUrl": "{{ application.callback_domain }}/auth0/blocked",
+    "urlLifetimeInSeconds": 432000,
+    "template": "blocked_account",
+    "enabled": true
+}

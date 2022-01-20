@@ -2,7 +2,7 @@ import * as s3 from "@aws-cdk/aws-s3";
 import { HttpMethods } from "@aws-cdk/aws-s3";
 import * as ssm from "@aws-cdk/aws-ssm";
 import * as cdk from "@aws-cdk/core";
-import type { Env } from "./env";
+import type { Env } from "../env";
 
 export interface S3StackProps extends cdk.StackProps {
     stackPrefix: string;

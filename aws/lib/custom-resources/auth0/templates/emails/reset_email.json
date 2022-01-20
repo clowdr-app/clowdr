@@ -1,0 +1,9 @@
+{
+    "syntax": "liquid",
+    "body": "./reset_email.html",
+    "subject": "Midspace password reset",
+    "resultUrl": "{{ application.callback_domain }}/auth0/password/reset/result",
+    "urlLifetimeInSeconds": 432000,
+    "template": "reset_email",
+    "enabled": true
+}

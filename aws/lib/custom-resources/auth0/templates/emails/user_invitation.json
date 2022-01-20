@@ -1,0 +1,7 @@
+{
+    "syntax": "liquid",
+    "body": "./user_invitation.html",
+    "subject": "",
+    "template": "user_invitation",
+    "enabled": true
+}

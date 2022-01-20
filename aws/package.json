@@ -40,6 +40,7 @@
         "@aws-cdk/aws-logs": "1.138.2",
         "@aws-cdk/aws-medialive": "1.138.2",
         "@aws-cdk/aws-s3": "1.138.2",
+        "@aws-cdk/aws-s3-deployment": "1.138.2",
         "@aws-cdk/aws-secretsmanager": "1.138.2",
         "@aws-cdk/aws-sns": "1.138.2",
         "@aws-cdk/aws-sns-subscriptions": "1.138.2",
@@ -48,7 +49,9 @@
         "@aws-cdk/cloudformation-include": "1.138.2",
         "@aws-cdk/core": "1.138.2",
         "@aws-cdk/custom-resources": "1.138.2",
+        "@aws-sdk/client-s3": "^3.46.0",
         "@aws-sdk/client-secrets-manager": "^3.47.0",
+        "@sendgrid/client": "^7.6.0",
         "@types/auth0": "^2.34.10",
         "@types/aws-lambda": "^8.10.89",
         "@types/opentok": "workspace:^2.12.0",
@@ -56,10 +59,13 @@
         "auth0": "^2.37.0",
         "aws-lambda": "^1.0.7",
         "axios": "^0.24.0",
+        "debug": "^4.3.3",
         "njwt": "^1.2.0",
         "opentok": "^2.12.1",
         "prompt": "^1.2.1",
-        "source-map-support": "^0.5.21"
+        "source-map-support": "^0.5.21",
+        "superagent-proxy": "^3.0.0",
+        "supports-color": "^9.2.1"
     },
     "engines": {
         "node": ">=16.x",

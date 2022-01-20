@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "script": "./Setup isNew app metadata.js",
+  "name": "Setup isNew app metadata",
+  "order": 1,
+  "stage": "login_success"
+}

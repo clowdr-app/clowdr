@@ -8,13 +8,15 @@ import * as sm from "@aws-cdk/aws-secretsmanager";
 import * as sns from "@aws-cdk/aws-sns";
 import * as ssm from "@aws-cdk/aws-ssm";
 import * as cdk from "@aws-cdk/core";
-import type { Env } from "./env";
+import type { Env } from "../env";
 
 export interface AwsStackProps extends cdk.StackProps {
     stackPrefix: string;
     vars: Env;
     vonageWebhookSecret: sm.Secret;
     bucket: s3.Bucket;
+
+    hasuraAdminSecret: sm.Secret;
 }
 
 export class AwsStack extends cdk.Stack {
@@ -192,26 +194,6 @@ export class AwsStack extends cdk.Stack {
 
         /* Output Parameters / Secrets */
 
-        new ssm.StringParameter(this, "/EnvVars/AUTH0_API_DOMAIN", {
-            allowedPattern: ".*",
-            parameterName: "AUTH0_API_DOMAIN",
-            stringValue: props.vars.AUTH0_API_DOMAIN,
-            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
-        });
-
-        new ssm.StringParameter(this, "/EnvVars/AUTH0_AUDIENCE", {
-            allowedPattern: ".*",
-            parameterName: "AUTH0_AUDIENCE",
-            stringValue: props.vars.AUTH0_AUDIENCE,
-            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
-        });
-        new ssm.StringParameter(this, "/EnvVars/AUTH0_ISSUER_DOMAIN", {
-            allowedPattern: ".*",
-            parameterName: "AUTH0_ISSUER_DOMAIN",
-            stringValue: props.vars.AUTH0_ISSUER_DOMAIN,
-            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
-        });
-
         // TODO: The Redis URL may contain authentication parameters, which is annoying
         //       because it means this needs to be secret
         // TODO: Other secrets: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
@@ -309,32 +291,11 @@ export class AwsStack extends cdk.Stack {
             });
         }
 
-        const hasuraAdminSecret = new sm.Secret(this, "HASURA_ADMIN_SECRET", {
-            secretName: "HASURA_ADMIN_SECRET",
-            description: "Secret for Hasura Admin calls",
-            generateSecretString: {
-                secretStringTemplate: "{}",
-                generateStringKey: "secret",
-            },
-        });
-        hasuraAdminSecret.grantRead(actionsServiceSecretsRole);
-        hasuraAdminSecret.grantRead(authServiceSecretsRole);
-        hasuraAdminSecret.grantRead(cachesServiceSecretsRole);
-        hasuraAdminSecret.grantRead(playoutServiceSecretsRole);
-        hasuraAdminSecret.grantRead(realtimeServiceSecretsRole);
-
-        new ssm.StringParameter(this, "/EnvVars/GRAPHQL_API_SECURE_PROTOCOLS", {
-            allowedPattern: ".*",
-            parameterName: "GRAPHQL_API_SECURE_PROTOCOLS",
-            stringValue: props.vars.GRAPHQL_API_SECURE_PROTOCOLS,
-            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
-        });
-        new ssm.StringParameter(this, "/EnvVars/GRAPHQL_API_DOMAIN", {
-            allowedPattern: ".*",
-            parameterName: "GRAPHQL_API_DOMAIN",
-            stringValue: props.vars.GRAPHQL_API_DOMAIN,
-            tier: ssm.ParameterTier.INTELLIGENT_TIERING,
-        });
+        props.hasuraAdminSecret.grantRead(actionsServiceSecretsRole);
+        props.hasuraAdminSecret.grantRead(authServiceSecretsRole);
+        props.hasuraAdminSecret.grantRead(cachesServiceSecretsRole);
+        props.hasuraAdminSecret.grantRead(playoutServiceSecretsRole);
+        props.hasuraAdminSecret.grantRead(realtimeServiceSecretsRole);
 
         new ssm.StringParameter(this, "/EnvVars/AWS_CONTENT_BUCKET_ID", {
             allowedPattern: ".*",

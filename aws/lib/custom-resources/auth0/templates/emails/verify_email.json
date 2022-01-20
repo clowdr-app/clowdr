@@ -1,0 +1,9 @@
+{
+    "syntax": "liquid",
+    "body": "./verify_email.html",
+    "subject": "Midspace: Verify your email",
+    "resultUrl": "{{ application.callback_domain }}/auth0/email-verification/result",
+    "urlLifetimeInSeconds": 432000,
+    "template": "verify_email",
+    "enabled": true
+}

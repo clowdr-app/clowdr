@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import type { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/actionTypes";
-import type { Payload, RegistrantGoogleAccountData } from "@midspace/hasura/event";
+import type { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { RegistrantGoogleAccountData } from "@midspace/hasura/event-data";
 import type {
     YouTubeChannelDetails,
     YouTubeDataBlob,
@@ -23,7 +24,7 @@ import { callWithRetry } from "../utils";
 
 export async function handleRegistrantGoogleAccountDeleted(
     logger: P.Logger,
-    payload: Payload<RegistrantGoogleAccountData>
+    payload: EventPayload<RegistrantGoogleAccountData>
 ): Promise<void> {
     assert(payload.event.data.old, "Payload must contain old row data");
     const oldRow = payload.event.data.old;

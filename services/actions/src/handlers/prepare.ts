@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import type { ConferencePrepareJobData, Payload } from "@midspace/hasura/event";
-import type { BroadcastRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { ConferencePrepareJobData } from "@midspace/hasura/event-data";
+import type { BroadcastRenderJobDataBlob } from "@midspace/hasura/json-blobs/video-render-job";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum } from "@midspace/shared-types/content";
 import assert from "assert";
@@ -41,7 +42,7 @@ gql`
 
 export async function handleConferencePrepareJobInserted(
     logger: P.Logger,
-    payload: Payload<ConferencePrepareJobData>
+    payload: EventPayload<ConferencePrepareJobData>
 ): Promise<void> {
     assert(payload.event.data.new, "Payload must contain new row data");
 

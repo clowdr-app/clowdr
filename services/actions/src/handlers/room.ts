@@ -4,8 +4,9 @@ import type {
     CreateContentGroupRoomOutput,
     createRoomDmArgs,
     CreateRoomDmOutput,
-} from "@midspace/hasura/actionTypes";
-import type { Payload, RoomData } from "@midspace/hasura/event";
+} from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { RoomData } from "@midspace/hasura/event-data";
 import assert from "assert";
 import { sub } from "date-fns";
 import type { P } from "pino";
@@ -25,7 +26,7 @@ import { createItemVideoChatRoom } from "../lib/room";
 import { deleteRoomParticipantsCreatedBefore } from "../lib/roomParticipant";
 import Vonage from "../lib/vonage/vonageClient";
 
-export async function handleRoomCreated(logger: P.Logger, payload: Payload<RoomData>): Promise<void> {
+export async function handleRoomCreated(logger: P.Logger, payload: EventPayload<RoomData>): Promise<void> {
     assert(payload.event.data.new, "Expected new row data");
 
     if (!payload.event.data.new.publicVonageSessionId) {

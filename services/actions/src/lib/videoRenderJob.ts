@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
-import type { MP4Input } from "@midspace/hasura/broadcastContentItem";
-import type { BroadcastRenderJobDataBlob, VideoRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
+import type { MP4Input } from "@midspace/hasura/json-blobs/broadcast-element";
+import type { BroadcastRenderJobDataBlob, VideoRenderJobDataBlob } from "@midspace/hasura/json-blobs/video-render-job";
 import type { P } from "pino";
 import {
     CompleteVideoRenderJobDocument,

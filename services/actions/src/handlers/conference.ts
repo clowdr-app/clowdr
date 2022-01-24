@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import type { getSlugArgs } from "@midspace/hasura/actionTypes";
+import type { getSlugArgs } from "@midspace/hasura/action-types";
 import { CheckForFrontendHostsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 

@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import type { ConfirmInvitationOutput, invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
-import type { InvitationData, Payload } from "@midspace/hasura/event";
+import type { ConfirmInvitationOutput, invitationConfirmCurrentArgs } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { InvitationData } from "@midspace/hasura/event-data";
 import type { P } from "pino";
 import { v5 as uuidv5 } from "uuid";
 import type {
@@ -363,7 +364,7 @@ gql`
     }
 `;
 
-export async function handleInvitationInsert_AutomaticSend(payload: Payload<InvitationData>): Promise<void> {
+export async function handleInvitationInsert_AutomaticSend(payload: EventPayload<InvitationData>): Promise<void> {
     if (payload.event.data.new) {
         const conferenceId = payload.event.data.new.conferenceId;
         const configResponse = await apolloClient.query({

@@ -24,8 +24,9 @@ import Layout from "./Components/Layout";
 import type { Viewport } from "./Components/LayoutTypes";
 import SelfCameraComponent from "./Components/SelfCamera";
 import SelfScreenComponent from "./Components/SelfScreen";
-import VideoChatVideoPlayer from "./Components/VideoChatVideoPlayer";
 import { useVonageComputedState } from "./useVonageComputedState";
+import VideoChatVideoPlayer from "./VideoPlayback/VideoChatVideoPlayer";
+import { VonageVideoPlaybackProvider } from "./VideoPlayback/VonageVideoPlaybackContext";
 import type { TranscriptData } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import type { AvailableStream, VonageLayout } from "./VonageLayoutProvider";
@@ -108,62 +109,64 @@ export function VonageRoom({
             <ChatProfileModalProvider>
                 {mRegistrant ? (
                     <VonageLayoutProvider vonageSessionId={vonageSessionId}>
-                        <VonageRoomInner
-                            vonageSessionId={vonageSessionId}
-                            stop={!roomCouldBeInUse || disable}
-                            getAccessToken={getAccessToken}
-                            isBackstageRoom={isBackstageRoom}
-                            requireMicrophoneOrCamera={requireMicrophoneOrCamera}
-                            joinRoomButtonText={
-                                isBackstageRoom
-                                    ? raiseHandPrejoinEventId
-                                        ? "I'm ready"
-                                        : "Connect to the backstage"
-                                    : undefined
-                            }
-                            overrideJoining={
-                                isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined
-                            }
-                            beginJoin={
-                                isBackstageRoom && raiseHandPrejoinEventId
-                                    ? () => {
-                                          if (raiseHandPrejoinEventId) {
-                                              raiseHand.raise(raiseHandPrejoinEventId);
-                                          }
-                                      }
-                                    : undefined
-                            }
-                            cancelJoin={
-                                isBackstageRoom && raiseHandPrejoinEventId
-                                    ? () => {
-                                          if (raiseHandPrejoinEventId) {
-                                              raiseHand.lower(raiseHandPrejoinEventId);
-                                          }
-                                      }
-                                    : undefined
-                            }
-                            completeJoinRef={completeJoinRef}
-                            onRoomJoined={
-                                isBackstageRoom && eventId
-                                    ? (joined) => {
-                                          if (!joined) {
-                                              if (eventId) {
-                                                  deleteEventParticipant({
-                                                      eventId,
-                                                      registrantId: mRegistrant.id,
-                                                  });
+                        <VonageVideoPlaybackProvider vonageSessionId={vonageSessionId}>
+                            <VonageRoomInner
+                                vonageSessionId={vonageSessionId}
+                                stop={!roomCouldBeInUse || disable}
+                                getAccessToken={getAccessToken}
+                                isBackstageRoom={isBackstageRoom}
+                                requireMicrophoneOrCamera={requireMicrophoneOrCamera}
+                                joinRoomButtonText={
+                                    isBackstageRoom
+                                        ? raiseHandPrejoinEventId
+                                            ? "I'm ready"
+                                            : "Connect to the backstage"
+                                        : undefined
+                                }
+                                overrideJoining={
+                                    isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined
+                                }
+                                beginJoin={
+                                    isBackstageRoom && raiseHandPrejoinEventId
+                                        ? () => {
+                                              if (raiseHandPrejoinEventId) {
+                                                  raiseHand.raise(raiseHandPrejoinEventId);
                                               }
-
-                                              onLeave?.();
                                           }
-                                      }
-                                    : undefined
-                            }
-                            onPermissionsProblem={onPermissionsProblem}
-                            canControlRecording={canControlRecording}
-                            roomId={roomId ?? undefined}
-                            eventId={eventId ?? undefined}
-                        />
+                                        : undefined
+                                }
+                                cancelJoin={
+                                    isBackstageRoom && raiseHandPrejoinEventId
+                                        ? () => {
+                                              if (raiseHandPrejoinEventId) {
+                                                  raiseHand.lower(raiseHandPrejoinEventId);
+                                              }
+                                          }
+                                        : undefined
+                                }
+                                completeJoinRef={completeJoinRef}
+                                onRoomJoined={
+                                    isBackstageRoom && eventId
+                                        ? (joined) => {
+                                              if (!joined) {
+                                                  if (eventId) {
+                                                      deleteEventParticipant({
+                                                          eventId,
+                                                          registrantId: mRegistrant.id,
+                                                      });
+                                                  }
+
+                                                  onLeave?.();
+                                              }
+                                          }
+                                        : undefined
+                                }
+                                onPermissionsProblem={onPermissionsProblem}
+                                canControlRecording={canControlRecording}
+                                roomId={roomId ?? undefined}
+                                eventId={eventId ?? undefined}
+                            />
+                        </VonageVideoPlaybackProvider>
                     </VonageLayoutProvider>
                 ) : undefined}
             </ChatProfileModalProvider>
@@ -209,8 +212,6 @@ function VonageRoomInner({
     const currentRegistrant = useCurrentRegistrant();
     const [, saveVonageRoomRecording] = useSaveVonageRoomRecordingMutation();
 
-    const [playVideoElementId, setPlayVideoElementId] = useState<string | null>(null);
-
     const [isRecordingActive, setIsRecordingActive] = useState<boolean>(false);
     const onRecordingStarted = useCallback(() => {
         setIsRecordingActive(true);
@@ -227,13 +228,6 @@ function VonageRoomInner({
         },
         [currentRegistrant.id, saveVonageRoomRecording]
     );
-
-    const onPlayVideoReceived = useCallback((elementId: string) => {
-        setPlayVideoElementId(null);
-        setTimeout(() => {
-            setPlayVideoElementId(elementId);
-        }, 50 + Math.random() * 100);
-    }, []);
 
     const onTranscriptRef = useRef<((data: TranscriptData) => void) | undefined>(undefined);
     const onTranscript = useCallback((data: TranscriptData) => {
@@ -255,7 +249,6 @@ function VonageRoomInner({
             beginJoin,
             cancelJoin,
             completeJoinRef,
-            onPlayVideoReceived,
         });
     const { setAvailableStreams, refetchLayout } = useVonageLayout();
 
@@ -286,7 +279,6 @@ function VonageRoomInner({
     useEffect(() => {
         if (!connected) {
             setIsRecordingActive(false);
-            setPlayVideoElementId(null);
         }
     }, [connected]);
 
@@ -672,7 +664,7 @@ function VonageRoomInner({
                     onTranscriptRef={onTranscriptRef}
                 />
             </Flex>
-            {connected && playVideoElementId ? <VideoChatVideoPlayer elementId={playVideoElementId} /> : undefined}
+            {connected ? <VideoChatVideoPlayer /> : undefined}
             {connected ? (
                 <Box position="relative" width="100%" zIndex={1}>
                     <Layout

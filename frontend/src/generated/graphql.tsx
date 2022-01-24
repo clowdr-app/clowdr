@@ -14066,6 +14066,10 @@ export type Mutation_Root = {
     readonly delete_video_VonageSessionLayout?: Maybe<Video_VonageSessionLayout_Mutation_Response>;
     /** delete single row from the table: "video.VonageSessionLayout" */
     readonly delete_video_VonageSessionLayout_by_pk?: Maybe<Video_VonageSessionLayout>;
+    /** delete data from the table: "video.VonageVideoPlaybackCommand" */
+    readonly delete_video_VonageVideoPlaybackCommand?: Maybe<Video_VonageVideoPlaybackCommand_Mutation_Response>;
+    /** delete single row from the table: "video.VonageVideoPlaybackCommand" */
+    readonly delete_video_VonageVideoPlaybackCommand_by_pk?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** delete data from the table: "video.YouTubeUpload" */
     readonly delete_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** delete single row from the table: "video.YouTubeUpload" */
@@ -14444,6 +14448,10 @@ export type Mutation_Root = {
     readonly insert_video_VonageSessionLayout?: Maybe<Video_VonageSessionLayout_Mutation_Response>;
     /** insert a single row into the table: "video.VonageSessionLayout" */
     readonly insert_video_VonageSessionLayout_one?: Maybe<Video_VonageSessionLayout>;
+    /** insert data into the table: "video.VonageVideoPlaybackCommand" */
+    readonly insert_video_VonageVideoPlaybackCommand?: Maybe<Video_VonageVideoPlaybackCommand_Mutation_Response>;
+    /** insert a single row into the table: "video.VonageVideoPlaybackCommand" */
+    readonly insert_video_VonageVideoPlaybackCommand_one?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** insert data into the table: "video.YouTubeUpload" */
     readonly insert_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** insert a single row into the table: "video.YouTubeUpload" */
@@ -14833,6 +14841,10 @@ export type Mutation_Root = {
     readonly update_video_VonageSessionLayout?: Maybe<Video_VonageSessionLayout_Mutation_Response>;
     /** update single row of the table: "video.VonageSessionLayout" */
     readonly update_video_VonageSessionLayout_by_pk?: Maybe<Video_VonageSessionLayout>;
+    /** update data of the table: "video.VonageVideoPlaybackCommand" */
+    readonly update_video_VonageVideoPlaybackCommand?: Maybe<Video_VonageVideoPlaybackCommand_Mutation_Response>;
+    /** update single row of the table: "video.VonageVideoPlaybackCommand" */
+    readonly update_video_VonageVideoPlaybackCommand_by_pk?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** update data of the table: "video.YouTubeUpload" */
     readonly update_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** update single row of the table: "video.YouTubeUpload" */
@@ -15782,6 +15794,16 @@ export type Mutation_RootDelete_Video_VonageSessionLayoutArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Video_VonageSessionLayout_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageVideoPlaybackCommandArgs = {
+    where: Video_VonageVideoPlaybackCommand_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageVideoPlaybackCommand_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -16915,6 +16937,18 @@ export type Mutation_RootInsert_Video_VonageSessionLayoutArgs = {
 export type Mutation_RootInsert_Video_VonageSessionLayout_OneArgs = {
     object: Video_VonageSessionLayout_Insert_Input;
     on_conflict?: InputMaybe<Video_VonageSessionLayout_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_VonageVideoPlaybackCommandArgs = {
+    objects: ReadonlyArray<Video_VonageVideoPlaybackCommand_Insert_Input>;
+    on_conflict?: InputMaybe<Video_VonageVideoPlaybackCommand_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_VonageVideoPlaybackCommand_OneArgs = {
+    object: Video_VonageVideoPlaybackCommand_Insert_Input;
+    on_conflict?: InputMaybe<Video_VonageVideoPlaybackCommand_On_Conflict>;
 };
 
 /** mutation root */
@@ -18359,6 +18393,28 @@ export type Mutation_RootUpdate_Video_VonageSessionLayout_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Video_VonageVideoPlaybackCommandArgs = {
+    _append?: InputMaybe<Video_VonageVideoPlaybackCommand_Append_Input>;
+    _delete_at_path?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_Key_Input>;
+    _prepend?: InputMaybe<Video_VonageVideoPlaybackCommand_Prepend_Input>;
+    _set?: InputMaybe<Video_VonageVideoPlaybackCommand_Set_Input>;
+    where: Video_VonageVideoPlaybackCommand_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_VonageVideoPlaybackCommand_By_PkArgs = {
+    _append?: InputMaybe<Video_VonageVideoPlaybackCommand_Append_Input>;
+    _delete_at_path?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_Key_Input>;
+    _prepend?: InputMaybe<Video_VonageVideoPlaybackCommand_Prepend_Input>;
+    _set?: InputMaybe<Video_VonageVideoPlaybackCommand_Set_Input>;
+    pk_columns: Video_VonageVideoPlaybackCommand_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Video_YouTubeUploadArgs = {
     _set?: InputMaybe<Video_YouTubeUpload_Set_Input>;
     where: Video_YouTubeUpload_Bool_Exp;
@@ -19013,6 +19069,12 @@ export type Query_Root = {
     readonly video_VonageSessionLayout_aggregate: Video_VonageSessionLayout_Aggregate;
     /** fetch data from the table: "video.VonageSessionLayout" using primary key columns */
     readonly video_VonageSessionLayout_by_pk?: Maybe<Video_VonageSessionLayout>;
+    /** fetch data from the table: "video.VonageVideoPlaybackCommand" */
+    readonly video_VonageVideoPlaybackCommand: ReadonlyArray<Video_VonageVideoPlaybackCommand>;
+    /** fetch aggregated fields from the table: "video.VonageVideoPlaybackCommand" */
+    readonly video_VonageVideoPlaybackCommand_aggregate: Video_VonageVideoPlaybackCommand_Aggregate;
+    /** fetch data from the table: "video.VonageVideoPlaybackCommand" using primary key columns */
+    readonly video_VonageVideoPlaybackCommand_by_pk?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** fetch data from the table: "video.YouTubeUpload" */
     readonly video_YouTubeUpload: ReadonlyArray<Video_YouTubeUpload>;
     /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -21041,6 +21103,26 @@ export type Query_RootVideo_VonageSessionLayout_AggregateArgs = {
 };
 
 export type Query_RootVideo_VonageSessionLayout_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootVideo_VonageVideoPlaybackCommandArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Order_By>>;
+    where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+export type Query_RootVideo_VonageVideoPlaybackCommand_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Order_By>>;
+    where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+export type Query_RootVideo_VonageVideoPlaybackCommand_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -29274,6 +29356,12 @@ export type Subscription_Root = {
     readonly video_VonageSessionLayout_aggregate: Video_VonageSessionLayout_Aggregate;
     /** fetch data from the table: "video.VonageSessionLayout" using primary key columns */
     readonly video_VonageSessionLayout_by_pk?: Maybe<Video_VonageSessionLayout>;
+    /** fetch data from the table: "video.VonageVideoPlaybackCommand" */
+    readonly video_VonageVideoPlaybackCommand: ReadonlyArray<Video_VonageVideoPlaybackCommand>;
+    /** fetch aggregated fields from the table: "video.VonageVideoPlaybackCommand" */
+    readonly video_VonageVideoPlaybackCommand_aggregate: Video_VonageVideoPlaybackCommand_Aggregate;
+    /** fetch data from the table: "video.VonageVideoPlaybackCommand" using primary key columns */
+    readonly video_VonageVideoPlaybackCommand_by_pk?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** fetch data from the table: "video.YouTubeUpload" */
     readonly video_YouTubeUpload: ReadonlyArray<Video_YouTubeUpload>;
     /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -31293,6 +31381,26 @@ export type Subscription_RootVideo_VonageSessionLayout_AggregateArgs = {
 };
 
 export type Subscription_RootVideo_VonageSessionLayout_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootVideo_VonageVideoPlaybackCommandArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Order_By>>;
+    where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_VonageVideoPlaybackCommand_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Order_By>>;
+    where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_VonageVideoPlaybackCommand_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -35371,6 +35479,257 @@ export enum Video_VonageSessionLayout_Update_Column {
     VonageSessionId = "vonageSessionId",
 }
 
+/** columns and relationships of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand = {
+    readonly __typename?: "video_VonageVideoPlaybackCommand";
+    readonly command: Scalars["jsonb"];
+    /** An object relationship */
+    readonly conference: Conference_Conference;
+    readonly conferenceId: Scalars["uuid"];
+    readonly createdByRegistrantId?: Maybe<Scalars["uuid"]>;
+    readonly created_at: Scalars["timestamptz"];
+    /** An object relationship */
+    readonly eventVonageSession?: Maybe<Video_EventVonageSession>;
+    readonly id: Scalars["uuid"];
+    /** An object relationship */
+    readonly registrant?: Maybe<Registrant_Registrant>;
+    /** An array relationship */
+    readonly rooms: ReadonlyArray<Room_Room>;
+    /** An aggregate relationship */
+    readonly rooms_aggregate: Room_Room_Aggregate;
+    /** An object relationship */
+    readonly subconference: Conference_Subconference;
+    readonly subconferenceId: Scalars["uuid"];
+    readonly updated_at: Scalars["timestamptz"];
+    readonly vonageSessionId: Scalars["String"];
+};
+
+/** columns and relationships of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommandCommandArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommandRoomsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Room_Room_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Room_Room_Order_By>>;
+    where?: InputMaybe<Room_Room_Bool_Exp>;
+};
+
+/** columns and relationships of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommandRooms_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Room_Room_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Room_Room_Order_By>>;
+    where?: InputMaybe<Room_Room_Bool_Exp>;
+};
+
+/** aggregated selection of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Aggregate = {
+    readonly __typename?: "video_VonageVideoPlaybackCommand_aggregate";
+    readonly aggregate?: Maybe<Video_VonageVideoPlaybackCommand_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Video_VonageVideoPlaybackCommand>;
+};
+
+/** aggregate fields of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Aggregate_Fields = {
+    readonly __typename?: "video_VonageVideoPlaybackCommand_aggregate_fields";
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Video_VonageVideoPlaybackCommand_Max_Fields>;
+    readonly min?: Maybe<Video_VonageVideoPlaybackCommand_Min_Fields>;
+};
+
+/** aggregate fields of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Video_VonageVideoPlaybackCommand_Append_Input = {
+    readonly command?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** Boolean expression to filter rows from the table "video.VonageVideoPlaybackCommand". All fields are combined with a logical 'AND'. */
+export type Video_VonageVideoPlaybackCommand_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Bool_Exp>>;
+    readonly _not?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Video_VonageVideoPlaybackCommand_Bool_Exp>>;
+    readonly command?: InputMaybe<Jsonb_Comparison_Exp>;
+    readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly createdByRegistrantId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Bool_Exp>;
+    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    readonly rooms?: InputMaybe<Room_Room_Bool_Exp>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
+    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly vonageSessionId?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.VonageVideoPlaybackCommand" */
+export enum Video_VonageVideoPlaybackCommand_Constraint {
+    /** unique or primary key constraint */
+    VonageVideoPlaybackCommandPkey = "VonageVideoPlaybackCommand_pkey",
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Video_VonageVideoPlaybackCommand_Delete_At_Path_Input = {
+    readonly command?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Video_VonageVideoPlaybackCommand_Delete_Elem_Input = {
+    readonly command?: InputMaybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Video_VonageVideoPlaybackCommand_Delete_Key_Input = {
+    readonly command?: InputMaybe<Scalars["String"]>;
+};
+
+/** input type for inserting data into table "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Insert_Input = {
+    readonly command?: InputMaybe<Scalars["jsonb"]>;
+    readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly createdByRegistrantId?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Obj_Rel_Insert_Input>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    readonly rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly vonageSessionId?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Video_VonageVideoPlaybackCommand_Max_Fields = {
+    readonly __typename?: "video_VonageVideoPlaybackCommand_max_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly createdByRegistrantId?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly vonageSessionId?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate min on columns */
+export type Video_VonageVideoPlaybackCommand_Min_Fields = {
+    readonly __typename?: "video_VonageVideoPlaybackCommand_min_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly createdByRegistrantId?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly vonageSessionId?: Maybe<Scalars["String"]>;
+};
+
+/** response of any mutation on the table "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Mutation_Response = {
+    readonly __typename?: "video_VonageVideoPlaybackCommand_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Video_VonageVideoPlaybackCommand>;
+};
+
+/** on conflict condition type for table "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_On_Conflict = {
+    readonly constraint: Video_VonageVideoPlaybackCommand_Constraint;
+    readonly update_columns?: ReadonlyArray<Video_VonageVideoPlaybackCommand_Update_Column>;
+    readonly where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.VonageVideoPlaybackCommand". */
+export type Video_VonageVideoPlaybackCommand_Order_By = {
+    readonly command?: InputMaybe<Order_By>;
+    readonly conference?: InputMaybe<Conference_Conference_Order_By>;
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly createdByRegistrantId?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
+    readonly rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+    readonly vonageSessionId?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: video_VonageVideoPlaybackCommand */
+export type Video_VonageVideoPlaybackCommand_Pk_Columns_Input = {
+    readonly id: Scalars["uuid"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Video_VonageVideoPlaybackCommand_Prepend_Input = {
+    readonly command?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "video.VonageVideoPlaybackCommand" */
+export enum Video_VonageVideoPlaybackCommand_Select_Column {
+    /** column name */
+    Command = "command",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedByRegistrantId = "createdByRegistrantId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    VonageSessionId = "vonageSessionId",
+}
+
+/** input type for updating data in table "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Set_Input = {
+    readonly command?: InputMaybe<Scalars["jsonb"]>;
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly createdByRegistrantId?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly vonageSessionId?: InputMaybe<Scalars["String"]>;
+};
+
+/** update columns of table "video.VonageVideoPlaybackCommand" */
+export enum Video_VonageVideoPlaybackCommand_Update_Column {
+    /** column name */
+    Command = "command",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedByRegistrantId = "createdByRegistrantId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    VonageSessionId = "vonageSessionId",
+}
+
 /** columns and relationships of "video.YouTubeUpload" */
 export type Video_YouTubeUpload = {
     readonly __typename?: "video_YouTubeUpload";
@@ -36202,6 +36561,12 @@ export type ProgramPersonDataFragment = {
         readonly registrantId?: any | null | undefined;
         readonly conferenceId: any;
     };
+};
+
+export type UseMediaElement_MediaElementFragment = {
+    readonly __typename?: "content_Element";
+    readonly typeName: Content_ElementType_Enum;
+    readonly data: any;
 };
 
 export type ItemElements_GetItemQueryVariables = Exact<{
@@ -38223,10 +38588,7 @@ export type VideoPlayer_GetElementQuery = {
               readonly __typename?: "content_Element";
               readonly id: any;
               readonly typeName: Content_ElementType_Enum;
-              readonly isHidden: boolean;
               readonly data: any;
-              readonly name: string;
-              readonly itemId: any;
               readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
           }
         | null
@@ -38382,6 +38744,35 @@ export type GetRoomVideosQuery = {
                     }
                   | null
                   | undefined;
+          }
+        | null
+        | undefined;
+};
+
+export type VonageVideoPlaybackContext_InsertCommandMutationVariables = Exact<{
+    object: Video_VonageVideoPlaybackCommand_Insert_Input;
+}>;
+
+export type VonageVideoPlaybackContext_InsertCommandMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_video_VonageVideoPlaybackCommand_one?:
+        | { readonly __typename?: "video_VonageVideoPlaybackCommand"; readonly id: any }
+        | null
+        | undefined;
+};
+
+export type VonageVideoPlaybackContext_GetElementQueryVariables = Exact<{
+    elementId: Scalars["uuid"];
+}>;
+
+export type VonageVideoPlaybackContext_GetElementQuery = {
+    readonly __typename?: "query_root";
+    readonly content_Element_by_pk?:
+        | {
+              readonly __typename?: "content_Element";
+              readonly id: any;
+              readonly typeName: Content_ElementType_Enum;
+              readonly data: any;
           }
         | null
         | undefined;
@@ -38985,99 +39376,6 @@ export type StarEventButton_DeleteStarsMutation = {
         | undefined;
 };
 
-export type StarredEvents_SelectEventIdsQueryVariables = Exact<{
-    registrantId: Scalars["uuid"];
-}>;
-
-export type StarredEvents_SelectEventIdsQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_StarredEvent: ReadonlyArray<{
-        readonly __typename?: "schedule_StarredEvent";
-        readonly id: any;
-        readonly eventId: any;
-        readonly registrantId: any;
-    }>;
-    readonly schedule_Event: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-};
-
-export type StarredEvents_SelectEventsQueryVariables = Exact<{
-    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type StarredEvents_SelectEventsQuery = {
-    readonly __typename?: "query_root";
-    readonly room_Room: ReadonlyArray<{
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
-        readonly priority: number;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly conferenceId: any;
-    }>;
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly roomId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly name: string;
-        readonly startTime: any;
-        readonly durationSeconds: number;
-        readonly itemId?: any | null | undefined;
-        readonly exhibitionId?: any | null | undefined;
-        readonly shufflePeriodId?: any | null | undefined;
-        readonly item?:
-            | {
-                  readonly __typename?: "content_Item";
-                  readonly id: any;
-                  readonly title: string;
-                  readonly shortTitle?: string | null | undefined;
-                  readonly typeName: Content_ItemType_Enum;
-                  readonly conferenceId: any;
-                  readonly itemTags: ReadonlyArray<{
-                      readonly __typename?: "content_ItemTag";
-                      readonly id: any;
-                      readonly itemId: any;
-                      readonly tagId: any;
-                  }>;
-                  readonly itemExhibitions: ReadonlyArray<{
-                      readonly __typename?: "content_ItemExhibition";
-                      readonly id: any;
-                      readonly itemId: any;
-                      readonly exhibitionId: any;
-                  }>;
-                  readonly itemPeople: ReadonlyArray<{
-                      readonly __typename?: "content_ItemProgramPerson";
-                      readonly id: any;
-                      readonly itemId: any;
-                      readonly personId: any;
-                      readonly priority?: number | null | undefined;
-                      readonly roleName: string;
-                  }>;
-              }
-            | null
-            | undefined;
-    }>;
-    readonly collection_ProgramPerson: ReadonlyArray<{
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly name: string;
-        readonly affiliation?: string | null | undefined;
-        readonly registrantId?: any | null | undefined;
-        readonly conferenceId: any;
-    }>;
-    readonly collection_Tag: ReadonlyArray<{
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly name: string;
-        readonly colour: string;
-        readonly priority: number;
-        readonly conferenceId: any;
-    }>;
-};
-
 export type Schedule_ElementFragment = {
     readonly __typename?: "content_Element";
     readonly id: any;
@@ -39326,6 +39624,21 @@ export type Schedule_SelectSummariesQuery = {
         readonly priority: number;
         readonly conferenceId: any;
     }>;
+};
+
+export type StarredEvents_SelectEventIdsQueryVariables = Exact<{
+    registrantId: Scalars["uuid"];
+}>;
+
+export type StarredEvents_SelectEventIdsQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_StarredEvent: ReadonlyArray<{
+        readonly __typename?: "schedule_StarredEvent";
+        readonly id: any;
+        readonly eventId: any;
+        readonly registrantId: any;
+    }>;
+    readonly schedule_Event: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
 };
 
 export type ScheduleV2_LightweightEventFragment = {
@@ -47241,6 +47554,12 @@ export const ShortChatReactionDataFragmentDoc = gql`
         duplicateSId
     }
 `;
+export const UseMediaElement_MediaElementFragmentDoc = gql`
+    fragment useMediaElement_MediaElement on content_Element {
+        typeName
+        data
+    }
+`;
 export const ItemRoomEventFragmentDoc = gql`
     fragment ItemRoomEvent on schedule_Event {
         startTime
@@ -50025,17 +50344,14 @@ export const VideoPlayer_GetElementDocument = gql`
     query VideoPlayer_GetElement($elementId: uuid!) {
         content_Element_by_pk(id: $elementId) {
             id
-            typeName
-            isHidden
-            data
-            name
-            itemId
             item {
                 id
                 title
             }
+            ...useMediaElement_MediaElement
         }
     }
+    ${UseMediaElement_MediaElementFragmentDoc}
 `;
 
 export function useVideoPlayer_GetElementQuery(
@@ -50160,6 +50476,38 @@ export const GetRoomVideosDocument = gql`
 
 export function useGetRoomVideosQuery(options: Omit<Urql.UseQueryArgs<GetRoomVideosQueryVariables>, "query"> = {}) {
     return Urql.useQuery<GetRoomVideosQuery>({ query: GetRoomVideosDocument, ...options });
+}
+export const VonageVideoPlaybackContext_InsertCommandDocument = gql`
+    mutation VonageVideoPlaybackContext_InsertCommand($object: video_VonageVideoPlaybackCommand_insert_input!) {
+        insert_video_VonageVideoPlaybackCommand_one(object: $object) {
+            id
+        }
+    }
+`;
+
+export function useVonageVideoPlaybackContext_InsertCommandMutation() {
+    return Urql.useMutation<
+        VonageVideoPlaybackContext_InsertCommandMutation,
+        VonageVideoPlaybackContext_InsertCommandMutationVariables
+    >(VonageVideoPlaybackContext_InsertCommandDocument);
+}
+export const VonageVideoPlaybackContext_GetElementDocument = gql`
+    query VonageVideoPlaybackContext_GetElement($elementId: uuid!) {
+        content_Element_by_pk(id: $elementId) {
+            id
+            ...useMediaElement_MediaElement
+        }
+    }
+    ${UseMediaElement_MediaElementFragmentDoc}
+`;
+
+export function useVonageVideoPlaybackContext_GetElementQuery(
+    options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetElementQueryVariables>, "query"> = {}
+) {
+    return Urql.useQuery<VonageVideoPlaybackContext_GetElementQuery>({
+        query: VonageVideoPlaybackContext_GetElementDocument,
+        ...options,
+    });
 }
 export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
@@ -50448,56 +50796,6 @@ export function useStarEventButton_DeleteStarsMutation() {
         StarEventButton_DeleteStarsDocument
     );
 }
-export const StarredEvents_SelectEventIdsDocument = gql`
-    query StarredEvents_SelectEventIds($registrantId: uuid!) {
-        schedule_StarredEvent(where: { registrantId: { _eq: $registrantId } }) {
-            ...StarredEvent
-        }
-        schedule_Event(where: { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
-            id
-        }
-    }
-    ${StarredEventFragmentDoc}
-`;
-
-export function useStarredEvents_SelectEventIdsQuery(
-    options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventIdsQueryVariables>, "query"> = {}
-) {
-    return Urql.useQuery<StarredEvents_SelectEventIdsQuery>({
-        query: StarredEvents_SelectEventIdsDocument,
-        ...options,
-    });
-}
-export const StarredEvents_SelectEventsDocument = gql`
-    query StarredEvents_SelectEvents($eventIds: [uuid!]!, $conferenceId: uuid!) {
-        room_Room(where: { events: { id: { _in: $eventIds } } }) {
-            ...Schedule_RoomSummary
-        }
-        schedule_Event(where: { id: { _in: $eventIds } }) {
-            ...Schedule_EventSummary
-            item {
-                ...Schedule_ItemFields
-            }
-        }
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_ProgramPerson
-        }
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_Tag
-        }
-    }
-    ${Schedule_RoomSummaryFragmentDoc}
-    ${Schedule_EventSummaryFragmentDoc}
-    ${Schedule_ItemFieldsFragmentDoc}
-    ${Schedule_ProgramPersonFragmentDoc}
-    ${Schedule_TagFragmentDoc}
-`;
-
-export function useStarredEvents_SelectEventsQuery(
-    options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventsQueryVariables>, "query"> = {}
-) {
-    return Urql.useQuery<StarredEvents_SelectEventsQuery>({ query: StarredEvents_SelectEventsDocument, ...options });
-}
 export const Schedule_SelectItemDocument = gql`
     query Schedule_SelectItem($id: uuid!) {
         content_Item_by_pk(id: $id) {
@@ -50543,6 +50841,26 @@ export function useSchedule_SelectSummariesQuery(
     options: Omit<Urql.UseQueryArgs<Schedule_SelectSummariesQueryVariables>, "query"> = {}
 ) {
     return Urql.useQuery<Schedule_SelectSummariesQuery>({ query: Schedule_SelectSummariesDocument, ...options });
+}
+export const StarredEvents_SelectEventIdsDocument = gql`
+    query StarredEvents_SelectEventIds($registrantId: uuid!) {
+        schedule_StarredEvent(where: { registrantId: { _eq: $registrantId } }) {
+            ...StarredEvent
+        }
+        schedule_Event(where: { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
+            id
+        }
+    }
+    ${StarredEventFragmentDoc}
+`;
+
+export function useStarredEvents_SelectEventIdsQuery(
+    options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventIdsQueryVariables>, "query"> = {}
+) {
+    return Urql.useQuery<StarredEvents_SelectEventIdsQuery>({
+        query: StarredEvents_SelectEventIdsDocument,
+        ...options,
+    });
 }
 export const ScheduleV2_DayLightweightEventsDocument = gql`
     query ScheduleV2_DayLightweightEvents(
@@ -56609,6 +56927,22 @@ export type GraphCacheKeysConfig = {
     video_VonageSessionLayout_mutation_response?: (
         data: WithTypename<Video_VonageSessionLayout_Mutation_Response>
     ) => null | string;
+    video_VonageVideoPlaybackCommand?: (data: WithTypename<Video_VonageVideoPlaybackCommand>) => null | string;
+    video_VonageVideoPlaybackCommand_aggregate?: (
+        data: WithTypename<Video_VonageVideoPlaybackCommand_Aggregate>
+    ) => null | string;
+    video_VonageVideoPlaybackCommand_aggregate_fields?: (
+        data: WithTypename<Video_VonageVideoPlaybackCommand_Aggregate_Fields>
+    ) => null | string;
+    video_VonageVideoPlaybackCommand_max_fields?: (
+        data: WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>
+    ) => null | string;
+    video_VonageVideoPlaybackCommand_min_fields?: (
+        data: WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>
+    ) => null | string;
+    video_VonageVideoPlaybackCommand_mutation_response?: (
+        data: WithTypename<Video_VonageVideoPlaybackCommand_Mutation_Response>
+    ) => null | string;
     video_YouTubeUpload?: (data: WithTypename<Video_YouTubeUpload>) => null | string;
     video_YouTubeUpload_aggregate?: (data: WithTypename<Video_YouTubeUpload_Aggregate>) => null | string;
     video_YouTubeUpload_aggregate_fields?: (data: WithTypename<Video_YouTubeUpload_Aggregate_Fields>) => null | string;
@@ -58122,6 +58456,21 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootVideo_VonageSessionLayout_By_PkArgs,
             WithTypename<Video_VonageSessionLayout> | string
+        >;
+        video_VonageVideoPlaybackCommand?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootVideo_VonageVideoPlaybackCommandArgs,
+            Array<WithTypename<Video_VonageVideoPlaybackCommand> | string>
+        >;
+        video_VonageVideoPlaybackCommand_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootVideo_VonageVideoPlaybackCommand_AggregateArgs,
+            WithTypename<Video_VonageVideoPlaybackCommand_Aggregate> | string
+        >;
+        video_VonageVideoPlaybackCommand_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootVideo_VonageVideoPlaybackCommand_By_PkArgs,
+            WithTypename<Video_VonageVideoPlaybackCommand> | string
         >;
         video_YouTubeUpload?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -76227,6 +76576,193 @@ export type GraphCacheResolvers = {
             Array<WithTypename<Video_VonageSessionLayout> | string>
         >;
     };
+    video_VonageVideoPlaybackCommand?: {
+        command?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Video_VonageVideoPlaybackCommandCommandArgs,
+            Scalars["jsonb"] | string
+        >;
+        conference?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            WithTypename<Conference_Conference> | string
+        >;
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        createdByRegistrantId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        eventVonageSession?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            WithTypename<Video_EventVonageSession> | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        registrant?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            WithTypename<Registrant_Registrant> | string
+        >;
+        rooms?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Video_VonageVideoPlaybackCommandRoomsArgs,
+            Array<WithTypename<Room_Room> | string>
+        >;
+        rooms_aggregate?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Video_VonageVideoPlaybackCommandRooms_AggregateArgs,
+            WithTypename<Room_Room_Aggregate> | string
+        >;
+        subconference?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            WithTypename<Conference_Subconference> | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        vonageSessionId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    video_VonageVideoPlaybackCommand_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Aggregate>,
+            Record<string, never>,
+            WithTypename<Video_VonageVideoPlaybackCommand_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Video_VonageVideoPlaybackCommand> | string>
+        >;
+    };
+    video_VonageVideoPlaybackCommand_aggregate_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Aggregate_Fields>,
+            Video_VonageVideoPlaybackCommand_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields> | string
+        >;
+    };
+    video_VonageVideoPlaybackCommand_max_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        createdByRegistrantId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        vonageSessionId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    video_VonageVideoPlaybackCommand_min_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        createdByRegistrantId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        vonageSessionId?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    video_VonageVideoPlaybackCommand_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Video_VonageVideoPlaybackCommand> | string>
+        >;
+    };
     video_YouTubeUpload?: {
         conference?: GraphCacheResolver<
             WithTypename<Video_YouTubeUpload>,
@@ -77200,6 +77736,14 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootDelete_Video_VonageSessionLayout_By_PkArgs,
         Maybe<WithTypename<Video_VonageSessionLayout>>
     >;
+    delete_video_VonageVideoPlaybackCommand?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Video_VonageVideoPlaybackCommandArgs,
+        Maybe<WithTypename<Video_VonageVideoPlaybackCommand_Mutation_Response>>
+    >;
+    delete_video_VonageVideoPlaybackCommand_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Video_VonageVideoPlaybackCommand_By_PkArgs,
+        Maybe<WithTypename<Video_VonageVideoPlaybackCommand>>
+    >;
     delete_video_YouTubeUpload?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Video_YouTubeUploadArgs,
         Maybe<WithTypename<Video_YouTubeUpload_Mutation_Response>>
@@ -77956,6 +78500,14 @@ export type GraphCacheOptimisticUpdaters = {
     insert_video_VonageSessionLayout_one?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Video_VonageSessionLayout_OneArgs,
         Maybe<WithTypename<Video_VonageSessionLayout>>
+    >;
+    insert_video_VonageVideoPlaybackCommand?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Video_VonageVideoPlaybackCommandArgs,
+        Maybe<WithTypename<Video_VonageVideoPlaybackCommand_Mutation_Response>>
+    >;
+    insert_video_VonageVideoPlaybackCommand_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Video_VonageVideoPlaybackCommand_OneArgs,
+        Maybe<WithTypename<Video_VonageVideoPlaybackCommand>>
     >;
     insert_video_YouTubeUpload?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Video_YouTubeUploadArgs,
@@ -78757,6 +79309,14 @@ export type GraphCacheOptimisticUpdaters = {
     update_video_VonageSessionLayout_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Video_VonageSessionLayout_By_PkArgs,
         Maybe<WithTypename<Video_VonageSessionLayout>>
+    >;
+    update_video_VonageVideoPlaybackCommand?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Video_VonageVideoPlaybackCommandArgs,
+        Maybe<WithTypename<Video_VonageVideoPlaybackCommand_Mutation_Response>>
+    >;
+    update_video_VonageVideoPlaybackCommand_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Video_VonageVideoPlaybackCommand_By_PkArgs,
+        Maybe<WithTypename<Video_VonageVideoPlaybackCommand>>
     >;
     update_video_YouTubeUpload?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Video_YouTubeUploadArgs,
@@ -79602,6 +80162,18 @@ export type GraphCacheUpdaters = {
             { delete_video_VonageSessionLayout_by_pk: Maybe<WithTypename<Video_VonageSessionLayout>> },
             Mutation_RootDelete_Video_VonageSessionLayout_By_PkArgs
         >;
+        delete_video_VonageVideoPlaybackCommand?: GraphCacheUpdateResolver<
+            {
+                delete_video_VonageVideoPlaybackCommand: Maybe<
+                    WithTypename<Video_VonageVideoPlaybackCommand_Mutation_Response>
+                >;
+            },
+            Mutation_RootDelete_Video_VonageVideoPlaybackCommandArgs
+        >;
+        delete_video_VonageVideoPlaybackCommand_by_pk?: GraphCacheUpdateResolver<
+            { delete_video_VonageVideoPlaybackCommand_by_pk: Maybe<WithTypename<Video_VonageVideoPlaybackCommand>> },
+            Mutation_RootDelete_Video_VonageVideoPlaybackCommand_By_PkArgs
+        >;
         delete_video_YouTubeUpload?: GraphCacheUpdateResolver<
             { delete_video_YouTubeUpload: Maybe<WithTypename<Video_YouTubeUpload_Mutation_Response>> },
             Mutation_RootDelete_Video_YouTubeUploadArgs
@@ -80437,6 +81009,18 @@ export type GraphCacheUpdaters = {
         insert_video_VonageSessionLayout_one?: GraphCacheUpdateResolver<
             { insert_video_VonageSessionLayout_one: Maybe<WithTypename<Video_VonageSessionLayout>> },
             Mutation_RootInsert_Video_VonageSessionLayout_OneArgs
+        >;
+        insert_video_VonageVideoPlaybackCommand?: GraphCacheUpdateResolver<
+            {
+                insert_video_VonageVideoPlaybackCommand: Maybe<
+                    WithTypename<Video_VonageVideoPlaybackCommand_Mutation_Response>
+                >;
+            },
+            Mutation_RootInsert_Video_VonageVideoPlaybackCommandArgs
+        >;
+        insert_video_VonageVideoPlaybackCommand_one?: GraphCacheUpdateResolver<
+            { insert_video_VonageVideoPlaybackCommand_one: Maybe<WithTypename<Video_VonageVideoPlaybackCommand>> },
+            Mutation_RootInsert_Video_VonageVideoPlaybackCommand_OneArgs
         >;
         insert_video_YouTubeUpload?: GraphCacheUpdateResolver<
             { insert_video_YouTubeUpload: Maybe<WithTypename<Video_YouTubeUpload_Mutation_Response>> },
@@ -81321,6 +81905,18 @@ export type GraphCacheUpdaters = {
         update_video_VonageSessionLayout_by_pk?: GraphCacheUpdateResolver<
             { update_video_VonageSessionLayout_by_pk: Maybe<WithTypename<Video_VonageSessionLayout>> },
             Mutation_RootUpdate_Video_VonageSessionLayout_By_PkArgs
+        >;
+        update_video_VonageVideoPlaybackCommand?: GraphCacheUpdateResolver<
+            {
+                update_video_VonageVideoPlaybackCommand: Maybe<
+                    WithTypename<Video_VonageVideoPlaybackCommand_Mutation_Response>
+                >;
+            },
+            Mutation_RootUpdate_Video_VonageVideoPlaybackCommandArgs
+        >;
+        update_video_VonageVideoPlaybackCommand_by_pk?: GraphCacheUpdateResolver<
+            { update_video_VonageVideoPlaybackCommand_by_pk: Maybe<WithTypename<Video_VonageVideoPlaybackCommand>> },
+            Mutation_RootUpdate_Video_VonageVideoPlaybackCommand_By_PkArgs
         >;
         update_video_YouTubeUpload?: GraphCacheUpdateResolver<
             { update_video_YouTubeUpload: Maybe<WithTypename<Video_YouTubeUpload_Mutation_Response>> },
@@ -82518,6 +83114,18 @@ export type GraphCacheUpdaters = {
         video_VonageSessionLayout_by_pk?: GraphCacheUpdateResolver<
             { video_VonageSessionLayout_by_pk: Maybe<WithTypename<Video_VonageSessionLayout>> },
             Subscription_RootVideo_VonageSessionLayout_By_PkArgs
+        >;
+        video_VonageVideoPlaybackCommand?: GraphCacheUpdateResolver<
+            { video_VonageVideoPlaybackCommand: Array<WithTypename<Video_VonageVideoPlaybackCommand>> },
+            Subscription_RootVideo_VonageVideoPlaybackCommandArgs
+        >;
+        video_VonageVideoPlaybackCommand_aggregate?: GraphCacheUpdateResolver<
+            { video_VonageVideoPlaybackCommand_aggregate: WithTypename<Video_VonageVideoPlaybackCommand_Aggregate> },
+            Subscription_RootVideo_VonageVideoPlaybackCommand_AggregateArgs
+        >;
+        video_VonageVideoPlaybackCommand_by_pk?: GraphCacheUpdateResolver<
+            { video_VonageVideoPlaybackCommand_by_pk: Maybe<WithTypename<Video_VonageVideoPlaybackCommand>> },
+            Subscription_RootVideo_VonageVideoPlaybackCommand_By_PkArgs
         >;
         video_YouTubeUpload?: GraphCacheUpdateResolver<
             { video_YouTubeUpload: Array<WithTypename<Video_YouTubeUpload>> },

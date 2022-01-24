@@ -1,6 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
-import type { invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
+import type { invitationConfirmCurrentArgs } from "@midspace/hasura/action-types";
 import { requestId } from "@midspace/server-utils/middlewares/request-id";
 import assert from "assert";
 import { json } from "body-parser";
@@ -42,6 +42,7 @@ import { router as transcribeRouter } from "./router/transcribe";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
 import { router as vonageSessionLayoutRouter } from "./router/vonageSessionLayout";
+import { router as vonageVideoPlaybackCommand } from "./router/vonageVideoPlaybackCommand";
 
 if (process.env.NODE_ENV !== "test") {
     assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN environment variable not provided.");
@@ -103,6 +104,7 @@ app.use("/videoRenderJob", videoRenderJobRouter);
 app.use("/event", eventRouter);
 app.use("/room", roomRouter);
 app.use("/vonageSessionLayout", vonageSessionLayoutRouter);
+app.use("/vonageVideoPlaybackCommand", vonageVideoPlaybackCommand);
 app.use("/mediaPackageHarvestJob", mediaPackageHarvestJobRouter);
 app.use("/combineVideosJob", combineVideosJobRouter);
 app.use("/registrantGoogleAccount", registrantGoogleAccountRouter);

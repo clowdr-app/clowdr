@@ -4,7 +4,7 @@ import type {
     GetGoogleOAuthUrlOutput,
     submitGoogleOAuthCodeArgs,
     SubmitGoogleOAuthCodeOutput,
-} from "@midspace/hasura/actionTypes";
+} from "@midspace/hasura/action-types";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";

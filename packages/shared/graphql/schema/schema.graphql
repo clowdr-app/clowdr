@@ -20093,6 +20093,19 @@ type mutation_root {
     """
     delete_video_VonageSessionLayout_by_pk(id: uuid!): video_VonageSessionLayout
     """
+    delete data from the table: "video.VonageVideoPlaybackCommand"
+    """
+    delete_video_VonageVideoPlaybackCommand(
+        """
+        filter the rows which have to be deleted
+        """
+        where: video_VonageVideoPlaybackCommand_bool_exp!
+    ): video_VonageVideoPlaybackCommand_mutation_response
+    """
+    delete single row from the table: "video.VonageVideoPlaybackCommand"
+    """
+    delete_video_VonageVideoPlaybackCommand_by_pk(id: uuid!): video_VonageVideoPlaybackCommand
+    """
     delete data from the table: "video.YouTubeUpload"
     """
     delete_video_YouTubeUpload(
@@ -22525,6 +22538,32 @@ type mutation_root {
         """
         on_conflict: video_VonageSessionLayout_on_conflict
     ): video_VonageSessionLayout
+    """
+    insert data into the table: "video.VonageVideoPlaybackCommand"
+    """
+    insert_video_VonageVideoPlaybackCommand(
+        """
+        the rows to be inserted
+        """
+        objects: [video_VonageVideoPlaybackCommand_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: video_VonageVideoPlaybackCommand_on_conflict
+    ): video_VonageVideoPlaybackCommand_mutation_response
+    """
+    insert a single row into the table: "video.VonageVideoPlaybackCommand"
+    """
+    insert_video_VonageVideoPlaybackCommand_one(
+        """
+        the row to be inserted
+        """
+        object: video_VonageVideoPlaybackCommand_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: video_VonageVideoPlaybackCommand_on_conflict
+    ): video_VonageVideoPlaybackCommand
     """
     insert data into the table: "video.YouTubeUpload"
     """
@@ -25671,6 +25710,69 @@ type mutation_root {
         _set: video_VonageSessionLayout_set_input
         pk_columns: video_VonageSessionLayout_pk_columns_input!
     ): video_VonageSessionLayout
+    """
+    update data of the table: "video.VonageVideoPlaybackCommand"
+    """
+    update_video_VonageVideoPlaybackCommand(
+        """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: video_VonageVideoPlaybackCommand_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: video_VonageVideoPlaybackCommand_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: video_VonageVideoPlaybackCommand_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: video_VonageVideoPlaybackCommand_delete_key_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: video_VonageVideoPlaybackCommand_prepend_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: video_VonageVideoPlaybackCommand_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: video_VonageVideoPlaybackCommand_bool_exp!
+    ): video_VonageVideoPlaybackCommand_mutation_response
+    """
+    update single row of the table: "video.VonageVideoPlaybackCommand"
+    """
+    update_video_VonageVideoPlaybackCommand_by_pk(
+        """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: video_VonageVideoPlaybackCommand_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: video_VonageVideoPlaybackCommand_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: video_VonageVideoPlaybackCommand_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: video_VonageVideoPlaybackCommand_delete_key_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: video_VonageVideoPlaybackCommand_prepend_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: video_VonageVideoPlaybackCommand_set_input
+        pk_columns: video_VonageVideoPlaybackCommand_pk_columns_input!
+    ): video_VonageVideoPlaybackCommand
     """
     update data of the table: "video.YouTubeUpload"
     """
@@ -31265,6 +31367,60 @@ type query_root {
     fetch data from the table: "video.VonageSessionLayout" using primary key columns
     """
     video_VonageSessionLayout_by_pk(id: uuid!): video_VonageSessionLayout
+    """
+    fetch data from the table: "video.VonageVideoPlaybackCommand"
+    """
+    video_VonageVideoPlaybackCommand(
+        """
+        distinct select on columns
+        """
+        distinct_on: [video_VonageVideoPlaybackCommand_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [video_VonageVideoPlaybackCommand_order_by!]
+        """
+        filter the rows returned
+        """
+        where: video_VonageVideoPlaybackCommand_bool_exp
+    ): [video_VonageVideoPlaybackCommand!]!
+    """
+    fetch aggregated fields from the table: "video.VonageVideoPlaybackCommand"
+    """
+    video_VonageVideoPlaybackCommand_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [video_VonageVideoPlaybackCommand_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [video_VonageVideoPlaybackCommand_order_by!]
+        """
+        filter the rows returned
+        """
+        where: video_VonageVideoPlaybackCommand_bool_exp
+    ): video_VonageVideoPlaybackCommand_aggregate!
+    """
+    fetch data from the table: "video.VonageVideoPlaybackCommand" using primary key columns
+    """
+    video_VonageVideoPlaybackCommand_by_pk(id: uuid!): video_VonageVideoPlaybackCommand
     """
     fetch data from the table: "video.YouTubeUpload"
     """
@@ -47280,6 +47436,60 @@ type subscription_root {
     """
     video_VonageSessionLayout_by_pk(id: uuid!): video_VonageSessionLayout
     """
+    fetch data from the table: "video.VonageVideoPlaybackCommand"
+    """
+    video_VonageVideoPlaybackCommand(
+        """
+        distinct select on columns
+        """
+        distinct_on: [video_VonageVideoPlaybackCommand_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [video_VonageVideoPlaybackCommand_order_by!]
+        """
+        filter the rows returned
+        """
+        where: video_VonageVideoPlaybackCommand_bool_exp
+    ): [video_VonageVideoPlaybackCommand!]!
+    """
+    fetch aggregated fields from the table: "video.VonageVideoPlaybackCommand"
+    """
+    video_VonageVideoPlaybackCommand_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [video_VonageVideoPlaybackCommand_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [video_VonageVideoPlaybackCommand_order_by!]
+        """
+        filter the rows returned
+        """
+        where: video_VonageVideoPlaybackCommand_bool_exp
+    ): video_VonageVideoPlaybackCommand_aggregate!
+    """
+    fetch data from the table: "video.VonageVideoPlaybackCommand" using primary key columns
+    """
+    video_VonageVideoPlaybackCommand_by_pk(id: uuid!): video_VonageVideoPlaybackCommand
+    """
     fetch data from the table: "video.YouTubeUpload"
     """
     video_YouTubeUpload(
@@ -52889,6 +53099,359 @@ enum video_VonageSessionLayout_update_column {
     column name
     """
     layoutData
+    """
+    column name
+    """
+    subconferenceId
+    """
+    column name
+    """
+    updated_at
+    """
+    column name
+    """
+    vonageSessionId
+}
+
+"""
+columns and relationships of "video.VonageVideoPlaybackCommand"
+"""
+type video_VonageVideoPlaybackCommand {
+    command(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb!
+    """
+    An object relationship
+    """
+    conference: conference_Conference!
+    conferenceId: uuid!
+    createdByRegistrantId: uuid
+    created_at: timestamptz!
+    """
+    An object relationship
+    """
+    eventVonageSession: video_EventVonageSession
+    id: uuid!
+    """
+    An object relationship
+    """
+    registrant: registrant_Registrant
+    """
+    An array relationship
+    """
+    rooms(
+        """
+        distinct select on columns
+        """
+        distinct_on: [room_Room_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [room_Room_order_by!]
+        """
+        filter the rows returned
+        """
+        where: room_Room_bool_exp
+    ): [room_Room!]!
+    """
+    An aggregate relationship
+    """
+    rooms_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [room_Room_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [room_Room_order_by!]
+        """
+        filter the rows returned
+        """
+        where: room_Room_bool_exp
+    ): room_Room_aggregate!
+    """
+    An object relationship
+    """
+    subconference: conference_Subconference!
+    subconferenceId: uuid!
+    updated_at: timestamptz!
+    vonageSessionId: String!
+}
+
+"""
+aggregated selection of "video.VonageVideoPlaybackCommand"
+"""
+type video_VonageVideoPlaybackCommand_aggregate {
+    aggregate: video_VonageVideoPlaybackCommand_aggregate_fields
+    nodes: [video_VonageVideoPlaybackCommand!]!
+}
+
+"""
+aggregate fields of "video.VonageVideoPlaybackCommand"
+"""
+type video_VonageVideoPlaybackCommand_aggregate_fields {
+    count(columns: [video_VonageVideoPlaybackCommand_select_column!], distinct: Boolean): Int!
+    max: video_VonageVideoPlaybackCommand_max_fields
+    min: video_VonageVideoPlaybackCommand_min_fields
+}
+
+"""
+append existing jsonb value of filtered columns with new jsonb value
+"""
+input video_VonageVideoPlaybackCommand_append_input {
+    command: jsonb
+}
+
+"""
+Boolean expression to filter rows from the table "video.VonageVideoPlaybackCommand". All fields are combined with a logical 'AND'.
+"""
+input video_VonageVideoPlaybackCommand_bool_exp {
+    _and: [video_VonageVideoPlaybackCommand_bool_exp!]
+    _not: video_VonageVideoPlaybackCommand_bool_exp
+    _or: [video_VonageVideoPlaybackCommand_bool_exp!]
+    command: jsonb_comparison_exp
+    conference: conference_Conference_bool_exp
+    conferenceId: uuid_comparison_exp
+    createdByRegistrantId: uuid_comparison_exp
+    created_at: timestamptz_comparison_exp
+    eventVonageSession: video_EventVonageSession_bool_exp
+    id: uuid_comparison_exp
+    registrant: registrant_Registrant_bool_exp
+    rooms: room_Room_bool_exp
+    subconference: conference_Subconference_bool_exp
+    subconferenceId: uuid_comparison_exp
+    updated_at: timestamptz_comparison_exp
+    vonageSessionId: String_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "video.VonageVideoPlaybackCommand"
+"""
+enum video_VonageVideoPlaybackCommand_constraint {
+    """
+    unique or primary key constraint
+    """
+    VonageVideoPlaybackCommand_pkey
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input video_VonageVideoPlaybackCommand_delete_at_path_input {
+    command: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input video_VonageVideoPlaybackCommand_delete_elem_input {
+    command: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input video_VonageVideoPlaybackCommand_delete_key_input {
+    command: String
+}
+
+"""
+input type for inserting data into table "video.VonageVideoPlaybackCommand"
+"""
+input video_VonageVideoPlaybackCommand_insert_input {
+    command: jsonb
+    conference: conference_Conference_obj_rel_insert_input
+    conferenceId: uuid
+    createdByRegistrantId: uuid
+    created_at: timestamptz
+    eventVonageSession: video_EventVonageSession_obj_rel_insert_input
+    id: uuid
+    registrant: registrant_Registrant_obj_rel_insert_input
+    rooms: room_Room_arr_rel_insert_input
+    subconference: conference_Subconference_obj_rel_insert_input
+    subconferenceId: uuid
+    updated_at: timestamptz
+    vonageSessionId: String
+}
+
+"""
+aggregate max on columns
+"""
+type video_VonageVideoPlaybackCommand_max_fields {
+    conferenceId: uuid
+    createdByRegistrantId: uuid
+    created_at: timestamptz
+    id: uuid
+    subconferenceId: uuid
+    updated_at: timestamptz
+    vonageSessionId: String
+}
+
+"""
+aggregate min on columns
+"""
+type video_VonageVideoPlaybackCommand_min_fields {
+    conferenceId: uuid
+    createdByRegistrantId: uuid
+    created_at: timestamptz
+    id: uuid
+    subconferenceId: uuid
+    updated_at: timestamptz
+    vonageSessionId: String
+}
+
+"""
+response of any mutation on the table "video.VonageVideoPlaybackCommand"
+"""
+type video_VonageVideoPlaybackCommand_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [video_VonageVideoPlaybackCommand!]!
+}
+
+"""
+on conflict condition type for table "video.VonageVideoPlaybackCommand"
+"""
+input video_VonageVideoPlaybackCommand_on_conflict {
+    constraint: video_VonageVideoPlaybackCommand_constraint!
+    update_columns: [video_VonageVideoPlaybackCommand_update_column!]! = []
+    where: video_VonageVideoPlaybackCommand_bool_exp
+}
+
+"""
+Ordering options when selecting data from "video.VonageVideoPlaybackCommand".
+"""
+input video_VonageVideoPlaybackCommand_order_by {
+    command: order_by
+    conference: conference_Conference_order_by
+    conferenceId: order_by
+    createdByRegistrantId: order_by
+    created_at: order_by
+    eventVonageSession: video_EventVonageSession_order_by
+    id: order_by
+    registrant: registrant_Registrant_order_by
+    rooms_aggregate: room_Room_aggregate_order_by
+    subconference: conference_Subconference_order_by
+    subconferenceId: order_by
+    updated_at: order_by
+    vonageSessionId: order_by
+}
+
+"""
+primary key columns input for table: video_VonageVideoPlaybackCommand
+"""
+input video_VonageVideoPlaybackCommand_pk_columns_input {
+    id: uuid!
+}
+
+"""
+prepend existing jsonb value of filtered columns with new jsonb value
+"""
+input video_VonageVideoPlaybackCommand_prepend_input {
+    command: jsonb
+}
+
+"""
+select columns of table "video.VonageVideoPlaybackCommand"
+"""
+enum video_VonageVideoPlaybackCommand_select_column {
+    """
+    column name
+    """
+    command
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    createdByRegistrantId
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    subconferenceId
+    """
+    column name
+    """
+    updated_at
+    """
+    column name
+    """
+    vonageSessionId
+}
+
+"""
+input type for updating data in table "video.VonageVideoPlaybackCommand"
+"""
+input video_VonageVideoPlaybackCommand_set_input {
+    command: jsonb
+    conferenceId: uuid
+    createdByRegistrantId: uuid
+    created_at: timestamptz
+    id: uuid
+    subconferenceId: uuid
+    updated_at: timestamptz
+    vonageSessionId: String
+}
+
+"""
+update columns of table "video.VonageVideoPlaybackCommand"
+"""
+enum video_VonageVideoPlaybackCommand_update_column {
+    """
+    column name
+    """
+    command
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    createdByRegistrantId
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
     """
     column name
     """

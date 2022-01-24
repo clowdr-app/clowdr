@@ -127,6 +127,7 @@ importers:
       '@midspace/shared-types': workspace:*
       '@midspace/urql-hasura-cache-generic-resolver': workspace:*
       '@opentok/client': ^2.21.2
+      '@react-hook/timeout': ^2.1.1
       '@researchgate/react-intersection-observer': ^1.3.5
       '@types/emoji-mart': ^3.0.8
       '@types/levenshtein-edit-distance': ^2.0.1
@@ -230,6 +231,7 @@ importers:
       typescript: ^4.5.2
       url: ^0.11.0
       urql: ^2.0.5
+      use-callback-ref: ^1.2.5
       use-file-picker: ^1.4.1
       use-http: ^1.0.26
       use-react-router-breadcrumbs: ^2.0.2
@@ -264,6 +266,7 @@ importers:
       '@midspace/shared-types': link:../packages/shared/shared-types
       '@midspace/urql-hasura-cache-generic-resolver': link:../packages/shared/urql-hasura-cache-generic-resolver
       '@opentok/client': 2.21.2
+      '@react-hook/timeout': 2.1.1_react@17.0.2
       '@researchgate/react-intersection-observer': 1.3.5_react-dom@17.0.2+react@17.0.2
       '@types/emoji-mart': 3.0.8
       '@types/levenshtein-edit-distance': 2.0.1
@@ -362,6 +365,7 @@ importers:
       typescript: 4.5.2
       url: 0.11.0
       urql: 2.0.5_graphql@15.7.2+react@17.0.2
+      use-callback-ref: 1.2.5_cfedea9b3ed0faf0dded75c187406c5e
       use-file-picker: 1.4.1_react@17.0.2
       use-http: 1.0.26_react-dom@17.0.2+react@17.0.2
       use-react-router-breadcrumbs: 2.0.2_react-router@5.2.1+react@17.0.2
@@ -823,6 +827,7 @@ importers:
       ts-patch: ^2.0.1
       typescript: ^4.5.2
       typescript-is: ^0.19.0
+      zod: ^3.11.6
     dependencies:
       '@types/ramda': 0.27.47
       class-transformer: 0.4.0
@@ -832,6 +837,7 @@ importers:
       ts-patch: 2.0.1_typescript@4.5.2
       typescript: 4.5.2
       typescript-is: 0.19.0_typescript@4.5.2
+      zod: 3.11.6
     devDependencies:
       rimraf: 3.0.2
 
@@ -11035,6 +11041,23 @@ packages:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       tslib: 2.3.1
+    dev: false
+
+  /@react-hook/latest/1.0.3_react@17.0.2:
+    resolution: {integrity: sha512-dy6duzl+JnAZcDbNTfmaP3xHiKtbXYOaz3G51MGVljh548Y8MWzTr+PHLOfvpypEVW9zwvl+VyKjbWKEVbV1Rg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      react: 17.0.2
+    dev: false
+
+  /@react-hook/timeout/2.1.1_react@17.0.2:
+    resolution: {integrity: sha512-nl76ab/tLU8tBtn54gX12z/XalQSLkZl86ZqH6HoV32y4+XzZq6LCQo9fJJpxqZpT2ueXiM5YnbPPghdHBlRWg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@react-hook/latest': 1.0.3_react@17.0.2
+      react: 17.0.2
     dev: false
 
   /@request/api/0.6.0:

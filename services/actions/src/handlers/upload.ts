@@ -4,7 +4,7 @@ import type {
     SubmitElementOutput,
     SubmitUpdatedSubtitlesOutput,
     updateSubtitlesArgs,
-} from "@midspace/hasura/actionTypes";
+} from "@midspace/hasura/action-types";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import type {

@@ -1,5 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
-import type { Payload, VideoRenderJobData } from "@midspace/hasura/event";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { VideoRenderJobData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -13,7 +14,7 @@ router.use(checkEventSecret);
 
 router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<VideoRenderJobData>>(req.body);
+        assertType<EventPayload<VideoRenderJobData>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");

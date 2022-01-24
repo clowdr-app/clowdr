@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import type { InitialiseSuperUserOutput } from "@midspace/hasura/actionTypes";
+import type { InitialiseSuperUserOutput } from "@midspace/hasura/action-types";
 import type { P } from "pino";
 import { InitialiseSuperUserStateDocument, SuperUserStateDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";

@@ -1,5 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
-import type { Payload, ShuffleQueueEntryData } from "@midspace/hasura/event";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { ShuffleQueueEntryData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -13,7 +14,7 @@ router.use(checkEventSecret);
 
 router.post("/entered", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<ShuffleQueueEntryData>>(req.body);
+        assertType<EventPayload<ShuffleQueueEntryData>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");

@@ -1,5 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
-import type { FlagData, Payload } from "@midspace/hasura/event";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { FlagData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -14,7 +15,7 @@ router.use(json());
 
 router.post("/flag/inserted", async (req: Request, res: Response) => {
     try {
-        assertType<Payload<FlagData>>(req.body);
+        assertType<EventPayload<FlagData>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");

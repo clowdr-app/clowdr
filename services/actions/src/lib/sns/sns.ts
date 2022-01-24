@@ -1,4 +1,4 @@
-import type { Maybe } from "@midspace/hasura/actionTypes";
+import type { Maybe } from "@midspace/hasura/action-types";
 import type { SNSNotification } from "@midspace/shared-types/sns/index";
 import axios from "axios";
 import type { P } from "pino";

@@ -5,8 +5,9 @@ import type {
     CreateContentGroupRoomOutput,
     createRoomDmArgs,
     CreateRoomDmOutput,
-} from "@midspace/hasura/actionTypes";
-import type { Payload, RoomData } from "@midspace/hasura/event";
+} from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { RoomData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -25,7 +26,7 @@ router.use(checkEventSecret);
 
 router.post("/created", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<RoomData>>(req.body);
+        assertType<EventPayload<RoomData>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");

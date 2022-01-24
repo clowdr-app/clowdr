@@ -1,6 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import type { ActionPayload } from "@midspace/hasura/action";
-import type { joinRoomChimeSessionArgs, JoinRoomChimeSessionOutput } from "@midspace/hasura/actionTypes";
+import type { joinRoomChimeSessionArgs, JoinRoomChimeSessionOutput } from "@midspace/hasura/action-types";
 import { json, text } from "body-parser";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";

@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import type { GetUploadAgreementOutput } from "@midspace/hasura/actionTypes";
-import type { ElementData, Payload } from "@midspace/hasura/event";
+import type { GetUploadAgreementOutput } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { ElementData } from "@midspace/hasura/event-data";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { AWSJobStatus } from "@midspace/shared-types/content";
 import { SourceType } from "@midspace/shared-types/content/element";
@@ -34,7 +35,7 @@ gql`
     }
 `;
 
-export async function handleElementUpdated(logger: P.Logger, payload: Payload<ElementData>): Promise<void> {
+export async function handleElementUpdated(logger: P.Logger, payload: EventPayload<ElementData>): Promise<void> {
     const oldRow = payload.event.data.old;
     const newRow = payload.event.data.new;
 

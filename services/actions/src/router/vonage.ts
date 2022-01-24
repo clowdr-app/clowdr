@@ -8,7 +8,7 @@ import type {
     JoinRoomVonageSessionOutput,
     toggleVonageRecordingStateArgs,
     ToggleVonageRecordingStateOutput,
-} from "@midspace/hasura/actionTypes";
+} from "@midspace/hasura/action-types";
 import assert from "assert";
 import { json } from "body-parser";
 import type { NextFunction, Request, Response } from "express";

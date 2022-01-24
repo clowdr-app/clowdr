@@ -4,7 +4,7 @@ import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
 import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
 import type { ActionPayload } from "@midspace/hasura/action";
-import type { updateProfilePhotoArgs, UpdateProfilePhotoResponse } from "@midspace/hasura/actionTypes";
+import type { updateProfilePhotoArgs, UpdateProfilePhotoResponse } from "@midspace/hasura/action-types";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { json } from "body-parser";

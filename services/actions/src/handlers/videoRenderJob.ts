@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import type { Payload, VideoRenderJobData } from "@midspace/hasura/event";
-import type { VideoRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { VideoRenderJobData } from "@midspace/hasura/event-data";
+import type { VideoRenderJobDataBlob } from "@midspace/hasura/json-blobs/video-render-job";
 import { notEmpty } from "@midspace/shared-types/utils";
 import assert from "assert";
 import type { P } from "pino";
@@ -32,7 +33,7 @@ gql`
 
 export async function handleVideoRenderJobUpdated(
     logger: P.Logger,
-    payload: Payload<VideoRenderJobData>
+    payload: EventPayload<VideoRenderJobData>
 ): Promise<void> {
     assert(payload.event.data.new, "Payload must contain new row data");
 

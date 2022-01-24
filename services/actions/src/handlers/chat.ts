@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import type { FlagData, Payload } from "@midspace/hasura/event";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { FlagData } from "@midspace/hasura/event-data";
 import assert from "assert";
 import type { P } from "pino";
 import { FlagInserted_GetSupportAddressDocument } from "../generated/graphql";
@@ -27,7 +28,7 @@ gql`
     }
 `;
 
-export async function handleFlagInserted(logger: P.Logger, data: Payload<FlagData>): Promise<void> {
+export async function handleFlagInserted(logger: P.Logger, data: EventPayload<FlagData>): Promise<void> {
     const newFlag = data.event.data.new;
     if (newFlag) {
         const response = await apolloClient.query({

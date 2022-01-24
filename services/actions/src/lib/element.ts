@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import type { Maybe } from "@midspace/hasura/actionTypes";
+import type { Maybe } from "@midspace/hasura/action-types";
 import type {
     BroadcastTranscodeDetails,
     Content_ElementType_Enum,

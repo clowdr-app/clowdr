@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import type { Payload, ShuffleQueueEntryData } from "@midspace/hasura/event";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { ShuffleQueueEntryData } from "@midspace/hasura/event-data";
 import type { P } from "pino";
 import type {
     ActiveShufflePeriodFragment,
@@ -449,7 +450,7 @@ async function processShufflePeriod(logger: P.Logger, period: ActiveShufflePerio
 
 export async function handleShuffleQueueEntered(
     logger: P.Logger,
-    payload: Payload<ShuffleQueueEntryData>
+    payload: EventPayload<ShuffleQueueEntryData>
 ): Promise<void> {
     if (!payload.event.data.new) {
         throw new Error("Shuffled queue entered: 'new' data is null?!");

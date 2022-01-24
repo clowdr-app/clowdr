@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import type { stopEventBroadcastArgs, StopEventBroadcastOutput } from "@midspace/hasura/actionTypes";
-import type { EventData, Payload } from "@midspace/hasura/event";
+import type { stopEventBroadcastArgs, StopEventBroadcastOutput } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { EventData } from "@midspace/hasura/event-data";
 import type { ContinuationTo } from "@midspace/shared-types/continuation";
 import { ContinuationType } from "@midspace/shared-types/continuation";
 import type { P } from "pino";
@@ -35,7 +36,7 @@ import {
 import { callWithRetry } from "../utils";
 import { createMediaPackageHarvestJob } from "./recording";
 
-export async function handleEventUpdated(logger: P.Logger, payload: Payload<EventData>): Promise<void> {
+export async function handleEventUpdated(logger: P.Logger, payload: EventPayload<EventData>): Promise<void> {
     const newRow = payload.event.data.new;
 
     if (!newRow) {

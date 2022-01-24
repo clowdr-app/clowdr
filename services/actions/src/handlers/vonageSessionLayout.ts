@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import type { Payload, VonageSessionLayoutData_Record } from "@midspace/hasura/event";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { VonageSessionLayoutData_Record } from "@midspace/hasura/event-data";
 import assert from "assert";
 import type { P } from "pino";
 import { VonageSession_RemoveInvalidStreamsDocument } from "../generated/graphql";
@@ -45,7 +46,7 @@ async function removeInvalidEventParticipantStreams(
 
 export async function handleVonageSessionLayoutCreated(
     logger: P.Logger,
-    payload: Payload<VonageSessionLayoutData_Record>
+    payload: EventPayload<VonageSessionLayoutData_Record>
 ): Promise<void> {
     assert(payload.event.data.new, "Expected payload to have new row");
 

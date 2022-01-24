@@ -1,4 +1,4 @@
-import type { joinRoomChimeSessionArgs, JoinRoomChimeSessionOutput } from "@midspace/hasura/actionTypes";
+import type { joinRoomChimeSessionArgs, JoinRoomChimeSessionOutput } from "@midspace/hasura/action-types";
 import type { P } from "pino";
 import { addRegistrantToChimeMeeting } from "../lib/aws/chime";
 import { ForbiddenError, ServerError } from "../lib/errors";

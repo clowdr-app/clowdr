@@ -44,7 +44,7 @@ import { VideoAspectWrapper } from "./Video/VideoAspectWrapper";
 import { VideoChatRoom } from "./VideoChat/VideoChatRoom";
 
 const Backstages = React.lazy(() => import("./Stream/Backstages"));
-const VideoPlayer = React.lazy(() => import("./Video/VideoPlayer"));
+const VideoPlayer = React.lazy(() => import("./Video/VideoPlayerEventPlayer"));
 const HlsPlayer = React.lazy(() => import("./Video/HlsPlayer"));
 
 gql`

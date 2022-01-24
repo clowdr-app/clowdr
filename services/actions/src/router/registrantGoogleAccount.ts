@@ -1,6 +1,7 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
-import type { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/actionTypes";
-import type { Payload, RegistrantGoogleAccountData } from "@midspace/hasura/event";
+import type { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { RegistrantGoogleAccountData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -14,7 +15,7 @@ router.use(checkEventSecret);
 
 router.post("/deleted", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<RegistrantGoogleAccountData>>(req.body);
+        assertType<EventPayload<RegistrantGoogleAccountData>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");

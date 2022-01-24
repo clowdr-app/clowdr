@@ -1,4 +1,4 @@
-import type { MP4Input } from "./broadcastContentItem";
+import type { MP4Input } from "./broadcast-element";
 
 export type VideoRenderJobDataBlob = TitleRenderJobDataBlob | BroadcastRenderJobDataBlob;
 

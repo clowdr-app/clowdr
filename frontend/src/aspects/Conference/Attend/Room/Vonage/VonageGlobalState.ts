@@ -1,4 +1,6 @@
 import { assert } from "@midspace/assert";
+import type { VonageVideoPlaybackCommandSignal } from "@midspace/shared-types/video/vonage-video-playback-command";
+import { vonageVideoPlaybackCommandSignal } from "@midspace/shared-types/video/vonage-video-playback-command";
 import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import { isVonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import OT from "@opentok/client";
@@ -37,7 +39,7 @@ interface InitialisedStateData {
     onRecordingStopped: () => void;
     onRecordingIdReceived: (recordingId: string) => void;
     onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void;
-    onPlayVideoReceived: (elementId: string) => void;
+    onVideoPlaybackSignalReceived: (command: VonageVideoPlaybackCommandSignal) => void;
     onTranscript: (data: TranscriptData) => void;
 }
 
@@ -119,24 +121,24 @@ export class VonageGlobalState {
         }
     }
 
-    public async initialiseState(
-        getToken: (sessionId: string) => Promise<string>,
-        sessionId: string,
-        onStreamsChanged: (streams: OT.Stream[]) => void,
-        onConnectionsChanged: (connections: OT.Connection[]) => void,
-        onSessionConnected: (isConnected: boolean) => void,
-        onCameraStreamDestroyed: (reason: string) => void,
-        onScreenStreamDestroyed: (reason: string) => void,
-        onCameraStreamCreated: () => void,
-        onScreenStreamCreated: () => void,
-        onMuteForced: () => void,
-        onRecordingStarted: () => void,
-        onRecordingStopped: () => void,
-        onRecordingIdReceived: (recordingId: string) => void,
-        onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void,
-        onPlayVideoReceived: (elementId: string) => void,
-        onTranscript: (data: TranscriptData) => void
-    ): Promise<void> {
+    public async initialiseState(input: {
+        getToken: (sessionId: string) => Promise<string>;
+        sessionId: string;
+        onStreamsChanged: (streams: OT.Stream[]) => void;
+        onConnectionsChanged: (connections: OT.Connection[]) => void;
+        onSessionConnected: (isConnected: boolean) => void;
+        onCameraStreamDestroyed: (reason: string) => void;
+        onScreenStreamDestroyed: (reason: string) => void;
+        onCameraStreamCreated: () => void;
+        onScreenStreamCreated: () => void;
+        onMuteForced: () => void;
+        onRecordingStarted: () => void;
+        onRecordingStopped: () => void;
+        onRecordingIdReceived: (recordingId: string) => void;
+        onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void;
+        onVideoPlaybackSignalReceived: (command: VonageVideoPlaybackCommandSignal) => void;
+        onTranscript: (data: TranscriptData) => void;
+    }): Promise<void> {
         const release = await this.mutex.acquire();
         try {
             // todo: disconnect from previous session etc if initialised.
@@ -156,23 +158,8 @@ export class VonageGlobalState {
 
             this.state = {
                 type: StateType.Initialised,
-                getToken,
-                sessionId,
-                onStreamsChanged,
-                onConnectionsChanged,
-                onSessionConnected,
-                onCameraStreamDestroyed,
-                onScreenStreamDestroyed,
                 screenSharingSupported,
-                onCameraStreamCreated,
-                onScreenStreamCreated,
-                onMuteForced,
-                onRecordingStarted,
-                onRecordingStopped,
-                onRecordingIdReceived,
-                onLayoutReceived,
-                onPlayVideoReceived,
-                onTranscript,
+                ...input,
             };
         } catch (e) {
             console.error("VonageGlobalState: initialiseState failure", e);
@@ -251,11 +238,15 @@ export class VonageGlobalState {
                     console.error("VonageGlobalState: error handling layout signal", e)
                 )
             );
-            session.on("signal:play-video", (event: any) =>
-                this.onPlayVideoReceived(event.data).catch((e) =>
-                    console.error("VonageGlobalState: error handling play video signal", e)
-                )
-            );
+            session.on("signal:video-playback", (event: any) => {
+                if (event.from === null) {
+                    this.onVideoPlaybackSignalReceived(event.data).catch((e) =>
+                        console.error("VonageGlobalState: error handling play video signal", e)
+                    );
+                } else {
+                    console.warn("VonageGlobalState: received video playback signal from a peer (ignored)", event);
+                }
+            });
             session.on("signal:transcript", (event: any) =>
                 this.onTranscriptReceived(event.data).catch((e) =>
                     console.error("VonageGlobalState: error handling transcript signal", e)
@@ -1013,41 +1004,39 @@ export class VonageGlobalState {
         }
     }
 
-    private async onPlayVideoReceived(elementId: any): Promise<void> {
+    private async onVideoPlaybackSignalReceived(data: unknown): Promise<void> {
         const release = await this.mutex.acquire();
         try {
-            if (!elementId || typeof elementId !== "string") {
-                throw new Error("Layout data is not valid");
-            }
+            const signal = vonageVideoPlaybackCommandSignal.parse(data);
 
             if (this.state.type === StateType.Initialised) {
-                this.state.onPlayVideoReceived(elementId);
+                this.state.onVideoPlaybackSignalReceived(signal);
             } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onPlayVideoReceived(elementId);
+                this.state.initialisedState.onVideoPlaybackSignalReceived(signal);
             }
         } catch (e) {
-            console.error("VonageGlobalState: onPlayVideoReceived failure", e);
+            console.error("VonageGlobalState: onVideoPlaybackSignalReceived failure", e);
             throw e;
         } finally {
             release();
         }
     }
 
-    public async startPlayingVideo(elementId: string): Promise<void> {
-        if (this.state.type === StateType.Connected) {
-            this.state.session.signal(
-                {
-                    type: "play-video",
-                    data: elementId,
-                },
-                (err) => {
-                    if (err) {
-                        console.error("Error sending play video signal", err);
-                    }
-                }
-            );
-        }
-    }
+    // public async startPlayingVideo(elementId: string): Promise<void> {
+    //     if (this.state.type === StateType.Connected) {
+    //         this.state.session.signal(
+    //             {
+    //                 type: "play-video",
+    //                 data: elementId,
+    //             },
+    //             (err) => {
+    //                 if (err) {
+    //                     console.error("Error sending play video signal", err);
+    //                 }
+    //             }
+    //         );
+    //     }
+    // }
 
     private async onTranscriptReceived(transcriptData: any): Promise<void> {
         try {

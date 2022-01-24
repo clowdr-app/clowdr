@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import type { MediaPackageHarvestJob, Payload } from "@midspace/hasura/event";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { MediaPackageHarvestJob } from "@midspace/hasura/event-data";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
 import type { SourceBlob } from "@midspace/shared-types/content/element";
@@ -49,7 +50,7 @@ gql`
 
 export async function handleMediaPackageHarvestJobUpdated(
     logger: P.Logger,
-    payload: Payload<MediaPackageHarvestJob>
+    payload: EventPayload<MediaPackageHarvestJob>
 ): Promise<void> {
     assert(payload.event.data.new, "Expected new MediaPackageHarvestJob data");
 

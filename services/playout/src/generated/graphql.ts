@@ -14057,6 +14057,10 @@ export type Mutation_Root = {
     delete_video_VonageSessionLayout?: Maybe<Video_VonageSessionLayout_Mutation_Response>;
     /** delete single row from the table: "video.VonageSessionLayout" */
     delete_video_VonageSessionLayout_by_pk?: Maybe<Video_VonageSessionLayout>;
+    /** delete data from the table: "video.VonageVideoPlaybackCommand" */
+    delete_video_VonageVideoPlaybackCommand?: Maybe<Video_VonageVideoPlaybackCommand_Mutation_Response>;
+    /** delete single row from the table: "video.VonageVideoPlaybackCommand" */
+    delete_video_VonageVideoPlaybackCommand_by_pk?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** delete data from the table: "video.YouTubeUpload" */
     delete_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** delete single row from the table: "video.YouTubeUpload" */
@@ -14435,6 +14439,10 @@ export type Mutation_Root = {
     insert_video_VonageSessionLayout?: Maybe<Video_VonageSessionLayout_Mutation_Response>;
     /** insert a single row into the table: "video.VonageSessionLayout" */
     insert_video_VonageSessionLayout_one?: Maybe<Video_VonageSessionLayout>;
+    /** insert data into the table: "video.VonageVideoPlaybackCommand" */
+    insert_video_VonageVideoPlaybackCommand?: Maybe<Video_VonageVideoPlaybackCommand_Mutation_Response>;
+    /** insert a single row into the table: "video.VonageVideoPlaybackCommand" */
+    insert_video_VonageVideoPlaybackCommand_one?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** insert data into the table: "video.YouTubeUpload" */
     insert_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** insert a single row into the table: "video.YouTubeUpload" */
@@ -14824,6 +14832,10 @@ export type Mutation_Root = {
     update_video_VonageSessionLayout?: Maybe<Video_VonageSessionLayout_Mutation_Response>;
     /** update single row of the table: "video.VonageSessionLayout" */
     update_video_VonageSessionLayout_by_pk?: Maybe<Video_VonageSessionLayout>;
+    /** update data of the table: "video.VonageVideoPlaybackCommand" */
+    update_video_VonageVideoPlaybackCommand?: Maybe<Video_VonageVideoPlaybackCommand_Mutation_Response>;
+    /** update single row of the table: "video.VonageVideoPlaybackCommand" */
+    update_video_VonageVideoPlaybackCommand_by_pk?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** update data of the table: "video.YouTubeUpload" */
     update_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** update single row of the table: "video.YouTubeUpload" */
@@ -15773,6 +15785,16 @@ export type Mutation_RootDelete_Video_VonageSessionLayoutArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Video_VonageSessionLayout_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageVideoPlaybackCommandArgs = {
+    where: Video_VonageVideoPlaybackCommand_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageVideoPlaybackCommand_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -16906,6 +16928,18 @@ export type Mutation_RootInsert_Video_VonageSessionLayoutArgs = {
 export type Mutation_RootInsert_Video_VonageSessionLayout_OneArgs = {
     object: Video_VonageSessionLayout_Insert_Input;
     on_conflict?: InputMaybe<Video_VonageSessionLayout_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_VonageVideoPlaybackCommandArgs = {
+    objects: Array<Video_VonageVideoPlaybackCommand_Insert_Input>;
+    on_conflict?: InputMaybe<Video_VonageVideoPlaybackCommand_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_VonageVideoPlaybackCommand_OneArgs = {
+    object: Video_VonageVideoPlaybackCommand_Insert_Input;
+    on_conflict?: InputMaybe<Video_VonageVideoPlaybackCommand_On_Conflict>;
 };
 
 /** mutation root */
@@ -18350,6 +18384,28 @@ export type Mutation_RootUpdate_Video_VonageSessionLayout_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Video_VonageVideoPlaybackCommandArgs = {
+    _append?: InputMaybe<Video_VonageVideoPlaybackCommand_Append_Input>;
+    _delete_at_path?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_Key_Input>;
+    _prepend?: InputMaybe<Video_VonageVideoPlaybackCommand_Prepend_Input>;
+    _set?: InputMaybe<Video_VonageVideoPlaybackCommand_Set_Input>;
+    where: Video_VonageVideoPlaybackCommand_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_VonageVideoPlaybackCommand_By_PkArgs = {
+    _append?: InputMaybe<Video_VonageVideoPlaybackCommand_Append_Input>;
+    _delete_at_path?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Video_VonageVideoPlaybackCommand_Delete_Key_Input>;
+    _prepend?: InputMaybe<Video_VonageVideoPlaybackCommand_Prepend_Input>;
+    _set?: InputMaybe<Video_VonageVideoPlaybackCommand_Set_Input>;
+    pk_columns: Video_VonageVideoPlaybackCommand_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Video_YouTubeUploadArgs = {
     _set?: InputMaybe<Video_YouTubeUpload_Set_Input>;
     where: Video_YouTubeUpload_Bool_Exp;
@@ -19004,6 +19060,12 @@ export type Query_Root = {
     video_VonageSessionLayout_aggregate: Video_VonageSessionLayout_Aggregate;
     /** fetch data from the table: "video.VonageSessionLayout" using primary key columns */
     video_VonageSessionLayout_by_pk?: Maybe<Video_VonageSessionLayout>;
+    /** fetch data from the table: "video.VonageVideoPlaybackCommand" */
+    video_VonageVideoPlaybackCommand: Array<Video_VonageVideoPlaybackCommand>;
+    /** fetch aggregated fields from the table: "video.VonageVideoPlaybackCommand" */
+    video_VonageVideoPlaybackCommand_aggregate: Video_VonageVideoPlaybackCommand_Aggregate;
+    /** fetch data from the table: "video.VonageVideoPlaybackCommand" using primary key columns */
+    video_VonageVideoPlaybackCommand_by_pk?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** fetch data from the table: "video.YouTubeUpload" */
     video_YouTubeUpload: Array<Video_YouTubeUpload>;
     /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -21032,6 +21094,26 @@ export type Query_RootVideo_VonageSessionLayout_AggregateArgs = {
 };
 
 export type Query_RootVideo_VonageSessionLayout_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootVideo_VonageVideoPlaybackCommandArgs = {
+    distinct_on?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Order_By>>;
+    where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+export type Query_RootVideo_VonageVideoPlaybackCommand_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Order_By>>;
+    where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+export type Query_RootVideo_VonageVideoPlaybackCommand_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -29265,6 +29347,12 @@ export type Subscription_Root = {
     video_VonageSessionLayout_aggregate: Video_VonageSessionLayout_Aggregate;
     /** fetch data from the table: "video.VonageSessionLayout" using primary key columns */
     video_VonageSessionLayout_by_pk?: Maybe<Video_VonageSessionLayout>;
+    /** fetch data from the table: "video.VonageVideoPlaybackCommand" */
+    video_VonageVideoPlaybackCommand: Array<Video_VonageVideoPlaybackCommand>;
+    /** fetch aggregated fields from the table: "video.VonageVideoPlaybackCommand" */
+    video_VonageVideoPlaybackCommand_aggregate: Video_VonageVideoPlaybackCommand_Aggregate;
+    /** fetch data from the table: "video.VonageVideoPlaybackCommand" using primary key columns */
+    video_VonageVideoPlaybackCommand_by_pk?: Maybe<Video_VonageVideoPlaybackCommand>;
     /** fetch data from the table: "video.YouTubeUpload" */
     video_YouTubeUpload: Array<Video_YouTubeUpload>;
     /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -31284,6 +31372,26 @@ export type Subscription_RootVideo_VonageSessionLayout_AggregateArgs = {
 };
 
 export type Subscription_RootVideo_VonageSessionLayout_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootVideo_VonageVideoPlaybackCommandArgs = {
+    distinct_on?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Order_By>>;
+    where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_VonageVideoPlaybackCommand_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Order_By>>;
+    where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_VonageVideoPlaybackCommand_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -35354,6 +35462,257 @@ export enum Video_VonageSessionLayout_Update_Column {
     Id = "id",
     /** column name */
     LayoutData = "layoutData",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    VonageSessionId = "vonageSessionId",
+}
+
+/** columns and relationships of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand = {
+    __typename?: "video_VonageVideoPlaybackCommand";
+    command: Scalars["jsonb"];
+    /** An object relationship */
+    conference: Conference_Conference;
+    conferenceId: Scalars["uuid"];
+    createdByRegistrantId?: Maybe<Scalars["uuid"]>;
+    created_at: Scalars["timestamptz"];
+    /** An object relationship */
+    eventVonageSession?: Maybe<Video_EventVonageSession>;
+    id: Scalars["uuid"];
+    /** An object relationship */
+    registrant?: Maybe<Registrant_Registrant>;
+    /** An array relationship */
+    rooms: Array<Room_Room>;
+    /** An aggregate relationship */
+    rooms_aggregate: Room_Room_Aggregate;
+    /** An object relationship */
+    subconference: Conference_Subconference;
+    subconferenceId: Scalars["uuid"];
+    updated_at: Scalars["timestamptz"];
+    vonageSessionId: Scalars["String"];
+};
+
+/** columns and relationships of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommandCommandArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommandRoomsArgs = {
+    distinct_on?: InputMaybe<Array<Room_Room_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Room_Room_Order_By>>;
+    where?: InputMaybe<Room_Room_Bool_Exp>;
+};
+
+/** columns and relationships of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommandRooms_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Room_Room_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Room_Room_Order_By>>;
+    where?: InputMaybe<Room_Room_Bool_Exp>;
+};
+
+/** aggregated selection of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Aggregate = {
+    __typename?: "video_VonageVideoPlaybackCommand_aggregate";
+    aggregate?: Maybe<Video_VonageVideoPlaybackCommand_Aggregate_Fields>;
+    nodes: Array<Video_VonageVideoPlaybackCommand>;
+};
+
+/** aggregate fields of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Aggregate_Fields = {
+    __typename?: "video_VonageVideoPlaybackCommand_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Video_VonageVideoPlaybackCommand_Max_Fields>;
+    min?: Maybe<Video_VonageVideoPlaybackCommand_Min_Fields>;
+};
+
+/** aggregate fields of "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Video_VonageVideoPlaybackCommand_Append_Input = {
+    command?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** Boolean expression to filter rows from the table "video.VonageVideoPlaybackCommand". All fields are combined with a logical 'AND'. */
+export type Video_VonageVideoPlaybackCommand_Bool_Exp = {
+    _and?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Bool_Exp>>;
+    _not?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+    _or?: InputMaybe<Array<Video_VonageVideoPlaybackCommand_Bool_Exp>>;
+    command?: InputMaybe<Jsonb_Comparison_Exp>;
+    conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    createdByRegistrantId?: InputMaybe<Uuid_Comparison_Exp>;
+    created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    eventVonageSession?: InputMaybe<Video_EventVonageSession_Bool_Exp>;
+    id?: InputMaybe<Uuid_Comparison_Exp>;
+    registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    rooms?: InputMaybe<Room_Room_Bool_Exp>;
+    subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
+    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    vonageSessionId?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.VonageVideoPlaybackCommand" */
+export enum Video_VonageVideoPlaybackCommand_Constraint {
+    /** unique or primary key constraint */
+    VonageVideoPlaybackCommandPkey = "VonageVideoPlaybackCommand_pkey",
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Video_VonageVideoPlaybackCommand_Delete_At_Path_Input = {
+    command?: InputMaybe<Array<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Video_VonageVideoPlaybackCommand_Delete_Elem_Input = {
+    command?: InputMaybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Video_VonageVideoPlaybackCommand_Delete_Key_Input = {
+    command?: InputMaybe<Scalars["String"]>;
+};
+
+/** input type for inserting data into table "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Insert_Input = {
+    command?: InputMaybe<Scalars["jsonb"]>;
+    conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    createdByRegistrantId?: InputMaybe<Scalars["uuid"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    eventVonageSession?: InputMaybe<Video_EventVonageSession_Obj_Rel_Insert_Input>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
+    subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    vonageSessionId?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Video_VonageVideoPlaybackCommand_Max_Fields = {
+    __typename?: "video_VonageVideoPlaybackCommand_max_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    createdByRegistrantId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    vonageSessionId?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate min on columns */
+export type Video_VonageVideoPlaybackCommand_Min_Fields = {
+    __typename?: "video_VonageVideoPlaybackCommand_min_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    createdByRegistrantId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    vonageSessionId?: Maybe<Scalars["String"]>;
+};
+
+/** response of any mutation on the table "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Mutation_Response = {
+    __typename?: "video_VonageVideoPlaybackCommand_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Video_VonageVideoPlaybackCommand>;
+};
+
+/** on conflict condition type for table "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_On_Conflict = {
+    constraint: Video_VonageVideoPlaybackCommand_Constraint;
+    update_columns?: Array<Video_VonageVideoPlaybackCommand_Update_Column>;
+    where?: InputMaybe<Video_VonageVideoPlaybackCommand_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.VonageVideoPlaybackCommand". */
+export type Video_VonageVideoPlaybackCommand_Order_By = {
+    command?: InputMaybe<Order_By>;
+    conference?: InputMaybe<Conference_Conference_Order_By>;
+    conferenceId?: InputMaybe<Order_By>;
+    createdByRegistrantId?: InputMaybe<Order_By>;
+    created_at?: InputMaybe<Order_By>;
+    eventVonageSession?: InputMaybe<Video_EventVonageSession_Order_By>;
+    id?: InputMaybe<Order_By>;
+    registrant?: InputMaybe<Registrant_Registrant_Order_By>;
+    rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
+    subconference?: InputMaybe<Conference_Subconference_Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+    vonageSessionId?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: video_VonageVideoPlaybackCommand */
+export type Video_VonageVideoPlaybackCommand_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Video_VonageVideoPlaybackCommand_Prepend_Input = {
+    command?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "video.VonageVideoPlaybackCommand" */
+export enum Video_VonageVideoPlaybackCommand_Select_Column {
+    /** column name */
+    Command = "command",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedByRegistrantId = "createdByRegistrantId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    VonageSessionId = "vonageSessionId",
+}
+
+/** input type for updating data in table "video.VonageVideoPlaybackCommand" */
+export type Video_VonageVideoPlaybackCommand_Set_Input = {
+    command?: InputMaybe<Scalars["jsonb"]>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    createdByRegistrantId?: InputMaybe<Scalars["uuid"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    vonageSessionId?: InputMaybe<Scalars["String"]>;
+};
+
+/** update columns of table "video.VonageVideoPlaybackCommand" */
+export enum Video_VonageVideoPlaybackCommand_Update_Column {
+    /** column name */
+    Command = "command",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedByRegistrantId = "createdByRegistrantId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
     /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */

@@ -1,7 +1,8 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
-import type { GetUploadAgreementOutput, submitElementArgs, updateSubtitlesArgs } from "@midspace/hasura/actionTypes";
-import type { ElementData, Payload } from "@midspace/hasura/event";
+import type { GetUploadAgreementOutput, submitElementArgs, updateSubtitlesArgs } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { ElementData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
@@ -17,7 +18,7 @@ router.use(checkEventSecret);
 
 router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<ElementData>>(req.body);
+        assertType<EventPayload<ElementData>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");

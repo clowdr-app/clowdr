@@ -1,11 +1,22 @@
-import { IconButton, Menu, MenuButton, MenuItem, MenuList, Portal } from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
+import {
+    IconButton,
+    Menu,
+    MenuButton,
+    MenuDivider,
+    MenuGroup,
+    MenuItem,
+    MenuList,
+    Portal,
+    Tooltip,
+} from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { gql } from "urql";
 import { useGetEventVideosQuery, useGetRoomVideosQuery } from "../../../../../../generated/graphql";
 import FAIcon from "../../../../../Chakra/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeCompare";
-import { useVonageGlobalState } from "../VonageGlobalStateProvider";
+import { VonageVideoPlaybackContext } from "../VideoPlayback/VonageVideoPlaybackContext";
 
 gql`
     query GetEventVideos($eventId: uuid!) {
@@ -68,7 +79,7 @@ export default function PlayVideoMenuButton({
     roomId: string | undefined;
     eventId: string | undefined;
 }): JSX.Element {
-    const vonage = useVonageGlobalState();
+    const { sendCommand, latestCommand } = useContext(VonageVideoPlaybackContext);
     const [eventResponse] = useGetEventVideosQuery({
         variables: {
             eventId,
@@ -81,95 +92,147 @@ export default function PlayVideoMenuButton({
         },
         pause: !roomId,
     });
-    const { videoElementIds, videoElementMenuItems } = useMemo(() => {
-        const ids: string[] = [];
-        const videoElementMenuItems: JSX.Element[] = [];
 
-        if (eventResponse.data?.schedule_Event_by_pk) {
-            if (eventResponse.data.schedule_Event_by_pk.item) {
-                const item = eventResponse.data.schedule_Event_by_pk.item;
-                for (const element of item.elements) {
-                    ids.push(element.id);
-                    videoElementMenuItems.push(
+    const eventMenuItems = useMemo(() => {
+        const item = eventResponse.data?.schedule_Event_by_pk?.item;
+
+        return (
+            item?.elements.map((element) => (
+                <MenuItem
+                    key={element.id}
+                    onClick={() => {
+                        sendCommand({
+                            type: "video",
+                            currentTimeSeconds: 0,
+                            elementId: element.id,
+                            playing: true,
+                            volume: 1,
+                        });
+                    }}
+                >
+                    {item.title}: {element.name}
+                </MenuItem>
+            )) ?? []
+        );
+    }, [eventResponse.data?.schedule_Event_by_pk?.item, sendCommand]);
+
+    const exhibitionMenuItems = useMemo(() => {
+        const exhibitionItems = R.sort(
+            (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
+            eventResponse?.data?.schedule_Event_by_pk?.exhibition?.items ?? []
+        );
+
+        return exhibitionItems
+            .filter((item) => item.item.id !== item.id)
+            .flatMap((item) =>
+                item.item.elements.map((element) => (
+                    <MenuItem
+                        key={element.id}
+                        onClick={() => {
+                            sendCommand({
+                                type: "video",
+                                currentTimeSeconds: 0,
+                                elementId: element.id,
+                                playing: true,
+                                volume: 1,
+                            });
+                        }}
+                    >
+                        {item.item.title}: {element.name}
+                    </MenuItem>
+                ))
+            );
+    }, [eventResponse?.data?.schedule_Event_by_pk?.exhibition?.items, sendCommand]);
+
+    const roomItemMenuItems = useMemo(() => {
+        const roomItem = roomResponse.data?.room_Room_by_pk?.item;
+
+        return roomItem
+            ? roomItem.elements.map((element) => (
+                  <MenuItem
+                      key={element.id}
+                      onClick={() => {
+                          sendCommand({
+                              type: "video",
+                              currentTimeSeconds: 0,
+                              elementId: element.id,
+                              playing: true,
+                              volume: 1,
+                          });
+                      }}
+                  >
+                      {roomItem.title}: {element.name}
+                  </MenuItem>
+              ))
+            : [];
+    }, [roomResponse.data?.room_Room_by_pk?.item, sendCommand]);
+
+    const menuItems = useMemo(() => {
+        const currentlyPlaying = latestCommand?.command?.type === "video";
+        const anythingAvailable =
+            currentlyPlaying || eventMenuItems.length || exhibitionMenuItems.length || roomItemMenuItems.length;
+        return anythingAvailable ? (
+            <>
+                {latestCommand?.command?.type === "video" ? (
+                    <>
                         <MenuItem
-                            key={element.id}
-                            onClick={() => {
-                                vonage.startPlayingVideo(element.id);
-                            }}
+                            key="stop"
+                            onClick={() =>
+                                sendCommand({
+                                    type: "no-video",
+                                })
+                            }
+                            icon={<CloseIcon />}
                         >
-                            {item.title}: {element.name}
+                            Stop video
                         </MenuItem>
-                    );
-                }
-            }
-
-            if (eventResponse.data.schedule_Event_by_pk.exhibition) {
-                const items = R.sort(
-                    (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
-                    eventResponse.data.schedule_Event_by_pk.exhibition.items
-                );
-                for (const { item } of items) {
-                    if (item.id !== eventResponse.data.schedule_Event_by_pk.item?.id) {
-                        for (const element of item.elements) {
-                            ids.push(element.id);
-                            videoElementMenuItems.push(
-                                <MenuItem
-                                    key={element.id}
-                                    onClick={() => {
-                                        vonage.startPlayingVideo(element.id);
-                                    }}
-                                >
-                                    {item.title}: {element.name}
-                                </MenuItem>
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        if (roomResponse.data?.room_Room_by_pk) {
-            if (roomResponse.data.room_Room_by_pk.item) {
-                const item = roomResponse.data.room_Room_by_pk.item;
-                for (const element of item.elements) {
-                    ids.push(element.id);
-                    videoElementMenuItems.push(
-                        <MenuItem
-                            key={element.id}
-                            onClick={() => {
-                                vonage.startPlayingVideo(element.id);
-                            }}
-                        >
-                            {item.title}: {element.name}
-                        </MenuItem>
-                    );
-                }
-            }
-        }
-
-        return {
-            videoElementIds: ids,
-            videoElementMenuItems,
-        };
-    }, [eventResponse.data?.schedule_Event_by_pk, roomResponse.data?.room_Room_by_pk, vonage]);
+                        <MenuDivider />
+                    </>
+                ) : undefined}
+                {R.intersperse(<MenuDivider />, [
+                    ...(eventMenuItems.length
+                        ? [
+                              <MenuGroup key="Event videos" title="Event videos">
+                                  {eventMenuItems}
+                              </MenuGroup>,
+                          ]
+                        : []),
+                    ...(exhibitionMenuItems.length
+                        ? [
+                              <MenuGroup key="Exhibition videos" title="Exhibition videos">
+                                  {exhibitionMenuItems}
+                              </MenuGroup>,
+                          ]
+                        : []),
+                    ...(roomItemMenuItems.length
+                        ? [
+                              <MenuGroup key="Room videos" title="Room videos">
+                                  {roomItemMenuItems}
+                              </MenuGroup>,
+                          ]
+                        : []),
+                ])}
+            </>
+        ) : (
+            <MenuItem isDisabled={true}>No videos available</MenuItem>
+        );
+    }, [latestCommand?.command.type, eventMenuItems, exhibitionMenuItems, roomItemMenuItems, sendCommand]);
 
     return (
         <Menu>
-            <MenuButton
-                as={IconButton}
-                size="sm"
-                colorScheme="RoomControlBarButton"
-                onClick={() => {
-                    // TODO
-                }}
-                isLoading={eventResponse.fetching}
-                isDisabled={!videoElementIds.length}
-                icon={<FAIcon iconStyle="s" icon="play-circle" />}
-                aria-label="Play video"
-            />
+            <Tooltip label="Play a video">
+                <MenuButton
+                    as={IconButton}
+                    size="sm"
+                    colorScheme="RoomControlBarButton"
+                    isLoading={eventResponse.fetching}
+                    icon={<FAIcon iconStyle="s" icon="play-circle" />}
+                    aria-label="Play video"
+                />
+            </Tooltip>
             <Portal>
                 <MenuList zIndex="1000000" overflow="auto" maxH="50vh" maxW="50vh">
-                    {videoElementMenuItems?.length ? videoElementMenuItems : <MenuItem>No videos available</MenuItem>}
+                    {menuItems}
                 </MenuList>
             </Portal>
         </Menu>

@@ -1,5 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
-import type { ConferencePrepareJobData, Payload } from "@midspace/hasura/event";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { ConferencePrepareJobData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -13,14 +14,14 @@ router.use(checkEventSecret);
 
 router.post("/inserted", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<ConferencePrepareJobData>>(req.body);
+        assertType<EventPayload<ConferencePrepareJobData>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
 
-    const params: Payload<ConferencePrepareJobData> = req.body;
+    const params: EventPayload<ConferencePrepareJobData> = req.body;
     handleConferencePrepareJobInserted(req.log, params)
         .then(() => {
             req.log.info({ id: params.id }, "Finished handling new ConferencePrepareJob");

@@ -97,4 +97,5 @@
 - "!include video_VonageParticipantStream.yaml"
 - "!include video_VonageRoomRecording.yaml"
 - "!include video_VonageSessionLayout.yaml"
+- "!include video_VonageVideoPlaybackCommand.yaml"
 - "!include video_YouTubeUpload.yaml"

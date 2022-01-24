@@ -1,8 +1,9 @@
 import { createStandaloneToast, useToast } from "@chakra-ui/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { theme } from "../../../../Chakra/ChakraCustomProvider";
 import { useNavigationState } from "../../../../Menu/NavigationState";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
+import { VonageVideoPlaybackContext } from "./VideoPlayback/VonageVideoPlaybackContext";
 import type { TranscriptData, VonageGlobalState } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
@@ -18,7 +19,6 @@ export function useVonageComputedState({
     onRecordingStarted,
     onRecordingStopped,
     onRecordingIdReceived,
-    onPlayVideoReceived,
     onTranscript,
     beginJoin,
     cancelJoin,
@@ -32,7 +32,6 @@ export function useVonageComputedState({
     onRecordingStarted?: () => void;
     onRecordingStopped?: () => void;
     onRecordingIdReceived?: (recordingId: string) => void;
-    onPlayVideoReceived?: (elementId: string) => void;
     onTranscript?: (data: TranscriptData) => void;
     beginJoin?: () => void;
     cancelJoin?: () => void;
@@ -54,6 +53,7 @@ export function useVonageComputedState({
     const vonage = useVonageGlobalState();
     const { dispatch } = useVonageRoom();
     const layout = useVonageLayout();
+    const videoPlayback = useContext(VonageVideoPlaybackContext);
 
     const [connected, setConnected] = useState<boolean>(false);
     const [streams, setStreams] = useState<OT.Stream[]>([]);
@@ -176,16 +176,16 @@ export function useVonageComputedState({
             }
 
             try {
-                await vonage.initialiseState(
-                    getAccessToken,
-                    vonageSessionId,
-                    (streams) => {
+                await vonage.initialiseState({
+                    getToken: getAccessToken,
+                    sessionId: vonageSessionId,
+                    onStreamsChanged: (streams) => {
                         setStreams(streams);
                     },
-                    (connections) => {
+                    onConnectionsChanged: (connections) => {
                         setConnections(connections);
                     },
-                    (isConnected: boolean) => {
+                    onSessionConnected: (isConnected: boolean) => {
                         navState.setDisabled(isConnected);
                         if (!isConnected) {
                             setConnected(false);
@@ -200,22 +200,22 @@ export function useVonageComputedState({
                             setConnected(true);
                         }
                     },
-                    (reason) => {
+                    onCameraStreamDestroyed: (reason) => {
                         onCameraStreamDestroyed(reason);
                     },
-                    (reason) => {
+                    onScreenStreamDestroyed: (reason) => {
                         setScreen(vonage.state.type === StateType.Connected ? vonage.state.screen : null);
                         onScreenStreamDestroyed(reason);
                     },
-                    () => {
+                    onCameraStreamCreated: () => {
                         setCamera(
                             vonage.state.type === StateType.Connected ? vonage.state.camera?.publisher ?? null : null
                         );
                     },
-                    () => {
+                    onScreenStreamCreated: () => {
                         setScreen(vonage.state.type === StateType.Connected ? vonage.state.screen : null);
                     },
-                    () => {
+                    onMuteForced: () => {
                         standaloneToast({
                             title: "Muted",
                             description: "You have been muted by a moderator.",
@@ -225,28 +225,29 @@ export function useVonageComputedState({
                             position: "top",
                         });
                     },
-                    () => {
+                    onRecordingStarted: () => {
                         onRecordingStarted?.();
                     },
-                    () => {
+                    onRecordingStopped: () => {
                         onRecordingStopped?.();
                     },
-                    (recordingId) => {
+                    onRecordingIdReceived: (recordingId) => {
                         onRecordingIdReceived?.(recordingId);
                     },
-                    (layoutData) => {
+                    onLayoutReceived: (layoutData) => {
                         layout?.updateLayout((old) =>
                             !old || old.createdAt < layoutData.createdAt ? layoutData : old
                         );
                     },
-                    (elementId) => {
-                        onPlayVideoReceived?.(elementId);
+                    onVideoPlaybackSignalReceived: (command) => {
+                        videoPlayback.receivedCommand(command);
                     },
-                    onTranscript ??
+                    onTranscript:
+                        onTranscript ??
                         (() => {
                             /* Do nothing */
-                        })
-                );
+                        }),
+                });
             } catch (e) {
                 console.warn("Failed to initialise session", e);
             }

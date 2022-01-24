@@ -1,5 +1,6 @@
 import { keyframes, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
+import { FormattedMessage } from "react-intl";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { defaultOutline_AsBoxShadow } from "../../../Chakra/Outline";
 import { useRealTime } from "../../../Generic/useRealTime";
@@ -76,11 +77,20 @@ export default function JoinZoomButton({
             <FAIcon iconStyle="s" icon="link" ml="auto" mr={4} />
             {secondsTillStartStr ? (
                 <>
-                    Starts in {secondsTillStartStr}
+                    <FormattedMessage
+                        id="Conference.Attend.Room.JoinZoomButton.StartsIn"
+                        defaultMessage="Starts in {seconds}"
+                        values={{
+                            seconds: secondsTillStartStr
+                        }}
+                    />
                     <br />
                 </>
             ) : undefined}
-            Click to join {zoomUrl.name}
+            <FormattedMessage
+                id="Conference.Attend.Room.JoinZoomButton.ClickToJoin"
+                defaultMessage="Click to join"
+            />{" "}{zoomUrl.name}
             <FAIcon iconStyle="s" icon="mouse-pointer" ml={4} />
         </ExternalLinkButton>
     );

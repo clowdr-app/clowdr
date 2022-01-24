@@ -3,6 +3,7 @@ import { Divider, Spinner } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { useRoomSponsorContent_GetElementsQuery } from "../../../../../generated/graphql";
 import ElementsGridLayout from "../../Content/Element/ElementsGridLayout";
+import { FormattedMessage } from "react-intl";
 
 gql`
     query RoomSponsorContent_GetElements($itemId: uuid!) {
@@ -42,7 +43,13 @@ export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element 
     return (
         <>
             <Divider mb={6} />
-            {loading ? <Spinner /> : error ? <>An error occurred loading in data.</> : undefined}
+            {loading ? <Spinner /> : error ? <>
+                <FormattedMessage
+                    id="Conference.Attend.Room.Sponsor.RoomSponsorContent.Error"
+                    defaultMessage="An error occurred loading in data."
+                />
+                
+            </> : undefined}
             <ElementsGridLayout elements={elements} />
         </>
     );

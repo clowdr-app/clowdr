@@ -31,6 +31,7 @@ import { useRealTime } from "../../../../../Generic/useRealTime";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { formatRemainingTime } from "../../formatRemainingTime";
 import StreamPreview from "./StreamPreview";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query LiveIndicator_GetLatest($eventId: uuid!) {
@@ -171,14 +172,24 @@ export function LiveIndicator({
                 return (
                     <>
                         <FAIcon icon="question-circle" iconStyle="s" fontSize="lg" />
-                        <Text>Uncertain input</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.Controls.LiveIndicator.UncertainInput"
+                                defaultMessage="Uncertain input"
+                            />
+                        </Text>
                     </>
                 );
             case "filler":
                 return (
                     <>
                         <FAIcon icon="play" iconStyle="s" fontSize="lg" />
-                        <Text>Filler video</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.Controls.LiveIndicator.FillerVideo"
+                                defaultMessage="Filler video"
+                            />
+                        </Text>
                     </>
                 );
             case "rtmp_push":
@@ -186,8 +197,21 @@ export function LiveIndicator({
                     <>
                         <FAIcon icon="broadcast-tower" iconStyle="s" fontSize="lg" />
                         <VStack>
-                            <Text fontSize={!isConnected ? "xs" : undefined}>Backstage is live</Text>
-                            {!isConnected ? <Text>You are not connected</Text> : undefined}
+                            <Text fontSize={!isConnected ? "xs" : undefined}>
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Stream.Controls.LiveIndicator.BackstageIsLive"
+                                    defaultMessage="Backstage is live"
+                                />
+                            </Text>
+                            {!isConnected
+                                ?
+                                    <Text>
+                                        <FormattedMessage
+                                            id="Conference.Attend.Room.Stream.Controls.LiveIndicator.YoureNotConnected"
+                                            defaultMessage="You are not connected"
+                                        />
+                                    </Text>
+                                : undefined}
                         </VStack>
                     </>
                 );
@@ -195,7 +219,12 @@ export function LiveIndicator({
                 return (
                     <>
                         <FAIcon icon="play" iconStyle="s" fontSize="lg" />
-                        <Text>Video</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.Controls.LiveIndicator.Video"
+                                defaultMessage="Video"
+                            />
+                        </Text>
                     </>
                 );
             case "video_unknown_duration":
@@ -204,12 +233,23 @@ export function LiveIndicator({
                         <VStack>
                             <HStack>
                                 <FAIcon icon="play" iconStyle="s" fontSize="lg" />
-                                <Text>Video or live</Text>
+                                <Text>
+                                    <FormattedMessage
+                                        id="Conference.Attend.Room.Stream.Controls.LiveIndicator.VideoOrLive"
+                                        defaultMessage="Video or live"
+                                    />
+                                </Text>
                             </HStack>
                             <Text fontSize="xs" textTransform="none">
-                                Video duration unknown (not prepared for broadcast);
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Stream.Controls.LiveIndicator.VideoDurationUnknown"
+                                    defaultMessage="Video duration unknown (not prepared for broadcast);"
+                                />
                                 <br />
-                                the backstage may be live again.
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Stream.Controls.LiveIndicator.BackstageMayBeLive"
+                                    defaultMessage="the backstage may be live again."
+                                />
                             </Text>
                         </VStack>
                     </>
@@ -218,7 +258,12 @@ export function LiveIndicator({
                 return (
                     <>
                         <FAIcon icon="play" iconStyle="s" fontSize="lg" />
-                        <Text>Video (ending soon)</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.Controls.LiveIndicator.VideoEnding"
+                                defaultMessage="Video (ending soon)"
+                            />
+                        </Text>
                     </>
                 );
         }
@@ -231,38 +276,68 @@ export function LiveIndicator({
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>
-                        You will be live the moment the indicator says &ldquo;Backstage is live&rdquo;.
+                        <FormattedMessage
+                            id="Conference.Attend.Room.Stream.Controls.LiveIndicator.YoullBeLive"
+                            defaultMessage='You will be live the moment the indicator says "Backstage is live".'
+                        />
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <VStack alignItems="left" spacing={6}>
                             <VStack alignItems="left" spacing={1}>
-                                <Text fontWeight="bold">The audience sees the stream with a bit of delay.</Text>
+                                <Text fontWeight="bold">
+                                    <FormattedMessage
+                                        id='Conference.Attend.Room.Stream.Controls.LiveIndicator.AudienceSeesDelay'
+                                        defaultMessage='The audience sees the stream with a bit of delay.'
+                                    />
+                                </Text>
                                 <Text>
-                                    This is normally 5-30 seconds depending on where they are in the world. Don&apos;t
-                                    wait for the audience to tell you they can see you - or they will see you sitting
-                                    there silently for up to thirty seconds!
+                                    <FormattedMessage
+                                        id='Conference.Attend.Room.Stream.Controls.LiveIndicator.DelayNotice'
+                                        defaultMessage="This is normally 5-30 seconds depending on where they are in the world. Don't
+                                        wait for the audience to tell you they can see you - or they will see you sitting
+                                        there silently for up to thirty seconds!"
+                                    />
                                 </Text>
                             </VStack>
                             <VStack alignItems="left" spacing={1}>
-                                <Text fontWeight="bold">Pay attention to the countdown clock.</Text>
+                                <Text fontWeight="bold">
+                                    <FormattedMessage
+                                        id='Conference.Attend.Room.Stream.Controls.LiveIndicator.PayAttentionClock'
+                                        defaultMessage="Pay attention to the countdown clock."
+                                    />
+                                </Text>
                                 <Text>
-                                    If it says the backstage is live, then you are live in front of the entire
-                                    conference and should start your presentation or Q&amp;A session.
+                                    <FormattedMessage
+                                        id='Conference.Attend.Room.Stream.Controls.LiveIndicator.BackstageLiveMessage'
+                                        defaultMessage='If it says the backstage is live, then you are live in front of the entire
+                                        conference and should start your presentation or Q&A session.'
+                                    />
                                 </Text>
                             </VStack>
                             <VStack alignItems="left" spacing={1}>
-                                <Text fontWeight="bold">Open the chat sidebar now.</Text>
+                                <Text fontWeight="bold">
+                                    <FormattedMessage
+                                        id='Conference.Attend.Room.Stream.Controls.LiveIndicator.OpenChatSidebar'
+                                        defaultMessage='Open the chat sidebar now.'
+                                    />
+                                </Text>
                                 <Text>
-                                    It&apos;s a good idea to have the chat open so that you can read feedback from the
-                                    audience.
+                                    <FormattedMessage
+                                        id='Conference.Attend.Room.Stream.Controls.LiveIndicator.GoodIdeaChatOpen'
+                                        defaultMessage="It's a good idea to have the chat open so that you can read feedback from the
+                                        audience."
+                                    />
                                 </Text>
                             </VStack>
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
                         <Button size="sm" colorScheme="PrimaryActionButton" onClick={onClose}>
-                            Close
+                            <FormattedMessage
+                                id='Conference.Attend.Room.Stream.Controls.LiveIndicator.Close'
+                                defaultMessage='Close'
+                            />
                         </Button>
                     </ModalFooter>
                 </ModalContent>
@@ -286,7 +361,12 @@ export function LiveIndicator({
                         <HStack>{whatIsLiveText}</HStack>
                     </Badge>
                     <Stat fontSize="md" ml="auto" flexGrow={1} textAlign="center" p="2px">
-                        <StatLabel>Time until end</StatLabel>
+                        <StatLabel>
+                            <FormattedMessage
+                                id='Conference.Attend.Room.Stream.Controls.LiveIndicator.TimeUntilEnd'
+                                defaultMessage='Time until end'
+                            />
+                        </StatLabel>
                         <StatNumber>{formatRemainingTime(secondsUntilOffAir)}</StatNumber>
                     </Stat>
                 </>
@@ -314,8 +394,20 @@ export function LiveIndicator({
                                 alignItems="center"
                             >
                                 <VStack>
-                                    <Text fontSize={!isConnected ? "xs" : undefined}>Backstage is off-air</Text>
-                                    {!isConnected ? <Text>You are not connected</Text> : undefined}
+                                    <Text fontSize={!isConnected ? "xs" : undefined}>
+                                        <FormattedMessage
+                                            id='Conference.Attend.Room.Stream.Controls.LiveIndicator.BackstageOffAir'
+                                            defaultMessage='Backstage is off-air'
+                                        />
+                                    </Text>
+                                    {!isConnected
+                                        ? <Text>
+                                                <FormattedMessage
+                                                    id='Conference.Attend.Room.Stream.Controls.LiveIndicator.YoureNotConnected'
+                                                    defaultMessage='You are not connected'
+                                                />
+                                          </Text>
+                                        : undefined}
                                 </VStack>
                             </Badge>
                             {secondsUntilLive < 1200 ? (
@@ -341,7 +433,12 @@ export function LiveIndicator({
                                     flexDir="column"
                                     justifyContent="center"
                                 >
-                                    <StatLabel>Time until start</StatLabel>
+                                    <StatLabel>
+                                        <FormattedMessage
+                                            id='Conference.Attend.Room.Stream.Controls.LiveIndicator.TimeUntilStart'
+                                            defaultMessage='Time until start'
+                                        />
+                                    </StatLabel>
                                     <StatNumber
                                         css={{
                                             fontFeatureSettings: "tnum",
@@ -367,13 +464,21 @@ export function LiveIndicator({
                                     flexShrink={1}
                                     maxW="15ch"
                                 >
-                                    How do I use the backstage?
+                                    <FormattedMessage
+                                        id='Conference.Attend.Room.Stream.Controls.LiveIndicator.HowDoIUse'
+                                        defaultMessage='How do I use the backstage?'
+                                    />
                                 </Button>
                             ) : undefined}
                         </>
                     ) : (
                         <Badge fontSize="lg" colorScheme="SecondaryActionButton" fontWeight="bold" p={4}>
-                            <Text>Backstage is off air</Text>
+                            <Text>
+                                <FormattedMessage
+                                    id='Conference.Attend.Room.Stream.Controls.LiveIndicator.OffTheAir'
+                                    defaultMessage='Backstage is off air'
+                                />
+                            </Text>
                         </Badge>
                     )}
                 </>

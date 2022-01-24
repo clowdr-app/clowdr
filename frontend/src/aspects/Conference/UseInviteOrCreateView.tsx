@@ -2,6 +2,7 @@ import { Heading, Stack, StackDivider, useColorModeValue, VStack } from "@chakra
 import React from "react";
 import InviteCodeInput from "../Users/NewUser/InviteCodeInput";
 import NewConferenceForm from "./NewConferenceForm";
+import { FormattedMessage } from "react-intl";
 
 export default function UseInviteOrCreateView(): JSX.Element {
     const useInviteEl = (
@@ -13,7 +14,10 @@ export default function UseInviteOrCreateView(): JSX.Element {
             spacing={5}
         >
             <Heading as="h1" id="page-heading">
-                Join a conference
+                <FormattedMessage
+                    id="conference.useinviteorcreateview.join"
+                    defaultMessage="Join a conference"
+                />
             </Heading>
             <InviteCodeInput />
             {/* TODO: Show a "Find a (public) conference" button */}
@@ -27,7 +31,12 @@ export default function UseInviteOrCreateView(): JSX.Element {
             alignItems="center"
             spacing={5}
         >
-            <Heading as="h1">Create a conference</Heading>
+            <Heading as="h1">
+                <FormattedMessage
+                    id="conference.useinviteorcreateview.create"
+                    defaultMessage="Create a conference"
+                />
+            </Heading>
             <NewConferenceForm />
         </VStack>
     );

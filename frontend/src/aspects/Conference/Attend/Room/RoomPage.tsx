@@ -8,6 +8,7 @@ import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import Room from "./Room";
+import { useIntl } from "react-intl";
 
 gql`
     query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
@@ -82,6 +83,7 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
 }
 
 function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
+    const intl = useIntl();
     const registrant = useCurrentRegistrant();
     const roomDetailsResponse = useRoomPage_GetRoomDetailsQuery({
         variables: {
@@ -90,7 +92,10 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
         },
     });
     const title = useTitle(
-        roomDetailsResponse.loading ? "Loading room" : roomDetailsResponse.data?.room_Room_by_pk?.name ?? "Unknown room"
+        roomDetailsResponse.loading
+        ? intl.formatMessage({ id: 'conference.attend.room.roompage.loadingroom', defaultMessage: "Loading room" })
+        : roomDetailsResponse.data?.room_Room_by_pk?.name
+        ?? intl.formatMessage({ id: 'conference.attend.room.roompage.unknownroom', defaultMessage: "Unknown room" })
     );
 
     return (

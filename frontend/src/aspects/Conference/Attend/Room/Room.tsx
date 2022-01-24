@@ -47,6 +47,7 @@ import { HlsPlayerV1 } from "./Video/HlsPlayerV1";
 import { VideoAspectWrapper } from "./Video/VideoAspectWrapper";
 import { VideoPlayer } from "./Video/VideoPlayer";
 import { VideoChatRoom } from "./VideoChat/VideoChatRoom";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
@@ -200,6 +201,7 @@ function RoomInner({
     roomEvents: readonly Room_EventSummaryFragment[];
     defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
 }): JSX.Element {
+    const intl = useIntl();
     const currentRegistrant = useCurrentRegistrant();
     const { choice } = useUXChoice();
 
@@ -360,7 +362,7 @@ function RoomInner({
                 status: "warning",
                 position: "top",
                 isClosable: true,
-                title: "You are a presenter of the next event",
+                title: intl.formatMessage({ id: 'conference.attend.room.room.youreapresenter', defaultMessage: "You are a presenter of the next event" }),
                 description: (
                     <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="PrimaryActionButton" mt={2}>
                         Go to the backstage
@@ -651,7 +653,12 @@ function RoomInner({
                                 borderRadius="lg"
                             >
                                 <VStack>
-                                    <Text fontSize="2xl">Select a video below</Text>
+                                    <Text fontSize="2xl">
+                                        <FormattedMessage
+                                            id="conference.attend.room.room.selectavideo"
+                                            defaultMessage="Select a video below"
+                                        />
+                                    </Text>
                                     <FAIcon icon="hand-point-down" aria-hidden="true" iconStyle="r" fontSize="6xl" />
                                 </VStack>
                             </AspectRatio>

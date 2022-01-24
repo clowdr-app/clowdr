@@ -1,6 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, MenuItem } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useLocation } from "react-router-dom";
 import MenuButton from "../../Menu/V2/MenuButton";
 
@@ -23,6 +24,7 @@ export default function LoginButton({
     showLabel?: boolean;
     colorScheme?: string;
 }): JSX.Element {
+    const intl = useIntl();
     const { loginWithRedirect } = useAuth0();
     const location = useLocation();
 
@@ -37,7 +39,7 @@ export default function LoginButton({
 
     return asMenuButtonV2 ? (
         <MenuButton
-            label="Login"
+            label={intl.formatMessage({ id: 'auth.buttons.loginbutton.login', defaultMessage: "Log In" })}
             iconStyle="s"
             icon="sign-in-alt"
             borderRadius={0}
@@ -53,7 +55,10 @@ export default function LoginButton({
             onClick={() => loginWithRedirect(opts)}
             colorScheme={colorScheme ?? "RightMenuButton"}
         >
-            Log In
+            <FormattedMessage
+                id="auth.buttons.loginbutton.login"
+                defaultMessage="Log In"
+            />
         </MenuItem>
     ) : (
         <Button
@@ -62,7 +67,10 @@ export default function LoginButton({
             onClick={() => loginWithRedirect(opts)}
             colorScheme={colorScheme ?? "LoginButtonWithinPage"}
         >
-            Log In
+            <FormattedMessage
+                id="auth.buttons.loginbutton.login"
+                defaultMessage="Log In"
+            />
         </Button>
     );
 }

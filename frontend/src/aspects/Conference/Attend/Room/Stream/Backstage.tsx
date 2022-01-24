@@ -19,6 +19,7 @@ import { useRealTime } from "../../../../Generic/useRealTime";
 import StreamTextCaptions from "../StreamTextCaptions";
 import { isEventNow, isEventSoon } from "./isEventAt";
 import { VonageBackstage } from "./VonageBackstage";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function Backstage({
     event,
@@ -35,6 +36,7 @@ export default function Backstage({
     onLeave?: () => void;
     hlsUri: string | undefined;
 }): JSX.Element {
+    const intl = useIntl();
     const offAirColor = useColorModeValue("Backstage.offAirBorderColor-light", "Backstage.offAirBorderColor-dark");
     const offAirBorderColour = useToken("colors", offAirColor);
 
@@ -84,10 +86,10 @@ export default function Backstage({
                 >
                     <Text fontSize="lg" whiteSpace="normal">
                         {isSelected
-                            ? "Exit this backstage"
+                            ? intl.formatMessage({ id: 'Conference.Attend.Room.Stream.Backstage.Exit', defaultMessage: "Exit this backstage" })
                             : selectedEventId
-                            ? "Switch to this backstage"
-                            : "Show this backstage"}
+                            ? intl.formatMessage({ id: 'Conference.Attend.Room.Stream.Backstage.Switch', defaultMessage: "Switch to this backstage" })
+                            : intl.formatMessage({ id: 'Conference.Attend.Room.Stream.Backstage.Show', defaultMessage: "Show this backstage" })}
                     </Text>
                 </Button>
             </HStack>
@@ -110,7 +112,10 @@ export default function Backstage({
             ) : !isActive ? (
                 <Alert status="warning" mb={8}>
                     <AlertIcon />
-                    This event has now finished. Once you close this backstage, you will not be able to rejoin it.
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Stream.Backstage.EventFinished"
+                        defaultMessage="This event has now finished. Once you close this backstage, you will not be able to rejoin it."
+                    />
                 </Alert>
             ) : undefined,
         [isActive, isNow, isSelected, vonageBackstage, roomChatId, event.streamTextEventId, onAirBorderColour]

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useGoogleOAuth_SubmitGoogleOAuthCodeMutation } from "../../generated/graphql";
 import { useGoogleOAuthRedirectPath } from "./useGoogleOAuthRedirectUrl";
+import { useIntl } from "react-intl";
 
 gql`
     mutation GoogleOAuth_SubmitGoogleOAuthCode($code: String!, $state: String!) {
@@ -15,6 +16,7 @@ gql`
 `;
 
 export function GoogleOAuthRedirect(): JSX.Element {
+    const intl = useIntl();
     const location = useLocation();
     const toast = useToast();
 
@@ -31,8 +33,8 @@ export function GoogleOAuthRedirect(): JSX.Element {
             window.location.href = `/googleoauth2?${updatedSearchParams.toString()}`;
         } else {
             toast({
-                title: "Failed to connect to Google account",
-                description: "Some expected data from Google was missing",
+                title: intl.formatMessage({ id: 'google.googleoauth.failedtoconnect', defaultMessage: "Failed to connect to Google account" }),
+                description: intl.formatMessage({ id: 'google.googleoauth.datamissing', defaultMessage: "Some expected data from Google was missing" }),
                 status: "error",
             });
         }
@@ -44,6 +46,7 @@ export function GoogleOAuthRedirect(): JSX.Element {
 }
 
 export function GoogleOAuth(): JSX.Element {
+    const intl = useIntl();
     const location = useLocation();
 
     const [submit] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation();
@@ -69,7 +72,7 @@ export function GoogleOAuth(): JSX.Element {
                         throw new Error("Failure during authorisation code exchange");
                     }
 
-                    setMessage("Successfully connected to Google Account");
+                    setMessage(intl.formatMessage({ id: 'google.googleoauth.successfullyconnected', defaultMessage: "Successfully connected to Google Account" }));
                     follow();
                 } else {
                     throw new Error("Invalid token returned from Google");

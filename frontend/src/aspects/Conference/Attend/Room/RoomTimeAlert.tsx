@@ -2,6 +2,7 @@ import { Alert, AlertDescription, AlertIcon, chakra, Text, VStack } from "@chakr
 import React from "react";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { formatRemainingTime } from "./formatRemainingTime";
+import { useIntl } from "react-intl";
 
 export default function RoomTimeAlert({
     shuffleEndsAt,
@@ -18,6 +19,7 @@ export default function RoomTimeAlert({
     broadcastStartsAt: number;
     eventIsOngoing: boolean;
 }): JSX.Element {
+    const intl = useIntl();
     const now = useRealTime(1000);
     const secondsUntilShuffleEnds = Math.round(shuffleEndsAt - now) / 1000;
     const secondsUntilVideoChatRoomCloses = Math.round((breakoutRoomClosesAt - now) / 1000);
@@ -35,7 +37,7 @@ export default function RoomTimeAlert({
                 >
                     <AlertIcon />
                     <AlertDescription>
-                        Shuffle room ends in{" "}
+                        {intl.formatMessage({ id: 'Conference.Attend.Room.RoomTimeAlert.ShuffleRoomEndsIn', defaultMessage: "Shuffle room ends in" }) + " "}
                         <chakra.span fontWeight="bold">
                             {formatRemainingTime(secondsUntilShuffleEnds, false)}
                         </chakra.span>
@@ -49,7 +51,7 @@ export default function RoomTimeAlert({
                     <AlertIcon />
                     <AlertDescription as={VStack} w="100%">
                         <Text>
-                            Video-chat closes in{" "}
+                            {intl.formatMessage({ id: 'Conference.Attend.Room.RoomTimeAlert.VideoChatClosesIn', defaultMessage: "Video-chat closes in" }) + " "}
                             <chakra.span fontWeight="bold">
                                 {formatRemainingTime(secondsUntilVideoChatRoomCloses, false)}
                             </chakra.span>
@@ -61,7 +63,7 @@ export default function RoomTimeAlert({
                 <Alert status="info" pos="sticky" top={0} zIndex={1000}>
                     <AlertIcon />
                     <AlertDescription>
-                        Zoom event starting in{" "}
+                        {intl.formatMessage({ id: 'Conference.Attend.Room.RoomTimeAlert.ZoomEventStartingIn', defaultMessage: "Zoom event starting in" }) + " "}
                         <chakra.span fontWeight="bold">{formatRemainingTime(secondsUntilZoomEvent, false)}</chakra.span>
                     </AlertDescription>
                 </Alert>
@@ -70,7 +72,7 @@ export default function RoomTimeAlert({
                 <Alert status="info" pos="sticky" top={0} zIndex={1000}>
                     <AlertIcon />
                     <AlertDescription>
-                        Livestream event starting in{" "}
+                        {intl.formatMessage({ id: 'Conference.Attend.Room.RoomTimeAlert.LivestreamEventStartingIn', defaultMessage: "Livestream event starting in" }) + " "}
                         <chakra.span fontWeight="bold">
                             {formatRemainingTime(secondsUntilBroadcastEvent, false)}
                         </chakra.span>

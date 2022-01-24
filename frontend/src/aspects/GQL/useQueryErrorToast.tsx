@@ -3,6 +3,7 @@ import { Box, useToast } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import FAIcon from "../Icons/FAIcon";
 import { useApolloCustomContext } from "./ApolloCustomProvider";
+import { FormattedMessage, useIntl } from "react-intl";
 
 // let shownJWTIssuedAtFutureReloadWarning = false;
 let errorToastId: string | number | undefined = undefined;
@@ -12,6 +13,7 @@ export default function useQueryErrorToast(
     reconnectOnError: boolean,
     queryName?: string
 ): void {
+    const intl = useIntl();
     const toast = useToast();
     const ctx = useApolloCustomContext();
 
@@ -41,7 +43,7 @@ export default function useQueryErrorToast(
             if (errorToastId === null || errorToastId === undefined) {
                 errorToastId = toast({
                     isClosable: false,
-                    title: "Disconnected",
+                    title: intl.formatMessage({ id: 'gql.usequeryerrortoast.disconnected', defaultMessage: "Disconnected" }),
                     status: "error",
                     description: message,
                     position: "bottom-right",
@@ -68,9 +70,9 @@ export default function useQueryErrorToast(
                         toast({
                             isClosable: false,
                             duration: 3000,
-                            title: "Reconnected",
+                            title: intl.formatMessage({ id: 'gql.usequeryerrortoast.reconnected', defaultMessage: "Reconnected" }),
                             status: "success",
-                            description: "Successfully reconnected to the server.",
+                            description: intl.formatMessage({ id: 'gql.usequeryerrortoast.successfullyreconnected', defaultMessage: "Successfully reconnected to the server." }),
                             position: "bottom-right",
                             render: function QueryError(_props): JSX.Element {
                                 return (

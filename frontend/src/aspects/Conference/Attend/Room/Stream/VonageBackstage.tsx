@@ -11,6 +11,7 @@ import {
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import { BackstageControls } from "./Controls/BackstageControls";
+import { FormattedMessage } from "react-intl";
 
 gql`
     query GetEventDetails($eventId: uuid!) {
@@ -122,7 +123,12 @@ export function EventVonageRoomInner({
                         onLeave={onLeave}
                     />
                 ) : (
-                    <>No room session available.</>
+                    <>
+                        <FormattedMessage
+                            id="Conference.Attend.Room.Stream.VonageBackstage.NoRoomSession"
+                            defaultMessage="No room session available."
+                        />
+                    </>
                 )}
             </Box>
         </VStack>

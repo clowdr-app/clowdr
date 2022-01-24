@@ -18,6 +18,7 @@ import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import type { Registrant } from "../../useCurrentRegistrant";
 import RegistrantsList from "./RegistrantsList";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query SelectRegistrants($conferenceId: uuid!) {
@@ -48,6 +49,7 @@ gql`
 `;
 
 export function AllRegistrantsList(): JSX.Element {
+    const intl = useIntl();
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
@@ -144,19 +146,27 @@ export function AllRegistrantsList(): JSX.Element {
             <FormControl maxW={400}>
                 <InputGroup>
                     <InputLeftAddon as="label" id="registrants-search">
-                        Search
+                        <FormattedMessage
+                            id="Conference.Attend.Registrant.RegistrantListPage.Search"
+                            defaultMessage="Search"
+                        />
                     </InputLeftAddon>
                     <Input
                         aria-labelledby="registrants-search"
                         value={search}
                         onChange={(ev) => setSearch(ev.target.value)}
-                        placeholder="Type to search"
+                        placeholder={intl.formatMessage({ id: 'Conference.Attend.Registrant.RegistrantListPage.TypeToSearch', defaultMessage: "Type to search" })}
                     />
                     <InputRightElement>
                         {loadingSearch ? <Spinner /> : <FAIcon iconStyle="s" icon="search" />}
                     </InputRightElement>
                 </InputGroup>
-                <FormHelperText>Search badges, names, affiliations and bios. (Min length 3)</FormHelperText>
+                <FormHelperText>
+                    <FormattedMessage
+                        id="Conference.Attend.Registrant.RegistrantListPage.SearchThings"
+                        defaultMessage="Search badges, names, affiliations and bios. (Min length 3)"
+                    />
+                </FormHelperText>
             </FormControl>
             <RegistrantsList
                 allRegistrants={registrants ?? undefined}
@@ -171,7 +181,10 @@ export function AllRegistrantsList(): JSX.Element {
             loadedCount < ((search.length > 0 ? searched?.length : undefined) ?? allRegistrants.length) ? (
                 <Button isLoading={isLoadingMore} onClick={loadMore} py={2}>
                     <FAIcon iconStyle="s" icon="chevron-down" mr={2} />
-                    Load more
+                    <FormattedMessage
+                        id="Conference.Attend.Registrant.RegistrantListPage.LoadMore"
+                        defaultMessage="Load more"
+                    />
                 </Button>
             ) : (
                 <></>
@@ -181,14 +194,18 @@ export function AllRegistrantsList(): JSX.Element {
 }
 
 export default function RegistrantListPage(): JSX.Element {
+    const intl = useIntl();
     const conference = useConference();
-    const title = useTitle(`People at ${conference.shortName}`);
+    const title = useTitle(intl.formatMessage({ id: 'Conference.Attend.Registrant.RegistrantListPage.PeopleAtConference', defaultMessage: "People at {conference}" }, { conference: conference.shortName }));
 
     return (
         <>
             {title}
             <Heading as="h1" id="page-heading">
-                People
+                <FormattedMessage
+                    id="Conference.Attend.Registrant.RegistrantListPage.People"
+                    defaultMessage="People"
+                />
             </Heading>
             <AllRegistrantsList />
         </>

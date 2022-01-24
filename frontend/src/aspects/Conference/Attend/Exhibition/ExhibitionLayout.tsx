@@ -30,6 +30,7 @@ import { useConference } from "../../useConference";
 import { AuthorList } from "../Content/AuthorList";
 import { Element } from "../Content/Element/Element";
 import TagList from "../Content/TagList";
+import { FormattedMessage, useIntl } from "react-intl";
 
 function ItemTile({
     item,
@@ -40,6 +41,7 @@ function ItemTile({
     exhibitionColour: string;
     hideLiveViewButton: boolean;
 }): JSX.Element {
+    const intl = useIntl(); 
     const conference = useConference();
 
     const { colorMode } = useColorMode();
@@ -199,12 +201,15 @@ function ItemTile({
                     <LinkButton
                         colorScheme="LiveActionButton"
                         to={liveRoomUrl}
-                        title={"Event is happening now. Go to room"}
+                        title={intl.formatMessage({ id: 'Conference.Attend.Exhibition.ExhibitionLayout.EventHappening', defaultMessage: "Event is happening now. Go to room"})}
                         textDecoration="none"
                     >
                         <FAIcon iconStyle="s" icon="link" mr={2} />
                         <Text as="span" ml={1} mr={2}>
-                            LIVE View
+                            <FormattedMessage
+                                id="Conference.Attend.Exhibition.ExhibitionLayout.LiveView"
+                                defaultMessage="LIVE View"
+                            />
                         </Text>
                         <PageCountText path={liveRoomUrl} fontSize="inherit" />
                     </LinkButton>
@@ -214,7 +219,13 @@ function ItemTile({
             {primaryItems.length > 1 ? (
                 <LinkButton to={itemUrl} my={4} colorScheme="PrimaryActionButton" linkProps={{ alignSelf: "center" }}>
                     <FAIcon iconStyle="s" icon="video" mr={2} />
-                    View {primaryItems.length - 1} more videos and images
+                    <FormattedMessage
+                        id="Conference.Attend.Exhibition.ExhibitionLayout.ViewMore"
+                        defaultMessage="View {number} more videos and images"
+                        values={{
+                            number: primaryItems.length - 1
+                        }}
+                    />
                 </LinkButton>
             ) : undefined}
             <Box mt={primaryItems.length === 1 ? 4 : undefined}>
@@ -235,7 +246,10 @@ function ItemTile({
                     <LinkButton colorScheme="PrimaryActionButton" to={discussionRoomUrl} textDecoration="none">
                         <FAIcon iconStyle="s" icon="video" mr={2} />
                         <Text as="span" ml={1} mr={2}>
-                            Join in room
+                            <FormattedMessage
+                                    id="Conference.Attend.Exhibition.ExhibitionLayout.JoinInRoom"
+                                    defaultMessage="Join in room"
+                            />
                         </Text>
                         <PageCountText path={discussionRoomUrl} fontSize="inherit" />
                     </LinkButton>
@@ -244,14 +258,23 @@ function ItemTile({
                     <ExternalLinkButton colorScheme="PrimaryActionButton" to={zoomInfo.url} textDecoration="none">
                         <FAIcon iconStyle="s" icon="video" mr={2} />
                         <Text as="span" ml={1} mr={2}>
-                            Join in {zoomInfo.name}
+                            <FormattedMessage
+                                id="Conference.Attend.Exhibition.ExhibitionLayout.JoinIn"
+                                defaultMessage="Join in {zoomInfoName}"
+                                values={{
+                                    zoomInfoName: zoomInfo.name
+                                }}
+                            />
                         </Text>
                     </ExternalLinkButton>
                 ) : undefined}
                 <LinkButton colorScheme="SecondaryActionButton" to={itemUrl} textDecoration="none">
                     <FAIcon iconStyle="s" icon="link" mr={2} />
                     <Text as="span" ml={1} mr={2}>
-                        Find out more
+                        <FormattedMessage
+                            id="Conference.Attend.Exhibition.ExhibitionLayout.FindOutMore"
+                            defaultMessage="Find out more"
+                        />
                     </Text>
                     <PageCountText path={itemUrl} fontSize="inherit" />
                 </LinkButton>

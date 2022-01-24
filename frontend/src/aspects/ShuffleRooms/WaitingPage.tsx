@@ -31,6 +31,7 @@ import { roundToNearest } from "../Generic/MathUtils";
 import { useRealTime } from "../Generic/useRealTime";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useTitle } from "../Utils/useTitle";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     fragment ShufflePeriodData on room_ShufflePeriod {
@@ -120,6 +121,7 @@ function QueuedShufflePeriodBox({
     numberOfQueued: number;
     isWaitingForAllocatedRoom: boolean;
 }): JSX.Element {
+    const intl = useIntl();
     const startAt = Date.parse(period.startAt);
     const endAt = Date.parse(period.endAt);
     const now = useRealTime(1000);
@@ -155,7 +157,12 @@ function QueuedShufflePeriodBox({
     if (startAt > now) {
         return (
             <>
-                <Text>You are in the queue, please wait.</Text>
+                <Text>
+                    <FormattedMessage
+                        id="shufflerooms.waitingpage.inqueue"
+                        defaultMessage="You are in the queue, please wait."
+                    />
+                </Text>
                 {timeTextEl}
             </>
         );
@@ -176,8 +183,15 @@ function QueuedShufflePeriodBox({
                         p={4}
                     >
                         <VStack>
-                            <Text as="span">Go to your allocated room</Text>
-                            <Text as="span">(Room {lastEntry.shuffleRoom.id})</Text>
+                            <Text as="span">
+                                <FormattedMessage
+                                    id="shufflerooms.waitingpage.gotoallocatedroom"
+                                    defaultMessage="Go to your allocated room"
+                                />
+                            </Text>
+                            <Text as="span">
+                                ({intl.formatMessage({ id: 'shufflerooms.waitingpage.room', defaultMessage: "Room" })}  {lastEntry.shuffleRoom.id})
+                            </Text>
                         </VStack>
                     </LinkButton>
                     <Button isLoading={isJoining} onClick={joinShuffleQueue}>
@@ -190,7 +204,10 @@ function QueuedShufflePeriodBox({
             return (
                 <>
                     <Button isLoading={isJoining} colorScheme="PrimaryActionButton" onClick={joinShuffleQueue}>
-                        Join the queue
+                        <FormattedMessage
+                            id="shufflerooms.waitingpage.joinqueue"
+                            defaultMessage="Join the queue"
+                        />
                     </Button>
                     {timeTextEl}
                 </>
@@ -200,11 +217,16 @@ function QueuedShufflePeriodBox({
         return (
             <>
                 <Text>
-                    No rooms are available at the moment. There are either not enough people active in the queue or the
-                    available rooms are full.
+                    <FormattedMessage
+                        id="shufflerooms.waitingpage.noroomsavaiable"
+                        defaultMessage="No rooms are available at the moment. There are either not enough people active in the queue or the available rooms are full."
+                    />
                 </Text>
                 <Button isLoading={isJoining} onClick={joinShuffleQueue}>
-                    Rejoin the queue
+                    <FormattedMessage
+                        id="shufflerooms.waitingpage.rejoinqueue"
+                        defaultMessage="Rejoin the queue"
+                    />
                 </Button>
             </>
         );
@@ -223,7 +245,7 @@ function QueuedShufflePeriodBox({
                 trackColor={trackColour}
             >
                 <CircularProgressLabel fontSize="sm">
-                    {timeWaiting < 0 ? "Initialising..." : Math.round(timeWaiting / 1000) + "s"}
+                    {timeWaiting < 0 ? intl.formatMessage({ id: 'shufflerooms.waitingpage.initialising', defaultMessage: "Initialising..." }) : Math.round(timeWaiting / 1000) + "s"}
                 </CircularProgressLabel>
             </CircularProgress>
         );
@@ -231,20 +253,28 @@ function QueuedShufflePeriodBox({
             return (
                 <>
                     {progressEl}
-                    <Text>Sorry, it may not be possible to match you with anyone at the moment.</Text>
+                    <Text>
+                        <FormattedMessage
+                            id="shufflerooms.waitingpage.nomatch"
+                            defaultMessage="Sorry, it may not be possible to match you with anyone at the moment."
+                        />
+                    </Text>
                 </>
             );
         }
         return (
             <>
                 {progressEl}
-                {numberOfQueued > 1 ? <Text>Please wait while we allocate rooms</Text> : <Text>Please wait</Text>}
+                {numberOfQueued > 1
+                    ? <Text>{intl.formatMessage({ id: 'shufflerooms.waitingpage.pleasewaitwhile', defaultMessage: "Please wait while we allocate rooms" })}</Text>
+                    : <Text>{intl.formatMessage({ id: 'shufflerooms.waitingpage.pleasewait', defaultMessage: "Please wait" })}</Text>}
             </>
         );
     }
 }
 
 export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JSX.Element {
+    const intl = useIntl();
     const now = useRealTime(1000);
     const currentRegistrant = useCurrentRegistrant();
     const conference = useConference();
@@ -312,24 +342,27 @@ export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment
 
     const button = useMemo(() => {
         if (endAt - now < 0) {
-            return <Text>This shuffle period has ended.</Text>;
+            return <Text>{intl.formatMessage({ id: 'shufflerooms.waitingpage.shuffleperiodended', defaultMessage: "This shuffle period has ended." })}</Text>;
         } else if (endAt - now < 0.1 * period.roomDurationMinutes * 60 * 1000) {
-            return <Text>This shuffle period is coming to an end.</Text>;
+            return <Text>{intl.formatMessage({ id: 'shufflerooms.waitingpage.shuffleperiodending', defaultMessage: "This shuffle period is coming to an end." })}</Text>;
         } else if (queuedEntryBox) {
             return queuedEntryBox;
         } else {
             const timeTextEl =
                 startAt < now ? (
-                    <Text>Ends {formatRelative(endAt, now)}</Text>
+                    <Text>{intl.formatMessage({ id: 'shufflerooms.waitingpage.ends', defaultMessage: "Ends" })} {formatRelative(endAt, now)}</Text>
                 ) : (
-                    <Text>Starts {formatRelative(startAt, now)}</Text>
+                    <Text>{intl.formatMessage({ id: 'shufflerooms.waitingpage.starts', defaultMessage: "Starts" })} {formatRelative(startAt, now)}</Text>
                 );
 
             return (
                 <>
                     {now > startAt - 5 * 60 * 1000 ? (
                         <Button isLoading={isJoining} colorScheme="PrimaryActionButton" onClick={joinShuffleQueue}>
-                            Join the queue
+                            <FormattedMessage
+                                id="shufflerooms.waitingpage.joinqueue"
+                                defaultMessage="Join the queue"
+                            />
                         </Button>
                     ) : undefined}
                     {timeTextEl}
@@ -346,8 +379,8 @@ export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment
                     {period.name}
                 </Heading>
                 {button}
-                {numberOfQueued > 0 ? <Text>{numberOfQueued} people queued</Text> : undefined}
-                {numberInRooms > 0 ? <Text>{numberInRooms} allocated to rooms</Text> : undefined}
+                {numberOfQueued > 0 ? <Text>{numberOfQueued} {intl.formatMessage({ id: 'shufflerooms.waitingpage.peoplequeued', defaultMessage: "people queued" })}</Text> : undefined}
+                {numberInRooms > 0 ? <Text>{numberInRooms} {intl.formatMessage({ id: 'shufflerooms.waitingpage.allocatedtorooms', defaultMessage: "allocated to rooms" })}</Text> : undefined}
             </VStack>
         </GridItem>
     );
@@ -399,7 +432,13 @@ export function ShuffleWaiting(): JSX.Element {
                         <ShufflePeriodBox key={period.id} period={period} />
                     ))}
                     {!ongoingQueues?.length ? (
-                        <GridItem>No active shuffle spaces at the moment, please come back later.</GridItem>
+                        <GridItem>
+                            <FormattedMessage
+                                id="shufflerooms.waitingpage.noactiveshufflespaces"
+                                defaultMessage="No active shuffle spaces at the moment, please come back later."
+                            />
+                            
+                        </GridItem>
                     ) : undefined}
                     {upcomingQueues && upcomingQueues.length > 0 ? (
                         <ShufflePeriodBox key={upcomingQueues[0].id} period={upcomingQueues[0]} />
@@ -417,9 +456,17 @@ export default function WaitingPage(): JSX.Element {
         <>
             {title}
             <Heading as="h1" mt={2}>
-                Networking
+                <FormattedMessage
+                    id="shufflerooms.waitingpage.networking"
+                    defaultMessage="Networking"
+                />
             </Heading>
-            <Text>Join a networking queue to be randomly grouped and meet new people!</Text>
+            <Text>
+                <FormattedMessage
+                    id="shufflerooms.waitingpage.joinnetworkingqueue"
+                    defaultMessage="Join a networking queue to be randomly grouped and meet new people!"
+                />
+            </Text>
             <ShuffleWaiting />
         </>
     );

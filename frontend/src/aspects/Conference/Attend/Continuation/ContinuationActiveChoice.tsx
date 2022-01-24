@@ -16,6 +16,7 @@ import type { ContinuationDefaultFor } from "@clowdr-app/shared-types/build/cont
 import React, { useCallback, useState } from "react";
 import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
 import ContinuationChoiceList from "./ContinuationChoiceList";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function ContinuationActiveChoice({
     choices,
@@ -60,7 +61,10 @@ export default function ContinuationActiveChoice({
                 <ModalHeader>
                     <HStack flexWrap="wrap" mb={2}>
                         <Text fontWeight="bold" mb={2}>
-                            Where would you like to go next?
+                            <FormattedMessage
+                                id="Conference.Attend.Continuation.Vonage.ContinuationActiveChoice.WhereTo"
+                                defaultMessage="Where would you like to go next?"
+                            />
                         </Text>
                         {timeRemaining > 0 ? (
                             <Box>

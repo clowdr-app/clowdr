@@ -27,6 +27,7 @@ import { AllRegistrantsList } from "../../Registrant/RegistrantListPage";
 import { CreateRoomModal } from "../../Room/CreateRoomModal";
 import ActiveSocialRooms from "./ActiveSocialRooms";
 import InactiveSocialRooms from "./InactiveSocialRooms";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export enum SocialiseModalTab {
     Rooms = "Rooms",
@@ -120,6 +121,7 @@ export default function SocialiseModal({
     selectedTab: SocialiseModalTab;
     setSelectedTab: (tab: SocialiseModalTab) => void;
 }): JSX.Element {
+    const intl = useIntl();
     const { isOpen: createRoom_IsOpen, onClose: createRoom_OnClose, onOpen: createRoom_OnOpen } = useDisclosure();
     const conference = useConference();
 
@@ -199,15 +201,15 @@ export default function SocialiseModal({
                             <TabList justifyContent="center">
                                 <Tab>
                                     <FAIcon iconStyle="s" icon="mug-hot" aria-hidden />
-                                    &nbsp;&nbsp;Rooms
+                                    &nbsp;&nbsp;{intl.formatMessage({ id: 'conference.attend.rooms.v2.socialisemodal.rooms', defaultMessage: "Rooms" })}
                                 </Tab>
                                 <Tab overflow="hidden">
                                     <FAIcon iconStyle="s" icon="users" aria-hidden />
-                                    &nbsp;&nbsp;People
+                                    &nbsp;&nbsp;{intl.formatMessage({ id: 'conference.attend.rooms.v2.socialisemodal.people', defaultMessage: "People" })}
                                 </Tab>
                                 <Tab overflow="auto">
                                     <FAIcon iconStyle="s" icon="random" aria-hidden />
-                                    &nbsp;&nbsp;Networking
+                                    &nbsp;&nbsp;{intl.formatMessage({ id: 'conference.attend.rooms.v2.socialisemodal.networking', defaultMessage: "Networking" })}
                                 </Tab>
                             </TabList>
                             <TabPanels overflow="hidden">
@@ -216,7 +218,10 @@ export default function SocialiseModal({
                                     <InactiveSocialRooms />
                                     <Flex mt={4} justifyContent="center">
                                         <Button onClick={createRoom_OnOpen} colorScheme="PrimaryActionButton">
-                                            Create new room
+                                            <FormattedMessage
+                                                id="conference.attend.rooms.v2.socialisemodal.newroom"
+                                                defaultMessage="Create new room"
+                                            />
                                         </Button>
                                     </Flex>
                                 </TabPanel>

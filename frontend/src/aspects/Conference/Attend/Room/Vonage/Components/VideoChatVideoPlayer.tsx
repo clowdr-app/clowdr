@@ -3,8 +3,10 @@ import { Box, useToast } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef } from "react";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../../Vonage/useVonageRoom";
 import { VideoPlayer } from "../../Video/VideoPlayer";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function VideoChatVideoPlayer({ elementId }: { elementId: string }): JSX.Element {
+    const intl = useIntl();
     const isMicOnRef = useRef<boolean>(false);
     const vonageRoom = useVonageRoom();
 
@@ -34,11 +36,10 @@ export default function VideoChatVideoPlayer({ elementId }: { elementId: string 
                 unmutedToastIdRef.current = undefined;
             }
             mutedToastIdRef.current = toast({
-                title: "Auto muted",
+                title: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.VideoChatVideoPlayer.AutoMuted', defaultMessage: "Auto muted" }),
                 status: "info",
                 position: "top",
-                description:
-                    "You have been automatically muted to avoid an audio feedback loop in the room. You will be automatically unmuted when the video is paused or ends.",
+                description: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.VideoChatVideoPlayer.AutomaticallyMuted', defaultMessage: "You have been automatically muted to avoid an audio feedback loop in the room. You will be automatically unmuted when the video is paused or ends." }),
                 isClosable: true,
                 duration: 15000,
                 variant: "subtle",
@@ -61,7 +62,7 @@ export default function VideoChatVideoPlayer({ elementId }: { elementId: string 
                 mutedToastIdRef.current = undefined;
             }
             unmutedToastIdRef.current = toast({
-                title: "Auto un-muted",
+                title: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.VideoChatVideoPlayer.AutoUnmuted', defaultMessage: "Auto un-muted" }),
                 status: "info",
                 position: "top",
                 isClosable: true,
@@ -82,11 +83,10 @@ export default function VideoChatVideoPlayer({ elementId }: { elementId: string 
 
     useEffect(() => {
         playToastRef.current = toast({
-            title: "Please click play",
+            title: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.VideoChatVideoPlayer.PressClick', defaultMessage: "Please click play" }),
             status: "success",
             position: "top",
-            description:
-                "The presenter would like to play a video. Please click play on the video player to join in. (Midspace cannot auto-play due to browser restrictions).",
+            description: intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.VideoChatVideoPlayer.PlayAVideo', defaultMessage: "The presenter would like to play a video. Please click play on the video player to join in. (Midspace cannot auto-play due to browser restrictions)." }),
             isClosable: true,
             duration: 15000,
         });

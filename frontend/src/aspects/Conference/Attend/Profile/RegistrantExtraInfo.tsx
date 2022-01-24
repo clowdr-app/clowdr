@@ -2,6 +2,7 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import type { GridProps} from "@chakra-ui/react";
 import { Badge, chakra, Grid, GridItem, Link } from "@chakra-ui/react";
 import React from "react";
+import { FormattedMessage } from "react-intl";
 import type { Registrant } from "../../useCurrentRegistrant";
 
 export default function RegistrantExtraInfo({
@@ -16,7 +17,12 @@ export default function RegistrantExtraInfo({
         <Grid gridTemplateColumns="auto auto" gap={4} alignSelf="flex-start" {...rest}>
             {registrant.profile.timezoneUTCOffset !== undefined && registrant.profile.timezoneUTCOffset !== null ? (
                 <>
-                    <GridItem fontWeight="600">Timezone</GridItem>
+                    <GridItem fontWeight="600">    
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantExtraInfo.Timezone"
+                            defaultMessage="Timezone"
+                        />
+                    </GridItem>
                     <GridItem>
                         <Badge fontSize="md" p={1}>
                             &nbsp; UTC{registrant.profile.timezoneUTCOffset < 0 ? "-" : "+"}
@@ -28,13 +34,23 @@ export default function RegistrantExtraInfo({
             ) : undefined}
             {registrant.profile.country ? (
                 <>
-                    <GridItem fontWeight="600">Country</GridItem>
+                    <GridItem fontWeight="600">
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantExtraInfo.Country"
+                            defaultMessage="Country"
+                        />
+                    </GridItem>
                     <GridItem overflowWrap="break-word">{registrant.profile.country}</GridItem>
                 </>
             ) : undefined}
             {registrant.profile.website ? (
                 <>
-                    <GridItem fontWeight="600">Website</GridItem>
+                    <GridItem fontWeight="600">
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantExtraInfo.Website"
+                            defaultMessage="Website"
+                        />
+                    </GridItem>
                     <GridItem overflowWrap="anywhere">
                         <Link
                             isExternal
@@ -57,7 +73,12 @@ export default function RegistrantExtraInfo({
             ) : undefined}
             {registrant.profile.twitter ? (
                 <>
-                    <GridItem fontWeight="600">Twitter</GridItem>
+                    <GridItem fontWeight="600">
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantExtraInfo.Twitter"
+                            defaultMessage="Twitter"
+                        />
+                    </GridItem>
                     <GridItem overflowWrap="anywhere">
                         <Link
                             isExternal
@@ -75,7 +96,12 @@ export default function RegistrantExtraInfo({
             ) : undefined}
             {registrant.profile.github ? (
                 <>
-                    <GridItem fontWeight="600">GitHub</GridItem>
+                    <GridItem fontWeight="600">
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantExtraInfo.GitHub"
+                            defaultMessage="GitHub"
+                        />
+                    </GridItem>
                     <GridItem overflowWrap="anywhere">
                         <Link
                             isExternal

@@ -36,6 +36,7 @@ import {
 import { useRealTime } from "../../../../../Generic/useRealTime";
 import FAIcon from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query ImmediateSwitch_GetElements($eventId: uuid!) {
@@ -75,6 +76,7 @@ gql`
 
 export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
     const toast = useToast();
+    const intl = useIntl();
 
     const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
@@ -102,10 +104,16 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
         () => (
             <>
                 <option key="rtmp_push" value="rtmp_push">
-                    Live backstage (default)
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Stream.Controls.ImmediateSwitch.LiveBackstage"
+                        defaultMessage="Live backstage (default)"
+                    />
                 </option>
                 <option key="filler" value="filler">
-                    Filler video
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Stream.Controls.ImmediateSwitch.FillerVideo"
+                        defaultMessage="Filler video"
+                    />
                 </option>
                 {R.sort(
                     (a, b) => a.title.localeCompare(b.title),
@@ -156,7 +164,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                     } catch (err: any) {
                         toast({
                             status: "error",
-                            title: "Could not switch to filler video",
+                            title: intl.formatMessage({ id: 'Conference.Attend.Room.Stream.Controls.ImmediateSwitch.ErrorFiller', defaultMessage: "Could not switch to filler video" }),
                             description: err.message,
                         });
                         return;
@@ -178,7 +186,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                     } catch (err: any) {
                         toast({
                             status: "error",
-                            title: "Could not switch to live presentation",
+                            title: intl.formatMessage({ id: 'Conference.Attend.Room.Stream.Controls.ImmediateSwitch.ErrorSwitchLive', defaultMessage: "Could not switch to live presentation" }),
                             description: err.message,
                         });
                         return;
@@ -191,7 +199,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                         if (!isValidUUID) {
                             toast({
                                 status: "error",
-                                title: "Could not switch to chosen video",
+                                title: intl.formatMessage({ id: 'Conference.Attend.Room.Stream.Controls.ImmediateSwitch.ErrorSwitchVideo', defaultMessage: "Could not switch to chosen video" }),
                                 description: "Invalid ID",
                             });
                             return;
@@ -210,7 +218,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                     } catch (err: any) {
                         toast({
                             status: "error",
-                            title: "Could not switch to chosen video",
+                            title: intl.formatMessage({ id: 'Conference.Attend.Room.Stream.Controls.ImmediateSwitch.ErrorSwitchVideoImmediate', defaultMessage: "Could not switch to chosen video" }),
                             description: err.message,
                         });
                         return;
@@ -286,14 +294,25 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                     <AlertDialogOverlay />
 
                     <AlertDialogContent>
-                        <AlertDialogHeader>Switch livestream input</AlertDialogHeader>
+                        <AlertDialogHeader>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.Controls.ImmediateSwitch.SwitchInput"
+                                defaultMessage="Switch livestream input"
+                            />
+                        </AlertDialogHeader>
                         <AlertDialogCloseButton />
                         <AlertDialogBody>
-                            Are you sure you want to change what is being streamed? The audience will see this change.
+                            <FormattedMessage
+                                id="Conference.Attend.Room.Stream.Controls.ImmediateSwitch.ChangeConfirmation"
+                                defaultMessage="Are you sure you want to change what is being streamed? The audience will see this change."
+                            />
                         </AlertDialogBody>
                         <AlertDialogFooter>
                             <Button ref={cancelRef} onClick={onClose}>
-                                No
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Stream.Controls.ImmediateSwitch.No"
+                                    defaultMessage="No"
+                                />
                             </Button>
                             <Button
                                 colorScheme="ConfirmButton"
@@ -307,7 +326,10 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                                     }
                                 }}
                             >
-                                Yes
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.Stream.Controls.ImmediateSwitch.Yes"
+                                    defaultMessage="Yes"
+                                />
                             </Button>
                         </AlertDialogFooter>
                     </AlertDialogContent>

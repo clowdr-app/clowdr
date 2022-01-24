@@ -21,6 +21,7 @@ import type { Viewport } from "./LayoutTypes";
 import { VisualLayoutType } from "./LayoutTypes";
 import StreamChooser from "./StreamChooser";
 import useVisualLayout from "./useVisualLayout";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function Layout({
     viewports,
@@ -54,7 +55,12 @@ export default function Layout({
             isAlone ? (
                 <Alert status="info" mt={2} w="100%">
                     <AlertIcon />
-                    <AlertTitle>Nobody else has joined the room at the moment.</AlertTitle>
+                    <AlertTitle>
+                        <FormattedMessage
+                            id="Conference.Attend.Room.Vonage.Components.Layout.NobodyElseAlert"
+                            defaultMessage="Nobody else has joined the room at the moment."
+                        />
+                    </AlertTitle>
                 </Alert>
             ) : (
                 <></>

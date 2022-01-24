@@ -1,6 +1,7 @@
 import { Divider, Heading, List, ListItem } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { FormattedMessage } from "react-intl";
 import type { SearchPanel_ItemFragment} from "../../../../generated/graphql";
 import { useProfilePage_ItemsQuery } from "../../../../generated/graphql";
 import SearchResult_Item from "../Search/SearchResult_Item";
@@ -30,7 +31,10 @@ export default function RegistrantItems({ registrantId }: { registrantId: string
                 <>
                     <Divider pt={4} />
                     <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
-                        Presenter of:
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantItems.PresenterOf"
+                            defaultMessage="Presenter of:"
+                        />
                     </Heading>
                     <List pt={4} spacing={3} w="100%" px={2}>
                         {items.PRESENTER.map((item) => (
@@ -45,7 +49,10 @@ export default function RegistrantItems({ registrantId }: { registrantId: string
                 <>
                     <Divider pt={4} />
                     <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
-                        Author of:
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantItems.AuthorOf"
+                            defaultMessage="Author of:"
+                        />
                     </Heading>
                     <List pt={4} spacing={3} w="100%" px={2}>
                         {items.AUTHOR.map((item) => (
@@ -60,7 +67,10 @@ export default function RegistrantItems({ registrantId }: { registrantId: string
                 <>
                     <Divider pt={4} />
                     <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
-                        Discussant of:
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantItems.DiscussantOf"
+                            defaultMessage="Discussant of:"
+                        />
                     </Heading>
                     <List pt={4} spacing={3} w="100%" px={2}>
                         {items.DISCUSSANT.map((item) => (
@@ -75,7 +85,10 @@ export default function RegistrantItems({ registrantId }: { registrantId: string
                 <>
                     <Divider pt={4} />
                     <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
-                        Chair of:
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantItems.ChairOf"
+                            defaultMessage="Chair of:"
+                        />
                     </Heading>
                     <List pt={4} spacing={3} w="100%" px={2}>
                         {items.CHAIR.map((item) => (
@@ -90,7 +103,10 @@ export default function RegistrantItems({ registrantId }: { registrantId: string
                 <>
                     <Divider pt={4} />
                     <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
-                        Session organizer of:
+                        <FormattedMessage
+                            id="Conference.Attend.Profile.RegistrantItems.SessionOrganizerOf"
+                            defaultMessage="Session organizer of:"
+                        />
                     </Heading>
                     <List pt={4} spacing={3} w="100%" px={2}>
                         {items["SESSION ORGANIZER"].map((item) => (

@@ -5,6 +5,7 @@ import { useEnableBackstageStreamPreviewQuery } from "../../../../../../generate
 import { useConference } from "../../../../useConference";
 import { HlsPlayer } from "../../Video/HlsPlayer";
 import { VideoAspectWrapper } from "../../Video/VideoAspectWrapper";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query EnableBackstageStreamPreview($conferenceId: uuid!) {
@@ -88,21 +89,39 @@ export default function StreamPreview({
                 spacing={0}
             >
                 <Text whiteSpace="normal" alignSelf="center">
-                    Stream preview
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Stream.Controls.StreamPreview.StreamPreview"
+                        defaultMessage="Stream preview"
+                    />
                 </Text>
                 <Text whiteSpace="normal" fontSize="xs">
-                    Please note: the preview plays with a lag.
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Stream.Controls.StreamPreview.LagNotice"
+                        defaultMessage="Please note: the preview plays with a lag."
+                    />
+                    
                 </Text>
                 <Text whiteSpace="normal" fontSize="xs">
-                    To avoid echoes, mute the preview while you are live on air.
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Stream.Controls.StreamPreview.AvoidEchoes"
+                        defaultMessage="To avoid echoes, mute the preview while you are live on air."
+                    />
+                    
                 </Text>
             </VStack>
             <HStack spacing={1} justifyContent="center" p={1}>
                 <Text fontSize="sm" fontWeight="bold">
-                    Connection trouble?
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Stream.Controls.StreamPreview.ConnectionTrouble"
+                        defaultMessage="Connection trouble?"
+                    />
                 </Text>
                 <Button colorScheme="PrimaryActionButton" size="xs" onClick={() => setEnabled(false)}>
-                    Try disabling preview
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Stream.Controls.StreamPreview.TryDisablingPreview"
+                        defaultMessage="Try disabling preview"
+                    />
+                    
                 </Button>
             </HStack>
         </Box>
@@ -115,7 +134,10 @@ export default function StreamPreview({
                 setDelayCompleted(true);
             }}
         >
-            Enable stream preview
+            <FormattedMessage
+                id="Conference.Attend.Room.Stream.Controls.StreamPreview.EnablePreview"
+                defaultMessage="Enable stream preview"
+            />
         </Button>
     ) : (
         <Text
@@ -129,7 +151,10 @@ export default function StreamPreview({
             border="1px solid #999"
             bgColor={bgColor}
         >
-            Stream preview will be available when the stream starts.
+            <FormattedMessage
+                id="Conference.Attend.Room.Stream.Controls.StreamPreview.StreamPreviewAvaliablity"
+                defaultMessage="Stream preview will be available when the stream starts."
+            />
         </Text>
     );
 }

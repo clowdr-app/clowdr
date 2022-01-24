@@ -3,6 +3,7 @@ import { AtSignIcon, ChatIcon, LockIcon } from "@chakra-ui/icons";
 import { Button, Divider, List, ListIcon, ListItem, Spinner, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
+import { useIntl, FormattedMessage } from "react-intl";
 import { useHistory } from "react-router-dom";
 import { useCreateDmMutation } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
@@ -61,6 +62,7 @@ export function ChatsPanel({
     setUnread: (v: string) => void;
     isVisible: boolean;
 }): JSX.Element {
+    const intl = useIntl();
     const conference = useConference();
     const toast = useToast();
     const [pinnedChatsMap, setPinnedChatsMap] = useState<Map<string, ChatState> | null>(null);
@@ -273,7 +275,7 @@ export function ChatsPanel({
                             }
                         } catch (e) {
                             toast({
-                                title: "Could not create DM",
+                                title: intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.chatspanel.couldnotcreatedm', defaultMessage: "Could not create DM" }),
                                 status: "error",
                             });
                             console.error("Could not create DM", e);
@@ -314,12 +316,12 @@ export function ChatsPanel({
                         <Chat
                             isVisible={chat_IsVisible}
                             customHeadingElements={[
-                                <Tooltip key="back-button" label="Back to chats list">
+                                <Tooltip key="back-button" label={intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.chatspanel.backtochatslist', defaultMessage: "Back to chats list" })}>
                                     <Button
                                         size="xs"
                                         colorScheme="SecondaryActionButton"
                                         onClick={() => setCurrentChatId(null)}
-                                        aria-label="Return to all chats list"
+                                        aria-label={intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.chatspanel.backtochatslistdesc', defaultMessage: "Return to all chats list" })}
                                     >
                                         <FAIcon iconStyle="s" icon="chevron-left" mr={1} />
                                         &nbsp;
@@ -327,7 +329,7 @@ export function ChatsPanel({
                                     </Button>
                                 </Tooltip>,
                                 currentChat && currentChat.RoomId ? (
-                                    <Tooltip key="room-button" label="Go to video room">
+                                    <Tooltip key="room-button" label={intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.chatspanel.gotovideoroom', defaultMessage: "Go to video room" })}>
                                         <Button
                                             key="room-button"
                                             size="xs"
@@ -335,7 +337,7 @@ export function ChatsPanel({
                                             onClick={() =>
                                                 history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)
                                             }
-                                            aria-label="Go to video room for this chat"
+                                            aria-label={intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.chatspanel.gotovideoroomdesc', defaultMessage: "Go to video room for this chat" })}
                                         >
                                             <FAIcon iconStyle="s" icon="video" />
                                         </Button>
@@ -347,7 +349,7 @@ export function ChatsPanel({
                     </>
                 );
             } else {
-                return <Spinner label="Loading selected chat" />;
+                return <Spinner label={intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.chatspanel.loadingselectedchat', defaultMessage: "Loading selected chat" })} />;
             }
         }
         return undefined;
@@ -376,13 +378,16 @@ export function ChatsPanel({
                 )}
                 {pinnedChats && !mandatoryPinnedChats && !dmPinnedChats && !nonDMPinnedChats && (
                     <>
-                        No pinned chats.
+                        <FormattedMessage
+                            id="menu.v2.rightsidebar.panels.chatspanel.nopinnedchats"
+                            defaultMessage="No pinned chats."
+                        />
                         <Divider />
                     </>
                 )}
                 {pinnedChats === undefined ? (
                     <>
-                        <Spinner label="Loading pinned chats" />
+                        <Spinner label={intl.formatMessage({ id: 'menu.v2.rightsidebar.panels.chatspanel.loadingpinnedchats', defaultMessage: "Loading pinned chats" })} />
                         <Divider />
                     </>
                 ) : undefined}
@@ -395,7 +400,12 @@ export function ChatsPanel({
     if (createDMMutationResponse.loading) {
         return (
             <VStack alignItems="center">
-                <Text>Setting up chat...</Text>
+                <Text>
+                    <FormattedMessage
+                        id="menu.v2.rightsidebar.panels.chatspanel.settingupchat"
+                        defaultMessage="Setting up chat..."
+                    />
+                </Text>
                 <div>
                     <Spinner />
                 </div>

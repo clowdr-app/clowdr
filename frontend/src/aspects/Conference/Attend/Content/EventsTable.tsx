@@ -3,6 +3,7 @@ import { formatDistanceStrict } from "date-fns";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
+import { FormattedMessage, useIntl } from "react-intl";
 import type { ItemEventFragment, ItemRoomEventFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
@@ -25,19 +26,56 @@ export function EventsTable({
         <VStack spacing={2} alignItems="flex-start">
             {roomId ? (
                 <LinkButton colorScheme="SecondaryActionButton" to={`/conference/${conference.slug}/room/${roomId}`}>
-                    Go to room
+                    <FormattedMessage
+                        id="Conference.Attend.Content.EventsTable.GoToRoom"
+                        defaultMessage="Go to room"
+                    />
                 </LinkButton>
             ) : undefined}
             <Table m={0} textAlign="left" w="auto" size="sm" colorScheme="EventsTable">
                 <Thead>
                     <Tr>
                         {maybeRegistrant ? <Th p={0}></Th> : undefined}
-                        <Th px={3}>Date</Th>
-                        <Th px={1}>Time</Th>
-                        <Th>Duration</Th>
-                        {includeRoom ? <Th>Room</Th> : undefined}
-                        {!includeRoom ? <Th>Item</Th> : undefined}
-                        <Th>Event name</Th>
+                        <Th px={3}>
+                            <FormattedMessage
+                                id="Conference.Attend.Content.EventsTable.Date"
+                                defaultMessage="Date"
+                            />
+                        </Th>
+                        <Th px={1}>
+                            <FormattedMessage
+                                id="Conference.Attend.Content.EventsTable.Time"
+                                defaultMessage="Time"
+                            />
+                        </Th>
+                        <Th>
+                            <FormattedMessage
+                                id="Conference.Attend.Content.EventsTable.Duration"
+                                defaultMessage="Duration"
+                            />
+                        </Th>
+                        {includeRoom ?
+                            <Th>
+                                <FormattedMessage
+                                    id="Conference.Attend.Content.EventsTable.Room"
+                                    defaultMessage="Room"
+                                />
+                            </Th>
+                        : undefined}
+                        {!includeRoom ?
+                            <Th>
+                                <FormattedMessage
+                                    id="Conference.Attend.Content.EventsTable.Item"
+                                    defaultMessage="Item"
+                                />
+                            </Th>
+                        : undefined}
+                        <Th>
+                            <FormattedMessage
+                                id="Conference.Attend.Content.EventsTable.EventName"
+                                defaultMessage="Event name"
+                            />
+                        </Th>
                     </Tr>
                 </Thead>
                 <Tbody>
@@ -46,7 +84,12 @@ export function EventsTable({
                             <Event key={event.id} itemEvent={event} includeRoom={includeRoom} />
                         ))
                     ) : (
-                        <>No events.</>
+                        <>
+                            <FormattedMessage
+                                id="Conference.Attend.Content.EventsTable.NoEvents"
+                                defaultMessage="No events."
+                            />
+                        </>
                     )}
                 </Tbody>
             </Table>
@@ -61,6 +104,7 @@ function Event({
     itemEvent: ItemEventFragment | ItemRoomEventFragment;
     includeRoom: boolean;
 }): JSX.Element {
+    const intl = useIntl();
     const conference = useConference();
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const now = useRealTime(60000);
@@ -118,7 +162,11 @@ function Event({
                     <Td>
                         <LinkButton
                             to={`/conference/${conference.slug}/room/${itemEvent.roomId}`}
-                            aria-label={`Go to room: ${itemEvent.room?.name ?? "private room"}`}
+                            aria-label={
+                                (itemEvent.room?.name !== undefined)
+                                    ? intl.formatMessage({ id: 'Conference.Attend.Content.EventsTable.GoToRoomName', defaultMessage: "Go to room: {room}" }, { room: itemEvent.room.name })
+                                    : intl.formatMessage({ id: 'Conference.Attend.Content.EventsTable.GoToRoomPrivate', defaultMessage: "Go to private room" })
+                            }
                             whiteSpace="normal"
                             variant="outline"
                             size="sm"
@@ -132,7 +180,12 @@ function Event({
                         </LinkButton>
                     </Td>
                 ) : (
-                    <Td>No room</Td>
+                    <Td>
+                        <FormattedMessage
+                            id="Conference.Attend.Content.EventsTable.NoRoom"
+                            defaultMessage="No room"
+                        />
+                    </Td>
                 )
             ) : undefined}
             {!includeRoom ? (
@@ -141,7 +194,7 @@ function Event({
                         {itemEvent.item.id !== "" ? (
                             <LinkButton
                                 to={`/conference/${conference.slug}/item/${itemEvent.item.id}`}
-                                aria-label={`Go to item: ${itemEvent.item.title}`}
+                                aria-label={intl.formatMessage({ id: 'Conference.Attend.Content.EventsTable.GoToItemName', defaultMessage: "Go to item: {item}" }, { item: itemEvent.item.title })}
                                 whiteSpace="normal"
                                 variant="outline"
                                 size="sm"
@@ -156,12 +209,35 @@ function Event({
                         ) : "exhibitionId" in itemEvent && itemEvent.exhibitionId ? (
                             <>
                                 <Text mr={2} pb={2}>
-                                    {itemEvent.item.title} is part of the{" "}
-                                    {conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"} at this event.
+                                    {
+                                        (conference.hiddenExhibitionsLabel[0]?.value !== undefined)
+                                            ? intl.formatMessage({
+                                                id: 'Conference.Attend.Content.EventsTable.ItemIsPartOfExhibitionName',
+                                                defaultMessage: "{item} is part of the {exhibition} at this event." },{
+                                                item: itemEvent.item.title,
+                                                exhibition: conference.hiddenExhibitionsLabel[0].value
+                                            })
+                                            : intl.formatMessage({
+                                                id: 'Conference.Attend.Content.EventsTable.ItemIsPartOfExhibition',
+                                                defaultMessage: "{item} is part of the exhibition at this event." },{
+                                                item: itemEvent.item.title
+                                            })
+                                    }
                                 </Text>
                                 <LinkButton
                                     to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
-                                    aria-label={`Go to ${conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}`}
+                                    aria-label={
+                                        (conference.hiddenExhibitionsLabel[0]?.value !== undefined)
+                                            ? intl.formatMessage({
+                                                id: 'Conference.Attend.Content.EventsTable.GoToExhibitionName',
+                                                defaultMessage: "Go to {exhibition}" },{
+                                                exhibition: conference.hiddenExhibitionsLabel[0].value
+                                            })
+                                            : intl.formatMessage({
+                                                id: 'Conference.Attend.Content.EventsTable.GoToExhibition',
+                                                defaultMessage: "Go to exhibition"
+                                            })
+                                    }
                                     whiteSpace="normal"
                                     variant="outline"
                                     size="sm"
@@ -171,7 +247,18 @@ function Event({
                                     colorScheme="SecondaryActionButton"
                                     linkProps={{ maxH: "unset" }}
                                 >
-                                    View {conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}
+                                    {
+                                        (conference.hiddenExhibitionsLabel[0]?.value !== undefined)
+                                            ? intl.formatMessage({
+                                                id: 'Conference.Attend.Content.EventsTable.ViewExhibitionName',
+                                                defaultMessage: "View {exhibition}" },{
+                                                exhibition: conference.hiddenExhibitionsLabel[0].value
+                                            })
+                                            : intl.formatMessage({
+                                                id: 'Conference.Attend.Content.EventsTable.ViewExhibition',
+                                                defaultMessage: "View exhibition"
+                                            })
+                                    }
                                 </LinkButton>
                             </>
                         ) : (
@@ -184,7 +271,18 @@ function Event({
                     <Td>
                         <LinkButton
                             to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
-                            aria-label={`Go to ${conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}`}
+                            aria-label={
+                                (conference.hiddenExhibitionsLabel[0]?.value !== undefined)
+                                    ? intl.formatMessage({
+                                        id: 'Conference.Attend.Content.EventsTable.GoToExhibitionName',
+                                        defaultMessage: "Go to {exhibition}" },{
+                                        exhibition: conference.hiddenExhibitionsLabel[0].value
+                                    })
+                                    : intl.formatMessage({
+                                        id: 'Conference.Attend.Content.EventsTable.GoToExhibition',
+                                        defaultMessage: "Go to exhibition"
+                                    })
+                            }
                             whiteSpace="normal"
                             variant="outline"
                             size="sm"
@@ -194,11 +292,27 @@ function Event({
                             colorScheme="SecondaryActionButton"
                             linkProps={{ maxH: "unset" }}
                         >
-                            View {conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}
+                            {
+                                (conference.hiddenExhibitionsLabel[0]?.value !== undefined)
+                                    ? intl.formatMessage({
+                                        id: 'Conference.Attend.Content.EventsTable.ViewExhibitionName',
+                                        defaultMessage: "View {exhibition}" },{
+                                        exhibition: conference.hiddenExhibitionsLabel[0].value
+                                    })
+                                    : intl.formatMessage({
+                                        id: 'Conference.Attend.Content.EventsTable.ViewExhibition',
+                                        defaultMessage: "View exhibition"
+                                    })
+                            }
                         </LinkButton>
                     </Td>
                 ) : (
-                    <Td>No item</Td>
+                    <Td>
+                        <FormattedMessage
+                            id="Conference.Attend.Content.EventsTable.NoItem"
+                            defaultMessage="No item"
+                        />
+                    </Td>
                 )
             ) : undefined}
             <Td>

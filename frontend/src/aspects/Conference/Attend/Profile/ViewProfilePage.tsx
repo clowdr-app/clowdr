@@ -33,6 +33,7 @@ import type { Registrant} from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "./RegistrantExtraInfo";
 import RegistrantItems from "./RegistrantItems";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query ProfilePage_Items($registrantId: uuid!) {
@@ -43,6 +44,7 @@ gql`
 `;
 
 function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.Element {
+    const intl = useIntl();
     const conference = useConference();
     const activePermissions = useConferenceCurrentUserActivePermissions();
     const maybeCurrentUser = useMaybeCurrentUser();
@@ -61,7 +63,11 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                 ].some((permission) => activePermissions.has(permission)) ? (
                     <ButtonGroup variant="outline">
                         <LinkButton to={`/conference/${conference.slug}`} colorScheme="EditProfilePage-ContinueButton">
-                            Continue to {conference.shortName}
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.ViewProfilePage.ContinueToConference"
+                                defaultMessage="Continue to {conference}"
+                                values={{ conference: conference.shortName }}
+                            />
                         </LinkButton>
                         <LinkButton
                             to={`/conference/${conference.slug}/profile/edit${
@@ -71,7 +77,10 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                             }`}
                             colorScheme="PrimaryActionButton"
                         >
-                            Edit profile
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.ViewProfilePage.EditProfile"
+                                defaultMessage="Edit profile"
+                            />
                         </LinkButton>
                     </ButtonGroup>
                 ) : undefined}
@@ -96,7 +105,11 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                                 src={registrant.profile.photoURL_350x350}
                                 fallbackSrc="https://via.placeholder.com/350"
                                 overflow="hidden"
-                                alt={`Profile picture of ${registrant.displayName}`}
+                                alt={ intl.formatMessage({
+                                    id: 'Conference.Attend.Profile.ViewProfilePage.ProfilePicture',
+                                    defaultMessage: "Profile picture of {name}" },{
+                                    name: registrant.displayName
+                                })}
                             />
                         ) : (
                             <FAIcon iconStyle="s" icon="cat" fontSize="150px" />
@@ -199,8 +212,11 @@ function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: strin
     if (error) {
         return (
             <PageFailedToLoad>
-                Sorry, we were unable to load the page due to an unrecognised error. Please try again later or contact
-                our support teams if this error persists.
+                <FormattedMessage
+                    id="Conference.Attend.Profile.ViewProfilePage.UnrecognisedError"
+                    defaultMessage="Sorry, we were unable to load the page due to an unrecognised error. Please try again later or contact
+                    our support teams if this error persists."
+                />
             </PageFailedToLoad>
         );
     }

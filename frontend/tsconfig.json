@@ -24,10 +24,20 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
+        "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "importsNotUsedAsValues": "error",
         "isolatedModules": true,
-        "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }],
+        "plugins": [
+            { "transform": "typescript-is/lib/transform-inline/transformer" },
+            // {
+            //     "transform": "@formatjs/ts-transformer",
+            //     "import": "transform",
+            //     "type": "config",
+            //     "overrideIdFn": "[sha512:contenthash:base64:6]",
+            //     "ast": true
+            // },
+        ],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     }

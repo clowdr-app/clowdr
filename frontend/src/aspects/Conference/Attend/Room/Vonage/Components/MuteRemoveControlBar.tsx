@@ -1,6 +1,7 @@
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import React from "react";
 import { useVonageGlobalState } from "../VonageGlobalStateProvider";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function MuteRemoveControlBar({
     streamId,
@@ -9,6 +10,7 @@ export default function MuteRemoveControlBar({
     streamId?: string;
     connectionId: string;
 }): JSX.Element {
+    const intl = useIntl();
     const vonage = useVonageGlobalState();
 
     // const canForceMute = vonage.canForceMute;
@@ -61,19 +63,26 @@ export default function MuteRemoveControlBar({
                         }}
                         size="xs"
                     >
-                        Mute / Hide
+                        <FormattedMessage
+                            id="Conference.Attend.Room.Vonage.Components.MuteRemoveControlBar.MuteHide"
+                            defaultMessage="Mute / Hide"
+                        />
                     </Button>
                 ) : undefined}
                 {canForceDisconnect ? (
                     <Button
                         onClick={() => {
-                            if (window.confirm("Are you sure you want to remove this person from the room?")) {
+                            const confirmationString = intl.formatMessage({ id: 'Conference.Attend.Room.Vonage.Components.MuteRemoveControlBar.Confirmation', defaultMessage: "Are you sure you want to remove this person from the room" })
+                            if (window.confirm(confirmationString)) {
                                 vonage.forceDisconnect(connectionId);
                             }
                         }}
                         size="xs"
                     >
-                        Remove
+                        <FormattedMessage
+                            id="Conference.Attend.Room.Vonage.Components.MuteRemoveControlBar.Remove"
+                            defaultMessage="Remove"
+                        />
                     </Button>
                 ) : undefined}
             </ButtonGroup>

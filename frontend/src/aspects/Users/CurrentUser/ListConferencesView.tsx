@@ -12,6 +12,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
+import { FormattedMessage } from "react-intl";
 import type { RegistrantFieldsFragment } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { useTitle } from "../../Utils/useTitle";
@@ -32,7 +33,12 @@ export default function ListConferencesView(): JSX.Element {
         if (registrants.length === 0) {
             return (
                 <>
-                    <Text>No conferences.</Text>
+                    <Text>
+                        <FormattedMessage
+                            id="users.currentuser.listconferencesview.noconferences"
+                            defaultMessage="No conferences."
+                        />
+                    </Text>
                     {button}
                 </>
             );
@@ -82,27 +88,42 @@ export default function ListConferencesView(): JSX.Element {
                 spacing={5}
             >
                 <Heading as="h1" id="page-heading">
-                    My conferences
+                    <FormattedMessage
+                        id="users.currentuser.listconferencesview.myconferences"
+                        defaultMessage="My conferences"
+                    />
                 </Heading>
                 <VStack alignItems="flex-start" p={4} bgColor={boxBg} spacing={4}>
                     <Heading as="h3" fontSize="md" textAlign="left">
-                        Login email address
+                        <FormattedMessage
+                            id="users.currentuser.listconferencesview.loginemail"
+                            defaultMessage="Login email address"
+                        />
                     </Heading>
                     <Text>
-                        Your login email address is: <br />
+                        <FormattedMessage
+                            id="users.currentuser.listconferencesview.yourloginemail"
+                            defaultMessage="Your login email address is:"
+                        />{" "}<br />
                         <chakra.span fontFamily="monospace" fontSize="md" fontWeight="bold">
                             {user.email ?? "unknown"}
                         </chakra.span>
                     </Text>
                 </VStack>
                 <Text maxW="300px" fontSize="md">
-                    <b>Choose a conference</b> or use an invite code to join a new one.
+                    <FormattedMessage
+                        id="users.currentuser.listconferencesview.chooseaconference"
+                        defaultMessage="<strong>Choose a conference</strong> or use an invite code to join a new one."
+                    />
                 </Text>
                 {renderConferenceList(
                     LinkIcon,
                     user.registrants,
                     <LinkButton to="/join" colorScheme="pink" marginRight={0} mt={5}>
-                        Use invite code
+                        <FormattedMessage
+                            id="users.currentuser.listconferencesview.useinvitecode"
+                            defaultMessage="Use invite code"
+                        />
                     </LinkButton>,
                     ""
                 )}

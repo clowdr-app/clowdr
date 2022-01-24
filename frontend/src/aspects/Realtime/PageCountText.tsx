@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useMaybeConference } from "../Conference/useConference";
 import FAIcon from "../Icons/FAIcon";
 import { usePresenceState } from "./PresenceStateProvider";
+import { useIntl } from "react-intl";
 
 export default function PageCountText({
     path,
@@ -12,6 +13,7 @@ export default function PageCountText({
     noBrackets = false,
     ...props
 }: { noIcon?: boolean; noTooltip?: boolean; noBrackets?: boolean; path: string } & TextProps): JSX.Element {
+    const intl = useIntl();
     const presence = usePresenceState();
     const [pageCount, setPageCount] = useState<number | null>(null);
     const mConference = useMaybeConference();
@@ -23,7 +25,7 @@ export default function PageCountText({
     }, [mConference?.slug, path, presence]);
 
     const pageCountLabel = pageCount
-        ? `${pageCount} user${pageCount !== 1 ? "s" : ""} with an open tab here`
+        ? intl.formatMessage({ id: 'realtime.pagecounttext.userscounter', defaultMessage: "{number} user(s) with an open tab here" }, { number: pageCount })
         : undefined;
 
     const innerEl = (

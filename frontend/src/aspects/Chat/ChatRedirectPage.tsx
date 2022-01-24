@@ -5,6 +5,7 @@ import { useGetChatPathQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { useConference } from "../Conference/useConference";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
+import { FormattedMessage } from "react-intl";
 
 gql`
     query GetChatPath($chatId: uuid!) {
@@ -35,7 +36,12 @@ export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.El
     }
 
     if (error) {
-        return <>Error loading chat info</>;
+        return <>
+            <FormattedMessage
+                id="chat.ChatRedirectPage.error"
+                defaultMessage="Error loading chat info"
+            />
+        </>;
     }
 
     return (

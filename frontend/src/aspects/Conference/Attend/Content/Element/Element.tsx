@@ -4,6 +4,7 @@ import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import ReactPlayer from "react-player";
 import type { ElementDataFragment } from "../../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../../Chakra/LinkButton";
@@ -36,6 +37,7 @@ function ElementInner({
     type: Content_ElementType_Enum;
     elementId: string;
 }): JSX.Element {
+    const intl = useIntl();
     const scheduleModal = useScheduleModal();
 
     const el = useMemo(() => {
@@ -61,7 +63,10 @@ function ElementInner({
                         onClick={() => scheduleModal.onOpen(undefined, ProgramModalTab.Tags)}
                     >
                         <FAIcon iconStyle="s" icon="tags" mr={2} />
-                        Browse content
+                        <FormattedMessage
+                            id="Conference.Attend.Content.Element.Element.BrowseContent"
+                            defaultMessage="Browse content"
+                        />
                     </Button>
                 );
             case Content_ElementType_Enum.ExploreScheduleButton:
@@ -71,7 +76,10 @@ function ElementInner({
                         onClick={() => scheduleModal.onOpen(undefined, ProgramModalTab.Schedule)}
                     >
                         <FAIcon iconStyle="s" icon="calendar" mr={2} />
-                        Full schedule
+                        <FormattedMessage
+                            id="Conference.Attend.Content.Element.Element.FullSchedule"
+                            defaultMessage="Full schedule"
+                        />
                     </Button>
                 );
         }
@@ -142,7 +150,7 @@ function ElementInner({
                             alt={
                                 latestVersion.data.title?.length
                                     ? latestVersion.data.title
-                                    : "Off-site image - no caption provided"
+                                    : intl.formatMessage({ id: 'Conference.Attend.Content.Element.Element.OffSiteImage', defaultMessage: "Off-site image - no caption provided" })
                             }
                         />
                     </Box>
@@ -162,13 +170,18 @@ function ElementInner({
                                 alt={
                                     latestVersion.data.altText?.length
                                         ? latestVersion.data.altText
-                                        : "No caption provided"
+                                        : intl.formatMessage({ id: 'Conference.Attend.Content.Element.Element.NoCaptionProvided', defaultMessage: "No caption provided" })
                                 }
                             />
                         </Box>
                     );
                 } catch (e) {
-                    return <>Invalid image URL.</>;
+                    return <>
+                        <FormattedMessage
+                            id="Conference.Attend.Content.Element.Element.InvalidImageUrl"
+                            defaultMessage="Invalid image URL."
+                        />
+                    </>;
                 }
             case Content_ElementType_Enum.Link:
                 return <Link href={latestVersion.data.url}>{latestVersion.data.text}</Link>;
@@ -200,7 +213,11 @@ function ElementInner({
             case Content_ElementType_Enum.PaperUrl:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
-                        Open {name}
+                        <FormattedMessage
+                            id="Conference.Attend.Content.Element.Element.OpenName"
+                            defaultMessage="Open {name}"
+                            values={{ name: name }}
+                        />
                     </ExternalLinkButton>
                 );
             case Content_ElementType_Enum.PaperLink:
@@ -228,17 +245,30 @@ function ElementInner({
                     }.amazonaws.com/${bucket}/${key}`;
                     return (
                         <ExternalLinkButton to={url} isExternal={true} colorScheme="PrimaryActionButton">
-                            Open {name}
+                            <FormattedMessage
+                                id="Conference.Attend.Content.Element.Element.OpenName"
+                                defaultMessage="Open {name}"
+                                values={{ name: name }}
+                            />
                         </ExternalLinkButton>
                     );
                 } catch (e) {
-                    return <>Invalid file URL.</>;
+                    return <>
+                        <FormattedMessage
+                            id="Conference.Attend.Content.Element.Element.InvalidFileUrl"
+                            defaultMessage="Invalid file URL."
+                        />
+                    </>;
                 }
             }
             case Content_ElementType_Enum.PosterUrl:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
-                        Open {name}
+                        <FormattedMessage
+                            id="Conference.Attend.Content.Element.Element.OpenName"
+                            defaultMessage="Open {name}"
+                            values={{ name: name }}
+                        />
                     </ExternalLinkButton>
                 );
             case Content_ElementType_Enum.PosterFile: {
@@ -264,7 +294,7 @@ function ElementInner({
                                     alt={
                                         latestVersion.data.altText?.length
                                             ? latestVersion.data.altText
-                                            : "No caption provided"
+                                            : intl.formatMessage({ id: 'Conference.Attend.Content.Element.Element.NoCaptionProvided', defaultMessage: "No caption provided" })
                                     }
                                 />
                             </Box>

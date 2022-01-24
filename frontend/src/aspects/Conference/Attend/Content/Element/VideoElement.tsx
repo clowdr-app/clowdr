@@ -24,6 +24,7 @@ import type { TrackProps } from "react-player/file";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export function VideoElement({
     elementId,
@@ -42,6 +43,7 @@ export function VideoElement({
     onPause?: () => void;
     onFinish?: () => void;
 }): JSX.Element {
+    const intl = useIntl();
     const { url: videoURL, isHLS } = useMemo(() => {
         let s3Url = "transcode" in elementData ? elementData.transcode?.s3Url : undefined;
 
@@ -185,7 +187,12 @@ export function VideoElement({
                     <Flex borderBottomRadius="2xl" p={1} justifyContent="flex-end" w="100%">
                         <Menu>
                             <MenuButton as={Button} size="xs">
-                                Speed <FAIcon iconStyle="s" icon="chevron-down" />
+                                <FormattedMessage
+                                    id="Conference.Attend.Content.Element.VideoElement.Speed"
+                                    defaultMessage="Speed"
+                                />
+                                {" "}
+                                <FAIcon iconStyle="s" icon="chevron-down" />
                             </MenuButton>
                             <MenuList size="xs" spacing="compact">
                                 <MenuOptionGroup
@@ -233,7 +240,11 @@ export function VideoElement({
             ) : undefined}
             {!videoURL && !loading ? (
                 <Text mb={2}>
-                    {elementData.type === Content_ElementType_Enum.AudioFile ? "Audio" : "Video"} not yet uploaded.
+                    {
+                        elementData.type === Content_ElementType_Enum.AudioFile
+                            ? intl.formatMessage({ id: 'Conference.Attend.Content.Element.VideoElement.AudioNotUploaded', defaultMessage: "Audio not yet uploaded." })
+                            : intl.formatMessage({ id: 'Conference.Attend.Content.Element.VideoElement.VideoNotUploaded', defaultMessage: "Video not yet uploaded." })
+                    } 
                 </Text>
             ) : undefined}
             {player}

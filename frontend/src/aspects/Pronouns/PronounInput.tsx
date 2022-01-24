@@ -1,5 +1,6 @@
 import { Box, FormControl, FormHelperText, FormLabel, Input, ListItem, UnorderedList } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import PronounTag from "./PronounTag";
 
 function PronounInputInner({
@@ -9,12 +10,16 @@ function PronounInputInner({
     pronouns: string[];
     onChange: (allPronouns: string[], newPronounName?: string) => void;
 }): JSX.Element {
+    const intl = useIntl();
     const inputRef = useRef<HTMLInputElement>(null);
     return (
         <>
             <FormControl maxW={450}>
                 <FormLabel fontWeight="bold" fontSize="1.2rem">
-                    Pronouns
+                    <FormattedMessage
+                        id="pronouns.pronouninput.pronouns"
+                        defaultMessage="Pronouns"
+                    />
                 </FormLabel>
                 <Box
                     fontSize="0.8rem"
@@ -43,7 +48,7 @@ function PronounInputInner({
                     ))}
                     <Input
                         ref={inputRef}
-                        placeholder="Type a pronoun"
+                        placeholder={intl.formatMessage({ id: 'pronouns.pronouninput.typeapronoun', defaultMessage: "Type a pronoun" })}
                         border="none"
                         w="10em"
                         p={0}
@@ -70,8 +75,18 @@ function PronounInputInner({
                 </Box>
                 <FormHelperText>
                     <UnorderedList>
-                        <ListItem>Create pronouns by typing then press Enter.</ListItem>
-                        <ListItem>Delete pronouns by clicking on them.</ListItem>
+                        <ListItem>
+                            <FormattedMessage
+                                id="pronouns.pronouninput.createpronouns"
+                                defaultMessage="Create pronouns by typing then press Enter."
+                            />
+                        </ListItem>
+                        <ListItem>
+                            <FormattedMessage
+                                id="pronouns.pronouninput.deletepronouns"
+                                defaultMessage="Delete pronouns by clicking on them."
+                            />
+                        </ListItem>
                     </UnorderedList>
                 </FormHelperText>
             </FormControl>

@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { FormattedMessage } from "react-intl";
 import type { ExhibitionWithContentFragment, ItemEventFragment } from "../../../../generated/graphql";
 import { Permissions_Permission_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
@@ -14,6 +15,7 @@ import { useConference } from "../../useConference";
 import { EventsTable } from "../Content/EventsTable";
 import { ItemElements } from "../Content/ItemElements";
 import ExhibitionLayout from "./ExhibitionLayout";
+
 
 gql`
     fragment ExhibitionItem on content_Item {
@@ -148,7 +150,10 @@ function ExhibitionPageInner({
                                                 verticalAlign="middle"
                                             />{" "}
                                             <chakra.span verticalAlign="middle" pb={0.7}>
-                                                Discussion room
+                                                <FormattedMessage
+                                                    id="conference.attend.exhibition.exhibitionpage.discussionroom"
+                                                    defaultMessage="Discussion room"
+                                                />
                                             </chakra.span>
                                         </Text>
                                         <PageCountText
@@ -164,7 +169,10 @@ function ExhibitionPageInner({
                     <>
                         <Text w="auto" textAlign="left" p={0}>
                             <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
-                            Times are shown in your local timezone.
+                            <FormattedMessage
+                                id="Conference.Attend.Exhibition.ExhibitionPage.LocalTimezone"
+                                defaultMessage="Times are shown in your local timezone."
+                            />
                         </Text>
                         <EventsTable events={events} includeRoom={true} />
                     </>

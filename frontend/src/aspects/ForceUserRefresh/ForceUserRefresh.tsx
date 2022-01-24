@@ -19,6 +19,7 @@ import { useGetForceUserRefreshConfigLazyQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 import { useRealTime } from "../Generic/useRealTime";
 import { useRestorableState } from "../Generic/useRestorableState";
+import { FormattedMessage } from "react-intl";
 
 gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
@@ -101,10 +102,19 @@ export default function ForceUserRefresh(): JSX.Element {
         >
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>A new version of Midspace is available!</ModalHeader>
+                <ModalHeader>
+                    <FormattedMessage
+                        id="forceuserrefresh.forceuserrefresh.newversion"
+                        defaultMessage="A new version of Midspace is available!"
+                    />
+                </ModalHeader>
                 <ModalBody>
                     <Text>
-                        To receive the latest updates please refresh the page (<Kbd>F5</Kbd>)
+                        <FormattedMessage
+                            id="forceuserrefresh.forceuserrefresh.pleaserefresh"
+                            defaultMessage="To receive the latest updates please refresh the page "
+                        />
+                        (<Kbd>F5</Kbd>)
                     </Text>
                 </ModalBody>
                 <ModalFooter>
@@ -130,7 +140,13 @@ function ProgressTimeout({ startTime, endTime }: { startTime: number; endTime: n
     return (
         <VStack w="100%">
             <Progress size="sm" dir="" w="100%" value={100 - value} />
-            <Text fontSize="sm">Automatic refresh in {Math.round(timeRemaining)}s</Text>
+            <Text fontSize="sm">
+                <FormattedMessage
+                    id="forceuserrefresh.forceuserrefresh.automaticrefresh"
+                    defaultMessage="Automatic refresh in "
+                />
+                {Math.round(timeRemaining)}s
+            </Text>
         </VStack>
     );
 }

@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { pushNotificationsState } from "./PushNotificationsState";
+import { FormattedMessage } from "react-intl";
 
 export default function PushNotificationSettings(): JSX.Element {
     const [isSubscribed, setIsSubscribed] = useState<boolean | string | null>(null);
@@ -34,36 +35,62 @@ export default function PushNotificationSettings(): JSX.Element {
         <Center as={VStack} flexDir="column" spacing={8} maxW={600}>
             {isSubscribed === null ? (
                 <>
-                    <Text>Determining subscription state for this browser...</Text>
+                    <Text>
+                        <FormattedMessage
+                            id="pushnotifications.pushnotificationsettings.determiningsubscriptionstate"
+                            defaultMessage="Determining subscription state for this browser..."
+                        />
+                    </Text>
                     <Box>
                         <Spinner />
                     </Box>
                 </>
             ) : isSubscribed && typeof isSubscribed === "string" ? (
                 <>
-                    <Text>Error handling subscription</Text>
+                    <Text>
+                        <FormattedMessage
+                            id="pushnotifications.pushnotificationsettings.errorhandlingsubscription"
+                            defaultMessage="Error handling subscription"
+                        />
+                    </Text>
                     <Text>{isSubscribed}</Text>
                 </>
             ) : isSubscribed ? (
                 <>
-                    <Text>You are subscribed to push notifications in this browser.</Text>
+                    <Text>
+                        <FormattedMessage
+                            id="pushnotifications.pushnotificationsettings.youresubscribed"
+                            defaultMessage="You are subscribed to push notifications in this browser."
+                        />
+                    </Text>
                     <Button
                         onClick={() => {
                             pushNotificationsState.unsubscribe(apolloClient);
                         }}
                     >
-                        Unsubscribe
+                        <FormattedMessage
+                            id="pushnotifications.pushnotificationsettings.unsubscribe"
+                            defaultMessage="Unsubscribe"
+                        />
                     </Button>
                 </>
             ) : (
                 <>
-                    <Text>You are not currently subscribed to push notifications in this browser.</Text>
+                    <Text>
+                        <FormattedMessage
+                            id="pushnotifications.pushnotificationsettings.notsubscribed"
+                            defaultMessage="You are not currently subscribed to push notifications in this browser."
+                        />
+                    </Text>
                     <Button
                         onClick={() => {
                             pushNotificationsState.subscribe(apolloClient);
                         }}
                     >
-                        Subscribe
+                        <FormattedMessage
+                            id="pushnotifications.pushnotificationsettings.subscribe"
+                            defaultMessage="Subscribe"
+                        />
                     </Button>
                 </>
             )}
@@ -75,22 +102,25 @@ export default function PushNotificationSettings(): JSX.Element {
                     </AlertTitle>
                     <AlertDescription as={VStack}>
                         <Text>
-                            Instructions for enabling alerts:{" "}
+                            <FormattedMessage
+                                id="pushnotifications.pushnotificationsettings.instructionsforenabling"
+                                defaultMessage="Instructions for enabling alerts:"
+                            />{" "}
                             <Link isExternal href="https://support.apple.com/en-us/HT204079">
                                 https://support.apple.com/en-us/HT204079
                             </Link>
                         </Text>
                         <Text>
-                            Mac users will need to{" "}
-                            <Link isExternal href="https://support.apple.com/en-us/HT204079">
-                                allow their browser to show notifications via the operating system&apos;s Control Center
-                                settings.
-                            </Link>
+                            <FormattedMessage
+                                id="pushnotifications.pushnotificationsettings.instructionsmac1"
+                                defaultMessage="Mac users will need to allow their browser to show notifications via the operating system's Control Center settings."
+                            />
                         </Text>
                         <Text>
-                            Please also remember that if you have Do Not Disturb mode on (which is often automatically
-                            enabled when you have a second screen plugged in), notifications will be suppressed by the
-                            operating system.
+                            <FormattedMessage
+                                id="pushnotifications.pushnotificationsettings.instructionsmac2"
+                                defaultMessage="Please also remember that if you have Do Not Disturb mode on (which is often automatically enabled when you have a second screen plugged in), notifications will be suppressed by the operating system."
+                            />
                         </Text>
                     </AlertDescription>
                 </Box>
@@ -99,17 +129,24 @@ export default function PushNotificationSettings(): JSX.Element {
                 <AlertIcon mt={1} />
                 <Box flex="1">
                     <AlertTitle mb={2}>
-                        Please note, push notifications are only supported in Firefox, Chrome, Edge and Opera on
-                        desktop, laptop and Android devices.
+                        <FormattedMessage
+                            id="pushnotifications.pushnotificationsettings.browserssupported"
+                            defaultMessage="Please note, push notifications are only supported in Firefox, Chrome, Edge and Opera on desktop, laptop and Android devices."
+                        />
                     </AlertTitle>
                     <AlertDescription as={VStack}>
                         <Text>
-                            Apple&apos;s decision to obstruct open web standards, by refusing to implement the Push API,
-                            prevents Midspace from supporting push notifications in Safari and all browsers on iOS.
+                            <FormattedMessage
+                                id="pushnotifications.pushnotificationsettings.applerant1"
+                                defaultMessage="Apple's decision to obstruct open web standards, by refusing to implement the Push API,prevents Midspace from supporting push notifications in Safari and all browsers on iOS."
+                            />
+                            
                         </Text>
                         <Text fontStyle="italic">
-                            (Don&apos;t be fooled: all iOS browser apps have to use Apple&apos;s web engine, including
-                            Firefox and Chrome. Your browser may not be what you think it is.)
+                            <FormattedMessage
+                                id="pushnotifications.pushnotificationsettings.applerant2"
+                                defaultMessage="(Don't be fooled: all iOS browser apps have to use Apple's web engine, including Firefox and Chrome. Your browser may not be what you think it is.)"
+                            />
                         </Text>
                     </AlertDescription>
                 </Box>

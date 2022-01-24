@@ -14,6 +14,7 @@ import { ProfileDataFragmentDoc, useSubmitProfilePhotoMutation } from "../../../
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { RegistrantContextT } from "../../useCurrentRegistrant";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     mutation SubmitProfilePhoto($registrantId: uuid!, $s3URL: String!) {
@@ -32,6 +33,7 @@ export default function EditProfilePitureForm({
     handleFormSubmitted?: () => Promise<void>;
     registrant: RegistrantContextT;
 }): JSX.Element {
+    const intl = useIntl();
     const toast = useToast();
     const [files, setFiles] = useState<UppyFile[]>([]);
     const [submitProfilePhoto] = useSubmitProfilePhotoMutation();
@@ -69,15 +71,20 @@ export default function EditProfilePitureForm({
                     toast({
                         position: "top",
                         status: "error",
-                        description: "The maximum size is 1MiB.",
+                        description: intl.formatMessage({
+                            id: 'Conference.Attend.Profile.EditProfilePictureForm.MaximumFileSize',
+                            defaultMessage: "Maximum file size is 1MiB."
+                        }),
                     });
                     uppy.removeFile(invalidFile.id);
                 } else {
                     toast({
                         position: "top",
                         status: "error",
-                        description:
-                            "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_",
+                        description: intl.formatMessage({
+                            id: 'Conference.Attend.Profile.EditProfilePictureForm.InvalidFileName',
+                            defaultMessage: "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_"
+                        }),
                     });
                     uppy.removeFile(invalidFile.id);
                 }
@@ -110,7 +117,10 @@ export default function EditProfilePitureForm({
                         toast({
                             position: "top",
                             status: "error",
-                            description: "Failed to upload file. Please try again.",
+                            description: intl.formatMessage({
+                                id: 'Conference.Attend.Profile.EditProfilePictureForm.FailedToUploadTryAgain',
+                                defaultMessage: "Failed to upload file. Please try again."
+                            }),
                         });
                         uppy.reset();
                         return;
@@ -121,7 +131,10 @@ export default function EditProfilePitureForm({
                         toast({
                             position: "top",
                             status: "error",
-                            description: "Failed to upload file. Please try again later.",
+                            description: intl.formatMessage({
+                                id: 'Conference.Attend.Profile.EditProfilePictureForm.FailedToUploadTryAgain',
+                                defaultMessage: "Failed to upload file. Please try again."
+                            }),
                         });
                         uppy.reset();
                         return;
@@ -174,7 +187,10 @@ export default function EditProfilePitureForm({
                         toast({
                             position: "top",
                             status: "success",
-                            description: "Uploaded file successfully.",
+                            description: intl.formatMessage({
+                                id: 'Conference.Attend.Profile.EditProfilePictureForm.UploadedSuccessfully',
+                                defaultMessage: "Uploaded file successfully."
+                            }),
                         });
 
                         uppy.reset();
@@ -186,8 +202,14 @@ export default function EditProfilePitureForm({
                         console.error("Failed to upload file", e);
                         toast({
                             status: "error",
-                            title: "Failed to upload file.",
-                            description: e?.message ?? "Please try again later.",
+                            title: intl.formatMessage({
+                                id: 'Conference.Attend.Profile.EditProfilePictureForm.FailedToUpload',
+                                defaultMessage: "Failed to upload file."
+                            }),
+                            description: e?.message ?? intl.formatMessage({
+                                id: 'Conference.Attend.Profile.EditProfilePictureForm.TryAgain',
+                                defaultMessage: "Please try again later."
+                            }),
                         });
                         uppy.reset();
                         return;
@@ -217,8 +239,14 @@ export default function EditProfilePitureForm({
                                             mt={2}
                                             alt={
                                                 files.length === 1
-                                                    ? "Preview of the selected file."
-                                                    : "Your current profile picture."
+                                                    ? intl.formatMessage({
+                                                        id: 'Conference.Attend.Profile.EditProfilePictureForm.FilePreview',
+                                                        defaultMessage: "Preview of the selected file."
+                                                    })
+                                                    : intl.formatMessage({
+                                                        id: 'Conference.Attend.Profile.EditProfilePictureForm.CurrentProfilePicture',
+                                                        defaultMessage: "Your current profile picture."
+                                                    })
                                             }
                                             src={
                                                 (files.length === 1
@@ -266,7 +294,10 @@ export default function EditProfilePitureForm({
                                         <Button
                                             isLoading={isDeleting}
                                             pos="absolute"
-                                            aria-label="Remove profile picture"
+                                            aria-label={intl.formatMessage({
+                                                id: 'Conference.Attend.Profile.EditProfilePictureForm.RemoveProfilePicture',
+                                                defaultMessage: "Remove profile picture"
+                                            })}
                                             colorScheme="DestructiveActionButton"
                                             top={2}
                                             right={2}
@@ -319,8 +350,15 @@ export default function EditProfilePitureForm({
                                     ) : undefined}
                                 </Box>
                                 <FormHelperText>
-                                    File types: {allowedFileTypes.join(", ")}.<br />
-                                    Maximum file size 1MiB.
+                                    <FormattedMessage
+                                        id="Conference.Attend.Profile.EditProfilePictureForm.FileTypes"
+                                        defaultMessage="File types: {types}."
+                                        values={{ types: allowedFileTypes.join(", ") }}
+                                    /><br />
+                                    <FormattedMessage
+                                        id="Conference.Attend.Profile.EditProfilePictureForm.MaximumFileSize"
+                                        defaultMessage="Maximum file size is 1MiB."
+                                    />
                                 </FormHelperText>
                             </FormControl>
 
@@ -332,7 +370,10 @@ export default function EditProfilePitureForm({
                                 isDisabled={!isValid || files.length !== 1}
                                 mt={2}
                             >
-                                Upload
+                                <FormattedMessage
+                                    id="Conference.Attend.Profile.EditProfilePictureForm.Upload"
+                                    defaultMessage="Upload"
+                                />
                             </Button>
                         </Form>
                     </>

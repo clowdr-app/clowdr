@@ -11,6 +11,7 @@ import {
     Select,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 
 interface Props {
     isOpen: boolean;
@@ -34,6 +35,7 @@ export default function DeviceChooserModal({
     showCamera,
     showMicrophone,
 }: Props): JSX.Element {
+    const intl = useIntl();
     const [mediaDevices, setMediaDevices] = useState<MediaDeviceInfo[]>([]);
     const [selectedCamera, setSelectedCamera] = useState<string | null>(cameraId);
     const [selectedMicrophone, setSelectedMicrophone] = useState<string | null>(microphoneId);
@@ -89,10 +91,13 @@ export default function DeviceChooserModal({
                         {showCamera ? (
                             <>
                                 <Heading as="h4" size="sm" textAlign="left" my={4}>
-                                    Camera
+                                    <FormattedMessage
+                                        id="conference.attend.room.vonage.devicechoosermodal.camera"
+                                        defaultMessage="Camera"
+                                    />
                                 </Heading>
                                 <Select
-                                    placeholder="Choose camera"
+                                    placeholder={intl.formatMessage({ id: 'conference.attend.room.vonage.devicechoosermodal.choosecamera', defaultMessage: "Choose camera" })}
                                     value={selectedCamera ?? undefined}
                                     onChange={(e) =>
                                         e.target.value === ""
@@ -111,10 +116,13 @@ export default function DeviceChooserModal({
                         {showMicrophone ? (
                             <>
                                 <Heading as="h4" size="sm" textAlign="left" my={4}>
-                                    Microphone
+                                    <FormattedMessage
+                                        id="conference.attend.room.vonage.devicechoosermodal.microphone"
+                                        defaultMessage="Microphone"
+                                    />
                                 </Heading>
                                 <Select
-                                    placeholder="Choose microphone"
+                                    placeholder={intl.formatMessage({ id: 'conference.attend.room.vonage.devicechoosermodal.choosemicrophone', defaultMessage: "Choose microphone" })}
                                     value={selectedMicrophone ?? undefined}
                                     onChange={(e) =>
                                         e.target.value === ""
@@ -133,7 +141,10 @@ export default function DeviceChooserModal({
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={doClose} colorScheme="PrimaryActionButton" mt={5}>
-                            Save
+                            <FormattedMessage
+                                id="conference.attend.room.vonage.devicechoosermodal.save"
+                                defaultMessage="Save"
+                            />
                         </Button>
                     </ModalFooter>
                 </ModalContent>

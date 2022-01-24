@@ -24,6 +24,7 @@ import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModal
 import { ProgramModalTab, useScheduleModal } from "../Schedule/ProgramModal";
 import ContinuationActiveChoice from "./ContinuationActiveChoice";
 import ContinuationPassiveChoice from "./ContinuationPassiveChoice";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     fragment ContinuationChoices_Continuation on schedule_Continuation {
@@ -186,6 +187,7 @@ function ContinuationChoices_Inner({
     currentRole: ContinuationDefaultFor;
     currentRoomId: string;
 }): JSX.Element {
+    const intl = useIntl();
     const roomsResponse = useContinuationChoices_RoomsQuery({
         variables: {
             ids: choices.reduce((acc, option) => {
@@ -317,7 +319,7 @@ function ContinuationChoices_Inner({
                                         if (roomsResponse.error) {
                                             error = roomsResponse.error.message;
                                         } else {
-                                            error = "Sorry, the room for the chosen event could not be found.";
+                                            error = intl.formatMessage({ id: "Conference.Attend.Continuation.ContinuationChoices.RoomNotFound", defaultMessage: "Sorry, the room for the chosen event could not be found." });
                                         }
                                     }
                                 }
@@ -340,7 +342,7 @@ function ContinuationChoices_Inner({
                                         if (roomsResponse.error) {
                                             error = roomsResponse.error.message;
                                         } else {
-                                            error = "Sorry, the chosen discussion room could not be found.";
+                                            error = intl.formatMessage({ id: "Conference.Attend.Continuation.ContinuationChoices.DiscussionNotFound", defaultMessage: "Sorry, the chosen discussion room could not be found." });
                                         }
                                     }
                                 }
@@ -402,7 +404,7 @@ function ContinuationChoices_Inner({
                                 break;
                         }
                     } else {
-                        error = "Sorry, the selected option is no longer available.";
+                        error = intl.formatMessage({ id: "Conference.Attend.Continuation.ContinuationChoices.OptionUnavaiable", defaultMessage: "Sorry, the selected option is no longer available." });
                     }
 
                     setActivatedChoice(error ?? true);
@@ -430,7 +432,7 @@ function ContinuationChoices_Inner({
                 duration: 80000,
                 position: "bottom",
                 isClosable: true,
-                title: "Error activating continuation",
+                title: intl.formatMessage({ id: "Conference.Attend.Continuation.ContinuationChoices.ErrorActivatingContinuation", defaultMessage: "Error activating continuation" }),
                 status: "error",
             });
         }

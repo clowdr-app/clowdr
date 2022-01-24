@@ -30,6 +30,7 @@ import {
 import type { FocusableElement } from "@chakra-ui/utils";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import type { MyBackstages_EventFragment } from "../../../../generated/graphql";
 import { useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
@@ -73,6 +74,7 @@ gql`
 `;
 
 function MyBackstages(): JSX.Element {
+    const intl = useIntl();
     const conference = useConference();
     const registrant = useCurrentRegistrant();
 
@@ -136,12 +138,18 @@ function MyBackstages(): JSX.Element {
         <>
             {myBackstagesNotice ? <Markdown>{myBackstagesNotice}</Markdown> : undefined}
             <Text pb={2} pt={myBackstagesNotice ? 2 : undefined}>
-                If you are an author, chair or presenter, below is the list of your backstages for current and future
-                live-stream (not video-chat) events. You should join your backstage when it is available.
+                <FormattedMessage
+                    id="Conference.Attend.Profile.MyBackstages.BelowIsTheList"
+                    defaultMessage="If you are an author, chair or presenter, below is the list of your backstages for current and future
+                    live-stream (not video-chat) events. You should join your backstage when it is available."
+                />
             </Text>
             <Text pb={4}>
-                Backstages are only available for live-stream events. If you are presenting at a video-chat event, you
-                can go directly to your room at the start time. You will not see any backstages in this list.
+                <FormattedMessage
+                    id="Conference.Attend.Profile.MyBackstages.OnlyAvaiableForLiveStream"
+                    defaultMessage="Backstages are only available for live-stream events. If you are presenting at a video-chat event, you
+                    can go directly to your room at the start time. You will not see any backstages in this list."
+                />
             </Text>
             {myBackstagesResponse.loading && !eventsGroupedByDay ? (
                 <CenteredSpinner spinnerProps={{ label: "Loading backstages" }} />
@@ -150,12 +158,20 @@ function MyBackstages(): JSX.Element {
                 <>
                     {eventsTodayAndFuture.length === 0 ? (
                         <Text fontWeight="bold">
-                            You are not assigned to any future live-stream events. If you think this is a mistake,
-                            please contact your conference organisers.
+                            <FormattedMessage
+                                id="Conference.Attend.Profile.MyBackstages.NotAssignedLiveStream"
+                                defaultMessage="You are not assigned to any future live-stream events. If you think this is a mistake,
+                                please contact your conference organisers."
+                            />
                         </Text>
                     ) : (
                         <>
-                            <Text>All times/dates are shown in your local timezone.</Text>
+                            <Text>
+                                <FormattedMessage
+                                    id="Conference.Attend.Profile.MyBackstages.AllTimesLocal"
+                                    defaultMessage="All times/dates are shown in your local timezone."
+                                />
+                            </Text>
                             <Accordion allowToggle w="100%" reduceMotion defaultIndex={0}>
                                 {eventsTodayAndFuture.reduce((elements, group) => {
                                     const startAtDay = new Date(group[0].startTime);
@@ -178,12 +194,42 @@ function MyBackstages(): JSX.Element {
                                                 <Table size="sm" colorScheme="MyBackstages">
                                                     <Thead>
                                                         <Tr>
-                                                            <Th maxW="7em">You are needed</Th>
-                                                            <Th maxW="9em">Backstage from</Th>
-                                                            <Th maxW="5em">Event start</Th>
-                                                            <Th maxW="12em">Event name</Th>
-                                                            <Th maxW="25em">Content item</Th>
-                                                            <Th maxW="15em">Where to find your backstage</Th>
+                                                            <Th maxW="7em">
+                                                                <FormattedMessage
+                                                                    id="Conference.Attend.Profile.MyBackstages.YouAreNeeded"
+                                                                    defaultMessage="You are needed"
+                                                                />
+                                                            </Th>
+                                                            <Th maxW="9em">
+                                                                <FormattedMessage
+                                                                    id="Conference.Attend.Profile.MyBackstages.BackstageFrom"
+                                                                    defaultMessage="Backstage from"
+                                                                />
+                                                            </Th>
+                                                            <Th maxW="5em">
+                                                                <FormattedMessage
+                                                                    id="Conference.Attend.Profile.MyBackstages.EventStart"
+                                                                    defaultMessage="Event start"
+                                                                />
+                                                            </Th>
+                                                            <Th maxW="12em">
+                                                                <FormattedMessage
+                                                                    id="Conference.Attend.Profile.MyBackstages.EventName"
+                                                                    defaultMessage="Event name"
+                                                                />
+                                                            </Th>
+                                                            <Th maxW="25em">
+                                                                <FormattedMessage
+                                                                    id="Conference.Attend.Profile.MyBackstages.ContentItem"
+                                                                    defaultMessage="Content item"
+                                                                />
+                                                            </Th>
+                                                            <Th maxW="15em">
+                                                                <FormattedMessage
+                                                                    id="Conference.Attend.Profile.MyBackstages.WhereToFindBackstage"
+                                                                    defaultMessage="Where to find your backstage"
+                                                                />
+                                                            </Th>
                                                         </Tr>
                                                     </Thead>
                                                     <Tbody>
@@ -237,20 +283,28 @@ function MyBackstages(): JSX.Element {
                                                                                     fontSize="xs"
                                                                                     mr={2}
                                                                                 />
-                                                                                <chakra.span>Now!</chakra.span>
+                                                                                <chakra.span>
+                                                                                    <FormattedMessage
+                                                                                        id="Conference.Attend.Profile.MyBackstages.NowExc"
+                                                                                        defaultMessage="Now!"
+                                                                                    />
+                                                                                </chakra.span>
                                                                                 <chakra.span fontSize="xs" mt={2}>
-                                                                                    (Click here to go to your backstage)
+                                                                                    <FormattedMessage
+                                                                                        id="Conference.Attend.Profile.MyBackstages.GoToBackstage"
+                                                                                        defaultMessage="(Click here to go to your backstage)"
+                                                                                    />
                                                                                 </chakra.span>
                                                                             </LinkButton>
                                                                         ) : isSoon ? (
-                                                                            "Soon"
+                                                                            intl.formatMessage({ id: 'Conference.Attend.Profile.MyBackstages.Soon', defaultMessage: "Soon" })
                                                                         ) : (
-                                                                            "Not yet"
+                                                                            intl.formatMessage({ id: 'Conference.Attend.Profile.MyBackstages.NotYet', defaultMessage: "Not yet" })
                                                                         )}
                                                                     </Td>
                                                                     <Td>
                                                                         {isNow
-                                                                            ? "Now"
+                                                                            ? intl.formatMessage({ id: 'Conference.Attend.Profile.MyBackstages.Now', defaultMessage: "Now" })
                                                                             : new Date(
                                                                                   backstageStartTime
                                                                               ).toLocaleTimeString(undefined, {
@@ -260,7 +314,7 @@ function MyBackstages(): JSX.Element {
                                                                     </Td>
                                                                     <Td>
                                                                         {isLive
-                                                                            ? "Live now"
+                                                                            ? intl.formatMessage({ id: 'Conference.Attend.Profile.MyBackstages.LiveNow', defaultMessage: "Live now" })
                                                                             : startAt.toLocaleTimeString(undefined, {
                                                                                   minute: "2-digit",
                                                                                   hour: "2-digit",
@@ -386,14 +440,18 @@ export function MyBackstagesModal({
 }
 
 export default function MyBackstagesPage(): JSX.Element {
-    const title = useTitle("My Backstages");
+    const intl = useIntl();
+    const title = useTitle(intl.formatMessage({ id: 'Conference.Attend.Profile.MyBackstages.MyBackstages', defaultMessage: "My Backstages" }));
     const registrant = useCurrentRegistrant();
 
     return (
         <>
             {title}
             <Heading as="h1" id="page-heading">
-                My Backstages
+                <FormattedMessage
+                    id="Conference.Attend.Profile.MyBackstages.MyBackstages"
+                    defaultMessage="My Backstages"
+                />
             </Heading>
             <Heading as="h2" fontSize="lg" fontStyle="italic">
                 ({registrant.displayName})

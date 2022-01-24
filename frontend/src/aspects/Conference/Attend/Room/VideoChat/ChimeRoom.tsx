@@ -4,6 +4,7 @@ import * as portals from "react-reverse-portal";
 import type { RoomPage_RoomDetailsFragment} from "../../../../../generated/graphql";
 import { useGetRoomChimeDataMutation } from "../../../../../generated/graphql";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     mutation GetRoomChimeData($roomId: uuid!) {
@@ -49,6 +50,9 @@ export function VideoChatChimeRoom({
             getMeetingData={getMeetingData}
         />
     ) : (
-        <>Cannot load breakout room</>
+        <FormattedMessage 
+            id="Conference.Attend.Room.VideoChat.ChimeRoom.CannotLoad"
+            defaultMessage="Cannot load breakout room"
+        />
     );
 }

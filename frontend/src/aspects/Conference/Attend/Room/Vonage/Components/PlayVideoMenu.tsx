@@ -6,6 +6,7 @@ import React, { useMemo } from "react";
 import { useGetEventVideosQuery, useGetRoomVideosQuery } from "../../../../../../generated/graphql";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useVonageGlobalState } from "../VonageGlobalStateProvider";
+import { FormattedMessage, useIntl } from "react-intl";
 
 gql`
     query GetEventVideos($eventId: uuid!) {
@@ -159,12 +160,17 @@ export default function PlayVideoMenuButton({
                 isLoading={eventResponse.loading}
                 isDisabled={!videoElementIds.length}
             >
-                <chakra.span>Play pre-recorded video</chakra.span>
+                <chakra.span>
+                    <FormattedMessage
+                        id="Conference.Attend.Room.Vonage.Components.PlayVideoMenu.PlayPreRecorded"
+                        defaultMessage="Play pre-recorded video"
+                    />
+                </chakra.span>
                 <ChevronDownIcon ml={2} />
             </MenuButton>
             <Portal>
                 <MenuList zIndex="1000000" overflow="auto" maxH="50vh" maxW="50vh">
-                    {videoElementMenuItems?.length ? videoElementMenuItems : <MenuItem>No videos available</MenuItem>}
+                    {videoElementMenuItems?.length ? videoElementMenuItems : <FormattedMessage id="Conference.Attend.Room.Vonage.Components.PlayVideoMenu.NoVideosAvaliable" defaultMessage="No videos avaliable" />}
                 </MenuList>
             </Portal>
         </Menu>

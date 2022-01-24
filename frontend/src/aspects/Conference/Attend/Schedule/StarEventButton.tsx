@@ -19,6 +19,7 @@ import {
 import FAIcon from "../../../Icons/FAIcon";
 import type { Registrant} from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import { useIntl } from "react-intl";
 
 gql`
     fragment StarredEvent on schedule_StarredEvent {
@@ -109,6 +110,7 @@ function StarEventButtonInner({
     eventIds: string | string[];
     registrant: Registrant;
 }): JSX.Element {
+    const intl = useIntl();
     const eventIds = useMemo(() => (typeof _eventIds === "string" ? [_eventIds] : _eventIds), [_eventIds]);
     const starsResponse = useStarEventButton_GetStarsQuery({
         variables: {
@@ -273,7 +275,7 @@ function StarEventButtonInner({
     if (starsResponse.data.schedule_StarredEvent.length > 0) {
         return (
             <Button
-                aria-label="Remove event from your personal schedule"
+                aria-label={intl.formatMessage({ id: 'Conference.Attend.Schedule.StarEventButton.RemoveFromSchedule', defaultMessage: "Remove event from your personal schedule" })}
                 onClick={(ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();
@@ -308,7 +310,7 @@ function StarEventButtonInner({
     } else {
         return (
             <Button
-                aria-label="Add event to your personal schedule"
+                aria-label={intl.formatMessage({ id: 'Conference.Attend.Schedule.StarEventButton.AddToSchedule', defaultMessage: "Add event to your personal schedule" })}
                 onClick={(ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();

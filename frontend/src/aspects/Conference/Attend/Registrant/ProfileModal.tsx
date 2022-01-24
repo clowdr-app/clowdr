@@ -31,6 +31,7 @@ import type { Registrant} from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "../Profile/RegistrantExtraInfo";
 import RegistrantItems from "../Profile/RegistrantItems";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function ProfileModal({
     registrant,
@@ -41,6 +42,7 @@ export default function ProfileModal({
     isOpen: boolean;
     onClose: () => void;
 }): JSX.Element {
+    const intl = useIntl();
     const conference = useConference();
     const mCurrentRegistrant = useMaybeCurrentRegistrant();
     const mChatState = useMaybeGlobalChatState();
@@ -62,7 +64,7 @@ export default function ProfileModal({
                 } else {
                     if (result.data.createRoomDm.message !== "DM already exists") {
                         toast({
-                            title: result.data.createRoomDm.message ?? "Created new DM",
+                            title: result.data.createRoomDm.message ?? intl.formatMessage({ id: 'Conference.Attend.Registrant.ProfileModal.CreatedNewDM', defaultMessage: "Created new DM" }),
                             status: "success",
                         });
                     }
@@ -73,7 +75,7 @@ export default function ProfileModal({
                 }
             } catch (e) {
                 toast({
-                    title: "Could not create DM",
+                    title: intl.formatMessage({ id: 'Conference.Attend.Registrant.ProfileModal.CouldNotCreateDM', defaultMessage: "Could not create DM" }),
                     status: "error",
                 });
                 console.error("Could not create DM", e);
@@ -159,7 +161,10 @@ export default function ProfileModal({
                                             colorScheme="SecondaryActionButton"
                                         >
                                             <FAIcon iconStyle="s" icon="link" mr={2} />
-                                            View profile
+                                            <FormattedMessage
+                                                id="Conference.Attend.Registrant.ProfileModal.ViewProfile"
+                                                defaultMessage="View profile"
+                                            />
                                         </LinkButton>
                                     </VStack>
                                 </HStack>
@@ -189,7 +194,7 @@ export default function ProfileModal({
                                 ) : undefined}
                             </VStack>
                         ) : (
-                            <Spinner label="Loading registrant profile, please wait" />
+                            <Spinner label={intl.formatMessage({ id: 'Conference.Attend.Registrant.ProfileModal.LoadingRegistrantProfile', defaultMessage: "Loading registrant profile, please wait" })} />
                         )}
                     </ModalBody>
                 </ModalContent>

@@ -1,6 +1,6 @@
 import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
-import React, { useMemo } from "react";
+import React, { useMemo, Component } from "react";
 import type { RouteComponentProps } from "react-router-dom";
 import { Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
@@ -34,7 +34,7 @@ import { useUXChoice, UXChoice } from "./aspects/UXChoice/UXChoice";
 //     return new URLSearchParams(useLocation().search);
 // }
 
-export default function App(): JSX.Element {
+export default function App(props: any): JSX.Element {
     const chimeTheme = useColorModeValue(lightTheme, darkTheme);
 
     // const query = useQuery();

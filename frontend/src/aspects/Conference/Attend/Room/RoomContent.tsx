@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
+import { FormattedMessage } from "react-intl";
 import type {
     RoomPage_RoomDetailsFragment,
     Room_EventSummaryFragment} from "../../../../generated/graphql";
@@ -82,7 +83,10 @@ export function RoomContent({
             ) : (
                 <Alert status="warning" mt={3}>
                     <AlertIcon />
-                    No videos have been added to this content item yet.
+                    <FormattedMessage
+                        id="Conference.Attend.Room.NoVideosAdded"
+                        defaultMessage="No videos have been added to this content item yet."
+                    />
                 </Alert>
             ),
         [currentRoomEvent?.item?.videoElements, currentlySelectedVideoElementId, onChooseVideo]
@@ -101,9 +105,25 @@ export function RoomContent({
             {currentRoomEvent ? (
                 <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
                     <HStack justifyContent="space-between">
-                        <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now5s)}</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.StartedTime"
+                                defaultMessage="Started {time}"
+                                values={{
+                                    time: formatRelative(Date.parse(currentRoomEvent.startTime), now5s)
+                                }}
+                            />
+                        </Text>
                         {currentRoomEvent.endTime ? (
-                            <Text>Ends {formatRelative(Date.parse(currentRoomEvent.endTime), now5s)}</Text>
+                            <Text>
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.EndsTime"
+                                    defaultMessage="Ends {time}"
+                                    values={{
+                                        time: formatRelative(Date.parse(currentRoomEvent.endTime), now5s)
+                                    }}
+                                />
+                            </Text>
                         ) : undefined}
                         {currentEventRole ? (
                             <Tag colorScheme="Room-CurrentEventRoleLabel" my={2}>
@@ -147,10 +167,24 @@ export function RoomContent({
                         {nextRoomEvent.name}
                     </Heading>
                     <HStack justifyContent="space-between" mb={2}>
-                        <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)}</Text>
+                        <Text>
+                            <FormattedMessage
+                                id="Conference.Attend.Room.StartsTime"
+                                defaultMessage="Starts {time}"
+                                values={{
+                                    time: formatRelative(Date.parse(nextRoomEvent.startTime), now5s)
+                                }}
+                            />
+                        </Text>
                         {nextEventRole ? (
                             <Tag colorScheme="Room-NextEventRoleLabel" my={2} textTransform="none">
-                                You are {nextEventRole}
+                                <FormattedMessage
+                                    id="Conference.Attend.Room.YourRole"
+                                    defaultMessage="You are {role}"
+                                    values={{
+                                        role: nextEventRole
+                                    }}
+                                />
                             </Tag>
                         ) : undefined}
                     </HStack>
@@ -168,7 +202,12 @@ export function RoomContent({
             !nextRoomEvent &&
             roomDetails.isProgramRoom &&
             roomDetails.originatingItem?.typeName !== Content_ItemType_Enum.Sponsor ? (
-                <Text p={5}>No events in this room in the next hour.</Text>
+                <Text p={5}>
+                    <FormattedMessage
+                        id="Conference.Attend.Room.NoEventsNextHour"
+                        defaultMessage="No events in this room in the next hour."
+                    />
+                </Text>
             ) : (
                 <></>
             )}

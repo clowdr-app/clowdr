@@ -5,6 +5,7 @@ import React, { useCallback, useMemo } from "react";
 import FAIcon from "../../../../../Icons/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useVonageLayout } from "../VonageLayoutProvider";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function StreamChooser({
     centered,
@@ -104,7 +105,7 @@ export default function StreamChooser({
                 <MenuButton as={Button} size="xs" colorScheme="gray" opacity={1}>
                     <HStack spacing={2}>
                         <FAIcon iconStyle="s" icon="sync-alt" />
-                        {centered ? <chakra.span>Choose participant</chakra.span> : undefined}
+                        {centered ? <chakra.span><FormattedMessage id="Conference.Attend.Room.Vonage.Components.StreamChooser.Choose" defaultMessage="Choose participant" /></chakra.span> : undefined}
                     </HStack>
                 </MenuButton>
                 <Portal>
@@ -114,7 +115,7 @@ export default function StreamChooser({
                                 changeLayout(null);
                             }}
                         >
-                            None
+                            <FormattedMessage id="Conference.Attend.Room.Vonage.Components.StreamChooser.None" defaultMessage="None" />
                         </MenuItem>
                         {availableOptions}
                     </MenuList>

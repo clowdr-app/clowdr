@@ -22,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
+import { FormattedMessage, useIntl } from "react-intl";
 import type { BadgeData } from "./ProfileBadge";
 import ProfileBadge from "./ProfileBadge";
 
@@ -49,7 +50,12 @@ function BadgeColourModal({
                 }}
             />
         ) : copyNum === 0 ? (
-            <Text as="span">Error! Could not find badge</Text>
+            <Text as="span">
+                <FormattedMessage
+                    id="badges.badgeinput.badgenotfound"
+                    defaultMessage="Error! Could not find badge"
+                />
+            </Text>
         ) : (
             <></>
         );
@@ -61,7 +67,12 @@ function BadgeColourModal({
         <Modal isOpen={!!badge} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Select badge colour</ModalHeader>
+                <ModalHeader>
+                    <FormattedMessage
+                        id="badges.badgeinput.selectcolour"
+                        defaultMessage="Select badge colour"
+                    />
+                </ModalHeader>
                 <ModalBody>
                     <Center flexDir="column">
                         <HStack mb={4}>
@@ -84,7 +95,10 @@ function BadgeColourModal({
                 </ModalBody>
                 <ModalFooter>
                     <Button colorScheme="ConfirmButton" onClick={() => onClose()}>
-                        Done
+                        <FormattedMessage
+                            id="badges.badgeinput.done"
+                            defaultMessage="Done"
+                        />
                     </Button>
                 </ModalFooter>
             </ModalContent>
@@ -110,11 +124,19 @@ function BadgeInputInner({
         <>
             <FormControl maxW={450}>
                 <FormLabel fontWeight="bold" fontSize="1.2rem">
-                    Badges
+                    <FormattedMessage
+                        id="badges.badgeinput.badges"
+                        defaultMessage="Badges"
+                    />
                 </FormLabel>
                 <VStack alignItems="flex-start">
                     <VStack alignItems="flex-start" w="100%">
-                        <Text as="span">Examples (click to add)</Text>
+                        <Text as="span">
+                            <FormattedMessage
+                                id="badges.badgeinput.examples"
+                                defaultMessage="Examples (click to add)"
+                            />
+                        </Text>
                         <Box fontSize="0.8rem" display="block" w="100%">
                             {examples
                                 .filter(
@@ -154,7 +176,12 @@ function BadgeInputInner({
                         </Box>
                     </VStack>
                     <VStack alignItems="flex-start" w="100%" mt={-2}>
-                        <Text as="span">Selected badges</Text>
+                        <Text as="span">
+                            <FormattedMessage
+                                id="badges.badgeinput.selectedbadges"
+                                defaultMessage="Selected badges"
+                            />
+                        </Text>
                         <Box
                             fontSize="0.8rem"
                             display="block"
@@ -214,9 +241,24 @@ function BadgeInputInner({
                 </VStack>
                 <FormHelperText>
                     <UnorderedList>
-                        <ListItem>Create badges by typing, press Enter then select a colour.</ListItem>
-                        <ListItem>Maximum length 10 characters.</ListItem>
-                        <ListItem>Delete badges by clicking on them.</ListItem>
+                        <ListItem>
+                            <FormattedMessage
+                                id="badges.badgeinput.createbadges"
+                                defaultMessage="Create badges by typing, press Enter then select a colour."
+                            />
+                        </ListItem>
+                        <ListItem>
+                            <FormattedMessage
+                                id="badges.badgeinput.maxlength"
+                                defaultMessage="Maximum length 10 characters."
+                            />
+                        </ListItem>
+                        <ListItem>
+                            <FormattedMessage
+                                id="badges.badgeinput.delete"
+                                defaultMessage="Delete badges by clicking on them."
+                            />
+                        </ListItem>
                     </UnorderedList>
                 </FormHelperText>
             </FormControl>
@@ -251,22 +293,23 @@ export default function BadgeInput({
     settingColourOf?: string | null;
     onChange?: (badges: BadgeData[]) => void;
 }): JSX.Element {
+    const intl = useIntl();
     const [internalBadges, setInternalBadges] = useState<BadgeData[]>([]);
     const [internalSettingColourOf, setInternalSettingColourOf] = useState<string | null>(null);
     return (
         <BadgeInputInner
             examples={
                 examples ?? [
-                    "Author",
-                    "Volunteer",
-                    "Mentor",
-                    "Mentee",
-                    "Sponsor",
-                    "Hiring",
-                    "Hire me",
-                    "Let's chat!",
-                    "Coffee?",
-                    "Organiser",
+                    intl.formatMessage({ id: 'badges.badgeinput.example01', defaultMessage: "Author" }),
+                    intl.formatMessage({ id: 'badges.badgeinput.example02', defaultMessage: "Volunteer" }),
+                    intl.formatMessage({ id: 'badges.badgeinput.example03', defaultMessage: "Mentor" }),
+                    intl.formatMessage({ id: 'badges.badgeinput.example04', defaultMessage: "Mentee" }),
+                    intl.formatMessage({ id: 'badges.badgeinput.example05', defaultMessage: "Sponsor" }),
+                    intl.formatMessage({ id: 'badges.badgeinput.example06', defaultMessage: "Hiring" }),
+                    intl.formatMessage({ id: 'badges.badgeinput.example07', defaultMessage: "Hire me" }),
+                    intl.formatMessage({ id: 'badges.badgeinput.example08', defaultMessage: "Let's chat!" }),
+                    intl.formatMessage({ id: 'badges.badgeinput.example09', defaultMessage: "Coffee?" }),
+                    intl.formatMessage({ id: 'badges.badgeinput.example10', defaultMessage: "Organiser" }),
                 ]
             }
             badges={badges ?? internalBadges}

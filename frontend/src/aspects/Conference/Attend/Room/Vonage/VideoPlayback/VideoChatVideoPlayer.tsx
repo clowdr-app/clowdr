@@ -16,6 +16,7 @@ import {
     Tag,
     TagLabel,
     Tooltip,
+    useLatestRef,
 } from "@chakra-ui/react";
 import { useTimeoutCallback } from "@react-hook/timeout";
 import { Duration } from "luxon";
@@ -43,6 +44,8 @@ import { VonageVideoPlaybackContext } from "./VonageVideoPlaybackContext";
 
 export default function VideoChatVideoPlayer(): JSX.Element {
     const videoPlayback = useContext(VonageVideoPlaybackContext);
+
+    const videoPlaybackRef = useLatestRef(videoPlayback);
 
     const [ended, setEnded] = useState<boolean>(false);
     const [duration, setDuration] = useState<number>(NaN);
@@ -79,14 +82,29 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                 }
             };
 
+            const readyListener = (event: Event) => {
+                if (event.target instanceof HTMLMediaElement) {
+                    if (
+                        videoPlaybackRef.current &&
+                        videoPlaybackRef.current.latestCommand?.command?.type === "video" &&
+                        videoPlaybackRef.current.latestCommand.command.playing
+                    ) {
+                        event.target.play();
+                    }
+                }
+            };
+
             value.addEventListener("ended", endedListener);
             value.addEventListener("timeupdate", timeUpdateListener);
             value.addEventListener("durationchange", durationChangeListener);
+            value.addEventListener("canplay", readyListener);
 
             return () => {
                 if (value) {
                     value.removeEventListener("pause", endedListener);
                     value.removeEventListener("timeupdate", timeUpdateListener);
+                    value.removeEventListener("durationchange", durationChangeListener);
+                    value.removeEventListener("canplay", readyListener);
                 }
             };
         }
@@ -149,74 +167,86 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                 <video ref={videoRef} src={videoPlayback.video?.url}></video>
                             </Skeleton>
                             <HStack p={2} position="absolute" bottom="0px" left="0px" width="100%" alignItems="stretch">
-                                <Tooltip label={playing ? "Pause" : "Play"}>
-                                    <IconButton
-                                        aria-label={playing ? "Pause video" : "Play video"}
-                                        icon={<FAIcon iconStyle="s" icon={playing ? "pause" : "play"} />}
-                                        isDisabled={ended || controlsDisabled}
-                                        onClick={() => {
-                                            temporarilyDisableControls();
-                                            if (
-                                                videoElement &&
-                                                videoPlayback.latestCommand?.command?.type === "video"
-                                            ) {
-                                                videoPlayback.sendCommand({
-                                                    type: "video",
-                                                    currentTimeSeconds: videoElement.currentTime,
-                                                    elementId: videoPlayback.latestCommand.command.elementId,
-                                                    playing: !playing,
-                                                    volume: videoPlayback.latestCommand.command.volume,
-                                                });
-                                            }
-                                        }}
-                                    />
-                                </Tooltip>
-                                <ButtonGroup isAttached>
-                                    <Tooltip label="Skip backward 15s">
-                                        <IconButton
-                                            aria-label="Skip backward 15s in video"
-                                            icon={<ArrowLeftIcon />}
-                                            isDisabled={controlsDisabled}
-                                            onClick={() => {
-                                                temporarilyDisableControls();
-                                                if (
-                                                    videoElement &&
-                                                    videoPlayback.latestCommand?.command?.type === "video"
-                                                ) {
-                                                    videoPlayback.sendCommand({
-                                                        type: "video",
-                                                        currentTimeSeconds: Math.max(videoElement.currentTime - 15, 0),
-                                                        elementId: videoPlayback.latestCommand.command.elementId,
-                                                        playing,
-                                                        volume: videoPlayback.latestCommand.command.volume,
-                                                    });
-                                                }
-                                            }}
-                                        />
-                                    </Tooltip>
-                                    <Tooltip label="Skip forward 15s">
-                                        <IconButton
-                                            aria-label="Skip forward 15s in video"
-                                            icon={<ArrowRightIcon />}
-                                            isDisabled={controlsDisabled}
-                                            onClick={() => {
-                                                temporarilyDisableControls();
-                                                if (
-                                                    videoElement &&
-                                                    videoPlayback.latestCommand?.command?.type === "video"
-                                                ) {
-                                                    videoPlayback.sendCommand({
-                                                        type: "video",
-                                                        currentTimeSeconds: Math.max(videoElement.currentTime + 15, 0),
-                                                        elementId: videoPlayback.latestCommand.command.elementId,
-                                                        playing,
-                                                        volume: videoPlayback.latestCommand.command.volume,
-                                                    });
-                                                }
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </ButtonGroup>
+                                {videoPlayback.canControlPlayback ? (
+                                    <>
+                                        <Tooltip label={playing ? "Pause" : "Play"}>
+                                            <IconButton
+                                                aria-label={playing ? "Pause video" : "Play video"}
+                                                icon={<FAIcon iconStyle="s" icon={playing ? "pause" : "play"} />}
+                                                isDisabled={ended || controlsDisabled}
+                                                onClick={() => {
+                                                    temporarilyDisableControls();
+                                                    if (
+                                                        videoElement &&
+                                                        videoPlayback.latestCommand?.command?.type === "video"
+                                                    ) {
+                                                        videoPlayback.sendCommand({
+                                                            type: "video",
+                                                            currentTimeSeconds: videoElement.currentTime,
+                                                            elementId: videoPlayback.latestCommand.command.elementId,
+                                                            playing: !playing,
+                                                            volume: videoPlayback.latestCommand.command.volume,
+                                                        });
+                                                    }
+                                                }}
+                                            />
+                                        </Tooltip>
+                                        <ButtonGroup isAttached>
+                                            <Tooltip label="Skip backward 15s">
+                                                <IconButton
+                                                    aria-label="Skip backward 15s in video"
+                                                    icon={<ArrowLeftIcon />}
+                                                    isDisabled={controlsDisabled}
+                                                    onClick={() => {
+                                                        temporarilyDisableControls();
+                                                        if (
+                                                            videoElement &&
+                                                            videoPlayback.latestCommand?.command?.type === "video"
+                                                        ) {
+                                                            videoPlayback.sendCommand({
+                                                                type: "video",
+                                                                currentTimeSeconds: Math.max(
+                                                                    videoElement.currentTime - 15,
+                                                                    0
+                                                                ),
+                                                                elementId:
+                                                                    videoPlayback.latestCommand.command.elementId,
+                                                                playing,
+                                                                volume: videoPlayback.latestCommand.command.volume,
+                                                            });
+                                                        }
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                            <Tooltip label="Skip forward 15s">
+                                                <IconButton
+                                                    aria-label="Skip forward 15s in video"
+                                                    icon={<ArrowRightIcon />}
+                                                    isDisabled={controlsDisabled}
+                                                    onClick={() => {
+                                                        temporarilyDisableControls();
+                                                        if (
+                                                            videoElement &&
+                                                            videoPlayback.latestCommand?.command?.type === "video"
+                                                        ) {
+                                                            videoPlayback.sendCommand({
+                                                                type: "video",
+                                                                currentTimeSeconds: Math.max(
+                                                                    videoElement.currentTime + 15,
+                                                                    0
+                                                                ),
+                                                                elementId:
+                                                                    videoPlayback.latestCommand.command.elementId,
+                                                                playing,
+                                                                volume: videoPlayback.latestCommand.command.volume,
+                                                            });
+                                                        }
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                        </ButtonGroup>
+                                    </>
+                                ) : undefined}
                                 <Tag size="lg">
                                     <TagLabel>
                                         {Duration.fromMillis(currentTime * 1000).toFormat("hh:mm:ss")}
@@ -251,25 +281,27 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                 </Slider>
 
                                 <Spacer />
-                                <Tooltip label="Close video">
-                                    <IconButton
-                                        ml="auto"
-                                        aria-label="Close video"
-                                        icon={<CloseIcon />}
-                                        isDisabled={controlsDisabled}
-                                        onClick={() => {
-                                            temporarilyDisableControls();
-                                            if (
-                                                videoElement &&
-                                                videoPlayback.latestCommand?.command?.type === "video"
-                                            ) {
-                                                videoPlayback.sendCommand({
-                                                    type: "no-video",
-                                                });
-                                            }
-                                        }}
-                                    />
-                                </Tooltip>
+                                {videoPlayback.canControlPlayback ? (
+                                    <Tooltip label="Close video">
+                                        <IconButton
+                                            ml="auto"
+                                            aria-label="Close video"
+                                            icon={<CloseIcon />}
+                                            isDisabled={controlsDisabled}
+                                            onClick={() => {
+                                                temporarilyDisableControls();
+                                                if (
+                                                    videoElement &&
+                                                    videoPlayback.latestCommand?.command?.type === "video"
+                                                ) {
+                                                    videoPlayback.sendCommand({
+                                                        type: "no-video",
+                                                    });
+                                                }
+                                            }}
+                                        />
+                                    </Tooltip>
+                                ) : undefined}
                             </HStack>
                         </Box>
                     </AspectRatio>

@@ -30,9 +30,10 @@ gql`
 
 type Props = {
     vonageSessionId: string;
+    canControlPlayback: boolean;
 };
 
-function useValue({ vonageSessionId }: Props) {
+function useValue({ vonageSessionId, canControlPlayback }: Props) {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
     const context = useMemo(
@@ -115,6 +116,7 @@ function useValue({ vonageSessionId }: Props) {
         video,
         subtitles,
         errors,
+        canControlPlayback,
     };
 }
 

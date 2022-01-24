@@ -109,7 +109,10 @@ export function VonageRoom({
             <ChatProfileModalProvider>
                 {mRegistrant ? (
                     <VonageLayoutProvider vonageSessionId={vonageSessionId}>
-                        <VonageVideoPlaybackProvider vonageSessionId={vonageSessionId}>
+                        <VonageVideoPlaybackProvider
+                            vonageSessionId={vonageSessionId}
+                            canControlPlayback={canControlRecording}
+                        >
                             <VonageRoomInner
                                 vonageSessionId={vonageSessionId}
                                 stop={!roomCouldBeInUse || disable}

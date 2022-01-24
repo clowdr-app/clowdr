@@ -116,6 +116,7 @@ export function VideoElement({
                 <ReactPlayer
                     url={video.url}
                     width="100%"
+                    controls={true}
                     height="auto"
                     onEnded={() => {
                         setIsPlaying(false);

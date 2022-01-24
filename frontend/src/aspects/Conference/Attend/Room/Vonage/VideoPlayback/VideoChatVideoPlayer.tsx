@@ -95,6 +95,12 @@ export default function VideoChatVideoPlayer(): JSX.Element {
         };
     });
 
+    useEffect(() => {
+        if (currentTime < duration) {
+            setEnded(false);
+        }
+    }, [duration, currentTime]);
+
     const playing = useMemo(
         () =>
             videoPlayback.latestCommand?.command?.type === "video" &&

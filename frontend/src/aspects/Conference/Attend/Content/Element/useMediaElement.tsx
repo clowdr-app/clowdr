@@ -128,6 +128,10 @@ export function useMediaElementUrls(elementData: VideoElementBlob | AudioElement
 
     return {
         video,
-        subtitles,
+        subtitles: {
+            loading: subtitles.loading,
+            error: subtitles.error,
+            url: subtitles.result,
+        },
     };
 }

@@ -23,17 +23,6 @@ import FAIcon from "../../../../Chakra/FAIcon";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
 import { useMediaElementUrls } from "./useMediaElement";
 
-export interface VideoState {
-    /** @summary Whether the video is currently playing. */
-    playing: boolean;
-    /** @summary The time offset into the video of the playhead. */
-    currentTimeSeconds: number;
-    /** @summary The volume of the video, from 0.0 (silent) to 1.0 (max volume). */
-    volume: number;
-    /** @summary The timestamp (epoch millis) of this command from which this state was derived. */
-    commandTimestampMillis: number;
-}
-
 export function VideoElement({
     elementId,
     elementData,
@@ -91,24 +80,6 @@ export function VideoElement({
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const playerRef = useRef<ReactPlayer | null>(null);
     const [playbackRate, setPlaybackRate] = useState<number>(1);
-
-    // const applyVideoState = useCallback(() => {
-    //     if (playerRef.current && state) {
-    //         const offset = Math.max(Date.now() - state.commandTimestampMillis, 0);
-    //         playerRef.current.seekTo(state.currentTimeSeconds + offset / 1000, "seconds");
-    //         setShouldPlay(state.playing);
-    //         setVolume(state.volume);
-    //     }
-    // }, [state]);
-
-    // useEffect(() => {
-    //     if (playerRef.current && state) {
-    //         const offset = Math.max(Date.now() - state.commandTimestampMillis, 0);
-    //         playerRef.current.seekTo(state.currentTimeSeconds + offset / 1000, "seconds");
-    //         setShouldPlay(state.playing);
-    //         setVolume(state.volume);
-    //     }
-    // }, [state]);
 
     const innerPlayer = useMemo(
         () =>

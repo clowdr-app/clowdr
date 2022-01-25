@@ -1,4 +1,5 @@
 import { ArrowLeftIcon, ArrowRightIcon, CloseIcon, WarningIcon } from "@chakra-ui/icons";
+import type { ToastId } from "@chakra-ui/react";
 import {
     Alert,
     AlertIcon,
@@ -16,148 +17,126 @@ import {
     Tag,
     TagLabel,
     Tooltip,
-    useLatestRef,
+    useToast,
 } from "@chakra-ui/react";
-import type { VonageVideoPlaybackCommandSignal } from "@midspace/shared-types/video/vonage-video-playback-command";
-import { useTimeoutCallback } from "@react-hook/timeout";
 import { Duration } from "luxon";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useCallbackRef } from "use-callback-ref";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import FAIcon from "../../../../../Chakra/FAIcon";
+import { useVonageRoom, VonageRoomStateActionType } from "../../../../../Vonage/useVonageRoom";
 import { AutoplayContext } from "./AutoplayContext";
+import { useVideoCommands } from "./useVideoCommands";
 import { VonageVideoPlaybackContext } from "./VonageVideoPlaybackContext";
 
-async function setVideoElementState(
-    videoEl: HTMLMediaElement,
-    latestCommand: VonageVideoPlaybackCommandSignal
-): Promise<void> {
-    if (latestCommand.command?.type === "video") {
-        const offsetMillis = Date.now() - latestCommand.createdAtMillis;
-        const seekPosition = latestCommand.command.playing
-            ? latestCommand.command.currentTimeSeconds + offsetMillis / 1000
-            : latestCommand.command.currentTimeSeconds;
-
-        if (seekPosition > videoEl.duration) {
-            videoEl.currentTime = videoEl.duration;
-        } else if (Math.abs(videoEl.currentTime - seekPosition) > 2) {
-            videoEl.currentTime = seekPosition;
-        }
-
-        if (latestCommand.command.playing) {
-            await videoEl.play();
-        } else {
-            videoEl.pause();
-        }
-    }
-}
-
 export default function VideoChatVideoPlayer(): JSX.Element {
+    const {
+        videoElement,
+        playing,
+        ended,
+        videoRef,
+        disableControls,
+        currentTime,
+        duration,
+        temporarilyDisableControls,
+    } = useVideoCommands();
+
     const videoPlayback = useContext(VonageVideoPlaybackContext);
-    const videoPlaybackRef = useLatestRef(videoPlayback);
     const autoplay = useContext(AutoplayContext);
-
-    const [ended, setEnded] = useState<boolean>(false);
-    const [duration, setDuration] = useState<number>(NaN);
-
-    const [controlsDisabled, setControlsDisabled] = useState<boolean>(false);
-    const [startControlsDisabledTimeout] = useTimeoutCallback(() => setControlsDisabled(false), 2000);
-    const temporarilyDisableControls = useCallback(() => {
-        setControlsDisabled(true);
-        startControlsDisabledTimeout();
-    }, [startControlsDisabledTimeout]);
-
-    const [currentTime, setCurrentTime] = useState<number>(0);
     const [volume, setVolume] = useState<number>(0.5);
-
-    const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(null);
-    const videoRef = useCallbackRef(null, (value: HTMLVideoElement | null) => {
-        setVideoElement(value);
-
-        if (value) {
-            const endedListener = (_event: Event) => {
-                setEnded(true);
-            };
-
-            const timeUpdateListener = (event: Event) => {
-                if (event.target instanceof HTMLMediaElement) {
-                    setCurrentTime(event.target.currentTime);
-                }
-            };
-
-            const durationChangeListener = (event: Event) => {
-                if (event.target instanceof HTMLMediaElement) {
-                    setDuration(event.target.duration);
-                }
-            };
-
-            const readyListener = (event: Event) => {
-                if (event.target instanceof HTMLMediaElement) {
-                    if (videoPlaybackRef.current.latestCommand) {
-                        setVideoElementState(event.target, videoPlaybackRef.current.latestCommand).catch(() => {
-                            autoplay.unblockAutoplay().catch((err) => console.error(err));
-                        });
-                    }
-                }
-            };
-
-            value.addEventListener("ended", endedListener);
-            value.addEventListener("timeupdate", timeUpdateListener);
-            value.addEventListener("durationchange", durationChangeListener);
-            value.addEventListener("canplay", readyListener);
-
-            return () => {
-                if (value) {
-                    value.removeEventListener("pause", endedListener);
-                    value.removeEventListener("timeupdate", timeUpdateListener);
-                    value.removeEventListener("durationchange", durationChangeListener);
-                    value.removeEventListener("canplay", readyListener);
-                }
-            };
-        }
-        return () => {
-            //
-        };
-    });
-
-    useEffect(() => {
-        if (!autoplay.autoplayBlocked) {
-            if (videoElement && videoPlayback.latestCommand?.command.type === "video") {
-                setVideoElementState(videoElement, videoPlayback.latestCommand).catch(() => {
-                    autoplay.unblockAutoplay().catch((err) => console.error(err));
-                });
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [autoplay.autoplayBlocked]);
-
-    useEffect(() => {
-        if (currentTime < duration) {
-            setEnded(false);
-        }
-    }, [duration, currentTime]);
-
-    const playing = useMemo(
-        () =>
-            videoPlayback.latestCommand?.command?.type === "video" &&
-            videoPlayback.latestCommand.command.playing &&
-            !ended,
-        [ended, videoPlayback.latestCommand?.command]
-    );
-
-    useEffect(() => {
-        if (videoElement && videoPlayback.latestCommand?.command.type === "video") {
-            setVideoElementState(videoElement, videoPlayback.latestCommand).catch(() => {
-                autoplay.unblockAutoplay().catch((err) => console.error(err));
-            });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [videoElement, videoPlayback.latestCommand]);
 
     useEffect(() => {
         if (videoElement) {
             videoElement.volume = volume;
         }
     }, [videoElement, volume]);
+
+    const isMicOnRef = useRef<boolean>(false);
+    const vonageRoom = useVonageRoom();
+    const toast = useToast();
+    const mutedToastIdRef = useRef<ToastId | undefined>(undefined);
+    const unmutedToastIdRef = useRef<ToastId | undefined>(undefined);
+
+    const onPlay = useCallback(() => {
+        isMicOnRef.current = vonageRoom.state.microphoneIntendedEnabled;
+        if (vonageRoom.state.microphoneIntendedEnabled) {
+            vonageRoom.dispatch({
+                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                microphoneEnabled: false,
+                explicitlyDisabled: false,
+                onError: () => {
+                    console.error("VideoChatVideoPlayer: Error auto-muting");
+                },
+            });
+            if (unmutedToastIdRef.current !== undefined) {
+                toast.close(unmutedToastIdRef.current);
+                unmutedToastIdRef.current = undefined;
+            }
+            mutedToastIdRef.current = toast({
+                title: "Auto muted",
+                status: "info",
+                position: "top",
+                description:
+                    "You have been automatically muted to avoid an audio feedback loop in the room. You will be automatically unmuted when the video is paused or ends.",
+                isClosable: true,
+                duration: 15000,
+                variant: "subtle",
+            });
+        }
+    }, [toast, vonageRoom]);
+
+    const onPause = useCallback(() => {
+        if (isMicOnRef.current && !vonageRoom.state.microphoneIntendedEnabled) {
+            vonageRoom.dispatch({
+                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                microphoneEnabled: true,
+                explicitlyDisabled: false,
+                onError: () => {
+                    console.error("VideoChatVideoPlayer: Error auto-un-muting");
+                },
+            });
+            if (mutedToastIdRef.current !== undefined) {
+                toast.close(mutedToastIdRef.current);
+                mutedToastIdRef.current = undefined;
+            }
+            unmutedToastIdRef.current = toast({
+                title: "Auto un-muted",
+                status: "info",
+                position: "top",
+                isClosable: true,
+                duration: 3000,
+                variant: "subtle",
+            });
+        }
+    }, [toast, vonageRoom]);
+
+    useEffect(() => {
+        // This condition is detecting when the user re-enables their mic after an auto-mute
+        // i.e. overrides the auto-mute state for the first time since the auto-mute
+        if (isMicOnRef.current && vonageRoom.state.microphoneIntendedEnabled) {
+            // Suppress the auto-un-mute
+            isMicOnRef.current = false;
+        }
+    }, [vonageRoom.state.microphoneIntendedEnabled]);
+
+    useEffect(() => {
+        if (videoElement) {
+            videoElement.addEventListener("play", onPlay);
+            videoElement.addEventListener("pause", onPause);
+            return () => {
+                videoElement.removeEventListener("play", onPlay);
+                videoElement.removeEventListener("pause", onPause);
+            };
+        }
+        return () => {
+            //
+        };
+    }, [onPlay, onPause, videoElement]);
+
+    useEffect(() => {
+        if (videoPlayback.latestCommand?.command?.type === "no-video") {
+            onPause();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [videoPlayback.latestCommand?.command]);
 
     return (
         <>
@@ -183,7 +162,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                             <IconButton
                                                 aria-label={playing ? "Pause video" : "Play video"}
                                                 icon={<FAIcon iconStyle="s" icon={playing ? "pause" : "play"} />}
-                                                isDisabled={ended || controlsDisabled}
+                                                isDisabled={ended || disableControls}
                                                 onClick={() => {
                                                     temporarilyDisableControls();
                                                     if (
@@ -206,7 +185,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                                 <IconButton
                                                     aria-label="Skip backward 15s in video"
                                                     icon={<ArrowLeftIcon />}
-                                                    isDisabled={controlsDisabled}
+                                                    isDisabled={disableControls}
                                                     onClick={() => {
                                                         temporarilyDisableControls();
                                                         if (
@@ -232,7 +211,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                                 <IconButton
                                                     aria-label="Skip forward 15s in video"
                                                     icon={<ArrowRightIcon />}
-                                                    isDisabled={controlsDisabled}
+                                                    isDisabled={disableControls}
                                                     onClick={() => {
                                                         temporarilyDisableControls();
                                                         if (
@@ -297,7 +276,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                             colorScheme="red"
                                             aria-label="Video playback is not enabled. Click for more details."
                                             icon={<WarningIcon />}
-                                            isDisabled={ended || controlsDisabled}
+                                            isDisabled={ended || disableControls}
                                             onClick={() => {
                                                 autoplay.setAutoplayAlertDismissed(false);
                                             }}
@@ -310,7 +289,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                             ml="auto"
                                             aria-label="Close video"
                                             icon={<CloseIcon />}
-                                            isDisabled={controlsDisabled}
+                                            isDisabled={disableControls}
                                             onClick={() => {
                                                 temporarilyDisableControls();
                                                 if (

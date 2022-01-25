@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from "@chakra-ui/icons";
+import { ArrowLeftIcon, ArrowRightIcon, CloseIcon, WarningIcon } from "@chakra-ui/icons";
 import {
     Alert,
     AlertIcon,
@@ -18,17 +18,43 @@ import {
     Tooltip,
     useLatestRef,
 } from "@chakra-ui/react";
+import type { VonageVideoPlaybackCommandSignal } from "@midspace/shared-types/video/vonage-video-playback-command";
 import { useTimeoutCallback } from "@react-hook/timeout";
 import { Duration } from "luxon";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useCallbackRef } from "use-callback-ref";
 import FAIcon from "../../../../../Chakra/FAIcon";
+import { AutoplayContext } from "./AutoplayContext";
 import { VonageVideoPlaybackContext } from "./VonageVideoPlaybackContext";
+
+async function setVideoElementState(
+    videoEl: HTMLMediaElement,
+    latestCommand: VonageVideoPlaybackCommandSignal
+): Promise<void> {
+    if (latestCommand.command?.type === "video") {
+        const offsetMillis = Date.now() - latestCommand.createdAtMillis;
+        const seekPosition = latestCommand.command.playing
+            ? latestCommand.command.currentTimeSeconds + offsetMillis / 1000
+            : latestCommand.command.currentTimeSeconds;
+
+        if (seekPosition > videoEl.duration) {
+            videoEl.currentTime = videoEl.duration;
+        } else if (Math.abs(videoEl.currentTime - seekPosition) > 2) {
+            videoEl.currentTime = seekPosition;
+        }
+
+        if (latestCommand.command.playing) {
+            await videoEl.play();
+        } else {
+            videoEl.pause();
+        }
+    }
+}
 
 export default function VideoChatVideoPlayer(): JSX.Element {
     const videoPlayback = useContext(VonageVideoPlaybackContext);
-
     const videoPlaybackRef = useLatestRef(videoPlayback);
+    const autoplay = useContext(AutoplayContext);
 
     const [ended, setEnded] = useState<boolean>(false);
     const [duration, setDuration] = useState<number>(NaN);
@@ -66,20 +92,10 @@ export default function VideoChatVideoPlayer(): JSX.Element {
 
             const readyListener = (event: Event) => {
                 if (event.target instanceof HTMLMediaElement) {
-                    if (
-                        videoPlaybackRef.current &&
-                        videoPlaybackRef.current.latestCommand?.command?.type === "video" &&
-                        videoPlaybackRef.current.latestCommand.command.playing
-                    ) {
-                        const offsetMillis = Date.now() - videoPlaybackRef.current.latestCommand.createdAtMillis;
-                        const seekPosition =
-                            videoPlaybackRef.current.latestCommand.command.currentTimeSeconds + offsetMillis / 1000;
-
-                        if (seekPosition > event.target.duration) {
-                            event.target.currentTime = event.target.duration;
-                        } else {
-                            event.target.play();
-                        }
+                    if (videoPlaybackRef.current.latestCommand) {
+                        setVideoElementState(event.target, videoPlaybackRef.current.latestCommand).catch(() => {
+                            autoplay.unblockAutoplay().catch((err) => console.error(err));
+                        });
                     }
                 }
             };
@@ -104,6 +120,17 @@ export default function VideoChatVideoPlayer(): JSX.Element {
     });
 
     useEffect(() => {
+        if (!autoplay.autoplayBlocked) {
+            if (videoElement && videoPlayback.latestCommand?.command.type === "video") {
+                setVideoElementState(videoElement, videoPlayback.latestCommand).catch(() => {
+                    autoplay.unblockAutoplay().catch((err) => console.error(err));
+                });
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoplay.autoplayBlocked]);
+
+    useEffect(() => {
         if (currentTime < duration) {
             setEnded(false);
         }
@@ -118,19 +145,10 @@ export default function VideoChatVideoPlayer(): JSX.Element {
     );
 
     useEffect(() => {
-        if (videoElement) {
-            if (videoPlayback.latestCommand?.command.type === "video") {
-                if (videoPlayback.latestCommand.command.playing) {
-                    videoElement.play();
-                } else {
-                    videoElement.pause();
-                }
-                const offsetMillis = videoPlayback.latestCommand.command.playing
-                    ? Date.now() - videoPlayback.latestCommand.createdAtMillis
-                    : 0;
-                const seekPosition = videoPlayback.latestCommand.command.currentTimeSeconds + offsetMillis / 1000;
-                videoElement.currentTime = seekPosition;
-            }
+        if (videoElement && videoPlayback.latestCommand?.command.type === "video") {
+            setVideoElementState(videoElement, videoPlayback.latestCommand).catch(() => {
+                autoplay.unblockAutoplay().catch((err) => console.error(err));
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [videoElement, videoPlayback.latestCommand]);
@@ -273,6 +291,19 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                 </Slider>
 
                                 <Spacer />
+                                {autoplay.autoplayBlocked ? (
+                                    <Tooltip label="Video playback is not enabled. Click for more details.">
+                                        <IconButton
+                                            colorScheme="red"
+                                            aria-label="Video playback is not enabled. Click for more details."
+                                            icon={<WarningIcon />}
+                                            isDisabled={ended || controlsDisabled}
+                                            onClick={() => {
+                                                autoplay.setAutoplayAlertDismissed(false);
+                                            }}
+                                        />
+                                    </Tooltip>
+                                ) : undefined}
                                 {videoPlayback.canControlPlayback ? (
                                     <Tooltip label="Close video">
                                         <IconButton

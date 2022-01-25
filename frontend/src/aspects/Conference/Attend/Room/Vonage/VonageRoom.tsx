@@ -12,7 +12,7 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
 import { gql } from "urql";
@@ -654,19 +654,18 @@ function VonageRoomInner({
             .catch((err) => console.error(err));
     }, [autoplay, autoplayAlert, toast]);
 
-    const [autoplayAlertDismissed, setAutoplayAlertDismissed] = useState<boolean>(false);
     const dismissUnblockAutoplay = useCallback(() => {
-        setAutoplayAlertDismissed(true);
+        autoplay.setAutoplayAlertDismissed(true);
         autoplayAlert.onClose();
-    }, [autoplayAlert]);
+    }, [autoplay, autoplayAlert]);
 
     useEffect(() => {
-        if (connected && autoplay.autoplayBlocked && !autoplayAlertDismissed) {
+        if (connected && autoplay.autoplayBlocked && !autoplay.autoplayAlertDismissed) {
             autoplayAlert.onOpen();
         } else if (!autoplay.autoplayBlocked) {
             autoplayAlert.onClose();
         }
-    }, [autoplay.autoplayBlocked, autoplayAlert, autoplayAlertDismissed, connected]);
+    }, [autoplay.autoplayBlocked, autoplayAlert, autoplay.autoplayAlertDismissed, connected]);
 
     return (
         <Box width="100%" isolation="isolate">

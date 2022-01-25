@@ -3,6 +3,7 @@ import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 
 function useValue() {
+    const [autoplayAlertDismissed, setAutoplayAlertDismissed] = useState<boolean>(false);
     const [autoplayBlocked, setAutoplayBlocked] = useState<boolean>(true);
 
     const unblockAutoplay = useCallback(async (): Promise<boolean> => {
@@ -21,7 +22,7 @@ function useValue() {
         fn().catch((err) => console.error(err));
     }, [unblockAutoplay]);
 
-    return { unblockAutoplay, autoplayBlocked };
+    return { unblockAutoplay, autoplayBlocked, autoplayAlertDismissed, setAutoplayAlertDismissed };
 }
 
 export const AutoplayContext = createContext({} as ReturnType<typeof useValue>);

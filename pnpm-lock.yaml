@@ -122,13 +122,13 @@ importers:
       '@graphql-codegen/typescript-urql-graphcache': ^2.2.2
       '@graphql-codegen/urql-introspection': ^2.1.0
       '@midspace/assert': workspace:*
-      '@midspace/auth': workspace:*
       '@midspace/graphql': workspace:*
       '@midspace/shared-types': workspace:*
       '@midspace/urql-hasura-cache-generic-resolver': workspace:*
       '@opentok/client': ^2.21.2
       '@react-hook/timeout': ^2.1.1
       '@researchgate/react-intersection-observer': ^1.3.5
+      '@types/can-autoplay': ^3.0.1
       '@types/emoji-mart': ^3.0.8
       '@types/levenshtein-edit-distance': ^2.0.1
       '@types/luxon': ^2.0.7
@@ -170,6 +170,7 @@ importers:
       amazon-s3-uri: ^0.1.1
       anchorme: github:clowdr-app/anchorme.js
       async-mutex: ^0.3.2
+      can-autoplay: ^3.0.2
       class-transformer: ^0.5.1
       class-validator: ^0.13.2
       compare-versions: ^3.6.0
@@ -262,13 +263,13 @@ importers:
       '@emotion/styled': 11.6.0_972360c6fb1a99a79d517e1157925c9a
       '@fortawesome/free-regular-svg-icons': 5.15.4
       '@midspace/assert': link:../packages/shared/assert
-      '@midspace/auth': link:../packages/node/auth
       '@midspace/graphql': link:../packages/shared/graphql
       '@midspace/shared-types': link:../packages/shared/shared-types
       '@midspace/urql-hasura-cache-generic-resolver': link:../packages/shared/urql-hasura-cache-generic-resolver
       '@opentok/client': 2.21.2
       '@react-hook/timeout': 2.1.1_react@17.0.2
       '@researchgate/react-intersection-observer': 1.3.5_react-dom@17.0.2+react@17.0.2
+      '@types/can-autoplay': 3.0.1
       '@types/emoji-mart': 3.0.8
       '@types/levenshtein-edit-distance': 2.0.1
       '@types/luxon': 2.0.7
@@ -309,6 +310,7 @@ importers:
       amazon-s3-uri: 0.1.1
       anchorme: github.com/clowdr-app/anchorme.js/368eccc0a52d5eda0fb7bf0bb62465bbde56fd31
       async-mutex: 0.3.2
+      can-autoplay: 3.0.2
       class-transformer: 0.5.1
       class-validator: 0.13.2
       compare-versions: 3.6.0
@@ -11351,6 +11353,10 @@ packages:
       '@types/node': 16.11.7
     dev: false
 
+  /@types/can-autoplay/3.0.1:
+    resolution: {integrity: sha512-E4AYbmLUKP5Bn0jb7w58ul6Yt8hlOzEExpFFIk0LLWklGAqyqy1v+QKOZGT3v5uq6P/bLUCyofkfF/aYQiYHmw==}
+    dev: false
+
   /@types/common-tags/1.8.1:
     resolution: {integrity: sha512-20R/mDpKSPWdJs5TOpz3e7zqbeCNuMCPhV7Yndk9KU2Rbij2r5W4RzwDPkzC+2lzUqXYu9rFzTktCBnDjHuNQg==}
 
@@ -13729,6 +13735,10 @@ packages:
 
   /camelize/1.0.0:
     resolution: {integrity: sha1-FkpUg+Yw+kMh5a8HAg5TGDGyYJs=}
+    dev: false
+
+  /can-autoplay/3.0.2:
+    resolution: {integrity: sha512-Ih6wc7yJB4TylS/mLyAW0Dj5Nh3Gftq/g966TcxgvpNCOzlbqTs85srAq7mwIspo4w8gnLCVVGroyCHfh6l9aA==}
     dev: false
 
   /caniuse-lite/1.0.30001272:

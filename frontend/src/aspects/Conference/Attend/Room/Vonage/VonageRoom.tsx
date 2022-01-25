@@ -1,5 +1,18 @@
-import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
-import React, { useCallback, useContext, useEffect, useMemo, useRef } from "react";
+import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
+    Box,
+    Button,
+    Flex,
+    useColorModeValue,
+    useDisclosure,
+    useToast,
+} from "@chakra-ui/react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
 import { gql } from "urql";
@@ -24,6 +37,7 @@ import Layout from "./Components/Layout";
 import type { Viewport } from "./Components/LayoutTypes";
 import SelfCameraComponent from "./Components/SelfCamera";
 import SelfScreenComponent from "./Components/SelfScreen";
+import { AutoplayContext, AutoplayProvider } from "./VideoPlayback/AutoplayContext";
 import VideoChatVideoPlayer from "./VideoPlayback/VideoChatVideoPlayer";
 import { VonageVideoPlaybackProvider } from "./VideoPlayback/VonageVideoPlaybackContext";
 import { VonageComputedStateContext, VonageComputedStateProvider } from "./VonageComputedStateContext";
@@ -168,28 +182,30 @@ export function VonageRoom({
                         cancelJoin={cancelJoin}
                         onRecordingIdReceived={onRecordingIdReceived}
                     >
-                        <VonageVideoPlaybackProvider
-                            vonageSessionId={vonageSessionId}
-                            canControlPlayback={canControlRecording}
-                        >
-                            <VonageRoomInner
-                                stop={!roomCouldBeInUse || disable}
-                                isBackstageRoom={isBackstageRoom}
-                                requireMicrophoneOrCamera={requireMicrophoneOrCamera}
-                                joinRoomButtonText={
-                                    isBackstageRoom
-                                        ? raiseHandPrejoinEventId
-                                            ? "I'm ready"
-                                            : "Connect to the backstage"
-                                        : undefined
-                                }
-                                cancelJoin={cancelJoin}
-                                onPermissionsProblem={onPermissionsProblem}
-                                canControlRecording={canControlRecording}
-                                roomId={roomId ?? undefined}
-                                eventId={eventId ?? undefined}
-                            />
-                        </VonageVideoPlaybackProvider>
+                        <AutoplayProvider>
+                            <VonageVideoPlaybackProvider
+                                vonageSessionId={vonageSessionId}
+                                canControlPlayback={canControlRecording}
+                            >
+                                <VonageRoomInner
+                                    stop={!roomCouldBeInUse || disable}
+                                    isBackstageRoom={isBackstageRoom}
+                                    requireMicrophoneOrCamera={requireMicrophoneOrCamera}
+                                    joinRoomButtonText={
+                                        isBackstageRoom
+                                            ? raiseHandPrejoinEventId
+                                                ? "I'm ready"
+                                                : "Connect to the backstage"
+                                            : undefined
+                                    }
+                                    cancelJoin={cancelJoin}
+                                    onPermissionsProblem={onPermissionsProblem}
+                                    canControlRecording={canControlRecording}
+                                    roomId={roomId ?? undefined}
+                                    eventId={eventId ?? undefined}
+                                />
+                            </VonageVideoPlaybackProvider>
+                        </AutoplayProvider>
                     </VonageComputedStateProvider>
                 </VonageLayoutProvider>
             </ChatProfileModalProvider>
@@ -608,8 +624,76 @@ function VonageRoomInner({
         "RoomControlBar.backgroundColor-dark"
     );
 
+    // Autoplay
+    const autoplay = useContext(AutoplayContext);
+    const autoplayAlert = useDisclosure();
+    const autoplayCancelRef = useRef<HTMLButtonElement | null>(null);
+    const toast = useToast();
+
+    useEffect(() => {
+        async function fn() {
+            await autoplay.unblockAutoplay();
+        }
+
+        fn().catch((err) => console.error(err));
+    }, [autoplay]);
+
+    const unblockAutoplay = useCallback(() => {
+        autoplay
+            .unblockAutoplay()
+            .then((result) => {
+                if (!result) {
+                    toast({
+                        status: "error",
+                        title: "Could not enable video playback.",
+                    });
+                } else {
+                    autoplayAlert.onClose();
+                }
+            })
+            .catch((err) => console.error(err));
+    }, [autoplay, autoplayAlert, toast]);
+
+    const [autoplayAlertDismissed, setAutoplayAlertDismissed] = useState<boolean>(false);
+    const dismissUnblockAutoplay = useCallback(() => {
+        setAutoplayAlertDismissed(true);
+        autoplayAlert.onClose();
+    }, [autoplayAlert]);
+
+    useEffect(() => {
+        if (connected && autoplay.autoplayBlocked && !autoplayAlertDismissed) {
+            autoplayAlert.onOpen();
+        } else if (!autoplay.autoplayBlocked) {
+            autoplayAlert.onClose();
+        }
+    }, [autoplay.autoplayBlocked, autoplayAlert, autoplayAlertDismissed, connected]);
+
     return (
         <Box width="100%" isolation="isolate">
+            <AlertDialog
+                isOpen={autoplayAlert.isOpen}
+                leastDestructiveRef={autoplayCancelRef}
+                onClose={autoplayAlert.onClose}
+            >
+                <AlertDialogOverlay>
+                    <AlertDialogContent>
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                            You must enable video playback
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>Midspace cannot automatically play videos in your browser.</AlertDialogBody>
+
+                        <AlertDialogFooter>
+                            <Button ref={autoplayCancelRef} onClick={dismissUnblockAutoplay} ml={3}>
+                                Dismiss
+                            </Button>
+                            <Button colorScheme="ConfirmButton" onClick={unblockAutoplay} ml={3}>
+                                Enable video playback
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
             <Flex
                 mt={connected ? undefined : 4}
                 justifyContent="center"

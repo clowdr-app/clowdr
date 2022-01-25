@@ -5,6 +5,7 @@ import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import { isVonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
+import { EventEmitter } from "eventemitter3";
 import * as R from "ramda";
 import { StoredObservable } from "../../../../Observable";
 import { transparentImage } from "../../../../Vonage/resources";
@@ -26,21 +27,7 @@ interface InitialisedStateData {
     type: StateType.Initialised;
     getToken: (sessionId: string) => Promise<string>;
     sessionId: string;
-    onStreamsChanged: (streams: OT.Stream[]) => void;
-    onConnectionsChanged: (connections: OT.Connection[]) => void;
-    onSessionConnected: (isConnected: boolean) => void;
-    onCameraStreamDestroyed: (reason: string) => void;
-    onScreenStreamDestroyed: (reason: string) => void;
     screenSharingSupported: boolean;
-    onCameraStreamCreated: () => void;
-    onScreenStreamCreated: () => void;
-    onMuteForced: () => void;
-    onRecordingStarted: () => void;
-    onRecordingStopped: () => void;
-    onRecordingIdReceived: (recordingId: string) => void;
-    onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void;
-    onVideoPlaybackSignalReceived: (command: VonageVideoPlaybackCommandSignal) => void;
-    onTranscript: (data: TranscriptData) => void;
 }
 
 interface ConnectedStateData {
@@ -65,7 +52,24 @@ export interface TranscriptData {
     transcript: string;
 }
 
-export class VonageGlobalState {
+export interface Events {
+    "video-playback-signal-received": VonageVideoPlaybackCommandSignal;
+    "streams-changed": (streams: OT.Stream[]) => void;
+    "connections-changed": (connections: OT.Connection[]) => void;
+    "session-connected": (isConnected: boolean) => void;
+    "camera-stream-destroyed": (reason: string) => void;
+    "screen-stream-destroyed": (reason: string) => void;
+    "camera-stream-created": () => void;
+    "screen-stream-created": () => void;
+    "mute-forced": () => void;
+    "recording-started": () => void;
+    "recording-stopped": () => void;
+    "recording-id-received": (recordingId: string) => void;
+    "layout-signal-received": (layout: VonageSessionLayoutData) => void;
+    "transcript-data-received": TranscriptData;
+}
+
+export class VonageGlobalState extends EventEmitter<Events> {
     private mutex: Mutex = new Mutex();
 
     private _state: StateData = { type: StateType.Uninitialised };
@@ -124,20 +128,6 @@ export class VonageGlobalState {
     public async initialiseState(input: {
         getToken: (sessionId: string) => Promise<string>;
         sessionId: string;
-        onStreamsChanged: (streams: OT.Stream[]) => void;
-        onConnectionsChanged: (connections: OT.Connection[]) => void;
-        onSessionConnected: (isConnected: boolean) => void;
-        onCameraStreamDestroyed: (reason: string) => void;
-        onScreenStreamDestroyed: (reason: string) => void;
-        onCameraStreamCreated: () => void;
-        onScreenStreamCreated: () => void;
-        onMuteForced: () => void;
-        onRecordingStarted: () => void;
-        onRecordingStopped: () => void;
-        onRecordingIdReceived: (recordingId: string) => void;
-        onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void;
-        onVideoPlaybackSignalReceived: (command: VonageVideoPlaybackCommandSignal) => void;
-        onTranscript: (data: TranscriptData) => void;
     }): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -306,7 +296,7 @@ export class VonageGlobalState {
                         ...this.state,
                         camera: null,
                     };
-                    this.state.initialisedState.onCameraStreamDestroyed("mediaStopped");
+                    this.emit("camera-stream-destroyed", "mediaStopped");
                 }
             } else if (existingState.camera) {
                 if (
@@ -376,7 +366,7 @@ export class VonageGlobalState {
                             publisher,
                         },
                     };
-                    this.state.initialisedState.onCameraStreamCreated();
+                    this.emit("camera-stream-created");
                 } else {
                     // Otherwise, we can simply switch the sources
                     if (audioDeviceId !== existingState.camera.audioDeviceId) {
@@ -455,7 +445,7 @@ export class VonageGlobalState {
                         publisher,
                     },
                 };
-                this.state.initialisedState.onCameraStreamCreated();
+                this.emit("camera-stream-created");
             }
         } catch (e) {
             console.error("VonageGlobalState: publishCamera failure", e);
@@ -463,7 +453,7 @@ export class VonageGlobalState {
                 _publisher.destroy();
             }
             if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onCameraStreamDestroyed("mediaStopped");
+                this.emit("camera-stream-destroyed", "mediaStopped");
             }
             throw e;
         } finally {
@@ -545,14 +535,14 @@ export class VonageGlobalState {
                 ...this.state,
                 screen: publisher,
             };
-            this.state.initialisedState.onScreenStreamCreated();
+            this.emit("screen-stream-created");
         } catch (e) {
             console.error("VonageGlobalState: publishScreen failure", e);
             if (_publisher) {
                 _publisher.destroy();
             }
             if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onScreenStreamDestroyed("mediaStopped");
+                this.emit("screen-stream-destroyed", "mediaStopped");
             }
             throw e;
         } finally {
@@ -577,7 +567,7 @@ export class VonageGlobalState {
                 ...this.state,
                 screen: null,
             };
-            this.state.initialisedState.onScreenStreamDestroyed("unpublished");
+            this.emit("screen-stream-destroyed", "unpublished");
         } catch (e) {
             console.error("VonageGlobalState: unpublishScreen failure", e);
             throw e;
@@ -606,14 +596,13 @@ export class VonageGlobalState {
             this.state.session.off();
             this.state.session.disconnect();
 
-            const callback = this.state.initialisedState.onSessionConnected;
             // TODO: handle exceptions
 
             this.state = {
                 ...this.state.initialisedState,
             };
 
-            callback(false);
+            this.emit("session-connected", false);
         } catch (e) {
             console.error("VonageGlobalState: disconnect failure", e);
             throw e;
@@ -715,7 +704,7 @@ export class VonageGlobalState {
                 streams: R.uniqBy((stream) => stream.streamId, [...this.state.streams, event.stream]),
             };
 
-            this.state.initialisedState.onStreamsChanged(this.state.streams);
+            this.emit("streams-changed", this.state.streams);
         } catch (e) {
             console.error("VonageGlobalState: onStreamCreated failure", e);
             throw e;
@@ -738,7 +727,7 @@ export class VonageGlobalState {
                 streams: this.state.streams.filter((x) => x.streamId !== event.stream.streamId),
             };
 
-            this.state.initialisedState.onStreamsChanged(this.state.streams);
+            this.emit("streams-changed", this.state.streams);
         } catch (e) {
             console.error("VonageGlobalState: onStreamDestroyed failure", e);
             throw e;
@@ -795,7 +784,7 @@ export class VonageGlobalState {
                 ),
             };
 
-            this.state.initialisedState.onConnectionsChanged(this.state.connections);
+            this.emit("connections-changed", this.state.connections);
         } catch (e) {
             console.error("VonageGlobalState: onConnectionCreated failure", e);
             throw e;
@@ -818,7 +807,7 @@ export class VonageGlobalState {
                 connections: this.state.connections.filter((x) => x.connectionId !== event.connection.connectionId),
             };
 
-            this.state.initialisedState.onConnectionsChanged(this.state.connections);
+            this.emit("connections-changed", this.state.connections);
         } catch (e) {
             console.error("VonageGlobalState: onConnectionDestroyed failure", e);
             throw e;
@@ -836,7 +825,6 @@ export class VonageGlobalState {
 
             event.preventDefault();
 
-            const callback = this.state.initialisedState.onSessionConnected;
             this.state.session.off();
 
             this.state = {
@@ -844,7 +832,7 @@ export class VonageGlobalState {
                 type: StateType.Initialised,
             };
 
-            callback(false);
+            this.emit("session-connected", false);
         } catch (e) {
             console.error("VonageGlobalState: onSessionDisconnected failure", e);
             throw e;
@@ -860,14 +848,7 @@ export class VonageGlobalState {
                 throw new Error("Invalid state transition: must be connected to disconnect");
             }
 
-            let callback;
-            if (this.state.type === StateType.Initialised) {
-                callback = this.state.onSessionConnected;
-            } else {
-                callback = this.state.initialisedState.onSessionConnected;
-            }
-
-            callback(true);
+            this.emit("session-connected", true);
         } catch (e) {
             console.error("VonageGlobalState: onSessionConnected failure", e);
             throw e;
@@ -881,10 +862,8 @@ export class VonageGlobalState {
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
-            if (this.state.type === StateType.Initialised) {
-                this.state.onCameraStreamDestroyed(event.reason);
-            } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onCameraStreamDestroyed(event.reason);
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("camera-stream-destroyed", event.reason);
             }
         } catch (e) {
             console.error("VonageGlobalState: onCameraStreamDestroyed failure", e);
@@ -899,10 +878,8 @@ export class VonageGlobalState {
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
-            if (this.state.type === StateType.Initialised) {
-                this.state.onScreenStreamDestroyed(event.reason);
-            } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onScreenStreamDestroyed(event.reason);
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("screen-stream-destroyed", event.reason);
             }
         } catch (e) {
             console.error("VonageGlobalState: onScreenStreamDestroyed failure", e);
@@ -915,10 +892,8 @@ export class VonageGlobalState {
     private async onMuteForced(_event: OT.Event<"muteForced", OT.Session>): Promise<void> {
         const release = await this.mutex.acquire();
         try {
-            if (this.state.type === StateType.Initialised) {
-                this.state.onMuteForced();
-            } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onMuteForced();
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("mute-forced");
             }
         } catch (e) {
             console.error("VonageGlobalState: onMuteForced failure", e);
@@ -931,10 +906,8 @@ export class VonageGlobalState {
     private async onArchiveStarted(_event: OT.Event<"archiveStarted", OT.Session>): Promise<void> {
         const release = await this.mutex.acquire();
         try {
-            if (this.state.type === StateType.Initialised) {
-                this.state.onRecordingStarted();
-            } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onRecordingStarted();
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("recording-started");
             }
         } catch (e) {
             console.error("VonageGlobalState: onArchiveStarted failure", e);
@@ -946,10 +919,8 @@ export class VonageGlobalState {
     private async onArchiveStopped(_event: OT.Event<"archiveStopped", OT.Session>): Promise<void> {
         const release = await this.mutex.acquire();
         try {
-            if (this.state.type === StateType.Initialised) {
-                this.state.onRecordingStopped();
-            } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onRecordingStopped();
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("recording-stopped");
             }
         } catch (e) {
             console.error("VonageGlobalState: onArchiveStopped failure", e);
@@ -962,10 +933,8 @@ export class VonageGlobalState {
     private async onRecordingIdReceived(recordingId: string): Promise<void> {
         const release = await this.mutex.acquire();
         try {
-            if (this.state.type === StateType.Initialised) {
-                this.state.onRecordingIdReceived(recordingId);
-            } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onRecordingIdReceived(recordingId);
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("recording-id-received", recordingId);
             }
         } catch (e) {
             console.error("VonageGlobalState: onRecordingIdReceived failure", e);
@@ -991,10 +960,8 @@ export class VonageGlobalState {
                 throw new Error("Layout data is not valid");
             }
 
-            if (this.state.type === StateType.Initialised) {
-                this.state.onLayoutReceived(layoutData);
-            } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onLayoutReceived(layoutData);
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("layout-signal-received", layoutData);
             }
         } catch (e) {
             console.error("VonageGlobalState: onLayoutReceived failure", e);
@@ -1009,10 +976,8 @@ export class VonageGlobalState {
         try {
             const signal = vonageVideoPlaybackCommandSignal.parse(data);
 
-            if (this.state.type === StateType.Initialised) {
-                this.state.onVideoPlaybackSignalReceived(signal);
-            } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onVideoPlaybackSignalReceived(signal);
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("video-playback-signal-received", signal);
             }
         } catch (e) {
             console.error("VonageGlobalState: onVideoPlaybackSignalReceived failure", e);
@@ -1022,30 +987,12 @@ export class VonageGlobalState {
         }
     }
 
-    // public async startPlayingVideo(elementId: string): Promise<void> {
-    //     if (this.state.type === StateType.Connected) {
-    //         this.state.session.signal(
-    //             {
-    //                 type: "play-video",
-    //                 data: elementId,
-    //             },
-    //             (err) => {
-    //                 if (err) {
-    //                     console.error("Error sending play video signal", err);
-    //                 }
-    //             }
-    //         );
-    //     }
-    // }
-
     private async onTranscriptReceived(transcriptData: any): Promise<void> {
         try {
             const transcript: TranscriptData = JSON.parse(transcriptData);
 
-            if (this.state.type === StateType.Initialised) {
-                this.state.onTranscript(transcript);
-            } else if (this.state.type === StateType.Connected) {
-                this.state.initialisedState.onTranscript(transcript);
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("transcript-data-received", transcript);
             }
         } catch (e) {
             console.error("VonageGlobalState: onTranscriptReceived failure", e);
@@ -1074,7 +1021,7 @@ export class VonageGlobalState {
     }
 
     constructor() {
-        // todo
+        super();
     }
 }
 

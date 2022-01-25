@@ -25,23 +25,6 @@ import { useCallbackRef } from "use-callback-ref";
 import FAIcon from "../../../../../Chakra/FAIcon";
 import { VonageVideoPlaybackContext } from "./VonageVideoPlaybackContext";
 
-// function commandToVideoState(command: VonageVideoPlaybackCommandSignal): VideoState {
-//     if (command.command.type === "video") {
-//         return {
-//             currentTimeSeconds: command.command.currentTimeSeconds,
-//             playing: command.command.playing,
-//             commandTimestampMillis: command.createdAtMillis,
-//             volume: command.command.volume,
-//         };
-//     }
-//     return {
-//         currentTimeSeconds: 0,
-//         playing: false,
-//         commandTimestampMillis: 0,
-//         volume: 0,
-//     };
-// }
-
 export default function VideoChatVideoPlayer(): JSX.Element {
     const videoPlayback = useContext(VonageVideoPlaybackContext);
 
@@ -56,7 +39,6 @@ export default function VideoChatVideoPlayer(): JSX.Element {
         setControlsDisabled(true);
         startControlsDisabledTimeout();
     }, [startControlsDisabledTimeout]);
-    // const [controlsEnabled, startControlsDisabledTimeout, resetControlsDisabledTimeout] = useTimeout(2000);
 
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [volume, setVolume] = useState<number>(0.5);
@@ -161,7 +143,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
             ) : undefined}
             {videoPlayback.latestCommand?.command.type === "video" ? (
                 <Box position="relative">
-                    <AspectRatio w="min(100%, 90vh * (16 / 9))" maxW="100%" ratio={16 / 9} mx="auto">
+                    <AspectRatio w="min(100%, 90vh * (16 / 9))" maxW="100%" maxH="80vh" ratio={16 / 9} mx="auto">
                         <Box>
                             <Skeleton isLoaded={Boolean(videoPlayback.video?.url)} position="relative">
                                 <video ref={videoRef} src={videoPlayback.video?.url}></video>

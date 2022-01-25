@@ -1,5 +1,5 @@
 import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
 import { gql } from "urql";
@@ -24,10 +24,9 @@ import Layout from "./Components/Layout";
 import type { Viewport } from "./Components/LayoutTypes";
 import SelfCameraComponent from "./Components/SelfCamera";
 import SelfScreenComponent from "./Components/SelfScreen";
-import { useVonageComputedState } from "./useVonageComputedState";
 import VideoChatVideoPlayer from "./VideoPlayback/VideoChatVideoPlayer";
 import { VonageVideoPlaybackProvider } from "./VideoPlayback/VonageVideoPlaybackContext";
-import type { TranscriptData } from "./VonageGlobalState";
+import { VonageComputedStateContext, VonageComputedStateProvider } from "./VonageComputedStateContext";
 import { StateType } from "./VonageGlobalState";
 import type { AvailableStream, VonageLayout } from "./VonageLayoutProvider";
 import { useVonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
@@ -104,124 +103,9 @@ export function VonageRoom({
 
     const { onPermissionsProblem } = useContext(PermissionInstructionsContext);
 
-    return (
-        <VonageRoomStateProvider onPermissionsProblem={onPermissionsProblem}>
-            <ChatProfileModalProvider>
-                {mRegistrant ? (
-                    <VonageLayoutProvider vonageSessionId={vonageSessionId}>
-                        <VonageVideoPlaybackProvider
-                            vonageSessionId={vonageSessionId}
-                            canControlPlayback={canControlRecording}
-                        >
-                            <VonageRoomInner
-                                vonageSessionId={vonageSessionId}
-                                stop={!roomCouldBeInUse || disable}
-                                getAccessToken={getAccessToken}
-                                isBackstageRoom={isBackstageRoom}
-                                requireMicrophoneOrCamera={requireMicrophoneOrCamera}
-                                joinRoomButtonText={
-                                    isBackstageRoom
-                                        ? raiseHandPrejoinEventId
-                                            ? "I'm ready"
-                                            : "Connect to the backstage"
-                                        : undefined
-                                }
-                                overrideJoining={
-                                    isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined
-                                }
-                                beginJoin={
-                                    isBackstageRoom && raiseHandPrejoinEventId
-                                        ? () => {
-                                              if (raiseHandPrejoinEventId) {
-                                                  raiseHand.raise(raiseHandPrejoinEventId);
-                                              }
-                                          }
-                                        : undefined
-                                }
-                                cancelJoin={
-                                    isBackstageRoom && raiseHandPrejoinEventId
-                                        ? () => {
-                                              if (raiseHandPrejoinEventId) {
-                                                  raiseHand.lower(raiseHandPrejoinEventId);
-                                              }
-                                          }
-                                        : undefined
-                                }
-                                completeJoinRef={completeJoinRef}
-                                onRoomJoined={
-                                    isBackstageRoom && eventId
-                                        ? (joined) => {
-                                              if (!joined) {
-                                                  if (eventId) {
-                                                      deleteEventParticipant({
-                                                          eventId,
-                                                          registrantId: mRegistrant.id,
-                                                      });
-                                                  }
-
-                                                  onLeave?.();
-                                              }
-                                          }
-                                        : undefined
-                                }
-                                onPermissionsProblem={onPermissionsProblem}
-                                canControlRecording={canControlRecording}
-                                roomId={roomId ?? undefined}
-                                eventId={eventId ?? undefined}
-                            />
-                        </VonageVideoPlaybackProvider>
-                    </VonageLayoutProvider>
-                ) : undefined}
-            </ChatProfileModalProvider>
-        </VonageRoomStateProvider>
-    );
-}
-
-function VonageRoomInner({
-    vonageSessionId,
-    getAccessToken,
-    stop,
-    isBackstageRoom,
-    onRoomJoined,
-    joinRoomButtonText,
-    requireMicrophoneOrCamera,
-    overrideJoining,
-    beginJoin,
-    cancelJoin,
-    completeJoinRef,
-    onPermissionsProblem,
-    canControlRecording,
-    roomId,
-    eventId,
-}: {
-    vonageSessionId: string;
-    getAccessToken: () => Promise<string>;
-    stop: boolean;
-    isBackstageRoom: boolean;
-    joinRoomButtonText?: string;
-    requireMicrophoneOrCamera: boolean;
-    onRoomJoined?: (_joined: boolean) => void;
-    overrideJoining?: boolean;
-    beginJoin?: () => void;
-    cancelJoin?: () => void;
-    completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
-    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
-    canControlRecording: boolean;
-    roomId?: string;
-    eventId?: string;
-}): JSX.Element {
-    const cameraPreviewRef = useRef<HTMLVideoElement>(null);
-
-    const currentRegistrant = useCurrentRegistrant();
     const [, saveVonageRoomRecording] = useSaveVonageRoomRecordingMutation();
 
-    const [isRecordingActive, setIsRecordingActive] = useState<boolean>(false);
-    const onRecordingStarted = useCallback(() => {
-        setIsRecordingActive(true);
-    }, []);
-    const onRecordingStopped = useCallback(() => {
-        setIsRecordingActive(false);
-    }, []);
+    const currentRegistrant = useCurrentRegistrant();
     const onRecordingIdReceived = useCallback(
         (recordingId: string) => {
             saveVonageRoomRecording({
@@ -232,27 +116,126 @@ function VonageRoomInner({
         [currentRegistrant.id, saveVonageRoomRecording]
     );
 
-    const onTranscriptRef = useRef<((data: TranscriptData) => void) | undefined>(undefined);
-    const onTranscript = useCallback((data: TranscriptData) => {
-        onTranscriptRef.current?.(data);
-    }, []);
+    const cancelJoin = useMemo(
+        () =>
+            isBackstageRoom && raiseHandPrejoinEventId
+                ? () => {
+                      if (raiseHandPrejoinEventId) {
+                          raiseHand.lower(raiseHandPrejoinEventId);
+                      }
+                  }
+                : undefined,
+        [isBackstageRoom, raiseHand, raiseHandPrejoinEventId]
+    );
+
+    return mRegistrant ? (
+        <VonageRoomStateProvider onPermissionsProblem={onPermissionsProblem}>
+            <ChatProfileModalProvider>
+                <VonageLayoutProvider vonageSessionId={vonageSessionId}>
+                    <VonageComputedStateProvider
+                        getAccessToken={getAccessToken}
+                        isBackstageRoom={isBackstageRoom}
+                        vonageSessionId={vonageSessionId}
+                        overrideJoining={
+                            isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined
+                        }
+                        beginJoin={
+                            isBackstageRoom && raiseHandPrejoinEventId
+                                ? () => {
+                                      if (raiseHandPrejoinEventId) {
+                                          raiseHand.raise(raiseHandPrejoinEventId);
+                                      }
+                                  }
+                                : undefined
+                        }
+                        completeJoinRef={completeJoinRef}
+                        onRoomJoined={
+                            isBackstageRoom && eventId
+                                ? (joined) => {
+                                      if (!joined) {
+                                          if (eventId) {
+                                              deleteEventParticipant({
+                                                  eventId,
+                                                  registrantId: mRegistrant.id,
+                                              });
+                                          }
+
+                                          onLeave?.();
+                                      }
+                                  }
+                                : undefined
+                        }
+                        cancelJoin={cancelJoin}
+                        onRecordingIdReceived={onRecordingIdReceived}
+                    >
+                        <VonageVideoPlaybackProvider
+                            vonageSessionId={vonageSessionId}
+                            canControlPlayback={canControlRecording}
+                        >
+                            <VonageRoomInner
+                                stop={!roomCouldBeInUse || disable}
+                                isBackstageRoom={isBackstageRoom}
+                                requireMicrophoneOrCamera={requireMicrophoneOrCamera}
+                                joinRoomButtonText={
+                                    isBackstageRoom
+                                        ? raiseHandPrejoinEventId
+                                            ? "I'm ready"
+                                            : "Connect to the backstage"
+                                        : undefined
+                                }
+                                cancelJoin={cancelJoin}
+                                onPermissionsProblem={onPermissionsProblem}
+                                canControlRecording={canControlRecording}
+                                roomId={roomId ?? undefined}
+                                eventId={eventId ?? undefined}
+                            />
+                        </VonageVideoPlaybackProvider>
+                    </VonageComputedStateProvider>
+                </VonageLayoutProvider>
+            </ChatProfileModalProvider>
+        </VonageRoomStateProvider>
+    ) : (
+        <></>
+    );
+}
+
+function VonageRoomInner({
+    stop,
+    isBackstageRoom,
+    joinRoomButtonText,
+    requireMicrophoneOrCamera,
+    cancelJoin,
+    onPermissionsProblem,
+    canControlRecording,
+    roomId,
+    eventId,
+}: {
+    stop: boolean;
+    isBackstageRoom: boolean;
+    joinRoomButtonText?: string;
+    requireMicrophoneOrCamera: boolean;
+    cancelJoin?: () => void;
+    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
+    canControlRecording: boolean;
+    roomId?: string;
+    eventId?: string;
+}): JSX.Element {
+    const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
     const { state, dispatch } = useVonageRoom();
-    const { vonage, connected, connections, streams, screen, camera, joining, leaveRoom, joinRoom } =
-        useVonageComputedState({
-            getAccessToken,
-            vonageSessionId,
-            overrideJoining,
-            onRoomJoined,
-            onRecordingStarted,
-            onRecordingStopped,
-            onRecordingIdReceived,
-            onTranscript,
-            isBackstageRoom,
-            beginJoin,
-            cancelJoin,
-            completeJoinRef,
-        });
+    const {
+        camera,
+        connected,
+        connections,
+        isRecordingActive,
+        joining,
+        onTranscriptRef,
+        streams,
+        screen,
+        vonage,
+        leaveRoom,
+        joinRoom,
+    } = useContext(VonageComputedStateContext);
     const { setAvailableStreams, refetchLayout } = useVonageLayout();
 
     const userId = useUserId();
@@ -278,16 +261,6 @@ function VonageRoomInner({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connected]);
-
-    useEffect(() => {
-        if (!connected) {
-            setIsRecordingActive(false);
-        }
-    }, [connected]);
-
-    useEffect(() => {
-        setIsRecordingActive(false);
-    }, [vonageSessionId]);
 
     const preJoin = useMemo(
         () => (connected ? undefined : <PreJoin cameraPreviewRef={cameraPreviewRef} />),

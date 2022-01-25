@@ -35486,8 +35486,8 @@ export type Video_VonageVideoPlaybackCommand = {
     /** An object relationship */
     readonly conference: Conference_Conference;
     readonly conferenceId: Scalars["uuid"];
+    readonly createdAt: Scalars["timestamptz"];
     readonly createdByRegistrantId?: Maybe<Scalars["uuid"]>;
-    readonly created_at: Scalars["timestamptz"];
     /** An object relationship */
     readonly eventVonageSession?: Maybe<Video_EventVonageSession>;
     readonly id: Scalars["uuid"];
@@ -35498,9 +35498,9 @@ export type Video_VonageVideoPlaybackCommand = {
     /** An aggregate relationship */
     readonly rooms_aggregate: Room_Room_Aggregate;
     /** An object relationship */
-    readonly subconference: Conference_Subconference;
-    readonly subconferenceId: Scalars["uuid"];
-    readonly updated_at: Scalars["timestamptz"];
+    readonly subconference?: Maybe<Conference_Subconference>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly updatedAt: Scalars["timestamptz"];
     readonly vonageSessionId: Scalars["String"];
 };
 
@@ -35561,15 +35561,15 @@ export type Video_VonageVideoPlaybackCommand_Bool_Exp = {
     readonly command?: InputMaybe<Jsonb_Comparison_Exp>;
     readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
     readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly createdByRegistrantId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Bool_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     readonly rooms?: InputMaybe<Room_Room_Bool_Exp>;
     readonly subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly vonageSessionId?: InputMaybe<String_Comparison_Exp>;
 };
 
@@ -35599,15 +35599,15 @@ export type Video_VonageVideoPlaybackCommand_Insert_Input = {
     readonly command?: InputMaybe<Scalars["jsonb"]>;
     readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly createdByRegistrantId?: InputMaybe<Scalars["uuid"]>;
-    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Obj_Rel_Insert_Input>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     readonly rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
     readonly subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly vonageSessionId?: InputMaybe<Scalars["String"]>;
 };
 
@@ -35615,11 +35615,11 @@ export type Video_VonageVideoPlaybackCommand_Insert_Input = {
 export type Video_VonageVideoPlaybackCommand_Max_Fields = {
     readonly __typename?: "video_VonageVideoPlaybackCommand_max_fields";
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly createdByRegistrantId?: Maybe<Scalars["uuid"]>;
-    readonly created_at?: Maybe<Scalars["timestamptz"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly vonageSessionId?: Maybe<Scalars["String"]>;
 };
 
@@ -35627,11 +35627,11 @@ export type Video_VonageVideoPlaybackCommand_Max_Fields = {
 export type Video_VonageVideoPlaybackCommand_Min_Fields = {
     readonly __typename?: "video_VonageVideoPlaybackCommand_min_fields";
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly createdByRegistrantId?: Maybe<Scalars["uuid"]>;
-    readonly created_at?: Maybe<Scalars["timestamptz"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly vonageSessionId?: Maybe<Scalars["String"]>;
 };
 
@@ -35656,15 +35656,15 @@ export type Video_VonageVideoPlaybackCommand_Order_By = {
     readonly command?: InputMaybe<Order_By>;
     readonly conference?: InputMaybe<Conference_Conference_Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
+    readonly createdAt?: InputMaybe<Order_By>;
     readonly createdByRegistrantId?: InputMaybe<Order_By>;
-    readonly created_at?: InputMaybe<Order_By>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     readonly rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
     readonly subconference?: InputMaybe<Conference_Subconference_Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
-    readonly updated_at?: InputMaybe<Order_By>;
+    readonly updatedAt?: InputMaybe<Order_By>;
     readonly vonageSessionId?: InputMaybe<Order_By>;
 };
 
@@ -35685,15 +35685,15 @@ export enum Video_VonageVideoPlaybackCommand_Select_Column {
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
-    CreatedByRegistrantId = "createdByRegistrantId",
+    CreatedAt = "createdAt",
     /** column name */
-    CreatedAt = "created_at",
+    CreatedByRegistrantId = "createdByRegistrantId",
     /** column name */
     Id = "id",
     /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
-    UpdatedAt = "updated_at",
+    UpdatedAt = "updatedAt",
     /** column name */
     VonageSessionId = "vonageSessionId",
 }
@@ -35702,11 +35702,11 @@ export enum Video_VonageVideoPlaybackCommand_Select_Column {
 export type Video_VonageVideoPlaybackCommand_Set_Input = {
     readonly command?: InputMaybe<Scalars["jsonb"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly createdByRegistrantId?: InputMaybe<Scalars["uuid"]>;
-    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly vonageSessionId?: InputMaybe<Scalars["String"]>;
 };
 
@@ -35717,15 +35717,15 @@ export enum Video_VonageVideoPlaybackCommand_Update_Column {
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
-    CreatedByRegistrantId = "createdByRegistrantId",
+    CreatedAt = "createdAt",
     /** column name */
-    CreatedAt = "created_at",
+    CreatedByRegistrantId = "createdByRegistrantId",
     /** column name */
     Id = "id",
     /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
-    UpdatedAt = "updated_at",
+    UpdatedAt = "updatedAt",
     /** column name */
     VonageSessionId = "vonageSessionId",
 }
@@ -38759,6 +38759,21 @@ export type VonageVideoPlaybackContext_InsertCommandMutation = {
         | { readonly __typename?: "video_VonageVideoPlaybackCommand"; readonly id: any }
         | null
         | undefined;
+};
+
+export type VonageVideoPlaybackContext_GetLatestCommandQueryVariables = Exact<{
+    vonageSessionId: Scalars["String"];
+}>;
+
+export type VonageVideoPlaybackContext_GetLatestCommandQuery = {
+    readonly __typename?: "query_root";
+    readonly video_VonageVideoPlaybackCommand: ReadonlyArray<{
+        readonly __typename?: "video_VonageVideoPlaybackCommand";
+        readonly id: any;
+        readonly command: any;
+        readonly createdByRegistrantId?: any | null | undefined;
+        readonly createdAt: any;
+    }>;
 };
 
 export type VonageVideoPlaybackContext_GetElementQueryVariables = Exact<{
@@ -50490,6 +50505,29 @@ export function useVonageVideoPlaybackContext_InsertCommandMutation() {
         VonageVideoPlaybackContext_InsertCommandMutation,
         VonageVideoPlaybackContext_InsertCommandMutationVariables
     >(VonageVideoPlaybackContext_InsertCommandDocument);
+}
+export const VonageVideoPlaybackContext_GetLatestCommandDocument = gql`
+    query VonageVideoPlaybackContext_GetLatestCommand($vonageSessionId: String!) {
+        video_VonageVideoPlaybackCommand(
+            where: { vonageSessionId: { _eq: $vonageSessionId } }
+            order_by: { createdAt: desc }
+            limit: 1
+        ) {
+            id
+            command
+            createdByRegistrantId
+            createdAt
+        }
+    }
+`;
+
+export function useVonageVideoPlaybackContext_GetLatestCommandQuery(
+    options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetLatestCommandQueryVariables>, "query"> = {}
+) {
+    return Urql.useQuery<VonageVideoPlaybackContext_GetLatestCommandQuery>({
+        query: VonageVideoPlaybackContext_GetLatestCommandDocument,
+        ...options,
+    });
 }
 export const VonageVideoPlaybackContext_GetElementDocument = gql`
     query VonageVideoPlaybackContext_GetElement($elementId: uuid!) {
@@ -76592,15 +76630,15 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
+        createdAt?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
         createdByRegistrantId?: GraphCacheResolver<
             WithTypename<Video_VonageVideoPlaybackCommand>,
             Record<string, never>,
             Scalars["uuid"] | string
-        >;
-        created_at?: GraphCacheResolver<
-            WithTypename<Video_VonageVideoPlaybackCommand>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
         >;
         eventVonageSession?: GraphCacheResolver<
             WithTypename<Video_VonageVideoPlaybackCommand>,
@@ -76637,7 +76675,7 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        updated_at?: GraphCacheResolver<
+        updatedAt?: GraphCacheResolver<
             WithTypename<Video_VonageVideoPlaybackCommand>,
             Record<string, never>,
             Scalars["timestamptz"] | string
@@ -76683,15 +76721,15 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
+        createdAt?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
         createdByRegistrantId?: GraphCacheResolver<
             WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
-        >;
-        created_at?: GraphCacheResolver<
-            WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
         >;
         id?: GraphCacheResolver<
             WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
@@ -76703,7 +76741,7 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        updated_at?: GraphCacheResolver<
+        updatedAt?: GraphCacheResolver<
             WithTypename<Video_VonageVideoPlaybackCommand_Max_Fields>,
             Record<string, never>,
             Scalars["timestamptz"] | string
@@ -76720,15 +76758,15 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
+        createdAt?: GraphCacheResolver<
+            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
         createdByRegistrantId?: GraphCacheResolver<
             WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
-        >;
-        created_at?: GraphCacheResolver<
-            WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
         >;
         id?: GraphCacheResolver<
             WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
@@ -76740,7 +76778,7 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        updated_at?: GraphCacheResolver<
+        updatedAt?: GraphCacheResolver<
             WithTypename<Video_VonageVideoPlaybackCommand_Min_Fields>,
             Record<string, never>,
             Scalars["timestamptz"] | string

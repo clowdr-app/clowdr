@@ -53128,8 +53128,8 @@ type video_VonageVideoPlaybackCommand {
     """
     conference: conference_Conference!
     conferenceId: uuid!
+    createdAt: timestamptz!
     createdByRegistrantId: uuid
-    created_at: timestamptz!
     """
     An object relationship
     """
@@ -53192,9 +53192,9 @@ type video_VonageVideoPlaybackCommand {
     """
     An object relationship
     """
-    subconference: conference_Subconference!
-    subconferenceId: uuid!
-    updated_at: timestamptz!
+    subconference: conference_Subconference
+    subconferenceId: uuid
+    updatedAt: timestamptz!
     vonageSessionId: String!
 }
 
@@ -53232,15 +53232,15 @@ input video_VonageVideoPlaybackCommand_bool_exp {
     command: jsonb_comparison_exp
     conference: conference_Conference_bool_exp
     conferenceId: uuid_comparison_exp
+    createdAt: timestamptz_comparison_exp
     createdByRegistrantId: uuid_comparison_exp
-    created_at: timestamptz_comparison_exp
     eventVonageSession: video_EventVonageSession_bool_exp
     id: uuid_comparison_exp
     registrant: registrant_Registrant_bool_exp
     rooms: room_Room_bool_exp
     subconference: conference_Subconference_bool_exp
     subconferenceId: uuid_comparison_exp
-    updated_at: timestamptz_comparison_exp
+    updatedAt: timestamptz_comparison_exp
     vonageSessionId: String_comparison_exp
 }
 
@@ -53282,15 +53282,15 @@ input video_VonageVideoPlaybackCommand_insert_input {
     command: jsonb
     conference: conference_Conference_obj_rel_insert_input
     conferenceId: uuid
+    createdAt: timestamptz
     createdByRegistrantId: uuid
-    created_at: timestamptz
     eventVonageSession: video_EventVonageSession_obj_rel_insert_input
     id: uuid
     registrant: registrant_Registrant_obj_rel_insert_input
     rooms: room_Room_arr_rel_insert_input
     subconference: conference_Subconference_obj_rel_insert_input
     subconferenceId: uuid
-    updated_at: timestamptz
+    updatedAt: timestamptz
     vonageSessionId: String
 }
 
@@ -53299,11 +53299,11 @@ aggregate max on columns
 """
 type video_VonageVideoPlaybackCommand_max_fields {
     conferenceId: uuid
+    createdAt: timestamptz
     createdByRegistrantId: uuid
-    created_at: timestamptz
     id: uuid
     subconferenceId: uuid
-    updated_at: timestamptz
+    updatedAt: timestamptz
     vonageSessionId: String
 }
 
@@ -53312,11 +53312,11 @@ aggregate min on columns
 """
 type video_VonageVideoPlaybackCommand_min_fields {
     conferenceId: uuid
+    createdAt: timestamptz
     createdByRegistrantId: uuid
-    created_at: timestamptz
     id: uuid
     subconferenceId: uuid
-    updated_at: timestamptz
+    updatedAt: timestamptz
     vonageSessionId: String
 }
 
@@ -53350,15 +53350,15 @@ input video_VonageVideoPlaybackCommand_order_by {
     command: order_by
     conference: conference_Conference_order_by
     conferenceId: order_by
+    createdAt: order_by
     createdByRegistrantId: order_by
-    created_at: order_by
     eventVonageSession: video_EventVonageSession_order_by
     id: order_by
     registrant: registrant_Registrant_order_by
     rooms_aggregate: room_Room_aggregate_order_by
     subconference: conference_Subconference_order_by
     subconferenceId: order_by
-    updated_at: order_by
+    updatedAt: order_by
     vonageSessionId: order_by
 }
 
@@ -53391,11 +53391,11 @@ enum video_VonageVideoPlaybackCommand_select_column {
     """
     column name
     """
-    createdByRegistrantId
+    createdAt
     """
     column name
     """
-    created_at
+    createdByRegistrantId
     """
     column name
     """
@@ -53407,7 +53407,7 @@ enum video_VonageVideoPlaybackCommand_select_column {
     """
     column name
     """
-    updated_at
+    updatedAt
     """
     column name
     """
@@ -53420,11 +53420,11 @@ input type for updating data in table "video.VonageVideoPlaybackCommand"
 input video_VonageVideoPlaybackCommand_set_input {
     command: jsonb
     conferenceId: uuid
+    createdAt: timestamptz
     createdByRegistrantId: uuid
-    created_at: timestamptz
     id: uuid
     subconferenceId: uuid
-    updated_at: timestamptz
+    updatedAt: timestamptz
     vonageSessionId: String
 }
 
@@ -53443,11 +53443,11 @@ enum video_VonageVideoPlaybackCommand_update_column {
     """
     column name
     """
-    createdByRegistrantId
+    createdAt
     """
     column name
     """
-    created_at
+    createdByRegistrantId
     """
     column name
     """
@@ -53459,7 +53459,7 @@ enum video_VonageVideoPlaybackCommand_update_column {
     """
     column name
     """
-    updated_at
+    updatedAt
     """
     column name
     """

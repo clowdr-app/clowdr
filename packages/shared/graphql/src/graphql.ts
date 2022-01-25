@@ -35487,8 +35487,8 @@ export type Video_VonageVideoPlaybackCommand = {
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
+    createdAt: Scalars["timestamptz"];
     createdByRegistrantId?: Maybe<Scalars["uuid"]>;
-    created_at: Scalars["timestamptz"];
     /** An object relationship */
     eventVonageSession?: Maybe<Video_EventVonageSession>;
     id: Scalars["uuid"];
@@ -35499,9 +35499,9 @@ export type Video_VonageVideoPlaybackCommand = {
     /** An aggregate relationship */
     rooms_aggregate: Room_Room_Aggregate;
     /** An object relationship */
-    subconference: Conference_Subconference;
-    subconferenceId: Scalars["uuid"];
-    updated_at: Scalars["timestamptz"];
+    subconference?: Maybe<Conference_Subconference>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
+    updatedAt: Scalars["timestamptz"];
     vonageSessionId: Scalars["String"];
 };
 
@@ -35562,15 +35562,15 @@ export type Video_VonageVideoPlaybackCommand_Bool_Exp = {
     command?: Maybe<Jsonb_Comparison_Exp>;
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     createdByRegistrantId?: Maybe<Uuid_Comparison_Exp>;
-    created_at?: Maybe<Timestamptz_Comparison_Exp>;
     eventVonageSession?: Maybe<Video_EventVonageSession_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
     rooms?: Maybe<Room_Room_Bool_Exp>;
     subconference?: Maybe<Conference_Subconference_Bool_Exp>;
     subconferenceId?: Maybe<Uuid_Comparison_Exp>;
-    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+    updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
     vonageSessionId?: Maybe<String_Comparison_Exp>;
 };
 
@@ -35600,15 +35600,15 @@ export type Video_VonageVideoPlaybackCommand_Insert_Input = {
     command?: Maybe<Scalars["jsonb"]>;
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
     createdByRegistrantId?: Maybe<Scalars["uuid"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
     eventVonageSession?: Maybe<Video_EventVonageSession_Obj_Rel_Insert_Input>;
     id?: Maybe<Scalars["uuid"]>;
     registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     rooms?: Maybe<Room_Room_Arr_Rel_Insert_Input>;
     subconference?: Maybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
     vonageSessionId?: Maybe<Scalars["String"]>;
 };
 
@@ -35616,11 +35616,11 @@ export type Video_VonageVideoPlaybackCommand_Insert_Input = {
 export type Video_VonageVideoPlaybackCommand_Max_Fields = {
     __typename?: "video_VonageVideoPlaybackCommand_max_fields";
     conferenceId?: Maybe<Scalars["uuid"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
     createdByRegistrantId?: Maybe<Scalars["uuid"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
     vonageSessionId?: Maybe<Scalars["String"]>;
 };
 
@@ -35628,11 +35628,11 @@ export type Video_VonageVideoPlaybackCommand_Max_Fields = {
 export type Video_VonageVideoPlaybackCommand_Min_Fields = {
     __typename?: "video_VonageVideoPlaybackCommand_min_fields";
     conferenceId?: Maybe<Scalars["uuid"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
     createdByRegistrantId?: Maybe<Scalars["uuid"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
     vonageSessionId?: Maybe<Scalars["String"]>;
 };
 
@@ -35657,15 +35657,15 @@ export type Video_VonageVideoPlaybackCommand_Order_By = {
     command?: Maybe<Order_By>;
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
+    createdAt?: Maybe<Order_By>;
     createdByRegistrantId?: Maybe<Order_By>;
-    created_at?: Maybe<Order_By>;
     eventVonageSession?: Maybe<Video_EventVonageSession_Order_By>;
     id?: Maybe<Order_By>;
     registrant?: Maybe<Registrant_Registrant_Order_By>;
     rooms_aggregate?: Maybe<Room_Room_Aggregate_Order_By>;
     subconference?: Maybe<Conference_Subconference_Order_By>;
     subconferenceId?: Maybe<Order_By>;
-    updated_at?: Maybe<Order_By>;
+    updatedAt?: Maybe<Order_By>;
     vonageSessionId?: Maybe<Order_By>;
 };
 
@@ -35686,15 +35686,15 @@ export enum Video_VonageVideoPlaybackCommand_Select_Column {
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
-    CreatedByRegistrantId = "createdByRegistrantId",
+    CreatedAt = "createdAt",
     /** column name */
-    CreatedAt = "created_at",
+    CreatedByRegistrantId = "createdByRegistrantId",
     /** column name */
     Id = "id",
     /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
-    UpdatedAt = "updated_at",
+    UpdatedAt = "updatedAt",
     /** column name */
     VonageSessionId = "vonageSessionId",
 }
@@ -35703,11 +35703,11 @@ export enum Video_VonageVideoPlaybackCommand_Select_Column {
 export type Video_VonageVideoPlaybackCommand_Set_Input = {
     command?: Maybe<Scalars["jsonb"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
     createdByRegistrantId?: Maybe<Scalars["uuid"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
     vonageSessionId?: Maybe<Scalars["String"]>;
 };
 
@@ -35718,15 +35718,15 @@ export enum Video_VonageVideoPlaybackCommand_Update_Column {
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
-    CreatedByRegistrantId = "createdByRegistrantId",
+    CreatedAt = "createdAt",
     /** column name */
-    CreatedAt = "created_at",
+    CreatedByRegistrantId = "createdByRegistrantId",
     /** column name */
     Id = "id",
     /** column name */
     SubconferenceId = "subconferenceId",
     /** column name */
-    UpdatedAt = "updated_at",
+    UpdatedAt = "updatedAt",
     /** column name */
     VonageSessionId = "vonageSessionId",
 }

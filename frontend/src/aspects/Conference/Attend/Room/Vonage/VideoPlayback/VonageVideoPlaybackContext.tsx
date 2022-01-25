@@ -3,15 +3,20 @@ import type {
     VonageVideoPlaybackCommand,
     VonageVideoPlaybackCommandSignal,
 } from "@midspace/shared-types/video/vonage-video-playback-command";
+import { vonageVideoPlaybackCommand } from "@midspace/shared-types/video/vonage-video-playback-command";
 import { gql } from "@urql/core";
+import * as R from "ramda";
 import type { PropsWithChildren } from "react";
-import React, { createContext, useCallback, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useAsync } from "react-async-hook";
+import type { VonageVideoPlaybackContext_GetLatestCommandQuery } from "../../../../../../generated/graphql";
 import {
     useVonageVideoPlaybackContext_GetElementQuery,
+    useVonageVideoPlaybackContext_GetLatestCommandQuery,
     useVonageVideoPlaybackContext_InsertCommandMutation,
 } from "../../../../../../generated/graphql";
 import { makeContext } from "../../../../../GQL/make-context";
+import { useEvent } from "../../../../../Utils/useEvent";
 import { useConference } from "../../../../useConference";
 import useCurrentRegistrant from "../../../../useCurrentRegistrant";
 import {
@@ -19,11 +24,26 @@ import {
     parseMediaElementSubtitlesUrl,
     parseMediaElementUrl,
 } from "../../../Content/Element/useMediaElement";
+import { VonageComputedStateContext } from "../VonageComputedStateContext";
+import { useVonageGlobalState } from "../VonageGlobalStateProvider";
 
 gql`
     mutation VonageVideoPlaybackContext_InsertCommand($object: video_VonageVideoPlaybackCommand_insert_input!) {
         insert_video_VonageVideoPlaybackCommand_one(object: $object) {
             id
+        }
+    }
+
+    query VonageVideoPlaybackContext_GetLatestCommand($vonageSessionId: String!) {
+        video_VonageVideoPlaybackCommand(
+            where: { vonageSessionId: { _eq: $vonageSessionId } }
+            order_by: { createdAt: desc }
+            limit: 1
+        ) {
+            id
+            command
+            createdByRegistrantId
+            createdAt
         }
     }
 `;
@@ -32,6 +52,24 @@ type Props = {
     vonageSessionId: string;
     canControlPlayback: boolean;
 };
+
+function parseStoredCommand(
+    result: VonageVideoPlaybackContext_GetLatestCommandQuery
+): VonageVideoPlaybackCommandSignal | undefined {
+    const latestStored = R.last(result.video_VonageVideoPlaybackCommand);
+    if (!latestStored) {
+        return undefined;
+    }
+    const command = vonageVideoPlaybackCommand.safeParse(latestStored?.command);
+    if (!command.success) {
+        return undefined;
+    }
+    return {
+        command: command.data,
+        createdAtMillis: Date.parse(latestStored.createdAt),
+        createdByRegistrantId: latestStored.createdByRegistrantId,
+    };
+}
 
 function useValue({ vonageSessionId, canControlPlayback }: Props) {
     const conference = useConference();
@@ -64,10 +102,40 @@ function useValue({ vonageSessionId, canControlPlayback }: Props) {
         [conference.id, context, insertCommand, registrant.id, vonageSessionId]
     );
 
+    const { connected } = useContext(VonageComputedStateContext);
+    const [latestCommandResult] = useVonageVideoPlaybackContext_GetLatestCommandQuery({
+        variables: {
+            vonageSessionId,
+        },
+        pause: !connected,
+        requestPolicy: "network-only",
+    });
+
     const [latestCommand, setLatestCommand] = useState<VonageVideoPlaybackCommandSignal>();
-    const receivedCommand = useCallback((command: VonageVideoPlaybackCommandSignal) => {
-        setLatestCommand(command);
-    }, []);
+    useEffect(() => {
+        if (!latestCommandResult.data) {
+            return;
+        }
+        const storedCommand = parseStoredCommand(latestCommandResult.data);
+        if (!storedCommand) {
+            return;
+        }
+        if (!latestCommand || storedCommand.createdAtMillis > latestCommand.createdAtMillis) {
+            setLatestCommand(storedCommand);
+        }
+    }, [latestCommand, latestCommandResult.data]);
+
+    const receivedCommand = useCallback(
+        (command: VonageVideoPlaybackCommandSignal) => {
+            if (!latestCommand || command.createdAtMillis > latestCommand.createdAtMillis) {
+                setLatestCommand(command);
+            }
+        },
+        [latestCommand]
+    );
+
+    const vonage = useVonageGlobalState();
+    useEvent(vonage, "video-playback-signal-received", receivedCommand);
 
     gql`
         query VonageVideoPlaybackContext_GetElement($elementId: uuid!) {

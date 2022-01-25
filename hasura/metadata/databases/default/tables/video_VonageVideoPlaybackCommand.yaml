@@ -1,6 +1,11 @@
 table:
   name: VonageVideoPlaybackCommand
   schema: video
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
 object_relationships:
 - name: conference
   using:

@@ -119,15 +119,16 @@ export function VonageRoom({
 
     const [, saveVonageRoomRecording] = useSaveVonageRoomRecordingMutation();
 
-    const currentRegistrant = useCurrentRegistrant();
     const onRecordingIdReceived = useCallback(
         (recordingId: string) => {
-            saveVonageRoomRecording({
-                recordingId,
-                registrantId: currentRegistrant.id,
-            });
+            if (mRegistrant) {
+                saveVonageRoomRecording({
+                    recordingId,
+                    registrantId: mRegistrant.id,
+                });
+            }
         },
-        [currentRegistrant.id, saveVonageRoomRecording]
+        [mRegistrant, saveVonageRoomRecording]
     );
 
     const cancelJoin = useMemo(

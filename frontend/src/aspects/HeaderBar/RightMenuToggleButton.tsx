@@ -2,6 +2,7 @@ import { Box, chakra, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 import usePinnedChats from "../Chat/Hooks/usePinnedChats";
 import useUnreadCount from "../Chat/Hooks/useUnreadCount";
+import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import HeaderBarButton from "./HeaderBarButton";
 
 export default function RightMenuToggleButton({
@@ -16,8 +17,7 @@ export default function RightMenuToggleButton({
         "MainMenuHeaderBar.buttonFocusBackgroundColor-dark"
     );
 
-    const pinnedChats = usePinnedChats();
-    const unreadCount = useUnreadCount(pinnedChats);
+    const mRegistrant = useMaybeCurrentRegistrant();
 
     return (
         <HeaderBarButton
@@ -31,7 +31,7 @@ export default function RightMenuToggleButton({
             mb={0}
         >
             <chakra.span fontSize="xs" alignSelf="flex-start" ml="2px" mt="2ex">
-                {unreadCount}
+                {mRegistrant ? <UnreadCount /> : undefined}
             </chakra.span>
             {isOpen ? (
                 <Box pos="absolute" bottom={0} left={0} w="100%">
@@ -42,4 +42,11 @@ export default function RightMenuToggleButton({
             ) : undefined}
         </HeaderBarButton>
     );
+}
+
+function UnreadCount(): JSX.Element {
+    const pinnedChats = usePinnedChats();
+    const unreadCount = useUnreadCount(pinnedChats);
+
+    return <>{unreadCount}</>;
 }

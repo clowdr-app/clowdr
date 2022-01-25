@@ -58,10 +58,12 @@ export default function HeaderBar({
                     {!isVeryNarrowView ? (
                         <SearchPopover isActive={searchIsActive} setIsActive={setSearchIsActive} />
                     ) : undefined}
-                    <NotificationsPopover />
-                    <RightMenuToggleButton isOpen={rightMenuOpen} setIsOpen={setRightMenuOpen} />
                     {maybeRegistrant ? (
-                        <ProfileMenu />
+                        <>
+                            <NotificationsPopover />
+                            <RightMenuToggleButton isOpen={rightMenuOpen} setIsOpen={setRightMenuOpen} />
+                            <ProfileMenu />
+                        </>
                     ) : !maybeUser ? (
                         <LoginButton asMenuButton={true} />
                     ) : (

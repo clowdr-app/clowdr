@@ -5,8 +5,6 @@ import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { GlobalChatState } from "./ChatGlobalState";
 import { ReportMessageProvider } from "./Moderation/ReportMessageDialog";
 
-export const GlobalChatStateContext = React.createContext<GlobalChatState | undefined>(undefined);
-
 export function useMaybeGlobalChatState(): GlobalChatState | undefined {
     return React.useContext(GlobalChatStateContext);
 }
@@ -19,11 +17,7 @@ export function useGlobalChatState(): GlobalChatState {
     return ctx;
 }
 
-export function GlobalChatStateProvider({
-    children,
-}: {
-    children: string | JSX.Element | Array<JSX.Element>;
-}): JSX.Element {
+function useValue() {
     const conference = useConference();
     const registrant = useMaybeCurrentRegistrant();
     const client = useClient();
@@ -40,8 +34,18 @@ export function GlobalChatStateProvider({
         };
     }, [state]);
 
+    return state;
+}
+
+export const GlobalChatStateContext = React.createContext({} as ReturnType<typeof useValue>);
+
+export function GlobalChatStateProvider({
+    children,
+}: {
+    children: string | JSX.Element | Array<JSX.Element>;
+}): JSX.Element {
     return (
-        <GlobalChatStateContext.Provider value={state}>
+        <GlobalChatStateContext.Provider value={useValue()}>
             <ReportMessageProvider>{children}</ReportMessageProvider>
         </GlobalChatStateContext.Provider>
     );

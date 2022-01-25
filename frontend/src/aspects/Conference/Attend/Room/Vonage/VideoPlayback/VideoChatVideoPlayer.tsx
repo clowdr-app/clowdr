@@ -71,7 +71,15 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                         videoPlaybackRef.current.latestCommand?.command?.type === "video" &&
                         videoPlaybackRef.current.latestCommand.command.playing
                     ) {
-                        event.target.play();
+                        const offsetMillis = Date.now() - videoPlaybackRef.current.latestCommand.createdAtMillis;
+                        const seekPosition =
+                            videoPlaybackRef.current.latestCommand.command.currentTimeSeconds + offsetMillis / 1000;
+
+                        if (seekPosition > event.target.duration) {
+                            event.target.currentTime = event.target.duration;
+                        } else {
+                            event.target.play();
+                        }
                     }
                 }
             };
@@ -117,7 +125,9 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                 } else {
                     videoElement.pause();
                 }
-                const offsetMillis = Date.now() - videoPlayback.latestCommand.createdAtMillis;
+                const offsetMillis = videoPlayback.latestCommand.command.playing
+                    ? Date.now() - videoPlayback.latestCommand.createdAtMillis
+                    : 0;
                 const seekPosition = videoPlayback.latestCommand.command.currentTimeSeconds + offsetMillis / 1000;
                 videoElement.currentTime = seekPosition;
             }

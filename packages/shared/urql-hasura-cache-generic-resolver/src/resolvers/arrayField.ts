@@ -26,6 +26,7 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
 
         const existingFields = cache.inspectFields(parent as Entity);
         const matchingFields = existingFields.filter((x) => x.fieldName === info.fieldName);
+        // console.info(`Existing matching fields for ${info.parentKey}.${info.fieldName}`, { parent, matchingFields });
         const allExistingFieldValues = matchingFields.flatMap((field) =>
             cache.resolve(parent as Entity, field.fieldKey)
         );
@@ -53,6 +54,9 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
                               cache
                           );
                 if (conditionResult === "partial") {
+                    // console.info(
+                    //     `Array field resolver: Setting partial result due to partial conditional: ${info.parentKey}.${info.fieldName}`
+                    // );
                     info.partial = true;
                     return undefined;
                 }
@@ -86,6 +90,7 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
         }
 
         const results = resolveRelation(fieldAugSchema.type, cache, info.parentKey, fieldEntityTypeName, args.where);
+        // console.info(`Resolved relational results for ${info.parentKey}.${info.fieldName}`, { parent, results });
 
         // console.info(`Array field resolver for ${info.parentTypeName}.${info.fieldName}`, {
         //     parent,
@@ -101,16 +106,16 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
         //     results,
         // });
         const finalResults: Set<string | null> = new Set();
-        let resolvedAny = false;
+        // let resolvedAny = false;
         if (matchingFields.length) {
             const keys = existingFieldValues.map((x) => cache.keyOfEntity(x as Entity));
             keys.map((key) => finalResults.add(key));
-            resolvedAny = true;
+            // resolvedAny = true;
         }
         if (results && results[fieldEntityTypeName] && results[fieldEntityTypeName] instanceof Array) {
             const keys = results[fieldEntityTypeName] as string[];
             keys.map((key) => finalResults.add(key));
-            resolvedAny = true;
+            // resolvedAny = true;
         }
 
         // console.log(
@@ -118,10 +123,11 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
         //     finalResults
         // );
 
-        if (!resolvedAny) {
-            info.partial = true;
-            return undefined;
-        }
+        // This is not correct. No results for an array field means empty array not partial data.
+        // if (!resolvedAny) {
+        //     info.partial = true;
+        //     return undefined;
+        // }
 
         let arrResults = [...finalResults];
 

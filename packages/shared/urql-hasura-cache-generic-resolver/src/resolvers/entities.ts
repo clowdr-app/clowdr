@@ -19,9 +19,9 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
 
         const allFields = cache.inspectFields(info.parentKey);
         const fieldInfos = allFields.filter((fieldInfo) => fieldInfo.fieldName === info.fieldName);
+        // console.info(`Field infos for ${info.parentKey}.${info.fieldName}`, fieldInfos);
         if (fieldInfos.length === 0) {
             info.partial = true;
-            return undefined;
         }
 
         const result = new Set<string>();

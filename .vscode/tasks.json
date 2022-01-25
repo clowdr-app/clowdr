@@ -390,7 +390,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["deploy:all"]
+            "args": ["deploy:all", "--", "--profile", "${input:aws-profile-name}"]
         },
         {
             "label": "AWS -- Open console",

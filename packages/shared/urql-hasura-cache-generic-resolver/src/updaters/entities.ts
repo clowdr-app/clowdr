@@ -1,90 +1,23 @@
-import type { Data, QueryInput, UpdateResolver } from "@urql/exchange-graphcache";
+import type { Data, UpdateResolver } from "@urql/exchange-graphcache";
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
-import type { DocumentNode, IntrospectionObjectType, SelectionNode } from "graphql";
-import { GraphQLError, isObjectType } from "graphql";
-import { getObjectTypeName, getTableFieldsSchema, getTableMutationSchema, isArrayOfObjectType } from "../schema";
+import { GraphQLError } from "graphql";
+import { getObjectTypeName, getTableFieldsSchema, getTableMutationSchema } from "../schema";
 import type { AugmentedIntrospectionData, InnerResolverConfig } from "../types";
 
-function buildSelectionSet(
-    datas: any[],
-    tableSchema: IntrospectionObjectType,
-    schema: IntrospectionData,
-    augSchema: AugmentedIntrospectionData
-): SelectionNode[] {
-    const result: SelectionNode[] = [];
-
-    for (const data of datas) {
-        for (const key in data) {
-            if (result.some((x) => x.kind === "Field" && x.name.value === key)) {
-                continue;
-            }
-
-            const value = data[key];
-            const fieldSchema = tableSchema.fields.find((x) => x.name === key);
-            if (!fieldSchema) {
-                continue;
-            }
-
-            if (isArrayOfObjectType(fieldSchema.type)) {
-                const fieldObjectTypeName = getObjectTypeName(fieldSchema.type);
-                if (!fieldObjectTypeName) {
-                    continue;
-                }
-                const fieldTableFieldsSchema = getTableFieldsSchema(fieldObjectTypeName, schema, augSchema);
-                if (!fieldTableFieldsSchema) {
-                    continue;
-                }
-                result.push({
-                    kind: "Field",
-                    name: {
-                        kind: "Name",
-                        value: key,
-                    },
-                    selectionSet: {
-                        kind: "SelectionSet",
-                        selections: buildSelectionSet(value, fieldTableFieldsSchema.tableSchema, schema, augSchema),
-                    },
-                });
-            } else if (isObjectType(fieldSchema.type)) {
-                const fieldObjectTypeName = getObjectTypeName(fieldSchema.type);
-                if (!fieldObjectTypeName) {
-                    continue;
-                }
-                const fieldTableFieldsSchema = getTableFieldsSchema(fieldObjectTypeName, schema, augSchema);
-                if (!fieldTableFieldsSchema) {
-                    continue;
-                }
-                result.push({
-                    kind: "Field",
-                    name: {
-                        kind: "Name",
-                        value: key,
-                    },
-                    selectionSet: {
-                        kind: "SelectionSet",
-                        selections: buildSelectionSet([value], fieldTableFieldsSchema.tableSchema, schema, augSchema),
-                    },
-                });
-            } else {
-                result.push({
-                    kind: "Field",
-                    name: {
-                        kind: "Name",
-                        value: key,
-                    },
-                });
-            }
-        }
-    }
-
-    return result;
-}
+/**
+ * If you're going to edit this code, you'll probably want to know about the
+ * impact the Urql Garbage Collector has on data written to the cache and thus
+ * why this code chooses to update existing queries rather than insert fresh
+ * ('unconnected') queries.
+ *
+ * https://github.com/FormidableLabs/urql/discussions/2219
+ */
 
 const entityUpdater: (schema: IntrospectionData, augSchema: AugmentedIntrospectionData) => UpdateResolver = (
     schema,
     augSchema
 ) =>
-    function updater(parent, args, cache, info) {
+    function updater(parent, _args, cache, info) {
         const rawOperation: string = info.fieldName.split("_")[0];
         const operation: "insert" | "update" | "delete" | undefined =
             rawOperation === "insert" || rawOperation === "update" || rawOperation === "delete"
@@ -130,112 +63,36 @@ const entityUpdater: (schema: IntrospectionData, augSchema: AugmentedIntrospecti
             return;
         }
 
-        console.info("Cache entity update", {
-            schema,
-            augSchema,
-            parent,
-            args,
-            cache,
-            info,
-            tableSchema,
-            tableFieldsSchema,
-            newObjects,
-            operation,
-        });
+        // console.info("Cache entity update", {
+        //     schema,
+        //     augSchema,
+        //     parent,
+        //     args,
+        //     cache,
+        //     info,
+        //     tableSchema,
+        //     tableFieldsSchema,
+        //     newObjects,
+        //     operation,
+        // });
 
         if (operation === "insert") {
-            const selections: SelectionNode[] = buildSelectionSet(
-                newObjects,
-                tableFieldsSchema.tableSchema,
-                schema,
-                augSchema
-            );
-            const query: QueryInput = {
-                query: {
-                    kind: "Document",
-                    definitions: [
-                        {
-                            kind: "OperationDefinition",
-                            operation: "query",
-                            selectionSet: {
-                                kind: "SelectionSet",
-                                selections: [
-                                    {
-                                        kind: "Field",
-                                        name: {
-                                            kind: "Name",
-                                            value: entityName,
-                                        },
-                                        selectionSet: {
-                                            kind: "SelectionSet",
-                                            selections,
-                                        },
-                                    },
-                                ],
-                            },
-                        },
-                    ],
-                },
-            };
-            cache.updateQuery(query, (existingQueryData): Data | null => {
-                const d = existingQueryData?.[entityName];
-
-                if (!d) {
-                    return {
-                        [entityName]: newObjects,
-                    } as Data;
-                }
-                if (d instanceof Array) {
-                    return {
-                        [entityName]: [...d, ...newObjects],
-                    } as Data;
+            const keysToInsert = newObjects.map((x) => cache.keyOfEntity(x));
+            const allFields = cache.inspectFields(schema.__schema.queryType.name);
+            const fieldInfos = allFields.filter((fieldInfo) => fieldInfo.fieldName === entityName);
+            // We're going to cheat. We know that the data we just inserted probably doesn't meet
+            // the conditions of most (or any) of the queries we've just extracted. But it
+            // shouldn't matter: the generic resolvers are going to re-filter the data anyway thus
+            // removing any erroneously inserted links. It's self-healing!
+            fieldInfos.forEach((fieldInfo) => {
+                const keys = cache.resolve(schema.__schema.queryType.name, fieldInfo.fieldKey) as string[] | null;
+                if (keys) {
+                    const newKeys = [...keys, ...keysToInsert];
+                    cache.link(schema.__schema.queryType.name, fieldInfo.fieldName, fieldInfo.arguments, newKeys);
                 } else {
-                    return {
-                        [entityName]: [d, ...newObjects],
-                    } as Data;
+                    cache.link(schema.__schema.queryType.name, fieldInfo.fieldName, fieldInfo.arguments, keysToInsert);
                 }
             });
-
-            // TODO: Insert links into existing fields...not this update query nonsense
-            //       Need to evaluate "where" conditions before inserting - except Urql
-            //       cache (in its infinite wisdom) will not execute "resolvers" during
-            //       "updaters" so it's likely that our conditionals code will break...
-        } else if (operation === "update") {
-            const selections: SelectionNode[] = buildSelectionSet(
-                _newObjects,
-                tableFieldsSchema.tableSchema,
-                schema,
-                augSchema
-            );
-
-            const fragment: DocumentNode = {
-                kind: "Document",
-                definitions: [
-                    {
-                        kind: "FragmentDefinition",
-                        name: {
-                            kind: "Name",
-                            value: "_",
-                        },
-                        typeCondition: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: entityName,
-                            },
-                        },
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections,
-                        },
-                    },
-                ],
-            };
-            for (const data of _newObjects) {
-                cache.writeFragment(fragment, data);
-            }
-
-            // TODO: Not sure if this writeFragment approach is sufficient?
         } else if (operation === "delete") {
             const keysToDelete = newObjects.map((x) => cache.keyOfEntity(x));
             const allFields = cache.inspectFields(schema.__schema.queryType.name);
@@ -247,8 +104,6 @@ const entityUpdater: (schema: IntrospectionData, augSchema: AugmentedIntrospecti
                     cache.link(schema.__schema.queryType.name, fieldInfo.fieldName, fieldInfo.arguments, newKeys);
                 }
             });
-
-            // TODO: Delete links from nested fields?
         }
     };
 

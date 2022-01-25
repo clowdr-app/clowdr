@@ -563,7 +563,7 @@ export function satisfiesConditions(
                     // Non-scalar condition
                     const typedCondition: ConditionalClauses = condition as ConditionalClauses;
                     const innerEntityKeys = cache.resolve(entityKey, conditionKey) as null | string | string[];
-                    if (innerEntityKeys !== null) {
+                    if (innerEntityKeys !== null && innerEntityKeys !== undefined) {
                         if (innerEntityKeys instanceof Array) {
                             let ok = false;
                             for (const innerEntityKey of innerEntityKeys) {
@@ -605,7 +605,10 @@ export function satisfiesConditions(
                             }
                         }
                     } else {
-                        return "partial";
+                        return false;
+                        // TODO: Returning "partial" seems to be incorrect but I'm not 100% sure why;
+                        //       It seems to cause a query loop due to incorrectly reporting partial
+                        //       results.
                     }
                 }
             }

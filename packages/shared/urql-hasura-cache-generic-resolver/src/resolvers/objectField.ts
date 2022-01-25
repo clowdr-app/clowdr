@@ -12,6 +12,7 @@ export const objectFieldResolver: (schema: IntrospectionData, augSchema: Augment
     function resolver(_parent, args, cache, info) {
         const existingFields = cache.inspectFields(info.parentKey);
         const matchingFields = existingFields.filter((x) => x.fieldName === info.fieldName);
+        // console.info(`Existing matching fields for ${info.parentKey}.${info.fieldName}`, { parent, matchingFields });
         const existingFieldValues = matchingFields.flatMap((field) => cache.resolve(info.parentKey, field.fieldKey));
         // N.B. Object fields do not have 'where' arguments
         if (existingFieldValues.length > 0) {
@@ -47,6 +48,7 @@ export const objectFieldResolver: (schema: IntrospectionData, augSchema: Augment
         }
 
         const result = resolveRelation(fieldAugSchema.type, cache, info.parentKey, fieldEntityTypeName, args.where);
+        // console.info(`Resolved relational results for ${info.parentKey}.${info.fieldName}`, { parent, result });
 
         // console.info(`Object field resolver for ${info.parentTypeName}.${info.fieldName}`, {
         //     parent,
@@ -70,6 +72,8 @@ export const objectFieldResolver: (schema: IntrospectionData, augSchema: Augment
                 return possibleResults;
             }
         }
-        info.partial ||= matchingFields.length === 0;
-        return matchingFields.length > 0 ? null : undefined;
+
+        // This is not correct. No results for an object field means "no object" not "partial data"
+        // info.partial ||= matchingFields.length === 0 && result === null;
+        return null;
     };

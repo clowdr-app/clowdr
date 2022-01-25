@@ -90,12 +90,16 @@ gql`
         layout
     }
 
-    fragment ManageContent_Item on content_Item {
+    fragment ManageContent_ItemScalars on content_Item {
         id
         conferenceId
         title
         shortTitle
         typeName
+    }
+
+    fragment ManageContent_Item on content_Item {
+        ...ManageContent_ItemScalars
         itemTags {
             ...ManageContent_ItemTag
         }
@@ -248,7 +252,7 @@ gql`
             }
         }
         update_content_Item_by_pk(pk_columns: { id: $id }, _set: $item) {
-            ...ManageContent_Item
+            ...ManageContent_ItemScalars
         }
     }
 

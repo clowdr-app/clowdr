@@ -41206,6 +41206,15 @@ export type ManageContent_ItemExhibitionFragment = {
     readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
 };
 
+export type ManageContent_ItemScalarsFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly title: string;
+    readonly shortTitle?: string | null | undefined;
+    readonly typeName: Content_ItemType_Enum;
+};
+
 export type ManageContent_ItemFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
@@ -41587,12 +41596,6 @@ export type ManageContent_UpdateItemMutation = {
               readonly title: string;
               readonly shortTitle?: string | null | undefined;
               readonly typeName: Content_ItemType_Enum;
-              readonly itemTags: ReadonlyArray<{
-                  readonly __typename?: "content_ItemTag";
-                  readonly id: any;
-                  readonly itemId: any;
-                  readonly tagId: any;
-              }>;
           }
         | null
         | undefined;
@@ -48613,6 +48616,15 @@ export const ManageContent_ItemExhibitionFragmentDoc = gql`
         layout
     }
 `;
+export const ManageContent_ItemScalarsFragmentDoc = gql`
+    fragment ManageContent_ItemScalars on content_Item {
+        id
+        conferenceId
+        title
+        shortTitle
+        typeName
+    }
+`;
 export const ManageContent_ItemTagFragmentDoc = gql`
     fragment ManageContent_ItemTag on content_ItemTag {
         id
@@ -48622,15 +48634,12 @@ export const ManageContent_ItemTagFragmentDoc = gql`
 `;
 export const ManageContent_ItemFragmentDoc = gql`
     fragment ManageContent_Item on content_Item {
-        id
-        conferenceId
-        title
-        shortTitle
-        typeName
+        ...ManageContent_ItemScalars
         itemTags {
             ...ManageContent_ItemTag
         }
     }
+    ${ManageContent_ItemScalarsFragmentDoc}
     ${ManageContent_ItemTagFragmentDoc}
 `;
 export const ManageContent_RoomFragmentDoc = gql`
@@ -51900,11 +51909,11 @@ export const ManageContent_UpdateItemDocument = gql`
             }
         }
         update_content_Item_by_pk(pk_columns: { id: $id }, _set: $item) {
-            ...ManageContent_Item
+            ...ManageContent_ItemScalars
         }
     }
     ${ManageContent_ItemTagFragmentDoc}
-    ${ManageContent_ItemFragmentDoc}
+    ${ManageContent_ItemScalarsFragmentDoc}
 `;
 
 export function useManageContent_UpdateItemMutation() {

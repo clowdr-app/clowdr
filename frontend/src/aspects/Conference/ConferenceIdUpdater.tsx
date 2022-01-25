@@ -35,7 +35,14 @@ export default function useConferenceIdUpdater(): void {
         if (!loading && conferenceSlug === returnedConferenceSlug) {
             setConferenceId(conferenceId ?? "NONE");
         } else {
-            setConferenceId(null);
+            setConferenceId(conferenceResponse.data?.conference_Conference.length === 0 ? "NONE" : null);
         }
-    }, [loading, conferenceId, setConferenceId, conferenceSlug, returnedConferenceSlug]);
+    }, [
+        loading,
+        conferenceId,
+        setConferenceId,
+        conferenceSlug,
+        returnedConferenceSlug,
+        conferenceResponse.data?.conference_Conference.length,
+    ]);
 }

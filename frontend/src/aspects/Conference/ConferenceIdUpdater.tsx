@@ -23,7 +23,9 @@ export default function useConferenceIdUpdater(): void {
 
     useEffect(() => {
         if (conferenceSlug && conferenceSlug !== "") {
-            refetchConferenceResponse();
+            refetchConferenceResponse({
+                requestPolicy: "network-only",
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [conferenceSlug]);

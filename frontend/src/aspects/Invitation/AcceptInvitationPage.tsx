@@ -72,7 +72,9 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
     useEffect(() => {
         if (errorMsg === "true" || errorMsg.includes("same user") || duplicateRegistrantError) {
             assert.truthy(data?.invitationConfirmCurrent?.confSlug);
-            history.push(`/conference/${data?.invitationConfirmCurrent?.confSlug}`);
+            new Promise((r) => setTimeout(r, 5000)).then(() => {
+                history.push(`/conference/${data?.invitationConfirmCurrent?.confSlug}`);
+            });
         }
     }, [data?.invitationConfirmCurrent?.confSlug, duplicateRegistrantError, errorMsg, history]);
 

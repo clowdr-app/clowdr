@@ -121,6 +121,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                     gridColumnGap={5}
                                     flexWrap={stackColumns ? "wrap" : "nowrap"}
                                     maxW="100%"
+                                    pb={[2, 2, 4]}
                                 >
                                     <Box maxW="100%" textAlign="center" flexGrow={1}>
                                         <Box>

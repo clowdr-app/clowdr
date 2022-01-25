@@ -110,7 +110,7 @@ function ExhibitionPageInner({
     );
 
     return (
-        <VStack spacing={4} alignItems="flex-start" mt={4} w="100%">
+        <VStack spacing={4} alignItems="flex-start" pb={[2, 2, 4]} px={[2, 2, 4]} w="100%">
             {title}
             <Heading as="h1" id="page-heading" pt={2} w="100%" textAlign="left">
                 <Circle size="0.7em" bg={exhibition.colour} display="inline-block" verticalAlign="middle" mr="0.4em" />

@@ -5,7 +5,6 @@ import React from "react";
 export default function CenteredSpinner({
     spinnerProps,
     centerProps,
-    caller,
 }: {
     spinnerProps?: SpinnerProps;
     centerProps?: CenterProps;
@@ -15,7 +14,7 @@ export default function CenteredSpinner({
         <Center w="100%" h="100%" {...centerProps}>
             <div>
                 <Spinner {...spinnerProps} />
-                {caller}
+                {/* {caller} */}
             </div>
         </Center>
     );

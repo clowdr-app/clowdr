@@ -22,6 +22,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
         // console.info(`Field infos for ${info.parentKey}.${info.fieldName}`, fieldInfos);
         if (fieldInfos.length === 0) {
             info.partial = true;
+            return [];
         }
 
         const result = new Set<string>();
@@ -90,6 +91,19 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
                     }
                 }
             }
+        }
+
+        if (result.size === 0) {
+            // There has to be a better test than this for detecting the difference between:
+            // "Get me this registrant with this exact Id...oh, it's not in the cache"
+            // versus
+            // "Find me all events of this conference in this time range...oh the cache says there are none"
+            // versus
+            // "Find me all events with ids in this array...oh, one of them isn't in the cache yet"
+            //    This hack basically checks if you're searching for specific objects by seeing if you're searching on
+            //    default primary key. If not it assumes it was a speculative search ("find...") rather than a
+            //    non-speculative fetch ("get me this thing I know exists").
+            info.partial ||= Boolean(args.where && typeof args.where === "object" && "id" in args.where);
         }
 
         let resultArr = [...result];

@@ -8,6 +8,8 @@ import { makeOperation } from "@urql/core";
 import type { AuthConfig } from "@urql/exchange-auth";
 import { authExchange } from "@urql/exchange-auth";
 import { cacheExchange } from "@urql/exchange-graphcache";
+import { makeDefaultStorage } from "@urql/exchange-graphcache/default-storage";
+import { requestPolicyExchange } from "@urql/exchange-request-policy";
 import { retryExchange } from "@urql/exchange-retry";
 import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -38,10 +40,10 @@ export function useUrqlContext(): UrqlContext {
     return ctx;
 }
 
-// const storage = makeDefaultStorage({
-//     idbName: "graphcache-v3", // The name of the IndexedDB database
-//     maxAge: 7, // The maximum age of the persisted data in days
-// });
+const storage = makeDefaultStorage({
+    idbName: "graphcache-v3", // The name of the IndexedDB database
+    maxAge: 7, // The maximum age of the persisted data in days
+});
 
 function UrqlProviderInner({
     children,
@@ -65,7 +67,7 @@ function UrqlProviderInner({
     // used imperatively within the operation formation function.
     authCtxRef.current = authParams;
 
-    // const loadedAt = useMemo(() => Date.now(), []);
+    const loadedAt = useMemo(() => Date.now(), []);
 
     const connect = useCallback(
         async (cb?: () => void) => {
@@ -156,8 +158,25 @@ function UrqlProviderInner({
                             TranscribeGeneratePresignedUrlOutput: () => null,
                         },
                         schema: schema as any,
-                        // storage,
-                        resolvers: genericResolvers({}, schema as any, augSchema as any),
+                        storage,
+                        resolvers: genericResolvers(
+                            {
+                                schedule_Event: {
+                                    endTime: (data) =>
+                                        data.endTime ??
+                                        (data.startTime &&
+                                        data.durationSeconds !== null &&
+                                        data.durationSeconds !== undefined
+                                            ? new Date(
+                                                  Date.parse(data.startTime as string) +
+                                                      (data.durationSeconds as number) * 1000
+                                              ).toISOString()
+                                            : null),
+                                },
+                            },
+                            schema as any,
+                            augSchema as any
+                        ),
                         updates: genericUpdaters({}, schema as any, augSchema as any),
                     });
 
@@ -167,11 +186,11 @@ function UrqlProviderInner({
                             // devtoolsExchange,
                             dedupExchange,
                             requestTracingExchange,
-                            // requestPolicyExchange({
-                            //     ttl: 30 * 60 * 1000,
-                            //     shouldUpgrade: () =>
-                            //         authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
-                            // }),
+                            requestPolicyExchange({
+                                ttl: 30 * 60 * 1000,
+                                shouldUpgrade: () =>
+                                    authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
+                            }),
                             cache,
                             authExchange(authOptions),
                             retryExchange(retryOptions),
@@ -197,7 +216,7 @@ function UrqlProviderInner({
                 }
             }
         },
-        [getAccessTokenSilently, isAuthenticated]
+        [getAccessTokenSilently, isAuthenticated, loadedAt]
     );
 
     useEffect(() => {

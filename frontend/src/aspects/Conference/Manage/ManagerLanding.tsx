@@ -17,7 +17,8 @@ export default function ManagerLandingPage(): JSX.Element {
             <VStack
                 w="100%"
                 alignItems="flex-start"
-                px={8}
+                px={[4, 4, 8]}
+                pb={[4, 4, 8]}
                 spacing={8}
                 maxW="calc(902px + (2 * var(--chakra-space-8)))"
             >

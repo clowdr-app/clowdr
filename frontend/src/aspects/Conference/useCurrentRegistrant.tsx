@@ -52,11 +52,10 @@ export function CurrentRegistrantProvider({ children }: { children: ReactNode | 
         if (!("registrants" in conference)) {
             return undefined;
         }
-        // Annoyingly, GraphQL CodeGen mistakenly types `conference.registrants`
-        // as a single object rather than an array. Arguably, it is correct, on
-        // the basis of the primary key. But Hasura still returns it as an array.
         return conference.registrants.length > 0 ? (conference.registrants[0] as Registrant) : undefined;
-    }, [conference]);
+        // Protect against cache weirdness causing accidental re-renders of everything
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [conference?.id]);
 
     return <CurrentRegistrantContext.Provider value={ctx}>{children}</CurrentRegistrantContext.Provider>;
 }

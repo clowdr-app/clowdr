@@ -1,6 +1,6 @@
 import { Spinner, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import type { UseQueryState } from "urql";
+import type { OperationResult, UseQueryState } from "urql";
 import useQueryErrorToast from "./useQueryErrorToast";
 
 export default function QueryWrapper<TData, TVariables, TInnerData>({
@@ -10,20 +10,23 @@ export default function QueryWrapper<TData, TVariables, TInnerData>({
     childrenNoData,
     noSpinner = false,
 }: {
-    queryResult: UseQueryState<TData, TVariables>;
+    queryResult:
+        | UseQueryState<TData, TVariables>
+        | (OperationResult<TData, TVariables> & { fetching: boolean })
+        | { fetching: boolean };
     getter: (data: TData) => TInnerData | undefined | null;
-    children: (data: TInnerData) => React.ReactNode | React.ReactNodeArray;
-    childrenNoData?: () => React.ReactNode | React.ReactNodeArray;
+    children: (data: TInnerData) => React.ReactNode | React.ReactNode[];
+    childrenNoData?: () => React.ReactNode | React.ReactNode[];
     noSpinner?: boolean;
 }): JSX.Element {
     const innerData = useMemo(() => {
-        if (queryResult.data) {
+        if ("data" in queryResult && queryResult.data) {
             return getter(queryResult.data);
         } else {
             return undefined;
         }
-    }, [getter, queryResult.data]);
-    useQueryErrorToast(queryResult.error, false, "QueryWrapper");
+    }, [getter, queryResult]);
+    useQueryErrorToast("error" in queryResult ? queryResult?.error : undefined, false, "QueryWrapper");
 
     return (
         <>
@@ -33,7 +36,7 @@ export default function QueryWrapper<TData, TVariables, TInnerData>({
                 ) : (
                     <Spinner />
                 )
-            ) : queryResult.error ? (
+            ) : queryResult && "error" in queryResult && queryResult.error ? (
                 <Text>An error occurred loading in data - please see further information in notifications.</Text>
             ) : undefined}
             {queryResult.fetching && !innerData ? (

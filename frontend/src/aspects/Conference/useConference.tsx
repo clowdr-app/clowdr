@@ -2,8 +2,12 @@ import { VStack } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
-import React, { useMemo } from "react";
-import type { AuthdConferenceInfoFragment, PublicConferenceInfoFragment } from "../../generated/graphql";
+import React, { useEffect, useMemo, useState } from "react";
+import type {
+    AuthdConferenceInfoFragment,
+    ConferenceById_WithoutUserQuery,
+    PublicConferenceInfoFragment,
+} from "../../generated/graphql";
 import { useConferenceById_WithoutUserQuery, useConferenceById_WithUserQuery } from "../../generated/graphql";
 import { AppError } from "../App";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
@@ -172,8 +176,20 @@ function ConferenceProvider_WithoutUser({
         },
         context,
     });
+    // Protect against cache weirdness causing accidental re-renders of everything
+    const [firstDataResult, setFirstDataResult] = useState<
+        ConferenceById_WithoutUserQuery["conference_Conference_by_pk"] | null
+    >(null);
+    useEffect(() => {
+        if (!firstDataResult && data?.conference_Conference_by_pk) {
+            setFirstDataResult(data.conference_Conference_by_pk);
+        } else if (firstDataResult?.id !== conferenceId) {
+            setFirstDataResult(data?.conference_Conference_by_pk ?? null);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [conferenceId, data?.conference_Conference_by_pk]);
 
-    if (loading && !data) {
+    if (loading && !firstDataResult) {
         return <CenteredSpinner caller="useConference:175" />;
     }
 
@@ -185,7 +201,7 @@ function ConferenceProvider_WithoutUser({
         );
     }
 
-    if (!data || !data.conference_Conference_by_pk) {
+    if (!firstDataResult) {
         return (
             <VStack>
                 <PageNotFound />
@@ -193,7 +209,7 @@ function ConferenceProvider_WithoutUser({
         );
     }
 
-    return <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children}</ConferenceContext.Provider>;
+    return <ConferenceContext.Provider value={firstDataResult}>{children}</ConferenceContext.Provider>;
 }
 
 function ConferenceProvider_WithUser({
@@ -219,8 +235,20 @@ function ConferenceProvider_WithUser({
         },
         context,
     });
+    // Protect against cache weirdness causing accidental re-renders of everything
+    const [firstDataResult, setFirstDataResult] = useState<
+        ConferenceById_WithoutUserQuery["conference_Conference_by_pk"] | null
+    >(null);
+    useEffect(() => {
+        if (!firstDataResult && data?.conference_Conference_by_pk) {
+            setFirstDataResult(data.conference_Conference_by_pk);
+        } else if (firstDataResult?.id !== conferenceId) {
+            setFirstDataResult(data?.conference_Conference_by_pk ?? null);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [conferenceId, data?.conference_Conference_by_pk]);
 
-    if (loading && !data) {
+    if (loading && !firstDataResult) {
         return <CenteredSpinner caller="useConference:222" />;
     }
 
@@ -237,7 +265,7 @@ function ConferenceProvider_WithUser({
         );
     }
 
-    if (!data || !data.conference_Conference_by_pk) {
+    if (!firstDataResult) {
         return (
             <VStack>
                 <PageNotFound />
@@ -245,7 +273,7 @@ function ConferenceProvider_WithUser({
         );
     }
 
-    return <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children}</ConferenceContext.Provider>;
+    return <ConferenceContext.Provider value={firstDataResult}>{children}</ConferenceContext.Provider>;
 }
 
 export default function ConferenceProvider({

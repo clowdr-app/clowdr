@@ -146,13 +146,19 @@ function CurrentUserProvider_IsAuthenticated({
             }),
         []
     );
-    const [{ fetching: loading, error, data }] = useSelectCurrentUserQuery({
+    const [{ fetching: loading, error, data }, refreshSelectCurrentUser] = useSelectCurrentUserQuery({
         variables: {
             userId,
         },
         context,
     });
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
+    // TODO: remove this hack once the cache is fixed to immediately reflect result of the `AgreeToTerms` mutation.
+    const forceRefresh = useCallback(() => {
+        refreshSelectCurrentUser({
+            requestPolicy: "network-only",
+        });
+    }, [refreshSelectCurrentUser]);
 
     const [{ fetching: termsLoading, data: termsData }] = useTermsConfigsQuery();
 
@@ -212,6 +218,7 @@ function CurrentUserProvider_IsAuthenticated({
                         termsAcceptance={
                             !acceptedTermsAt ? "never" : termsTimestamp > acceptedTermsAt ? "outdated" : "current"
                         }
+                        forceRefresh={forceRefresh}
                     />
                 );
             }
@@ -289,6 +296,7 @@ function TermsAndPPCompliance({
     userId,
     termsAcceptance,
     ppAcceptance,
+    forceRefresh,
 }: {
     ppURL: string;
     termsURL: string;
@@ -296,17 +304,19 @@ function TermsAndPPCompliance({
     userId: string;
     termsAcceptance: "never" | "current" | "outdated";
     ppAcceptance: "never" | "current" | "outdated";
+    forceRefresh: () => void;
 }): JSX.Element {
     const [termsChecked, setTermsChecked] = useState<boolean>(false);
     const [ppChecked, setPPChecked] = useState<boolean>(false);
     const [agreeToTermsResponse, agreeToTerms] = useAgreeToTermsMutation();
 
-    const agreeAndContinue = useCallback(() => {
-        agreeToTerms({
+    const agreeAndContinue = useCallback(async () => {
+        await agreeToTerms({
             userId,
             at: new Date().toISOString(),
         });
-    }, [agreeToTerms, userId]);
+        forceRefresh();
+    }, [agreeToTerms, forceRefresh, userId]);
 
     return (
         <Center mt={10}>

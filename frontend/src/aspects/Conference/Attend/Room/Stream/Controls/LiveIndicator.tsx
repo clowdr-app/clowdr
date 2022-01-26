@@ -80,8 +80,9 @@ export function LiveIndicator({
             eventId: event.id,
         },
         pause: !isConnected,
+        requestPolicy: "network-only",
     });
-    const { start: startPolling, stop: stopPolling } = usePolling(refetchLiveIndicator, 30000, isConnected);
+    const { start: startPolling, stop: stopPolling } = usePolling(refetchLiveIndicator, 20000, isConnected);
     useEffect(() => {
         if (isConnected) {
             startPolling();

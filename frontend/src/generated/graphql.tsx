@@ -7,6 +7,7 @@ import type {
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import gql from "graphql-tag";
 import * as Urql from "urql";
+import { useQuery } from "@midspace/urql-hasura-cache-generic-resolver/useQuery";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -49558,7 +49559,7 @@ export const GetSlugForUrlDocument = gql`
 `;
 
 export function useGetSlugForUrlQuery(options: Omit<Urql.UseQueryArgs<GetSlugForUrlQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetSlugForUrlQuery>({ query: GetSlugForUrlDocument, ...options });
+    return useQuery<GetSlugForUrlQuery>({ query: GetSlugForUrlDocument, ...options });
 }
 export const InitialChatStateDocument = gql`
     query InitialChatState($registrantId: uuid!) {
@@ -49576,7 +49577,7 @@ export const InitialChatStateDocument = gql`
 export function useInitialChatStateQuery(
     options: Omit<Urql.UseQueryArgs<InitialChatStateQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<InitialChatStateQuery>({ query: InitialChatStateDocument, ...options });
+    return useQuery<InitialChatStateQuery>({ query: InitialChatStateDocument, ...options });
 }
 export const SelectInitialChatStateDocument = gql`
     query SelectInitialChatState($chatId: uuid!, $registrantId: uuid!) {
@@ -49590,7 +49591,7 @@ export const SelectInitialChatStateDocument = gql`
 export function useSelectInitialChatStateQuery(
     options: Omit<Urql.UseQueryArgs<SelectInitialChatStateQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectInitialChatStateQuery>({ query: SelectInitialChatStateDocument, ...options });
+    return useQuery<SelectInitialChatStateQuery>({ query: SelectInitialChatStateDocument, ...options });
 }
 export const SelectInitialChatStatesDocument = gql`
     query SelectInitialChatStates($chatIds: [uuid!]!, $registrantId: uuid!) {
@@ -49604,7 +49605,7 @@ export const SelectInitialChatStatesDocument = gql`
 export function useSelectInitialChatStatesQuery(
     options: Omit<Urql.UseQueryArgs<SelectInitialChatStatesQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectInitialChatStatesQuery>({ query: SelectInitialChatStatesDocument, ...options });
+    return useQuery<SelectInitialChatStatesQuery>({ query: SelectInitialChatStatesDocument, ...options });
 }
 export const SubscribeChatDocument = gql`
     mutation SubscribeChat($chatId: uuid!, $registrantId: uuid!) {
@@ -49680,7 +49681,7 @@ export const SelectMessagesPageDocument = gql`
 export function useSelectMessagesPageQuery(
     options: Omit<Urql.UseQueryArgs<SelectMessagesPageQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectMessagesPageQuery>({ query: SelectMessagesPageDocument, ...options });
+    return useQuery<SelectMessagesPageQuery>({ query: SelectMessagesPageDocument, ...options });
 }
 export const InsertChatFlagDocument = gql`
     mutation InsertChatFlag($messageSId: uuid!, $registrantId: uuid!, $type: chat_FlagType_enum!, $reason: String!) {
@@ -49711,7 +49712,7 @@ export const GetChatPathDocument = gql`
 `;
 
 export function useGetChatPathQuery(options: Omit<Urql.UseQueryArgs<GetChatPathQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetChatPathQuery>({ query: GetChatPathDocument, ...options });
+    return useQuery<GetChatPathQuery>({ query: GetChatPathDocument, ...options });
 }
 export const ConferenceLandingPageItemDocument = gql`
     query ConferenceLandingPageItem($conferenceId: uuid!) {
@@ -49725,7 +49726,7 @@ export const ConferenceLandingPageItemDocument = gql`
 export function useConferenceLandingPageItemQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceLandingPageItemQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ConferenceLandingPageItemQuery>({ query: ConferenceLandingPageItemDocument, ...options });
+    return useQuery<ConferenceLandingPageItemQuery>({ query: ConferenceLandingPageItemDocument, ...options });
 }
 export const ItemElements_GetItemDocument = gql`
     query ItemElements_GetItem($itemId: uuid!) {
@@ -49739,7 +49740,7 @@ export const ItemElements_GetItemDocument = gql`
 export function useItemElements_GetItemQuery(
     options: Omit<Urql.UseQueryArgs<ItemElements_GetItemQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ItemElements_GetItemQuery>({ query: ItemElements_GetItemDocument, ...options });
+    return useQuery<ItemElements_GetItemQuery>({ query: ItemElements_GetItemDocument, ...options });
 }
 export const ContentOfTagDocument = gql`
     query ContentOfTag($id: uuid!) {
@@ -49751,7 +49752,7 @@ export const ContentOfTagDocument = gql`
 `;
 
 export function useContentOfTagQuery(options: Omit<Urql.UseQueryArgs<ContentOfTagQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<ContentOfTagQuery>({ query: ContentOfTagDocument, ...options });
+    return useQuery<ContentOfTagQuery>({ query: ContentOfTagDocument, ...options });
 }
 export const TagsDocument = gql`
     query Tags($conferenceId: uuid!) {
@@ -49763,7 +49764,7 @@ export const TagsDocument = gql`
 `;
 
 export function useTagsQuery(options: Omit<Urql.UseQueryArgs<TagsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<TagsQuery>({ query: TagsDocument, ...options });
+    return useQuery<TagsQuery>({ query: TagsDocument, ...options });
 }
 export const GetItemDocument = gql`
     query GetItem($itemId: uuid!) {
@@ -49787,7 +49788,7 @@ export const GetItemDocument = gql`
 `;
 
 export function useGetItemQuery(options: Omit<Urql.UseQueryArgs<GetItemQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetItemQuery>({ query: GetItemDocument, ...options });
+    return useQuery<GetItemQuery>({ query: GetItemDocument, ...options });
 }
 export const ContinuationChoices_ContinuationsDocument = gql`
     query ContinuationChoices_Continuations($fromId: uuid!, $nowStart: timestamptz, $nowEnd: timestamptz) {
@@ -49822,7 +49823,7 @@ export const ContinuationChoices_ContinuationsDocument = gql`
 export function useContinuationChoices_ContinuationsQuery(
     options: Omit<Urql.UseQueryArgs<ContinuationChoices_ContinuationsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ContinuationChoices_ContinuationsQuery>({
+    return useQuery<ContinuationChoices_ContinuationsQuery>({
         query: ContinuationChoices_ContinuationsDocument,
         ...options,
     });
@@ -49846,7 +49847,7 @@ export const ContinuationChoices_RoomsDocument = gql`
 export function useContinuationChoices_RoomsQuery(
     options: Omit<Urql.UseQueryArgs<ContinuationChoices_RoomsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ContinuationChoices_RoomsQuery>({ query: ContinuationChoices_RoomsDocument, ...options });
+    return useQuery<ContinuationChoices_RoomsQuery>({ query: ContinuationChoices_RoomsDocument, ...options });
 }
 export const SelectExhibitionDocument = gql`
     query SelectExhibition($id: uuid!) {
@@ -49864,7 +49865,7 @@ export const SelectExhibitionDocument = gql`
 export function useSelectExhibitionQuery(
     options: Omit<Urql.UseQueryArgs<SelectExhibitionQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectExhibitionQuery>({ query: SelectExhibitionDocument, ...options });
+    return useQuery<SelectExhibitionQuery>({ query: SelectExhibitionDocument, ...options });
 }
 export const SelectAllExhibitionsDocument = gql`
     query SelectAllExhibitions($conferenceId: uuid!) {
@@ -49878,7 +49879,7 @@ export const SelectAllExhibitionsDocument = gql`
 export function useSelectAllExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<SelectAllExhibitionsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectAllExhibitionsQuery>({ query: SelectAllExhibitionsDocument, ...options });
+    return useQuery<SelectAllExhibitionsQuery>({ query: SelectAllExhibitionsDocument, ...options });
 }
 export const RegistrantByIdDocument = gql`
     query RegistrantById($conferenceId: uuid!, $registrantId: uuid!) {
@@ -49890,7 +49891,7 @@ export const RegistrantByIdDocument = gql`
 `;
 
 export function useRegistrantByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantByIdQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<RegistrantByIdQuery>({ query: RegistrantByIdDocument, ...options });
+    return useQuery<RegistrantByIdQuery>({ query: RegistrantByIdDocument, ...options });
 }
 export const RegistrantInvitedEmailAddressDocument = gql`
     query RegistrantInvitedEmailAddress($registrantId: uuid!) {
@@ -49905,7 +49906,7 @@ export const RegistrantInvitedEmailAddressDocument = gql`
 export function useRegistrantInvitedEmailAddressQuery(
     options: Omit<Urql.UseQueryArgs<RegistrantInvitedEmailAddressQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<RegistrantInvitedEmailAddressQuery>({
+    return useQuery<RegistrantInvitedEmailAddressQuery>({
         query: RegistrantInvitedEmailAddressDocument,
         ...options,
     });
@@ -49969,7 +49970,7 @@ export const RegistrantEventsWithBackstagesDocument = gql`
 export function useRegistrantEventsWithBackstagesQuery(
     options: Omit<Urql.UseQueryArgs<RegistrantEventsWithBackstagesQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<RegistrantEventsWithBackstagesQuery>({
+    return useQuery<RegistrantEventsWithBackstagesQuery>({
         query: RegistrantEventsWithBackstagesDocument,
         ...options,
     });
@@ -49986,7 +49987,7 @@ export const ProfilePage_ItemsDocument = gql`
 export function useProfilePage_ItemsQuery(
     options: Omit<Urql.UseQueryArgs<ProfilePage_ItemsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ProfilePage_ItemsQuery>({ query: ProfilePage_ItemsDocument, ...options });
+    return useQuery<ProfilePage_ItemsQuery>({ query: ProfilePage_ItemsDocument, ...options });
 }
 export const MyRecordingsDocument = gql`
     query MyRecordings($registrantId: uuid!) {
@@ -50011,7 +50012,7 @@ export const MyRecordingsDocument = gql`
 `;
 
 export function useMyRecordingsQuery(options: Omit<Urql.UseQueryArgs<MyRecordingsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<MyRecordingsQuery>({ query: MyRecordingsDocument, ...options });
+    return useQuery<MyRecordingsQuery>({ query: MyRecordingsDocument, ...options });
 }
 export const SelectRegistrantsDocument = gql`
     query SelectRegistrants($conferenceId: uuid!) {
@@ -50025,7 +50026,7 @@ export const SelectRegistrantsDocument = gql`
 export function useSelectRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<SelectRegistrantsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectRegistrantsQuery>({ query: SelectRegistrantsDocument, ...options });
+    return useQuery<SelectRegistrantsQuery>({ query: SelectRegistrantsDocument, ...options });
 }
 export const SearchRegistrantsDocument = gql`
     query SearchRegistrants($conferenceId: uuid!, $search: String!) {
@@ -50053,7 +50054,7 @@ export const SearchRegistrantsDocument = gql`
 export function useSearchRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<SearchRegistrantsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SearchRegistrantsQuery>({ query: SearchRegistrantsDocument, ...options });
+    return useQuery<SearchRegistrantsQuery>({ query: SearchRegistrantsDocument, ...options });
 }
 export const Registrant_RegistrantCreateRoomDocument = gql`
     mutation registrant_RegistrantCreateRoom(
@@ -50091,7 +50092,7 @@ export const Room_GetEventsDocument = gql`
 `;
 
 export function useRoom_GetEventsQuery(options: Omit<Urql.UseQueryArgs<Room_GetEventsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<Room_GetEventsQuery>({ query: Room_GetEventsDocument, ...options });
+    return useQuery<Room_GetEventsQuery>({ query: Room_GetEventsDocument, ...options });
 }
 export const Room_GetDefaultVideoRoomBackendDocument = gql`
     query Room_GetDefaultVideoRoomBackend {
@@ -50104,7 +50105,7 @@ export const Room_GetDefaultVideoRoomBackendDocument = gql`
 export function useRoom_GetDefaultVideoRoomBackendQuery(
     options: Omit<Urql.UseQueryArgs<Room_GetDefaultVideoRoomBackendQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<Room_GetDefaultVideoRoomBackendQuery>({
+    return useQuery<Room_GetDefaultVideoRoomBackendQuery>({
         query: Room_GetDefaultVideoRoomBackendDocument,
         ...options,
     });
@@ -50136,7 +50137,7 @@ export const RoomPage_GetRoomDetailsDocument = gql`
 export function useRoomPage_GetRoomDetailsQuery(
     options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomDetailsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<RoomPage_GetRoomDetailsQuery>({ query: RoomPage_GetRoomDetailsDocument, ...options });
+    return useQuery<RoomPage_GetRoomDetailsQuery>({ query: RoomPage_GetRoomDetailsDocument, ...options });
 }
 export const RoomPage_IsAdminDocument = gql`
     query RoomPage_IsAdmin($roomId: uuid!, $registrantId: uuid!) {
@@ -50154,7 +50155,7 @@ export const RoomPage_IsAdminDocument = gql`
 export function useRoomPage_IsAdminQuery(
     options: Omit<Urql.UseQueryArgs<RoomPage_IsAdminQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<RoomPage_IsAdminQuery>({ query: RoomPage_IsAdminDocument, ...options });
+    return useQuery<RoomPage_IsAdminQuery>({ query: RoomPage_IsAdminDocument, ...options });
 }
 export const RoomPage_GetRoomChannelStackDocument = gql`
     query RoomPage_GetRoomChannelStack($roomId: uuid!) {
@@ -50168,7 +50169,7 @@ export const RoomPage_GetRoomChannelStackDocument = gql`
 export function useRoomPage_GetRoomChannelStackQuery(
     options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomChannelStackQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<RoomPage_GetRoomChannelStackQuery>({
+    return useQuery<RoomPage_GetRoomChannelStackQuery>({
         query: RoomPage_GetRoomChannelStackDocument,
         ...options,
     });
@@ -50189,7 +50190,7 @@ export const GetEventVonageDetailsDocument = gql`
 export function useGetEventVonageDetailsQuery(
     options: Omit<Urql.UseQueryArgs<GetEventVonageDetailsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetEventVonageDetailsQuery>({ query: GetEventVonageDetailsDocument, ...options });
+    return useQuery<GetEventVonageDetailsQuery>({ query: GetEventVonageDetailsDocument, ...options });
 }
 export const RoomSponsorContent_GetElementsDocument = gql`
     query RoomSponsorContent_GetElements($itemId: uuid!) {
@@ -50203,7 +50204,7 @@ export const RoomSponsorContent_GetElementsDocument = gql`
 export function useRoomSponsorContent_GetElementsQuery(
     options: Omit<Urql.UseQueryArgs<RoomSponsorContent_GetElementsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<RoomSponsorContent_GetElementsQuery>({
+    return useQuery<RoomSponsorContent_GetElementsQuery>({
         query: RoomSponsorContent_GetElementsDocument,
         ...options,
     });
@@ -50269,7 +50270,7 @@ export const ImmediateSwitch_GetElementsDocument = gql`
 export function useImmediateSwitch_GetElementsQuery(
     options: Omit<Urql.UseQueryArgs<ImmediateSwitch_GetElementsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ImmediateSwitch_GetElementsQuery>({ query: ImmediateSwitch_GetElementsDocument, ...options });
+    return useQuery<ImmediateSwitch_GetElementsQuery>({ query: ImmediateSwitch_GetElementsDocument, ...options });
 }
 export const ImmediateSwitch_CreateDocument = gql`
     mutation ImmediateSwitch_Create($data: jsonb!, $eventId: uuid!, $conferenceId: uuid!) {
@@ -50302,7 +50303,7 @@ export const LiveIndicator_GetLatestDocument = gql`
 export function useLiveIndicator_GetLatestQuery(
     options: Omit<Urql.UseQueryArgs<LiveIndicator_GetLatestQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<LiveIndicator_GetLatestQuery>({ query: LiveIndicator_GetLatestDocument, ...options });
+    return useQuery<LiveIndicator_GetLatestQuery>({ query: LiveIndicator_GetLatestDocument, ...options });
 }
 export const LiveIndicator_GetElementDocument = gql`
     query LiveIndicator_GetElement($elementId: uuid!) {
@@ -50316,7 +50317,7 @@ export const LiveIndicator_GetElementDocument = gql`
 export function useLiveIndicator_GetElementQuery(
     options: Omit<Urql.UseQueryArgs<LiveIndicator_GetElementQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<LiveIndicator_GetElementQuery>({ query: LiveIndicator_GetElementDocument, ...options });
+    return useQuery<LiveIndicator_GetElementQuery>({ query: LiveIndicator_GetElementDocument, ...options });
 }
 export const EnableBackstageStreamPreviewDocument = gql`
     query EnableBackstageStreamPreview($conferenceId: uuid!) {
@@ -50331,7 +50332,7 @@ export const EnableBackstageStreamPreviewDocument = gql`
 export function useEnableBackstageStreamPreviewQuery(
     options: Omit<Urql.UseQueryArgs<EnableBackstageStreamPreviewQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<EnableBackstageStreamPreviewQuery>({
+    return useQuery<EnableBackstageStreamPreviewQuery>({
         query: EnableBackstageStreamPreviewDocument,
         ...options,
     });
@@ -50346,7 +50347,7 @@ export const GetEventDetailsDocument = gql`
 `;
 
 export function useGetEventDetailsQuery(options: Omit<Urql.UseQueryArgs<GetEventDetailsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetEventDetailsQuery>({ query: GetEventDetailsDocument, ...options });
+    return useQuery<GetEventDetailsQuery>({ query: GetEventDetailsDocument, ...options });
 }
 export const TranscribeGeneratePresignedUrlDocument = gql`
     query TranscribeGeneratePresignedUrl($languageCode: String!, $sampleRate: String!) {
@@ -50359,7 +50360,7 @@ export const TranscribeGeneratePresignedUrlDocument = gql`
 export function useTranscribeGeneratePresignedUrlQuery(
     options: Omit<Urql.UseQueryArgs<TranscribeGeneratePresignedUrlQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<TranscribeGeneratePresignedUrlQuery>({
+    return useQuery<TranscribeGeneratePresignedUrlQuery>({
         query: TranscribeGeneratePresignedUrlDocument,
         ...options,
     });
@@ -50381,7 +50382,7 @@ export const VideoPlayer_GetElementDocument = gql`
 export function useVideoPlayer_GetElementQuery(
     options: Omit<Urql.UseQueryArgs<VideoPlayer_GetElementQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<VideoPlayer_GetElementQuery>({ query: VideoPlayer_GetElementDocument, ...options });
+    return useQuery<VideoPlayer_GetElementQuery>({ query: VideoPlayer_GetElementDocument, ...options });
 }
 export const GetRoomChimeDataDocument = gql`
     mutation GetRoomChimeData($roomId: uuid!, $registrantId: uuid!) {
@@ -50437,7 +50438,7 @@ export const GetRoomVonageSessionIdDocument = gql`
 export function useGetRoomVonageSessionIdQuery(
     options: Omit<Urql.UseQueryArgs<GetRoomVonageSessionIdQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetRoomVonageSessionIdQuery>({ query: GetRoomVonageSessionIdDocument, ...options });
+    return useQuery<GetRoomVonageSessionIdQuery>({ query: GetRoomVonageSessionIdDocument, ...options });
 }
 export const GetEventVideosDocument = gql`
     query GetEventVideos($eventId: uuid!) {
@@ -50480,7 +50481,7 @@ export const GetEventVideosDocument = gql`
 `;
 
 export function useGetEventVideosQuery(options: Omit<Urql.UseQueryArgs<GetEventVideosQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetEventVideosQuery>({ query: GetEventVideosDocument, ...options });
+    return useQuery<GetEventVideosQuery>({ query: GetEventVideosDocument, ...options });
 }
 export const GetRoomVideosDocument = gql`
     query GetRoomVideos($roomId: uuid!) {
@@ -50499,7 +50500,7 @@ export const GetRoomVideosDocument = gql`
 `;
 
 export function useGetRoomVideosQuery(options: Omit<Urql.UseQueryArgs<GetRoomVideosQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetRoomVideosQuery>({ query: GetRoomVideosDocument, ...options });
+    return useQuery<GetRoomVideosQuery>({ query: GetRoomVideosDocument, ...options });
 }
 export const VonageVideoPlaybackContext_InsertCommandDocument = gql`
     mutation VonageVideoPlaybackContext_InsertCommand($object: video_VonageVideoPlaybackCommand_insert_input!) {
@@ -50533,7 +50534,7 @@ export const VonageVideoPlaybackContext_GetLatestCommandDocument = gql`
 export function useVonageVideoPlaybackContext_GetLatestCommandQuery(
     options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetLatestCommandQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<VonageVideoPlaybackContext_GetLatestCommandQuery>({
+    return useQuery<VonageVideoPlaybackContext_GetLatestCommandQuery>({
         query: VonageVideoPlaybackContext_GetLatestCommandDocument,
         ...options,
     });
@@ -50551,7 +50552,7 @@ export const VonageVideoPlaybackContext_GetElementDocument = gql`
 export function useVonageVideoPlaybackContext_GetElementQuery(
     options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetElementQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<VonageVideoPlaybackContext_GetElementQuery>({
+    return useQuery<VonageVideoPlaybackContext_GetElementQuery>({
         query: VonageVideoPlaybackContext_GetElementDocument,
         ...options,
     });
@@ -50574,7 +50575,7 @@ export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
 export function useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery(
     options: Omit<Urql.UseQueryArgs<VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery>({
+    return useQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery>({
         query: VonageLayoutProvider_GetLatestVonageSessionLayoutDocument,
         ...options,
     });
@@ -50676,7 +50677,7 @@ export const GetAllRoomsDocument = gql`
 `;
 
 export function useGetAllRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllRoomsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetAllRoomsQuery>({ query: GetAllRoomsDocument, ...options });
+    return useQuery<GetAllRoomsQuery>({ query: GetAllRoomsDocument, ...options });
 }
 export const GetAllTodaysRoomsDocument = gql`
     query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
@@ -50710,7 +50711,7 @@ export const GetAllTodaysRoomsDocument = gql`
 export function useGetAllTodaysRoomsQuery(
     options: Omit<Urql.UseQueryArgs<GetAllTodaysRoomsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetAllTodaysRoomsQuery>({ query: GetAllTodaysRoomsDocument, ...options });
+    return useQuery<GetAllTodaysRoomsQuery>({ query: GetAllTodaysRoomsDocument, ...options });
 }
 export const GetSocialRoomsDocument = gql`
     query GetSocialRooms($conferenceId: uuid!) {
@@ -50729,7 +50730,7 @@ export const GetSocialRoomsDocument = gql`
 `;
 
 export function useGetSocialRoomsQuery(options: Omit<Urql.UseQueryArgs<GetSocialRoomsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetSocialRoomsQuery>({ query: GetSocialRoomsDocument, ...options });
+    return useQuery<GetSocialRoomsQuery>({ query: GetSocialRoomsDocument, ...options });
 }
 export const RoomTile_GetRoomDocument = gql`
     query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) {
@@ -50743,7 +50744,7 @@ export const RoomTile_GetRoomDocument = gql`
 export function useRoomTile_GetRoomQuery(
     options: Omit<Urql.UseQueryArgs<RoomTile_GetRoomQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<RoomTile_GetRoomQuery>({ query: RoomTile_GetRoomDocument, ...options });
+    return useQuery<RoomTile_GetRoomQuery>({ query: RoomTile_GetRoomDocument, ...options });
 }
 export const GetSponsorBoothsDocument = gql`
     query GetSponsorBooths($conferenceId: uuid!) {
@@ -50760,7 +50761,7 @@ export const GetSponsorBoothsDocument = gql`
 export function useGetSponsorBoothsQuery(
     options: Omit<Urql.UseQueryArgs<GetSponsorBoothsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetSponsorBoothsQuery>({ query: GetSponsorBoothsDocument, ...options });
+    return useQuery<GetSponsorBoothsQuery>({ query: GetSponsorBoothsDocument, ...options });
 }
 export const Schedule_HappeningSoonDocument = gql`
     query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
@@ -50796,7 +50797,7 @@ export const Schedule_HappeningSoonDocument = gql`
 export function useSchedule_HappeningSoonQuery(
     options: Omit<Urql.UseQueryArgs<Schedule_HappeningSoonQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<Schedule_HappeningSoonQuery>({ query: Schedule_HappeningSoonDocument, ...options });
+    return useQuery<Schedule_HappeningSoonQuery>({ query: Schedule_HappeningSoonDocument, ...options });
 }
 export const StarEventButton_GetStarsDocument = gql`
     query StarEventButton_GetStars($eventIds: [uuid!]!, $registrantId: uuid!) {
@@ -50810,7 +50811,7 @@ export const StarEventButton_GetStarsDocument = gql`
 export function useStarEventButton_GetStarsQuery(
     options: Omit<Urql.UseQueryArgs<StarEventButton_GetStarsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<StarEventButton_GetStarsQuery>({ query: StarEventButton_GetStarsDocument, ...options });
+    return useQuery<StarEventButton_GetStarsQuery>({ query: StarEventButton_GetStarsDocument, ...options });
 }
 export const StarEventButton_InsertStarsDocument = gql`
     mutation StarEventButton_InsertStars($objects: [schedule_StarredEvent_insert_input!]!) {
@@ -50855,7 +50856,7 @@ export const Schedule_SelectItemDocument = gql`
 export function useSchedule_SelectItemQuery(
     options: Omit<Urql.UseQueryArgs<Schedule_SelectItemQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<Schedule_SelectItemQuery>({ query: Schedule_SelectItemDocument, ...options });
+    return useQuery<Schedule_SelectItemQuery>({ query: Schedule_SelectItemDocument, ...options });
 }
 export const Schedule_SelectSummariesDocument = gql`
     query Schedule_SelectSummaries($conferenceId: uuid!) {
@@ -50887,7 +50888,7 @@ export const Schedule_SelectSummariesDocument = gql`
 export function useSchedule_SelectSummariesQuery(
     options: Omit<Urql.UseQueryArgs<Schedule_SelectSummariesQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<Schedule_SelectSummariesQuery>({ query: Schedule_SelectSummariesDocument, ...options });
+    return useQuery<Schedule_SelectSummariesQuery>({ query: Schedule_SelectSummariesDocument, ...options });
 }
 export const StarredEvents_SelectEventIdsDocument = gql`
     query StarredEvents_SelectEventIds($registrantId: uuid!) {
@@ -50904,7 +50905,7 @@ export const StarredEvents_SelectEventIdsDocument = gql`
 export function useStarredEvents_SelectEventIdsQuery(
     options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventIdsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<StarredEvents_SelectEventIdsQuery>({
+    return useQuery<StarredEvents_SelectEventIdsQuery>({
         query: StarredEvents_SelectEventIdsDocument,
         ...options,
     });
@@ -50935,7 +50936,7 @@ export const ScheduleV2_DayLightweightEventsDocument = gql`
 export function useScheduleV2_DayLightweightEventsQuery(
     options: Omit<Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ScheduleV2_DayLightweightEventsQuery>({
+    return useQuery<ScheduleV2_DayLightweightEventsQuery>({
         query: ScheduleV2_DayLightweightEventsDocument,
         ...options,
     });
@@ -50952,7 +50953,7 @@ export const ScheduleV2_DayEventsDocument = gql`
 export function useScheduleV2_DayEventsQuery(
     options: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ScheduleV2_DayEventsQuery>({ query: ScheduleV2_DayEventsDocument, ...options });
+    return useQuery<ScheduleV2_DayEventsQuery>({ query: ScheduleV2_DayEventsDocument, ...options });
 }
 export const ScheduleV2_RoomsDocument = gql`
     query ScheduleV2_Rooms($conferenceId: uuid!) {
@@ -50966,7 +50967,7 @@ export const ScheduleV2_RoomsDocument = gql`
 export function useScheduleV2_RoomsQuery(
     options: Omit<Urql.UseQueryArgs<ScheduleV2_RoomsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ScheduleV2_RoomsQuery>({ query: ScheduleV2_RoomsDocument, ...options });
+    return useQuery<ScheduleV2_RoomsQuery>({ query: ScheduleV2_RoomsDocument, ...options });
 }
 export const ScheduleV2_TagsDocument = gql`
     query ScheduleV2_Tags($conferenceId: uuid!) {
@@ -50978,7 +50979,7 @@ export const ScheduleV2_TagsDocument = gql`
 `;
 
 export function useScheduleV2_TagsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_TagsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<ScheduleV2_TagsQuery>({ query: ScheduleV2_TagsDocument, ...options });
+    return useQuery<ScheduleV2_TagsQuery>({ query: ScheduleV2_TagsDocument, ...options });
 }
 export const ScheduleV2_AllEvents_ParamsDocument = gql`
     query ScheduleV2_AllEvents_Params($conferenceId: uuid!) {
@@ -51006,7 +51007,7 @@ export const ScheduleV2_AllEvents_ParamsDocument = gql`
 export function useScheduleV2_AllEvents_ParamsQuery(
     options: Omit<Urql.UseQueryArgs<ScheduleV2_AllEvents_ParamsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ScheduleV2_AllEvents_ParamsQuery>({ query: ScheduleV2_AllEvents_ParamsDocument, ...options });
+    return useQuery<ScheduleV2_AllEvents_ParamsQuery>({ query: ScheduleV2_AllEvents_ParamsDocument, ...options });
 }
 export const SearchPanel_ItemsDocument = gql`
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
@@ -51020,7 +51021,7 @@ export const SearchPanel_ItemsDocument = gql`
 export function useSearchPanel_ItemsQuery(
     options: Omit<Urql.UseQueryArgs<SearchPanel_ItemsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SearchPanel_ItemsQuery>({ query: SearchPanel_ItemsDocument, ...options });
+    return useQuery<SearchPanel_ItemsQuery>({ query: SearchPanel_ItemsDocument, ...options });
 }
 export const SearchPanel_EventsDocument = gql`
     query SearchPanel_Events($conferenceId: uuid!, $search: String!) {
@@ -51037,7 +51038,7 @@ export const SearchPanel_EventsDocument = gql`
 export function useSearchPanel_EventsQuery(
     options: Omit<Urql.UseQueryArgs<SearchPanel_EventsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SearchPanel_EventsQuery>({ query: SearchPanel_EventsDocument, ...options });
+    return useQuery<SearchPanel_EventsQuery>({ query: SearchPanel_EventsDocument, ...options });
 }
 export const SearchPanel_PeopleDocument = gql`
     query SearchPanel_People($conferenceId: uuid!, $search: String!) {
@@ -51051,7 +51052,7 @@ export const SearchPanel_PeopleDocument = gql`
 export function useSearchPanel_PeopleQuery(
     options: Omit<Urql.UseQueryArgs<SearchPanel_PeopleQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SearchPanel_PeopleQuery>({ query: SearchPanel_PeopleDocument, ...options });
+    return useQuery<SearchPanel_PeopleQuery>({ query: SearchPanel_PeopleDocument, ...options });
 }
 export const SelectSwagBagsDocument = gql`
     query SelectSwagBags($conferenceId: uuid!) {
@@ -51063,7 +51064,7 @@ export const SelectSwagBagsDocument = gql`
 `;
 
 export function useSelectSwagBagsQuery(options: Omit<Urql.UseQueryArgs<SelectSwagBagsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<SelectSwagBagsQuery>({ query: SelectSwagBagsDocument, ...options });
+    return useQuery<SelectSwagBagsQuery>({ query: SelectSwagBagsDocument, ...options });
 }
 export const ConferenceBySlugDocument = gql`
     query ConferenceBySlug($slug: String!) {
@@ -51077,7 +51078,7 @@ export const ConferenceBySlugDocument = gql`
 export function useConferenceBySlugQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceBySlugQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ConferenceBySlugQuery>({ query: ConferenceBySlugDocument, ...options });
+    return useQuery<ConferenceBySlugQuery>({ query: ConferenceBySlugDocument, ...options });
 }
 export const ConferenceStatsDocument = gql`
     query ConferenceStats($id: uuid!) {
@@ -51147,7 +51148,7 @@ export const ConferenceStatsDocument = gql`
 `;
 
 export function useConferenceStatsQuery(options: Omit<Urql.UseQueryArgs<ConferenceStatsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<ConferenceStatsQuery>({ query: ConferenceStatsDocument, ...options });
+    return useQuery<ConferenceStatsQuery>({ query: ConferenceStatsDocument, ...options });
 }
 export const GetChannelStacksDocument = gql`
     query GetChannelStacks($conferenceId: uuid!) {
@@ -51168,7 +51169,7 @@ export const GetChannelStacksDocument = gql`
 export function useGetChannelStacksQuery(
     options: Omit<Urql.UseQueryArgs<GetChannelStacksQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetChannelStacksQuery>({ query: GetChannelStacksDocument, ...options });
+    return useQuery<GetChannelStacksQuery>({ query: GetChannelStacksDocument, ...options });
 }
 export const ConferenceConfiguration_GetConferenceConfigurationsDocument = gql`
     query ConferenceConfiguration_GetConferenceConfigurations($conferenceId: uuid!) {
@@ -51182,7 +51183,7 @@ export const ConferenceConfiguration_GetConferenceConfigurationsDocument = gql`
 export function useConferenceConfiguration_GetConferenceConfigurationsQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery>({
+    return useQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery>({
         query: ConferenceConfiguration_GetConferenceConfigurationsDocument,
         ...options,
     });
@@ -51208,7 +51209,7 @@ export const EventVonageControls_GetEventsDocument = gql`
 export function useEventVonageControls_GetEventsQuery(
     options: Omit<Urql.UseQueryArgs<EventVonageControls_GetEventsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<EventVonageControls_GetEventsQuery>({
+    return useQuery<EventVonageControls_GetEventsQuery>({
         query: EventVonageControls_GetEventsDocument,
         ...options,
     });
@@ -51259,7 +51260,7 @@ export const MonitorLivestreamsDocument = gql`
 export function useMonitorLivestreamsQuery(
     options: Omit<Urql.UseQueryArgs<MonitorLivestreamsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<MonitorLivestreamsQuery>({ query: MonitorLivestreamsDocument, ...options });
+    return useQuery<MonitorLivestreamsQuery>({ query: MonitorLivestreamsDocument, ...options });
 }
 export const CreateConferencePrepareJobDocument = gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
@@ -51300,7 +51301,7 @@ export const GetConferencePrepareJobsDocument = gql`
 export function useGetConferencePrepareJobsQuery(
     options: Omit<Urql.UseQueryArgs<GetConferencePrepareJobsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetConferencePrepareJobsQuery>({ query: GetConferencePrepareJobsDocument, ...options });
+    return useQuery<GetConferencePrepareJobsQuery>({ query: GetConferencePrepareJobsDocument, ...options });
 }
 export const ManageModeration_SelectFlagsDocument = gql`
     query ManageModeration_SelectFlags($conferenceId: uuid!) {
@@ -51314,7 +51315,7 @@ export const ManageModeration_SelectFlagsDocument = gql`
 export function useManageModeration_SelectFlagsQuery(
     options: Omit<Urql.UseQueryArgs<ManageModeration_SelectFlagsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageModeration_SelectFlagsQuery>({
+    return useQuery<ManageModeration_SelectFlagsQuery>({
         query: ManageModeration_SelectFlagsDocument,
         ...options,
     });
@@ -51686,7 +51687,7 @@ export const PreshowChecklistDocument = gql`
 export function usePreshowChecklistQuery(
     options: Omit<Urql.UseQueryArgs<PreshowChecklistQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
+    return useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
 }
 export const UpdateConferenceDocument = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
@@ -51720,7 +51721,7 @@ export const MultiSettingUpdater_GetConfigurationsDocument = gql`
 export function useMultiSettingUpdater_GetConfigurationsQuery(
     options: Omit<Urql.UseQueryArgs<MultiSettingUpdater_GetConfigurationsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<MultiSettingUpdater_GetConfigurationsQuery>({
+    return useQuery<MultiSettingUpdater_GetConfigurationsQuery>({
         query: MultiSettingUpdater_GetConfigurationsDocument,
         ...options,
     });
@@ -51758,7 +51759,7 @@ export const SettingUpdater_GetConfigurationDocument = gql`
 export function useSettingUpdater_GetConfigurationQuery(
     options: Omit<Urql.UseQueryArgs<SettingUpdater_GetConfigurationQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SettingUpdater_GetConfigurationQuery>({
+    return useQuery<SettingUpdater_GetConfigurationQuery>({
         query: SettingUpdater_GetConfigurationDocument,
         ...options,
     });
@@ -51812,7 +51813,7 @@ export const ManageContent_SelectAllItemsDocument = gql`
 export function useManageContent_SelectAllItemsQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllItemsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageContent_SelectAllItemsQuery>({
+    return useQuery<ManageContent_SelectAllItemsQuery>({
         query: ManageContent_SelectAllItemsDocument,
         ...options,
     });
@@ -51829,7 +51830,7 @@ export const ManageContent_SelectItemsForExportDocument = gql`
 export function useManageContent_SelectItemsForExportQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemsForExportQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageContent_SelectItemsForExportQuery>({
+    return useQuery<ManageContent_SelectItemsForExportQuery>({
         query: ManageContent_SelectItemsForExportDocument,
         ...options,
     });
@@ -51850,7 +51851,7 @@ export const ManageContent_SelectItemDocument = gql`
 export function useManageContent_SelectItemQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageContent_SelectItemQuery>({ query: ManageContent_SelectItemDocument, ...options });
+    return useQuery<ManageContent_SelectItemQuery>({ query: ManageContent_SelectItemDocument, ...options });
 }
 export const ManageContent_SelectItemPeopleDocument = gql`
     query ManageContent_SelectItemPeople($itemId: uuid!) {
@@ -51864,7 +51865,7 @@ export const ManageContent_SelectItemPeopleDocument = gql`
 export function useManageContent_SelectItemPeopleQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemPeopleQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageContent_SelectItemPeopleQuery>({
+    return useQuery<ManageContent_SelectItemPeopleQuery>({
         query: ManageContent_SelectItemPeopleDocument,
         ...options,
     });
@@ -51948,7 +51949,7 @@ export const ManageContent_SelectAllTagsDocument = gql`
 export function useManageContent_SelectAllTagsQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllTagsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageContent_SelectAllTagsQuery>({ query: ManageContent_SelectAllTagsDocument, ...options });
+    return useQuery<ManageContent_SelectAllTagsQuery>({ query: ManageContent_SelectAllTagsDocument, ...options });
 }
 export const ManageContent_SelectAllExhibitionsDocument = gql`
     query ManageContent_SelectAllExhibitions($conferenceId: uuid!) {
@@ -51962,7 +51963,7 @@ export const ManageContent_SelectAllExhibitionsDocument = gql`
 export function useManageContent_SelectAllExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllExhibitionsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageContent_SelectAllExhibitionsQuery>({
+    return useQuery<ManageContent_SelectAllExhibitionsQuery>({
         query: ManageContent_SelectAllExhibitionsDocument,
         ...options,
     });
@@ -51995,7 +51996,7 @@ export const SelectAllContentDocument = gql`
 export function useSelectAllContentQuery(
     options: Omit<Urql.UseQueryArgs<SelectAllContentQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectAllContentQuery>({ query: SelectAllContentDocument, ...options });
+    return useQuery<SelectAllContentQuery>({ query: SelectAllContentDocument, ...options });
 }
 export const InsertDeleteItemsDocument = gql`
     mutation InsertDeleteItems($newGroups: [content_Item_insert_input!]!, $deleteGroupIds: [uuid!]!) {
@@ -52402,7 +52403,7 @@ export const CombineVideosModal_GetCombineVideosJobDocument = gql`
 export function useCombineVideosModal_GetCombineVideosJobQuery(
     options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetCombineVideosJobQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<CombineVideosModal_GetCombineVideosJobQuery>({
+    return useQuery<CombineVideosModal_GetCombineVideosJobQuery>({
         query: CombineVideosModal_GetCombineVideosJobDocument,
         ...options,
     });
@@ -52426,7 +52427,7 @@ export const CombineVideosModal_GetElementsDocument = gql`
 export function useCombineVideosModal_GetElementsQuery(
     options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetElementsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<CombineVideosModal_GetElementsQuery>({
+    return useQuery<CombineVideosModal_GetElementsQuery>({
         query: CombineVideosModal_GetElementsDocument,
         ...options,
     });
@@ -52441,7 +52442,7 @@ export const SEoUm_InfosDocument = gql`
 `;
 
 export function useSEoUm_InfosQuery(options: Omit<Urql.UseQueryArgs<SEoUm_InfosQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<SEoUm_InfosQuery>({ query: SEoUm_InfosDocument, ...options });
+    return useQuery<SEoUm_InfosQuery>({ query: SEoUm_InfosDocument, ...options });
 }
 export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
     query UpdateExhibitionDescriptiveItems_SelectExhibitions($conferenceId: uuid!) {
@@ -52457,7 +52458,7 @@ export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
 export function useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery>({
+    return useQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery>({
         query: UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument,
         ...options,
     });
@@ -52550,7 +52551,7 @@ export const ManageContent_SelectItemExhibitionsDocument = gql`
 export function useManageContent_SelectItemExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemExhibitionsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageContent_SelectItemExhibitionsQuery>({
+    return useQuery<ManageContent_SelectItemExhibitionsQuery>({
         query: ManageContent_SelectItemExhibitionsDocument,
         ...options,
     });
@@ -52682,7 +52683,7 @@ export const ManageContent_SelectProgramPeopleDocument = gql`
 export function useManageContent_SelectProgramPeopleQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectProgramPeopleQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageContent_SelectProgramPeopleQuery>({
+    return useQuery<ManageContent_SelectProgramPeopleQuery>({
         query: ManageContent_SelectProgramPeopleDocument,
         ...options,
     });
@@ -52814,7 +52815,7 @@ export const SubmissionRequestsModalDataDocument = gql`
 export function useSubmissionRequestsModalDataQuery(
     options: Omit<Urql.UseQueryArgs<SubmissionRequestsModalDataQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SubmissionRequestsModalDataQuery>({ query: SubmissionRequestsModalDataDocument, ...options });
+    return useQuery<SubmissionRequestsModalDataQuery>({ query: SubmissionRequestsModalDataDocument, ...options });
 }
 export const SubmissionsReviewModalDataDocument = gql`
     query SubmissionsReviewModalData($itemIds: [uuid!]!) {
@@ -52828,7 +52829,7 @@ export const SubmissionsReviewModalDataDocument = gql`
 export function useSubmissionsReviewModalDataQuery(
     options: Omit<Urql.UseQueryArgs<SubmissionsReviewModalDataQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SubmissionsReviewModalDataQuery>({ query: SubmissionsReviewModalDataDocument, ...options });
+    return useQuery<SubmissionsReviewModalDataQuery>({ query: SubmissionsReviewModalDataDocument, ...options });
 }
 export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
     query ConfigureEmailTemplates_GetConferenceConfigurations($conferenceId: uuid!) {
@@ -52842,7 +52843,7 @@ export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
 export function useConfigureEmailTemplates_GetConferenceConfigurationsQuery(
     options: Omit<Urql.UseQueryArgs<ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery>({
+    return useQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery>({
         query: ConfigureEmailTemplates_GetConferenceConfigurationsDocument,
         ...options,
     });
@@ -52891,7 +52892,7 @@ export const DownloadVideos_GetAllVideosDocument = gql`
 export function useDownloadVideos_GetAllVideosQuery(
     options: Omit<Urql.UseQueryArgs<DownloadVideos_GetAllVideosQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<DownloadVideos_GetAllVideosQuery>({ query: DownloadVideos_GetAllVideosDocument, ...options });
+    return useQuery<DownloadVideos_GetAllVideosQuery>({ query: DownloadVideos_GetAllVideosDocument, ...options });
 }
 export const ChooseElementByTagModal_GetTagsDocument = gql`
     query ChooseElementByTagModal_GetTags($conferenceId: uuid!) {
@@ -52906,7 +52907,7 @@ export const ChooseElementByTagModal_GetTagsDocument = gql`
 export function useChooseElementByTagModal_GetTagsQuery(
     options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetTagsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ChooseElementByTagModal_GetTagsQuery>({
+    return useQuery<ChooseElementByTagModal_GetTagsQuery>({
         query: ChooseElementByTagModal_GetTagsDocument,
         ...options,
     });
@@ -52936,7 +52937,7 @@ export const ChooseElementByTagModal_GetVideoElementsDocument = gql`
 export function useChooseElementByTagModal_GetVideoElementsQuery(
     options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetVideoElementsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ChooseElementByTagModal_GetVideoElementsQuery>({
+    return useQuery<ChooseElementByTagModal_GetVideoElementsQuery>({
         query: ChooseElementByTagModal_GetVideoElementsDocument,
         ...options,
     });
@@ -52954,7 +52955,7 @@ export const ChooseElementModal_GetItemsDocument = gql`
 export function useChooseElementModal_GetItemsQuery(
     options: Omit<Urql.UseQueryArgs<ChooseElementModal_GetItemsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ChooseElementModal_GetItemsQuery>({ query: ChooseElementModal_GetItemsDocument, ...options });
+    return useQuery<ChooseElementModal_GetItemsQuery>({ query: ChooseElementModal_GetItemsDocument, ...options });
 }
 export const ChooseElementModal_GetVideoElementsDocument = gql`
     query ChooseElementModal_GetVideoElements($itemId: uuid) {
@@ -52973,7 +52974,7 @@ export const ChooseElementModal_GetVideoElementsDocument = gql`
 export function useChooseElementModal_GetVideoElementsQuery(
     options: Omit<Urql.UseQueryArgs<ChooseElementModal_GetVideoElementsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ChooseElementModal_GetVideoElementsQuery>({
+    return useQuery<ChooseElementModal_GetVideoElementsQuery>({
         query: ChooseElementModal_GetVideoElementsDocument,
         ...options,
     });
@@ -53003,7 +53004,7 @@ export const ManageExport_GetRegistrantGoogleAccountsDocument = gql`
 export function useManageExport_GetRegistrantGoogleAccountsQuery(
     options: Omit<Urql.UseQueryArgs<ManageExport_GetRegistrantGoogleAccountsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageExport_GetRegistrantGoogleAccountsQuery>({
+    return useQuery<ManageExport_GetRegistrantGoogleAccountsQuery>({
         query: ManageExport_GetRegistrantGoogleAccountsDocument,
         ...options,
     });
@@ -53036,7 +53037,7 @@ export const UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument = gql`
 export function useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery(
     options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery>({
+    return useQuery<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery>({
         query: UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument,
         ...options,
     });
@@ -53076,7 +53077,7 @@ export const UploadYouTubeVideos_GetElementsDocument = gql`
 export function useUploadYouTubeVideos_GetElementsQuery(
     options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetElementsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<UploadYouTubeVideos_GetElementsQuery>({
+    return useQuery<UploadYouTubeVideos_GetElementsQuery>({
         query: UploadYouTubeVideos_GetElementsDocument,
         ...options,
     });
@@ -53147,7 +53148,7 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
 export function useUploadYouTubeVideos_GetTemplateDataQuery(
     options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetTemplateDataQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<UploadYouTubeVideos_GetTemplateDataQuery>({
+    return useQuery<UploadYouTubeVideos_GetTemplateDataQuery>({
         query: UploadYouTubeVideos_GetTemplateDataDocument,
         ...options,
     });
@@ -53183,7 +53184,7 @@ export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
 export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery(
     options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>({
+    return useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>({
         query: UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument,
         ...options,
     });
@@ -53219,7 +53220,7 @@ export const SelectAllGroupsDocument = gql`
 `;
 
 export function useSelectAllGroupsQuery(options: Omit<Urql.UseQueryArgs<SelectAllGroupsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<SelectAllGroupsQuery>({ query: SelectAllGroupsDocument, ...options });
+    return useQuery<SelectAllGroupsQuery>({ query: SelectAllGroupsDocument, ...options });
 }
 export const CreateDeleteGroupsDocument = gql`
     mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [registrant_Group_insert_input!]!) {
@@ -53270,7 +53271,7 @@ export const ManageProgramPeople_SelectAllPeopleDocument = gql`
 export function useManageProgramPeople_SelectAllPeopleQuery(
     options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllPeopleQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageProgramPeople_SelectAllPeopleQuery>({
+    return useQuery<ManageProgramPeople_SelectAllPeopleQuery>({
         query: ManageProgramPeople_SelectAllPeopleDocument,
         ...options,
     });
@@ -53287,7 +53288,7 @@ export const ManageProgramPeople_SelectAllRegistrantsDocument = gql`
 export function useManageProgramPeople_SelectAllRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllRegistrantsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageProgramPeople_SelectAllRegistrantsQuery>({
+    return useQuery<ManageProgramPeople_SelectAllRegistrantsQuery>({
         query: ManageProgramPeople_SelectAllRegistrantsDocument,
         ...options,
     });
@@ -53361,7 +53362,7 @@ export const SelectAllRoomsWithParticipantsDocument = gql`
 export function useSelectAllRoomsWithParticipantsQuery(
     options: Omit<Urql.UseQueryArgs<SelectAllRoomsWithParticipantsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectAllRoomsWithParticipantsQuery>({
+    return useQuery<SelectAllRoomsWithParticipantsQuery>({
         query: SelectAllRoomsWithParticipantsDocument,
         ...options,
     });
@@ -53379,7 +53380,7 @@ export const ManageRooms_SelectGroupsDocument = gql`
 export function useManageRooms_SelectGroupsQuery(
     options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageRooms_SelectGroupsQuery>({ query: ManageRooms_SelectGroupsDocument, ...options });
+    return useQuery<ManageRooms_SelectGroupsQuery>({ query: ManageRooms_SelectGroupsDocument, ...options });
 }
 export const ManageRooms_SelectItemsDocument = gql`
     query ManageRooms_SelectItems($conferenceId: uuid!) {
@@ -53394,7 +53395,7 @@ export const ManageRooms_SelectItemsDocument = gql`
 export function useManageRooms_SelectItemsQuery(
     options: Omit<Urql.UseQueryArgs<ManageRooms_SelectItemsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageRooms_SelectItemsQuery>({ query: ManageRooms_SelectItemsDocument, ...options });
+    return useQuery<ManageRooms_SelectItemsQuery>({ query: ManageRooms_SelectItemsDocument, ...options });
 }
 export const ManageRooms_SelectGroupRegistrantsDocument = gql`
     query ManageRooms_SelectGroupRegistrants($groupId: uuid!) {
@@ -53409,7 +53410,7 @@ export const ManageRooms_SelectGroupRegistrantsDocument = gql`
 export function useManageRooms_SelectGroupRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupRegistrantsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageRooms_SelectGroupRegistrantsQuery>({
+    return useQuery<ManageRooms_SelectGroupRegistrantsQuery>({
         query: ManageRooms_SelectGroupRegistrantsDocument,
         ...options,
     });
@@ -53426,7 +53427,7 @@ export const ManageRooms_SelectRoomPeopleDocument = gql`
 export function useManageRooms_SelectRoomPeopleQuery(
     options: Omit<Urql.UseQueryArgs<ManageRooms_SelectRoomPeopleQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageRooms_SelectRoomPeopleQuery>({
+    return useQuery<ManageRooms_SelectRoomPeopleQuery>({
         query: ManageRooms_SelectRoomPeopleDocument,
         ...options,
     });
@@ -53538,7 +53539,7 @@ export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
 export function useGetIsExternalRtmpBroadcastEnabledQuery(
     options: Omit<Urql.UseQueryArgs<GetIsExternalRtmpBroadcastEnabledQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetIsExternalRtmpBroadcastEnabledQuery>({
+    return useQuery<GetIsExternalRtmpBroadcastEnabledQuery>({
         query: GetIsExternalRtmpBroadcastEnabledDocument,
         ...options,
     });
@@ -53555,7 +53556,7 @@ export const SelectAllRegistrantsDocument = gql`
 export function useSelectAllRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<SelectAllRegistrantsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectAllRegistrantsQuery>({ query: SelectAllRegistrantsDocument, ...options });
+    return useQuery<SelectAllRegistrantsQuery>({ query: SelectAllRegistrantsDocument, ...options });
 }
 export const ManageRegistrants_SelectProfilesDocument = gql`
     query ManageRegistrants_SelectProfiles($registrantIds: [uuid!]!) {
@@ -53569,7 +53570,7 @@ export const ManageRegistrants_SelectProfilesDocument = gql`
 export function useManageRegistrants_SelectProfilesQuery(
     options: Omit<Urql.UseQueryArgs<ManageRegistrants_SelectProfilesQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageRegistrants_SelectProfilesQuery>({
+    return useQuery<ManageRegistrants_SelectProfilesQuery>({
         query: ManageRegistrants_SelectProfilesDocument,
         ...options,
     });
@@ -53735,7 +53736,7 @@ export const GetRoomRtmpOutputDocument = gql`
 export function useGetRoomRtmpOutputQuery(
     options: Omit<Urql.UseQueryArgs<GetRoomRtmpOutputQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetRoomRtmpOutputQuery>({ query: GetRoomRtmpOutputDocument, ...options });
+    return useQuery<GetRoomRtmpOutputQuery>({ query: GetRoomRtmpOutputDocument, ...options });
 }
 export const InsertRoomRtmpOutputDocument = gql`
     mutation InsertRoomRtmpOutput($roomId: uuid!, $url: String!, $key: String!) {
@@ -53809,7 +53810,7 @@ export const AddEventPeople_SelectItemPeopleDocument = gql`
 export function useAddEventPeople_SelectItemPeopleQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectItemPeopleQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<AddEventPeople_SelectItemPeopleQuery>({
+    return useQuery<AddEventPeople_SelectItemPeopleQuery>({
         query: AddEventPeople_SelectItemPeopleDocument,
         ...options,
     });
@@ -53826,7 +53827,7 @@ export const AddEventPeople_SelectProgramPeopleDocument = gql`
 export function useAddEventPeople_SelectProgramPeopleQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeopleQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<AddEventPeople_SelectProgramPeopleQuery>({
+    return useQuery<AddEventPeople_SelectProgramPeopleQuery>({
         query: AddEventPeople_SelectProgramPeopleDocument,
         ...options,
     });
@@ -53843,7 +53844,7 @@ export const AddEventPeople_SelectRegistrantsDocument = gql`
 export function useAddEventPeople_SelectRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrantsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<AddEventPeople_SelectRegistrantsQuery>({
+    return useQuery<AddEventPeople_SelectRegistrantsQuery>({
         query: AddEventPeople_SelectRegistrantsDocument,
         ...options,
     });
@@ -53860,7 +53861,7 @@ export const AddEventPeople_SelectProgramPeople_ByRegistrantDocument = gql`
 export function useAddEventPeople_SelectProgramPeople_ByRegistrantQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<AddEventPeople_SelectProgramPeople_ByRegistrantQuery>({
+    return useQuery<AddEventPeople_SelectProgramPeople_ByRegistrantQuery>({
         query: AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
         ...options,
     });
@@ -53877,7 +53878,7 @@ export const AddEventPeople_SelectGroupsDocument = gql`
 export function useAddEventPeople_SelectGroupsQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectGroupsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<AddEventPeople_SelectGroupsQuery>({ query: AddEventPeople_SelectGroupsDocument, ...options });
+    return useQuery<AddEventPeople_SelectGroupsQuery>({ query: AddEventPeople_SelectGroupsDocument, ...options });
 }
 export const AddEventPeople_SelectRegistrants_ByGroupDocument = gql`
     query AddEventPeople_SelectRegistrants_ByGroup($groupId: uuid!) {
@@ -53891,7 +53892,7 @@ export const AddEventPeople_SelectRegistrants_ByGroupDocument = gql`
 export function useAddEventPeople_SelectRegistrants_ByGroupQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrants_ByGroupQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<AddEventPeople_SelectRegistrants_ByGroupQuery>({
+    return useQuery<AddEventPeople_SelectRegistrants_ByGroupQuery>({
         query: AddEventPeople_SelectRegistrants_ByGroupDocument,
         ...options,
     });
@@ -53947,7 +53948,7 @@ export const ContinuationsEditor_SelectContinuationsDocument = gql`
 export function useContinuationsEditor_SelectContinuationsQuery(
     options: Omit<Urql.UseQueryArgs<ContinuationsEditor_SelectContinuationsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ContinuationsEditor_SelectContinuationsQuery>({
+    return useQuery<ContinuationsEditor_SelectContinuationsQuery>({
         query: ContinuationsEditor_SelectContinuationsDocument,
         ...options,
     });
@@ -54024,7 +54025,7 @@ export const CreateContinuationModal_RoomsDocument = gql`
 export function useCreateContinuationModal_RoomsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_RoomsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<CreateContinuationModal_RoomsQuery>({
+    return useQuery<CreateContinuationModal_RoomsQuery>({
         query: CreateContinuationModal_RoomsDocument,
         ...options,
     });
@@ -54060,7 +54061,7 @@ export const CreateContinuationModal_EventsDocument = gql`
 export function useCreateContinuationModal_EventsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_EventsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<CreateContinuationModal_EventsQuery>({
+    return useQuery<CreateContinuationModal_EventsQuery>({
         query: CreateContinuationModal_EventsDocument,
         ...options,
     });
@@ -54078,7 +54079,7 @@ export const CreateContinuationModal_ItemsDocument = gql`
 export function useCreateContinuationModal_ItemsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ItemsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<CreateContinuationModal_ItemsQuery>({
+    return useQuery<CreateContinuationModal_ItemsQuery>({
         query: CreateContinuationModal_ItemsDocument,
         ...options,
     });
@@ -54096,7 +54097,7 @@ export const CreateContinuationModal_ExhibitionsDocument = gql`
 export function useCreateContinuationModal_ExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ExhibitionsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<CreateContinuationModal_ExhibitionsQuery>({
+    return useQuery<CreateContinuationModal_ExhibitionsQuery>({
         query: CreateContinuationModal_ExhibitionsDocument,
         ...options,
     });
@@ -54114,7 +54115,7 @@ export const CreateContinuationModal_ShufflePeriodsDocument = gql`
 export function useCreateContinuationModal_ShufflePeriodsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ShufflePeriodsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<CreateContinuationModal_ShufflePeriodsQuery>({
+    return useQuery<CreateContinuationModal_ShufflePeriodsQuery>({
         query: CreateContinuationModal_ShufflePeriodsDocument,
         ...options,
     });
@@ -54132,7 +54133,7 @@ export const CreateContinuationModal_TagsDocument = gql`
 export function useCreateContinuationModal_TagsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_TagsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<CreateContinuationModal_TagsQuery>({
+    return useQuery<CreateContinuationModal_TagsQuery>({
         query: CreateContinuationModal_TagsDocument,
         ...options,
     });
@@ -54150,7 +54151,7 @@ export const CreateContinuationModal_ProfileDocument = gql`
 export function useCreateContinuationModal_ProfileQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ProfileQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<CreateContinuationModal_ProfileQuery>({
+    return useQuery<CreateContinuationModal_ProfileQuery>({
         query: CreateContinuationModal_ProfileDocument,
         ...options,
     });
@@ -54167,7 +54168,7 @@ export const SelectEventStreamTextEventIdDocument = gql`
 export function useSelectEventStreamTextEventIdQuery(
     options: Omit<Urql.UseQueryArgs<SelectEventStreamTextEventIdQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectEventStreamTextEventIdQuery>({
+    return useQuery<SelectEventStreamTextEventIdQuery>({
         query: SelectEventStreamTextEventIdDocument,
         ...options,
     });
@@ -54244,7 +54245,7 @@ export const ManageSchedule_ShufflePeriodsDocument = gql`
 export function useManageSchedule_ShufflePeriodsQuery(
     options: Omit<Urql.UseQueryArgs<ManageSchedule_ShufflePeriodsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageSchedule_ShufflePeriodsQuery>({
+    return useQuery<ManageSchedule_ShufflePeriodsQuery>({
         query: ManageSchedule_ShufflePeriodsDocument,
         ...options,
     });
@@ -54393,7 +54394,7 @@ export const SelectWholeScheduleDocument = gql`
 export function useSelectWholeScheduleQuery(
     options: Omit<Urql.UseQueryArgs<SelectWholeScheduleQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectWholeScheduleQuery>({ query: SelectWholeScheduleDocument, ...options });
+    return useQuery<SelectWholeScheduleQuery>({ query: SelectWholeScheduleDocument, ...options });
 }
 export const InsertRoomsDocument = gql`
     mutation InsertRooms($newRooms: [room_Room_insert_input!]!) {
@@ -54577,7 +54578,7 @@ export const ManageShufflePeriods_SelectAllDocument = gql`
 export function useManageShufflePeriods_SelectAllQuery(
     options: Omit<Urql.UseQueryArgs<ManageShufflePeriods_SelectAllQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ManageShufflePeriods_SelectAllQuery>({
+    return useQuery<ManageShufflePeriods_SelectAllQuery>({
         query: ManageShufflePeriods_SelectAllDocument,
         ...options,
     });
@@ -54627,7 +54628,7 @@ export const ConferenceTakenDocument = gql`
 `;
 
 export function useConferenceTakenQuery(options: Omit<Urql.UseQueryArgs<ConferenceTakenQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<ConferenceTakenQuery>({ query: ConferenceTakenDocument, ...options });
+    return useQuery<ConferenceTakenQuery>({ query: ConferenceTakenDocument, ...options });
 }
 export const CreateConferenceDocument = gql`
     mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!, $userId: String!) {
@@ -54738,7 +54739,7 @@ export const RegistrantsByIdDocument = gql`
 `;
 
 export function useRegistrantsByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantsByIdQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<RegistrantsByIdQuery>({ query: RegistrantsByIdDocument, ...options });
+    return useQuery<RegistrantsByIdQuery>({ query: RegistrantsByIdDocument, ...options });
 }
 export const RegistrantsByUserIdDocument = gql`
     query RegistrantsByUserId($conferenceId: uuid!, $userIds: [String!]!) {
@@ -54752,7 +54753,7 @@ export const RegistrantsByUserIdDocument = gql`
 export function useRegistrantsByUserIdQuery(
     options: Omit<Urql.UseQueryArgs<RegistrantsByUserIdQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<RegistrantsByUserIdQuery>({ query: RegistrantsByUserIdDocument, ...options });
+    return useQuery<RegistrantsByUserIdQuery>({ query: RegistrantsByUserIdDocument, ...options });
 }
 export const ConferenceById_WithUserDocument = gql`
     query ConferenceById_WithUser($id: uuid!, $userId: String!) {
@@ -54768,7 +54769,7 @@ export const ConferenceById_WithUserDocument = gql`
 export function useConferenceById_WithUserQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceById_WithUserQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ConferenceById_WithUserQuery>({ query: ConferenceById_WithUserDocument, ...options });
+    return useQuery<ConferenceById_WithUserQuery>({ query: ConferenceById_WithUserDocument, ...options });
 }
 export const ConferenceById_WithoutUserDocument = gql`
     query ConferenceById_WithoutUser($id: uuid!) {
@@ -54782,7 +54783,7 @@ export const ConferenceById_WithoutUserDocument = gql`
 export function useConferenceById_WithoutUserQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceById_WithoutUserQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ConferenceById_WithoutUserQuery>({ query: ConferenceById_WithoutUserDocument, ...options });
+    return useQuery<ConferenceById_WithoutUserQuery>({ query: ConferenceById_WithoutUserDocument, ...options });
 }
 export const GetForceUserRefreshConfigDocument = gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
@@ -54797,7 +54798,7 @@ export const GetForceUserRefreshConfigDocument = gql`
 export function useGetForceUserRefreshConfigQuery(
     options: Omit<Urql.UseQueryArgs<GetForceUserRefreshConfigQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetForceUserRefreshConfigQuery>({ query: GetForceUserRefreshConfigDocument, ...options });
+    return useQuery<GetForceUserRefreshConfigQuery>({ query: GetForceUserRefreshConfigDocument, ...options });
 }
 export const GoogleOAuth_SubmitGoogleOAuthCodeDocument = gql`
     mutation GoogleOAuth_SubmitGoogleOAuthCode($code: String!, $state: String!) {
@@ -54826,7 +54827,7 @@ export const SelectInvitationForAcceptDocument = gql`
 export function useSelectInvitationForAcceptQuery(
     options: Omit<Urql.UseQueryArgs<SelectInvitationForAcceptQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectInvitationForAcceptQuery>({ query: SelectInvitationForAcceptDocument, ...options });
+    return useQuery<SelectInvitationForAcceptQuery>({ query: SelectInvitationForAcceptDocument, ...options });
 }
 export const Invitation_ConfirmCurrentDocument = gql`
     mutation Invitation_ConfirmCurrent($inviteCode: uuid!) {
@@ -54856,7 +54857,7 @@ export const GetEventsInNextHourDocument = gql`
 export function useGetEventsInNextHourQuery(
     options: Omit<Urql.UseQueryArgs<GetEventsInNextHourQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetEventsInNextHourQuery>({ query: GetEventsInNextHourDocument, ...options });
+    return useQuery<GetEventsInNextHourQuery>({ query: GetEventsInNextHourDocument, ...options });
 }
 export const CountSwagBagsDocument = gql`
     query CountSwagBags($conferenceId: uuid!) {
@@ -54869,7 +54870,7 @@ export const CountSwagBagsDocument = gql`
 `;
 
 export function useCountSwagBagsQuery(options: Omit<Urql.UseQueryArgs<CountSwagBagsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<CountSwagBagsQuery>({ query: CountSwagBagsDocument, ...options });
+    return useQuery<CountSwagBagsQuery>({ query: CountSwagBagsDocument, ...options });
 }
 export const CreateDmDocument = gql`
     mutation CreateDm($registrantIds: [uuid]!, $conferenceId: uuid!) {
@@ -54902,7 +54903,7 @@ export const GetItemChatIdDocument = gql`
 `;
 
 export function useGetItemChatIdQuery(options: Omit<Urql.UseQueryArgs<GetItemChatIdQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetItemChatIdQuery>({ query: GetItemChatIdDocument, ...options });
+    return useQuery<GetItemChatIdQuery>({ query: GetItemChatIdDocument, ...options });
 }
 export const GetConferenceLandingPageItemIdDocument = gql`
     query GetConferenceLandingPageItemId($conferenceId: uuid!) {
@@ -54917,7 +54918,7 @@ export const GetConferenceLandingPageItemIdDocument = gql`
 export function useGetConferenceLandingPageItemIdQuery(
     options: Omit<Urql.UseQueryArgs<GetConferenceLandingPageItemIdQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetConferenceLandingPageItemIdQuery>({
+    return useQuery<GetConferenceLandingPageItemIdQuery>({
         query: GetConferenceLandingPageItemIdDocument,
         ...options,
     });
@@ -54933,7 +54934,7 @@ export const GetRoomChatIdDocument = gql`
 `;
 
 export function useGetRoomChatIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomChatIdQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
+    return useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
 }
 export const GetVapidPublicKeyDocument = gql`
     query GetVAPIDPublicKey {
@@ -54946,7 +54947,7 @@ export const GetVapidPublicKeyDocument = gql`
 export function useGetVapidPublicKeyQuery(
     options: Omit<Urql.UseQueryArgs<GetVapidPublicKeyQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetVapidPublicKeyQuery>({ query: GetVapidPublicKeyDocument, ...options });
+    return useQuery<GetVapidPublicKeyQuery>({ query: GetVapidPublicKeyDocument, ...options });
 }
 export const UpsertPushNotificationSubscriptionDocument = gql`
     mutation UpsertPushNotificationSubscription($object: PushNotificationSubscription_insert_input!) {
@@ -54989,7 +54990,7 @@ export const GetRoomMembersDocument = gql`
 `;
 
 export function useGetRoomMembersQuery(options: Omit<Urql.UseQueryArgs<GetRoomMembersQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetRoomMembersQuery>({ query: GetRoomMembersDocument, ...options });
+    return useQuery<GetRoomMembersQuery>({ query: GetRoomMembersDocument, ...options });
 }
 export const GetAllRoomParticipantsDocument = gql`
     query GetAllRoomParticipants($conferenceId: uuid!) {
@@ -55003,7 +55004,7 @@ export const GetAllRoomParticipantsDocument = gql`
 export function useGetAllRoomParticipantsQuery(
     options: Omit<Urql.UseQueryArgs<GetAllRoomParticipantsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetAllRoomParticipantsQuery>({ query: GetAllRoomParticipantsDocument, ...options });
+    return useQuery<GetAllRoomParticipantsQuery>({ query: GetAllRoomParticipantsDocument, ...options });
 }
 export const SearchAllDocument = gql`
     query SearchAll($conferenceId: uuid!, $search: String!, $limit: Int!, $offset: Int!) {
@@ -55028,7 +55029,7 @@ export const SearchAllDocument = gql`
 `;
 
 export function useSearchAllQuery(options: Omit<Urql.UseQueryArgs<SearchAllQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<SearchAllQuery>({ query: SearchAllDocument, ...options });
+    return useQuery<SearchAllQuery>({ query: SearchAllDocument, ...options });
 }
 export const MyShuffleQueueEntryDocument = gql`
     query MyShuffleQueueEntry($id: bigint!) {
@@ -55042,7 +55043,7 @@ export const MyShuffleQueueEntryDocument = gql`
 export function useMyShuffleQueueEntryQuery(
     options: Omit<Urql.UseQueryArgs<MyShuffleQueueEntryQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<MyShuffleQueueEntryQuery>({ query: MyShuffleQueueEntryDocument, ...options });
+    return useQuery<MyShuffleQueueEntryQuery>({ query: MyShuffleQueueEntryDocument, ...options });
 }
 export const ShufflePeriodsDocument = gql`
     query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) {
@@ -55054,7 +55055,7 @@ export const ShufflePeriodsDocument = gql`
 `;
 
 export function useShufflePeriodsQuery(options: Omit<Urql.UseQueryArgs<ShufflePeriodsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<ShufflePeriodsQuery>({ query: ShufflePeriodsDocument, ...options });
+    return useQuery<ShufflePeriodsQuery>({ query: ShufflePeriodsDocument, ...options });
 }
 export const JoinShuffleQueueDocument = gql`
     mutation JoinShuffleQueue($shufflePeriodId: uuid!, $registrantId: uuid!) {
@@ -55083,7 +55084,7 @@ export const GetShuffleRoomsParticipantsCountDocument = gql`
 export function useGetShuffleRoomsParticipantsCountQuery(
     options: Omit<Urql.UseQueryArgs<GetShuffleRoomsParticipantsCountQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetShuffleRoomsParticipantsCountQuery>({
+    return useQuery<GetShuffleRoomsParticipantsCountQuery>({
         query: GetShuffleRoomsParticipantsCountDocument,
         ...options,
     });
@@ -55122,7 +55123,7 @@ export const GetElementDocument = gql`
 `;
 
 export function useGetElementQuery(options: Omit<Urql.UseQueryArgs<GetElementQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
+    return useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
 }
 export const SubmitUploadableElementDocument = gql`
     mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!, $elementId: uuid!) {
@@ -55150,7 +55151,7 @@ export const GetUploadAgreementDocument = gql`
 export function useGetUploadAgreementQuery(
     options: Omit<Urql.UseQueryArgs<GetUploadAgreementQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<GetUploadAgreementQuery>({ query: GetUploadAgreementDocument, ...options });
+    return useQuery<GetUploadAgreementQuery>({ query: GetUploadAgreementDocument, ...options });
 }
 export const ItemByPersonAccessTokenDocument = gql`
     query ItemByPersonAccessToken($accessToken: String!, $itemId: uuid!) {
@@ -55177,7 +55178,7 @@ export const ItemByPersonAccessTokenDocument = gql`
 export function useItemByPersonAccessTokenQuery(
     options: Omit<Urql.UseQueryArgs<ItemByPersonAccessTokenQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ItemByPersonAccessTokenQuery>({ query: ItemByPersonAccessTokenDocument, ...options });
+    return useQuery<ItemByPersonAccessTokenQuery>({ query: ItemByPersonAccessTokenDocument, ...options });
 }
 export const ItemsByPersonAccessTokenDocument = gql`
     query ItemsByPersonAccessToken($accessToken: String!) {
@@ -55200,7 +55201,7 @@ export const ItemsByPersonAccessTokenDocument = gql`
 export function useItemsByPersonAccessTokenQuery(
     options: Omit<Urql.UseQueryArgs<ItemsByPersonAccessTokenQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<ItemsByPersonAccessTokenQuery>({ query: ItemsByPersonAccessTokenDocument, ...options });
+    return useQuery<ItemsByPersonAccessTokenQuery>({ query: ItemsByPersonAccessTokenDocument, ...options });
 }
 export const InitialiseSuperUserDocument = gql`
     mutation InitialiseSuperUser {
@@ -55226,7 +55227,7 @@ export const SuperUserStateDocument = gql`
 `;
 
 export function useSuperUserStateQuery(options: Omit<Urql.UseQueryArgs<SuperUserStateQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<SuperUserStateQuery>({ query: SuperUserStateDocument, ...options });
+    return useQuery<SuperUserStateQuery>({ query: SuperUserStateDocument, ...options });
 }
 export const UserSuPermissionsDocument = gql`
     query UserSUPermissions($userId: String!) {
@@ -55240,7 +55241,7 @@ export const UserSuPermissionsDocument = gql`
 export function useUserSuPermissionsQuery(
     options: Omit<Urql.UseQueryArgs<UserSuPermissionsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<UserSuPermissionsQuery>({ query: UserSuPermissionsDocument, ...options });
+    return useQuery<UserSuPermissionsQuery>({ query: UserSuPermissionsDocument, ...options });
 }
 export const SelectSuPermissionsDocument = gql`
     query SelectSUPermissions {
@@ -55254,7 +55255,7 @@ export const SelectSuPermissionsDocument = gql`
 export function useSelectSuPermissionsQuery(
     options: Omit<Urql.UseQueryArgs<SelectSuPermissionsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectSuPermissionsQuery>({ query: SelectSuPermissionsDocument, ...options });
+    return useQuery<SelectSuPermissionsQuery>({ query: SelectSuPermissionsDocument, ...options });
 }
 export const SuPermissionGrants_AllUsersDocument = gql`
     query SUPermissionGrants_AllUsers {
@@ -55268,7 +55269,7 @@ export const SuPermissionGrants_AllUsersDocument = gql`
 export function useSuPermissionGrants_AllUsersQuery(
     options: Omit<Urql.UseQueryArgs<SuPermissionGrants_AllUsersQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SuPermissionGrants_AllUsersQuery>({ query: SuPermissionGrants_AllUsersDocument, ...options });
+    return useQuery<SuPermissionGrants_AllUsersQuery>({ query: SuPermissionGrants_AllUsersDocument, ...options });
 }
 export const InsertSuPermissionGrantDocument = gql`
     mutation InsertSUPermissionGrant($object: system_SuperUserPermissionGrant_insert_input!) {
@@ -55342,7 +55343,7 @@ export const SelectSysConfigPermissionsDocument = gql`
 export function useSelectSysConfigPermissionsQuery(
     options: Omit<Urql.UseQueryArgs<SelectSysConfigPermissionsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectSysConfigPermissionsQuery>({ query: SelectSysConfigPermissionsDocument, ...options });
+    return useQuery<SelectSysConfigPermissionsQuery>({ query: SelectSysConfigPermissionsDocument, ...options });
 }
 export const InsertSysConfigPermissionGrantDocument = gql`
     mutation InsertSysConfigPermissionGrant($object: system_ConfigurationPermissionGrant_insert_input!) {
@@ -55385,7 +55386,7 @@ export const UserSysConfigPermissionsDocument = gql`
 export function useUserSysConfigPermissionsQuery(
     options: Omit<Urql.UseQueryArgs<UserSysConfigPermissionsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<UserSysConfigPermissionsQuery>({ query: UserSysConfigPermissionsDocument, ...options });
+    return useQuery<UserSysConfigPermissionsQuery>({ query: UserSysConfigPermissionsDocument, ...options });
 }
 export const AllSystemConfigurationsDocument = gql`
     query AllSystemConfigurations {
@@ -55399,7 +55400,7 @@ export const AllSystemConfigurationsDocument = gql`
 export function useAllSystemConfigurationsQuery(
     options: Omit<Urql.UseQueryArgs<AllSystemConfigurationsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<AllSystemConfigurationsQuery>({ query: AllSystemConfigurationsDocument, ...options });
+    return useQuery<AllSystemConfigurationsQuery>({ query: AllSystemConfigurationsDocument, ...options });
 }
 export const InsertSystemConfigurationDocument = gql`
     mutation InsertSystemConfiguration($object: system_Configuration_insert_input!) {
@@ -55456,7 +55457,7 @@ export const SelectCurrentUserDocument = gql`
 export function useSelectCurrentUserQuery(
     options: Omit<Urql.UseQueryArgs<SelectCurrentUserQueryVariables>, "query"> = {}
 ) {
-    return Urql.useQuery<SelectCurrentUserQuery>({ query: SelectCurrentUserDocument, ...options });
+    return useQuery<SelectCurrentUserQuery>({ query: SelectCurrentUserDocument, ...options });
 }
 export const TermsConfigsDocument = gql`
     query TermsConfigs {
@@ -55499,7 +55500,7 @@ export const TermsConfigsDocument = gql`
 `;
 
 export function useTermsConfigsQuery(options: Omit<Urql.UseQueryArgs<TermsConfigsQueryVariables>, "query"> = {}) {
-    return Urql.useQuery<TermsConfigsQuery>({ query: TermsConfigsDocument, ...options });
+    return useQuery<TermsConfigsQuery>({ query: TermsConfigsDocument, ...options });
 }
 export const AgreeToTermsDocument = gql`
     mutation AgreeToTerms($userId: String!, $at: timestamptz!) {
@@ -55530,7 +55531,7 @@ export function useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQ
         "query"
     > = {}
 ) {
-    return Urql.useQuery<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery>({
+    return useQuery<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery>({
         query: VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocument,
         ...options,
     });

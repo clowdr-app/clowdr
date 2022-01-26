@@ -1,14 +1,8 @@
 import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
-import React, { useEffect, useMemo, useState } from "react";
-import type { OperationResult } from "urql";
-import { useClient } from "urql";
-import type {
-    RoomPage_GetRoomDetailsQuery,
-    RoomPage_GetRoomDetailsQueryVariables,
-    RoomPage_RoomDetailsFragment,
-} from "../../../../generated/graphql";
-import { RoomPage_GetRoomDetailsDocument } from "../../../../generated/graphql";
+import React, { useMemo } from "react";
+import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
+import { useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { makeContext } from "../../../GQL/make-context";
 import QueryWrapper from "../../../GQL/QueryWrapper";
@@ -106,55 +100,18 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
             }),
         [roomId]
     );
-    const [roomDetailsResponse, setRoomDetailsResponse] =
-        useState<OperationResult<RoomPage_GetRoomDetailsQuery> | null>(null);
-    const [fetchingRoomDetails, setFetchingRoomDetails] = useState<boolean>(false);
-    const client = useClient();
-    // We really need to protect the room page against reloads at this level. It can result in the video chat flickering
-    // which is unacceptable. As it turns out, "searching" can result in Urql reloading the room details query.
-    useEffect(() => {
-        let setFetchingRoomDetailsRef: typeof setFetchingRoomDetails | null = setFetchingRoomDetails;
-        (async () => {
-            setFetchingRoomDetailsRef?.(true);
-
-            try {
-                const result = await client
-                    .query<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>(
-                        RoomPage_GetRoomDetailsDocument,
-                        {
-                            roomId,
-                            registrantId: registrant.id,
-                        },
-                        context
-                    )
-                    .toPromise();
-                setRoomDetailsResponse(result);
-            } catch (e: any) {
-                console.error("Error fetching room details", e);
-            }
-
-            setFetchingRoomDetailsRef?.(false);
-        })();
-
-        return () => {
-            setFetchingRoomDetailsRef = null;
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [registrant.id, roomId]);
+    const [roomDetailsResponse] = useRoomPage_GetRoomDetailsQuery({
+        variables: {
+            roomId,
+            registrantId: registrant.id,
+        },
+        context,
+    });
 
     const title = useTitle(
-        fetchingRoomDetails ? "Loading room" : roomDetailsResponse?.data?.room_Room_by_pk?.name ?? "Unknown room"
-    );
-
-    const queryResult = useMemo(
-        () =>
-            roomDetailsResponse
-                ? {
-                      ...roomDetailsResponse,
-                      fetching: fetchingRoomDetails,
-                  }
-                : { fetching: fetchingRoomDetails },
-        [fetchingRoomDetails, roomDetailsResponse]
+        roomDetailsResponse.fetching
+            ? "Loading room"
+            : roomDetailsResponse?.data?.room_Room_by_pk?.name ?? "Unknown room"
     );
 
     return (
@@ -162,7 +119,7 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
             {title}
             <QueryWrapper
                 getter={(data) => data.room_Room_by_pk}
-                queryResult={queryResult}
+                queryResult={roomDetailsResponse}
                 childrenNoData={() => <PageNotFound />}
             >
                 {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}

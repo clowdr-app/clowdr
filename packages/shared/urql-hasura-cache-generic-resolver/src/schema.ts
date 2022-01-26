@@ -12,7 +12,12 @@ export function getTableSchema(
     );
     if (querySchema?.kind === "OBJECT") {
         const tableSchema = querySchema.fields.find((x) => x.name === name);
-        const augTableSchema = augSchema.__schema.types.find((x) => x.kind === "OBJECT" && x.name === name);
+        const baseName = name.endsWith("_by_pk")
+            ? name.substring(0, name.length - "_by_pk".length)
+            : name.endsWith("_aggregate")
+            ? name.substring(0, name.length - "_aggregate".length)
+            : name;
+        const augTableSchema = augSchema.__schema.types.find((x) => x.kind === "OBJECT" && x.name === baseName);
         return tableSchema && augTableSchema
             ? {
                   tableSchema,
@@ -60,7 +65,12 @@ export function getTableFieldsSchema(
     augSchema: AugmentedIntrospectionData
 ): undefined | { tableSchema: IntrospectionObjectType; augTableSchema: AugmentedIntrospectionObjectType } {
     const tableSchema = schema.__schema.types?.find((x) => x.kind === "OBJECT" && x.name === name);
-    const augTableSchema = augSchema.__schema.types.find((x) => x.kind === "OBJECT" && x.name === name);
+    const baseName = name.endsWith("_by_pk")
+        ? name.substring(0, name.length - "_by_pk".length)
+        : name.endsWith("_aggregate")
+        ? name.substring(0, name.length - "_aggregate".length)
+        : name;
+    const augTableSchema = augSchema.__schema.types.find((x) => x.kind === "OBJECT" && x.name === baseName);
     return tableSchema && augTableSchema && tableSchema.kind === "OBJECT"
         ? {
               tableSchema,

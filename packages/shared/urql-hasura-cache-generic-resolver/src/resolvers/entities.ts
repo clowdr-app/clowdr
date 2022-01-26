@@ -11,6 +11,8 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
     augSchema
 ) =>
     function resolver(parent, args, cache, info) {
+        const isObjectByPkQuery = info.fieldName.endsWith("_by_pk");
+
         const tableSchema = getTableSchema(info.fieldName, schema, augSchema);
         if (!tableSchema) {
             info.error = new GraphQLError("Table schema not found");
@@ -18,15 +20,38 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
         }
 
         const allFields = cache.inspectFields(info.parentKey);
-        const fieldInfos = allFields.filter((fieldInfo) => fieldInfo.fieldName === info.fieldName);
+        const fieldInfos = allFields.filter(
+            (fieldInfo) =>
+                fieldInfo.fieldName === tableSchema.augTableSchema.name ||
+                fieldInfo.fieldName === tableSchema.augTableSchema.name + "_by_pk"
+        );
         // console.info(`Field infos for ${info.parentKey}.${info.fieldName}`, fieldInfos);
         if (fieldInfos.length === 0) {
             info.partial = true;
-            return [];
+            return undefined;
         }
 
         const result = new Set<string>();
-        if (args.where) {
+        if (isObjectByPkQuery) {
+            for (const fieldInfo of fieldInfos) {
+                const key = cache.resolve(info.parentKey, fieldInfo.fieldKey) as string | null;
+                if (key && _.isEqual(fieldInfo.arguments, args)) {
+                    result.add(key);
+                } else if (key) {
+                    let ok = true;
+                    for (const argFieldName in args) {
+                        const val = cache.resolve(key, argFieldName);
+                        if (val !== args[argFieldName]) {
+                            ok = false;
+                            break;
+                        }
+                    }
+                    if (ok) {
+                        result.add(key);
+                    }
+                }
+            }
+        } else if (args.where) {
             const whereSchema = tableSchema.tableSchema.args.find((x) => x.name === "where");
             if (!whereSchema || whereSchema.type.kind !== "INPUT_OBJECT") {
                 info.error = new GraphQLError("Table 'where' schema not found");
@@ -103,35 +128,40 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
             //    This hack basically checks if you're searching for specific objects by seeing if you're searching on
             //    default primary key. If not it assumes it was a speculative search ("find...") rather than a
             //    non-speculative fetch ("get me this thing I know exists").
-            info.partial ||= Boolean(args.where && typeof args.where === "object" && "id" in args.where);
+            info.partial =
+                info.partial ||
+                (isObjectByPkQuery && fieldInfos.length === 0) ||
+                Boolean(args.where && typeof args.where === "object" && "id" in args.where);
         }
 
         let resultArr = [...result];
 
-        // TODO: args.order_by
-        // TODO: args.distinct_on
+        if (!isObjectByPkQuery) {
+            // TODO: args.order_by
+            // TODO: args.distinct_on
 
-        if (args.offset) {
-            if (typeof args.offset === "number") {
-                resultArr = resultArr.slice(args.offset);
-            } else {
-                info.error = new GraphQLError("Invalid offset value");
-                return [];
+            if (args.offset) {
+                if (typeof args.offset === "number") {
+                    resultArr = resultArr.slice(args.offset);
+                } else {
+                    info.error = new GraphQLError("Invalid offset value");
+                    return info.fieldName.endsWith("_by_pk") ? null : [];
+                }
             }
-        }
 
-        if (args.limit) {
-            if (typeof args.limit === "number") {
-                resultArr = resultArr.slice(0, args.limit);
-            } else {
-                info.error = new GraphQLError("Invalid limit value");
-                return [];
+            if (args.limit) {
+                if (typeof args.limit === "number") {
+                    resultArr = resultArr.slice(0, args.limit);
+                } else {
+                    info.error = new GraphQLError("Invalid limit value");
+                    return info.fieldName.endsWith("_by_pk") ? null : [];
+                }
             }
         }
 
         // console.log("--------------- END CACHE LOOKUP (2) ---------------", result);
 
-        return resultArr;
+        return isObjectByPkQuery ? resultArr[0] ?? null : resultArr;
     };
 
 export function queryRootResolvers(

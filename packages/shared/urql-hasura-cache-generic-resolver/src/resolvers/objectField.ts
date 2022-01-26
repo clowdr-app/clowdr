@@ -74,6 +74,6 @@ export const objectFieldResolver: (schema: IntrospectionData, augSchema: Augment
         }
 
         // This is not correct. No results for an object field means "no object" not "partial data"
-        // info.partial ||= matchingFields.length === 0 && result === null;
+        // info.partial = info.partial || matchingFields.length === 0 && result === null;
         return null;
     };

@@ -53,9 +53,7 @@ export function CurrentRegistrantProvider({ children }: { children: ReactNode | 
             return undefined;
         }
         return conference.registrants.length > 0 ? (conference.registrants[0] as Registrant) : undefined;
-        // Protect against cache weirdness causing accidental re-renders of everything
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [conference?.id]);
+    }, [conference]);
 
     return <CurrentRegistrantContext.Provider value={ctx}>{children}</CurrentRegistrantContext.Provider>;
 }

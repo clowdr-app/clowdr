@@ -1316,7 +1316,7 @@ export default function CRUDTable<T>({
                     if (existing) {
                         dependentColumns.forEach((column) => {
                             const newVal = column.get(record);
-                            foundDifference ||= existing[column.id] !== newVal;
+                            foundDifference = foundDifference || existing[column.id] !== newVal;
                             existing[column.id] = newVal;
                         });
                     } else {

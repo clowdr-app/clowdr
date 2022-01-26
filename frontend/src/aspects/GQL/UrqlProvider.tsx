@@ -42,7 +42,7 @@ export function useUrqlContext(): UrqlContext {
 
 const storage = makeDefaultStorage({
     idbName: "graphcache-v3", // The name of the IndexedDB database
-    maxAge: 7, // The maximum age of the persisted data in days
+    maxAge: 2, // The maximum age of the persisted data in days
 });
 
 function UrqlProviderInner({

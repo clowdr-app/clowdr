@@ -435,6 +435,7 @@ importers:
       cors: ^2.8.5
       cpy-cli: ^3.1.1
       express: ^4.17.1
+      express-jwt: ^6.1.0
       generic-pool: ^3.8.2
       graphql: ^15.7.2
       graphql-tag: ^2.12.5
@@ -481,6 +482,7 @@ importers:
       cors: 2.8.5
       cpy-cli: 3.1.1
       express: 4.17.1
+      express-jwt: 6.1.0
       generic-pool: 3.8.2
       graphql: 15.7.2
       graphql-tag: 2.12.5_graphql@15.7.2
@@ -952,7 +954,6 @@ importers:
       dotenv: ^10.0.0
       exponential-backoff: ^3.1.0
       express: ^4.17.1
-      express-jwt: ^6.1.0
       get-stream: ^6.0.1
       google-auth-library: ^7.10.2
       googleapis: ^89.0.0
@@ -1047,7 +1048,6 @@ importers:
       date-fns: 2.25.0
       exponential-backoff: 3.1.0
       express: 4.17.1
-      express-jwt: 6.1.0
       get-stream: 6.0.1
       google-auth-library: 7.10.2
       googleapis: 89.0.0

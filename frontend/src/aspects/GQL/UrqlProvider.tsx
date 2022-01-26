@@ -8,7 +8,6 @@ import { makeOperation } from "@urql/core";
 import type { AuthConfig } from "@urql/exchange-auth";
 import { authExchange } from "@urql/exchange-auth";
 import { cacheExchange } from "@urql/exchange-graphcache";
-import { makeDefaultStorage } from "@urql/exchange-graphcache/default-storage";
 import { requestPolicyExchange } from "@urql/exchange-request-policy";
 import { retryExchange } from "@urql/exchange-retry";
 import { Mutex } from "async-mutex";
@@ -40,10 +39,10 @@ export function useUrqlContext(): UrqlContext {
     return ctx;
 }
 
-const storage = makeDefaultStorage({
-    idbName: "graphcache-v3", // The name of the IndexedDB database
-    maxAge: 2, // The maximum age of the persisted data in days
-});
+// const storage = makeDefaultStorage({
+//     idbName: "graphcache-v3", // The name of the IndexedDB database
+//     maxAge: 2, // The maximum age of the persisted data in days
+// });
 
 function UrqlProviderInner({
     children,
@@ -158,7 +157,7 @@ function UrqlProviderInner({
                             TranscribeGeneratePresignedUrlOutput: () => null,
                         },
                         schema: schema as any,
-                        storage,
+                        // storage,
                         resolvers: genericResolvers(
                             {
                                 schedule_Event: {

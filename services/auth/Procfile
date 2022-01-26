@@ -1,1 +1,1 @@
-web: node build/web-server.js
+web: node services/auth/build/web-server.js

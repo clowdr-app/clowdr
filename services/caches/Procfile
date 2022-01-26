@@ -1,1 +1,1 @@
-web: node --enable-source-maps build/web-server.js
+web: node services/caches/build/web-server.js

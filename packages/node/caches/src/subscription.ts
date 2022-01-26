@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "graphql-tag";
+import type { P } from "pino";
 import type { GetChatSubscriptionsQuery, GetChatSubscriptionsQueryVariables } from "./generated/graphql";
 import { GetChatSubscriptionsDocument } from "./generated/graphql";
 import { TableCache } from "./generic/table";
@@ -16,19 +17,20 @@ gql`
 
 export type ChatSubscriptionsEntity = Record<string, string>;
 
-export const chatSubscriptionsCache = new TableCache("ChatSubscription", async (chatId) => {
-    const response = await gqlClient
-        ?.query<GetChatSubscriptionsQuery, GetChatSubscriptionsQueryVariables>(GetChatSubscriptionsDocument, {
-            chatId,
-        })
-        .toPromise();
+export const chatSubscriptionsCache = (logger: P.Logger) =>
+    new TableCache(logger, "ChatSubscription", async (chatId) => {
+        const response = await gqlClient
+            ?.query<GetChatSubscriptionsQuery, GetChatSubscriptionsQueryVariables>(GetChatSubscriptionsDocument, {
+                chatId,
+            })
+            .toPromise();
 
-    const data = response?.data?.chat_Subscription;
-    if (data) {
-        return data.reduce<Record<string, string>>((acc, x) => {
-            acc[x.registrantId] = x.wasManuallySubscribed ? "true" : "false";
-            return acc;
-        }, {});
-    }
-    return undefined;
-});
+        const data = response?.data?.chat_Subscription;
+        if (data) {
+            return data.reduce<Record<string, string>>((acc, x) => {
+                acc[x.registrantId] = x.wasManuallySubscribed ? "true" : "false";
+                return acc;
+            }, {});
+        }
+        return undefined;
+    });

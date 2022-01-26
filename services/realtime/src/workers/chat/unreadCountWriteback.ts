@@ -1,7 +1,7 @@
 // Set this up as a CronToGo task
 // CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/chat/unreadCountWriteback.js
 
-import { readUpToIndicesCache } from "@midspace/caches/readUpToIndex";
+import { ReadUpToIndexCache } from "@midspace/caches/readUpToIndex";
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
 import { gql } from "graphql-tag";
@@ -36,7 +36,7 @@ async function Main(continueExecuting = false) {
         assert(gqlClient, "GQL client needed for read up to index writeback");
 
         logger.info("Writing back read up to indices");
-        const indicesToWriteBack = await readUpToIndicesCache.getAndClearModified();
+        const indicesToWriteBack = await new ReadUpToIndexCache(logger).getAndClearModified();
         const registrantIds = await gqlClient
             .query<RegistrantIdsFromChatsAndUsersQuery, RegistrantIdsFromChatsAndUsersQueryVariables>(
                 RegistrantIdsFromChatsAndUsersDocument,

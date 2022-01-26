@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
+import type { P } from "pino";
 import type {
     GetRoomMembershipsQuery,
     GetRoomMembershipsQueryVariables,
@@ -20,19 +21,20 @@ gql`
 
 export type RoomMembershipsEntity = Record<string, Room_PersonRole_Enum>;
 
-export const roomMembershipsCache = new TableCache("RoomMembership", async (roomId) => {
-    const response = await gqlClient
-        ?.query<GetRoomMembershipsQuery, GetRoomMembershipsQueryVariables>(GetRoomMembershipsDocument, {
-            roomId,
-        })
-        .toPromise();
+export const roomMembershipsCache = (logger: P.Logger) =>
+    new TableCache(logger, "RoomMembership", async (roomId) => {
+        const response = await gqlClient
+            ?.query<GetRoomMembershipsQuery, GetRoomMembershipsQueryVariables>(GetRoomMembershipsDocument, {
+                roomId,
+            })
+            .toPromise();
 
-    const data = response?.data?.room_RoomMembership;
-    if (data) {
-        return data.reduce<Record<string, string>>((acc, x) => {
-            acc[x.registrantId] = x.personRoleName;
-            return acc;
-        }, {});
-    }
-    return undefined;
-});
+        const data = response?.data?.room_RoomMembership;
+        if (data) {
+            return data.reduce<Record<string, string>>((acc, x) => {
+                acc[x.registrantId] = x.personRoleName;
+                return acc;
+            }, {});
+        }
+        return undefined;
+    });

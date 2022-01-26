@@ -29,7 +29,7 @@ router.post("/conference", json() as any, async (req: Request, res: Response) =>
     try {
         const payload = assertType<Payload<CacheUpdate.ConferenceData>>(req.body);
         req.log.trace({ payload }, "Cache update: conference");
-        await handleConferenceCacheUpdate(payload);
+        await handleConferenceCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -42,7 +42,7 @@ router.post("/subconference", json() as any, async (req: Request, res: Response)
     try {
         const payload = assertType<Payload<CacheUpdate.SubconferenceData>>(req.body);
         req.log.trace({ payload }, "Cache update: subconference");
-        await handleSubconferenceCacheUpdate(payload);
+        await handleSubconferenceCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -55,7 +55,7 @@ router.post("/room", json() as any, async (req: Request, res: Response) => {
     try {
         const payload = assertType<Payload<CacheUpdate.RoomData>>(req.body);
         req.log.trace({ payload }, "Cache update: room");
-        await handleRoomCacheUpdate(payload);
+        await handleRoomCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -68,7 +68,7 @@ router.post("/registrant", json() as any, async (req: Request, res: Response) =>
     try {
         const payload = assertType<Payload<CacheUpdate.RegistrantData>>(req.body);
         req.log.trace({ payload }, "Cache update: registrant");
-        await handleRegistrantCacheUpdate(payload);
+        await handleRegistrantCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -81,7 +81,7 @@ router.post("/subconferenceMembership", json() as any, async (req: Request, res:
     try {
         const payload = assertType<Payload<CacheUpdate.SubconferenceMembershipData>>(req.body);
         req.log.trace({ payload }, "Cache update: subconference membership");
-        await handleSubconferenceMembershipCacheUpdate(payload);
+        await handleSubconferenceMembershipCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -94,7 +94,7 @@ router.post("/roomMembership", json() as any, async (req: Request, res: Response
     try {
         const payload = assertType<Payload<CacheUpdate.RoomMembershipData>>(req.body);
         req.log.trace({ payload }, "Cache update: room membership");
-        await handleRoomMembershipCacheUpdate(payload);
+        await handleRoomMembershipCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -107,7 +107,7 @@ router.post("/user", json() as any, async (req: Request, res: Response) => {
     try {
         const payload = assertType<Payload<CacheUpdate.UserData>>(req.body);
         req.log.trace({ payload }, "Cache update: user");
-        await handleUserCacheUpdate(payload);
+        await handleUserCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -120,7 +120,7 @@ router.post("/event", json() as any, async (req: Request, res: Response) => {
     try {
         const payload = assertType<Payload<CacheUpdate.EventData>>(req.body);
         req.log.trace({ payload }, "Cache update: event");
-        await handleEventCacheUpdate(payload);
+        await handleEventCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -133,7 +133,7 @@ router.post("/pushNotificationSubscription", json() as any, async (req: Request,
     try {
         const payload = assertType<Payload<CacheUpdate.PushNotificationSubscriptionData>>(req.body);
         req.log.trace({ payload }, "Cache update: push notification subscription");
-        await handlePushNotificationSubscriptionCacheUpdate(payload);
+        await handlePushNotificationSubscriptionCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -146,7 +146,7 @@ router.post("/chat", json() as any, async (req: Request, res: Response) => {
     try {
         const payload = assertType<Payload<CacheUpdate.ChatData>>(req.body);
         req.log.trace({ payload }, "Cache update: chat");
-        await handleChatCacheUpdate(payload);
+        await handleChatCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -159,7 +159,7 @@ router.post("/contentItem", json() as any, async (req: Request, res: Response) =
     try {
         const payload = assertType<Payload<CacheUpdate.ContentItemData>>(req.body);
         req.log.trace({ payload }, "Cache update: content item");
-        await handleContentItemCacheUpdate(payload);
+        await handleContentItemCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -172,7 +172,7 @@ router.post("/chatPin", json() as any, async (req: Request, res: Response) => {
     try {
         const payload = assertType<Payload<CacheUpdate.ChatPinData>>(req.body);
         req.log.trace({ payload }, "Cache update: chat pin");
-        await handleChatPinCacheUpdate(payload);
+        await handleChatPinCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");
@@ -185,7 +185,7 @@ router.post("/chatSubscription", json() as any, async (req: Request, res: Respon
     try {
         const payload = assertType<Payload<CacheUpdate.ChatSubscriptionData>>(req.body);
         req.log.trace({ payload }, "Cache update: chat subscription");
-        await handleChatSubscriptionCacheUpdate(payload);
+        await handleChatSubscriptionCacheUpdate(req.log, payload);
         res.status(200).json({});
     } catch (err) {
         req.log.error({ err }, "Failure while handling Hasura cache event");

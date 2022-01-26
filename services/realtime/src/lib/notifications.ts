@@ -1,9 +1,10 @@
 import type { PushNotificationSubscriptionsEntity } from "@midspace/caches/pushNotificationSubscriptions";
-import { pushNotificationSubscriptionsCache } from "@midspace/caches/pushNotificationSubscriptions";
+import { PushNotificationSubscriptionsCache } from "@midspace/caches/pushNotificationSubscriptions";
 import { emitter } from "../socket-emitter/socket-emitter";
 import type { Notification } from "../types/chat";
 import { sendNotification } from "../web-push/sendNotification";
 import { notificationsRoomName } from "./chat";
+import { logger } from "./logger";
 
 export async function sendNotifications(userIds: Set<string>, notification: Notification): Promise<void> {
     const userIdsArr = [...userIds.values()];
@@ -12,7 +13,7 @@ export async function sendNotifications(userIds: Set<string>, notification: Noti
             userIdsArr.map(
                 async (userId): Promise<[string, PushNotificationSubscriptionsEntity | undefined]> => [
                     userId,
-                    await pushNotificationSubscriptionsCache.getEntity(userId),
+                    await new PushNotificationSubscriptionsCache(logger).getEntity(userId),
                 ]
             )
         )

@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
+import type { P } from "pino";
 import type {
     Conference_VisibilityLevel_Enum,
     GetConferenceQuery,
@@ -32,8 +33,10 @@ export interface ConferenceEntity {
     subconferenceIds: string[];
 }
 
-class ConferenceCache {
-    private readonly cache = new TableCache("Conference", async (id) => {
+export class ConferenceCache {
+    constructor(private readonly logger: P.Logger) {}
+
+    private readonly cache = new TableCache(this.logger, "Conference", async (id) => {
         const response = await gqlClient
             ?.query<GetConferenceQuery, GetConferenceQueryVariables>(GetConferenceDocument, {
                 id,
@@ -146,5 +149,3 @@ class ConferenceCache {
         }
     }
 }
-
-export const conferenceCache = new ConferenceCache();

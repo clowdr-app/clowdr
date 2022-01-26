@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "graphql-tag";
+import type { P } from "pino";
 import type webPush from "web-push";
 import type {
     GetPushNotificationSubscriptionsQuery,
@@ -24,8 +25,10 @@ export interface PushNotificationSubscriptionsEntity {
     subscriptions: webPush.PushSubscription[];
 }
 
-class PushNotificationSubscriptionsCache {
-    private readonly cache = new TableCache("PushNotificationSubscriptions", async (userId) => {
+export class PushNotificationSubscriptionsCache {
+    constructor(private readonly logger: P.Logger) {}
+
+    private readonly cache = new TableCache(this.logger, "PushNotificationSubscriptions", async (userId) => {
         const response = await gqlClient
             ?.query<GetPushNotificationSubscriptionsQuery, GetPushNotificationSubscriptionsQueryVariables>(
                 GetPushNotificationSubscriptionsDocument,
@@ -131,5 +134,3 @@ class PushNotificationSubscriptionsCache {
         }
     }
 }
-
-export const pushNotificationSubscriptionsCache = new PushNotificationSubscriptionsCache();

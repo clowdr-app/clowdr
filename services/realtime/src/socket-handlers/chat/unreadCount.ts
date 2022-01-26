@@ -1,4 +1,4 @@
-import { readUpToIndicesCache } from "@midspace/caches/readUpToIndex";
+import { ReadUpToIndexCache } from "@midspace/caches/readUpToIndex";
 import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
@@ -41,7 +41,7 @@ export function onSetReadUpToIndex(
                 assert(is<string>(messageSId), "Data (1) does not match expected type.");
 
                 if (await canSelectChat(userId, chatId)) {
-                    await readUpToIndicesCache.setField(chatId, userId, messageSId);
+                    await new ReadUpToIndexCache(logger).setField(chatId, userId, messageSId);
                     await sendUnreadCount(chatId, userId);
                 }
             } catch (error: any) {

@@ -62,6 +62,7 @@
         "jwks-rsa": "^2.0.3",
         "node-env-run": "^4.0.2",
         "node-fetch": "^2.6.1",
+        "pino": "^7.6.4",
         "redis": "^3.1.2",
         "redlock": "^4.2.0",
         "subscriptions-transport-ws": "^0.9.19",

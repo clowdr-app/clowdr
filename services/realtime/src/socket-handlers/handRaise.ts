@@ -1,4 +1,4 @@
-import { eventCache } from "@midspace/caches/event";
+import { EventCache } from "@midspace/caches/event";
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
@@ -153,7 +153,7 @@ export function onAcceptHandRaised(
 
                 const roleName = Schedule_EventProgramPersonRole_Enum.Participant;
 
-                const eventInfo = await eventCache.getEntity(eventId);
+                const eventInfo = await new EventCache(logger).getEntity(eventId);
                 if (
                     eventInfo &&
                     // TODO: Enforce event person role

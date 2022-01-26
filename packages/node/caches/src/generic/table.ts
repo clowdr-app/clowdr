@@ -1,9 +1,11 @@
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
+import type { P } from "pino";
 import type { Callback, RedisClient } from "redis";
 import { promisify } from "util";
 
 export class TableCache {
     constructor(
+        private readonly logger: P.Logger,
         private readonly redisRootKey: string,
         private readonly fetch: (key: string) => Promise<Record<string, string> | undefined>,
         private readonly ttlSeconds = 7 * 24 * 60 * 60
@@ -60,12 +62,12 @@ export class TableCache {
                 }
             } catch (e: any) {
                 await redisClientP.unwatch(redisClient)();
-                console.error("Error getting field from cache", e);
+                this.logger.error("Error getting field from cache", e);
             } finally {
                 await redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
             }
         } catch (e: any) {
-            console.error("Error acquiring redis client in order to fetch field from cache", e);
+            this.logger.error("Error acquiring redis client in order to fetch field from cache", e);
         }
         return undefined;
     }
@@ -104,12 +106,12 @@ export class TableCache {
                 }
             } catch (e: any) {
                 await redisClientP.unwatch(redisClient)();
-                console.error("Error getting entity from cache", e);
+                this.logger.error("Error getting entity from cache", e);
             } finally {
                 await redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
             }
         } catch (e: any) {
-            console.error("Error acquiring redis client in order to fetch entity from cache", e);
+            this.logger.error("Error acquiring redis client in order to fetch entity from cache", e);
         }
         return undefined;
     }
@@ -130,12 +132,12 @@ export class TableCache {
                 //     await lease.unlock();
                 // }
             } catch (e: any) {
-                console.error("Error setting entity in cache", e);
+                this.logger.error("Error setting entity in cache", e);
             } finally {
                 await redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
             }
         } catch (e: any) {
-            console.error("Error acquiring redis client in order to set entity in cache", e);
+            this.logger.error("Error acquiring redis client in order to set entity in cache", e);
         }
     }
 
@@ -155,12 +157,12 @@ export class TableCache {
                 //     await lease.unlock();
                 // }
             } catch (e: any) {
-                console.error("Error setting field in cache", e);
+                this.logger.error("Error setting field in cache", e);
             } finally {
                 await redisClientPool.release(`caches/generic/table:${this.redisRootKey}`, redisClient);
             }
         } catch (e: any) {
-            console.error("Error acquiring redis client in order to set field in cache", e);
+            this.logger.error("Error acquiring redis client in order to set field in cache", e);
         }
     }
 

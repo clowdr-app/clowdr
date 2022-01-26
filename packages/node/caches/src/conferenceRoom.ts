@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
+import type { P } from "pino";
 import type {
     GetConferenceRoomsQuery,
     GetConferenceRoomsQueryVariables,
@@ -19,19 +20,20 @@ gql`
 
 export type ConferenceRoomsEntity = Record<string, Room_ManagementMode_Enum>;
 
-export const conferenceRoomsCache = new TableCache("ConferenceRoom", async (conferenceId) => {
-    const response = await gqlClient
-        ?.query<GetConferenceRoomsQuery, GetConferenceRoomsQueryVariables>(GetConferenceRoomsDocument, {
-            conferenceId,
-        })
-        .toPromise();
+export const conferenceRoomsCache = (logger: P.Logger) =>
+    new TableCache(logger, "ConferenceRoom", async (conferenceId) => {
+        const response = await gqlClient
+            ?.query<GetConferenceRoomsQuery, GetConferenceRoomsQueryVariables>(GetConferenceRoomsDocument, {
+                conferenceId,
+            })
+            .toPromise();
 
-    const data = response?.data?.room_Room;
-    if (data) {
-        return data.reduce<Record<string, string>>((acc, x) => {
-            acc[x.id] = x.managementModeName;
-            return acc;
-        }, {});
-    }
-    return undefined;
-});
+        const data = response?.data?.room_Room;
+        if (data) {
+            return data.reduce<Record<string, string>>((acc, x) => {
+                acc[x.id] = x.managementModeName;
+                return acc;
+            }, {});
+        }
+        return undefined;
+    });

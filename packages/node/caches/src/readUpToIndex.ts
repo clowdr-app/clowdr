@@ -1,6 +1,7 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import { gql } from "graphql-tag";
+import type { P } from "pino";
 import type { Callback } from "redis";
 import { promisify } from "util";
 import type { GetReadUpToIndicesQuery, GetReadUpToIndicesQueryVariables } from "./generated/graphql";
@@ -21,8 +22,10 @@ gql`
 
 export type ReadUpToIndicesEntity = Record<string, string>;
 
-class ReadUpToIndexCache {
-    private readonly cache = new TableCache("ReadUpToIndex", async (chatId) => {
+export class ReadUpToIndexCache {
+    constructor(private readonly logger: P.Logger) {}
+
+    private readonly cache = new TableCache(this.logger, "ReadUpToIndex", async (chatId) => {
         const response = await gqlClient
             ?.query<GetReadUpToIndicesQuery, GetReadUpToIndicesQueryVariables>(GetReadUpToIndicesDocument, {
                 chatId,
@@ -126,4 +129,3 @@ class ReadUpToIndexCache {
         return [];
     }
 }
-export const readUpToIndicesCache = new ReadUpToIndexCache();

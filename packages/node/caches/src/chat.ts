@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
+import type { P } from "pino";
 import type { GetChatQuery, GetChatQueryVariables } from "./generated/graphql";
 import { GetChatDocument } from "./generated/graphql";
 import { TableCache } from "./generic/table";
@@ -28,8 +29,10 @@ export interface ChatEntity {
     roomId: string | null;
 }
 
-class ChatCache {
-    private readonly cache = new TableCache("Chat", async (id) => {
+export class ChatCache {
+    constructor(private readonly logger: P.Logger) {}
+
+    private readonly cache = new TableCache(this.logger, "Chat", async (id) => {
         const response = await gqlClient
             ?.query<GetChatQuery, GetChatQueryVariables>(GetChatDocument, {
                 id,
@@ -128,5 +131,3 @@ class ChatCache {
         }
     }
 }
-
-export const chatCache = new ChatCache();

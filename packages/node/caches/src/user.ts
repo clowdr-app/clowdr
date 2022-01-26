@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
+import type { P } from "pino";
 import type { GetUserQuery, GetUserQueryVariables } from "./generated/graphql";
 import { GetUserDocument } from "./generated/graphql";
 import { TableCache } from "./generic/table";
@@ -24,8 +25,10 @@ export interface UserEntity {
     }[];
 }
 
-class UserCache {
-    private readonly cache = new TableCache("User", async (id) => {
+export class UserCache {
+    constructor(private readonly logger: P.Logger) {}
+
+    private readonly cache = new TableCache(this.logger, "User", async (id) => {
         const response = await gqlClient
             ?.query<GetUserQuery, GetUserQueryVariables>(GetUserDocument, {
                 id,
@@ -115,5 +118,3 @@ class UserCache {
         }
     }
 }
-
-export const userCache = new UserCache();

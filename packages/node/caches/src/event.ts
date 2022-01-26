@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
+import type { P } from "pino";
 import type { GetEventQuery, GetEventQueryVariables } from "./generated/graphql";
 import { GetEventDocument } from "./generated/graphql";
 import { TableCache } from "./generic/table";
@@ -20,8 +21,10 @@ export interface EventEntity {
     roomId: string;
 }
 
-class EventCache {
-    private readonly cache = new TableCache("Event", async (id) => {
+export class EventCache {
+    constructor(private readonly logger: P.Logger) {}
+
+    private readonly cache = new TableCache(this.logger, "Event", async (id) => {
         const response = await gqlClient
             ?.query<GetEventQuery, GetEventQueryVariables>(GetEventDocument, {
                 id,
@@ -110,5 +113,3 @@ class EventCache {
         }
     }
 }
-
-export const eventCache = new EventCache();

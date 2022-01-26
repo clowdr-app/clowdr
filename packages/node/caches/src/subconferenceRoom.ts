@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
+import type { P } from "pino";
 import type {
     GetSubconferenceRoomsQuery,
     GetSubconferenceRoomsQueryVariables,
@@ -19,19 +20,20 @@ gql`
 
 export type SubconferenceRoomsEntity = Record<string, Room_ManagementMode_Enum>;
 
-export const subconferenceRoomsCache = new TableCache("SubconferenceRoom", async (subconferenceId) => {
-    const response = await gqlClient
-        ?.query<GetSubconferenceRoomsQuery, GetSubconferenceRoomsQueryVariables>(GetSubconferenceRoomsDocument, {
-            subconferenceId,
-        })
-        .toPromise();
+export const subconferenceRoomsCache = (logger: P.Logger) =>
+    new TableCache(logger, "SubconferenceRoom", async (subconferenceId) => {
+        const response = await gqlClient
+            ?.query<GetSubconferenceRoomsQuery, GetSubconferenceRoomsQueryVariables>(GetSubconferenceRoomsDocument, {
+                subconferenceId,
+            })
+            .toPromise();
 
-    const data = response?.data?.room_Room;
-    if (data) {
-        return data.reduce<Record<string, string>>((acc, x) => {
-            acc[x.id] = x.managementModeName;
-            return acc;
-        }, {});
-    }
-    return undefined;
-});
+        const data = response?.data?.room_Room;
+        if (data) {
+            return data.reduce<Record<string, string>>((acc, x) => {
+                acc[x.id] = x.managementModeName;
+                return acc;
+            }, {});
+        }
+        return undefined;
+    });

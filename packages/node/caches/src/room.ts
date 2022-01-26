@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
+import type { P } from "pino";
 import type { GetRoomQuery, GetRoomQueryVariables, Room_ManagementMode_Enum } from "./generated/graphql";
 import { GetRoomDocument } from "./generated/graphql";
 import { TableCache } from "./generic/table";
@@ -24,8 +25,10 @@ export interface RoomEntity {
     managementModeName: Room_ManagementMode_Enum;
 }
 
-class RoomCache {
-    private readonly cache = new TableCache("Room", async (id) => {
+export class RoomCache {
+    constructor(private readonly logger: P.Logger) {}
+
+    private readonly cache = new TableCache(this.logger, "Room", async (id) => {
         const response = await gqlClient
             ?.query<GetRoomQuery, GetRoomQueryVariables>(GetRoomDocument, {
                 id,
@@ -119,5 +122,3 @@ class RoomCache {
         }
     }
 }
-
-export const roomCache = new RoomCache();

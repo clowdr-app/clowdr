@@ -1,5 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
+import type { P } from "pino";
 import type {
     GetRegistrantQuery,
     GetRegistrantQueryVariables,
@@ -38,8 +39,9 @@ export interface RegistrantEntity {
     subconferenceMemberships: SubconferenceMembership[];
 }
 
-class RegistrantCache {
-    private readonly cache = new TableCache("Registrant", async (id) => {
+export class RegistrantCache {
+    constructor(private readonly logger: P.Logger) {}
+    private readonly cache = new TableCache(this.logger, "Registrant", async (id) => {
         const response = await gqlClient
             ?.query<GetRegistrantQuery, GetRegistrantQueryVariables>(GetRegistrantDocument, {
                 id,
@@ -146,5 +148,3 @@ class RegistrantCache {
         }
     }
 }
-
-export const registrantCache = new RegistrantCache();

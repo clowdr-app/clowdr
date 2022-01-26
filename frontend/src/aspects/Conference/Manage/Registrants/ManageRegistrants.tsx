@@ -13,6 +13,7 @@ import {
     MenuItem,
     MenuItemOption,
     MenuList,
+    Select,
     Text,
     Tooltip,
     useClipboard,
@@ -34,6 +35,7 @@ import type {
 } from "../../../../generated/graphql";
 import {
     ManageRegistrants_SelectProfilesDocument,
+    Registrant_RegistrantRole_Enum,
     useDeleteRegistrantsMutation,
     useInsertInvitationEmailJobsMutation,
     useInsertRegistrantMutation,
@@ -49,6 +51,7 @@ import { LinkButton } from "../../../Chakra/LinkButton";
 import MultiSelect from "../../../Chakra/MultiSelect";
 import {
     CheckBoxColumnFilter,
+    formatEnumValue,
     MultiSelectColumnFilter,
     SelectColumnFilter,
     TextColumnFilter,
@@ -163,11 +166,11 @@ gql`
 
     mutation UpdateRegistrant(
         $registrantId: uuid!
-        $registrantName: String!
+        $registrantUpdates: registrant_Registrant_set_input!
         $upsertGroups: [registrant_GroupRegistrant_insert_input!]!
         $remainingGroupIds: [uuid!]
     ) {
-        update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: { displayName: $registrantName }) {
+        update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: $registrantUpdates) {
             ...RegistrantParts
         }
         insert_registrant_GroupRegistrant(
@@ -322,6 +325,17 @@ export default function ManageRegistrants(): JSX.Element {
                 value: "error",
             },
         ],
+        []
+    );
+
+    const roleOptions = useMemo(
+        () =>
+            Object.keys(Registrant_RegistrantRole_Enum)
+                .map((x) => {
+                    const v = (Registrant_RegistrantRole_Enum as any)[x];
+                    return { value: v, label: formatEnumValue(v) };
+                })
+                .sort((x, y) => x.label.localeCompare(y.label)),
         []
     );
 
@@ -623,6 +637,49 @@ export default function ManageRegistrants(): JSX.Element {
                 },
             },
             {
+                id: "role",
+                header: function RoleHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    return isInCreate ? (
+                        <FormLabel>Role</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={onClick}>
+                            Role{sortDir !== null ? ` ${sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.conferenceRole,
+                set: (record, v: Registrant_RegistrantRole_Enum) => {
+                    record.conferenceRole = v;
+                },
+                filterFn: (rows, v: Registrant_RegistrantRole_Enum) => rows.filter((r) => r.conferenceRole === v),
+                filterEl: SelectColumnFilter(Object.values(Registrant_RegistrantRole_Enum)),
+                sort: (x: Registrant_RegistrantRole_Enum, y: Registrant_RegistrantRole_Enum) => x.localeCompare(y),
+                cell: function RoomModeCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<RegistrantDescriptor>, Registrant_RegistrantRole_Enum | undefined>) {
+                    return (
+                        <Select
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value as Registrant_RegistrantRole_Enum)}
+                            onBlur={onBlur}
+                            ref={ref as LegacyRef<HTMLSelectElement>}
+                            maxW={400}
+                        >
+                            {roleOptions.map((option) => {
+                                return (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                );
+                            })}
+                        </Select>
+                    );
+                },
+            },
+            {
                 id: "groups",
                 header: function ContentHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
                     return isInCreate ? (
@@ -736,6 +793,7 @@ export default function ManageRegistrants(): JSX.Element {
                                 id: record.id,
                                 conferenceId: conference.id,
                                 displayName: record.displayName,
+                                conferenceRole: record.conferenceRole,
                                 groupRegistrants: {
                                     data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
                                 },
@@ -762,7 +820,10 @@ export default function ManageRegistrants(): JSX.Element {
                 updateRegistrant(
                     {
                         registrantId: record.id,
-                        registrantName: record.displayName,
+                        registrantUpdates: {
+                            displayName: record.displayName,
+                            conferenceRole: record.conferenceRole,
+                        },
                         upsertGroups: record.groupRegistrants.map((x) => ({
                             groupId: x.groupId,
                             registrantId: x.registrantId,

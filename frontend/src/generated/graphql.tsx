@@ -44397,7 +44397,7 @@ export type DeleteRegistrantsMutation = {
 
 export type UpdateRegistrantMutationVariables = Exact<{
     registrantId: Scalars["uuid"];
-    registrantName: Scalars["String"];
+    registrantUpdates: Registrant_Registrant_Set_Input;
     upsertGroups: ReadonlyArray<Registrant_GroupRegistrant_Insert_Input> | Registrant_GroupRegistrant_Insert_Input;
     remainingGroupIds?: InputMaybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
 }>;
@@ -53624,11 +53624,11 @@ export function useDeleteRegistrantsMutation() {
 export const UpdateRegistrantDocument = gql`
     mutation UpdateRegistrant(
         $registrantId: uuid!
-        $registrantName: String!
+        $registrantUpdates: registrant_Registrant_set_input!
         $upsertGroups: [registrant_GroupRegistrant_insert_input!]!
         $remainingGroupIds: [uuid!]
     ) {
-        update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: { displayName: $registrantName }) {
+        update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: $registrantUpdates) {
             ...RegistrantParts
         }
         insert_registrant_GroupRegistrant(

@@ -17,6 +17,8 @@ importers:
       prettier-plugin-organize-imports: ^2.3.4
       typescript: ^4.5.2
       wait-on: ^6.0.0
+    dependencies:
+      typescript: 4.5.2
     devDependencies:
       '@typescript-eslint/eslint-plugin': 5.4.0_5c8ff4cecd5a55e744866c0654edac32
       '@typescript-eslint/parser': 5.4.0_eslint@8.3.0+typescript@4.5.2
@@ -29,7 +31,6 @@ importers:
       lint-staged: 12.1.2
       prettier: 2.5.0
       prettier-plugin-organize-imports: 2.3.4_prettier@2.5.0+typescript@4.5.2
-      typescript: 4.5.2
       wait-on: 6.0.0
 
   aws:
@@ -771,6 +772,8 @@ importers:
       rimraf: ^3.0.2
       ts-patch: ^2.0.1
       tsc-watch: ^4.4.0
+    dependencies:
+      ts-patch: 2.0.1_typescript@4.5.2
     devDependencies:
       '@graphql-codegen/cli': 2.2.2_graphql@15.7.2+typescript@4.5.2
       '@graphql-codegen/introspection': 2.1.0_graphql@15.7.2
@@ -781,7 +784,6 @@ importers:
       graphql: 15.7.2
       prettier: 2.5.0
       rimraf: 3.0.2
-      ts-patch: 2.0.1_typescript@4.5.2
       tsc-watch: 4.5.0_typescript@4.5.2
 
   packages/shared/hasura:
@@ -805,6 +807,7 @@ importers:
       '@midspace/shared-types': link:../shared-types
       cpy-cli: 3.1.1
       google-auth-library: 7.10.2
+      ts-patch: 2.0.1_typescript@4.5.2
     devDependencies:
       '@graphql-codegen/cli': 2.2.2_graphql@15.7.2+typescript@4.5.2
       '@graphql-codegen/introspection': 2.1.0_graphql@15.7.2
@@ -814,7 +817,6 @@ importers:
       graphql: 15.7.2
       prettier: 2.5.0
       rimraf: 3.0.2
-      ts-patch: 2.0.1_typescript@4.5.2
       tsc-watch: 4.5.0_typescript@4.5.2
 
   packages/shared/opentok-types:
@@ -16756,6 +16758,7 @@ packages:
       ini: 1.3.8
       kind-of: 6.0.3
       which: 1.3.1
+    dev: false
 
   /global/4.4.0:
     resolution: {integrity: sha512-wv/LAoHdRE3BeTGz53FAamhGlPLhlssK45usmGFThIi4XqnBmjKQ16u+RNbP7WvigRZDxUsM0J3gcQ5yicaL0w==}
@@ -17565,6 +17568,7 @@ packages:
   /interpret/1.4.0:
     resolution: {integrity: sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==}
     engines: {node: '>= 0.10'}
+    dev: false
 
   /intersection-observer/0.12.0:
     resolution: {integrity: sha512-2Vkz8z46Dv401zTWudDGwO7KiGHNDkMv417T5ItcNYfmvHR/1qCTVBO9vwH8zZmQ0WkA/1ARwpysR9bsnop4NQ==}
@@ -19470,6 +19474,7 @@ packages:
   /kind-of/6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
+    dev: false
 
   /klaw/1.3.1:
     resolution: {integrity: sha1-QIhDO0azsbolnXh4XY6W9zugJDk=}
@@ -22210,6 +22215,7 @@ packages:
     engines: {node: '>= 0.10'}
     dependencies:
       resolve: 1.20.0
+    dev: false
 
   /redent/3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
@@ -22786,6 +22792,7 @@ packages:
       glob: 7.2.0
       interpret: 1.4.0
       rechoir: 0.6.2
+    dev: false
 
   /shortid/2.2.16:
     resolution: {integrity: sha512-Ugt+GIZqvGXCIItnsL+lvFJOiN7RYqlGy7QE41O3YC1xbNSeDGIRO7xg2JJXIAj1cAGnOeC1r7/T9pgrtQbv4g==}
@@ -24103,6 +24110,7 @@ packages:
       shelljs: 0.8.4
       strip-ansi: 6.0.1
       typescript: 4.5.2
+    dev: false
 
   /ts-toolbelt/6.15.5:
     resolution: {integrity: sha512-FZIXf1ksVyLcfr7M317jbB67XFJhOO1YqdTcuGaq9q5jLUoTikukZ+98TPjKiP2jC5CgmYdWWYs0s2nLSU0/1A==}
@@ -24294,6 +24302,7 @@ packages:
     resolution: {integrity: sha512-5BlMof9H1yGt0P8/WF+wPNw6GfctgGjXp5hkblpyT+8rkASSmkUKMXrxR0Xg8ThVCi/JnHQiKXeBaEwCeQwMFw==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: false
 
   /typescript/4.5.4:
     resolution: {integrity: sha512-VgYs2A2QIRuGphtzFV7aQJduJ2gyfTljngLzjpfW9FoYZF6xuw1W0vW9ghCKLfcWrCFxK81CSGRAvS1pn4fIUg==}
@@ -24967,6 +24976,7 @@ packages:
     hasBin: true
     dependencies:
       isexe: 2.0.0
+    dev: false
 
   /which/2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}

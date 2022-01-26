@@ -1,4 +1,4 @@
-import { redisClientP, redisClientPool, redlock } from "@midspace/component-clients/redis";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import type { Callback, RedisClient } from "redis";
 import { promisify } from "util";
 
@@ -44,19 +44,19 @@ export class TableCache {
                         return results[0];
                     }
                 } else if (fetchIfNotFound) {
-                    const lease = await redlock.acquire(`locks:${cacheKey}`, 30000);
+                    //const lease = await redlock.acquire(`locks:${cacheKey}`, 30000);
 
-                    try {
-                        const value = await this.fetch(entityKey);
-                        if (value) {
-                            await this.rawSet(cacheKey, value, redisClient);
-                        } else {
-                            await redisClientP.del(redisClient)(cacheKey);
-                        }
-                        return value;
-                    } finally {
-                        await lease.unlock();
+                    //try {
+                    const value = await this.fetch(entityKey);
+                    if (value) {
+                        await this.rawSet(cacheKey, value, redisClient);
+                    } else {
+                        await redisClientP.del(redisClient)(cacheKey);
                     }
+                    return value;
+                    // } finally {
+                    //     await lease.unlock();
+                    // }
                 }
             } catch (e: any) {
                 await redisClientP.unwatch(redisClient)();
@@ -88,19 +88,19 @@ export class TableCache {
                 // It is possible that just the one field is missing
 
                 if (fetchIfNotFound) {
-                    const lease = await redlock.acquire(`locks:${cacheKey}`, 30000);
+                    // const lease = await redlock.acquire(`locks:${cacheKey}`, 30000);
 
-                    try {
-                        const value = await this.fetch(entityKey);
-                        if (value) {
-                            await this.rawSet(cacheKey, value, redisClient);
-                            return value[fieldKey];
-                        } else {
-                            await redisClientP.del(redisClient)(cacheKey);
-                        }
-                    } finally {
-                        await lease.unlock();
+                    // try {
+                    const value = await this.fetch(entityKey);
+                    if (value) {
+                        await this.rawSet(cacheKey, value, redisClient);
+                        return value[fieldKey];
+                    } else {
+                        await redisClientP.del(redisClient)(cacheKey);
                     }
+                    // } finally {
+                    //     await lease.unlock();
+                    // }
                 }
             } catch (e: any) {
                 await redisClientP.unwatch(redisClient)();
@@ -119,16 +119,16 @@ export class TableCache {
             const redisClient = await redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
             const cacheKey = this.generateEntityKey(entityKey);
             try {
-                const lease = await redlock.acquire(`locks:${cacheKey}`, 5000);
-                try {
-                    if (value) {
-                        await this.rawSet(cacheKey, value, redisClient);
-                    } else {
-                        await redisClientP.del(redisClient)(cacheKey);
-                    }
-                } finally {
-                    await lease.unlock();
+                //const lease = await redlock.acquire(`locks:${cacheKey}`, 5000);
+                //try {
+                if (value) {
+                    await this.rawSet(cacheKey, value, redisClient);
+                } else {
+                    await redisClientP.del(redisClient)(cacheKey);
                 }
+                // } finally {
+                //     await lease.unlock();
+                // }
             } catch (e: any) {
                 console.error("Error setting entity in cache", e);
             } finally {
@@ -144,16 +144,16 @@ export class TableCache {
             const redisClient = await redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
             const cacheKey = this.generateEntityKey(entityKey);
             try {
-                const lease = await redlock.acquire(`locks:${cacheKey}`, 5000);
-                try {
-                    if (value) {
-                        await redisClientP.hset(redisClient)(cacheKey, fieldKey, value);
-                    } else {
-                        await redisClientP.hdel(redisClient)(cacheKey, fieldKey);
-                    }
-                } finally {
-                    await lease.unlock();
+                // const lease = await redlock.acquire(`locks:${cacheKey}`, 5000);
+                // try {
+                if (value) {
+                    await redisClientP.hset(redisClient)(cacheKey, fieldKey, value);
+                } else {
+                    await redisClientP.hdel(redisClient)(cacheKey, fieldKey);
                 }
+                // } finally {
+                //     await lease.unlock();
+                // }
             } catch (e: any) {
                 console.error("Error setting field in cache", e);
             } finally {

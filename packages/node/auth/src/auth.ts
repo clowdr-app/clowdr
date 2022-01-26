@@ -154,9 +154,11 @@ export async function computeAuthHeaders(
         };
 
         if (unverifiedParams.conferenceId) {
+            console.log("Awaiting conferenceCache.getEntity (1)");
             const conference = await conferenceCache.getEntity(unverifiedParams.conferenceId);
 
             if (conference) {
+                console.log("Awaiting evaluateUnauthenticatedConference (1)");
                 await evaluateUnauthenticatedConference(conference, result, unverifiedParams);
             }
         }
@@ -167,6 +169,7 @@ export async function computeAuthHeaders(
         const allowedRoles: HasuraRoleName[] = [];
         let requestedRole = (unverifiedParams.role ?? HasuraRoleName.User) as HasuraRoleName;
 
+        console.log("Awaiting userCache.getEntity (1)");
         const user = await userCache.getEntity(verifiedParams.userId);
         if (user) {
             result[AuthSessionVariables.UserId] = user.id;
@@ -175,7 +178,9 @@ export async function computeAuthHeaders(
             if (unverifiedParams.conferenceId) {
                 const registrantId = user.registrants.find((x) => x.conferenceId === unverifiedParams.conferenceId);
                 if (registrantId) {
+                    console.log("Awaiting registrantCache.getEntity (1)");
                     const registrant = await registrantCache.getEntity(registrantId.id);
+                    console.log("Awaiting conferenceCache.getEntity (2)");
                     const conference = await conferenceCache.getEntity(unverifiedParams.conferenceId);
 
                     if (registrant && conference) {
@@ -191,6 +196,7 @@ export async function computeAuthHeaders(
                                 allowedRoles.push(HasuraRoleName.Moderator);
 
                                 for (const subconferenceId of conference.subconferenceIds) {
+                                    console.log("Awaiting subconferenceCache.getEntity (1)");
                                     const subconference = await subconferenceCache.getEntity(subconferenceId);
                                     if (
                                         subconference?.conferenceVisibilityLevel ===
@@ -209,6 +215,7 @@ export async function computeAuthHeaders(
                                 availableSubconferenceIds = conference.subconferenceIds;
                             } else {
                                 for (const subconferenceId of conference.subconferenceIds) {
+                                    console.log("Awaiting subconferenceCache.getEntity (2)");
                                     const subconference = await subconferenceCache.getEntity(subconferenceId);
                                     if (
                                         subconference?.conferenceVisibilityLevel ===
@@ -225,6 +232,7 @@ export async function computeAuthHeaders(
                                 formatArrayForHasuraHeader(availableSubconferenceIds);
 
                             if (unverifiedParams.roomId) {
+                                console.log("Awaiting roomCache.getEntity (1)");
                                 const room = await roomCache.getEntity(unverifiedParams.roomId);
                                 if (room) {
                                     if (room.conferenceId === conference.id && !room.subconferenceId) {
@@ -240,6 +248,7 @@ export async function computeAuthHeaders(
                                             result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
                                             allowedRoles.push(HasuraRoleName.RoomMember);
                                         } else {
+                                            console.log("Awaiting roomMembershipsCache.getEntity (1)");
                                             const role = await roomMembershipsCache.getField(room.id, registrant.id);
                                             if (role) {
                                                 result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
@@ -263,10 +272,12 @@ export async function computeAuthHeaders(
                             } else if (unverifiedParams.includeRoomIds) {
                                 allowedRoles.push(HasuraRoleName.RoomMember);
 
+                                console.log("Awaiting conferenceRoomsCache.getEntity (1)");
                                 const allRooms: Record<string, string> | undefined =
                                     await conferenceRoomsCache.getEntity(conference.id);
                                 if (allRooms) {
                                     for (const subconferenceId of availableSubconferenceIds) {
+                                        console.log("Awaiting subconferenceRoomsCache.getEntity (1)");
                                         const allSubconfRooms = await subconferenceRoomsCache.getEntity(
                                             subconferenceId
                                         );
@@ -307,6 +318,7 @@ export async function computeAuthHeaders(
                                                 roomManagementMode === Room_ManagementMode_Enum.Managed ||
                                                 roomManagementMode === Room_ManagementMode_Enum.Dm
                                             ) {
+                                                console.log("Awaiting roomMembershipsCache.getEntity (2)");
                                                 const roomMembership = await roomMembershipsCache.getField(
                                                     roomId,
                                                     registrant.id
@@ -342,6 +354,7 @@ export async function computeAuthHeaders(
                                 }
 
                                 if (unverifiedParams.roomId) {
+                                    console.log("Awaiting roomCache.getEntity (2)");
                                     const room = await roomCache.getEntity(unverifiedParams.roomId);
                                     if (room) {
                                         if (
@@ -363,6 +376,7 @@ export async function computeAuthHeaders(
                                                 );
                                                 allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else {
+                                                console.log("Awaiting roomMembershipsCache.getEntity (2)");
                                                 const role = await roomMembershipsCache.getField(
                                                     room.id,
                                                     registrant.id
@@ -389,6 +403,7 @@ export async function computeAuthHeaders(
                                 } else if (unverifiedParams.includeRoomIds) {
                                     allowedRoles.push(HasuraRoleName.RoomMember);
 
+                                    console.log("Awaiting subconferenceRoomsCache.getEntity (2)");
                                     const allRooms = await subconferenceRoomsCache.getEntity(
                                         subconferenceMembership.subconferenceId
                                     );
@@ -424,6 +439,7 @@ export async function computeAuthHeaders(
                                                     roomManagementMode === Room_ManagementMode_Enum.Managed ||
                                                     roomManagementMode === Room_ManagementMode_Enum.Dm
                                                 ) {
+                                                    console.log("Awaiting roomMembershipsCache.getEntity (3)");
                                                     const roomMembership = await roomMembershipsCache.getField(
                                                         roomId,
                                                         registrant.id
@@ -450,6 +466,7 @@ export async function computeAuthHeaders(
                         return false;
                     }
                 } else {
+                    console.log("Awaiting conferenceCache.getEntity (3)");
                     const conference = await conferenceCache.getEntity(unverifiedParams.conferenceId);
                     if (conference) {
                         if (conference.createdBy === user.id) {
@@ -459,6 +476,7 @@ export async function computeAuthHeaders(
                         } else {
                             result[AuthSessionVariables.ConferenceIds] = formatArrayForHasuraHeader([]);
                             result[AuthSessionVariables.SubconferenceIds] = formatArrayForHasuraHeader([]);
+                            console.log("Awaiting evaluateUnauthenticatedConference (2)");
                             if (await evaluateUnauthenticatedConference(conference, result, unverifiedParams)) {
                                 allowedRoles.push(HasuraRoleName.Unauthenticated);
                                 requestedRole = HasuraRoleName.Unauthenticated;
@@ -508,6 +526,7 @@ async function evaluateUnauthenticatedConference(
         result[AuthSessionVariables.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
 
         if (unverifiedParams.subconferenceId) {
+            console.log("Awaiting subconferenceCache.getField (X-1)");
             const conferenceVisibilityLevel = await subconferenceCache.getField(
                 unverifiedParams.subconferenceId,
                 "conferenceVisibilityLevel"
@@ -523,6 +542,7 @@ async function evaluateUnauthenticatedConference(
             // All public subconferences
             const publicSubconferenceIds: string[] = [];
             for (const subconferenceId of conference.subconferenceIds) {
+                console.log("Awaiting subconferenceCache.getField (X-2)");
                 const conferenceVisibilityLevel = await subconferenceCache.getField(
                     subconferenceId,
                     "conferenceVisibilityLevel"

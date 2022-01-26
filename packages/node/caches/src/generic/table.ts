@@ -33,7 +33,9 @@ export class TableCache {
     public async getEntity(entityKey: string, fetchIfNotFound = true): Promise<Record<string, string> | undefined> {
         try {
             const cacheKey = this.generateEntityKey(entityKey);
+            console.log(`Attempting to acquire lock: caches/generic/table:${this.redisRootKey}`);
             const redisClient = await redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
+            console.log(`Acquired lock: caches/generic/table:${this.redisRootKey}`);
             try {
                 await redisClientP.watch(redisClient)(cacheKey);
                 const exists = await redisClientP.exists(redisClient)(cacheKey);
@@ -47,7 +49,9 @@ export class TableCache {
                     const lease = await redlock.acquire(`locks:${cacheKey}`, 30000);
 
                     try {
+                        console.log(`Attempting to fetch: ${entityKey}`);
                         const value = await this.fetch(entityKey);
+                        console.log(`Fetched: ${entityKey}`);
                         if (value) {
                             await this.rawSet(cacheKey, value, redisClient);
                         } else {

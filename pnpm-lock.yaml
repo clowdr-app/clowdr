@@ -1267,6 +1267,7 @@ importers:
       pino-http: 6.0.0
       redis: 3.1.2
       redlock: 4.2.0
+      rimraf: 3.0.2
       typescript: 4.5.2
       typescript-is: 0.19.0_typescript@4.5.2
       utf-8-validate: 5.0.7
@@ -1274,7 +1275,6 @@ importers:
     devDependencies:
       dotenv: 10.0.0
       pino-pretty: 7.2.0
-      rimraf: 3.0.2
       tsc-watch: 4.5.0_typescript@4.5.2
 
   services/dd-proxy:
@@ -10157,6 +10157,12 @@ packages:
       tslib: 2.3.1
       value-or-promise: 1.0.11
 
+  /@graphql-typed-document-node/core/3.1.0:
+    resolution: {integrity: sha512-wYn6r8zVZyQJ6rQaALBEln5B1pzxb9shV5Ef97kTvn6yVGrqyXVnDqnU24MXnFubR+rZjBY9NWuxX3FB2sTsjg==}
+    peerDependencies:
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
+    dev: false
+
   /@graphql-typed-document-node/core/3.1.0_graphql@15.7.2:
     resolution: {integrity: sha512-wYn6r8zVZyQJ6rQaALBEln5B1pzxb9shV5Ef97kTvn6yVGrqyXVnDqnU24MXnFubR+rZjBY9NWuxX3FB2sTsjg==}
     peerDependencies:
@@ -12365,7 +12371,7 @@ packages:
     peerDependencies:
       graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
     dependencies:
-      '@graphql-typed-document-node/core': 3.1.1
+      '@graphql-typed-document-node/core': 3.1.0
       wonka: 4.0.15
     dev: false
 

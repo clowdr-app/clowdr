@@ -19,6 +19,9 @@
         "url": "https://github.com/clowdr-app/clowdr/issues"
     },
     "homepage": "https://github.com/clowdr-app/clowdr#readme",
+    "dependencies": {
+        "typescript": "^4.5.2"
+    },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^5.4.0",
         "@typescript-eslint/parser": "^5.4.0",
@@ -31,7 +34,6 @@
         "lint-staged": "^12.1.2",
         "prettier": "^2.5.0",
         "prettier-plugin-organize-imports": "^2.3.4",
-        "typescript": "^4.5.2",
         "wait-on": "^6.0.0"
     },
     "lint-staged": {

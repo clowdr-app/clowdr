@@ -4,7 +4,6 @@
     "description": "Development setup",
     "scripts": {
         "preinstall": "npx -y only-allow pnpm",
-        "heroku-postbuild": "node ./.scripts/heroku/build.js",
         "lint-staged": "lint-staged",
         "prepare": "node ./prepare.js",
         "hasura:console-when-ready": "cd hasura && npx wait-on http-get://localhost:8080/v1/version && hasura console --envfile ./hasura/.env.local"

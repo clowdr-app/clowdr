@@ -33,15 +33,10 @@ export class TableCache {
     public async getEntity(entityKey: string, fetchIfNotFound = true): Promise<Record<string, string> | undefined> {
         try {
             const cacheKey = this.generateEntityKey(entityKey);
-            console.log(`Attempting to acquire redis client: caches/generic/table:${this.redisRootKey}`);
             const redisClient = await redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
-            console.log(`Acquired redis client: caches/generic/table:${this.redisRootKey}`);
             try {
-                console.log(`Attempting to watch a key: ${cacheKey}`);
                 await redisClientP.watch(redisClient)(cacheKey);
-                console.log(`Watched key: ${cacheKey}`);
                 const exists = await redisClientP.exists(redisClient)(cacheKey);
-                console.log(`Key exists? ${exists} (${exists !== 0})`);
                 if (exists !== 0) {
                     const multi = redisClient.multi();
                     const results = await promisify((cb: Callback<any[]>) => multi.hgetall(cacheKey).exec(cb))();
@@ -49,14 +44,10 @@ export class TableCache {
                         return results[0];
                     }
                 } else if (fetchIfNotFound) {
-                    console.log(`Attempting to acquire lock: locks:${cacheKey}`);
                     const lease = await redlock.acquire(`locks:${cacheKey}`, 30000);
-                    console.log(`Acquired lock: locks:${cacheKey}`);
 
                     try {
-                        console.log(`Attempting to fetch: ${entityKey}`);
                         const value = await this.fetch(entityKey);
-                        console.log(`Fetched: ${entityKey}`);
                         if (value) {
                             await this.rawSet(cacheKey, value, redisClient);
                         } else {

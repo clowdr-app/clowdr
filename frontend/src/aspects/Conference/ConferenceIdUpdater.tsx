@@ -34,7 +34,7 @@ export default function useConferenceIdUpdater(): void {
     const returnedConferenceSlug = conferenceResponse.data?.conference_Conference[0]?.slug;
     const loading = conferenceResponse.fetching;
     useEffect(() => {
-        if (!loading && conferenceSlug === returnedConferenceSlug) {
+        if (!loading && conferenceSlug && conferenceSlug === returnedConferenceSlug) {
             setConferenceId(conferenceId ?? "NONE");
         } else {
             setConferenceId(conferenceResponse.data?.conference_Conference.length === 0 ? "NONE" : null);

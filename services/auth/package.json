@@ -14,6 +14,7 @@
     "author": "Clowdr CIC",
     "license": "AGPL-3.0-or-later",
     "dependencies": {
+        "@graphql-typed-document-node/core": "^3.1.1",
         "@midspace/auth": "workspace:*",
         "@midspace/server-utils": "workspace:*",
         "@socket.io/redis-emitter": "^4.1.0",
@@ -34,6 +35,7 @@
         "@urql/exchange-retry": "^0.3.0",
         "amqplib": "^0.8.0",
         "assert": "^2.0.0",
+        "body-parser": "^1.19.1",
         "bufferutil": "^4.0.5",
         "cors": "^2.8.5",
         "cpy-cli": "^3.1.1",

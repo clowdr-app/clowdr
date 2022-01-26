@@ -1,9 +1,9 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
-import type { Conference_Conference } from "@midspace/graphql/graphql";
 import { gql } from "@urql/core";
 import type { NextFunction, Request, Response } from "express";
 import { assertType } from "typescript-is";
 import type {
+    Conference_Conference,
     InsertAnnouncementsChatMutation,
     InsertAnnouncementsChatMutationVariables,
     SetAnnouncementsChatMutation,

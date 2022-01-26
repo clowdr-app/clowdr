@@ -32,6 +32,7 @@ export default function ListConferencesView(): JSX.Element {
             <>
                 <List spacing={2} display="flex" flexDir="column" alignItems="stretch">
                     {[...registrants]
+                        .filter((x) => Boolean(x.conference))
                         .sort((x, y) => x.conference.shortName.localeCompare(y.conference.shortName))
                         .map((registrant) => {
                             return (

@@ -33,12 +33,14 @@ SOFTWARE.
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Checkbox, Code, Divider, Heading, Image, Link, List, ListItem, Text } from "@chakra-ui/react";
+import type { ThemeTypings } from "@chakra-ui/react";
+import { Code, Divider, Heading, Link, ListItem, OrderedList, Text, UnorderedList } from "@chakra-ui/react";
 import anchorme from "anchorme";
 import React, { useMemo } from "react";
-import { Twemoji } from "react-emoji-render";
 import ReactMarkdown from "react-markdown";
 import ReactPlayer from "react-player";
+import rehypeTwemojify from "rehype-twemojify";
+import remarkEmoji from "remark-emoji";
 import matchAll from "string.prototype.matchall";
 
 export function parseYouTubeURL(youtubeURL: string): string | undefined {
@@ -52,14 +54,28 @@ export function parseYouTubeURL(youtubeURL: string): string | undefined {
     return undefined;
 }
 
-function emojify(text: string): JSX.Element {
-    try {
-        const emojified = <Twemoji className="twemoji" text={text} />;
-        return emojified;
-    } catch (e) {
-        console.error(`Could not emojify ${text}`);
-    }
-    return <>{text}</>;
+function getHeadingSize(
+    level: 1 | 2 | 3 | 4 | 5 | 6,
+    restrictHeadingSize: boolean
+): ThemeTypings["components"]["Heading"]["sizes"] {
+    const normal = {
+        1: "2xl",
+        2: "xl",
+        3: "lg",
+        4: "md",
+        5: "sm",
+        6: "xs",
+    };
+    const small = {
+        1: "md",
+        2: "sm",
+        3: "xs",
+        4: "xs",
+        5: "xs",
+        6: "xs",
+    };
+
+    return (restrictHeadingSize ? small : normal)[level];
 }
 
 function getCoreProps(props: any) {
@@ -103,17 +119,129 @@ export function Markdown(elProps?: {
         <ReactMarkdown
             className={elProps?.className}
             linkTarget="_blank"
-            renderers={{
-                text: (props) => {
-                    const { value } = props;
+            rehypePlugins={[[rehypeTwemojify, { folder: "svg", ext: ".svg" }]]}
+            remarkPlugins={[[remarkEmoji, { emoticon: true }]]}
+            components={{
+                a({ node: _node, children, ...props }) {
                     return (
-                        <Text as="span" textDecoration="inherit">
-                            {emojify(value)}
-                        </Text>
+                        <Link
+                            color={elProps?.linkColour}
+                            isExternal={true}
+                            rel="external noopener noreferrer"
+                            textDecoration="underline"
+                            {...props}
+                        >
+                            {children}
+                            <sup>
+                                <ExternalLinkIcon mx="2px" fontSize="1rem" paddingTop="2px" />
+                            </sup>
+                        </Link>
                     );
                 },
-                image: ({ src, alt }) => {
-                    const youtubeVideoId = parseYouTubeURL(src);
+                blockquote({ node: _node, ...props }) {
+                    return <Code p={2} {...props} />;
+                },
+                code({ node: _node, ...props }) {
+                    // TODO: add code highlighting
+                    // const { language, value } = props;
+                    // const className = language && `language-${language}`;
+                    return (
+                        <pre {...getCoreProps(props)}>
+                            <Code p={2} {...props} /*className={className || null}*/>
+                                {props.children}
+                            </Code>
+                        </pre>
+                    );
+                },
+                del({ node: _node, ...props }) {
+                    return <Text as="del" whiteSpace="normal" wordBreak="break-word" {...props} />;
+                },
+                em({ node: _node, ...props }) {
+                    return <Text as="em" whiteSpace="normal" wordBreak="break-word" {...props} />;
+                },
+                h1({ node: _node, ...props }) {
+                    return (
+                        <Heading
+                            my={4}
+                            textAlign="left"
+                            as="h1"
+                            size={getHeadingSize(1, Boolean(elProps?.restrictHeadingSize))}
+                            whiteSpace="normal"
+                            wordBreak="break-word"
+                            {...props}
+                        />
+                    );
+                },
+                h2({ node: _node, ...props }) {
+                    return (
+                        <Heading
+                            my={4}
+                            textAlign="left"
+                            as="h2"
+                            size={getHeadingSize(2, Boolean(elProps?.restrictHeadingSize))}
+                            whiteSpace="normal"
+                            wordBreak="break-word"
+                            {...props}
+                        />
+                    );
+                },
+                h3({ node: _node, ...props }) {
+                    return (
+                        <Heading
+                            my={4}
+                            textAlign="left"
+                            as="h3"
+                            size={getHeadingSize(3, Boolean(elProps?.restrictHeadingSize))}
+                            whiteSpace="normal"
+                            wordBreak="break-word"
+                            {...props}
+                        />
+                    );
+                },
+                h4({ node: _node, ...props }) {
+                    return (
+                        <Heading
+                            my={4}
+                            textAlign="left"
+                            as="h4"
+                            size={getHeadingSize(4, Boolean(elProps?.restrictHeadingSize))}
+                            whiteSpace="normal"
+                            wordBreak="break-word"
+                            {...props}
+                        />
+                    );
+                },
+                h5({ node: _node, ...props }) {
+                    return (
+                        <Heading
+                            my={4}
+                            textAlign="left"
+                            as="h5"
+                            size={getHeadingSize(5, Boolean(elProps?.restrictHeadingSize))}
+                            whiteSpace="normal"
+                            wordBreak="break-word"
+                            {...props}
+                        />
+                    );
+                },
+                h6({ node: _node, ...props }) {
+                    return (
+                        <Heading
+                            my={4}
+                            textAlign="left"
+                            as="h6"
+                            size={getHeadingSize(6, Boolean(elProps?.restrictHeadingSize))}
+                            whiteSpace="normal"
+                            wordBreak="break-word"
+                            {...props}
+                        />
+                    );
+                },
+                hr({ node: _node, ...props }) {
+                    return <Divider borderColor="gray.400" variant="dashed" {...props} />;
+                },
+                img({ node: _node, children: _children, ...props }) {
+                    const youtubeVideoId = parseYouTubeURL(props.src ?? "");
                     if (youtubeVideoId) {
                         return (
                             <ReactPlayer
@@ -128,129 +256,25 @@ export function Markdown(elProps?: {
                             />
                         );
                     } else {
-                        return <img src={src} alt={alt} />;
+                        return <img {...props} />;
                     }
                 },
-                link: function customLink({ href, children }: { href: string; children: JSX.Element }): JSX.Element {
-                    return (
-                        <Link
-                            href={href}
-                            color={elProps?.linkColour}
-                            isExternal={true}
-                            rel="external noopener noreferrer"
-                            textDecoration="underline"
-                        >
-                            {children}
-                            <sup>
-                                <ExternalLinkIcon mx="2px" fontSize="1rem" paddingTop="2px" />
-                            </sup>
-                        </Link>
-                    );
+                li({ node: _node, ...props }) {
+                    return <ListItem {...props} />;
+                },
+                ol({ node: _node, ...props }) {
+                    return <OrderedList pl={4} mb={2} {...props} />;
+                },
+                p({ node: _node, ...props }) {
+                    return <Text mb={2} whiteSpace="normal" wordBreak="break-word" {...props} />;
                 },
 
-                paragraph: (props) => {
-                    const { children } = props;
-                    return (
-                        <Text mb={2} whiteSpace="normal" wordBreak="break-word">
-                            {children}
-                        </Text>
-                    );
-                },
-                emphasis: (props) => {
-                    const { children } = props;
-                    return (
-                        <Text as="em" whiteSpace="normal" wordBreak="break-word">
-                            {children}
-                        </Text>
-                    );
-                },
-                blockquote: (props) => {
-                    const { children } = props;
-                    return <Code p={2}>{children}</Code>;
-                },
-                code: (props) => {
-                    const { language, value } = props;
-                    const className = language && `language-${language}`;
-                    return (
-                        <pre {...getCoreProps(props)}>
-                            <Code p={2} className={className || null}>
-                                {value}
-                            </Code>
-                        </pre>
-                    );
-                },
-                delete: (props) => {
-                    const { children } = props;
-                    return (
-                        <Text as="del" whiteSpace="normal" wordBreak="break-word">
-                            {children}
-                        </Text>
-                    );
-                },
-                thematicBreak: () => <Divider borderColor="gray.400" variant="dashed" />,
-                img: Image,
-                linkReference: Link,
-                imageReference: Image,
-                list: (props) => {
-                    const { start, ordered, children, depth } = props;
-                    const attrs = getCoreProps(props);
-                    if (start !== null && start !== 1 && start !== undefined) {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        attrs.start = start.toString();
-                    }
-                    let styleType = "disc";
-                    if (ordered) styleType = "decimal";
-                    if (depth === 1) styleType = "circle";
-                    return (
-                        <List as={ordered ? "ol" : "ul"} styleType={styleType} pl={4} mb={2} {...attrs}>
-                            {children}
-                        </List>
-                    );
-                },
-                listItem: (props) => {
-                    const { children, checked } = props;
-                    let checkbox = null;
-                    if (checked !== null && checked !== undefined) {
-                        checkbox = (
-                            <Checkbox isChecked={checked} isReadOnly>
-                                {children}
-                            </Checkbox>
-                        );
-                    }
-                    return (
-                        <ListItem {...getCoreProps(props)} listStyleType={checked !== null ? "none" : "inherit"}>
-                            {checkbox || children}
-                        </ListItem>
-                    );
-                },
-                definition: () => null,
-                heading: (props) => {
-                    const { level, children } = props;
-                    const sizes = elProps?.restrictHeadingSize
-                        ? ["md", "sm", "xs", "xs", "xs", "xs"]
-                        : ["2xl", "xl", "lg", "md", "sm", "xs"];
-                    return (
-                        <Heading
-                            my={4}
-                            textAlign="left"
-                            as={`h${level}` as any}
-                            size={sizes[level - 1]}
-                            {...getCoreProps(props)}
-                            whiteSpace="normal"
-                            wordBreak="break-word"
-                        >
-                            {children}
-                        </Heading>
-                    );
-                },
-                inlineCode: (props) => {
-                    const { children } = props;
-                    return <Code {...getCoreProps(props)}>{children}</Code>;
+                ul({ node: _node, ...props }) {
+                    return <UnorderedList pl={4} mb={2} {...props} />;
                 },
             }}
-            escapeHtml={true}
-            source={source}
-        />
+        >
+            {source}
+        </ReactMarkdown>
     );
 }

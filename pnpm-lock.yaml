@@ -423,6 +423,7 @@ importers:
       '@types/jwk-to-pem': ^2.0.0
       '@types/node-fetch': ^2.5.10
       '@types/pino-http': npm:pino-http@^6.6.0
+      '@types/ramda': ^0.27.64
       '@types/redis': ^2.8.30
       '@types/redlock': ^4.0.2
       '@types/uuid': ^8.3.0
@@ -446,6 +447,7 @@ importers:
       node-env-run: ^4.0.2
       node-fetch: ^2.6.1
       pino: ^7.6.4
+      ramda: ^0.27.1
       redis: ^3.1.2
       redlock: ^4.2.0
       rimraf: ^3.0.2
@@ -471,6 +473,7 @@ importers:
       '@types/jwk-to-pem': 2.0.1
       '@types/node-fetch': 2.5.12
       '@types/pino-http': /pino-http/6.6.0
+      '@types/ramda': 0.27.64
       '@types/redis': 2.8.32
       '@types/redlock': 4.0.2
       '@types/uuid': 8.3.1
@@ -494,6 +497,7 @@ importers:
       node-env-run: 4.0.2
       node-fetch: 2.6.5
       pino: 7.6.4
+      ramda: 0.27.1
       redis: 3.1.2
       redlock: 4.2.0
       rimraf: 3.0.2
@@ -541,6 +545,7 @@ importers:
       '@types/jsonwebtoken': ^8.5.3
       '@types/jwk-to-pem': ^2.0.0
       '@types/node-fetch': ^2.5.10
+      '@types/ramda': ^0.27.64
       '@types/redis': ^2.8.30
       '@types/redlock': ^4.0.2
       '@types/uuid': ^8.3.0
@@ -563,6 +568,7 @@ importers:
       node-env-run: ^4.0.2
       node-fetch: ^2.6.1
       pino: ^7.6.4
+      ramda: ^0.27.1
       redis: ^3.1.2
       redlock: ^4.2.0
       rimraf: ^3.0.2
@@ -594,6 +600,7 @@ importers:
       '@types/jsonwebtoken': 8.5.5
       '@types/jwk-to-pem': 2.0.1
       '@types/node-fetch': 2.5.12
+      '@types/ramda': 0.27.64
       '@types/redis': 2.8.32
       '@types/redlock': 4.0.2
       '@types/uuid': 8.3.1
@@ -616,6 +623,7 @@ importers:
       node-env-run: 4.0.2
       node-fetch: 2.6.5
       pino: 7.6.4
+      ramda: 0.27.1
       redis: 3.1.2
       redlock: 4.2.0
       subscriptions-transport-ws: 0.9.19_acd0233f23cbd4adaed8ca3972580acc
@@ -1104,6 +1112,7 @@ importers:
       '@types/jsonwebtoken': ^8.5.6
       '@types/jwk-to-pem': ^2.0.1
       '@types/node-fetch': ^2.5.10
+      '@types/ramda': ^0.27.64
       '@types/redis': ^2.8.32
       '@types/redlock': ^4.0.2
       '@types/uuid': ^8.3.1
@@ -1127,6 +1136,7 @@ importers:
       pino: ^7.6.4
       pino-http: ^6.6.0
       pino-pretty: ^7.2.0
+      ramda: ^0.27.1
       redis: ^3.1.2
       redlock: ^4.2.0
       rimraf: ^3.0.2
@@ -1148,6 +1158,7 @@ importers:
       '@types/jsonwebtoken': 8.5.6
       '@types/jwk-to-pem': 2.0.1
       '@types/node-fetch': 2.5.12
+      '@types/ramda': 0.27.64
       '@types/redis': 2.8.32
       '@types/redlock': 4.0.2
       '@types/uuid': 8.3.1
@@ -1170,6 +1181,7 @@ importers:
       node-fetch: 2.6.6
       pino: 7.6.4
       pino-http: 6.6.0
+      ramda: 0.27.1
       redis: 3.1.2
       redlock: 4.2.0
       rimraf: 3.0.2
@@ -1197,6 +1209,7 @@ importers:
       '@types/jsonwebtoken': ^8.5.6
       '@types/jwk-to-pem': ^2.0.1
       '@types/node-fetch': ^2.5.10
+      '@types/ramda': ^0.27.64
       '@types/redis': ^2.8.32
       '@types/redlock': ^4.0.2
       '@types/uuid': ^8.3.1
@@ -1220,6 +1233,7 @@ importers:
       pino: ^7.6.4
       pino-http: ^6.6.0
       pino-pretty: ^7.2.0
+      ramda: ^0.27.1
       redis: ^3.1.2
       redlock: ^4.2.0
       rimraf: ^3.0.2
@@ -1242,6 +1256,7 @@ importers:
       '@types/jsonwebtoken': 8.5.6
       '@types/jwk-to-pem': 2.0.1
       '@types/node-fetch': 2.5.12
+      '@types/ramda': 0.27.64
       '@types/redis': 2.8.32
       '@types/redlock': 4.0.2
       '@types/uuid': 8.3.1
@@ -1263,6 +1278,7 @@ importers:
       node-fetch: 2.6.6
       pino: 7.6.4
       pino-http: 6.6.0
+      ramda: 0.27.1
       redis: 3.1.2
       redlock: 4.2.0
       rimraf: 3.0.2
@@ -1502,6 +1518,7 @@ importers:
       '@types/jsonwebtoken': ^8.5.6
       '@types/jwk-to-pem': ^2.0.1
       '@types/node-fetch': ^2.5.10
+      '@types/ramda': ^0.27.64
       '@types/redis': ^2.8.30
       '@types/redlock': ^4.0.1
       '@types/socket.io': ^3.0.1
@@ -1530,6 +1547,7 @@ importers:
       node-fetch: ^2.6.1
       pino: ^7.6.4
       pino-pretty: ^7.2.0
+      ramda: ^0.27.1
       redis: ^3.1.2
       redlock: ^4.2.0
       rimraf: ^3.0.2
@@ -1565,6 +1583,7 @@ importers:
       '@types/jsonwebtoken': 8.5.6
       '@types/jwk-to-pem': 2.0.1
       '@types/node-fetch': 2.5.12
+      '@types/ramda': 0.27.64
       '@types/redis': 2.8.32
       '@types/redlock': 4.0.2
       '@types/socket.io': 3.0.2_5971b5a749a91823f5467a6d31a2f8b3
@@ -1592,6 +1611,7 @@ importers:
       node-fetch: 2.6.5
       pino: 7.6.4
       pino-pretty: 7.2.0
+      ramda: 0.27.1
       redis: 3.1.2
       redlock: 4.2.0
       rimraf: 3.0.2
@@ -11706,6 +11726,12 @@ packages:
       ts-toolbelt: 6.15.5
     dev: false
 
+  /@types/ramda/0.27.64:
+    resolution: {integrity: sha512-EDf++ss/JoMiDpvT1MuA8oi88OwpvmqVE+o8Ojm5v/5bdJEPZ6eIQd/XYAeQ0imlwG6Tf0Npfq4Z9w3hAKBk9Q==}
+    dependencies:
+      ts-toolbelt: 6.15.5
+    dev: false
+
   /@types/range-parser/1.2.4:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
     dev: false
@@ -18036,7 +18062,7 @@ packages:
     peerDependencies:
       ws: '*'
     dependencies:
-      ws: 8.2.3
+      ws: 8.2.3_5971b5a749a91823f5467a6d31a2f8b3
 
   /isstream/0.1.2:
     resolution: {integrity: sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=}

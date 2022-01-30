@@ -1,6 +1,6 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
-import type { P } from "pino";
+import type P from "pino";
 import type {
     ChatCacheDataFragment,
     Chat_Chat_Bool_Exp,
@@ -10,7 +10,7 @@ import type {
     GetChatsForHydrationQueryVariables,
 } from "./generated/graphql";
 import { GetChatDocument, GetChatsForHydrationDocument } from "./generated/graphql";
-import type { CacheRecord, HydrationRecord } from "./generic/table";
+import type { CacheRecord } from "./generic/table";
 import { TableCache } from "./generic/table";
 
 gql`
@@ -119,16 +119,10 @@ export class ChatCache {
                 })
                 .toPromise();
             if (response?.data) {
-                const records: HydrationRecord<keyof ChatCacheRecord>[] = [];
-
-                for (const chat of response.data.chat_Chat) {
-                    records.push({
-                        data: this.convertToCacheRecord(chat),
-                        entityKey: chat.id,
-                    });
-                }
-
-                return records;
+                return response.data.chat_Chat.map((record) => ({
+                    data: this.convertToCacheRecord(record),
+                    entityKey: record.id,
+                }));
             }
 
             return undefined;
@@ -222,5 +216,9 @@ export class ChatCache {
             const newEntity = update(entity);
             await this.setEntity(id, newEntity);
         }
+    }
+
+    public async hydrateIfNecessary(filters: ChatHydrationFilters): Promise<void> {
+        return this.cache.hydrateIfNecessary(filters);
     }
 }

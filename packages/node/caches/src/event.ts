@@ -1,16 +1,34 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
-import type { P } from "pino";
-import type { GetEventQuery, GetEventQueryVariables } from "./generated/graphql";
-import { GetEventDocument } from "./generated/graphql";
+import type P from "pino";
+import type {
+    EventCacheDataFragment,
+    GetEventQuery,
+    GetEventQueryVariables,
+    GetEventsForHydrationQuery,
+    GetEventsForHydrationQueryVariables,
+    Schedule_Event_Bool_Exp,
+} from "./generated/graphql";
+import { GetEventDocument, GetEventsForHydrationDocument } from "./generated/graphql";
+import type { CacheRecord } from "./generic/table";
 import { TableCache } from "./generic/table";
 
 gql`
+    fragment EventCacheData on schedule_Event {
+        id
+        conferenceId
+        roomId
+    }
+
     query GetEvent($id: uuid!) {
         schedule_Event_by_pk(id: $id) {
-            id
-            conferenceId
-            roomId
+            ...EventCacheData
+        }
+    }
+
+    query GetEventsForHydration($filters: schedule_Event_bool_exp!) {
+        schedule_Event(where: $filters) {
+            ...EventCacheData
         }
     }
 `;
@@ -21,26 +39,110 @@ export interface EventEntity {
     roomId: string;
 }
 
+interface EventCacheRecord {
+    id: string;
+    conferenceId: string;
+    roomId: string;
+}
+
+export type EventHydrationFilters =
+    | {
+          id: string;
+      }
+    | ((
+          | {
+                conferenceId: string;
+            }
+          | {
+                roomId: string;
+            }
+      ) &
+          (
+              | {
+                    startLte: string;
+                }
+              | {
+                    endGte: string;
+                }
+              | {
+                    startLte: string;
+                    endGte: string;
+                }
+          ));
+
 export class EventCache {
     constructor(private readonly logger: P.Logger) {}
 
-    private readonly cache = new TableCache(this.logger, "Event", async (id) => {
-        const response = await gqlClient
-            ?.query<GetEventQuery, GetEventQueryVariables>(GetEventDocument, {
-                id,
-            })
-            .toPromise();
+    private readonly cache = new TableCache<keyof EventCacheRecord, EventHydrationFilters>(
+        this.logger,
+        "Event",
+        async (id) => {
+            const response = await gqlClient
+                ?.query<GetEventQuery, GetEventQueryVariables>(GetEventDocument, {
+                    id,
+                })
+                .toPromise();
 
-        const data = response?.data?.schedule_Event_by_pk;
-        if (data) {
-            return {
-                id: data.id,
-                conferenceId: data.conferenceId,
-                roomId: data.roomId,
-            };
+            const data = response?.data?.schedule_Event_by_pk;
+            if (data) {
+                return this.convertToCacheRecord(data);
+            }
+            return undefined;
+        },
+        async (filters) => {
+            const gqlFilters: Schedule_Event_Bool_Exp = {};
+
+            if ("id" in filters) {
+                gqlFilters.id = {
+                    _eq: filters.id,
+                };
+            } else if ("conferenceId" in filters) {
+                gqlFilters.conferenceId = {
+                    _eq: filters.conferenceId,
+                };
+            } else if ("roomId" in filters) {
+                gqlFilters.roomId = {
+                    _eq: filters.roomId,
+                };
+            }
+
+            if ("startLte" in filters) {
+                gqlFilters.startTime = {
+                    _lte: filters.startLte,
+                };
+            }
+            if ("endGte" in filters) {
+                gqlFilters.endTime = {
+                    _lte: filters.endGte,
+                };
+            }
+
+            const response = await gqlClient
+                ?.query<GetEventsForHydrationQuery, GetEventsForHydrationQueryVariables>(
+                    GetEventsForHydrationDocument,
+                    {
+                        filters: gqlFilters,
+                    }
+                )
+                .toPromise();
+            if (response?.data) {
+                return response.data.schedule_Event.map((record) => ({
+                    data: this.convertToCacheRecord(record),
+                    entityKey: record.id,
+                }));
+            }
+
+            return undefined;
         }
-        return undefined;
-    });
+    );
+
+    private convertToCacheRecord(data: EventCacheDataFragment): CacheRecord<keyof EventCacheRecord> {
+        return {
+            id: data.id,
+            conferenceId: data.conferenceId,
+            roomId: data.roomId,
+        };
+    }
 
     public async getEntity(id: string, fetchIfNotFound = true): Promise<EventEntity | undefined> {
         const rawEntity = await this.cache.getEntity(id, fetchIfNotFound);
@@ -111,5 +213,9 @@ export class EventCache {
             const newEntity = update(entity);
             await this.setEntity(id, newEntity);
         }
+    }
+
+    public async hydrateIfNecessary(filters: EventHydrationFilters): Promise<void> {
+        return this.cache.hydrateIfNecessary(filters);
     }
 }

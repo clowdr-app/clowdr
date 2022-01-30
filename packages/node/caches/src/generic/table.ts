@@ -1,6 +1,7 @@
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
+import crypto from "crypto";
 import { hrtime } from "node:process";
-import type { P } from "pino";
+import type P from "pino";
 import type { Callback, RedisClient } from "redis";
 import { promisify } from "util";
 
@@ -26,6 +27,10 @@ export class TableCache<CacheRecordKeys extends string, HydrationInputFilters ex
 
     public generateEntityKey(itemKey: string): string {
         return `caches.${this.redisRootKey}:${itemKey}`;
+    }
+
+    public generateLastHydratedKey(): string {
+        return `caches.${this.redisRootKey}::hydratedAt`;
     }
 
     private async rawSet(cacheKey: string, value: CacheRecord<CacheRecordKeys>, redisClient: RedisClient) {
@@ -284,6 +289,56 @@ export class TableCache<CacheRecordKeys extends string, HydrationInputFilters ex
             }
         } finally {
             await redisClientPool.release("TableCache.hydrate", redisClient);
+        }
+    }
+
+    public async hydrateIfNecessary(filters: HydrationInputFilters): Promise<void> {
+        const filtersHash = crypto.createHash("sha256").update(JSON.stringify(filters)).digest().toString("base64");
+        const lastHydratedAtKey = this.generateLastHydratedKey();
+        let shouldHydrate = false;
+        let lastHydratedAtStr: string | undefined | null = undefined;
+
+        let redisClient = await redisClientPool.acquire("TableCache.hydrateIfNecessary(A)");
+        try {
+            lastHydratedAtStr = await redisClientP.hget(redisClient)(lastHydratedAtKey, filtersHash);
+            const lastHydratedAt = lastHydratedAtStr?.length ? Date.parse(lastHydratedAtStr) : undefined;
+            if (!lastHydratedAt || lastHydratedAt < Date.now() - 24 * 60 * 60 * 1000) {
+                try {
+                    await redisClientP.hset(redisClient)(lastHydratedAtKey, filtersHash, new Date().toISOString());
+                    shouldHydrate = true;
+                } catch (e: any) {
+                    shouldHydrate = false;
+
+                    if (lastHydratedAtStr) {
+                        await redisClientP.hset(redisClient)(lastHydratedAtKey, filtersHash, lastHydratedAtStr);
+                    } else {
+                        await redisClientP.hdel(redisClient)(lastHydratedAtKey, filtersHash);
+                    }
+
+                    throw e;
+                }
+            }
+        } finally {
+            await redisClientPool.release("TableCache.hydrateIfNecessary(A)", redisClient);
+        }
+
+        if (shouldHydrate) {
+            try {
+                await this.hydrate(filters);
+            } catch (e: any) {
+                try {
+                    redisClient = await redisClientPool.acquire("TableCache.hydrateIfNecessary(B)");
+                    if (lastHydratedAtStr) {
+                        await redisClientP.hset(redisClient)(lastHydratedAtKey, filtersHash, lastHydratedAtStr);
+                    } else {
+                        await redisClientP.hdel(redisClient)(lastHydratedAtKey, filtersHash);
+                    }
+                } finally {
+                    await redisClientPool.release("TableCache.hydrateIfNecessary(B)", redisClient);
+                }
+
+                throw e;
+            }
         }
     }
 }

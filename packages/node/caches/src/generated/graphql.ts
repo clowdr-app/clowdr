@@ -36012,48 +36012,86 @@ export type GetChatsForHydrationQuery = { __typename?: "query_root" } & {
     chat_Chat: Array<{ __typename?: "chat_Chat" } & ChatCacheDataFragment>;
 };
 
+export type ConferenceCacheDataFragment = { __typename?: "conference_Conference" } & Pick<
+    Conference_Conference,
+    "id" | "shortName" | "slug" | "conferenceVisibilityLevel" | "createdBy"
+> & { subconferences: Array<{ __typename?: "conference_Subconference" } & Pick<Conference_Subconference, "id">> };
+
 export type GetConferenceQueryVariables = Exact<{
     id: Scalars["uuid"];
 }>;
 
 export type GetConferenceQuery = { __typename?: "query_root" } & {
-    conference_Conference_by_pk?: Maybe<
-        { __typename?: "conference_Conference" } & Pick<
-            Conference_Conference,
-            "id" | "shortName" | "slug" | "conferenceVisibilityLevel" | "createdBy"
-        > & {
-                subconferences: Array<
-                    { __typename?: "conference_Subconference" } & Pick<Conference_Subconference, "id">
-                >;
-            }
-    >;
+    conference_Conference_by_pk?: Maybe<{ __typename?: "conference_Conference" } & ConferenceCacheDataFragment>;
 };
+
+export type GetConferencesForHydrationQueryVariables = Exact<{
+    filters: Conference_Conference_Bool_Exp;
+}>;
+
+export type GetConferencesForHydrationQuery = { __typename?: "query_root" } & {
+    conference_Conference: Array<{ __typename?: "conference_Conference" } & ConferenceCacheDataFragment>;
+};
+
+export type ConferenceRoomCacheDataFragment = { __typename?: "room_Room" } & Pick<
+    Room_Room,
+    "id" | "managementModeName"
+>;
 
 export type GetConferenceRoomsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
 }>;
 
 export type GetConferenceRoomsQuery = { __typename?: "query_root" } & {
-    room_Room: Array<{ __typename?: "room_Room" } & Pick<Room_Room, "id" | "managementModeName">>;
+    room_Room: Array<{ __typename?: "room_Room" } & ConferenceRoomCacheDataFragment>;
 };
+
+export type EventCacheDataFragment = { __typename?: "schedule_Event" } & Pick<
+    Schedule_Event,
+    "id" | "conferenceId" | "roomId"
+>;
 
 export type GetEventQueryVariables = Exact<{
     id: Scalars["uuid"];
 }>;
 
 export type GetEventQuery = { __typename?: "query_root" } & {
-    schedule_Event_by_pk?: Maybe<
-        { __typename?: "schedule_Event" } & Pick<Schedule_Event, "id" | "conferenceId" | "roomId">
-    >;
+    schedule_Event_by_pk?: Maybe<{ __typename?: "schedule_Event" } & EventCacheDataFragment>;
 };
+
+export type GetEventsForHydrationQueryVariables = Exact<{
+    filters: Schedule_Event_Bool_Exp;
+}>;
+
+export type GetEventsForHydrationQuery = { __typename?: "query_root" } & {
+    schedule_Event: Array<{ __typename?: "schedule_Event" } & EventCacheDataFragment>;
+};
+
+export type ChatPinCacheDataFragment = { __typename?: "chat_Pin" } & Pick<
+    Chat_Pin,
+    "chatId" | "registrantId" | "wasManuallyPinned"
+>;
 
 export type GetChatPinsQueryVariables = Exact<{
     chatId: Scalars["uuid"];
 }>;
 
 export type GetChatPinsQuery = { __typename?: "query_root" } & {
-    chat_Pin: Array<{ __typename?: "chat_Pin" } & Pick<Chat_Pin, "chatId" | "registrantId" | "wasManuallyPinned">>;
+    chat_Pin: Array<{ __typename?: "chat_Pin" } & ChatPinCacheDataFragment>;
 };
+
+export type GetChatPinsForHydrationQueryVariables = Exact<{
+    filters: Chat_Pin_Bool_Exp;
+}>;
+
+export type GetChatPinsForHydrationQuery = { __typename?: "query_root" } & {
+    chat_Pin: Array<{ __typename?: "chat_Pin" } & ChatPinCacheDataFragment>;
+};
+
+export type PushNotificationSubscriptionCacheDataFragment = { __typename?: "PushNotificationSubscription" } & Pick<
+    PushNotificationSubscription,
+    "userId" | "endpoint" | "p256dh" | "auth"
+>;
 
 export type GetPushNotificationSubscriptionsQueryVariables = Exact<{
     userId: Scalars["String"];
@@ -36061,67 +36099,107 @@ export type GetPushNotificationSubscriptionsQueryVariables = Exact<{
 
 export type GetPushNotificationSubscriptionsQuery = { __typename?: "query_root" } & {
     PushNotificationSubscription: Array<
-        { __typename?: "PushNotificationSubscription" } & Pick<
-            PushNotificationSubscription,
-            "userId" | "endpoint" | "p256dh" | "auth"
-        >
+        { __typename?: "PushNotificationSubscription" } & PushNotificationSubscriptionCacheDataFragment
     >;
 };
+
+export type ReadUpToIndexCacheDataFragment = { __typename?: "chat_ReadUpToIndex" } & Pick<
+    Chat_ReadUpToIndex,
+    "chatId" | "messageSId"
+> & { registrant: { __typename?: "registrant_Registrant" } & Pick<Registrant_Registrant, "userId"> };
 
 export type GetReadUpToIndicesQueryVariables = Exact<{
     chatId: Scalars["uuid"];
 }>;
 
 export type GetReadUpToIndicesQuery = { __typename?: "query_root" } & {
-    chat_ReadUpToIndex: Array<
-        { __typename?: "chat_ReadUpToIndex" } & Pick<Chat_ReadUpToIndex, "chatId" | "messageSId"> & {
-                registrant: { __typename?: "registrant_Registrant" } & Pick<Registrant_Registrant, "userId">;
-            }
-    >;
+    chat_ReadUpToIndex: Array<{ __typename?: "chat_ReadUpToIndex" } & ReadUpToIndexCacheDataFragment>;
 };
+
+export type GetReadUpToIndicesForHydrationQueryVariables = Exact<{
+    filters: Chat_ReadUpToIndex_Bool_Exp;
+}>;
+
+export type GetReadUpToIndicesForHydrationQuery = { __typename?: "query_root" } & {
+    chat_ReadUpToIndex: Array<{ __typename?: "chat_ReadUpToIndex" } & ReadUpToIndexCacheDataFragment>;
+};
+
+export type RegistrantCacheDataFragment = { __typename?: "registrant_Registrant" } & Pick<
+    Registrant_Registrant,
+    "id" | "conferenceRole" | "displayName" | "userId"
+> & {
+        subconferenceMemberships: Array<
+            { __typename?: "registrant_SubconferenceMembership" } & Pick<
+                Registrant_SubconferenceMembership,
+                "id" | "subconferenceId" | "role"
+            >
+        >;
+    };
 
 export type GetRegistrantQueryVariables = Exact<{
     id: Scalars["uuid"];
 }>;
 
 export type GetRegistrantQuery = { __typename?: "query_root" } & {
-    registrant_Registrant_by_pk?: Maybe<
-        { __typename?: "registrant_Registrant" } & Pick<
-            Registrant_Registrant,
-            "id" | "conferenceRole" | "displayName" | "userId"
-        > & {
-                subconferenceMemberships: Array<
-                    { __typename?: "registrant_SubconferenceMembership" } & Pick<
-                        Registrant_SubconferenceMembership,
-                        "id" | "subconferenceId" | "role"
-                    >
-                >;
-            }
-    >;
+    registrant_Registrant_by_pk?: Maybe<{ __typename?: "registrant_Registrant" } & RegistrantCacheDataFragment>;
 };
+
+export type GetRegistrantsForHydrationQueryVariables = Exact<{
+    filters: Registrant_Registrant_Bool_Exp;
+}>;
+
+export type GetRegistrantsForHydrationQuery = { __typename?: "query_root" } & {
+    registrant_Registrant: Array<{ __typename?: "registrant_Registrant" } & RegistrantCacheDataFragment>;
+};
+
+export type RoomCacheDataFragment = { __typename?: "room_Room" } & Pick<
+    Room_Room,
+    "id" | "name" | "conferenceId" | "subconferenceId" | "managementModeName"
+>;
 
 export type GetRoomQueryVariables = Exact<{
     id: Scalars["uuid"];
 }>;
 
 export type GetRoomQuery = { __typename?: "query_root" } & {
-    room_Room_by_pk?: Maybe<
-        { __typename?: "room_Room" } & Pick<
-            Room_Room,
-            "id" | "name" | "conferenceId" | "subconferenceId" | "managementModeName"
-        >
-    >;
+    room_Room_by_pk?: Maybe<{ __typename?: "room_Room" } & RoomCacheDataFragment>;
 };
+
+export type GetRoomsForHydrationQueryVariables = Exact<{
+    filters: Room_Room_Bool_Exp;
+}>;
+
+export type GetRoomsForHydrationQuery = { __typename?: "query_root" } & {
+    room_Room: Array<{ __typename?: "room_Room" } & RoomCacheDataFragment>;
+};
+
+export type RoomMembershipCacheDataFragment = { __typename?: "room_RoomMembership" } & Pick<
+    Room_RoomMembership,
+    "id" | "registrantId" | "personRoleName"
+>;
 
 export type GetRoomMembershipsQueryVariables = Exact<{
     roomId: Scalars["uuid"];
 }>;
 
 export type GetRoomMembershipsQuery = { __typename?: "query_root" } & {
+    room_RoomMembership: Array<{ __typename?: "room_RoomMembership" } & RoomMembershipCacheDataFragment>;
+};
+
+export type GetRoomMembershipsForHydrationQueryVariables = Exact<{
+    filters: Room_RoomMembership_Bool_Exp;
+}>;
+
+export type GetRoomMembershipsForHydrationQuery = { __typename?: "query_root" } & {
     room_RoomMembership: Array<
-        { __typename?: "room_RoomMembership" } & Pick<Room_RoomMembership, "id" | "registrantId" | "personRoleName">
+        { __typename?: "room_RoomMembership" } & Pick<Room_RoomMembership, "roomId"> & RoomMembershipCacheDataFragment
     >;
 };
+
+export type SubconferenceCacheDataFragment = { __typename?: "conference_Subconference" } & Pick<
+    Conference_Subconference,
+    "id" | "conferenceVisibilityLevel"
+>;
 
 export type GetSubconferenceQueryVariables = Exact<{
     id: Scalars["uuid"];
@@ -36129,43 +36207,82 @@ export type GetSubconferenceQueryVariables = Exact<{
 
 export type GetSubconferenceQuery = { __typename?: "query_root" } & {
     conference_Subconference_by_pk?: Maybe<
-        { __typename?: "conference_Subconference" } & Pick<Conference_Subconference, "id" | "conferenceVisibilityLevel">
+        { __typename?: "conference_Subconference" } & SubconferenceCacheDataFragment
     >;
 };
+
+export type GetSubconferencesForHydrationQueryVariables = Exact<{
+    filters: Conference_Subconference_Bool_Exp;
+}>;
+
+export type GetSubconferencesForHydrationQuery = { __typename?: "query_root" } & {
+    conference_Subconference: Array<{ __typename?: "conference_Subconference" } & SubconferenceCacheDataFragment>;
+};
+
+export type SubconferenceRoomCacheDataFragment = { __typename?: "room_Room" } & Pick<
+    Room_Room,
+    "id" | "managementModeName"
+>;
 
 export type GetSubconferenceRoomsQueryVariables = Exact<{
     subconferenceId: Scalars["uuid"];
 }>;
 
 export type GetSubconferenceRoomsQuery = { __typename?: "query_root" } & {
-    room_Room: Array<{ __typename?: "room_Room" } & Pick<Room_Room, "id" | "managementModeName">>;
+    room_Room: Array<{ __typename?: "room_Room" } & SubconferenceRoomCacheDataFragment>;
 };
+
+export type GetSubconferenceRoomsForHydrationQueryVariables = Exact<{
+    filters: Room_Room_Bool_Exp;
+}>;
+
+export type GetSubconferenceRoomsForHydrationQuery = { __typename?: "query_root" } & {
+    room_Room: Array<
+        { __typename?: "room_Room" } & Pick<Room_Room, "subconferenceId"> & SubconferenceRoomCacheDataFragment
+    >;
+};
+
+export type ChatSubscriptionCacheDataFragment = { __typename?: "chat_Subscription" } & Pick<
+    Chat_Subscription,
+    "chatId" | "registrantId" | "wasManuallySubscribed"
+>;
 
 export type GetChatSubscriptionsQueryVariables = Exact<{
     chatId: Scalars["uuid"];
 }>;
 
 export type GetChatSubscriptionsQuery = { __typename?: "query_root" } & {
-    chat_Subscription: Array<
-        { __typename?: "chat_Subscription" } & Pick<
-            Chat_Subscription,
-            "chatId" | "registrantId" | "wasManuallySubscribed"
-        >
-    >;
+    chat_Subscription: Array<{ __typename?: "chat_Subscription" } & ChatSubscriptionCacheDataFragment>;
 };
+
+export type GetChatSubscriptionsForHydrationQueryVariables = Exact<{
+    filters: Chat_Subscription_Bool_Exp;
+}>;
+
+export type GetChatSubscriptionsForHydrationQuery = { __typename?: "query_root" } & {
+    chat_Subscription: Array<{ __typename?: "chat_Subscription" } & ChatSubscriptionCacheDataFragment>;
+};
+
+export type UserCacheDataFragment = { __typename?: "User" } & Pick<User, "id"> & {
+        registrants: Array<
+            { __typename?: "registrant_Registrant" } & Pick<Registrant_Registrant, "id" | "conferenceId">
+        >;
+    };
 
 export type GetUserQueryVariables = Exact<{
     id: Scalars["String"];
 }>;
 
 export type GetUserQuery = { __typename?: "query_root" } & {
-    User_by_pk?: Maybe<
-        { __typename?: "User" } & Pick<User, "id"> & {
-                registrants: Array<
-                    { __typename?: "registrant_Registrant" } & Pick<Registrant_Registrant, "id" | "conferenceId">
-                >;
-            }
-    >;
+    User_by_pk?: Maybe<{ __typename?: "User" } & UserCacheDataFragment>;
+};
+
+export type GetUsersForHydrationQueryVariables = Exact<{
+    filters: User_Bool_Exp;
+}>;
+
+export type GetUsersForHydrationQuery = { __typename?: "query_root" } & {
+    User: Array<{ __typename?: "User" } & UserCacheDataFragment>;
 };
 
 export const ChatCacheDataFragmentDoc = {
@@ -36195,6 +36312,279 @@ export const ChatCacheDataFragmentDoc = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const ConferenceCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "ConferenceCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "conference_Conference" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "shortName" } },
+                    { kind: "Field", name: { kind: "Name", value: "slug" } },
+                    { kind: "Field", name: { kind: "Name", value: "conferenceVisibilityLevel" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdBy" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "subconferences" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const ConferenceRoomCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "ConferenceRoomCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "room_Room" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const EventCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "EventCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "schedule_Event" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                    { kind: "Field", name: { kind: "Name", value: "roomId" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const ChatPinCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "ChatPinCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "chat_Pin" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "chatId" } },
+                    { kind: "Field", name: { kind: "Name", value: "registrantId" } },
+                    { kind: "Field", name: { kind: "Name", value: "wasManuallyPinned" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const PushNotificationSubscriptionCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "PushNotificationSubscriptionCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "PushNotificationSubscription" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "userId" } },
+                    { kind: "Field", name: { kind: "Name", value: "endpoint" } },
+                    { kind: "Field", name: { kind: "Name", value: "p256dh" } },
+                    { kind: "Field", name: { kind: "Name", value: "auth" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const ReadUpToIndexCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "ReadUpToIndexCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "chat_ReadUpToIndex" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "chatId" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "registrant" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "userId" } }],
+                        },
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "messageSId" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const RegistrantCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "RegistrantCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "registrant_Registrant" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "conferenceRole" } },
+                    { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                    { kind: "Field", name: { kind: "Name", value: "userId" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "subconferenceMemberships" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "role" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const RoomCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "RoomCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "room_Room" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "name" } },
+                    { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                    { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
+                    { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const RoomMembershipCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "RoomMembershipCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "room_RoomMembership" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "registrantId" } },
+                    { kind: "Field", name: { kind: "Name", value: "personRoleName" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const SubconferenceCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "SubconferenceCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "conference_Subconference" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "conferenceVisibilityLevel" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const SubconferenceRoomCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "SubconferenceRoomCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "room_Room" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const ChatSubscriptionCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "ChatSubscriptionCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "chat_Subscription" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "chatId" } },
+                    { kind: "Field", name: { kind: "Name", value: "registrantId" } },
+                    { kind: "Field", name: { kind: "Name", value: "wasManuallySubscribed" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const UserCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "UserCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "User" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "registrants" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                            ],
                         },
                     },
                 ],
@@ -36311,25 +36701,57 @@ export const GetConferenceDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "shortName" } },
-                                { kind: "Field", name: { kind: "Name", value: "slug" } },
-                                { kind: "Field", name: { kind: "Name", value: "conferenceVisibilityLevel" } },
-                                { kind: "Field", name: { kind: "Name", value: "createdBy" } },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "subconferences" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
-                                    },
-                                },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ConferenceCacheData" } },
                             ],
                         },
                     },
                 ],
             },
         },
+        ...ConferenceCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetConferencesForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetConferencesForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "conference_Conference_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Conference" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ConferenceCacheData" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+        ...ConferenceCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetConferenceRoomsDocument = {
@@ -36397,14 +36819,14 @@ export const GetConferenceRoomsDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ConferenceRoomCacheData" } },
                             ],
                         },
                     },
                 ],
             },
         },
+        ...ConferenceRoomCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetEventDocument = {
@@ -36436,16 +36858,54 @@ export const GetEventDocument = {
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
-                                { kind: "Field", name: { kind: "Name", value: "roomId" } },
-                            ],
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "EventCacheData" } }],
                         },
                     },
                 ],
             },
         },
+        ...EventCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetEventsForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetEventsForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "schedule_Event_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "schedule_Event" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "EventCacheData" } }],
+                        },
+                    },
+                ],
+            },
+        },
+        ...EventCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetChatPinsDocument = {
@@ -36498,16 +36958,54 @@ export const GetChatPinsDocument = {
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                { kind: "Field", name: { kind: "Name", value: "chatId" } },
-                                { kind: "Field", name: { kind: "Name", value: "registrantId" } },
-                                { kind: "Field", name: { kind: "Name", value: "wasManuallyPinned" } },
-                            ],
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ChatPinCacheData" } }],
                         },
                     },
                 ],
             },
         },
+        ...ChatPinCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetChatPinsForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetChatPinsForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "chat_Pin_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_Pin" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ChatPinCacheData" } }],
+                        },
+                    },
+                ],
+            },
+        },
+        ...ChatPinCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetPushNotificationSubscriptionsDocument = {
@@ -36561,16 +37059,17 @@ export const GetPushNotificationSubscriptionsDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "userId" } },
-                                { kind: "Field", name: { kind: "Name", value: "endpoint" } },
-                                { kind: "Field", name: { kind: "Name", value: "p256dh" } },
-                                { kind: "Field", name: { kind: "Name", value: "auth" } },
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "PushNotificationSubscriptionCacheData" },
+                                },
                             ],
                         },
                     },
                 ],
             },
         },
+        ...PushNotificationSubscriptionCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetReadUpToIndicesDocument = {
@@ -36647,22 +37146,57 @@ export const GetReadUpToIndicesDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "chatId" } },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "registrant" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [{ kind: "Field", name: { kind: "Name", value: "userId" } }],
-                                    },
-                                },
-                                { kind: "Field", name: { kind: "Name", value: "messageSId" } },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ReadUpToIndexCacheData" } },
                             ],
                         },
                     },
                 ],
             },
         },
+        ...ReadUpToIndexCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetReadUpToIndicesForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetReadUpToIndicesForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "chat_ReadUpToIndex_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_ReadUpToIndex" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ReadUpToIndexCacheData" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+        ...ReadUpToIndexCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetRegistrantDocument = {
@@ -36695,28 +37229,57 @@ export const GetRegistrantDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "conferenceRole" } },
-                                { kind: "Field", name: { kind: "Name", value: "displayName" } },
-                                { kind: "Field", name: { kind: "Name", value: "userId" } },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "subconferenceMemberships" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
-                                            { kind: "Field", name: { kind: "Name", value: "role" } },
-                                        ],
-                                    },
-                                },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "RegistrantCacheData" } },
                             ],
                         },
                     },
                 ],
             },
         },
+        ...RegistrantCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetRegistrantsForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetRegistrantsForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "registrant_Registrant_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "registrant_Registrant" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "RegistrantCacheData" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+        ...RegistrantCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetRoomDocument = {
@@ -36748,18 +37311,54 @@ export const GetRoomDocument = {
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "name" } },
-                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
-                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
-                                { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
-                            ],
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "RoomCacheData" } }],
                         },
                     },
                 ],
             },
         },
+        ...RoomCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetRoomsForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetRoomsForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "room_Room_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "RoomCacheData" } }],
+                        },
+                    },
+                ],
+            },
+        },
+        ...RoomCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetRoomMembershipsDocument = {
@@ -36813,15 +37412,58 @@ export const GetRoomMembershipsDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "registrantId" } },
-                                { kind: "Field", name: { kind: "Name", value: "personRoleName" } },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "RoomMembershipCacheData" } },
                             ],
                         },
                     },
                 ],
             },
         },
+        ...RoomMembershipCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetRoomMembershipsForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetRoomMembershipsForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "room_RoomMembership_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_RoomMembership" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "roomId" } },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "RoomMembershipCacheData" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+        ...RoomMembershipCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetSubconferenceDocument = {
@@ -36854,14 +37496,57 @@ export const GetSubconferenceDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "conferenceVisibilityLevel" } },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SubconferenceCacheData" } },
                             ],
                         },
                     },
                 ],
             },
         },
+        ...SubconferenceCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetSubconferencesForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetSubconferencesForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "conference_Subconference_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Subconference" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SubconferenceCacheData" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+        ...SubconferenceCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetSubconferenceRoomsDocument = {
@@ -36915,14 +37600,58 @@ export const GetSubconferenceRoomsDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SubconferenceRoomCacheData" } },
                             ],
                         },
                     },
                 ],
             },
         },
+        ...SubconferenceRoomCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetSubconferenceRoomsForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetSubconferenceRoomsForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "room_Room_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SubconferenceRoomCacheData" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+        ...SubconferenceRoomCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetChatSubscriptionsDocument = {
@@ -36976,15 +37705,57 @@ export const GetChatSubscriptionsDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "chatId" } },
-                                { kind: "Field", name: { kind: "Name", value: "registrantId" } },
-                                { kind: "Field", name: { kind: "Name", value: "wasManuallySubscribed" } },
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ChatSubscriptionCacheData" } },
                             ],
                         },
                     },
                 ],
             },
         },
+        ...ChatSubscriptionCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetChatSubscriptionsForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetChatSubscriptionsForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "chat_Subscription_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_Subscription" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ChatSubscriptionCacheData" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+        ...ChatSubscriptionCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetUserDocument = {
@@ -37016,24 +37787,53 @@ export const GetUserDocument = {
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "registrants" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
-                                        ],
-                                    },
-                                },
-                            ],
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserCacheData" } }],
                         },
                     },
                 ],
             },
         },
+        ...UserCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetUsersForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetUsersForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "User_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "User" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserCacheData" } }],
+                        },
+                    },
+                ],
+            },
+        },
+        ...UserCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;

@@ -190,19 +190,21 @@ export async function computeAuthHeaders(
                             if (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator) {
                                 allowedRoles.push(HasuraRoleName.Moderator);
 
-                                for (const subconferenceId of conference.subconferenceIds) {
-                                    const subconference = await new SubconferenceCache(logger).getEntity(
-                                        subconferenceId
-                                    );
-                                    if (
-                                        subconference?.conferenceVisibilityLevel ===
-                                            Conference_VisibilityLevel_Enum.Public ||
-                                        subconference?.conferenceVisibilityLevel ===
-                                            Conference_VisibilityLevel_Enum.External
-                                    ) {
-                                        availableSubconferenceIds.push(subconference.id);
-                                    }
-                                }
+                                const scCache = new SubconferenceCache(logger);
+                                await scCache.hydrateIfNecessary({ conferenceId: unverifiedParams.conferenceId });
+                                await Promise.all(
+                                    conference.subconferenceIds.map(async (subconferenceId) => {
+                                        const subconference = await scCache.getEntity(subconferenceId);
+                                        if (
+                                            subconference?.conferenceVisibilityLevel ===
+                                                Conference_VisibilityLevel_Enum.Public ||
+                                            subconference?.conferenceVisibilityLevel ===
+                                                Conference_VisibilityLevel_Enum.External
+                                        ) {
+                                            availableSubconferenceIds.push(subconference.id);
+                                        }
+                                    })
+                                );
                             } else if (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) {
                                 allowedRoles.push(HasuraRoleName.Moderator);
                                 allowedRoles.push(HasuraRoleName.SubconferenceOrganizer);
@@ -210,19 +212,21 @@ export async function computeAuthHeaders(
 
                                 availableSubconferenceIds = conference.subconferenceIds;
                             } else {
-                                for (const subconferenceId of conference.subconferenceIds) {
-                                    const subconference = await new SubconferenceCache(logger).getEntity(
-                                        subconferenceId
-                                    );
-                                    if (
-                                        subconference?.conferenceVisibilityLevel ===
-                                            Conference_VisibilityLevel_Enum.Public ||
-                                        subconference?.conferenceVisibilityLevel ===
-                                            Conference_VisibilityLevel_Enum.External
-                                    ) {
-                                        availableSubconferenceIds.push(subconference.id);
-                                    }
-                                }
+                                const scCache = new SubconferenceCache(logger);
+                                await scCache.hydrateIfNecessary({ conferenceId: unverifiedParams.conferenceId });
+                                await Promise.all(
+                                    conference.subconferenceIds.map(async (subconferenceId) => {
+                                        const subconference = await scCache.getEntity(subconferenceId);
+                                        if (
+                                            subconference?.conferenceVisibilityLevel ===
+                                                Conference_VisibilityLevel_Enum.Public ||
+                                            subconference?.conferenceVisibilityLevel ===
+                                                Conference_VisibilityLevel_Enum.External
+                                        ) {
+                                            availableSubconferenceIds.push(subconference.id);
+                                        }
+                                    })
+                                );
                             }
 
                             result[AuthSessionVariables.SubconferenceIds] =
@@ -270,19 +274,23 @@ export async function computeAuthHeaders(
                             } else if (unverifiedParams.includeRoomIds) {
                                 allowedRoles.push(HasuraRoleName.RoomMember);
 
-                                const allRooms: Record<string, string> | undefined = await conferenceRoomsCache(
-                                    logger
-                                ).getEntity(conference.id);
+                                const crCache = conferenceRoomsCache(logger);
+                                await crCache.hydrateIfNecessary({ conferenceId: conference.id });
+                                const allRooms: Record<string, string> | undefined = await crCache.getEntity(
+                                    conference.id
+                                );
                                 if (allRooms) {
-                                    for (const subconferenceId of availableSubconferenceIds) {
-                                        const allSubconfRooms = await subconferenceRoomsCache(logger).getEntity(
-                                            subconferenceId
-                                        );
-                                        for (const roomId in allSubconfRooms) {
-                                            const roomManagementMode = allSubconfRooms[roomId];
-                                            allRooms[roomId] = roomManagementMode;
-                                        }
-                                    }
+                                    const scrCache = subconferenceRoomsCache(logger);
+                                    await scrCache.hydrateIfNecessary({ conferenceId: conference.id });
+                                    await Promise.all(
+                                        availableSubconferenceIds.map(async (subconferenceId) => {
+                                            const allSubconfRooms = await scrCache.getEntity(subconferenceId);
+                                            for (const roomId in allSubconfRooms) {
+                                                const roomManagementMode = allSubconfRooms[roomId];
+                                                allRooms[roomId] = roomManagementMode;
+                                            }
+                                        })
+                                    );
 
                                     if (
                                         requestedRole === HasuraRoleName.ConferenceOrganizer ||
@@ -309,24 +317,29 @@ export async function computeAuthHeaders(
                                         }
                                     } else {
                                         const availableRoomIds: string[] = [];
-                                        for (const roomId in allRooms) {
-                                            const roomManagementMode = allRooms[roomId];
-                                            if (roomManagementMode === Room_ManagementMode_Enum.Public) {
-                                                availableRoomIds.push(roomId);
-                                            } else if (
-                                                roomManagementMode === Room_ManagementMode_Enum.Private ||
-                                                roomManagementMode === Room_ManagementMode_Enum.Managed ||
-                                                roomManagementMode === Room_ManagementMode_Enum.Dm
-                                            ) {
-                                                const roomMembership = await roomMembershipsCache(logger).getField(
-                                                    roomId,
-                                                    registrant.id
-                                                );
-                                                if (roomMembership) {
+                                        const rmCache = roomMembershipsCache(logger);
+                                        await rmCache.hydrateIfNecessary({ conferenceId: conference.id });
+                                        await Promise.all(
+                                            Object.keys(allRooms).map(async (roomId) => {
+                                                const roomManagementMode = allRooms[roomId];
+                                                if (roomManagementMode === Room_ManagementMode_Enum.Public) {
                                                     availableRoomIds.push(roomId);
+                                                } else if (
+                                                    roomManagementMode === Room_ManagementMode_Enum.Private ||
+                                                    roomManagementMode === Room_ManagementMode_Enum.Managed ||
+                                                    roomManagementMode === Room_ManagementMode_Enum.Dm
+                                                ) {
+                                                    const roomMembership = await rmCache.getField(
+                                                        roomId,
+                                                        registrant.id
+                                                    );
+                                                    if (roomMembership) {
+                                                        availableRoomIds.push(roomId);
+                                                    }
                                                 }
-                                            }
-                                        }
+                                            })
+                                        );
+
                                         result[AuthSessionVariables.RoomIds] =
                                             formatArrayForHasuraHeader(availableRoomIds);
                                     }
@@ -400,9 +413,11 @@ export async function computeAuthHeaders(
                                 } else if (unverifiedParams.includeRoomIds) {
                                     allowedRoles.push(HasuraRoleName.RoomMember);
 
-                                    const allRooms = await subconferenceRoomsCache(logger).getEntity(
-                                        subconferenceMembership.subconferenceId
-                                    );
+                                    const scrCache = subconferenceRoomsCache(logger);
+                                    await scrCache.hydrateIfNecessary({
+                                        subconferenceId: subconferenceMembership.subconferenceId,
+                                    });
+                                    const allRooms = await scrCache.getEntity(subconferenceMembership.subconferenceId);
                                     if (allRooms) {
                                         if (
                                             requestedRole === HasuraRoleName.ConferenceOrganizer ||
@@ -429,6 +444,8 @@ export async function computeAuthHeaders(
                                             }
                                         } else {
                                             const availableRoomIds: string[] = [];
+                                            const rmCache = roomMembershipsCache(logger);
+                                            await rmCache.hydrateIfNecessary({ registrantId: registrant.id });
                                             for (const roomId in allRooms) {
                                                 const roomManagementMode = allRooms[roomId];
                                                 if (roomManagementMode === Room_ManagementMode_Enum.Public) {
@@ -438,7 +455,7 @@ export async function computeAuthHeaders(
                                                     roomManagementMode === Room_ManagementMode_Enum.Managed ||
                                                     roomManagementMode === Room_ManagementMode_Enum.Dm
                                                 ) {
-                                                    const roomMembership = await roomMembershipsCache(logger).getField(
+                                                    const roomMembership = await rmCache.getField(
                                                         roomId,
                                                         registrant.id
                                                     );
@@ -538,11 +555,10 @@ async function evaluateUnauthenticatedConference(
         } else {
             // All public subconferences
             const publicSubconferenceIds: string[] = [];
+            const scCache = new SubconferenceCache(logger);
+            await scCache.hydrateIfNecessary({ conferenceId: conference.id });
             for (const subconferenceId of conference.subconferenceIds) {
-                const conferenceVisibilityLevel = await new SubconferenceCache(logger).getField(
-                    subconferenceId,
-                    "conferenceVisibilityLevel"
-                );
+                const conferenceVisibilityLevel = await scCache.getField(subconferenceId, "conferenceVisibilityLevel");
                 if (conferenceVisibilityLevel === Conference_VisibilityLevel_Enum.Public) {
                     publicSubconferenceIds.push(subconferenceId);
                 }

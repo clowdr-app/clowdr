@@ -1,18 +1,37 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
-import type { P } from "pino";
-import type { GetRoomQuery, GetRoomQueryVariables, Room_ManagementMode_Enum } from "./generated/graphql";
-import { GetRoomDocument } from "./generated/graphql";
+import type P from "pino";
+import type {
+    GetRoomQuery,
+    GetRoomQueryVariables,
+    GetRoomsForHydrationQuery,
+    GetRoomsForHydrationQueryVariables,
+    RoomCacheDataFragment,
+    Room_ManagementMode_Enum,
+    Room_Room_Bool_Exp,
+} from "./generated/graphql";
+import { GetRoomDocument, GetRoomsForHydrationDocument } from "./generated/graphql";
+import type { CacheRecord } from "./generic/table";
 import { TableCache } from "./generic/table";
 
 gql`
+    fragment RoomCacheData on room_Room {
+        id
+        name
+        conferenceId
+        subconferenceId
+        managementModeName
+    }
+
     query GetRoom($id: uuid!) {
         room_Room_by_pk(id: $id) {
-            id
-            name
-            conferenceId
-            subconferenceId
-            managementModeName
+            ...RoomCacheData
+        }
+    }
+
+    query GetRoomsForHydration($filters: room_Room_bool_exp!) {
+        room_Room(where: $filters) {
+            ...RoomCacheData
         }
     }
 `;
@@ -25,28 +44,86 @@ export interface RoomEntity {
     managementModeName: Room_ManagementMode_Enum;
 }
 
+interface RoomCacheRecord {
+    id: string;
+    name: string;
+    conferenceId: string;
+    subconferenceId?: string | "null";
+    managementModeName: string;
+}
+
+export type RoomHydrationFilters =
+    | {
+          id: string;
+      }
+    | {
+          conferenceId: string;
+      }
+    | {
+          subconferenceId: string;
+      };
+
 export class RoomCache {
     constructor(private readonly logger: P.Logger) {}
 
-    private readonly cache = new TableCache(this.logger, "Room", async (id) => {
-        const response = await gqlClient
-            ?.query<GetRoomQuery, GetRoomQueryVariables>(GetRoomDocument, {
-                id,
-            })
-            .toPromise();
+    private readonly cache = new TableCache<keyof RoomCacheRecord, RoomHydrationFilters>(
+        this.logger,
+        "Room",
+        async (id) => {
+            const response = await gqlClient
+                ?.query<GetRoomQuery, GetRoomQueryVariables>(GetRoomDocument, {
+                    id,
+                })
+                .toPromise();
 
-        const data = response?.data?.room_Room_by_pk;
-        if (data) {
-            return {
-                id: data.id,
-                name: data.name,
-                conferenceId: data.conferenceId,
-                subconferenceId: data.subconferenceId ?? "null",
-                managementModeName: data.managementModeName,
-            };
+            const data = response?.data?.room_Room_by_pk;
+            if (data) {
+                return this.convertToCacheRecord(data);
+            }
+            return undefined;
+        },
+        async (filters) => {
+            const gqlFilters: Room_Room_Bool_Exp = {};
+
+            if ("id" in filters) {
+                gqlFilters.id = {
+                    _eq: filters.id,
+                };
+            } else if ("conferenceId" in filters) {
+                gqlFilters.conferenceId = {
+                    _eq: filters.conferenceId,
+                };
+            } else if ("subconferenceId" in filters) {
+                gqlFilters.subconferenceId = {
+                    _eq: filters.subconferenceId,
+                };
+            }
+
+            const response = await gqlClient
+                ?.query<GetRoomsForHydrationQuery, GetRoomsForHydrationQueryVariables>(GetRoomsForHydrationDocument, {
+                    filters: gqlFilters,
+                })
+                .toPromise();
+            if (response?.data) {
+                return response.data.room_Room.map((record) => ({
+                    data: this.convertToCacheRecord(record),
+                    entityKey: record.id,
+                }));
+            }
+
+            return undefined;
         }
-        return undefined;
-    });
+    );
+
+    private convertToCacheRecord(data: RoomCacheDataFragment): CacheRecord<keyof RoomCacheRecord> {
+        return {
+            id: data.id,
+            name: data.name,
+            conferenceId: data.conferenceId,
+            subconferenceId: data.subconferenceId ?? "null",
+            managementModeName: data.managementModeName,
+        };
+    }
 
     public async getEntity(id: string, fetchIfNotFound = true): Promise<RoomEntity | undefined> {
         const rawEntity = await this.cache.getEntity(id, fetchIfNotFound);
@@ -120,5 +197,9 @@ export class RoomCache {
             const newEntity = update(entity);
             await this.setEntity(id, newEntity);
         }
+    }
+
+    public async hydrateIfNecessary(filters: RoomHydrationFilters): Promise<void> {
+        return this.cache.hydrateIfNecessary(filters);
     }
 }

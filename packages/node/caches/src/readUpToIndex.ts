@@ -1,48 +1,127 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import { gql } from "graphql-tag";
-import type { P } from "pino";
+import type P from "pino";
+import * as R from "ramda";
 import type { Callback } from "redis";
 import { promisify } from "util";
-import type { GetReadUpToIndicesQuery, GetReadUpToIndicesQueryVariables } from "./generated/graphql";
-import { GetReadUpToIndicesDocument } from "./generated/graphql";
+import type {
+    Chat_ReadUpToIndex_Bool_Exp,
+    GetReadUpToIndicesForHydrationQuery,
+    GetReadUpToIndicesForHydrationQueryVariables,
+    GetReadUpToIndicesQuery,
+    GetReadUpToIndicesQueryVariables,
+    ReadUpToIndexCacheDataFragment,
+} from "./generated/graphql";
+import { GetReadUpToIndicesDocument, GetReadUpToIndicesForHydrationDocument } from "./generated/graphql";
+import type { CacheRecord } from "./generic/table";
 import { TableCache } from "./generic/table";
 
 gql`
+    fragment ReadUpToIndexCacheData on chat_ReadUpToIndex {
+        chatId
+        registrant {
+            userId
+        }
+        messageSId
+    }
+
     query GetReadUpToIndices($chatId: uuid!) {
         chat_ReadUpToIndex(where: { chatId: { _eq: $chatId }, registrant: { userId: { _is_null: false } } }) {
-            chatId
-            registrant {
-                userId
-            }
-            messageSId
+            ...ReadUpToIndexCacheData
+        }
+    }
+
+    query GetReadUpToIndicesForHydration($filters: chat_ReadUpToIndex_bool_exp!) {
+        chat_ReadUpToIndex(where: $filters) {
+            ...ReadUpToIndexCacheData
         }
     }
 `;
 
 export type ReadUpToIndicesEntity = Record<string, string>;
 
+type ReadUpToIndicesCacheRecord = Record<string, string>;
+
+export type ReadUpToIndicesHydrationFilters =
+    | {
+          userId: string;
+      }
+    | {
+          registrantId: string;
+      }
+    | {
+          chatId: string;
+      };
+
 export class ReadUpToIndexCache {
     constructor(private readonly logger: P.Logger) {}
 
-    private readonly cache = new TableCache(this.logger, "ReadUpToIndex", async (chatId) => {
-        const response = await gqlClient
-            ?.query<GetReadUpToIndicesQuery, GetReadUpToIndicesQueryVariables>(GetReadUpToIndicesDocument, {
-                chatId,
-            })
-            .toPromise();
+    private readonly cache = new TableCache<keyof ReadUpToIndicesCacheRecord, ReadUpToIndicesHydrationFilters>(
+        this.logger,
+        "ReadUpToIndex",
+        async (chatId) => {
+            const response = await gqlClient
+                ?.query<GetReadUpToIndicesQuery, GetReadUpToIndicesQueryVariables>(GetReadUpToIndicesDocument, {
+                    chatId,
+                })
+                .toPromise();
 
-        const data = response?.data?.chat_ReadUpToIndex;
-        if (data) {
-            return data.reduce<Record<string, string>>((acc, x) => {
-                if (x.registrant.userId) {
-                    acc[x.registrant.userId] = x.messageSId;
-                }
-                return acc;
-            }, {});
+            const data = response?.data?.chat_ReadUpToIndex;
+            if (data) {
+                return this.convertToCacheRecord(data);
+            }
+            return undefined;
+        },
+        async (filters) => {
+            const gqlFilters: Chat_ReadUpToIndex_Bool_Exp = {};
+
+            if ("chatId" in filters) {
+                gqlFilters.chatId = {
+                    _eq: filters.chatId,
+                };
+            } else if ("registrantId" in filters) {
+                gqlFilters.registrantId = {
+                    _eq: filters.registrantId,
+                };
+            } else if ("userId" in filters) {
+                gqlFilters.registrant = {
+                    userId: {
+                        _eq: filters.userId,
+                    },
+                };
+            }
+
+            const response = await gqlClient
+                ?.query<GetReadUpToIndicesForHydrationQuery, GetReadUpToIndicesForHydrationQueryVariables>(
+                    GetReadUpToIndicesForHydrationDocument,
+                    {
+                        filters: gqlFilters,
+                    }
+                )
+                .toPromise();
+            if (response?.data) {
+                const groups = R.groupBy((x) => x.chatId, response.data.chat_ReadUpToIndex);
+                return Object.entries(groups).map(([chatId, record]) => ({
+                    entityKey: chatId,
+                    data: this.convertToCacheRecord(record),
+                }));
+            }
+
+            return undefined;
         }
-        return undefined;
-    });
+    );
+
+    private convertToCacheRecord(
+        data: ReadUpToIndexCacheDataFragment[]
+    ): CacheRecord<keyof ReadUpToIndicesCacheRecord> {
+        return data.reduce<Record<string, string>>((acc, x) => {
+            if (x.registrant.userId) {
+                acc[x.registrant.userId] = x.messageSId;
+            }
+            return acc;
+        }, {});
+    }
 
     private readonly modifiedSetKey = this.cache.generateEntityKey("::modifiedSet");
 
@@ -127,5 +206,9 @@ export class ReadUpToIndexCache {
             console.error("Error getting and clearing the modified set for readUpToIndex cache");
         }
         return [];
+    }
+
+    public async hydrateIfNecessary(filters: ReadUpToIndicesHydrationFilters): Promise<void> {
+        return this.cache.hydrateIfNecessary(filters);
     }
 }

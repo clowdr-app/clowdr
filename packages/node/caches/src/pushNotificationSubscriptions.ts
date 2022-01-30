@@ -1,21 +1,27 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "graphql-tag";
-import type { P } from "pino";
+import type P from "pino";
 import type webPush from "web-push";
 import type {
     GetPushNotificationSubscriptionsQuery,
     GetPushNotificationSubscriptionsQueryVariables,
+    PushNotificationSubscriptionCacheDataFragment,
 } from "./generated/graphql";
 import { GetPushNotificationSubscriptionsDocument } from "./generated/graphql";
+import type { CacheRecord } from "./generic/table";
 import { TableCache } from "./generic/table";
 
 gql`
+    fragment PushNotificationSubscriptionCacheData on PushNotificationSubscription {
+        userId
+        endpoint
+        p256dh
+        auth
+    }
+
     query GetPushNotificationSubscriptions($userId: String!) {
         PushNotificationSubscription(where: { userId: { _eq: $userId } }) {
-            userId
-            endpoint
-            p256dh
-            auth
+            ...PushNotificationSubscriptionCacheData
         }
     }
 `;
@@ -25,36 +31,75 @@ export interface PushNotificationSubscriptionsEntity {
     subscriptions: webPush.PushSubscription[];
 }
 
+type PushNotificationSubscriptionCacheRecord = {
+    userId: string;
+    subscriptions: string;
+};
+
+export type PushNotificationSubscriptionHydrationFilters = {
+    userId: string;
+};
+
 export class PushNotificationSubscriptionsCache {
     constructor(private readonly logger: P.Logger) {}
 
-    private readonly cache = new TableCache(this.logger, "PushNotificationSubscriptions", async (userId) => {
-        const response = await gqlClient
-            ?.query<GetPushNotificationSubscriptionsQuery, GetPushNotificationSubscriptionsQueryVariables>(
-                GetPushNotificationSubscriptionsDocument,
-                {
-                    userId,
-                }
-            )
-            .toPromise();
+    private readonly cache = new TableCache<
+        keyof PushNotificationSubscriptionCacheRecord,
+        PushNotificationSubscriptionHydrationFilters
+    >(
+        this.logger,
+        "PushNotificationSubscriptions",
+        async (userId) => {
+            const response = await gqlClient
+                ?.query<GetPushNotificationSubscriptionsQuery, GetPushNotificationSubscriptionsQueryVariables>(
+                    GetPushNotificationSubscriptionsDocument,
+                    {
+                        userId,
+                    }
+                )
+                .toPromise();
 
-        const data = response?.data?.PushNotificationSubscription;
-        if (data) {
-            return {
-                userId,
-                subscriptions: JSON.stringify(
-                    data.map((x) => ({
-                        endpoint: x.endpoint,
-                        keys: {
-                            p256dh: x.p256dh,
-                            auth: x.auth,
-                        },
-                    }))
-                ),
-            };
+            const data = response?.data?.PushNotificationSubscription;
+            if (data) {
+                return this.convertToCacheRecord(userId, data);
+            }
+            return undefined;
+        },
+        async (filters) => {
+            const response = await gqlClient
+                ?.query<GetPushNotificationSubscriptionsQuery, GetPushNotificationSubscriptionsQueryVariables>(
+                    GetPushNotificationSubscriptionsDocument,
+                    {
+                        userId: filters.userId,
+                    }
+                )
+                .toPromise();
+
+            const data = response?.data?.PushNotificationSubscription;
+            if (data) {
+                return [{ entityKey: filters.userId, data: this.convertToCacheRecord(filters.userId, data) }];
+            }
+            return undefined;
         }
-        return undefined;
-    });
+    );
+
+    private convertToCacheRecord(
+        userId: string,
+        data: PushNotificationSubscriptionCacheDataFragment[]
+    ): CacheRecord<keyof PushNotificationSubscriptionCacheRecord> {
+        return {
+            userId,
+            subscriptions: JSON.stringify(
+                data.map((x) => ({
+                    endpoint: x.endpoint,
+                    keys: {
+                        p256dh: x.p256dh,
+                        auth: x.auth,
+                    },
+                }))
+            ),
+        };
+    }
 
     public async getEntity(
         id: string,
@@ -132,5 +177,9 @@ export class PushNotificationSubscriptionsCache {
         } else if (fetchIfNotFound) {
             await this.getEntity(id, true);
         }
+    }
+
+    public async hydrateIfNecessary(filters: PushNotificationSubscriptionHydrationFilters): Promise<void> {
+        return this.cache.hydrateIfNecessary(filters);
     }
 }

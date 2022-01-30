@@ -1,26 +1,41 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
-import type { P } from "pino";
+import type P from "pino";
 import type {
     GetRegistrantQuery,
     GetRegistrantQueryVariables,
+    GetRegistrantsForHydrationQuery,
+    GetRegistrantsForHydrationQueryVariables,
+    RegistrantCacheDataFragment,
     Registrant_RegistrantRole_Enum,
+    Registrant_Registrant_Bool_Exp,
 } from "./generated/graphql";
-import { GetRegistrantDocument } from "./generated/graphql";
+import { GetRegistrantDocument, GetRegistrantsForHydrationDocument } from "./generated/graphql";
+import type { CacheRecord } from "./generic/table";
 import { TableCache } from "./generic/table";
 
 gql`
+    fragment RegistrantCacheData on registrant_Registrant {
+        id
+        conferenceRole
+        displayName
+        userId
+        subconferenceMemberships {
+            id
+            subconferenceId
+            role
+        }
+    }
+
     query GetRegistrant($id: uuid!) {
         registrant_Registrant_by_pk(id: $id) {
-            id
-            conferenceRole
-            displayName
-            userId
-            subconferenceMemberships {
-                id
-                subconferenceId
-                role
-            }
+            ...RegistrantCacheData
+        }
+    }
+
+    query GetRegistrantsForHydration($filters: registrant_Registrant_bool_exp!) {
+        registrant_Registrant(where: $filters) {
+            ...RegistrantCacheData
         }
     }
 `;
@@ -39,33 +54,94 @@ export interface RegistrantEntity {
     subconferenceMemberships: SubconferenceMembership[];
 }
 
+interface RegistrantCacheRecord {
+    id: string;
+    displayName: string;
+    conferenceRole: string;
+    userId: string;
+    subconferenceMemberships: string;
+}
+
+export type RegistrantHydrationFilters =
+    | {
+          id: string;
+      }
+    | {
+          conferenceId: string;
+      }
+    | {
+          userId: string;
+      };
+
 export class RegistrantCache {
     constructor(private readonly logger: P.Logger) {}
-    private readonly cache = new TableCache(this.logger, "Registrant", async (id) => {
-        const response = await gqlClient
-            ?.query<GetRegistrantQuery, GetRegistrantQueryVariables>(GetRegistrantDocument, {
-                id,
-            })
-            .toPromise();
+    private readonly cache = new TableCache<keyof RegistrantCacheRecord, RegistrantHydrationFilters>(
+        this.logger,
+        "Registrant",
+        async (id) => {
+            const response = await gqlClient
+                ?.query<GetRegistrantQuery, GetRegistrantQueryVariables>(GetRegistrantDocument, {
+                    id,
+                })
+                .toPromise();
 
-        const data = response?.data?.registrant_Registrant_by_pk;
-        if (data) {
-            return {
-                id: data.id,
-                displayName: data.displayName,
-                conferenceRole: data.conferenceRole,
-                userId: data.userId ?? "null",
-                subconferenceMemberships: JSON.stringify(
-                    data.subconferenceMemberships.map((x) => ({
-                        id: x.id,
-                        role: x.role,
-                        subconferenceId: x.subconferenceId,
-                    }))
-                ),
-            };
+            const data = response?.data?.registrant_Registrant_by_pk;
+            if (data) {
+                return this.convertToCacheRecord(data);
+            }
+            return undefined;
+        },
+        async (filters) => {
+            const gqlFilters: Registrant_Registrant_Bool_Exp = {};
+
+            if ("id" in filters) {
+                gqlFilters.id = {
+                    _eq: filters.id,
+                };
+            } else if ("conferenceId" in filters) {
+                gqlFilters.conferenceId = {
+                    _eq: filters.conferenceId,
+                };
+            } else if ("userId" in filters) {
+                gqlFilters.userId = {
+                    _eq: filters.userId,
+                };
+            }
+
+            const response = await gqlClient
+                ?.query<GetRegistrantsForHydrationQuery, GetRegistrantsForHydrationQueryVariables>(
+                    GetRegistrantsForHydrationDocument,
+                    {
+                        filters: gqlFilters,
+                    }
+                )
+                .toPromise();
+            if (response?.data) {
+                return response.data.registrant_Registrant.map((record) => ({
+                    data: this.convertToCacheRecord(record),
+                    entityKey: record.id,
+                }));
+            }
+
+            return undefined;
         }
-        return undefined;
-    });
+    );
+
+    private convertToCacheRecord(data: RegistrantCacheDataFragment): CacheRecord<keyof RegistrantCacheRecord> {
+        return {
+            id: data.id,
+            displayName: data.displayName,
+            conferenceRole: data.conferenceRole,
+            userId: data.userId ?? "null",
+            subconferenceMemberships: JSON.stringify(
+                data.subconferenceMemberships.map((x) => ({
+                    id: x.id,
+                    role: x.role,
+                    subconferenceId: x.subconferenceId,
+                }))
+            ),
+        };
+    }
 
     public async getEntity(id: string, fetchIfNotFound = true): Promise<RegistrantEntity | undefined> {
         const rawEntity = await this.cache.getEntity(id, fetchIfNotFound);
@@ -146,5 +222,9 @@ export class RegistrantCache {
             const newEntity = update(entity);
             await this.setEntity(id, newEntity);
         }
+    }
+
+    public async hydrateIfNecessary(filters: RegistrantHydrationFilters): Promise<void> {
+        return this.cache.hydrateIfNecessary(filters);
     }
 }

@@ -113,7 +113,7 @@ export const redisClientP = {
         promisify((key: string, value: string, cb?: Callback<string>) => redisClient.getset(key, value, cb)),
 
     hget: (redisClient: RedisClient) =>
-        promisify((key: string, field: string, cb?: Callback<string>) => redisClient.hget(key, field, cb)),
+        promisify((key: string, field: string, cb?: Callback<string | null>) => redisClient.hget(key, field, cb)),
     hset: (redisClient: RedisClient) =>
         promisify((key: string, field: string, value: string, cb?: Callback<number>) =>
             redisClient.hset(key, field, value, cb)

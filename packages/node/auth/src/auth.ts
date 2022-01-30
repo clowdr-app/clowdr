@@ -194,7 +194,7 @@ export async function computeAuthHeaders(
                                 await scCache.hydrateIfNecessary({ conferenceId: unverifiedParams.conferenceId });
                                 await Promise.all(
                                     conference.subconferenceIds.map(async (subconferenceId) => {
-                                        const subconference = await scCache.getEntity(subconferenceId);
+                                        const subconference = await scCache.getEntity(subconferenceId, false);
                                         if (
                                             subconference?.conferenceVisibilityLevel ===
                                                 Conference_VisibilityLevel_Enum.Public ||
@@ -216,7 +216,7 @@ export async function computeAuthHeaders(
                                 await scCache.hydrateIfNecessary({ conferenceId: unverifiedParams.conferenceId });
                                 await Promise.all(
                                     conference.subconferenceIds.map(async (subconferenceId) => {
-                                        const subconference = await scCache.getEntity(subconferenceId);
+                                        const subconference = await scCache.getEntity(subconferenceId, false);
                                         if (
                                             subconference?.conferenceVisibilityLevel ===
                                                 Conference_VisibilityLevel_Enum.Public ||
@@ -277,14 +277,15 @@ export async function computeAuthHeaders(
                                 const crCache = conferenceRoomsCache(logger);
                                 await crCache.hydrateIfNecessary({ conferenceId: conference.id });
                                 const allRooms: Record<string, string> | undefined = await crCache.getEntity(
-                                    conference.id
+                                    conference.id,
+                                    false
                                 );
                                 if (allRooms) {
                                     const scrCache = subconferenceRoomsCache(logger);
                                     await scrCache.hydrateIfNecessary({ conferenceId: conference.id });
                                     await Promise.all(
                                         availableSubconferenceIds.map(async (subconferenceId) => {
-                                            const allSubconfRooms = await scrCache.getEntity(subconferenceId);
+                                            const allSubconfRooms = await scrCache.getEntity(subconferenceId, false);
                                             for (const roomId in allSubconfRooms) {
                                                 const roomManagementMode = allSubconfRooms[roomId];
                                                 allRooms[roomId] = roomManagementMode;
@@ -331,7 +332,8 @@ export async function computeAuthHeaders(
                                                 ) {
                                                     const roomMembership = await rmCache.getField(
                                                         roomId,
-                                                        registrant.id
+                                                        registrant.id,
+                                                        false
                                                     );
                                                     if (roomMembership) {
                                                         availableRoomIds.push(roomId);
@@ -417,7 +419,10 @@ export async function computeAuthHeaders(
                                     await scrCache.hydrateIfNecessary({
                                         subconferenceId: subconferenceMembership.subconferenceId,
                                     });
-                                    const allRooms = await scrCache.getEntity(subconferenceMembership.subconferenceId);
+                                    const allRooms = await scrCache.getEntity(
+                                        subconferenceMembership.subconferenceId,
+                                        false
+                                    );
                                     if (allRooms) {
                                         if (
                                             requestedRole === HasuraRoleName.ConferenceOrganizer ||
@@ -457,7 +462,8 @@ export async function computeAuthHeaders(
                                                 ) {
                                                     const roomMembership = await rmCache.getField(
                                                         roomId,
-                                                        registrant.id
+                                                        registrant.id,
+                                                        false
                                                     );
                                                     if (roomMembership) {
                                                         availableRoomIds.push(roomId);
@@ -557,12 +563,18 @@ async function evaluateUnauthenticatedConference(
             const publicSubconferenceIds: string[] = [];
             const scCache = new SubconferenceCache(logger);
             await scCache.hydrateIfNecessary({ conferenceId: conference.id });
-            for (const subconferenceId of conference.subconferenceIds) {
-                const conferenceVisibilityLevel = await scCache.getField(subconferenceId, "conferenceVisibilityLevel");
-                if (conferenceVisibilityLevel === Conference_VisibilityLevel_Enum.Public) {
-                    publicSubconferenceIds.push(subconferenceId);
-                }
-            }
+            await Promise.all(
+                conference.subconferenceIds.map(async (subconferenceId) => {
+                    const conferenceVisibilityLevel = await scCache.getField(
+                        subconferenceId,
+                        "conferenceVisibilityLevel",
+                        false
+                    );
+                    if (conferenceVisibilityLevel === Conference_VisibilityLevel_Enum.Public) {
+                        publicSubconferenceIds.push(subconferenceId);
+                    }
+                })
+            );
             result[AuthSessionVariables.SubconferenceIds] = formatArrayForHasuraHeader(publicSubconferenceIds);
             return true;
         }

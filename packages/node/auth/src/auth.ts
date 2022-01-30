@@ -274,6 +274,17 @@ export async function computeAuthHeaders(
                             } else if (unverifiedParams.includeRoomIds) {
                                 allowedRoles.push(HasuraRoleName.RoomMember);
 
+                                // We're going to pre-hydrate the room cache because there is a high chance individual
+                                // rooms are about to be requested if "includeRoomIds" was set
+                                const rCache = new RoomCache(logger);
+                                rCache
+                                    .hydrateIfNecessary({
+                                        conferenceId: conference.id,
+                                    })
+                                    .catch((err) => {
+                                        logger.error(err, "Error pre-emptively hydrating rooms cache");
+                                    });
+
                                 const crCache = conferenceRoomsCache(logger);
                                 await crCache.hydrateIfNecessary({ conferenceId: conference.id });
                                 const allRooms: Record<string, string> | undefined = await crCache.getEntity(
@@ -414,6 +425,17 @@ export async function computeAuthHeaders(
                                     }
                                 } else if (unverifiedParams.includeRoomIds) {
                                     allowedRoles.push(HasuraRoleName.RoomMember);
+
+                                    // We're going to pre-hydrate the room cache because there is a high chance individual
+                                    // rooms are about to be requested if "includeRoomIds" was set
+                                    const rCache = new RoomCache(logger);
+                                    rCache
+                                        .hydrateIfNecessary({
+                                            conferenceId: conference.id,
+                                        })
+                                        .catch((err) => {
+                                            logger.error(err, "Error pre-emptively hydrating rooms cache");
+                                        });
 
                                     const scrCache = subconferenceRoomsCache(logger);
                                     await scrCache.hydrateIfNecessary({

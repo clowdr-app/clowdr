@@ -266,27 +266,38 @@ export class TableCache<CacheRecordKeys extends string, HydrationInputFilters ex
     }
 
     public async hydrate(filters: HydrationInputFilters): Promise<void> {
+        this.logger.trace({ filters, redisRootKey: this.redisRootKey }, "Fetching data for hydration");
+
         const fetchedData = await this.fetchForHydrate(filters);
+
+        this.logger.trace({ filters, redisRootKey: this.redisRootKey }, "Hydrating...");
 
         const redisClient = await redisClientPool.acquire("TableCache.hydrate");
         try {
             const accumulatedErrors: any[] = [];
             if (fetchedData) {
-                for (const record of fetchedData) {
-                    try {
-                        const cacheKey = this.generateEntityKey(record.entityKey);
-                        await this.rawSet(cacheKey, record.data, redisClient);
-                    } catch (e: any) {
-                        accumulatedErrors.push(e);
-                    }
-                }
+                await Promise.all(
+                    fetchedData.map(async (record) => {
+                        try {
+                            const cacheKey = this.generateEntityKey(record.entityKey);
+                            await this.rawSet(cacheKey, record.data, redisClient);
+                        } catch (e: any) {
+                            accumulatedErrors.push(e);
+                        }
+                    })
+                );
             }
 
             if (accumulatedErrors.length > 0) {
-                throw new Error(
-                    "Some records failed to update during hydrate: " + JSON.stringify(accumulatedErrors, null, 2)
+                this.logger.error(
+                    { filters, redisRootKey: this.redisRootKey, accumulatedErrors },
+                    "Some records failed to hydrate"
                 );
+            } else {
+                this.logger.trace({ filters, redisRootKey: this.redisRootKey }, "Hydration complete");
             }
+        } catch (err: any) {
+            this.logger.error({ filters, redisRootKey: this.redisRootKey, err }, "Hydration failed");
         } finally {
             await redisClientPool.release("TableCache.hydrate", redisClient);
         }

@@ -284,7 +284,10 @@ export async function computeAuthHeaders(
                                         }
                                     }
 
-                                    if (requestedRole === HasuraRoleName.SubconferenceOrganizer) {
+                                    if (
+                                        requestedRole === HasuraRoleName.ConferenceOrganizer ||
+                                        requestedRole === HasuraRoleName.SubconferenceOrganizer
+                                    ) {
                                         if (allowedRoles.includes(requestedRole)) {
                                             const availableRoomIds: string[] = [];
                                             for (const roomId in allRooms) {
@@ -401,7 +404,10 @@ export async function computeAuthHeaders(
                                         subconferenceMembership.subconferenceId
                                     );
                                     if (allRooms) {
-                                        if (requestedRole === HasuraRoleName.SubconferenceOrganizer) {
+                                        if (
+                                            requestedRole === HasuraRoleName.ConferenceOrganizer ||
+                                            requestedRole === HasuraRoleName.SubconferenceOrganizer
+                                        ) {
                                             if (allowedRoles.includes(requestedRole)) {
                                                 const availableRoomIds: string[] = [];
                                                 for (const roomId in allRooms) {

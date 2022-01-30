@@ -35988,17 +35988,28 @@ export enum Video_YouTubeUpload_Update_Column {
     VideoTitle = "videoTitle",
 }
 
+export type ChatCacheDataFragment = { __typename?: "chat_Chat" } & Pick<
+    Chat_Chat,
+    "id" | "restrictToAdmins" | "conferenceId"
+> & {
+        item?: Maybe<{ __typename?: "content_Item" } & Pick<Content_Item, "id">>;
+        room?: Maybe<{ __typename?: "room_Room" } & Pick<Room_Room, "id">>;
+    };
+
 export type GetChatQueryVariables = Exact<{
     id: Scalars["uuid"];
 }>;
 
 export type GetChatQuery = { __typename?: "query_root" } & {
-    chat_Chat_by_pk?: Maybe<
-        { __typename?: "chat_Chat" } & Pick<Chat_Chat, "id" | "restrictToAdmins" | "conferenceId"> & {
-                item?: Maybe<{ __typename?: "content_Item" } & Pick<Content_Item, "id">>;
-                room?: Maybe<{ __typename?: "room_Room" } & Pick<Room_Room, "id">>;
-            }
-    >;
+    chat_Chat_by_pk?: Maybe<{ __typename?: "chat_Chat" } & ChatCacheDataFragment>;
+};
+
+export type GetChatsForHydrationQueryVariables = Exact<{
+    filters: Chat_Chat_Bool_Exp;
+}>;
+
+export type GetChatsForHydrationQuery = { __typename?: "query_root" } & {
+    chat_Chat: Array<{ __typename?: "chat_Chat" } & ChatCacheDataFragment>;
 };
 
 export type GetConferenceQueryVariables = Exact<{
@@ -36157,6 +36168,40 @@ export type GetUserQuery = { __typename?: "query_root" } & {
     >;
 };
 
+export const ChatCacheDataFragmentDoc = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "ChatCacheData" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "chat_Chat" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "restrictToAdmins" } },
+                    { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "item" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
 export const GetChatDocument = {
     kind: "Document",
     definitions: [
@@ -36186,32 +36231,54 @@ export const GetChatDocument = {
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "restrictToAdmins" } },
-                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "item" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
-                                    },
-                                },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "room" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
-                                    },
-                                },
-                            ],
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ChatCacheData" } }],
                         },
                     },
                 ],
             },
         },
+        ...ChatCacheDataFragmentDoc.definitions,
+    ],
+} as unknown as DocumentNode;
+export const GetChatsForHydrationDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetChatsForHydration" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "chat_Chat_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_Chat" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ChatCacheData" } }],
+                        },
+                    },
+                ],
+            },
+        },
+        ...ChatCacheDataFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const GetConferenceDocument = {

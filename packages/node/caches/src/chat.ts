@@ -1,22 +1,40 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
 import type { P } from "pino";
-import type { GetChatQuery, GetChatQueryVariables } from "./generated/graphql";
-import { GetChatDocument } from "./generated/graphql";
+import type {
+    ChatCacheDataFragment,
+    Chat_Chat_Bool_Exp,
+    GetChatQuery,
+    GetChatQueryVariables,
+    GetChatsForHydrationQuery,
+    GetChatsForHydrationQueryVariables,
+} from "./generated/graphql";
+import { GetChatDocument, GetChatsForHydrationDocument } from "./generated/graphql";
+import type { CacheRecord, HydrationRecord } from "./generic/table";
 import { TableCache } from "./generic/table";
 
 gql`
+    fragment ChatCacheData on chat_Chat {
+        id
+        restrictToAdmins
+        conferenceId
+        item {
+            id
+        }
+        room {
+            id
+        }
+    }
+
     query GetChat($id: uuid!) {
         chat_Chat_by_pk(id: $id) {
-            id
-            restrictToAdmins
-            conferenceId
-            item {
-                id
-            }
-            room {
-                id
-            }
+            ...ChatCacheData
+        }
+    }
+
+    query GetChatsForHydration($filters: chat_Chat_bool_exp!) {
+        chat_Chat(where: $filters) {
+            ...ChatCacheData
         }
     }
 `;
@@ -29,28 +47,103 @@ export interface ChatEntity {
     roomId: string | null;
 }
 
+interface ChatCacheRecord {
+    id: string;
+    restrictToAdmins: "true" | "false";
+    conferenceId: string;
+    itemId: "null" | string;
+    roomId: "null" | string | number;
+}
+
+export type ChatHydrationFilters =
+    | {
+          id: string;
+      }
+    | {
+          conferenceId: string;
+      }
+    | {
+          itemId: string;
+      }
+    | {
+          roomId: string;
+      };
+
 export class ChatCache {
     constructor(private readonly logger: P.Logger) {}
 
-    private readonly cache = new TableCache(this.logger, "Chat", async (id) => {
-        const response = await gqlClient
-            ?.query<GetChatQuery, GetChatQueryVariables>(GetChatDocument, {
-                id,
-            })
-            .toPromise();
+    private readonly cache = new TableCache<keyof ChatCacheRecord, ChatHydrationFilters>(
+        this.logger,
+        "Chat",
+        async (id) => {
+            const response = await gqlClient
+                ?.query<GetChatQuery, GetChatQueryVariables>(GetChatDocument, {
+                    id,
+                })
+                .toPromise();
 
-        const data = response?.data?.chat_Chat_by_pk;
-        if (data) {
-            return {
-                id: data.id,
-                restrictToAdmins: data.restrictToAdmins ? "true" : "false",
-                conferenceId: data.conferenceId,
-                itemId: data.item?.id ?? "null",
-                roomId: data.room?.id ?? "null",
-            };
+            const data = response?.data?.chat_Chat_by_pk;
+            if (data) {
+                return this.convertToCacheRecord(data);
+            }
+            return undefined;
+        },
+        async (filters) => {
+            const gqlFilters: Chat_Chat_Bool_Exp = {};
+
+            if ("id" in filters) {
+                gqlFilters.id = {
+                    _eq: filters.id,
+                };
+            } else if ("conferenceId" in filters) {
+                gqlFilters.conferenceId = {
+                    _eq: filters.conferenceId,
+                };
+            } else if ("roomId" in filters) {
+                gqlFilters.room = {
+                    id: {
+                        _eq: filters.roomId,
+                    },
+                };
+            } else if ("itemId" in filters) {
+                gqlFilters.item = {
+                    id: {
+                        _eq: filters.itemId,
+                    },
+                };
+            }
+
+            const response = await gqlClient
+                ?.query<GetChatsForHydrationQuery, GetChatsForHydrationQueryVariables>(GetChatsForHydrationDocument, {
+                    filters: gqlFilters,
+                })
+                .toPromise();
+            if (response?.data) {
+                const records: HydrationRecord<keyof ChatCacheRecord>[] = [];
+
+                for (const chat of response.data.chat_Chat) {
+                    records.push({
+                        data: this.convertToCacheRecord(chat),
+                        entityKey: chat.id,
+                    });
+                }
+
+                return records;
+            }
+
+            return undefined;
         }
-        return undefined;
-    });
+    );
+
+    private convertToCacheRecord(data: ChatCacheDataFragment): CacheRecord<keyof ChatCacheRecord> {
+        return {
+            id: data.id,
+            restrictToAdmins: data.restrictToAdmins ? "true" : "false",
+            conferenceId: data.conferenceId,
+            itemId: data.item?.id ?? "null",
+            roomId: data.room?.id ?? "null",
+        };
+    }
 
     public async getEntity(id: string, fetchIfNotFound = true): Promise<ChatEntity | undefined> {
         const rawEntity = await this.cache.getEntity(id, fetchIfNotFound);

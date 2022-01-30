@@ -4,11 +4,23 @@ import type { P } from "pino";
 import type { Callback, RedisClient } from "redis";
 import { promisify } from "util";
 
-export class TableCache {
+export type CacheRecord<Ks extends string> = {
+    [K in Ks]: string;
+};
+
+export interface HydrationRecord<CacheRecordKeys extends string> {
+    entityKey: string;
+    data: CacheRecord<CacheRecordKeys>;
+}
+
+export class TableCache<CacheRecordKeys extends string, HydrationInputFilters extends Record<string, string | number>> {
     constructor(
         private readonly logger: P.Logger,
         private readonly redisRootKey: string,
-        private readonly fetch: (key: string) => Promise<Record<string, string> | undefined>,
+        private readonly fetch: (key: string) => Promise<CacheRecord<CacheRecordKeys> | undefined>,
+        private readonly fetchForHydrate: (
+            filters: HydrationInputFilters
+        ) => Promise<HydrationRecord<CacheRecordKeys>[] | undefined>,
         private readonly ttlSeconds = 7 * 24 * 60 * 60
     ) {}
 
@@ -16,7 +28,7 @@ export class TableCache {
         return `caches.${this.redisRootKey}:${itemKey}`;
     }
 
-    private async rawSet(cacheKey: string, value: Record<string, string>, redisClient: RedisClient) {
+    private async rawSet(cacheKey: string, value: CacheRecord<CacheRecordKeys>, redisClient: RedisClient) {
         let discard = true;
         let multi = redisClient.multi();
         try {
@@ -33,7 +45,10 @@ export class TableCache {
         }
     }
 
-    public async getEntity(entityKey: string, fetchIfNotFound = true): Promise<Record<string, string> | undefined> {
+    public async getEntity(
+        entityKey: string,
+        fetchIfNotFound = true
+    ): Promise<CacheRecord<CacheRecordKeys> | undefined> {
         try {
             this.logger.trace(
                 { entityKey, fetchIfNotFound, redisRootKey: this.redisRootKey },
@@ -94,7 +109,11 @@ export class TableCache {
         return undefined;
     }
 
-    public async getField(entityKey: string, fieldKey: string, fetchIfNotFound = true): Promise<string | undefined> {
+    public async getField(
+        entityKey: string,
+        fieldKey: CacheRecordKeys,
+        fetchIfNotFound = true
+    ): Promise<string | undefined> {
         try {
             this.logger.trace(
                 { entityKey, fieldKey, redisRootKey: this.redisRootKey, fetchIfNotFound },
@@ -162,7 +181,7 @@ export class TableCache {
         return undefined;
     }
 
-    public async setEntity(entityKey: string, value: Record<string, string> | undefined): Promise<void> {
+    public async setEntity(entityKey: string, value: CacheRecord<CacheRecordKeys> | undefined): Promise<void> {
         try {
             const redisClient = await redisClientPool.acquire(`caches/generic/table:${this.redisRootKey}`);
             const cacheKey = this.generateEntityKey(entityKey);
@@ -231,13 +250,40 @@ export class TableCache {
 
     public async updateEntity(
         id: string,
-        update: (entity: Record<string, string>) => Record<string, string> | undefined,
+        update: (entity: CacheRecord<CacheRecordKeys>) => CacheRecord<CacheRecordKeys> | undefined,
         fetchIfNotFound = false
     ): Promise<void> {
         const entity = await this.getEntity(id, fetchIfNotFound);
         if (entity) {
             const newEntity = update(entity);
             await this.setEntity(id, newEntity);
+        }
+    }
+
+    public async hydrate(filters: HydrationInputFilters): Promise<void> {
+        const fetchedData = await this.fetchForHydrate(filters);
+
+        const redisClient = await redisClientPool.acquire("TableCache.hydrate");
+        try {
+            const accumulatedErrors: any[] = [];
+            if (fetchedData) {
+                for (const record of fetchedData) {
+                    try {
+                        const cacheKey = this.generateEntityKey(record.entityKey);
+                        await this.rawSet(cacheKey, record.data, redisClient);
+                    } catch (e: any) {
+                        accumulatedErrors.push(e);
+                    }
+                }
+            }
+
+            if (accumulatedErrors.length > 0) {
+                throw new Error(
+                    "Some records failed to update during hydrate: " + JSON.stringify(accumulatedErrors, null, 2)
+                );
+            }
+        } finally {
+            await redisClientPool.release("TableCache.hydrate", redisClient);
         }
     }
 }

@@ -130,7 +130,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
             //    non-speculative fetch ("get me this thing I know exists").
             info.partial =
                 info.partial ||
-                (isObjectByPkQuery && fieldInfos.length === 0) ||
+                isObjectByPkQuery ||
                 Boolean(args.where && typeof args.where === "object" && "id" in args.where);
         }
 

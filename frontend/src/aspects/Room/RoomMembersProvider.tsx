@@ -1,6 +1,8 @@
+import { AuthHeader } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useGetRoomMembersQuery } from "../../generated/graphql";
+import { makeContext } from "../GQL/make-context";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import type { RoomMembersInfos } from "./useRoomMembers";
 import { RoomMembersContext } from "./useRoomMembers";
@@ -27,10 +29,18 @@ export default function RoomMembersProvider({
     roomId: string;
     children: string | React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.RoomId]: roomId,
+            }),
+        [roomId]
+    );
     const [{ fetching: loading, error, data }] = useGetRoomMembersQuery({
         variables: {
             roomId,
         },
+        context,
     });
     useQueryErrorToast(error, true, "RoomMembersProvider:GetRoomMembers");
 

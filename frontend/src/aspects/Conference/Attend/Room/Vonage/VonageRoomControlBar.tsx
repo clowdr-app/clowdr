@@ -30,6 +30,7 @@ import {
     VStack,
     WrapItem,
 } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import { Mutex } from "async-mutex";
 import type { MutableRefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -39,6 +40,7 @@ import FAIcon from "../../../../Chakra/FAIcon";
 import type { ChatState } from "../../../../Chat/ChatGlobalState";
 import QuickSendEmote from "../../../../Chat/Compose/QuickSendEmote";
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
+import { makeContext } from "../../../../GQL/make-context";
 import useIsNarrowView from "../../../../Hooks/useIsNarrowView";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
@@ -445,12 +447,19 @@ export function VonageRoomControlBar({
 
     const globalChatState = useGlobalChatState();
     const [chat, setChat] = useState<ChatState | null>(null);
-
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.RoomId]: roomId,
+            }),
+        [roomId]
+    );
     const [roomChatIdResponse] = useGetRoomChatIdQuery({
         variables: {
             roomId,
         },
         pause: !roomId,
+        context,
     });
     const chatId = roomChatIdResponse.data?.room_Room_by_pk?.chatId;
     useEffect(() => {

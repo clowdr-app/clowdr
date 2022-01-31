@@ -95,8 +95,9 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
         () =>
             makeContext({
                 [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.RoomId]: roomId,
             }),
-        []
+        [roomId]
     );
     const [rtmpOutputResponse, refetchRtmpOutputResponse] = useGetRoomRtmpOutputQuery({
         variables: {

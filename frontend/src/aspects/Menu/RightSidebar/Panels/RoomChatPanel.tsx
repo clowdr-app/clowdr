@@ -1,10 +1,12 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, HStack, Spinner } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { AuthHeader } from "@midspace/shared-types/auth";
+import React, { useEffect, useMemo, useState } from "react";
 import { gql } from "urql";
 import { useGetRoomChatIdQuery } from "../../../../generated/graphql";
 import { Chat } from "../../../Chat/Chat";
 import type { ChatState } from "../../../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
+import { makeContext } from "../../../GQL/make-context";
 
 gql`
     query GetRoomChatId($roomId: uuid!) {
@@ -27,10 +29,18 @@ export function RoomChatPanel({
     setPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.RoomId]: roomId,
+            }),
+        [roomId]
+    );
     const [{ fetching: loading, error, data }] = useGetRoomChatIdQuery({
         variables: {
             roomId,
         },
+        context,
     });
 
     const globalChatState = useGlobalChatState();

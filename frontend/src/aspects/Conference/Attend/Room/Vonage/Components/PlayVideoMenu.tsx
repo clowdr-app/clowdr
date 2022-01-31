@@ -10,11 +10,13 @@ import {
     Portal,
     Tooltip,
 } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import * as R from "ramda";
 import React, { useContext, useMemo } from "react";
 import { gql } from "urql";
 import { useGetEventVideosQuery, useGetRoomVideosQuery } from "../../../../../../generated/graphql";
 import FAIcon from "../../../../../Chakra/FAIcon";
+import { makeContext } from "../../../../../GQL/make-context";
 import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { VonageVideoPlaybackContext } from "../VideoPlayback/VonageVideoPlaybackContext";
 
@@ -86,11 +88,19 @@ export default function PlayVideoMenuButton({
         },
         pause: !eventId,
     });
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.RoomId]: roomId,
+            }),
+        [roomId]
+    );
     const [roomResponse] = useGetRoomVideosQuery({
         variables: {
             roomId,
         },
         pause: !roomId,
+        context,
     });
 
     const eventMenuItems = useMemo(() => {

@@ -1,3 +1,4 @@
+import { useQuery } from "@midspace/urql-hasura-cache-generic-resolver/useQuery";
 import type {
     OptimisticMutationResolver as GraphCacheOptimisticMutationResolver,
     Resolver as GraphCacheResolver,
@@ -7,7 +8,6 @@ import type {
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import gql from "graphql-tag";
 import * as Urql from "urql";
-import { useQuery } from "@midspace/urql-hasura-cache-generic-resolver/useQuery";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };

@@ -34,7 +34,17 @@ SOFTWARE.
 /* eslint-disable react/display-name */
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import type { ThemeTypings } from "@chakra-ui/react";
-import { Code, Divider, Heading, Link, ListItem, OrderedList, Text, UnorderedList } from "@chakra-ui/react";
+import {
+    AspectRatio,
+    Code,
+    Divider,
+    Heading,
+    Link,
+    ListItem,
+    OrderedList,
+    Text,
+    UnorderedList,
+} from "@chakra-ui/react";
 import anchorme from "anchorme";
 import React, { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
@@ -244,16 +254,18 @@ export function Markdown(elProps?: {
                     const youtubeVideoId = parseYouTubeURL(props.src ?? "");
                     if (youtubeVideoId) {
                         return (
-                            <ReactPlayer
-                                className="video-player"
-                                width=""
-                                height=""
-                                playsinline
-                                controls={true}
-                                muted={false}
-                                volume={1}
-                                url={`https://www.youtube.com/watch?v=${youtubeVideoId}`}
-                            />
+                            <AspectRatio w="min(100%, 90vh * (16 / 9))" maxW="100%" ratio={16 / 9}>
+                                <ReactPlayer
+                                    className="video-player"
+                                    width=""
+                                    height=""
+                                    playsinline
+                                    controls={true}
+                                    muted={false}
+                                    volume={1}
+                                    url={`https://www.youtube.com/watch?v=${youtubeVideoId}`}
+                                />
+                            </AspectRatio>
                         );
                     } else {
                         return <img {...props} />;
@@ -266,7 +278,7 @@ export function Markdown(elProps?: {
                     return <OrderedList pl={4} mb={2} {...props} />;
                 },
                 p({ node: _node, ...props }) {
-                    return <Text mb={2} whiteSpace="normal" wordBreak="break-word" {...props} />;
+                    return <Text mb={2} whiteSpace="normal" wordBreak="break-word" w="100%" {...props} />;
                 },
 
                 ul({ node: _node, ...props }) {

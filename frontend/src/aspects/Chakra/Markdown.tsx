@@ -119,7 +119,7 @@ export function Markdown(elProps?: {
         <ReactMarkdown
             className={elProps?.className}
             linkTarget="_blank"
-            rehypePlugins={[[rehypeTwemojify, { folder: "svg", ext: ".svg" }]]}
+            rehypePlugins={[[rehypeTwemojify, { folder: "svg", ext: ".svg", className: "markdown-twemoji" }]]}
             remarkPlugins={[[remarkEmoji, { emoticon: true }]]}
             components={{
                 a({ node: _node, children, ...props }) {

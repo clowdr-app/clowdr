@@ -303,6 +303,7 @@ importers:
       '@uppy/react': 2.1.1_@uppy+core@2.1.2+react@17.0.2
       '@uppy/status-bar': 2.1.1_@uppy+core@2.1.2
       '@urql/core': 2.3.5_graphql@15.7.2
+      '@urql/devtools': 2.0.3_@urql+core@2.3.5+graphql@15.7.2
       '@urql/exchange-auth': 0.1.6_graphql@15.7.2
       '@urql/exchange-graphcache': 4.3.5_graphql@15.7.2
       '@urql/exchange-request-policy': 0.1.4_graphql@15.7.2
@@ -397,7 +398,6 @@ importers:
       '@graphql-codegen/typescript-urql': 3.4.1_a200a8b101ce12e4e050343b0b6fa1a4
       '@graphql-codegen/typescript-urql-graphcache': 2.2.2_15e7b238302909caeb9162519c8f7118
       '@graphql-codegen/urql-introspection': 2.1.0_graphql@15.7.2
-      '@urql/devtools': 2.0.3_@urql+core@2.3.5+graphql@15.7.2
       dotenv: 10.0.0
       prettier: 2.5.0
       rimraf: 3.0.2
@@ -12354,7 +12354,7 @@ packages:
       '@urql/core': 2.3.5_graphql@15.7.2
       graphql: 15.7.2
       wonka: 4.0.15
-    dev: true
+    dev: false
 
   /@urql/exchange-auth/0.1.6_graphql@15.7.2:
     resolution: {integrity: sha512-jVyUaV+hHe3p2rIJauh6lgILMAjXOsHQ98xjKhUF3TXYx88TZXuBIl5DPZwnMcGra8YPOSHO/Wsn6NEjO5hQ+Q==}
@@ -25414,6 +25414,7 @@ packages:
 
   /wonka/4.0.15:
     resolution: {integrity: sha512-U0IUQHKXXn6PFo9nqsHphVCE5m3IntqZNB9Jjn7EB1lrR7YTDY3YWgFvEvwniTzXSvOH/XMzAZaIfJF/LvHYXg==}
+    dev: false
 
   /word-wrap/1.2.3:
     resolution: {integrity: sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==}

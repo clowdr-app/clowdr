@@ -182,7 +182,9 @@ function UrqlProviderInner({
                     const newClient = createClient({
                         url: GraphQLHTTPUrl,
                         exchanges: [
-                            // devtoolsExchange,
+                            ...(import.meta.env.VITE_DEVELOPER_ENABLE_URQL_DEVTOOLS === "true"
+                                ? [(await import("@urql/devtools")).devtoolsExchange]
+                                : []),
                             dedupExchange,
                             requestTracingExchange,
                             requestPolicyExchange({

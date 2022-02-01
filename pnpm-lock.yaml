@@ -18080,7 +18080,7 @@ packages:
     peerDependencies:
       ws: '*'
     dependencies:
-      ws: 8.2.3_5971b5a749a91823f5467a6d31a2f8b3
+      ws: 8.2.3
 
   /isstream/0.1.2:
     resolution: {integrity: sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=}

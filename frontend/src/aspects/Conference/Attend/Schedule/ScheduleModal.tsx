@@ -207,7 +207,7 @@ export default function ScheduleModal({
             onClose={onClose}
         >
             <ModalOverlay />
-            <ModalContent h="100vh" overflow="hidden">
+            <ModalContent h="100vh" overflow="hidden" m={4}>
                 <ModalCloseButton ref={closeRef} />
                 <ModalBody display="flex" justifyContent="center" overflow="hidden" p={0}>
                     <Tabs

@@ -1,4 +1,8 @@
 import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
     Box,
     Button,
     Center,
@@ -782,7 +786,28 @@ export function ScheduleInner({
                     {frameEls}
                 </Flex>
             </Box>
-            {!rawEvents.length ? <Box>No events {noEventsText ? noEventsText.toLowerCase() : ""}</Box> : undefined}
+            {!rawEvents.length ? (
+                <Center h="100%" maxWidth="50ch" margin="0 auto">
+                    <Alert
+                        status="info"
+                        variant="subtle"
+                        flexDirection="column"
+                        alignItems="center"
+                        justifyContent="center"
+                        textAlign="center"
+                        p={8}
+                    >
+                        <AlertIcon boxSize="8" />
+                        <AlertTitle fontSize="lg" my={4}>
+                            No events found.
+                        </AlertTitle>
+                        <AlertDescription mr={2}>
+                            There are no events
+                            {noEventsText ? ` ${noEventsText.toLowerCase()}` : " in the schedule yet"}.
+                        </AlertDescription>
+                    </Alert>
+                </Center>
+            ) : undefined}
         </Flex>
     );
 }

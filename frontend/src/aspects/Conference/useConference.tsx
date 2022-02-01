@@ -168,7 +168,7 @@ function ConferenceProvider_WithoutUser({
         []
     );
     const [requestPolicy, setRequestPolicy] = useState<RequestPolicy | undefined>(undefined);
-    const [{ fetching: loading, error, data }] = useConferenceById_WithoutUserQuery({
+    const [{ fetching: loading, error, data, stale }] = useConferenceById_WithoutUserQuery({
         variables: {
             id: conferenceId,
         },
@@ -181,7 +181,7 @@ function ConferenceProvider_WithoutUser({
         }
     }, [data?.conference_Conference_by_pk]);
 
-    if (loading && !data) {
+    if ((loading || stale) && !data?.conference_Conference_by_pk) {
         return <CenteredSpinner caller="useConference:175" />;
     }
 
@@ -221,7 +221,7 @@ function ConferenceProvider_WithUser({
         []
     );
     const [requestPolicy, setRequestPolicy] = useState<RequestPolicy | undefined>(undefined);
-    const [{ fetching: loading, error, data }] = useConferenceById_WithUserQuery({
+    const [{ fetching: loading, error, data, stale }] = useConferenceById_WithUserQuery({
         variables: {
             id: conferenceId,
             userId,
@@ -235,7 +235,7 @@ function ConferenceProvider_WithUser({
         }
     }, [data?.conference_Conference_by_pk]);
 
-    if (loading && !data) {
+    if ((loading || stale) && !data?.conference_Conference_by_pk) {
         return <CenteredSpinner caller="useConference:222" />;
     }
 

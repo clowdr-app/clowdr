@@ -36284,7 +36284,7 @@ export type CompleteCustomEmailJobsMutation = {
 };
 
 export type ConferenceEmailConfigurationQueryVariables = Exact<{
-    conferenceId?: Maybe<Scalars["uuid"]>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
     includeConferenceFields: Scalars["Boolean"];
 }>;
 
@@ -36373,7 +36373,7 @@ export type GetSendGridConfigQuery = {
 export type UpdateEmailStatusMutationVariables = Exact<{
     id: Scalars["uuid"];
     status: Scalars["String"];
-    errorMessage?: Maybe<Scalars["String"]>;
+    errorMessage?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type UpdateEmailStatusMutation = {
@@ -36853,7 +36853,7 @@ export type OtherConferencePrepareJobsQuery = {
 };
 
 export type GetVideoBroadcastElementsQueryVariables = Exact<{
-    conferenceId?: Maybe<Scalars["uuid"]>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type GetVideoBroadcastElementsQuery = {
@@ -36961,10 +36961,10 @@ export type Recording_CompleteMediaPackageHarvestJobMutationVariables = Exact<{
     id: Scalars["uuid"];
     message: Scalars["String"];
     data: Scalars["jsonb"];
-    source?: Maybe<Scalars["jsonb"]>;
+    source?: InputMaybe<Scalars["jsonb"]>;
     itemId: Scalars["uuid"];
     conferenceId: Scalars["uuid"];
-    subconferenceId?: Maybe<Scalars["uuid"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     name: Scalars["String"];
 }>;
 
@@ -37063,7 +37063,7 @@ export type AddRegistrantToRoomMembershipsMutation = {
 };
 
 export type CreateDmRoom_GetRegistrantsQueryVariables = Exact<{
-    registrantIds?: Maybe<Array<Scalars["uuid"]> | Scalars["uuid"]>;
+    registrantIds?: InputMaybe<Array<Scalars["uuid"]> | Scalars["uuid"]>;
     conferenceId: Scalars["uuid"];
 }>;
 
@@ -37074,7 +37074,7 @@ export type CreateDmRoom_GetRegistrantsQuery = {
 
 export type CreateDmRoom_GetExistingRoomsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
-    registrantIds?: Maybe<Array<Scalars["uuid"]> | Scalars["uuid"]>;
+    registrantIds?: InputMaybe<Array<Scalars["uuid"]> | Scalars["uuid"]>;
 }>;
 
 export type CreateDmRoom_GetExistingRoomsQuery = {
@@ -37631,8 +37631,8 @@ export type CheckForVonageRoomRecordingNotUploadedQuery = {
 export type SaveVonageRoomRecordingMutationVariables = Exact<{
     id: Scalars["uuid"];
     endedAt: Scalars["timestamptz"];
-    uploadedAt?: Maybe<Scalars["timestamptz"]>;
-    s3Url?: Maybe<Scalars["String"]>;
+    uploadedAt?: InputMaybe<Scalars["timestamptz"]>;
+    s3Url?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type SaveVonageRoomRecordingMutation = {
@@ -37990,11 +37990,11 @@ export type CreateItemRoom_GetItemQuery = {
 };
 
 export type Item_CreateRoomMutationVariables = Exact<{
-    chatId?: Maybe<Scalars["uuid"]>;
+    chatId?: InputMaybe<Scalars["uuid"]>;
     conferenceId: Scalars["uuid"];
     name: Scalars["String"];
     itemId: Scalars["uuid"];
-    subconferenceId?: Maybe<Scalars["uuid"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type Item_CreateRoomMutation = {
@@ -38015,9 +38015,9 @@ export type GetRoomConferenceIdQuery = {
 };
 
 export type GetRoomThatRegistrantCanJoinQueryVariables = Exact<{
-    roomId?: Maybe<Scalars["uuid"]>;
-    registrantId?: Maybe<Scalars["uuid"]>;
-    conferenceId?: Maybe<Scalars["uuid"]>;
+    roomId?: InputMaybe<Scalars["uuid"]>;
+    registrantId?: InputMaybe<Scalars["uuid"]>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type GetRoomThatRegistrantCanJoinQuery = {
@@ -38110,8 +38110,8 @@ export type CreateRoomParticipantMutationVariables = Exact<{
     registrantId: Scalars["uuid"];
     conferenceId: Scalars["uuid"];
     roomId: Scalars["uuid"];
-    vonageConnectionId?: Maybe<Scalars["String"]>;
-    chimeRegistrantId?: Maybe<Scalars["String"]>;
+    vonageConnectionId?: InputMaybe<Scalars["String"]>;
+    chimeRegistrantId?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type CreateRoomParticipantMutation = {
@@ -38448,11 +38448,11 @@ export type GetVonageSessionLayoutQuery = {
 export type UpdateProfilePhotoMutationVariables = Exact<{
     registrantId: Scalars["uuid"];
     userId: Scalars["String"];
-    objectName?: Maybe<Scalars["String"]>;
-    bucket?: Maybe<Scalars["String"]>;
-    region?: Maybe<Scalars["String"]>;
-    photoURL_50x50?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
+    objectName?: InputMaybe<Scalars["String"]>;
+    bucket?: InputMaybe<Scalars["String"]>;
+    region?: InputMaybe<Scalars["String"]>;
+    photoURL_50x50?: InputMaybe<Scalars["String"]>;
+    photoURL_350x350?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type UpdateProfilePhotoMutation = {

@@ -46,6 +46,7 @@ marked **Production** as well.
      1. Next to the big + sign in the right side of the terminal header, there's a dropdown with tooltip "Launch Profile...". Click it and select Git Bash.
 1. [Node.js 16](https://nodejs.org/en/) (and NPM 7.8 or later)
 1. [Docker Desktop](https://docs.docker.com/compose/cli-command/#installing-compose-v2) - Midspace uses Docker Compose, now included in the Docker CLI.
+1. [Hasura CLI](https://hasura.io/docs/latest/graphql/core/hasura-cli/install-hasura-cli.html#install-hasura-cli)
 1. **Full Setup:** [AWS CLI](https://aws.amazon.com/cli/) and [awsvault](https://github.com/99designs/aws-vault)
 1. **Production:** [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) if you will be deploying Midspace publicly.
 

@@ -6,6 +6,7 @@ and all of our backend services.
 ## Pre-requisites
 
 1. [Docker Compose](https://docs.docker.com/compose/)
+1. [Hasura CLI](https://hasura.io/docs/latest/graphql/core/hasura-cli/install-hasura-cli.html#install-hasura-cli)
 1. **Full Setup**: A SendGrid account per instructions in the main README.
 
 ## Setting Up

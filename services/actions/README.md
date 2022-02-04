@@ -124,6 +124,8 @@ Note: `AWS_` values come from the outputs of your AWS CloudFormation deployment.
 | AWS_TRANSCRIBE_SERVICE_ROLE_ARN                  | The IAM role to be passed to Transcribe                                                                                                                                | CDK `main` stack output  |
 | AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN            | The ARN of the SNS topic for MediaConvert notifications                                                                                                                | CDK `main` stack output  |
 | AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN           | The ARN of the SNS topic for transcription notifications                                                                                                               | CDK `main` stack output  |
+| AWS_PUBLIC_TRANSCRIBE_USER_ACCESS_KEY_ID             |  | CDK `main` stack output |
+| AWS_PUBLIC_TRANSCRIBE_USER_SECRET_ACCESS_KEY         |  | CDK `main` stack output |
 | AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME          | The name of the CloudFront (separate AWS service from CloudFormation!) distribution obtained from deploying the Serverless Image Handler stack (e.g. `f9da4dbs83dnsl`) | AWS CloudFront           |
 | AWS_IMAGES_SECRET_ACCESS_ROLE_ARN                | The ARN of the role for accessing the Serverless Image Handler secret.                                                                                                 | Generated Earlier        |
 | AWS_IMAGES_SECRET_ARN                            | The ARN of the secret for the Serverless Image Handler.                                                                                                                | Generated Earlier        |

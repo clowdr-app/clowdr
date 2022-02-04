@@ -39,7 +39,7 @@
         "urql": "^2.0.5"
     },
     "engines": {
-        "node": ">=16.x",
+        "node": ">=17.x",
         "pnpm": "^6.19.x"
     },
     "exports": {

@@ -31,7 +31,7 @@
         "zod": "^3.11.6"
     },
     "engines": {
-        "node": ">=16.x",
+        "node": ">=17.x",
         "pnpm": "^6.19.x"
     },
     "exports": {

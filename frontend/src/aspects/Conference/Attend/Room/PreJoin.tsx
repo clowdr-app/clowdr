@@ -1,16 +1,16 @@
 import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
-import { Box, Center, chakra, HStack, useToast, VStack } from "@chakra-ui/react";
+import { Box, Center, chakra, HStack, useConst, useToast, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import FAIcon from "../../../Chakra/FAIcon";
+import { getAudioContext } from "../../../Utils/getAudioContext";
 import { backgroundImage } from "../../../Vonage/resources";
 import { useVonageRoom } from "../../../Vonage/useVonageRoom";
-
-export const AudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
 
 export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLVideoElement> }): JSX.Element {
     const { state } = useVonageRoom();
     const toast = useToast();
+    const audioContext = useConst(getAudioContext());
 
     useEffect(() => {
         if (cameraPreviewRef.current) {
@@ -59,14 +59,16 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                         .getAudioTracks()
                         .some((track) => track.enabled && track.readyState === "live") ? (
                         <>
-                            <VolumeMeter
-                                audioContext={AudioContext}
-                                height={25}
-                                width={50}
-                                shape={VmShape.VM_FLAT}
-                                stream={Optional.of(state.microphoneStream)}
-                                blocks={10}
-                            />
+                            {audioContext ? (
+                                <VolumeMeter
+                                    audioContext={audioContext}
+                                    height={25}
+                                    width={50}
+                                    shape={VmShape.VM_FLAT}
+                                    stream={Optional.of(state.microphoneStream)}
+                                    blocks={10}
+                                />
+                            ) : undefined}
                             <chakra.div w="2rem" h="2rem" bgColor="rgba(50,50,50,0.8)" borderRadius="50%">
                                 <FAIcon
                                     iconStyle="s"

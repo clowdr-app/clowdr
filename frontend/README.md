@@ -15,7 +15,7 @@ React web app that forms the main Midspace frontend.
 1. `cp .env.example .env`
 1. Configure your `.env` file according to the [Frontend
    Configuration](#frontend-configuration) section below.
-1. Run the VSCode task `Frontend -- GraphQL Codegen`.
+1. Run the VSCode task `Single -- GraphQL Codegen` and select `frontend` (Hasura must be running when you do this).
 1. Build and test the system locally (see [Local Development](#local-development)
    below).
 1. **Production**: If using Netlify, then:
@@ -39,7 +39,7 @@ components](@chakra-ui/theme-tools).
 
 After writing, modifying or delete a GraphQL query in the frontend, you will
 need to regenerate the GraphQL code. You can do this using the VSCode Task
-`Frontend -- GraphQL Codegen`.
+`Single -- GraphQL Codegen` and selecting `frontend` (Hasura must be running).
 
 ## Local Development
 

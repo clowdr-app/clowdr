@@ -22,7 +22,7 @@ Eventually this may be split into multiple microservices.
 1. Configure your `.env` according to the [Actions Service Configuration](#actions-service-configuration) table below
    - **Quick setup**: Set all the environment variables related to AWS to `XXXX`. BCP: This will not actually work right now, but let's give it a try this way and see how much further we can get.
    - **Full Setup**: You will need the outputs from running the AWS CDK deployment. `ChimeActionsUserAccessKeyId`, `ChimeActionsUserSecretAccessKey`, and `ChimeNotificationsTopic` are found in the `Outputs` tab for the `<prefix>-chime` stack that was deployed in `us-east-1 (N. Virginia)`, and most of the rest of the `AWS_...` environment variable values come from the `Outputs` for the `<prefix>-main` stack deployed to the default region.
-1. Run the `Actions service - GraphQL Codegen` task in VSCode to generate the GraphQL query code (Hasura must be running when you do this).
+1. Run the `Single -- GraphQL Codegen` task in VSCode and select `service-actions` as an input to generate the GraphQL query code for the actions service (Hasura must be running when you do this).
 
 Now return to the main README.
 

@@ -596,7 +596,7 @@ export default function AnalyticsDashboard(): JSX.Element {
             {popularVideosByPlaybacks?.length ? (
                 <VStack alignItems="flex-start">
                     <Text fontWeight="bold">The top 5 most popular videos are:</Text>
-                    <Table spacingX="40px" spacingY="20px" overflowX="auto">
+                    <Table cellSpacing="20px" overflowX="auto">
                         <Thead>
                             <Tr>
                                 <Th>Item</Th>

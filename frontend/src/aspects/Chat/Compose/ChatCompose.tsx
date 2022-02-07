@@ -392,8 +392,8 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                         composeCtx.setNewMessage(ev.target.value);
                     }}
                     value={composeCtx.newMessage}
-                    min={composeCtx.messageLengthRange.min}
-                    max={composeCtx.messageLengthRange.max}
+                    minLength={composeCtx.messageLengthRange.min}
+                    maxLength={composeCtx.messageLengthRange.max}
                     autoFocus
                     isDisabled={composeCtx.isSending}
                     onKeyDown={(ev) => {

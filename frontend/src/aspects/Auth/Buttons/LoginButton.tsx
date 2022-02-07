@@ -70,13 +70,7 @@ export default function LoginButton({
             <FAIcon iconStyle="s" icon="sign-in-alt" mr={2} aria-hidden={true} /> Login
         </Button>
     ) : asMenuItem ? (
-        <MenuItem
-            size={size ?? "sm"}
-            onClick={() => loginWithRedirect(opts)}
-            colorScheme={colorScheme ?? "RightMenuButton"}
-        >
-            Login
-        </MenuItem>
+        <MenuItem onClick={() => loginWithRedirect(opts)}>Login</MenuItem>
     ) : (
         <Button
             isLoading={isLoading}

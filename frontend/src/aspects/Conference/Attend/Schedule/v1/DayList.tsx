@@ -109,7 +109,6 @@ export default function DayList({
                             <MenuItem
                                 m={0}
                                 key="today"
-                                size="sm"
                                 onClick={() => {
                                     scrollToEvent(todayFEI[1].event);
                                 }}
@@ -138,7 +137,6 @@ export default function DayList({
                                 ) : undefined}
                                 <MenuItem
                                     m={0}
-                                    size="sm"
                                     onClick={() => {
                                         scrollToEvent(date[1].event);
                                     }}

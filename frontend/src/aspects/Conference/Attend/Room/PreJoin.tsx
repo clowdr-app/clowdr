@@ -35,7 +35,7 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                         bgPos="center bottom"
                         opacity="0.25"
                     />
-                    <Center position="absolute" w="100%" h="100%" t="0" l="0">
+                    <Center position="absolute" w="100%" h="100%" top="0" left="0">
                         <Box bgColor="rgba(0,0,0,0.5)" p={4} fontSize="lg" color="white" whiteSpace="normal">
                             Your camera is not switched on.
                         </Box>

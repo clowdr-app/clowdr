@@ -171,7 +171,7 @@ function SecondaryEditorInner({
     );
 
     return (
-        <VStack w="100%" alignExhibitions="flex-start">
+        <VStack w="100%" alignItems="flex-start">
             <HStack flexWrap="wrap" justifyContent="flex-start" w="100%" gridRowGap={2}>
                 <LinkButton
                     size="sm"

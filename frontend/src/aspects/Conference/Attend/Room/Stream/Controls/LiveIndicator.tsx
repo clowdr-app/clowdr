@@ -374,7 +374,6 @@ export function LiveIndicator({
                                     colorScheme="SecondaryActionButton"
                                     size="sm"
                                     whiteSpace="normal"
-                                    wordWrap="break-word"
                                     flexShrink={1}
                                     maxW="15ch"
                                 >

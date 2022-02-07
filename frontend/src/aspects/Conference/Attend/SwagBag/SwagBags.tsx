@@ -299,7 +299,7 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
     return (
         <Flex
             flex={["1 0 100%", "1 0 100%", "1 0 47%"]}
-            borderColour="gray.400"
+            borderColor="gray.400"
             borderTop="1px solid"
             justifyContent="center"
             overflow="hidden"

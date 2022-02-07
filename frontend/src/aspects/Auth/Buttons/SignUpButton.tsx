@@ -34,13 +34,7 @@ export default function SignupButton({
     return isAuthenticated ? (
         <></>
     ) : asMenuItem ? (
-        <MenuItem
-            size={size ?? "sm"}
-            onClick={() => loginWithRedirect(opts)}
-            colorScheme={colorScheme ?? "LeftMenuButton"}
-        >
-            Sign Up
-        </MenuItem>
+        <MenuItem onClick={() => loginWithRedirect(opts)}>Sign Up</MenuItem>
     ) : (
         <Button
             isLoading={isLoading}

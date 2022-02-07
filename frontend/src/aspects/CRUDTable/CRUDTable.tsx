@@ -378,7 +378,7 @@ const defaultRenderers: {
                     value={value ?? ""}
                     onChange={(value) => editMode.onChange(value.length === 0 ? null : parseInt(value, 10))}
                     aria-label={editMode.label}
-                    disabled={editMode.isDisabled}
+                    isDisabled={editMode.isDisabled}
                     maxWidth="100%"
                     max={editMode.opts.max}
                     min={editMode.opts.min}

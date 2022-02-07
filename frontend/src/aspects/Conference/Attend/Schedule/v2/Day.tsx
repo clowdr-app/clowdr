@@ -410,7 +410,6 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                                 verticalAlign="top"
                                 whiteSpace="nowrap"
                                 overflow="hidden"
-                                size="xs"
                                 fontSize="sm"
                                 p="0.6em"
                                 minW="min-content"

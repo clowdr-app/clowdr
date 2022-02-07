@@ -233,7 +233,6 @@ const CRUDCell = React.forwardRef(function CRUDCell(
             contents
         ) : (
             <Td
-                size="sm"
                 padding={1}
                 minW="max-content"
                 style={{ backgroundColor: backgroundColor ? backgroundColorToken : undefined }}
@@ -376,7 +375,7 @@ function CRUDRow<T>({
     const selectEl = useMemo(() => {
         const canSelect = row.canSelect?.(record) ?? true;
         return onSelectChange && (getIsSelectedRef || setIsSelectedRef) ? (
-            <Td size="sm" padding={1}>
+            <Td padding={1}>
                 <Tooltip label={canSelect !== true ? canSelect : undefined}>
                     <Center w="100%" h="100%" padding={0}>
                         <Checkbox
@@ -398,7 +397,7 @@ function CRUDRow<T>({
     const editEl = useMemo(
         () =>
             onSecondaryEdit ? (
-                <Td size="sm" padding={1}>
+                <Td padding={1}>
                     <Center w="100%" h="100%" padding={0}>
                         <Tooltip label={warning ?? "Edit hidden fields"}>
                             <Button
@@ -428,7 +427,7 @@ function CRUDRow<T>({
     const deleteEl = useMemo(() => {
         const canDelete = row.canDelete?.(record) ?? true;
         return onDelete ? (
-            <Td size="sm" padding={1}>
+            <Td padding={1}>
                 <Tooltip label={canDelete !== true ? canDelete : undefined}>
                     <Center w="100%" h="100%" padding={0}>
                         <Button
@@ -465,7 +464,6 @@ function CRUDRow<T>({
 
     return (
         <Tr
-            size="sm"
             onBlur={(ev) => {
                 onBlur(localRecord, ev.relatedTarget as Element);
             }}
@@ -841,7 +839,7 @@ function RenderedCRUDTable<T>({
         () =>
             data === null ? (
                 <Tr>
-                    <Td colSpan={9} size="sm">
+                    <Td colSpan={9}>
                         <Center m={2}>
                             <Text>No data</Text>
                         </Center>
@@ -855,7 +853,7 @@ function RenderedCRUDTable<T>({
         () =>
             data === false ? (
                 <Tr>
-                    <Td colSpan={9} size="sm">
+                    <Td colSpan={9}>
                         <CenteredSpinner
                             centerProps={{ m: 2, h: "auto" }}
                             spinnerProps={{ label: "Loading schedule data" }}

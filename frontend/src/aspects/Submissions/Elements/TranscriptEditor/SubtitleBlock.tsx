@@ -40,7 +40,6 @@ export default function SubtitleBlock({
     return (
         <Flex {...{ style: { padding: `8px ${SUBTITLE_BLOCK_PADDING_CH}ch`, fontFamily: "monospace" }, ...flexProps }}>
             <Textarea
-                shrink={0}
                 width={SUBTITLE_TEXTAREA_WIDTH}
                 height="96px"
                 rows={MAX_SUBTITLE_BLOCK_LINES}
@@ -52,7 +51,7 @@ export default function SubtitleBlock({
                 }}
             />
             <Button
-                shrink={0}
+                resize="none"
                 height="auto"
                 aria-label="Delete subtitle block"
                 title="Delete subtitle block"

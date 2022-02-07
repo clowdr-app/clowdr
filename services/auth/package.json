@@ -31,8 +31,8 @@
         "@types/uuid": "^8.3.1",
         "@types/web-push": "^3.3.2",
         "@types/ws": "^7.4.5",
-        "@urql/core": "^2.3.5",
-        "@urql/exchange-retry": "^0.3.0",
+        "@urql/core": "^2.4.1",
+        "@urql/exchange-retry": "^0.3.2",
         "amqplib": "^0.8.0",
         "assert": "^2.0.0",
         "body-parser": "^1.19.1",
@@ -41,6 +41,7 @@
         "cpy-cli": "^3.1.1",
         "express": "^4.17.1",
         "generic-pool": "^3.8.2",
+        "graphql": "^15.7.2",
         "jsonwebtoken": "^8.5.1",
         "jwk-to-pem": "^2.0.5",
         "jwks-rsa": "^2.0.5",
@@ -53,12 +54,13 @@
         "redlock": "^4.2.0",
         "rimraf": "^3.0.2",
         "subscriptions-transport-ws": "^0.11.0",
-        "typescript": "^4.5.2",
+        "typescript": "^4.5.5",
         "typescript-is": "^0.19.0",
         "utf-8-validate": "^5.0.7",
         "uuid": "^8.3.2"
     },
     "devDependencies": {
+        "dotenv": "^15.0.0",
         "pino-pretty": "^7.2.0",
         "tsc-watch": "^4.5.0"
     },

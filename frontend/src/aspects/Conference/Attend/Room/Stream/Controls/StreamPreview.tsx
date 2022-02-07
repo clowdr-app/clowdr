@@ -49,15 +49,7 @@ export default function StreamPreview({
     }
 
     return hlsUri && (isLive || delayCompleted) && enabled ? (
-        <Box
-            pos="relative"
-            spacing={1}
-            minW="300px"
-            maxW="calc(9vh / 16vh)"
-            w="20vw"
-            border="1px solid #999"
-            bgColor={bgColor}
-        >
+        <Box pos="relative" minW="300px" maxW="calc(9vh / 16vh)" w="20vw" border="1px solid #999" bgColor={bgColor}>
             <Box pos="relative" w="100%" maxH="240px" overflow="hidden" zIndex={1}>
                 <Suspense fallback={<Spinner />}>
                     <VideoAspectWrapper>

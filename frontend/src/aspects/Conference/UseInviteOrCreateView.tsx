@@ -41,7 +41,7 @@ export default function UseInviteOrCreateView(): JSX.Element {
             spacing={["2em", "2em", "4em"]}
             width="100%"
             maxWidth="1000px"
-            divider={<StackDivider orientation={["horizontal", "vertical"]} borderColor={dividerColor} />}
+            divider={<StackDivider borderColor={dividerColor} />}
         >
             {useInviteEl}
             {newConferenceEl}

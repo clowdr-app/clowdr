@@ -8,18 +8,18 @@
       pool_settings:
         connection_lifetime: 600
         idle_timeout: 180
-        max_connections: 225
+        max_connections: 180
         retries: 3
       use_prepared_statements: true
-    read_replicas:
-    - database_url:
-        from_env: DATABASE_URL_REPLICA_1
-      isolation_level: read-committed
-      pool_settings:
-        connection_lifetime: 600
-        idle_timeout: 180
-        max_connections: 225
-        retries: 3
-      use_prepared_statements: false
+    # read_replicas:
+    # - database_url:
+    #     from_env: DATABASE_URL_REPLICA_1
+    #   isolation_level: read-committed
+    #   pool_settings:
+    #     connection_lifetime: 600
+    #     idle_timeout: 180
+    #     max_connections: 225
+    #     retries: 3
+    #   use_prepared_statements: false
   tables: "!include default/tables/tables.yaml"
   functions: "!include default/functions/functions.yaml"

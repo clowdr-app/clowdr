@@ -153,7 +153,7 @@ export default function SearchPanel({
     const client = useClient();
 
     return (
-        <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center">
+        <Flex flexDir="column" w="100%" h="100%" alignItems="center">
             <VStack maxW={400} spacing={3}>
                 <Heading as="h3" fontSize="xl">
                     Search

@@ -140,7 +140,7 @@ export function VideoElement({
                             <MenuButton as={Button} size="xs">
                                 Speed <FAIcon iconStyle="s" icon="chevron-down" />
                             </MenuButton>
-                            <MenuList size="xs" spacing="compact">
+                            <MenuList>
                                 <MenuOptionGroup
                                     onChange={(value) => {
                                         const v = parseFloat(value as string);

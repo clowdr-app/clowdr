@@ -52,7 +52,6 @@ export default function LogoutButton({
         </Button>
     ) : asMenuItem ? (
         <MenuItem
-            size="sm"
             onClick={() => logout({ returnTo })}
             w="auto"
             p={3}

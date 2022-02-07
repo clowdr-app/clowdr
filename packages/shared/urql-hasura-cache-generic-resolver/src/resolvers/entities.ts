@@ -32,10 +32,12 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
         }
 
         const result = new Set<string>();
+        let exactQueryExistsInCache = false;
         if (isObjectByPkQuery) {
             for (const fieldInfo of fieldInfos) {
                 const key = cache.resolve(info.parentKey, fieldInfo.fieldKey) as string | null;
                 if (key && _.isEqual(fieldInfo.arguments, args)) {
+                    exactQueryExistsInCache = true;
                     result.add(key);
                 } else if (key) {
                     let ok = true;
@@ -47,6 +49,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
                         }
                     }
                     if (ok) {
+                        exactQueryExistsInCache = true;
                         result.add(key);
                     }
                 }
@@ -67,6 +70,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
                 if (_.isEqual(fieldInfo.arguments, args)) {
                     const key = cache.resolve(parent as Entity, fieldInfo.fieldKey) as string | string[] | null;
                     if (key) {
+                        exactQueryExistsInCache = true;
                         if (key instanceof Array) {
                             key.forEach((x) => result.add(x));
                         } else {
@@ -125,13 +129,11 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
             // "Find me all events of this conference in this time range...oh the cache says there are none"
             // versus
             // "Find me all events with ids in this array...oh, one of them isn't in the cache yet"
-            //    This hack basically checks if you're searching for specific objects by seeing if you're searching on
-            //    default primary key. If not it assumes it was a speculative search ("find...") rather than a
-            //    non-speculative fetch ("get me this thing I know exists").
-            info.partial =
-                info.partial ||
-                isObjectByPkQuery ||
-                Boolean(args.where && typeof args.where === "object" && "id" in args.where);
+
+            // This hack essentially tries to determine whether the cache already contains an answer to the
+            // exact query that was asked here. If so, we don't mark this result as partial (in order to avoid
+            // an infinite loop).
+            info.partial = !exactQueryExistsInCache;
         }
 
         let resultArr = [...result];

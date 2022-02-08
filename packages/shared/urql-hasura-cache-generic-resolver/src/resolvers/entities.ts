@@ -1,4 +1,4 @@
-import type { Entity, Resolver } from "@urql/exchange-graphcache";
+import type { Resolver } from "@urql/exchange-graphcache";
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import { GraphQLError } from "graphql";
 import _ from "lodash";
@@ -10,7 +10,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
     schema,
     augSchema
 ) =>
-    function resolver(parent, args, cache, info) {
+    function resolver(_parent, args, cache, info) {
         const isObjectByPkQuery = info.fieldName.endsWith("_by_pk");
 
         const tableSchema = getTableSchema(info.fieldName, schema, augSchema);
@@ -35,22 +35,28 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
         let exactQueryExistsInCache = false;
         if (isObjectByPkQuery) {
             for (const fieldInfo of fieldInfos) {
-                const key = cache.resolve(info.parentKey, fieldInfo.fieldKey) as string | null;
-                if (key && _.isEqual(fieldInfo.arguments, args)) {
-                    exactQueryExistsInCache = true;
-                    result.add(key);
-                } else if (key) {
-                    let ok = true;
-                    for (const argFieldName in args) {
-                        const val = cache.resolve(key, argFieldName);
-                        if (val !== args[argFieldName]) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                    if (ok) {
+                const key = cache.keyOfEntity({
+                    __typename: tableSchema.augTableSchema.name,
+                    ...fieldInfo.arguments,
+                });
+
+                if (key) {
+                    if (fieldInfo.fieldName === info.fieldName && _.isEqual(fieldInfo.arguments, args)) {
                         exactQueryExistsInCache = true;
-                        result.add(key);
+                        return cache.resolve(info.parentKey, fieldInfo.fieldKey) ? key : null;
+                    } else {
+                        let ok = true;
+                        for (const argFieldName in args) {
+                            const val = cache.resolve(key, argFieldName);
+                            if (val !== args[argFieldName]) {
+                                ok = false;
+                                break;
+                            }
+                        }
+                        if (ok) {
+                            exactQueryExistsInCache = true;
+                            return cache.resolve(info.parentKey, fieldInfo.fieldKey) ? key : null;
+                        }
                     }
                 }
             }
@@ -67,10 +73,11 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
             const where = args.where;
             const keysToTest = new Set<string>();
             for (const fieldInfo of fieldInfos) {
-                if (_.isEqual(fieldInfo.arguments, args)) {
-                    const key = cache.resolve(parent as Entity, fieldInfo.fieldKey) as string | string[] | null;
+                const key = cache.resolve(info.parentKey, fieldInfo.fieldKey) as string | string[] | null;
+
+                if (fieldInfo.fieldName === info.fieldName && _.isEqual(fieldInfo.arguments, args)) {
+                    exactQueryExistsInCache = true;
                     if (key) {
-                        exactQueryExistsInCache = true;
                         if (key instanceof Array) {
                             key.forEach((x) => result.add(x));
                         } else {
@@ -78,14 +85,11 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
                         }
                     }
                 } else {
-                    const keys = cache.resolve(parent as Entity, fieldInfo.fieldKey) as string | string[] | null;
-                    if (keys) {
-                        if (keys instanceof Array) {
-                            keys.forEach((key) => {
-                                keysToTest.add(key);
-                            });
+                    if (key) {
+                        if (key instanceof Array) {
+                            key.forEach((x) => keysToTest.add(x));
                         } else {
-                            keysToTest.add(keys);
+                            keysToTest.add(key);
                         }
                     }
                 }
@@ -111,13 +115,18 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
             }
         } else {
             for (const fieldInfo of fieldInfos) {
-                const keys = cache.resolve(parent as Entity, fieldInfo.fieldKey) as string | string[] | null;
-                if (keys) {
-                    if (keys instanceof Array) {
-                        keys.forEach((key) => result.add(key));
+                const key = cache.resolve(info.parentKey, fieldInfo.fieldKey) as string | string[] | null;
+
+                if (key) {
+                    if (key instanceof Array) {
+                        key.forEach((x) => result.add(x));
                     } else {
-                        result.add(keys);
+                        result.add(key);
                     }
+                }
+
+                if (fieldInfo.fieldName === info.fieldName && _.isEqual(fieldInfo.arguments, args)) {
+                    exactQueryExistsInCache = true;
                 }
             }
         }
@@ -163,7 +172,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
 
         // console.log("--------------- END CACHE LOOKUP (2) ---------------", result);
 
-        return isObjectByPkQuery ? resultArr[0] ?? null : resultArr;
+        return isObjectByPkQuery ? null : resultArr;
     };
 
 export function queryRootResolvers(

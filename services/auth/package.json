@@ -7,9 +7,7 @@
         "clean": "rimraf build",
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
         "start": "node --enable-source-maps -r dotenv/config build/web-server.js | pino-pretty -t SYS:HH:MM:ss.l -S -i hostname,pid",
-        "dev": "pnpm copy-resources && tsc-watch -b --onSuccess \"pnpm start\"",
-        "test-publisher": "node-env-run -E ./src/test/.publisher.env -e \"ts-node ./src/test/publisher.ts\"",
-        "test-consumer": "node-env-run -E ./src/test/.consumer.env -e \"ts-node ./src/test/consumer.ts\""
+        "dev": "pnpm copy-resources && tsc-watch -b --onSuccess \"pnpm start\""
     },
     "author": "Clowdr CIC",
     "license": "AGPL-3.0-or-later",

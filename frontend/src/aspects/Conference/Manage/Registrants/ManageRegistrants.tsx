@@ -739,7 +739,7 @@ export default function ManageRegistrants(): JSX.Element {
             },
         ];
         return result;
-    }, [allGroups?.registrant_Group, inviteStatusFilterOptions]);
+    }, [allGroups?.registrant_Group, inviteStatusFilterOptions, roleOptions]);
 
     const [{ fetching: insertInvitationEmailJobsLoading }, insertInvitationEmailJobsMutation] =
         useInsertInvitationEmailJobsMutation();
@@ -1021,7 +1021,7 @@ export default function ManageRegistrants(): JSX.Element {
                                             doExport(data);
                                         }}
                                     >
-                                        All
+                                        All registrants
                                     </MenuItem>
                                     {allGroups?.registrant_Group.length ? (
                                         <MenuGroup title="Groups">
@@ -1040,9 +1040,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 </MenuItem>
                                             ))}
                                         </MenuGroup>
-                                    ) : (
-                                        <Text px={2}>No groups.</Text>
-                                    )}
+                                    ) : undefined}
                                 </MenuList>
                             </Menu>
                         );
@@ -1076,6 +1074,42 @@ export default function ManageRegistrants(): JSX.Element {
                                     </MenuButton>
                                 </Tooltip>
                                 <MenuList>
+                                    <MenuItem
+                                        onClick={async () => {
+                                            const result = await insertInvitationEmailJobsMutation(
+                                                {
+                                                    registrantIds: data.map((a) => a.id),
+                                                    conferenceId: conference.id,
+                                                    sendRepeat: false,
+                                                },
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        },
+                                                    },
+                                                }
+                                            );
+                                            if (result.error) {
+                                                toast({
+                                                    title: "Failed to send invitation emails",
+                                                    description: result.error.message,
+                                                    isClosable: true,
+                                                    status: "error",
+                                                });
+                                            } else {
+                                                toast({
+                                                    title: "Invitation emails sent",
+                                                    duration: 8000,
+                                                    status: "success",
+                                                });
+                                            }
+
+                                            refetchAllRegistrants();
+                                        }}
+                                    >
+                                        All registrants
+                                    </MenuItem>
                                     {allGroups?.registrant_Group.length ? (
                                         <MenuGroup title="Groups">
                                             {allGroups?.registrant_Group.map((group) => (
@@ -1125,9 +1159,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 </MenuItem>
                                             ))}
                                         </MenuGroup>
-                                    ) : (
-                                        <Text px={2}>No groups.</Text>
-                                    )}
+                                    ) : undefined}
                                 </MenuList>
                             </Menu>
                         );
@@ -1192,6 +1224,42 @@ export default function ManageRegistrants(): JSX.Element {
                                     </MenuButton>
                                 </Tooltip>
                                 <MenuList>
+                                    <MenuItem
+                                        onClick={async () => {
+                                            const result = await insertInvitationEmailJobsMutation(
+                                                {
+                                                    registrantIds: data.map((a) => a.id),
+                                                    conferenceId: conference.id,
+                                                    sendRepeat: true,
+                                                },
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        },
+                                                    },
+                                                }
+                                            );
+                                            if (result.error) {
+                                                toast({
+                                                    title: "Failed to send invitation emails",
+                                                    description: result.error.message,
+                                                    isClosable: true,
+                                                    status: "error",
+                                                });
+                                            } else {
+                                                toast({
+                                                    title: "Invitation emails sent",
+                                                    duration: 8000,
+                                                    status: "success",
+                                                });
+                                            }
+
+                                            refetchAllRegistrants();
+                                        }}
+                                    >
+                                        All registrants
+                                    </MenuItem>
                                     {allGroups?.registrant_Group.length ? (
                                         <MenuGroup title="Groups">
                                             {allGroups.registrant_Group.map((group) => (
@@ -1241,9 +1309,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 </MenuItem>
                                             ))}
                                         </MenuGroup>
-                                    ) : (
-                                        <Text px={2}>No groups.</Text>
-                                    )}
+                                    ) : undefined}
                                 </MenuList>
                             </Menu>
                         );
@@ -1308,6 +1374,14 @@ export default function ManageRegistrants(): JSX.Element {
                                 </MenuButton>
                                 {/*</Tooltip>*/}
                                 <MenuList>
+                                    <MenuItem
+                                        onClick={() => {
+                                            setSendCustomEmailRegistrants(data);
+                                            sendCustomEmailModal.onOpen();
+                                        }}
+                                    >
+                                        All registrants
+                                    </MenuItem>
                                     {allGroups?.registrant_Group.length ? (
                                         <MenuGroup title="Groups">
                                             {allGroups.registrant_Group.map((group) => (
@@ -1326,9 +1400,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 </MenuItem>
                                             ))}
                                         </MenuGroup>
-                                    ) : (
-                                        <Text px={2}>No groups.</Text>
-                                    )}
+                                    ) : undefined}
                                 </MenuList>
                             </Menu>
                         );

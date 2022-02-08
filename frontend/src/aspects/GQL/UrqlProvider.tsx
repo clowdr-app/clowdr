@@ -197,7 +197,7 @@ function UrqlProviderInner({
                             retryExchange(retryOptions),
                             fetchExchange,
                         ],
-                        requestPolicy: "cache-and-network",
+                        requestPolicy: "cache-first",
                     });
                     setClient(newClient);
 

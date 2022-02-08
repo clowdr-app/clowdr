@@ -31,8 +31,7 @@
         "tsc-watch": "^4.5.0"
     },
     "engines": {
-        "node": ">=17.x",
-        "pnpm": "^6.19.x"
+        "node": ">=17.x"
     },
     "exports": {
         "./*": {

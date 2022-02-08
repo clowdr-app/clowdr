@@ -1,6 +1,7 @@
 import type { EventStreamMarshaller, Message as AWSEventStreamMessage } from "@aws-sdk/eventstream-marshaller";
 import * as marshaller from "@aws-sdk/eventstream-marshaller";
 import * as util_utf8_node from "@aws-sdk/util-utf8-node";
+import { useConst } from "@chakra-ui/react";
 import { datadogLogs } from "@datadog/browser-logs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
@@ -9,6 +10,7 @@ import type {
     TranscribeGeneratePresignedUrlQueryVariables,
 } from "../../../../../generated/graphql";
 import { TranscribeGeneratePresignedUrlDocument } from "../../../../../generated/graphql";
+import { getAudioContext } from "../../../../Utils/getAudioContext";
 import { downsampleBuffer, pcmEncode } from "./AudioEncoding";
 
 gql`
@@ -88,14 +90,16 @@ export function useAWSTranscription(
     onPartialTranscript?: (transcript: string) => void,
     onCompleteTranscript?: (transcript: string) => void
 ) {
-    const audioContext = useMemo(() => new AudioContext(), []);
-    const processorNode = useMemo(() => audioContext.createScriptProcessor(4096, 1, 1), [audioContext]);
+    const audioContext = useConst(getAudioContext());
+    const processorNode = useMemo(() => audioContext?.createScriptProcessor(4096, 1, 1), [audioContext]);
     useEffect(() => {
-        processorNode.connect(audioContext.destination);
-    }, [audioContext.destination, processorNode]);
+        if (audioContext?.destination && processorNode) {
+            processorNode.connect(audioContext.destination);
+        }
+    }, [audioContext?.destination, processorNode]);
     useEffect(() => {
         const audioTrack = camera?.getAudioSource();
-        if (audioTrack) {
+        if (audioContext && processorNode && audioTrack) {
             const audioStream = new MediaStream([audioTrack]);
             const audioInput = audioContext.createMediaStreamSource(audioStream);
             audioInput.connect(processorNode);
@@ -138,6 +142,10 @@ export function useAWSTranscription(
     );
     const [socket, setSocket] = useState<WebSocket | null>(null);
     useEffect(() => {
+        if (!audioContext || !processorNode) {
+            return;
+        }
+
         if (socket) {
             if (socket.readyState === socket.OPEN) {
                 // Send an empty frame so that Transcribe initiates a closure of the WebSocket after submitting all transcripts
@@ -203,5 +211,5 @@ export function useAWSTranscription(
             setSocket(null);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [eventStreamMarshaller, camera, preSignedUrl, processorNode, audioContext.sampleRate]);
+    }, [eventStreamMarshaller, camera, preSignedUrl, processorNode, audioContext?.sampleRate]);
 }

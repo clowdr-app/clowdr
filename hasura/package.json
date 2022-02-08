@@ -9,7 +9,6 @@
         "metadata": "hasura metadata apply --envfile=.env.local",
         "reload-metadata": "hasura metadata reload --envfile=.env.local"},
     "engines": {
-        "node": ">=17.x",
-        "pnpm": "^6.19.x"
+        "node": ">=17.x"
     }
 }

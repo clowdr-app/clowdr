@@ -43,6 +43,6 @@
     "packageManager": "pnpm@6.27.0",
     "engines": {
         "node": ">=17.x",
-        "pnpm": "^6.19.x"
+        "pnpm": "^6.30.x"
     }
 }

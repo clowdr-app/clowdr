@@ -82,6 +82,8 @@ Midspace relies on various cloud services, which will need to be configured for 
 1. Follow the Hasura setup: [Midspace Hasura ReadMe](hasura/README.md#Setting-up)
 1. Follow the Actions Service setup: [Midspace Actions Service
    ReadMe](services/actions/README.md#Setting-up)
+1. Follow the Auth Service setup: [Midspace Auth Service
+   ReadMe](services/auth/README.md#Setting-up)
 1. Follow the Playout Service setup: [Midspace Playout Service
    ReadMe](services/playout/README.md#Setting-up)
 1. Follow the Realtime Service setup: [Midspace Realtime Service

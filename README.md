@@ -14,6 +14,8 @@ If you want to contribute to Midspace, please read our [contribution guidelines]
 | hasura            | The Hasura GraphQL configuration, actions and seed data.             | [Hasura Readme](hasura/README.md)                      |
 | services          | Micro-services                                                       |                                                        |
 | services/actions  | A service that handles most Hasura actions.                          | [Actions service readme](services/actions/README.md)   |
+| services/auth     |                                                                      | [Auth service readme](services/auth/README.md)         |
+| services/caches   |                                                                      | [Caches service readme](services/caches/README.md)   |
 | services/realtime | A service that handles realtime interactions like chat and presence. | [Realtime service readme](services/realtime/README.md) |
 | services/playout  | A service that controls video broadcast pipelines.                   | [Playout service readme](services/playout/README.md)   |
 
@@ -84,6 +86,8 @@ Midspace relies on various cloud services, which will need to be configured for 
    ReadMe](services/actions/README.md#Setting-up)
 1. Follow the Auth Service setup: [Midspace Auth Service
    ReadMe](services/auth/README.md#Setting-up)
+1. Follow the Caches Service setup: [Midspace Caches Service
+   ReadMe](services/caches/README.md#Setting-up)
 1. Follow the Playout Service setup: [Midspace Playout Service
    ReadMe](services/playout/README.md#Setting-up)
 1. Follow the Realtime Service setup: [Midspace Realtime Service

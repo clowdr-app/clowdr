@@ -138,7 +138,7 @@ export default function ElementsGridLayout({
     }, [elements, textJustification]);
 
     return (
-        <Grid gridTemplateColumns="repeat(1fr, 12)" ml={0} mr={3} w="100%">
+        <Grid gridTemplateColumns="repeat(12, 1fr)" ml={0} mr={3} w="100%">
             {els}
         </Grid>
     );

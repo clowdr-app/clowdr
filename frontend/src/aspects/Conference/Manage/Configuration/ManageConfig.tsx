@@ -420,12 +420,12 @@ export default function ManageConfig(): JSX.Element {
                                 Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatStart,
                             ]}
                         >
-                            {(props) => (
+                            {(properties) => (
                                 <Button
                                     colorScheme="DestructiveActionButton"
-                                    isDisabled={props.values.every((x) => !x.value)}
+                                    isDisabled={properties.values.every((x) => !x.value)}
                                     onClick={() => {
-                                        props.deleteAll();
+                                        properties.deleteAll();
                                     }}
                                 >
                                     Stop automatic invitations

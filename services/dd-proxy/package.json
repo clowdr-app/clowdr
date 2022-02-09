@@ -18,15 +18,12 @@
         "axios": "^0.24.0",
         "cors": "^2.8.5",
         "express": "^4.17.1",
-        "node-fetch": "^2.6.6",
         "pino": "^7.6.4",
-        "pino-http": "^6.6.0",
-        "rimraf": "^3.0.2"
+        "pino-http": "^6.6.0"
     },
     "devDependencies": {
         "node-env-run": "^4.0.2",
-        "pino-pretty": "^7.2.0",
-        "tsc-watch": "^4.5.0"
+        "pino-pretty": "^7.2.0"
     },
     "engines": {
         "node": ">=17.x"

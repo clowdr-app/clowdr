@@ -24,19 +24,16 @@
         "@midspace/graphql": "workspace:*",
         "@midspace/shared-types": "workspace:*",
         "cpy-cli": "^3.1.1",
-        "google-auth-library": "^7.10.1",
+        "google-auth-library": "^7.11.0",
         "ts-patch": "^2.0.1"
     },
     "devDependencies": {
-        "@graphql-codegen/cli": "^2.2.1",
-        "@graphql-codegen/introspection": "^2.1.0",
-        "@graphql-codegen/plugin-helpers": "^2.3.0",
-        "@graphql-codegen/typescript": "^2.2.4",
-        "@graphql-typed-document-node/core": "^3.1.0",
-        "graphql": "^15.7.2",
-        "prettier": "^2.5.0",
-        "rimraf": "^3.0.2",
-        "tsc-watch": "^4.4.0"
+        "@graphql-codegen/cli": "^2.5.0",
+        "@graphql-codegen/introspection": "^2.1.1",
+        "@graphql-codegen/plugin-helpers": "^2.4.0",
+        "@graphql-codegen/typescript": "^2.4.3",
+        "@graphql-typed-document-node/core": "^3.1.1",
+        "graphql": "^15.7.2"
     },
     "engines": {
         "node": ">=17.x"

@@ -48,7 +48,5 @@
             ]
         }
     },
-    "devDependencies": {
-        "rimraf": "^3.0.2"
-    }
+    "devDependencies": {}
 }

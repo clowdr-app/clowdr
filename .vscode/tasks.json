@@ -445,6 +445,28 @@
                 "cwd": "${workspaceFolder}"
             },
             "args": ["wait-on", "http-get://localhost:8080/v1/version"]
+        },
+        {
+            "label": "Packages -- Find Mismatches",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "args": [
+                "dlx",
+                "syncpack",
+                "--",
+                "list-mismatches",
+                "--source",
+                "package.json",
+                "--source",
+                "services/*/package.json",
+                "--source",
+                "packages/*/*/package.json",
+                "--source",
+                "frontend/package.json",
+                "--source",
+                "aws/package.json"
+            ]
         }
     ],
     "inputs": [

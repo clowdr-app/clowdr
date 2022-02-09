@@ -125,6 +125,8 @@ variables in the build which start with `VITE_`.
 | VITE_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |
 | NPM_VERSION                       | `7.3` (only required in Netlify)                                                     | Only     |
 | NODE_VERSION                      | `15.4` (only required in Netlify)                                                    | Only     |
-| _Vonage Video API_                |                                                                                      |
+| _Vonage Video API_                |                                                                                      |          |
 | VITE_OPENTOK_API_KEY              | API key for the Vonage Video API project                                             |          |
-| SNOWPACK_PRESENCE_SERVICE_URL     | URL to the presence service.                                                         |
+| VITE_PRESENCE_SERVICE_URL         | URL to the presence service.                                                         |          |
+| _Other_                           |                                                                                      |          |
+| VITE_TECH_SUPPORT_ADDRESS         | Email address for contacting tech support                                            | Yes      |

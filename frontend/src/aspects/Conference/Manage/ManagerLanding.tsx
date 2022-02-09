@@ -1,16 +1,48 @@
-import { Flex, Heading, HStack, Link, Spacer, VStack } from "@chakra-ui/react";
-import React from "react";
+import { chakra, Flex, Heading, HStack, Link, Spacer, Text, VStack } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import React, { useMemo } from "react";
 import { Link as ReactLink } from "react-router-dom";
+import { gql } from "urql";
+import { useConferenceTechSupportAddressQuery } from "../../../generated/graphql";
 import { useAuthParameters } from "../../GQL/AuthParameters";
+import { makeContext } from "../../GQL/make-context";
 import { useTitle } from "../../Hooks/useTitle";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 
+gql`
+    query ConferenceTechSupportAddress($conferenceId: uuid!) {
+        conference_Configuration_by_pk(conferenceId: $conferenceId, key: TECH_SUPPORT_ADDRESS) {
+            conferenceId
+            key
+            value
+        }
+    }
+`;
+
 export default function ManagerLandingPage(): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage ${conference.shortName}`);
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [techSupportAddressResponse] = useConferenceTechSupportAddressQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+        context,
+    });
+    const techSupportAddress =
+        techSupportAddressResponse.data?.conference_Configuration_by_pk?.value ??
+        import.meta.env.VITE_TECH_SUPPORT_ADDRESS ??
+        "support@midspace.app";
+
     return (
         <>
             {title}
@@ -25,6 +57,12 @@ export default function ManagerLandingPage(): JSX.Element {
                 <Heading as="h1" id="page-heading" mt={4} textAlign="left" w="100%" fontSize="4xl">
                     Manage {conference.shortName}
                 </Heading>
+                <Text>
+                    <chakra.span fontWeight="bold">Need help?</chakra.span> Contact our support team at:&nbsp;
+                    <Link wordBreak="keep-all" whiteSpace="nowrap" href={`mailto:${techSupportAddress}`}>
+                        {techSupportAddress}
+                    </Link>
+                </Text>
                 <HStack w="100%" alignItems="flex-end">
                     <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
                         Program

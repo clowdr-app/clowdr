@@ -134,11 +134,6 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
 
     return (
         <>
-            <AddRoomPersonModal
-                roomId={roomDetails.id}
-                isOpen={addMemberModal.isOpen}
-                onClose={addMemberModal.onClose}
-            />
             {!roomMembers || sortedRegistrants.length !== roomMembers.length ? (
                 <Spinner label="Loading members" size="sm" />
             ) : (
@@ -146,19 +141,26 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
             )}
             {selfIsAdminResponse.data?.room_RoomMembership.length ||
             registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ? (
-                <Box textAlign="right" mb={2}>
-                    <Button
-                        mt={2}
-                        size="sm"
-                        colorScheme="PrimaryActionButton"
-                        aria-label="Add people to room"
-                        title="Add people to room"
-                        onClick={addMemberModal.onOpen}
-                    >
-                        <FAIcon icon="plus" iconStyle="s" mr={3} />
-                        Add people
-                    </Button>
-                </Box>
+                <>
+                    <AddRoomPersonModal
+                        roomId={roomDetails.id}
+                        isOpen={addMemberModal.isOpen}
+                        onClose={addMemberModal.onClose}
+                    />
+                    <Box textAlign="right" mb={2}>
+                        <Button
+                            mt={2}
+                            size="sm"
+                            colorScheme="PrimaryActionButton"
+                            aria-label="Add people to room"
+                            title="Add people to room"
+                            onClick={addMemberModal.onOpen}
+                        >
+                            <FAIcon icon="plus" iconStyle="s" mr={3} />
+                            Add people
+                        </Button>
+                    </Box>
+                </>
             ) : (
                 <></>
             )}

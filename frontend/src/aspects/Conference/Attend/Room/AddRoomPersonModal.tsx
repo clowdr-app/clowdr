@@ -1,6 +1,8 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import React, { useCallback, useMemo } from "react";
 import { useAddParticipantToRoomMutation } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import { RegistrantSearch } from "./RegistrantSearch";
 
@@ -23,10 +25,16 @@ export function AddRoomPersonModal({
 
     const addMember = useCallback(
         async (registrantId: string) => {
-            await addParticipantToRoomMutation({
-                registrantId,
-                roomId,
-            });
+            await addParticipantToRoomMutation(
+                {
+                    registrantId,
+                    roomId,
+                },
+                makeContext({
+                    [AuthHeader.RoomId]: roomId,
+                    [AuthHeader.Role]: "room-admin",
+                })
+            );
         },
         [addParticipantToRoomMutation, roomId]
     );

@@ -12,8 +12,8 @@ export default function QueryWrapper<TData, TVariables, TInnerData>({
 }: {
     queryResult:
         | UseQueryState<TData, TVariables>
-        | (OperationResult<TData, TVariables> & { fetching: boolean })
-        | { fetching: boolean };
+        | (OperationResult<TData, TVariables> & { fetching: boolean; stale: boolean })
+        | { fetching: boolean; stale: boolean };
     getter: (data: TData) => TInnerData | undefined | null;
     children: (data: TInnerData) => React.ReactNode | React.ReactNode[];
     childrenNoData?: () => React.ReactNode | React.ReactNode[];
@@ -30,7 +30,7 @@ export default function QueryWrapper<TData, TVariables, TInnerData>({
 
     return (
         <>
-            {queryResult.fetching ? (
+            {queryResult.fetching || queryResult.stale ? (
                 noSpinner ? (
                     <></>
                 ) : (
@@ -39,7 +39,7 @@ export default function QueryWrapper<TData, TVariables, TInnerData>({
             ) : queryResult && "error" in queryResult && queryResult.error ? (
                 <Text>An error occurred loading in data - please see further information in notifications.</Text>
             ) : undefined}
-            {queryResult.fetching && !innerData ? (
+            {(queryResult.fetching && !innerData) || queryResult.stale ? (
                 <></>
             ) : !innerData ? (
                 childrenNoData ? (

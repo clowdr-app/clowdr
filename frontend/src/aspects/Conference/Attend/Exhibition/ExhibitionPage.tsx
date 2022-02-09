@@ -178,14 +178,20 @@ export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string 
         },
     });
 
-    return exhibitionResponse.fetching && !exhibitionResponse.data ? (
-        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} caller="ExhibitionPage:187" />
-    ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
-        <ExhibitionPageInner
-            exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}
-            events={exhibitionResponse.data.schedule_Event}
-        />
-    ) : (
-        <PageNotFound />
+    return (
+        <>
+            {!exhibitionResponse.data?.collection_Exhibition_by_pk ? (
+                exhibitionResponse.fetching || exhibitionResponse.stale ? (
+                    <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} caller="ExhibitionPage:187" />
+                ) : (
+                    <PageNotFound />
+                )
+            ) : (
+                <ExhibitionPageInner
+                    exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}
+                    events={exhibitionResponse.data?.schedule_Event ?? []}
+                />
+            )}
+        </>
     );
 }

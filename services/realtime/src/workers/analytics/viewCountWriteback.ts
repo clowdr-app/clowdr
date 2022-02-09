@@ -61,7 +61,7 @@ gql`
 
 async function Main(continueExecuting = false) {
     try {
-        assert(gqlClient, "Apollo client needed for analytics view count writeback");
+        assert(gqlClient, "GraphQL client needed for analytics view count writeback");
 
         logger.info("Writing back analytics view counts");
 

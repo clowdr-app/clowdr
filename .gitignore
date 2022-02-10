@@ -118,7 +118,6 @@ desktop.ini
 ngrok.yml
 frontend/x.env.local
 *.local
-services/realtime/build/
 
 # MacOS
 .DS_Store
@@ -136,3 +135,4 @@ restore/
 services/auth/build
 
 **/build
+storybook-static

@@ -11,7 +11,9 @@
         "start": "vite preview --port 3000",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
-        "codegen": "graphql-codegen --config codegen.js"
+        "codegen": "graphql-codegen --config codegen.js",
+        "storybook": "start-storybook -p 6006",
+        "build-storybook": "build-storybook"
     },
     "dependencies": {
         "@ahanapediatrics/ahana-fp": "^2.6.0",
@@ -160,7 +162,15 @@
         "@graphql-codegen/typescript-operations": "^2.2.4",
         "@graphql-codegen/typescript-urql": "^3.5.1",
         "@graphql-codegen/typescript-urql-graphcache": "^2.2.4",
-        "dotenv": "^16.0.0"
+        "@storybook/addon-essentials": "^6.4.18",
+        "@storybook/addon-links": "^6.4.18",
+        "@storybook/builder-webpack5": "^6.4.18",
+        "@storybook/core-common": "^6.4.18",
+        "@storybook/manager-webpack5": "^6.4.18",
+        "@storybook/react": "^6.4.18",
+        "babel-loader": "^8.2.3",
+        "dotenv": "^16.0.0",
+        "webpack": "^5.68.0"
     },
     "engines": {
         "node": ">=17.x"

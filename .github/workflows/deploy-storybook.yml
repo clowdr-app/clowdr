@@ -2,6 +2,7 @@ on:
   - push
     branches:
       - main
+      - next/subconferences
 
 jobs:
   cache-and-install:

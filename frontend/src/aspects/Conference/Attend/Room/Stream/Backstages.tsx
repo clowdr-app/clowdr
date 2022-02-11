@@ -17,12 +17,12 @@ import {
     UnorderedList,
 } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
 import { Room_Mode_Enum } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Hooks/useRealTime";
-import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
+import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import Backstage from "./Backstage";
 import { isEventNow, isEventSoon } from "./isEventAt";
 
@@ -106,7 +106,7 @@ export default function Backstages({
         );
     }, [activeEvents, roomChatId, selectedEventId, onEventSelected, onLeave, hlsUri]);
 
-    const sharedRoomContext = useSharedRoomContext();
+    const sharedRoomContext = useContext(SharedRoomContext);
 
     const [isWatchStreamConfirmOpen, setIsWatchStreamConfirmOpen] = useState<boolean>(false);
     const cancelRef = useRef<HTMLButtonElement>(null);

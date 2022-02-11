@@ -22,7 +22,7 @@ import {
 import { Duration } from "luxon";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import FAIcon from "../../../../../Chakra/FAIcon";
-import { useVonageRoom, VonageRoomStateActionType } from "../../../../../Vonage/useVonageRoom";
+import { useVonageRoom, VonageRoomStateActionType } from "../State/VonageRoomProvider";
 import { AutoplayContext } from "./AutoplayContext";
 import { useVideoCommands } from "./useVideoCommands";
 import { VonageVideoPlaybackContext } from "./VonageVideoPlaybackContext";

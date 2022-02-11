@@ -32,8 +32,7 @@ import {
 } from "@chakra-ui/react";
 import { AuthHeader } from "@midspace/shared-types/auth";
 import { Mutex } from "async-mutex";
-import type { MutableRefObject } from "react";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { gql } from "urql";
 import { useGetRoomChatIdQuery, useToggleVonageRecordingStateMutation } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
@@ -42,17 +41,16 @@ import QuickSendEmote from "../../../../Chat/Compose/QuickSendEmote";
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
 import { makeContext } from "../../../../GQL/make-context";
 import useIsNarrowView from "../../../../Hooks/useIsNarrowView";
-import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
-import type { DevicesProps } from "../VideoChat/PermissionInstructionsContext";
 import LayoutChooser from "./Components/LayoutChooser";
 import PlayVideoMenuButton from "./Components/PlayVideoMenu";
 import SubtitlesPanel from "./Components/SubtitlesPanel";
 import DeviceChooserModal from "./DeviceChooserModal";
-import type { TranscriptData } from "./VonageGlobalState";
-import { StateType } from "./VonageGlobalState";
-import { useVonageGlobalState } from "./VonageGlobalStateProvider";
-import { useVonageLayout } from "./VonageLayoutProvider";
+import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
+import { StateType } from "./State/VonageGlobalState";
+import { useVonageGlobalState } from "./State/VonageGlobalStateProvider";
+import { useVonageLayout } from "./State/VonageLayoutProvider";
+import { useVonageRoom, VonageRoomStateActionType } from "./State/VonageRoomProvider";
 
 gql`
     mutation ToggleVonageRecordingState($vonageSessionId: String!, $recordingActive: Boolean!) {
@@ -64,39 +62,25 @@ gql`
 `;
 
 export function VonageRoomControlBar({
-    onJoinRoom,
-    onLeaveRoom,
     onCancelJoinRoom,
-    joining,
     joinRoomButtonText = "Join Room",
     joiningRoomButtonText = "Waiting to be admitted",
     requireMicrophoneOrCamera,
-    onPermissionsProblem,
-    isRecordingActive,
-    isBackstage,
-    canControlRecording,
+
     roomId,
     eventId,
-    onTranscriptRef,
 }: {
-    onJoinRoom: () => Promise<void>;
-    onLeaveRoom: () => void;
     onCancelJoinRoom?: () => void;
-    joining: boolean;
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
     requireMicrophoneOrCamera: boolean;
-    isRecordingActive: boolean;
-    isBackstage: boolean;
-    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
-    canControlRecording: boolean;
     roomId?: string;
     eventId?: string;
-    onTranscriptRef?: MutableRefObject<((data: TranscriptData) => void) | undefined>;
 }): JSX.Element {
     const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
     const { layoutChooser_isOpen, layoutChooser_onOpen, layoutChooser_onClose } = useVonageLayout();
+    const { isRecordingActive, joining, joinRoom, leaveRoom, onTranscriptRef } = useContext(VonageComputedStateContext);
 
     const [toggleVonageRecordingResponse, toggleVonageRecording] = useToggleVonageRecordingStateMutation();
 
@@ -165,7 +149,7 @@ export function VonageRoomControlBar({
                     break;
 
                 case "unable-to-list":
-                    onPermissionsProblem(
+                    settings.onPermissionsProblem(
                         {
                             camera: deviceModalState.showCamera,
                             microphone: deviceModalState.showMicrophone,
@@ -192,7 +176,7 @@ export function VonageRoomControlBar({
         [
             deviceModalState,
             dispatch,
-            onPermissionsProblem,
+            settings,
             startCameraOnClose,
             startMicrophoneOnClose,
             state.preferredCameraId,
@@ -259,7 +243,7 @@ export function VonageRoomControlBar({
                     });
                 } catch (err) {
                     console.log("Could not list device choices", { err });
-                    onPermissionsProblem(
+                    settings.onPermissionsProblem(
                         { camera: video, microphone: audio },
                         `Could not list choices of ${devicesToFriendlyName(
                             { camera: video, microphone: audio },
@@ -276,7 +260,7 @@ export function VonageRoomControlBar({
                 }
             })();
         },
-        [onPermissionsProblem, userMediaPermissionGranted.camera, userMediaPermissionGranted.microphone]
+        [settings, userMediaPermissionGranted.camera, userMediaPermissionGranted.microphone]
     );
 
     const startCamera = useCallback(() => {
@@ -565,8 +549,10 @@ export function VonageRoomControlBar({
                     <ControlBarButton
                         label={{ active: "Stop recording", inactive: "Start recording" }}
                         icon={{ active: "circle", inactive: { style: "r", icon: "dot-circle" } }}
-                        isVisible={vonage.state.type === StateType.Connected && !isBackstage}
-                        isLimited={!canControlRecording ? (isRecordingActive ? "Recording" : "Not recording") : false}
+                        isVisible={vonage.state.type === StateType.Connected && !settings.isBackstageRoom}
+                        isLimited={
+                            !settings.canControlRecording ? (isRecordingActive ? "Recording" : "Not recording") : false
+                        }
                         isLoading={toggleVonageRecordingResponse.fetching}
                         isActive={isRecordingActive}
                         isDestructive
@@ -590,7 +576,9 @@ export function VonageRoomControlBar({
                         isEnabled={!joining}
                     />
                 </ControlBarButtonGroup>
-                {vonage.state.type === StateType.Connected && canControlRecording && !isBackstage ? (
+                {vonage.state.type === StateType.Connected &&
+                settings.canControlRecording &&
+                !settings.isBackstageRoom ? (
                     <PlayVideoMenuButton roomId={roomId} eventId={eventId} />
                 ) : undefined}
                 {vonage.state.type === StateType.Connected && chat ? (
@@ -615,7 +603,7 @@ export function VonageRoomControlBar({
                 ) : undefined}
                 <WrapItem flex="1 1 auto" />
                 {vonage.state.type === StateType.Connected ? (
-                    <Button size="sm" colorScheme="DestructiveActionButton" onClick={onLeaveRoom}>
+                    <Button size="sm" colorScheme="DestructiveActionButton" onClick={leaveRoom}>
                         Leave
                     </Button>
                 ) : (
@@ -636,7 +624,7 @@ export function VonageRoomControlBar({
                                 h="auto"
                                 p={4}
                                 variant="glowing"
-                                onClick={joining ? onCancelJoinRoom : onJoinRoom}
+                                onClick={joining ? onCancelJoinRoom : joinRoom}
                                 isLoading={!onCancelJoinRoom && joining}
                                 isDisabled={
                                     !joining &&
@@ -706,7 +694,7 @@ export function VonageRoomControlBar({
                         <ButtonGroup spacing={2}>
                             <Button
                                 onClick={() => {
-                                    onLeaveRoom();
+                                    leaveRoom();
                                     onRecordingAlertClose();
                                 }}
                             >

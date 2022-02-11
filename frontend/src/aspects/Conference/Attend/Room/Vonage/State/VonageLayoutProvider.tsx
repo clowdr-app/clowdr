@@ -7,8 +7,8 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     useInsertVonageSessionLayoutMutation,
     useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery,
-} from "../../../../../generated/graphql";
-import { useConference } from "../../../useConference";
+} from "../../../../../../generated/graphql";
+import { useConference } from "../../../../useConference";
 
 gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {

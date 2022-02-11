@@ -1,9 +1,9 @@
 import { ViewOffIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { Button, HStack, Image, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import FAIcon from "../../../../Chakra/FAIcon";
-import { useChatProfileModal } from "../../../../Chat/Frame/ChatProfileModalProvider";
-import { useRegistrant } from "../../../RegistrantsContext";
+import FAIcon from "../../../../../../Chakra/FAIcon";
+import { useChatProfileModal } from "../../../../../../Chat/Frame/ChatProfileModalProvider";
+import { useRegistrant } from "../../../../../RegistrantsContext";
 
 export function VonageOverlay({
     connectionData,

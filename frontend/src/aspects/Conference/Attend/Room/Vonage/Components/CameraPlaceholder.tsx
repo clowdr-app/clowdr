@@ -1,7 +1,7 @@
 import { Box, Image } from "@chakra-ui/react";
 import React from "react";
 import type { RegistrantDataFragment } from "../../../../../../generated/graphql";
-import { backgroundImage } from "../../../../../Vonage/resources";
+import { backgroundImage } from "../resources";
 
 export default function CameraPlaceholderImage({
     zIndex,

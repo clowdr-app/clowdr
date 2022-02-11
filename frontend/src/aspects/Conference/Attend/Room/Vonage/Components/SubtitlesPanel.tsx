@@ -1,7 +1,7 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 import type { MutableRefObject } from "react";
 import React, { useEffect, useRef, useState } from "react";
-import type { TranscriptData } from "../VonageGlobalState";
+import type { TranscriptData } from "../State/VonageGlobalState";
 
 export default function SubtitlesPanel({
     onTranscriptRef,

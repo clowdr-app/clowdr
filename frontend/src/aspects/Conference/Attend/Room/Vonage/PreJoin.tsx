@@ -2,10 +2,10 @@ import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
 import { Box, Center, chakra, HStack, useConst, useToast, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import FAIcon from "../../../Chakra/FAIcon";
-import { getAudioContext } from "../../../Utils/getAudioContext";
-import { backgroundImage } from "../../../Vonage/resources";
-import { useVonageRoom } from "../../../Vonage/useVonageRoom";
+import FAIcon from "../../../../Chakra/FAIcon";
+import { getAudioContext } from "../../../../Utils/getAudioContext";
+import { backgroundImage } from "./resources";
+import { useVonageRoom } from "./State/VonageRoomProvider";
 
 export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLVideoElement> }): JSX.Element {
     const { state } = useVonageRoom();

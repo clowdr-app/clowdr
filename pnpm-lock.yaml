@@ -128,6 +128,7 @@ importers:
       '@midspace/shared-types': workspace:*
       '@midspace/urql-hasura-cache-generic-resolver': workspace:*
       '@opentok/client': ^2.21.7
+      '@react-hook/size': ^2.1.2
       '@react-hook/timeout': ^2.1.1
       '@researchgate/react-intersection-observer': ^1.3.5
       '@storybook/addon-a11y': ^6.4.19
@@ -280,6 +281,7 @@ importers:
       '@midspace/shared-types': link:../packages/shared/shared-types
       '@midspace/urql-hasura-cache-generic-resolver': link:../packages/shared/urql-hasura-cache-generic-resolver
       '@opentok/client': 2.21.7
+      '@react-hook/size': 2.1.2_react@17.0.2
       '@react-hook/timeout': 2.1.1_react@17.0.2
       '@researchgate/react-intersection-observer': 1.3.5_react-dom@17.0.2+react@17.0.2
       '@storybook/react': 6.4.19_a1ba45ad4327da6c4a71cca3153cc12a
@@ -10471,6 +10473,10 @@ packages:
       semver: 7.3.5
     dev: true
 
+  /@juggle/resize-observer/3.3.1:
+    resolution: {integrity: sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==}
+    dev: false
+
   /@mapbox/hast-util-table-cell-style/0.2.0:
     resolution: {integrity: sha512-gqaTIGC8My3LVSnU38IwjHVKJC94HSonjvFHDk8/aSrApL8v4uWgm8zJkK7MJIIbHuNOr/+Mv2KkQKcxs6LEZA==}
     engines: {node: '>=12'}
@@ -11032,6 +11038,37 @@ packages:
     peerDependencies:
       react: '>=16.8'
     dependencies:
+      react: 17.0.2
+    dev: false
+
+  /@react-hook/passive-layout-effect/1.2.1_react@17.0.2:
+    resolution: {integrity: sha512-IwEphTD75liO8g+6taS+4oqz+nnroocNfWVHWz7j+N+ZO2vYrc6PV1q7GQhuahL0IOR7JccFTsFKQ/mb6iZWAg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      react: 17.0.2
+    dev: false
+
+  /@react-hook/resize-observer/1.2.5_react@17.0.2:
+    resolution: {integrity: sha512-qa0pPvRxq5VbdI8mMK2apPFsZOckhQ6D3Jc9yLuyHMNhui8yEih4qyFCZBDzzK3ymZS6LAltVSVg3l1Dg9vA0w==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@juggle/resize-observer': 3.3.1
+      '@react-hook/latest': 1.0.3_react@17.0.2
+      '@react-hook/passive-layout-effect': 1.2.1_react@17.0.2
+      '@types/raf-schd': 4.0.1
+      raf-schd: 4.0.3
+      react: 17.0.2
+    dev: false
+
+  /@react-hook/size/2.1.2_react@17.0.2:
+    resolution: {integrity: sha512-BmE5asyRDxSuQ9p14FUKJ0iBRgV9cROjqNG9jT/EjCM+xHha1HVqbPoT+14FQg1K7xIydabClCibUY4+1tw/iw==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@react-hook/passive-layout-effect': 1.2.1_react@17.0.2
+      '@react-hook/resize-observer': 1.2.5_react@17.0.2
       react: 17.0.2
     dev: false
 
@@ -13362,6 +13399,10 @@ packages:
 
   /@types/qs/6.9.7:
     resolution: {integrity: sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==}
+
+  /@types/raf-schd/4.0.1:
+    resolution: {integrity: sha512-Ha+EnKHFIh9EKW0/XZJPUd3EGDFisEvauaBd4VVCRPKeOqUxNEc9TodiY2Zhk33XCgzJucoFEcaoNcBAPHTQ2A==}
+    dev: false
 
   /@types/ramda/0.27.64:
     resolution: {integrity: sha512-EDf++ss/JoMiDpvT1MuA8oi88OwpvmqVE+o8Ojm5v/5bdJEPZ6eIQd/XYAeQ0imlwG6Tf0Npfq4Z9w3hAKBk9Q==}
@@ -24854,6 +24895,10 @@ packages:
   /quick-lru/4.0.1:
     resolution: {integrity: sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==}
     engines: {node: '>=8'}
+    dev: false
+
+  /raf-schd/4.0.3:
+    resolution: {integrity: sha512-tQkJl2GRWh83ui2DiPTJz9wEiMN20syf+5oKfB03yYP7ioZcJwsIK8FjrtLwH1m7C7e+Tt2yYBlrOpdT+dyeIQ==}
     dev: false
 
   /railroad-diagrams/1.0.0:

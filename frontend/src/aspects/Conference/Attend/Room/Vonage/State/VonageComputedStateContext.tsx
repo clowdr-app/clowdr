@@ -1,16 +1,16 @@
 import { createStandaloneToast, useToast } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { theme } from "../../../../Chakra/ChakraCustomProvider";
-import { useNavigationState } from "../../../../Menu/NavigationState";
-import { useEvent } from "../../../../Utils/useEvent";
-import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
-import { useRecordingState } from "./Recording/useRecordingState";
-import { useTranscript } from "./Transcript/useTranscript";
+import { theme } from "../../../../../Chakra/ChakraCustomProvider";
+import { useNavigationState } from "../../../../../Menu/NavigationState";
+import { useEvent } from "../../../../../Utils/useEvent";
+import { useRecordingState } from "../Recording/useRecordingState";
+import { useTranscript } from "../Transcript/useTranscript";
 import type { TranscriptData, VonageGlobalState } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { useVonageLayout } from "./VonageLayoutProvider";
+import { useVonageRoom, VonageRoomStateActionType } from "./VonageRoomProvider";
 
 const standaloneToast = createStandaloneToast({ theme });
 
@@ -23,7 +23,6 @@ interface Props {
     beginJoin?: () => void;
     cancelJoin?: () => void;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
-    isBackstageRoom: boolean;
 }
 
 interface Outputs {
@@ -49,12 +48,11 @@ function useValue({
     beginJoin,
     cancelJoin,
     completeJoinRef,
-    isBackstageRoom,
 }: Props): Outputs {
     const navState = useNavigationState();
 
     const vonage = useVonageGlobalState();
-    const { dispatch } = useVonageRoom();
+    const { dispatch, settings } = useVonageRoom();
     const layout = useVonageLayout();
 
     const [connected, setConnected] = useState<boolean>(false);
@@ -263,7 +261,7 @@ function useValue({
                 console.warn("Failed to initialise session", e);
             }
             // Auto-rejoin when hopping backstages
-            if (isBackstageRoom && wasAlreadyConnected && previousVonageSessionId.current && vonageSessionId) {
+            if (settings.isBackstageRoom && wasAlreadyConnected && previousVonageSessionId.current && vonageSessionId) {
                 joinRoom();
             }
             previousVonageSessionId.current = vonageSessionId;

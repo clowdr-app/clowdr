@@ -4,7 +4,7 @@ import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
 import FAIcon from "../../../../../Chakra/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeCompare";
-import { useVonageLayout } from "../VonageLayoutProvider";
+import { useVonageLayout } from "../State/VonageLayoutProvider";
 
 export default function StreamChooser({
     centered,

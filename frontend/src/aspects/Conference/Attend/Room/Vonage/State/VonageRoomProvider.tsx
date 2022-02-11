@@ -5,10 +5,10 @@ import { detect } from "detect-browser";
 import * as R from "ramda";
 import type { Dispatch } from "react";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
-import { useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery } from "../../generated/graphql";
-import type { DevicesProps } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
-import { useConference } from "../Conference/useConference";
-import { useRestorableState } from "../Hooks/useRestorableState";
+import { useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery } from "../../../../../../generated/graphql";
+import { useRestorableState } from "../../../../../Hooks/useRestorableState";
+import { useConference } from "../../../../useConference";
+import type { DevicesProps } from "../../VideoChat/PermissionInstructionsContext";
 
 export interface VonageRoomState {
     preferredCameraId: string | null;
@@ -122,6 +122,9 @@ const initialComputedState: VonageRoomComputedState = {
 
 export interface VonageRoomSettings {
     maximumSimultaneousScreenShares: number;
+    isBackstageRoom: boolean;
+    canControlRecording: boolean;
+    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
 }
 
 interface VonageRoomContext {
@@ -133,6 +136,11 @@ interface VonageRoomContext {
 
 const defaultVonageRoomSettings: VonageRoomSettings = {
     maximumSimultaneousScreenShares: 1,
+    isBackstageRoom: false,
+    canControlRecording: false,
+    onPermissionsProblem: () => {
+        //
+    },
 };
 
 export const VonageContext = React.createContext<VonageRoomContext>({
@@ -229,10 +237,14 @@ gql`
 
 export function VonageRoomStateProvider({
     onPermissionsProblem,
+    isBackstageRoom,
+    canControlRecording,
     children,
 }: {
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
-    children: React.ReactNode | React.ReactNodeArray;
+    isBackstageRoom: boolean;
+    canControlRecording: boolean;
+    children: JSX.Element;
 }): JSX.Element {
     const [preferredCamera, setPreferredCamera] = useRestorableState<string | null>(
         "clowdr-preferredCamera",
@@ -490,9 +502,17 @@ export function VonageRoomStateProvider({
                 {
                     maximumSimultaneousScreenShares:
                         maxSimultaneousScreenSharesResponse?.data?.conference_Configuration_by_pk?.value ?? undefined,
+                    canControlRecording,
+                    isBackstageRoom,
+                    onPermissionsProblem,
                 }
             ),
-        [maxSimultaneousScreenSharesResponse?.data?.conference_Configuration_by_pk]
+        [
+            canControlRecording,
+            isBackstageRoom,
+            onPermissionsProblem,
+            maxSimultaneousScreenSharesResponse?.data?.conference_Configuration_by_pk?.value,
+        ]
     );
 
     const ctx = useMemo(() => ({ state, dispatch, computedState, settings }), [computedState, state, settings]);

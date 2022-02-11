@@ -1,6 +1,6 @@
 import { Box, VStack } from "@chakra-ui/react";
 import { gql } from "@urql/core";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import * as portals from "react-reverse-portal";
 import type { RoomEventDetailsFragment } from "../../../../../generated/graphql";
 import {
@@ -10,7 +10,7 @@ import {
     useGetEventVonageTokenMutation,
 } from "../../../../../generated/graphql";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
-import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
+import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { BackstageControls } from "./Controls/BackstageControls";
 
@@ -113,7 +113,7 @@ export function EventVonageRoomInner({
         return result.data?.joinEventVonageSession.accessToken;
     }, [getEventVonageToken, event.id, registrant.id]);
 
-    const sharedRoomContext = useSharedRoomContext();
+    const sharedRoomContext = useContext(SharedRoomContext);
 
     const isPresenterOrChairOrOrganizer = useMemo(
         () =>

@@ -11,11 +11,13 @@ import {
     Heading,
     SimpleGrid,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import * as portals from "react-reverse-portal";
 import usePolling from "../../../../../Hooks/usePolling";
 import useResizeObserver from "../../../../../Hooks/useResizeObserver";
-import { useVonageLayout } from "../VonageLayoutProvider";
+import { VonageComputedStateContext } from "../State/VonageComputedStateContext";
+import { useVonageLayout } from "../State/VonageLayoutProvider";
+import { useVonageRoom } from "../State/VonageRoomProvider";
 import CameraPlaceholderImage from "./CameraPlaceholder";
 import type { Viewport } from "./LayoutTypes";
 import { VisualLayoutType } from "./LayoutTypes";
@@ -25,14 +27,10 @@ import useVisualLayout from "./useVisualLayout";
 export default function Layout({
     viewports,
     allowedToControlLayout,
-    isRecordingMode,
-    isBackstage,
     streamActivities,
 }: {
     viewports: Viewport[];
     allowedToControlLayout: boolean;
-    isRecordingMode: boolean;
-    isBackstage: boolean;
     streamActivities: Map<
         string,
         React.MutableRefObject<{
@@ -41,6 +39,10 @@ export default function Layout({
         } | null>
     >;
 }): JSX.Element {
+    const { settings } = useVonageRoom();
+    const { isRecordingActive } = useContext(VonageComputedStateContext);
+    const isRecordingMode = settings.isBackstageRoom || isRecordingActive;
+
     const layout = useVonageLayout();
     const visualLayout = useVisualLayout(layout.layout.layout, isRecordingMode, viewports);
 
@@ -917,7 +919,7 @@ export default function Layout({
                 <>
                     <Divider mt={4} mb={2} borderColor="black" borderWidth={4} />
                     <Heading as="h3" my={4} textAlign="left" mx={4} fontSize="xl">
-                        Not visible in {isBackstage ? "stream" : "recording"}
+                        Not visible in {settings.isBackstageRoom ? "stream" : "recording"}
                     </Heading>
                 </>
             ) : undefined}

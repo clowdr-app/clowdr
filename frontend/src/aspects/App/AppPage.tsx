@@ -1,5 +1,5 @@
 import { Box, Flex, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
@@ -9,6 +9,7 @@ import { useRestorableState } from "../Hooks/useRestorableState";
 import LeftMenu from "../Menu/LeftMenu";
 import RightMenu from "../Menu/RightMenu";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
+import { AppLayoutContext } from "./AppLayoutContext";
 import Routing from "./AppRouting";
 
 export default function AppPage(): JSX.Element {
@@ -24,6 +25,8 @@ export default function AppPage(): JSX.Element {
     });
     const isRootPage = locationMatchRoot !== null;
     const isAppLandingPage = isRootPage && !user?.user;
+
+    const { mainPaneRef } = useContext(AppLayoutContext);
 
     const center = useMemo(() => <Routing />, []);
 
@@ -117,6 +120,7 @@ export default function AppPage(): JSX.Element {
                         css={{
                             ["scrollbarWidth"]: "thin",
                         }}
+                        ref={mainPaneRef}
                     >
                         {center}
                     </VStack>

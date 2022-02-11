@@ -118,8 +118,8 @@ export default function ScheduleModal({
         setAnySponsors?.(!!result.data && result.data.content_Item.length > 0);
     }, [setAnySponsors, result.data]);
     const sponsors = useMemo(
-        () => <SponsorBoothsInner sponsors={result.data?.content_Item ?? []} />,
-        [result.data?.content_Item]
+        () => <SponsorBoothsInner tiers={result.data?.sponsor_Tier ?? []} sponsors={result.data?.content_Item ?? []} />,
+        [result.data?.content_Item, result.data?.sponsor_Tier]
     );
 
     const selectedTabIndex = useMemo(() => {

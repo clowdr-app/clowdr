@@ -82,6 +82,15 @@ array_relationships:
       table:
         name: ItemTag
         schema: content
+- name: sponsorshipTierMemberships
+  using:
+    manual_configuration:
+      column_mapping:
+        id: itemId
+      insertion_order: null
+      remote_table:
+        name: TierMember
+        schema: sponsor
 - name: stats
   using:
     manual_configuration:

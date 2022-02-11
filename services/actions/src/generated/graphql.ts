@@ -7051,6 +7051,10 @@ export type Conference_Conference = {
     shufflePeriods_aggregate: Room_ShufflePeriod_Aggregate;
     slug: Scalars["String"];
     /** An array relationship */
+    sponsorshipTiers: Array<Sponsor_Tier>;
+    /** An aggregate relationship */
+    sponsorshipTiers_aggregate: Sponsor_Tier_Aggregate;
+    /** An array relationship */
     subconferences: Array<Conference_Subconference>;
     /** An aggregate relationship */
     subconferences_aggregate: Conference_Subconference_Aggregate;
@@ -7242,6 +7246,24 @@ export type Conference_ConferenceShufflePeriods_AggregateArgs = {
 };
 
 /** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceSponsorshipTiersArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceSponsorshipTiers_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
 export type Conference_ConferenceSubconferencesArgs = {
     distinct_on?: InputMaybe<Array<Conference_Subconference_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -7340,6 +7362,7 @@ export type Conference_Conference_Bool_Exp = {
     shortName?: InputMaybe<String_Comparison_Exp>;
     shufflePeriods?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
     slug?: InputMaybe<String_Comparison_Exp>;
+    sponsorshipTiers?: InputMaybe<Sponsor_Tier_Bool_Exp>;
     subconferences?: InputMaybe<Conference_Subconference_Bool_Exp>;
     tags?: InputMaybe<Collection_Tag_Bool_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -7384,6 +7407,7 @@ export type Conference_Conference_Insert_Input = {
     shortName?: InputMaybe<Scalars["String"]>;
     shufflePeriods?: InputMaybe<Room_ShufflePeriod_Arr_Rel_Insert_Input>;
     slug?: InputMaybe<Scalars["String"]>;
+    sponsorshipTiers?: InputMaybe<Sponsor_Tier_Arr_Rel_Insert_Input>;
     subconferences?: InputMaybe<Conference_Subconference_Arr_Rel_Insert_Input>;
     tags?: InputMaybe<Collection_Tag_Arr_Rel_Insert_Input>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -7495,6 +7519,7 @@ export type Conference_Conference_Order_By = {
     shortName?: InputMaybe<Order_By>;
     shufflePeriods_aggregate?: InputMaybe<Room_ShufflePeriod_Aggregate_Order_By>;
     slug?: InputMaybe<Order_By>;
+    sponsorshipTiers_aggregate?: InputMaybe<Sponsor_Tier_Aggregate_Order_By>;
     subconferences_aggregate?: InputMaybe<Conference_Subconference_Aggregate_Order_By>;
     tags_aggregate?: InputMaybe<Collection_Tag_Aggregate_Order_By>;
     updatedAt?: InputMaybe<Order_By>;
@@ -8563,7 +8588,29 @@ export type Conference_Subconference = {
     name: Scalars["String"];
     shortName: Scalars["String"];
     slug: Scalars["String"];
+    /** An array relationship */
+    sponsorshipTiers: Array<Sponsor_Tier>;
+    /** An aggregate relationship */
+    sponsorshipTiers_aggregate: Sponsor_Tier_Aggregate;
     updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceSponsorshipTiersArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceSponsorshipTiers_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
 };
 
 /** aggregated selection of "conference.Subconference" */
@@ -8615,6 +8662,7 @@ export type Conference_Subconference_Bool_Exp = {
     name?: InputMaybe<String_Comparison_Exp>;
     shortName?: InputMaybe<String_Comparison_Exp>;
     slug?: InputMaybe<String_Comparison_Exp>;
+    sponsorshipTiers?: InputMaybe<Sponsor_Tier_Bool_Exp>;
     updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -8641,6 +8689,7 @@ export type Conference_Subconference_Insert_Input = {
     name?: InputMaybe<Scalars["String"]>;
     shortName?: InputMaybe<Scalars["String"]>;
     slug?: InputMaybe<Scalars["String"]>;
+    sponsorshipTiers?: InputMaybe<Sponsor_Tier_Arr_Rel_Insert_Input>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -8724,6 +8773,7 @@ export type Conference_Subconference_Order_By = {
     name?: InputMaybe<Order_By>;
     shortName?: InputMaybe<Order_By>;
     slug?: InputMaybe<Order_By>;
+    sponsorshipTiers_aggregate?: InputMaybe<Sponsor_Tier_Aggregate_Order_By>;
     updated_at?: InputMaybe<Order_By>;
 };
 
@@ -9690,6 +9740,10 @@ export type Content_Item = {
     room?: Maybe<Room_Room>;
     shortTitle?: Maybe<Scalars["String"]>;
     /** An array relationship */
+    sponsorshipTierMemberships: Array<Sponsor_TierMember>;
+    /** An aggregate relationship */
+    sponsorshipTierMemberships_aggregate: Sponsor_TierMember_Aggregate;
+    /** An array relationship */
     stats: Array<Analytics_ContentItemStats>;
     /** An aggregate relationship */
     stats_aggregate: Analytics_ContentItemStats_Aggregate;
@@ -9810,6 +9864,24 @@ export type Content_ItemItemTags_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Content_ItemTag_Order_By>>;
     where?: InputMaybe<Content_ItemTag_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemSponsorshipTierMembershipsArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemSponsorshipTierMemberships_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
 };
 
 /** columns and relationships of "content.Item" */
@@ -10835,6 +10907,7 @@ export type Content_Item_Bool_Exp = {
     originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     shortTitle?: InputMaybe<String_Comparison_Exp>;
+    sponsorshipTierMemberships?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
     stats?: InputMaybe<Analytics_ContentItemStats_Bool_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     title?: InputMaybe<String_Comparison_Exp>;
@@ -10871,6 +10944,7 @@ export type Content_Item_Insert_Input = {
     originatingDataId?: InputMaybe<Scalars["uuid"]>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     shortTitle?: InputMaybe<Scalars["String"]>;
+    sponsorshipTierMemberships?: InputMaybe<Sponsor_TierMember_Arr_Rel_Insert_Input>;
     stats?: InputMaybe<Analytics_ContentItemStats_Arr_Rel_Insert_Input>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     title?: InputMaybe<Scalars["String"]>;
@@ -10977,6 +11051,7 @@ export type Content_Item_Order_By = {
     originatingDataId?: InputMaybe<Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     shortTitle?: InputMaybe<Order_By>;
+    sponsorshipTierMemberships_aggregate?: InputMaybe<Sponsor_TierMember_Aggregate_Order_By>;
     stats_aggregate?: InputMaybe<Analytics_ContentItemStats_Aggregate_Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     title?: InputMaybe<Order_By>;
@@ -13989,6 +14064,14 @@ export type Mutation_Root = {
     delete_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** delete single row from the table: "schedule.StarredEvent" */
     delete_schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+    /** delete data from the table: "sponsor.Tier" */
+    delete_sponsor_Tier?: Maybe<Sponsor_Tier_Mutation_Response>;
+    /** delete data from the table: "sponsor.TierMember" */
+    delete_sponsor_TierMember?: Maybe<Sponsor_TierMember_Mutation_Response>;
+    /** delete single row from the table: "sponsor.TierMember" */
+    delete_sponsor_TierMember_by_pk?: Maybe<Sponsor_TierMember>;
+    /** delete single row from the table: "sponsor.Tier" */
+    delete_sponsor_Tier_by_pk?: Maybe<Sponsor_Tier>;
     /** delete data from the table: "system.Configuration" */
     delete_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
     /** delete data from the table: "system.ConfigurationKey" */
@@ -14371,6 +14454,14 @@ export type Mutation_Root = {
     insert_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** insert a single row into the table: "schedule.StarredEvent" */
     insert_schedule_StarredEvent_one?: Maybe<Schedule_StarredEvent>;
+    /** insert data into the table: "sponsor.Tier" */
+    insert_sponsor_Tier?: Maybe<Sponsor_Tier_Mutation_Response>;
+    /** insert data into the table: "sponsor.TierMember" */
+    insert_sponsor_TierMember?: Maybe<Sponsor_TierMember_Mutation_Response>;
+    /** insert a single row into the table: "sponsor.TierMember" */
+    insert_sponsor_TierMember_one?: Maybe<Sponsor_TierMember>;
+    /** insert a single row into the table: "sponsor.Tier" */
+    insert_sponsor_Tier_one?: Maybe<Sponsor_Tier>;
     /** insert data into the table: "system.Configuration" */
     insert_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
     /** insert data into the table: "system.ConfigurationKey" */
@@ -14764,6 +14855,14 @@ export type Mutation_Root = {
     update_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** update single row of the table: "schedule.StarredEvent" */
     update_schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+    /** update data of the table: "sponsor.Tier" */
+    update_sponsor_Tier?: Maybe<Sponsor_Tier_Mutation_Response>;
+    /** update data of the table: "sponsor.TierMember" */
+    update_sponsor_TierMember?: Maybe<Sponsor_TierMember_Mutation_Response>;
+    /** update single row of the table: "sponsor.TierMember" */
+    update_sponsor_TierMember_by_pk?: Maybe<Sponsor_TierMember>;
+    /** update single row of the table: "sponsor.Tier" */
+    update_sponsor_Tier_by_pk?: Maybe<Sponsor_Tier>;
     /** update data of the table: "system.Configuration" */
     update_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
     /** update data of the table: "system.ConfigurationKey" */
@@ -15615,6 +15714,26 @@ export type Mutation_RootDelete_Schedule_StarredEventArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Schedule_StarredEvent_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Sponsor_TierArgs = {
+    where: Sponsor_Tier_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Sponsor_TierMemberArgs = {
+    where: Sponsor_TierMember_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Sponsor_TierMember_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Sponsor_Tier_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -16724,6 +16843,30 @@ export type Mutation_RootInsert_Schedule_StarredEventArgs = {
 export type Mutation_RootInsert_Schedule_StarredEvent_OneArgs = {
     object: Schedule_StarredEvent_Insert_Input;
     on_conflict?: InputMaybe<Schedule_StarredEvent_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Sponsor_TierArgs = {
+    objects: Array<Sponsor_Tier_Insert_Input>;
+    on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Sponsor_TierMemberArgs = {
+    objects: Array<Sponsor_TierMember_Insert_Input>;
+    on_conflict?: InputMaybe<Sponsor_TierMember_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Sponsor_TierMember_OneArgs = {
+    object: Sponsor_TierMember_Insert_Input;
+    on_conflict?: InputMaybe<Sponsor_TierMember_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Sponsor_Tier_OneArgs = {
+    object: Sponsor_Tier_Insert_Input;
+    on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
 };
 
 /** mutation root */
@@ -18136,6 +18279,34 @@ export type Mutation_RootUpdate_Schedule_StarredEvent_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Sponsor_TierArgs = {
+    _inc?: InputMaybe<Sponsor_Tier_Inc_Input>;
+    _set?: InputMaybe<Sponsor_Tier_Set_Input>;
+    where: Sponsor_Tier_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Sponsor_TierMemberArgs = {
+    _inc?: InputMaybe<Sponsor_TierMember_Inc_Input>;
+    _set?: InputMaybe<Sponsor_TierMember_Set_Input>;
+    where: Sponsor_TierMember_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Sponsor_TierMember_By_PkArgs = {
+    _inc?: InputMaybe<Sponsor_TierMember_Inc_Input>;
+    _set?: InputMaybe<Sponsor_TierMember_Set_Input>;
+    pk_columns: Sponsor_TierMember_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Sponsor_Tier_By_PkArgs = {
+    _inc?: InputMaybe<Sponsor_Tier_Inc_Input>;
+    _set?: InputMaybe<Sponsor_Tier_Set_Input>;
+    pk_columns: Sponsor_Tier_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_System_ConfigurationArgs = {
     _append?: InputMaybe<System_Configuration_Append_Input>;
     _delete_at_path?: InputMaybe<System_Configuration_Delete_At_Path_Input>;
@@ -18952,6 +19123,18 @@ export type Query_Root = {
     schedule_searchEvents: Array<Schedule_Event>;
     /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
     schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
+    /** fetch data from the table: "sponsor.Tier" */
+    sponsor_Tier: Array<Sponsor_Tier>;
+    /** fetch data from the table: "sponsor.TierMember" */
+    sponsor_TierMember: Array<Sponsor_TierMember>;
+    /** fetch aggregated fields from the table: "sponsor.TierMember" */
+    sponsor_TierMember_aggregate: Sponsor_TierMember_Aggregate;
+    /** fetch data from the table: "sponsor.TierMember" using primary key columns */
+    sponsor_TierMember_by_pk?: Maybe<Sponsor_TierMember>;
+    /** fetch aggregated fields from the table: "sponsor.Tier" */
+    sponsor_Tier_aggregate: Sponsor_Tier_Aggregate;
+    /** fetch data from the table: "sponsor.Tier" using primary key columns */
+    sponsor_Tier_by_pk?: Maybe<Sponsor_Tier>;
     /** fetch data from the table: "system.Configuration" */
     system_Configuration: Array<System_Configuration>;
     /** fetch data from the table: "system.ConfigurationKey" */
@@ -20734,6 +20917,46 @@ export type Query_RootSchedule_SearchEvents_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
     where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+export type Query_RootSponsor_TierArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+export type Query_RootSponsor_TierMemberArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+export type Query_RootSponsor_TierMember_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+export type Query_RootSponsor_TierMember_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootSponsor_Tier_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+export type Query_RootSponsor_Tier_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Query_RootSystem_ConfigurationArgs = {
@@ -28751,6 +28974,738 @@ export type Schedule_SearchEvents_Args = {
     search?: InputMaybe<Scalars["String"]>;
 };
 
+/** columns and relationships of "sponsor.Tier" */
+export type Sponsor_Tier = {
+    __typename?: "sponsor_Tier";
+    colour?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    conference: Conference_Conference;
+    conferenceId: Scalars["uuid"];
+    created_at: Scalars["timestamptz"];
+    description: Scalars["String"];
+    id: Scalars["uuid"];
+    /** An array relationship */
+    members: Array<Sponsor_TierMember>;
+    /** An aggregate relationship */
+    members_aggregate: Sponsor_TierMember_Aggregate;
+    name: Scalars["String"];
+    priority: Scalars["Int"];
+    showLogos: Scalars["Boolean"];
+    size: Scalars["numeric"];
+    /** An object relationship */
+    subconference?: Maybe<Conference_Subconference>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
+    updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "sponsor.Tier" */
+export type Sponsor_TierMembersArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+/** columns and relationships of "sponsor.Tier" */
+export type Sponsor_TierMembers_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+/** columns and relationships of "sponsor.TierMember" */
+export type Sponsor_TierMember = {
+    __typename?: "sponsor_TierMember";
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    /** An object relationship */
+    item: Content_Item;
+    itemId: Scalars["uuid"];
+    priority?: Maybe<Scalars["Int"]>;
+    /** An object relationship */
+    tier: Sponsor_Tier;
+    tierId: Scalars["uuid"];
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "sponsor.TierMember" */
+export type Sponsor_TierMember_Aggregate = {
+    __typename?: "sponsor_TierMember_aggregate";
+    aggregate?: Maybe<Sponsor_TierMember_Aggregate_Fields>;
+    nodes: Array<Sponsor_TierMember>;
+};
+
+/** aggregate fields of "sponsor.TierMember" */
+export type Sponsor_TierMember_Aggregate_Fields = {
+    __typename?: "sponsor_TierMember_aggregate_fields";
+    avg?: Maybe<Sponsor_TierMember_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Sponsor_TierMember_Max_Fields>;
+    min?: Maybe<Sponsor_TierMember_Min_Fields>;
+    stddev?: Maybe<Sponsor_TierMember_Stddev_Fields>;
+    stddev_pop?: Maybe<Sponsor_TierMember_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Sponsor_TierMember_Stddev_Samp_Fields>;
+    sum?: Maybe<Sponsor_TierMember_Sum_Fields>;
+    var_pop?: Maybe<Sponsor_TierMember_Var_Pop_Fields>;
+    var_samp?: Maybe<Sponsor_TierMember_Var_Samp_Fields>;
+    variance?: Maybe<Sponsor_TierMember_Variance_Fields>;
+};
+
+/** aggregate fields of "sponsor.TierMember" */
+export type Sponsor_TierMember_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Sponsor_TierMember_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Aggregate_Order_By = {
+    avg?: InputMaybe<Sponsor_TierMember_Avg_Order_By>;
+    count?: InputMaybe<Order_By>;
+    max?: InputMaybe<Sponsor_TierMember_Max_Order_By>;
+    min?: InputMaybe<Sponsor_TierMember_Min_Order_By>;
+    stddev?: InputMaybe<Sponsor_TierMember_Stddev_Order_By>;
+    stddev_pop?: InputMaybe<Sponsor_TierMember_Stddev_Pop_Order_By>;
+    stddev_samp?: InputMaybe<Sponsor_TierMember_Stddev_Samp_Order_By>;
+    sum?: InputMaybe<Sponsor_TierMember_Sum_Order_By>;
+    var_pop?: InputMaybe<Sponsor_TierMember_Var_Pop_Order_By>;
+    var_samp?: InputMaybe<Sponsor_TierMember_Var_Samp_Order_By>;
+    variance?: InputMaybe<Sponsor_TierMember_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "sponsor.TierMember" */
+export type Sponsor_TierMember_Arr_Rel_Insert_Input = {
+    data: Array<Sponsor_TierMember_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: InputMaybe<Sponsor_TierMember_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Sponsor_TierMember_Avg_Fields = {
+    __typename?: "sponsor_TierMember_avg_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Avg_Order_By = {
+    priority?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "sponsor.TierMember". All fields are combined with a logical 'AND'. */
+export type Sponsor_TierMember_Bool_Exp = {
+    _and?: InputMaybe<Array<Sponsor_TierMember_Bool_Exp>>;
+    _not?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+    _or?: InputMaybe<Array<Sponsor_TierMember_Bool_Exp>>;
+    created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    id?: InputMaybe<Uuid_Comparison_Exp>;
+    item?: InputMaybe<Content_Item_Bool_Exp>;
+    itemId?: InputMaybe<Uuid_Comparison_Exp>;
+    priority?: InputMaybe<Int_Comparison_Exp>;
+    tier?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+    tierId?: InputMaybe<Uuid_Comparison_Exp>;
+    updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "sponsor.TierMember" */
+export enum Sponsor_TierMember_Constraint {
+    /** unique or primary key constraint */
+    TierMemberPkey = "TierMember_pkey",
+    /** unique or primary key constraint */
+    TierMemberTierIdItemIdKey = "TierMember_tierId_itemId_key",
+}
+
+/** input type for incrementing numeric columns in table "sponsor.TierMember" */
+export type Sponsor_TierMember_Inc_Input = {
+    priority?: InputMaybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "sponsor.TierMember" */
+export type Sponsor_TierMember_Insert_Input = {
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
+    itemId?: InputMaybe<Scalars["uuid"]>;
+    priority?: InputMaybe<Scalars["Int"]>;
+    tier?: InputMaybe<Sponsor_Tier_Obj_Rel_Insert_Input>;
+    tierId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Sponsor_TierMember_Max_Fields = {
+    __typename?: "sponsor_TierMember_max_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    tierId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Max_Order_By = {
+    created_at?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    itemId?: InputMaybe<Order_By>;
+    priority?: InputMaybe<Order_By>;
+    tierId?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Sponsor_TierMember_Min_Fields = {
+    __typename?: "sponsor_TierMember_min_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    tierId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Min_Order_By = {
+    created_at?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    itemId?: InputMaybe<Order_By>;
+    priority?: InputMaybe<Order_By>;
+    tierId?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "sponsor.TierMember" */
+export type Sponsor_TierMember_Mutation_Response = {
+    __typename?: "sponsor_TierMember_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Sponsor_TierMember>;
+};
+
+/** on conflict condition type for table "sponsor.TierMember" */
+export type Sponsor_TierMember_On_Conflict = {
+    constraint: Sponsor_TierMember_Constraint;
+    update_columns?: Array<Sponsor_TierMember_Update_Column>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "sponsor.TierMember". */
+export type Sponsor_TierMember_Order_By = {
+    created_at?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    item?: InputMaybe<Content_Item_Order_By>;
+    itemId?: InputMaybe<Order_By>;
+    priority?: InputMaybe<Order_By>;
+    tier?: InputMaybe<Sponsor_Tier_Order_By>;
+    tierId?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: sponsor_TierMember */
+export type Sponsor_TierMember_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "sponsor.TierMember" */
+export enum Sponsor_TierMember_Select_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    TierId = "tierId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "sponsor.TierMember" */
+export type Sponsor_TierMember_Set_Input = {
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    itemId?: InputMaybe<Scalars["uuid"]>;
+    priority?: InputMaybe<Scalars["Int"]>;
+    tierId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Sponsor_TierMember_Stddev_Fields = {
+    __typename?: "sponsor_TierMember_stddev_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Stddev_Order_By = {
+    priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Sponsor_TierMember_Stddev_Pop_Fields = {
+    __typename?: "sponsor_TierMember_stddev_pop_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Stddev_Pop_Order_By = {
+    priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Sponsor_TierMember_Stddev_Samp_Fields = {
+    __typename?: "sponsor_TierMember_stddev_samp_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Stddev_Samp_Order_By = {
+    priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Sponsor_TierMember_Sum_Fields = {
+    __typename?: "sponsor_TierMember_sum_fields";
+    priority?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Sum_Order_By = {
+    priority?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "sponsor.TierMember" */
+export enum Sponsor_TierMember_Update_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    TierId = "tierId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Sponsor_TierMember_Var_Pop_Fields = {
+    __typename?: "sponsor_TierMember_var_pop_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Var_Pop_Order_By = {
+    priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Sponsor_TierMember_Var_Samp_Fields = {
+    __typename?: "sponsor_TierMember_var_samp_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Var_Samp_Order_By = {
+    priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Sponsor_TierMember_Variance_Fields = {
+    __typename?: "sponsor_TierMember_variance_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Variance_Order_By = {
+    priority?: InputMaybe<Order_By>;
+};
+
+/** aggregated selection of "sponsor.Tier" */
+export type Sponsor_Tier_Aggregate = {
+    __typename?: "sponsor_Tier_aggregate";
+    aggregate?: Maybe<Sponsor_Tier_Aggregate_Fields>;
+    nodes: Array<Sponsor_Tier>;
+};
+
+/** aggregate fields of "sponsor.Tier" */
+export type Sponsor_Tier_Aggregate_Fields = {
+    __typename?: "sponsor_Tier_aggregate_fields";
+    avg?: Maybe<Sponsor_Tier_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Sponsor_Tier_Max_Fields>;
+    min?: Maybe<Sponsor_Tier_Min_Fields>;
+    stddev?: Maybe<Sponsor_Tier_Stddev_Fields>;
+    stddev_pop?: Maybe<Sponsor_Tier_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Sponsor_Tier_Stddev_Samp_Fields>;
+    sum?: Maybe<Sponsor_Tier_Sum_Fields>;
+    var_pop?: Maybe<Sponsor_Tier_Var_Pop_Fields>;
+    var_samp?: Maybe<Sponsor_Tier_Var_Samp_Fields>;
+    variance?: Maybe<Sponsor_Tier_Variance_Fields>;
+};
+
+/** aggregate fields of "sponsor.Tier" */
+export type Sponsor_Tier_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Sponsor_Tier_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "sponsor.Tier" */
+export type Sponsor_Tier_Aggregate_Order_By = {
+    avg?: InputMaybe<Sponsor_Tier_Avg_Order_By>;
+    count?: InputMaybe<Order_By>;
+    max?: InputMaybe<Sponsor_Tier_Max_Order_By>;
+    min?: InputMaybe<Sponsor_Tier_Min_Order_By>;
+    stddev?: InputMaybe<Sponsor_Tier_Stddev_Order_By>;
+    stddev_pop?: InputMaybe<Sponsor_Tier_Stddev_Pop_Order_By>;
+    stddev_samp?: InputMaybe<Sponsor_Tier_Stddev_Samp_Order_By>;
+    sum?: InputMaybe<Sponsor_Tier_Sum_Order_By>;
+    var_pop?: InputMaybe<Sponsor_Tier_Var_Pop_Order_By>;
+    var_samp?: InputMaybe<Sponsor_Tier_Var_Samp_Order_By>;
+    variance?: InputMaybe<Sponsor_Tier_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "sponsor.Tier" */
+export type Sponsor_Tier_Arr_Rel_Insert_Input = {
+    data: Array<Sponsor_Tier_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Sponsor_Tier_Avg_Fields = {
+    __typename?: "sponsor_Tier_avg_fields";
+    priority?: Maybe<Scalars["Float"]>;
+    size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Avg_Order_By = {
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "sponsor.Tier". All fields are combined with a logical 'AND'. */
+export type Sponsor_Tier_Bool_Exp = {
+    _and?: InputMaybe<Array<Sponsor_Tier_Bool_Exp>>;
+    _not?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+    _or?: InputMaybe<Array<Sponsor_Tier_Bool_Exp>>;
+    colour?: InputMaybe<String_Comparison_Exp>;
+    conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    description?: InputMaybe<String_Comparison_Exp>;
+    id?: InputMaybe<Uuid_Comparison_Exp>;
+    members?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+    name?: InputMaybe<String_Comparison_Exp>;
+    priority?: InputMaybe<Int_Comparison_Exp>;
+    showLogos?: InputMaybe<Boolean_Comparison_Exp>;
+    size?: InputMaybe<Numeric_Comparison_Exp>;
+    subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
+    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "sponsor.Tier" */
+export enum Sponsor_Tier_Constraint {
+    /** unique or primary key constraint */
+    TierConferenceIdSubconferenceIdNameKey = "Tier_conferenceId_subconferenceId_name_key",
+    /** unique or primary key constraint */
+    TierPkey = "Tier_pkey",
+}
+
+/** input type for incrementing numeric columns in table "sponsor.Tier" */
+export type Sponsor_Tier_Inc_Input = {
+    priority?: InputMaybe<Scalars["Int"]>;
+    size?: InputMaybe<Scalars["numeric"]>;
+};
+
+/** input type for inserting data into table "sponsor.Tier" */
+export type Sponsor_Tier_Insert_Input = {
+    colour?: InputMaybe<Scalars["String"]>;
+    conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    description?: InputMaybe<Scalars["String"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    members?: InputMaybe<Sponsor_TierMember_Arr_Rel_Insert_Input>;
+    name?: InputMaybe<Scalars["String"]>;
+    priority?: InputMaybe<Scalars["Int"]>;
+    showLogos?: InputMaybe<Scalars["Boolean"]>;
+    size?: InputMaybe<Scalars["numeric"]>;
+    subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Sponsor_Tier_Max_Fields = {
+    __typename?: "sponsor_Tier_max_fields";
+    colour?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    description?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    size?: Maybe<Scalars["numeric"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Max_Order_By = {
+    colour?: InputMaybe<Order_By>;
+    conferenceId?: InputMaybe<Order_By>;
+    created_at?: InputMaybe<Order_By>;
+    description?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    name?: InputMaybe<Order_By>;
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Sponsor_Tier_Min_Fields = {
+    __typename?: "sponsor_Tier_min_fields";
+    colour?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    description?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    size?: Maybe<Scalars["numeric"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Min_Order_By = {
+    colour?: InputMaybe<Order_By>;
+    conferenceId?: InputMaybe<Order_By>;
+    created_at?: InputMaybe<Order_By>;
+    description?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    name?: InputMaybe<Order_By>;
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "sponsor.Tier" */
+export type Sponsor_Tier_Mutation_Response = {
+    __typename?: "sponsor_Tier_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Sponsor_Tier>;
+};
+
+/** input type for inserting object relation for remote table "sponsor.Tier" */
+export type Sponsor_Tier_Obj_Rel_Insert_Input = {
+    data: Sponsor_Tier_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
+};
+
+/** on conflict condition type for table "sponsor.Tier" */
+export type Sponsor_Tier_On_Conflict = {
+    constraint: Sponsor_Tier_Constraint;
+    update_columns?: Array<Sponsor_Tier_Update_Column>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "sponsor.Tier". */
+export type Sponsor_Tier_Order_By = {
+    colour?: InputMaybe<Order_By>;
+    conference?: InputMaybe<Conference_Conference_Order_By>;
+    conferenceId?: InputMaybe<Order_By>;
+    created_at?: InputMaybe<Order_By>;
+    description?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    members_aggregate?: InputMaybe<Sponsor_TierMember_Aggregate_Order_By>;
+    name?: InputMaybe<Order_By>;
+    priority?: InputMaybe<Order_By>;
+    showLogos?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+    subconference?: InputMaybe<Conference_Subconference_Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: sponsor_Tier */
+export type Sponsor_Tier_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "sponsor.Tier" */
+export enum Sponsor_Tier_Select_Column {
+    /** column name */
+    Colour = "colour",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Description = "description",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Name = "name",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    ShowLogos = "showLogos",
+    /** column name */
+    Size = "size",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "sponsor.Tier" */
+export type Sponsor_Tier_Set_Input = {
+    colour?: InputMaybe<Scalars["String"]>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    description?: InputMaybe<Scalars["String"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    name?: InputMaybe<Scalars["String"]>;
+    priority?: InputMaybe<Scalars["Int"]>;
+    showLogos?: InputMaybe<Scalars["Boolean"]>;
+    size?: InputMaybe<Scalars["numeric"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Sponsor_Tier_Stddev_Fields = {
+    __typename?: "sponsor_Tier_stddev_fields";
+    priority?: Maybe<Scalars["Float"]>;
+    size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Stddev_Order_By = {
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Sponsor_Tier_Stddev_Pop_Fields = {
+    __typename?: "sponsor_Tier_stddev_pop_fields";
+    priority?: Maybe<Scalars["Float"]>;
+    size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Stddev_Pop_Order_By = {
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Sponsor_Tier_Stddev_Samp_Fields = {
+    __typename?: "sponsor_Tier_stddev_samp_fields";
+    priority?: Maybe<Scalars["Float"]>;
+    size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Stddev_Samp_Order_By = {
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Sponsor_Tier_Sum_Fields = {
+    __typename?: "sponsor_Tier_sum_fields";
+    priority?: Maybe<Scalars["Int"]>;
+    size?: Maybe<Scalars["numeric"]>;
+};
+
+/** order by sum() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Sum_Order_By = {
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "sponsor.Tier" */
+export enum Sponsor_Tier_Update_Column {
+    /** column name */
+    Colour = "colour",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Description = "description",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Name = "name",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    ShowLogos = "showLogos",
+    /** column name */
+    Size = "size",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Sponsor_Tier_Var_Pop_Fields = {
+    __typename?: "sponsor_Tier_var_pop_fields";
+    priority?: Maybe<Scalars["Float"]>;
+    size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Var_Pop_Order_By = {
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Sponsor_Tier_Var_Samp_Fields = {
+    __typename?: "sponsor_Tier_var_samp_fields";
+    priority?: Maybe<Scalars["Float"]>;
+    size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Var_Samp_Order_By = {
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Sponsor_Tier_Variance_Fields = {
+    __typename?: "sponsor_Tier_variance_fields";
+    priority?: Maybe<Scalars["Float"]>;
+    size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Variance_Order_By = {
+    priority?: InputMaybe<Order_By>;
+    size?: InputMaybe<Order_By>;
+};
+
 export type Subscription_Root = {
     __typename?: "subscription_root";
     /** fetch data from the table: "Email" */
@@ -29241,6 +30196,18 @@ export type Subscription_Root = {
     schedule_searchEvents: Array<Schedule_Event>;
     /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
     schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
+    /** fetch data from the table: "sponsor.Tier" */
+    sponsor_Tier: Array<Sponsor_Tier>;
+    /** fetch data from the table: "sponsor.TierMember" */
+    sponsor_TierMember: Array<Sponsor_TierMember>;
+    /** fetch aggregated fields from the table: "sponsor.TierMember" */
+    sponsor_TierMember_aggregate: Sponsor_TierMember_Aggregate;
+    /** fetch data from the table: "sponsor.TierMember" using primary key columns */
+    sponsor_TierMember_by_pk?: Maybe<Sponsor_TierMember>;
+    /** fetch aggregated fields from the table: "sponsor.Tier" */
+    sponsor_Tier_aggregate: Sponsor_Tier_Aggregate;
+    /** fetch data from the table: "sponsor.Tier" using primary key columns */
+    sponsor_Tier_by_pk?: Maybe<Sponsor_Tier>;
     /** fetch data from the table: "system.Configuration" */
     system_Configuration: Array<System_Configuration>;
     /** fetch data from the table: "system.ConfigurationKey" */
@@ -31017,6 +31984,46 @@ export type Subscription_RootSchedule_SearchEvents_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
     where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_TierArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_TierMemberArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_TierMember_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_TierMember_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootSponsor_Tier_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_Tier_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Subscription_RootSystem_ConfigurationArgs = {
@@ -36046,10 +37053,10 @@ export type CombineVideosJob_FailJobMutationVariables = Exact<{
 
 export type CombineVideosJob_FailJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_CombineVideosJob?:
-        | { __typename?: "job_queues_CombineVideosJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_CombineVideosJob?: {
+        __typename?: "job_queues_CombineVideosJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type CombineVideosJob_StartJobMutationVariables = Exact<{
@@ -36059,10 +37066,10 @@ export type CombineVideosJob_StartJobMutationVariables = Exact<{
 
 export type CombineVideosJob_StartJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_CombineVideosJob?:
-        | { __typename?: "job_queues_CombineVideosJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_CombineVideosJob?: {
+        __typename?: "job_queues_CombineVideosJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type CombineVideosJob_CompleteJobMutationVariables = Exact<{
@@ -36071,10 +37078,10 @@ export type CombineVideosJob_CompleteJobMutationVariables = Exact<{
 
 export type CombineVideosJob_CompleteJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_CombineVideosJob?:
-        | { __typename?: "job_queues_CombineVideosJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_CombineVideosJob?: {
+        __typename?: "job_queues_CombineVideosJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type MediaConvert_GetCombineVideosJobQueryVariables = Exact<{
@@ -36084,14 +37091,13 @@ export type MediaConvert_GetCombineVideosJobQueryVariables = Exact<{
 
 export type MediaConvert_GetCombineVideosJobQuery = {
     __typename?: "query_root";
-    job_queues_CombineVideosJob_by_pk?:
-        | { __typename?: "job_queues_CombineVideosJob"; id: any; conferenceId: any; outputName: string }
-        | null
-        | undefined;
-    content_Item_by_pk?:
-        | { __typename?: "content_Item"; id: any; subconferenceId?: any | null | undefined }
-        | null
-        | undefined;
+    job_queues_CombineVideosJob_by_pk?: {
+        __typename?: "job_queues_CombineVideosJob";
+        id: any;
+        conferenceId: any;
+        outputName: string;
+    } | null;
+    content_Item_by_pk?: { __typename?: "content_Item"; id: any; subconferenceId?: any | null } | null;
 };
 
 export type CombineVideosJob_CreateElementMutationVariables = Exact<{
@@ -36104,7 +37110,7 @@ export type CombineVideosJob_CreateElementMutationVariables = Exact<{
 
 export type CombineVideosJob_CreateElementMutation = {
     __typename?: "mutation_root";
-    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null | undefined;
+    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type CheckForFrontendHostsQueryVariables = Exact<{
@@ -36129,14 +37135,14 @@ export type ElementAddNewVersionMutationVariables = Exact<{
 
 export type ElementAddNewVersionMutation = {
     __typename?: "mutation_root";
-    update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null | undefined;
+    update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type ElementUpdateNotification_ElementDetailsFragment = {
     __typename?: "content_Element";
     id: any;
     name: string;
-    source?: any | null | undefined;
+    source?: any | null;
     conference: {
         __typename?: "conference_Conference";
         id: any;
@@ -36158,7 +37164,7 @@ export type ElementUpdateNotification_ElementDetailsFragment = {
                 __typename?: "collection_ProgramPerson";
                 id: any;
                 name: string;
-                email?: string | null | undefined;
+                email?: string | null;
                 accessToken: string;
             };
         }>;
@@ -36171,41 +37177,38 @@ export type GetElementDetailsQueryVariables = Exact<{
 
 export type GetElementDetailsQuery = {
     __typename?: "query_root";
-    content_Element_by_pk?:
-        | {
-              __typename?: "content_Element";
-              id: any;
-              name: string;
-              source?: any | null | undefined;
-              conference: {
-                  __typename?: "conference_Conference";
-                  id: any;
-                  name: string;
-                  shortName: string;
-                  recordingNotificationsEnabled: Array<{ __typename?: "conference_Configuration"; value: any }>;
-                  submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
-                  emailTemplateSubtitlesGenerated: Array<{ __typename?: "conference_Configuration"; value: any }>;
-              };
-              item: {
-                  __typename?: "content_Item";
-                  id: any;
-                  title: string;
-                  itemPeople: Array<{
-                      __typename?: "content_ItemProgramPerson";
-                      id: any;
-                      roleName: string;
-                      person: {
-                          __typename?: "collection_ProgramPerson";
-                          id: any;
-                          name: string;
-                          email?: string | null | undefined;
-                          accessToken: string;
-                      };
-                  }>;
-              };
-          }
-        | null
-        | undefined;
+    content_Element_by_pk?: {
+        __typename?: "content_Element";
+        id: any;
+        name: string;
+        source?: any | null;
+        conference: {
+            __typename?: "conference_Conference";
+            id: any;
+            name: string;
+            shortName: string;
+            recordingNotificationsEnabled: Array<{ __typename?: "conference_Configuration"; value: any }>;
+            submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
+            emailTemplateSubtitlesGenerated: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        };
+        item: {
+            __typename?: "content_Item";
+            id: any;
+            title: string;
+            itemPeople: Array<{
+                __typename?: "content_ItemProgramPerson";
+                id: any;
+                roleName: string;
+                person: {
+                    __typename?: "collection_ProgramPerson";
+                    id: any;
+                    name: string;
+                    email?: string | null;
+                    accessToken: string;
+                };
+            }>;
+        };
+    } | null;
 };
 
 export type GetUploadAgreementQueryVariables = Exact<{
@@ -36239,18 +37242,15 @@ export type CustomEmail_SelectRegistrantsQuery = {
         __typename?: "registrant_Registrant";
         displayName: string;
         id: any;
-        invitation?: { __typename?: "registrant_Invitation"; invitedEmailAddress: string; id: any } | null | undefined;
-        user?: { __typename?: "User"; id: string; email?: string | null | undefined } | null | undefined;
+        invitation?: { __typename?: "registrant_Invitation"; invitedEmailAddress: string; id: any } | null;
+        user?: { __typename?: "User"; id: string; email?: string | null } | null;
     }>;
-    conference_Conference_by_pk?:
-        | {
-              __typename?: "conference_Conference";
-              shortName: string;
-              techSupportAddress: Array<{ __typename?: "conference_Configuration"; value: any }>;
-          }
-        | null
-        | undefined;
-    platformAddress?: { __typename?: "system_Configuration"; value: any } | null | undefined;
+    conference_Conference_by_pk?: {
+        __typename?: "conference_Conference";
+        shortName: string;
+        techSupportAddress: Array<{ __typename?: "conference_Configuration"; value: any }>;
+    } | null;
+    platformAddress?: { __typename?: "system_Configuration"; value: any } | null;
 };
 
 export type SelectUnprocessedCustomEmailJobsQueryVariables = Exact<{ [key: string]: never }>;
@@ -36273,14 +37273,11 @@ export type CompleteCustomEmailJobsMutationVariables = Exact<{
 
 export type CompleteCustomEmailJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_CustomEmailJob?:
-        | {
-              __typename?: "job_queues_CustomEmailJob_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "job_queues_CustomEmailJob"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_job_queues_CustomEmailJob?: {
+        __typename?: "job_queues_CustomEmailJob_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "job_queues_CustomEmailJob"; id: any }>;
+    } | null;
 };
 
 export type ConferenceEmailConfigurationQueryVariables = Exact<{
@@ -36292,23 +37289,19 @@ export type ConferenceEmailConfigurationQuery = {
     __typename?: "query_root";
     support: Array<{ __typename?: "conference_Configuration"; key: Conference_ConfigurationKey_Enum; value: any }>;
     techSupport: Array<{ __typename?: "conference_Configuration"; key: Conference_ConfigurationKey_Enum; value: any }>;
-    hostOrganisationName?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
-    stopEmails?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    hostOrganisationName?: {
+        __typename?: "system_Configuration";
+        key: System_ConfigurationKey_Enum;
+        value: any;
+    } | null;
+    stopEmails?: { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any } | null;
     frontendHost: Array<{ __typename?: "conference_Configuration"; key: Conference_ConfigurationKey_Enum; value: any }>;
-    defaultFrontendHost?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
-    allowEmailsToDomains?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    defaultFrontendHost?: { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any } | null;
+    allowEmailsToDomains?: {
+        __typename?: "system_Configuration";
+        key: System_ConfigurationKey_Enum;
+        value: any;
+    } | null;
     conference_Conference?: Array<{ __typename?: "conference_Conference"; shortName: string }>;
 };
 
@@ -36318,7 +37311,7 @@ export type InsertEmailsMutationVariables = Exact<{
 
 export type InsertEmailsMutation = {
     __typename?: "mutation_root";
-    insert_Email?: { __typename?: "Email_mutation_response"; affected_rows: number } | null | undefined;
+    insert_Email?: { __typename?: "Email_mutation_response"; affected_rows: number } | null;
 };
 
 export type SelectUnsentEmailIdsQueryVariables = Exact<{ [key: string]: never }>;
@@ -36332,22 +37325,19 @@ export type MarkAndSelectUnsentEmailsMutationVariables = Exact<{
 
 export type MarkAndSelectUnsentEmailsMutation = {
     __typename?: "mutation_root";
-    update_Email?:
-        | {
-              __typename?: "Email_mutation_response";
-              returning: Array<{
-                  __typename?: "Email";
-                  recipientName?: string | null | undefined;
-                  emailAddress: string;
-                  htmlContents: string;
-                  plainTextContents: string;
-                  id: any;
-                  subject: string;
-                  retriesCount: number;
-              }>;
-          }
-        | null
-        | undefined;
+    update_Email?: {
+        __typename?: "Email_mutation_response";
+        returning: Array<{
+            __typename?: "Email";
+            recipientName?: string | null;
+            emailAddress: string;
+            htmlContents: string;
+            plainTextContents: string;
+            id: any;
+            subject: string;
+            retriesCount: number;
+        }>;
+    } | null;
 };
 
 export type UnmarkUnsentEmailsMutationVariables = Exact<{
@@ -36356,18 +37346,18 @@ export type UnmarkUnsentEmailsMutationVariables = Exact<{
 
 export type UnmarkUnsentEmailsMutation = {
     __typename?: "mutation_root";
-    update_Email?: { __typename?: "Email_mutation_response"; affected_rows: number } | null | undefined;
+    update_Email?: { __typename?: "Email_mutation_response"; affected_rows: number } | null;
 };
 
 export type GetSendGridConfigQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetSendGridConfigQuery = {
     __typename?: "query_root";
-    apiKey?: { __typename?: "system_Configuration"; value: any } | null | undefined;
-    senderEmail?: { __typename?: "system_Configuration"; value: any } | null | undefined;
-    senderName?: { __typename?: "system_Configuration"; value: any } | null | undefined;
-    replyTo?: { __typename?: "system_Configuration"; value: any } | null | undefined;
-    webhookPublicKey?: { __typename?: "system_Configuration"; value: any } | null | undefined;
+    apiKey?: { __typename?: "system_Configuration"; value: any } | null;
+    senderEmail?: { __typename?: "system_Configuration"; value: any } | null;
+    senderName?: { __typename?: "system_Configuration"; value: any } | null;
+    replyTo?: { __typename?: "system_Configuration"; value: any } | null;
+    webhookPublicKey?: { __typename?: "system_Configuration"; value: any } | null;
 };
 
 export type UpdateEmailStatusMutationVariables = Exact<{
@@ -36378,7 +37368,7 @@ export type UpdateEmailStatusMutationVariables = Exact<{
 
 export type UpdateEmailStatusMutation = {
     __typename?: "mutation_root";
-    update_Email_by_pk?: { __typename?: "Email"; id: any } | null | undefined;
+    update_Email_by_pk?: { __typename?: "Email"; id: any } | null;
 };
 
 export type GetEventChatInfoQueryVariables = Exact<{
@@ -36387,20 +37377,14 @@ export type GetEventChatInfoQueryVariables = Exact<{
 
 export type GetEventChatInfoQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              startTime: any;
-              durationSeconds: number;
-              room: { __typename?: "room_Room"; id: any; name: string; chatId?: any | null | undefined };
-              item?:
-                  | { __typename?: "content_Item"; id: any; title: string; chatId?: any | null | undefined }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        startTime: any;
+        durationSeconds: number;
+        room: { __typename?: "room_Room"; id: any; name: string; chatId?: any | null };
+        item?: { __typename?: "content_Item"; id: any; title: string; chatId?: any | null } | null;
+    } | null;
 };
 
 export type StartChatDuplicationMutationVariables = Exact<{
@@ -36410,8 +37394,8 @@ export type StartChatDuplicationMutationVariables = Exact<{
 
 export type StartChatDuplicationMutation = {
     __typename?: "mutation_root";
-    update_chat1?: { __typename?: "chat_Chat"; id: any } | null | undefined;
-    update_chat2?: { __typename?: "chat_Chat"; id: any } | null | undefined;
+    update_chat1?: { __typename?: "chat_Chat"; id: any } | null;
+    update_chat2?: { __typename?: "chat_Chat"; id: any } | null;
 };
 
 export type EndChatDuplicationMutationVariables = Exact<{
@@ -36421,8 +37405,8 @@ export type EndChatDuplicationMutationVariables = Exact<{
 
 export type EndChatDuplicationMutation = {
     __typename?: "mutation_root";
-    update_chat1?: { __typename?: "chat_Chat"; id: any } | null | undefined;
-    update_chat2?: { __typename?: "chat_Chat"; id: any } | null | undefined;
+    update_chat1?: { __typename?: "chat_Chat"; id: any } | null;
+    update_chat2?: { __typename?: "chat_Chat"; id: any } | null;
 };
 
 export type NotifyRealtimeEventEndedMutationVariables = Exact<{
@@ -36440,30 +37424,21 @@ export type GetEventTimingsQueryVariables = Exact<{
 
 export type GetEventTimingsQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              name: string;
-              timingsUpdatedAt: any;
-              startTime: any;
-              endTime?: any | null | undefined;
-              conferenceId: any;
-              intendedRoomModeName: Room_Mode_Enum;
-              roomId: any;
-              enableRecording: boolean;
-              eventVonageSession?:
-                  | { __typename?: "video_EventVonageSession"; id: any; sessionId: string }
-                  | null
-                  | undefined;
-              item?:
-                  | { __typename?: "content_Item"; id: any; title: string; chatId?: any | null | undefined }
-                  | null
-                  | undefined;
-              continuations: Array<{ __typename?: "schedule_Continuation"; id: any; to: any }>;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        name: string;
+        timingsUpdatedAt: any;
+        startTime: any;
+        endTime?: any | null;
+        conferenceId: any;
+        intendedRoomModeName: Room_Mode_Enum;
+        roomId: any;
+        enableRecording: boolean;
+        eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
+        item?: { __typename?: "content_Item"; id: any; title: string; chatId?: any | null } | null;
+        continuations: Array<{ __typename?: "schedule_Continuation"; id: any; to: any }>;
+    } | null;
 };
 
 export type Event_GetEventVonageSessionQueryVariables = Exact<{
@@ -36472,17 +37447,11 @@ export type Event_GetEventVonageSessionQueryVariables = Exact<{
 
 export type Event_GetEventVonageSessionQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              eventVonageSession?:
-                  | { __typename?: "video_EventVonageSession"; id: any; sessionId: string }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
+    } | null;
 };
 
 export type GoogleOAuth_ConferenceConfig_FrontendHostQueryVariables = Exact<{
@@ -36491,20 +37460,14 @@ export type GoogleOAuth_ConferenceConfig_FrontendHostQueryVariables = Exact<{
 
 export type GoogleOAuth_ConferenceConfig_FrontendHostQuery = {
     __typename?: "query_root";
-    registrant?:
-        | {
-              __typename?: "registrant_Registrant";
-              conference: {
-                  __typename?: "conference_Conference";
-                  frontendHost: Array<{ __typename?: "conference_Configuration"; value: any }>;
-              };
-          }
-        | null
-        | undefined;
-    defaultFrontendHost?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    registrant?: {
+        __typename?: "registrant_Registrant";
+        conference: {
+            __typename?: "conference_Conference";
+            frontendHost: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        };
+    } | null;
+    defaultFrontendHost?: { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any } | null;
 };
 
 export type Google_CreateRegistrantGoogleAccountMutationVariables = Exact<{
@@ -36516,7 +37479,7 @@ export type Google_CreateRegistrantGoogleAccountMutationVariables = Exact<{
 
 export type Google_CreateRegistrantGoogleAccountMutation = {
     __typename?: "mutation_root";
-    insert_registrant_GoogleAccount_one?: { __typename?: "registrant_GoogleAccount"; id: any } | null | undefined;
+    insert_registrant_GoogleAccount_one?: { __typename?: "registrant_GoogleAccount"; id: any } | null;
 };
 
 export type CreateYouTubeUploadMutationVariables = Exact<{
@@ -36532,7 +37495,7 @@ export type CreateYouTubeUploadMutationVariables = Exact<{
 
 export type CreateYouTubeUploadMutation = {
     __typename?: "mutation_root";
-    insert_video_YouTubeUpload_one?: { __typename?: "video_YouTubeUpload"; id: any } | null | undefined;
+    insert_video_YouTubeUpload_one?: { __typename?: "video_YouTubeUpload"; id: any } | null;
 };
 
 export type SelectNewUploadYouTubeVideoJobsQueryVariables = Exact<{ [key: string]: never }>;
@@ -36548,49 +37511,46 @@ export type MarkAndSelectNewUploadYouTubeVideoJobsMutationVariables = Exact<{
 
 export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob?:
-        | {
-              __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
-              returning: Array<{
-                  __typename?: "job_queues_UploadYouTubeVideoJob";
-                  id: any;
-                  conferenceId: any;
-                  subconferenceId?: any | null | undefined;
-                  jobStatusName: Job_Queues_JobStatus_Enum;
-                  retriesCount: number;
-                  videoTitle: string;
-                  videoDescription: string;
-                  videoPrivacyStatus: string;
-                  playlistId?: string | null | undefined;
-                  registrantGoogleAccount: {
-                      __typename?: "registrant_GoogleAccount";
-                      id: any;
-                      tokenData: any;
-                      googleAccountEmail: string;
-                  };
-                  element: {
-                      __typename?: "content_Element";
-                      data: any;
-                      id: any;
-                      item: { __typename?: "content_Item"; id: any; title: string };
-                  };
-              }>;
-          }
-        | null
-        | undefined;
+    update_job_queues_UploadYouTubeVideoJob?: {
+        __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
+        returning: Array<{
+            __typename?: "job_queues_UploadYouTubeVideoJob";
+            id: any;
+            conferenceId: any;
+            subconferenceId?: any | null;
+            jobStatusName: Job_Queues_JobStatus_Enum;
+            retriesCount: number;
+            videoTitle: string;
+            videoDescription: string;
+            videoPrivacyStatus: string;
+            playlistId?: string | null;
+            registrantGoogleAccount: {
+                __typename?: "registrant_GoogleAccount";
+                id: any;
+                tokenData: any;
+                googleAccountEmail: string;
+            };
+            element: {
+                __typename?: "content_Element";
+                data: any;
+                id: any;
+                item: { __typename?: "content_Item"; id: any; title: string };
+            };
+        }>;
+    } | null;
 };
 
 export type UploadYouTubeVideoJobDataFragment = {
     __typename?: "job_queues_UploadYouTubeVideoJob";
     id: any;
     conferenceId: any;
-    subconferenceId?: any | null | undefined;
+    subconferenceId?: any | null;
     jobStatusName: Job_Queues_JobStatus_Enum;
     retriesCount: number;
     videoTitle: string;
     videoDescription: string;
     videoPrivacyStatus: string;
-    playlistId?: string | null | undefined;
+    playlistId?: string | null;
     registrantGoogleAccount: {
         __typename?: "registrant_GoogleAccount";
         id: any;
@@ -36611,14 +37571,11 @@ export type UnmarkUploadYouTubeVideoJobsMutationVariables = Exact<{
 
 export type UnmarkUploadYouTubeVideoJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob?:
-        | {
-              __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "job_queues_UploadYouTubeVideoJob"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_job_queues_UploadYouTubeVideoJob?: {
+        __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "job_queues_UploadYouTubeVideoJob"; id: any }>;
+    } | null;
 };
 
 export type FailUploadYouTubeVideoJobMutationVariables = Exact<{
@@ -36628,10 +37585,7 @@ export type FailUploadYouTubeVideoJobMutationVariables = Exact<{
 
 export type FailUploadYouTubeVideoJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob_by_pk?:
-        | { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_UploadYouTubeVideoJob_by_pk?: { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any } | null;
 };
 
 export type CompleteUploadYouTubeVideoJobMutationVariables = Exact<{
@@ -36640,32 +37594,29 @@ export type CompleteUploadYouTubeVideoJobMutationVariables = Exact<{
 
 export type CompleteUploadYouTubeVideoJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob_by_pk?:
-        | { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_UploadYouTubeVideoJob_by_pk?: { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any } | null;
 };
 
 export type InvitationPartsFragment = {
     __typename?: "registrant_Invitation";
     registrantId: any;
-    confirmationCode?: any | null | undefined;
+    confirmationCode?: any | null;
     id: any;
     inviteCode: any;
     invitedEmailAddress: string;
-    linkToUserId?: string | null | undefined;
+    linkToUserId?: string | null;
     updatedAt: any;
     createdAt: any;
     registrant: {
         __typename?: "registrant_Registrant";
         displayName: string;
-        userId?: string | null | undefined;
+        userId?: string | null;
         conference: { __typename?: "conference_Conference"; name: string; slug: string };
     };
-    user?: { __typename?: "User"; email?: string | null | undefined } | null | undefined;
+    user?: { __typename?: "User"; email?: string | null } | null;
 };
 
-export type InvitedUserPartsFragment = { __typename?: "User"; id: string; email?: string | null | undefined };
+export type InvitedUserPartsFragment = { __typename?: "User"; id: string; email?: string | null };
 
 export type SelectInvitationAndUserQueryVariables = Exact<{
     inviteCode: Scalars["uuid"];
@@ -36677,22 +37628,22 @@ export type SelectInvitationAndUserQuery = {
     registrant_Invitation: Array<{
         __typename?: "registrant_Invitation";
         registrantId: any;
-        confirmationCode?: any | null | undefined;
+        confirmationCode?: any | null;
         id: any;
         inviteCode: any;
         invitedEmailAddress: string;
-        linkToUserId?: string | null | undefined;
+        linkToUserId?: string | null;
         updatedAt: any;
         createdAt: any;
         registrant: {
             __typename?: "registrant_Registrant";
             displayName: string;
-            userId?: string | null | undefined;
+            userId?: string | null;
             conference: { __typename?: "conference_Conference"; name: string; slug: string };
         };
-        user?: { __typename?: "User"; email?: string | null | undefined } | null | undefined;
+        user?: { __typename?: "User"; email?: string | null } | null;
     }>;
-    User_by_pk?: { __typename?: "User"; id: string; email?: string | null | undefined } | null | undefined;
+    User_by_pk?: { __typename?: "User"; id: string; email?: string | null } | null;
 };
 
 export type UpdateInvitationMutationVariables = Exact<{
@@ -36704,10 +37655,10 @@ export type UpdateInvitationMutationVariables = Exact<{
 
 export type UpdateInvitationMutation = {
     __typename?: "mutation_root";
-    update_registrant_Invitation?:
-        | { __typename?: "registrant_Invitation_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_registrant_Invitation?: {
+        __typename?: "registrant_Invitation_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type SetRegistrantUserIdMutationVariables = Exact<{
@@ -36717,28 +37668,25 @@ export type SetRegistrantUserIdMutationVariables = Exact<{
 
 export type SetRegistrantUserIdMutation = {
     __typename?: "mutation_root";
-    update_registrant_Registrant?:
-        | { __typename?: "registrant_Registrant_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_registrant_Registrant?: {
+        __typename?: "registrant_Registrant_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type RegistrantWithInvitePartsFragment = {
     __typename?: "registrant_Registrant";
     id: any;
     displayName: string;
-    userId?: string | null | undefined;
+    userId?: string | null;
     conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string; slug: string };
-    invitation?:
-        | {
-              __typename?: "registrant_Invitation";
-              id: any;
-              inviteCode: any;
-              invitedEmailAddress: string;
-              emails: Array<{ __typename?: "Email"; reason: string }>;
-          }
-        | null
-        | undefined;
+    invitation?: {
+        __typename?: "registrant_Invitation";
+        id: any;
+        inviteCode: any;
+        invitedEmailAddress: string;
+        emails: Array<{ __typename?: "Email"; reason: string }>;
+    } | null;
 };
 
 export type SelectRegistrantsWithInvitationQueryVariables = Exact<{
@@ -36751,18 +37699,15 @@ export type SelectRegistrantsWithInvitationQuery = {
         __typename?: "registrant_Registrant";
         id: any;
         displayName: string;
-        userId?: string | null | undefined;
+        userId?: string | null;
         conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string; slug: string };
-        invitation?:
-            | {
-                  __typename?: "registrant_Invitation";
-                  id: any;
-                  inviteCode: any;
-                  invitedEmailAddress: string;
-                  emails: Array<{ __typename?: "Email"; reason: string }>;
-              }
-            | null
-            | undefined;
+        invitation?: {
+            __typename?: "registrant_Invitation";
+            id: any;
+            inviteCode: any;
+            invitedEmailAddress: string;
+            emails: Array<{ __typename?: "Email"; reason: string }>;
+        } | null;
     }>;
 };
 
@@ -36784,10 +37729,10 @@ export type CompleteInvitationEmailJobsMutationVariables = Exact<{
 
 export type CompleteInvitationEmailJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_InvitationEmailJob?:
-        | { __typename?: "job_queues_InvitationEmailJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_InvitationEmailJob?: {
+        __typename?: "job_queues_InvitationEmailJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type GetAutomaticInvitationsConfigurationQueryVariables = Exact<{
@@ -36796,8 +37741,8 @@ export type GetAutomaticInvitationsConfigurationQueryVariables = Exact<{
 
 export type GetAutomaticInvitationsConfigurationQuery = {
     __typename?: "query_root";
-    initialStart?: { __typename?: "conference_Configuration"; value: any } | null | undefined;
-    initialEnd?: { __typename?: "conference_Configuration"; value: any } | null | undefined;
+    initialStart?: { __typename?: "conference_Configuration"; value: any } | null;
+    initialEnd?: { __typename?: "conference_Configuration"; value: any } | null;
 };
 
 export type GetAutomaticInvitationsRepeatConfigurationsQueryVariables = Exact<{ [key: string]: never }>;
@@ -36823,10 +37768,7 @@ export type InsertInvitationEmailJobMutationVariables = Exact<{
 
 export type InsertInvitationEmailJobMutation = {
     __typename?: "mutation_root";
-    insert_job_queues_InvitationEmailJob_one?:
-        | { __typename?: "job_queues_InvitationEmailJob"; id: any }
-        | null
-        | undefined;
+    insert_job_queues_InvitationEmailJob_one?: { __typename?: "job_queues_InvitationEmailJob"; id: any } | null;
 };
 
 export type GetAutomaticInvitations_ToBeRepeatedQueryVariables = Exact<{
@@ -36835,11 +37777,7 @@ export type GetAutomaticInvitations_ToBeRepeatedQueryVariables = Exact<{
 
 export type GetAutomaticInvitations_ToBeRepeatedQuery = {
     __typename?: "query_root";
-    registrant_Registrant: Array<{
-        __typename?: "registrant_Registrant";
-        id: any;
-        invitationStatus?: any | null | undefined;
-    }>;
+    registrant_Registrant: Array<{ __typename?: "registrant_Registrant"; id: any; invitationStatus?: any | null }>;
 };
 
 export type OtherConferencePrepareJobsQueryVariables = Exact<{
@@ -36870,7 +37808,7 @@ export type CreateVideoRenderJobMutationVariables = Exact<{
 
 export type CreateVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    insert_video_VideoRenderJob_one?: { __typename?: "video_VideoRenderJob"; id: any } | null | undefined;
+    insert_video_VideoRenderJob_one?: { __typename?: "video_VideoRenderJob"; id: any } | null;
 };
 
 export type GetEventsWithoutVonageSessionQueryVariables = Exact<{
@@ -36888,23 +37826,17 @@ export type Recording_GetEventQueryVariables = Exact<{
 
 export type Recording_GetEventQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              startTime: any;
-              endTime?: any | null | undefined;
-              room: {
-                  __typename?: "room_Room";
-                  id: any;
-                  channelStack?:
-                      | { __typename?: "video_ChannelStack"; id: any; mediaPackageChannelId: string }
-                      | null
-                      | undefined;
-              };
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        startTime: any;
+        endTime?: any | null;
+        room: {
+            __typename?: "room_Room";
+            id: any;
+            channelStack?: { __typename?: "video_ChannelStack"; id: any; mediaPackageChannelId: string } | null;
+        };
+    } | null;
 };
 
 export type StartMediaPackageHarvestJobMutationVariables = Exact<{
@@ -36914,10 +37846,10 @@ export type StartMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type StartMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_MediaPackageHarvestJob_by_pk?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_MediaPackageHarvestJob_by_pk?: {
+        __typename?: "job_queues_MediaPackageHarvestJob";
+        id: any;
+    } | null;
 };
 
 export type CreateMediaPackageHarvestJobMutationVariables = Exact<{
@@ -36927,10 +37859,7 @@ export type CreateMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type CreateMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    insert_job_queues_MediaPackageHarvestJob_one?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob"; id: any }
-        | null
-        | undefined;
+    insert_job_queues_MediaPackageHarvestJob_one?: { __typename?: "job_queues_MediaPackageHarvestJob"; id: any } | null;
 };
 
 export type Recording_GetMediaPackageHarvestJobQueryVariables = Exact<{
@@ -36949,10 +37878,7 @@ export type Recording_GetMediaPackageHarvestJobQuery = {
             name: string;
             startTime: any;
             durationSeconds: number;
-            item?:
-                | { __typename?: "content_Item"; id: any; title: string; subconferenceId?: any | null | undefined }
-                | null
-                | undefined;
+            item?: { __typename?: "content_Item"; id: any; title: string; subconferenceId?: any | null } | null;
         };
     }>;
 };
@@ -36970,11 +37896,11 @@ export type Recording_CompleteMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type Recording_CompleteMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_MediaPackageHarvestJob_by_pk?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob"; id: any }
-        | null
-        | undefined;
-    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null | undefined;
+    update_job_queues_MediaPackageHarvestJob_by_pk?: {
+        __typename?: "job_queues_MediaPackageHarvestJob";
+        id: any;
+    } | null;
+    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type Recording_IgnoreMediaPackageHarvestJobMutationVariables = Exact<{
@@ -36984,10 +37910,10 @@ export type Recording_IgnoreMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type Recording_IgnoreMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_MediaPackageHarvestJob_by_pk?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_MediaPackageHarvestJob_by_pk?: {
+        __typename?: "job_queues_MediaPackageHarvestJob";
+        id: any;
+    } | null;
 };
 
 export type FailMediaPackageHarvestJobMutationVariables = Exact<{
@@ -36997,10 +37923,10 @@ export type FailMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type FailMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_MediaPackageHarvestJob?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_MediaPackageHarvestJob?: {
+        __typename?: "job_queues_MediaPackageHarvestJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQueryVariables = Exact<{
@@ -37009,16 +37935,13 @@ export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQueryVariables = E
 
 export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQuery = {
     __typename?: "query_root";
-    registrant_GoogleAccount_by_pk?:
-        | {
-              __typename?: "registrant_GoogleAccount";
-              registrantId: any;
-              id: any;
-              tokenData: any;
-              youTubeData?: any | null | undefined;
-          }
-        | null
-        | undefined;
+    registrant_GoogleAccount_by_pk?: {
+        __typename?: "registrant_GoogleAccount";
+        registrantId: any;
+        id: any;
+        tokenData: any;
+        youTubeData?: any | null;
+    } | null;
 };
 
 export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutationVariables = Exact<{
@@ -37028,7 +37951,7 @@ export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutationVariabl
 
 export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutation = {
     __typename?: "mutation_root";
-    update_registrant_GoogleAccount_by_pk?: { __typename?: "registrant_GoogleAccount"; id: any } | null | undefined;
+    update_registrant_GoogleAccount_by_pk?: { __typename?: "registrant_GoogleAccount"; id: any } | null;
 };
 
 export type SetRoomVonageSessionIdMutationVariables = Exact<{
@@ -37038,7 +37961,7 @@ export type SetRoomVonageSessionIdMutationVariables = Exact<{
 
 export type SetRoomVonageSessionIdMutation = {
     __typename?: "mutation_root";
-    update_room_Room_by_pk?: { __typename?: "room_Room"; id: any } | null | undefined;
+    update_room_Room_by_pk?: { __typename?: "room_Room"; id: any } | null;
 };
 
 export type GetRegistrantsForRoomAndUserQueryVariables = Exact<{
@@ -37059,7 +37982,7 @@ export type AddRegistrantToRoomMembershipsMutationVariables = Exact<{
 
 export type AddRegistrantToRoomMembershipsMutation = {
     __typename?: "mutation_root";
-    insert_room_RoomMembership_one?: { __typename?: "room_RoomMembership"; id: any } | null | undefined;
+    insert_room_RoomMembership_one?: { __typename?: "room_RoomMembership"; id: any } | null;
 };
 
 export type CreateDmRoom_GetRegistrantsQueryVariables = Exact<{
@@ -37082,7 +38005,7 @@ export type CreateDmRoom_GetExistingRoomsQuery = {
     room_Room: Array<{
         __typename?: "room_Room";
         id: any;
-        chatId?: any | null | undefined;
+        chatId?: any | null;
         roomMemberships: Array<{ __typename?: "room_RoomMembership"; registrantId: any; id: any }>;
     }>;
 };
@@ -37096,7 +38019,7 @@ export type CreateDmRoomMutationVariables = Exact<{
 
 export type CreateDmRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_Room_one?: { __typename?: "room_Room"; id: any; chatId?: any | null | undefined } | null | undefined;
+    insert_room_Room_one?: { __typename?: "room_Room"; id: any; chatId?: any | null } | null;
 };
 
 export type UnallocatedShuffleQueueEntryFragment = {
@@ -37122,7 +38045,7 @@ export type ActiveShuffleRoomFragment = {
 export type ActiveShufflePeriodFragment = {
     __typename?: "room_ShufflePeriod";
     conferenceId: any;
-    subconferenceId?: any | null | undefined;
+    subconferenceId?: any | null;
     endAt: any;
     id: any;
     maxRegistrantsPerRoom: number;
@@ -37151,7 +38074,7 @@ export type ActiveShufflePeriodFragment = {
             participants: Array<{ __typename?: "room_Participant"; id: any; registrantId: any }>;
         };
     }>;
-    events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null | undefined }>;
+    events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null }>;
 };
 
 export type SelectShufflePeriodQueryVariables = Exact<{
@@ -37161,57 +38084,10 @@ export type SelectShufflePeriodQueryVariables = Exact<{
 
 export type SelectShufflePeriodQuery = {
     __typename?: "query_root";
-    room_ShufflePeriod_by_pk?:
-        | {
-              __typename?: "room_ShufflePeriod";
-              conferenceId: any;
-              subconferenceId?: any | null | undefined;
-              endAt: any;
-              id: any;
-              maxRegistrantsPerRoom: number;
-              name: string;
-              organiserId: any;
-              roomDurationMinutes: number;
-              startAt: any;
-              targetRegistrantsPerRoom: number;
-              waitRoomMaxDurationSeconds: number;
-              algorithm: Room_ShuffleAlgorithm_Enum;
-              unallocatedQueueEntries: Array<{
-                  __typename?: "room_ShuffleQueueEntry";
-                  registrantId: any;
-                  id: any;
-                  created_at: any;
-              }>;
-              activeRooms: Array<{
-                  __typename?: "room_ShuffleRoom";
-                  id: any;
-                  startedAt: any;
-                  durationMinutes: number;
-                  room: {
-                      __typename?: "room_Room";
-                      id: any;
-                      people: Array<{ __typename?: "room_RoomMembership"; id: any; registrantId: any }>;
-                      participants: Array<{ __typename?: "room_Participant"; id: any; registrantId: any }>;
-                  };
-              }>;
-              events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null | undefined }>;
-          }
-        | null
-        | undefined;
-};
-
-export type SelectActiveShufflePeriodsQueryVariables = Exact<{
-    from: Scalars["timestamptz"];
-    until: Scalars["timestamptz"];
-    now: Scalars["timestamptz"];
-}>;
-
-export type SelectActiveShufflePeriodsQuery = {
-    __typename?: "query_root";
-    room_ShufflePeriod: Array<{
+    room_ShufflePeriod_by_pk?: {
         __typename?: "room_ShufflePeriod";
         conferenceId: any;
-        subconferenceId?: any | null | undefined;
+        subconferenceId?: any | null;
         endAt: any;
         id: any;
         maxRegistrantsPerRoom: number;
@@ -37240,7 +38116,51 @@ export type SelectActiveShufflePeriodsQuery = {
                 participants: Array<{ __typename?: "room_Participant"; id: any; registrantId: any }>;
             };
         }>;
-        events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null | undefined }>;
+        events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null }>;
+    } | null;
+};
+
+export type SelectActiveShufflePeriodsQueryVariables = Exact<{
+    from: Scalars["timestamptz"];
+    until: Scalars["timestamptz"];
+    now: Scalars["timestamptz"];
+}>;
+
+export type SelectActiveShufflePeriodsQuery = {
+    __typename?: "query_root";
+    room_ShufflePeriod: Array<{
+        __typename?: "room_ShufflePeriod";
+        conferenceId: any;
+        subconferenceId?: any | null;
+        endAt: any;
+        id: any;
+        maxRegistrantsPerRoom: number;
+        name: string;
+        organiserId: any;
+        roomDurationMinutes: number;
+        startAt: any;
+        targetRegistrantsPerRoom: number;
+        waitRoomMaxDurationSeconds: number;
+        algorithm: Room_ShuffleAlgorithm_Enum;
+        unallocatedQueueEntries: Array<{
+            __typename?: "room_ShuffleQueueEntry";
+            registrantId: any;
+            id: any;
+            created_at: any;
+        }>;
+        activeRooms: Array<{
+            __typename?: "room_ShuffleRoom";
+            id: any;
+            startedAt: any;
+            durationMinutes: number;
+            room: {
+                __typename?: "room_Room";
+                id: any;
+                people: Array<{ __typename?: "room_RoomMembership"; id: any; registrantId: any }>;
+                participants: Array<{ __typename?: "room_Participant"; id: any; registrantId: any }>;
+            };
+        }>;
+        events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null }>;
     }>;
 };
 
@@ -37252,18 +38172,12 @@ export type AddPeopleToExistingShuffleRoomMutationVariables = Exact<{
 
 export type AddPeopleToExistingShuffleRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_RoomMembership?:
-        | { __typename?: "room_RoomMembership_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
-    update_room_ShuffleQueueEntry?:
-        | {
-              __typename?: "room_ShuffleQueueEntry_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "room_ShuffleQueueEntry"; id: any }>;
-          }
-        | null
-        | undefined;
+    insert_room_RoomMembership?: { __typename?: "room_RoomMembership_mutation_response"; affected_rows: number } | null;
+    update_room_ShuffleQueueEntry?: {
+        __typename?: "room_ShuffleQueueEntry_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "room_ShuffleQueueEntry"; id: any }>;
+    } | null;
 };
 
 export type ExpireShuffleQueueEntriesMutationVariables = Exact<{
@@ -37272,14 +38186,11 @@ export type ExpireShuffleQueueEntriesMutationVariables = Exact<{
 
 export type ExpireShuffleQueueEntriesMutation = {
     __typename?: "mutation_root";
-    update_room_ShuffleQueueEntry?:
-        | {
-              __typename?: "room_ShuffleQueueEntry_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "room_ShuffleQueueEntry"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_room_ShuffleQueueEntry?: {
+        __typename?: "room_ShuffleQueueEntry_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "room_ShuffleQueueEntry"; id: any }>;
+    } | null;
 };
 
 export type InsertShuffleRoomMutationVariables = Exact<{
@@ -37292,7 +38203,7 @@ export type InsertShuffleRoomMutationVariables = Exact<{
 
 export type InsertShuffleRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_ShuffleRoom_one?: { __typename?: "room_ShuffleRoom"; id: any } | null | undefined;
+    insert_room_ShuffleRoom_one?: { __typename?: "room_ShuffleRoom"; id: any } | null;
 };
 
 export type InsertManagedRoomMutationVariables = Exact<{
@@ -37304,7 +38215,7 @@ export type InsertManagedRoomMutationVariables = Exact<{
 
 export type InsertManagedRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_Room_one?: { __typename?: "room_Room"; id: any } | null | undefined;
+    insert_room_Room_one?: { __typename?: "room_Room"; id: any } | null;
 };
 
 export type SetAutoPinOnManagedRoomMutationVariables = Exact<{
@@ -37313,7 +38224,7 @@ export type SetAutoPinOnManagedRoomMutationVariables = Exact<{
 
 export type SetAutoPinOnManagedRoomMutation = {
     __typename?: "mutation_root";
-    update_chat_Chat?: { __typename?: "chat_Chat_mutation_response"; affected_rows: number } | null | undefined;
+    update_chat_Chat?: { __typename?: "chat_Chat_mutation_response"; affected_rows: number } | null;
 };
 
 export type SetShuffleRoomsEndedMutationVariables = Exact<{
@@ -37322,14 +38233,11 @@ export type SetShuffleRoomsEndedMutationVariables = Exact<{
 
 export type SetShuffleRoomsEndedMutation = {
     __typename?: "mutation_root";
-    update_room_ShuffleRoom?:
-        | {
-              __typename?: "room_ShuffleRoom_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "room_ShuffleRoom"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_room_ShuffleRoom?: {
+        __typename?: "room_ShuffleRoom_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "room_ShuffleRoom"; id: any }>;
+    } | null;
 };
 
 export type SuperUserStateQueryVariables = Exact<{ [key: string]: never }>;
@@ -37338,8 +38246,8 @@ export type SuperUserStateQuery = {
     __typename?: "query_root";
     system_SuperUserState: Array<{
         __typename?: "system_SuperUserState";
-        isInitialised?: boolean | null | undefined;
-        canBeDirectlyInitialised?: boolean | null | undefined;
+        isInitialised?: boolean | null;
+        canBeDirectlyInitialised?: boolean | null;
     }>;
     User: Array<{ __typename?: "User"; id: string }>;
 };
@@ -37350,10 +38258,10 @@ export type InitialiseSuperUserStateMutationVariables = Exact<{
 
 export type InitialiseSuperUserStateMutation = {
     __typename?: "mutation_root";
-    insert_system_SuperUserPermissionGrant?:
-        | { __typename?: "system_SuperUserPermissionGrant_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    insert_system_SuperUserPermissionGrant?: {
+        __typename?: "system_SuperUserPermissionGrant_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type UploadableElementQueryVariables = Exact<{
@@ -37367,7 +38275,7 @@ export type UploadableElementQuery = {
         id: any;
         typeName: Content_ElementType_Enum;
         name: string;
-        uploadsRemaining?: number | null | undefined;
+        uploadsRemaining?: number | null;
         isHidden: boolean;
         data: any;
         item: { __typename?: "content_Item"; id: any; title: string };
@@ -37390,7 +38298,7 @@ export type UploadableElementFieldsFragment = {
     id: any;
     typeName: Content_ElementType_Enum;
     name: string;
-    uploadsRemaining?: number | null | undefined;
+    uploadsRemaining?: number | null;
     isHidden: boolean;
     data: any;
     item: { __typename?: "content_Item"; id: any; title: string };
@@ -37402,34 +38310,26 @@ export type GetUploadersQueryVariables = Exact<{
 
 export type GetUploadersQuery = {
     __typename?: "query_root";
-    content_Element_by_pk?:
-        | {
-              __typename?: "content_Element";
-              id: any;
-              conferenceId: any;
-              typeName: Content_ElementType_Enum;
-              conference: {
-                  __typename?: "conference_Conference";
-                  submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
-              };
-              item: {
-                  __typename?: "content_Item";
-                  id: any;
-                  itemPeople: Array<{
-                      __typename?: "content_ItemProgramPerson";
-                      id: any;
-                      roleName: string;
-                      person: {
-                          __typename?: "collection_ProgramPerson";
-                          id: any;
-                          name: string;
-                          email?: string | null | undefined;
-                      };
-                  }>;
-              };
-          }
-        | null
-        | undefined;
+    content_Element_by_pk?: {
+        __typename?: "content_Element";
+        id: any;
+        conferenceId: any;
+        typeName: Content_ElementType_Enum;
+        conference: {
+            __typename?: "conference_Conference";
+            submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        };
+        item: {
+            __typename?: "content_Item";
+            id: any;
+            itemPeople: Array<{
+                __typename?: "content_ItemProgramPerson";
+                id: any;
+                roleName: string;
+                person: { __typename?: "collection_ProgramPerson"; id: any; name: string; email?: string | null };
+            }>;
+        };
+    } | null;
 };
 
 export type SetUploadableElementUploadsRemainingMutationVariables = Exact<{
@@ -37439,7 +38339,7 @@ export type SetUploadableElementUploadsRemainingMutationVariables = Exact<{
 
 export type SetUploadableElementUploadsRemainingMutation = {
     __typename?: "mutation_root";
-    update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null | undefined;
+    update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type InsertSubmissionRequestEmailsMutationVariables = Exact<{
@@ -37448,10 +38348,10 @@ export type InsertSubmissionRequestEmailsMutationVariables = Exact<{
 
 export type InsertSubmissionRequestEmailsMutation = {
     __typename?: "mutation_root";
-    update_collection_ProgramPerson?:
-        | { __typename?: "collection_ProgramPerson_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_collection_ProgramPerson?: {
+        __typename?: "collection_ProgramPerson_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type SelectUnprocessedSubmissionRequestEmailJobsQueryVariables = Exact<{ [key: string]: never }>;
@@ -37461,12 +38361,12 @@ export type SelectUnprocessedSubmissionRequestEmailJobsQuery = {
     job_queues_SubmissionRequestEmailJob: Array<{
         __typename?: "job_queues_SubmissionRequestEmailJob";
         id: any;
-        emailTemplate?: any | null | undefined;
+        emailTemplate?: any | null;
         person: {
             __typename?: "collection_ProgramPerson";
             id: any;
             name: string;
-            email?: string | null | undefined;
+            email?: string | null;
             accessToken: string;
             conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string };
         };
@@ -37479,10 +38379,10 @@ export type CompleteSubmissionRequestEmailJobsMutationVariables = Exact<{
 
 export type CompleteSubmissionRequestEmailJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_SubmissionRequestEmailJob?:
-        | { __typename?: "job_queues_SubmissionRequestEmailJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_SubmissionRequestEmailJob?: {
+        __typename?: "job_queues_SubmissionRequestEmailJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type GetElementIdForVideoRenderJobQueryVariables = Exact<{
@@ -37491,7 +38391,7 @@ export type GetElementIdForVideoRenderJobQueryVariables = Exact<{
 
 export type GetElementIdForVideoRenderJobQuery = {
     __typename?: "query_root";
-    video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; elementId: any; id: any } | null | undefined;
+    video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; elementId: any; id: any } | null;
 };
 
 export type SelectNewVideoRenderJobsQueryVariables = Exact<{ [key: string]: never }>;
@@ -37507,19 +38407,16 @@ export type MarkAndSelectNewVideoRenderJobsMutationVariables = Exact<{
 
 export type MarkAndSelectNewVideoRenderJobsMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob?:
-        | {
-              __typename?: "video_VideoRenderJob_mutation_response";
-              returning: Array<{
-                  __typename?: "video_VideoRenderJob";
-                  id: any;
-                  jobStatusName: Job_Queues_JobStatus_Enum;
-                  data: any;
-                  retriesCount: number;
-              }>;
-          }
-        | null
-        | undefined;
+    update_video_VideoRenderJob?: {
+        __typename?: "video_VideoRenderJob_mutation_response";
+        returning: Array<{
+            __typename?: "video_VideoRenderJob";
+            id: any;
+            jobStatusName: Job_Queues_JobStatus_Enum;
+            data: any;
+            retriesCount: number;
+        }>;
+    } | null;
 };
 
 export type VideoRenderJobDataFragment = {
@@ -37536,14 +38433,11 @@ export type UnmarkVideoRenderJobsMutationVariables = Exact<{
 
 export type UnmarkVideoRenderJobsMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob?:
-        | {
-              __typename?: "video_VideoRenderJob_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "video_VideoRenderJob"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_video_VideoRenderJob?: {
+        __typename?: "video_VideoRenderJob_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "video_VideoRenderJob"; id: any }>;
+    } | null;
 };
 
 export type OngoingBroadcastableVideoRoomEventsQueryVariables = Exact<{
@@ -37572,31 +38466,22 @@ export type GetEventForArchiveQueryVariables = Exact<{
 
 export type GetEventForArchiveQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              name: string;
-              startTime: any;
-              conferenceId: any;
-              subconferenceId?: any | null | undefined;
-              item?:
-                  | {
-                        __typename?: "content_Item";
-                        id: any;
-                        elements_aggregate: {
-                            __typename?: "content_Element_aggregate";
-                            aggregate?:
-                                | { __typename?: "content_Element_aggregate_fields"; count: number }
-                                | null
-                                | undefined;
-                        };
-                    }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        name: string;
+        startTime: any;
+        conferenceId: any;
+        subconferenceId?: any | null;
+        item?: {
+            __typename?: "content_Item";
+            id: any;
+            elements_aggregate: {
+                __typename?: "content_Element_aggregate";
+                aggregate?: { __typename?: "content_Element_aggregate_fields"; count: number } | null;
+            };
+        } | null;
+    } | null;
 };
 
 export type InsertVonageArchiveElementMutationVariables = Exact<{
@@ -37605,7 +38490,7 @@ export type InsertVonageArchiveElementMutationVariables = Exact<{
 
 export type InsertVonageArchiveElementMutation = {
     __typename?: "mutation_root";
-    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null | undefined;
+    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type CheckForVonageRoomRecordingQueryVariables = Exact<{
@@ -37637,7 +38522,7 @@ export type SaveVonageRoomRecordingMutationVariables = Exact<{
 
 export type SaveVonageRoomRecordingMutation = {
     __typename?: "mutation_root";
-    update_video_VonageRoomRecording_by_pk?: { __typename?: "video_VonageRoomRecording"; id: any } | null | undefined;
+    update_video_VonageRoomRecording_by_pk?: { __typename?: "video_VonageRoomRecording"; id: any } | null;
 };
 
 export type Vonage_GetEventDetailsQueryVariables = Exact<{
@@ -37647,36 +38532,27 @@ export type Vonage_GetEventDetailsQueryVariables = Exact<{
 
 export type Vonage_GetEventDetailsQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              conferenceId: any;
-              id: any;
-              intendedRoomModeName: Room_Mode_Enum;
-              enableRecording: boolean;
-              eventVonageSession?:
-                  | { __typename?: "video_EventVonageSession"; id: any; sessionId: string }
-                  | null
-                  | undefined;
-              room: { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null | undefined };
-              eventPeople: Array<{
-                  __typename?: "schedule_EventProgramPerson";
-                  id: any;
-                  roleName: Schedule_EventProgramPersonRole_Enum;
-              }>;
-          }
-        | null
-        | undefined;
-    registrant_Registrant_by_pk?:
-        | {
-              __typename?: "registrant_Registrant";
-              id: any;
-              displayName: string;
-              conferenceId: any;
-              conferenceRole: Registrant_RegistrantRole_Enum;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        conferenceId: any;
+        id: any;
+        intendedRoomModeName: Room_Mode_Enum;
+        enableRecording: boolean;
+        eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
+        room: { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null };
+        eventPeople: Array<{
+            __typename?: "schedule_EventProgramPerson";
+            id: any;
+            roleName: Schedule_EventProgramPersonRole_Enum;
+        }>;
+    } | null;
+    registrant_Registrant_by_pk?: {
+        __typename?: "registrant_Registrant";
+        id: any;
+        displayName: string;
+        conferenceId: any;
+        conferenceRole: Registrant_RegistrantRole_Enum;
+    } | null;
 };
 
 export type VonageJoinRoom_GetInfoQueryVariables = Exact<{
@@ -37686,26 +38562,15 @@ export type VonageJoinRoom_GetInfoQueryVariables = Exact<{
 
 export type VonageJoinRoom_GetInfoQuery = {
     __typename?: "query_root";
-    room_Room_by_pk?:
-        | {
-              __typename?: "room_Room";
-              id: any;
-              item?:
-                  | {
-                        __typename?: "content_Item";
-                        id: any;
-                        itemPeople: Array<{
-                            __typename?: "content_ItemProgramPerson";
-                            id: any;
-                            roleName: string;
-                            personId: any;
-                        }>;
-                    }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    room_Room_by_pk?: {
+        __typename?: "room_Room";
+        id: any;
+        item?: {
+            __typename?: "content_Item";
+            id: any;
+            itemPeople: Array<{ __typename?: "content_ItemProgramPerson"; id: any; roleName: string; personId: any }>;
+        } | null;
+    } | null;
 };
 
 export type AddVonageRoomRecordingToUserListMutationVariables = Exact<{
@@ -37715,10 +38580,10 @@ export type AddVonageRoomRecordingToUserListMutationVariables = Exact<{
 
 export type AddVonageRoomRecordingToUserListMutation = {
     __typename?: "mutation_root";
-    insert_registrant_SavedVonageRoomRecording_one?:
-        | { __typename?: "registrant_SavedVonageRoomRecording"; id: any }
-        | null
-        | undefined;
+    insert_registrant_SavedVonageRoomRecording_one?: {
+        __typename?: "registrant_SavedVonageRoomRecording";
+        id: any;
+    } | null;
 };
 
 export type FindRoomByVonageSessionIdQueryVariables = Exact<{
@@ -37752,25 +38617,22 @@ export type VonageSession_RemoveInvalidStreamsMutationVariables = Exact<{
 
 export type VonageSession_RemoveInvalidStreamsMutation = {
     __typename?: "mutation_root";
-    update_video_VonageParticipantStream?:
-        | { __typename?: "video_VonageParticipantStream_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_video_VonageParticipantStream?: {
+        __typename?: "video_VonageParticipantStream_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type FetchPresenceSummaryQueryVariables = Exact<{ [key: string]: never }>;
 
 export type FetchPresenceSummaryQuery = {
     __typename?: "query_root";
-    presence_Summary?:
-        | {
-              __typename?: "PresenceSummaryOutput";
-              total_unique_tabs: number;
-              total_unique_user_ids: number;
-              pages?: any | null | undefined;
-          }
-        | null
-        | undefined;
+    presence_Summary?: {
+        __typename?: "PresenceSummaryOutput";
+        total_unique_tabs: number;
+        total_unique_user_ids: number;
+        pages?: any | null;
+    } | null;
 };
 
 export type InsertAppStatsMutationVariables = Exact<{
@@ -37779,7 +38641,7 @@ export type InsertAppStatsMutationVariables = Exact<{
 
 export type InsertAppStatsMutation = {
     __typename?: "mutation_root";
-    insert_analytics_AppStats_one?: { __typename?: "analytics_AppStats"; id: number } | null | undefined;
+    insert_analytics_AppStats_one?: { __typename?: "analytics_AppStats"; id: number } | null;
 };
 
 export type GetRegistrantQueryVariables = Exact<{
@@ -37868,16 +38730,13 @@ export type Authorisation_GetRegistrantQueryVariables = Exact<{
 
 export type Authorisation_GetRegistrantQuery = {
     __typename?: "query_root";
-    registrant_Registrant_by_pk?:
-        | {
-              __typename?: "registrant_Registrant";
-              id: any;
-              displayName: string;
-              conferenceId: any;
-              conferenceRole: Registrant_RegistrantRole_Enum;
-          }
-        | null
-        | undefined;
+    registrant_Registrant_by_pk?: {
+        __typename?: "registrant_Registrant";
+        id: any;
+        displayName: string;
+        conferenceId: any;
+        conferenceRole: Registrant_RegistrantRole_Enum;
+    } | null;
 };
 
 export type GetConfigurationValueQueryVariables = Exact<{
@@ -37887,10 +38746,11 @@ export type GetConfigurationValueQueryVariables = Exact<{
 
 export type GetConfigurationValueQuery = {
     __typename?: "query_root";
-    conference_Configuration_by_pk?:
-        | { __typename?: "conference_Configuration"; key: Conference_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    conference_Configuration_by_pk?: {
+        __typename?: "conference_Configuration";
+        key: Conference_ConfigurationKey_Enum;
+        value: any;
+    } | null;
 };
 
 export type Configuration_RecordingEmailNotificationsEnabledFragment = {
@@ -37915,7 +38775,7 @@ export type FailConferencePrepareJobMutationVariables = Exact<{
 
 export type FailConferencePrepareJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_PrepareJob_by_pk?: { __typename?: "job_queues_PrepareJob"; id: any } | null | undefined;
+    update_job_queues_PrepareJob_by_pk?: { __typename?: "job_queues_PrepareJob"; id: any } | null;
 };
 
 export type CompleteConferencePrepareJobMutationVariables = Exact<{
@@ -37924,7 +38784,7 @@ export type CompleteConferencePrepareJobMutationVariables = Exact<{
 
 export type CompleteConferencePrepareJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_PrepareJob_by_pk?: { __typename?: "job_queues_PrepareJob"; id: any } | null | undefined;
+    update_job_queues_PrepareJob_by_pk?: { __typename?: "job_queues_PrepareJob"; id: any } | null;
 };
 
 export type GetElementByIdQueryVariables = Exact<{
@@ -37933,20 +38793,19 @@ export type GetElementByIdQueryVariables = Exact<{
 
 export type GetElementByIdQuery = {
     __typename?: "query_root";
-    content_Element_by_pk?:
-        | { __typename?: "content_Element"; id: any; data: any; typeName: Content_ElementType_Enum }
-        | null
-        | undefined;
+    content_Element_by_pk?: {
+        __typename?: "content_Element";
+        id: any;
+        data: any;
+        typeName: Content_ElementType_Enum;
+    } | null;
 };
 
 export type GetEmailTemplatesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetEmailTemplatesQuery = {
     __typename?: "query_root";
-    emailTemplates?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    emailTemplates?: { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any } | null;
 };
 
 export type GetEventVonageSessionQueryVariables = Exact<{
@@ -37966,7 +38825,7 @@ export type SetEventVonageSessionIdMutationVariables = Exact<{
 
 export type SetEventVonageSessionIdMutation = {
     __typename?: "mutation_root";
-    insert_video_EventVonageSession_one?: { __typename?: "video_EventVonageSession"; id: any } | null | undefined;
+    insert_video_EventVonageSession_one?: { __typename?: "video_EventVonageSession"; id: any } | null;
 };
 
 export type CreateItemRoom_GetItemQueryVariables = Exact<{
@@ -37975,18 +38834,15 @@ export type CreateItemRoom_GetItemQueryVariables = Exact<{
 
 export type CreateItemRoom_GetItemQuery = {
     __typename?: "query_root";
-    content_Item_by_pk?:
-        | {
-              __typename?: "content_Item";
-              id: any;
-              chatId?: any | null | undefined;
-              conferenceId: any;
-              subconferenceId?: any | null | undefined;
-              title: string;
-              room?: { __typename?: "room_Room"; id: any } | null | undefined;
-          }
-        | null
-        | undefined;
+    content_Item_by_pk?: {
+        __typename?: "content_Item";
+        id: any;
+        chatId?: any | null;
+        conferenceId: any;
+        subconferenceId?: any | null;
+        title: string;
+        room?: { __typename?: "room_Room"; id: any } | null;
+    } | null;
 };
 
 export type Item_CreateRoomMutationVariables = Exact<{
@@ -37999,7 +38855,7 @@ export type Item_CreateRoomMutationVariables = Exact<{
 
 export type Item_CreateRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_Room_one?: { __typename?: "room_Room"; id: any } | null | undefined;
+    insert_room_Room_one?: { __typename?: "room_Room"; id: any } | null;
 };
 
 export type GetRoomConferenceIdQueryVariables = Exact<{
@@ -38008,10 +38864,7 @@ export type GetRoomConferenceIdQueryVariables = Exact<{
 
 export type GetRoomConferenceIdQuery = {
     __typename?: "query_root";
-    room_Room_by_pk?:
-        | { __typename?: "room_Room"; id: any; conferenceId: any; subconferenceId?: any | null | undefined }
-        | null
-        | undefined;
+    room_Room_by_pk?: { __typename?: "room_Room"; id: any; conferenceId: any; subconferenceId?: any | null } | null;
 };
 
 export type GetRoomThatRegistrantCanJoinQueryVariables = Exact<{
@@ -38025,7 +38878,7 @@ export type GetRoomThatRegistrantCanJoinQuery = {
     room_Room: Array<{
         __typename?: "room_Room";
         id: any;
-        publicVonageSessionId?: string | null | undefined;
+        publicVonageSessionId?: string | null;
         conference: {
             __typename?: "conference_Conference";
             registrants: Array<{ __typename?: "registrant_Registrant"; id: any }>;
@@ -38042,7 +38895,7 @@ export type CreateRoomChimeMeetingMutationVariables = Exact<{
 
 export type CreateRoomChimeMeetingMutation = {
     __typename?: "mutation_root";
-    insert_room_ChimeMeeting_one?: { __typename?: "room_ChimeMeeting"; id: any } | null | undefined;
+    insert_room_ChimeMeeting_one?: { __typename?: "room_ChimeMeeting"; id: any } | null;
 };
 
 export type GetRoomChimeMeetingQueryVariables = Exact<{
@@ -38060,10 +38913,7 @@ export type GetRoomVonageMeetingQueryVariables = Exact<{
 
 export type GetRoomVonageMeetingQuery = {
     __typename?: "query_root";
-    room_Room_by_pk?:
-        | { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null | undefined }
-        | null
-        | undefined;
+    room_Room_by_pk?: { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null } | null;
 };
 
 export type GetRoomBySessionIdQueryVariables = Exact<{
@@ -38090,7 +38940,7 @@ export type DeleteRoomChimeMeetingMutationVariables = Exact<{
 
 export type DeleteRoomChimeMeetingMutation = {
     __typename?: "mutation_root";
-    delete_room_ChimeMeeting_by_pk?: { __typename?: "room_ChimeMeeting"; id: any } | null | undefined;
+    delete_room_ChimeMeeting_by_pk?: { __typename?: "room_ChimeMeeting"; id: any } | null;
 };
 
 export type DeleteRoomChimeMeetingForRoomMutationVariables = Exact<{
@@ -38100,10 +38950,7 @@ export type DeleteRoomChimeMeetingForRoomMutationVariables = Exact<{
 
 export type DeleteRoomChimeMeetingForRoomMutation = {
     __typename?: "mutation_root";
-    delete_room_ChimeMeeting?:
-        | { __typename?: "room_ChimeMeeting_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    delete_room_ChimeMeeting?: { __typename?: "room_ChimeMeeting_mutation_response"; affected_rows: number } | null;
 };
 
 export type CreateRoomParticipantMutationVariables = Exact<{
@@ -38116,7 +38963,7 @@ export type CreateRoomParticipantMutationVariables = Exact<{
 
 export type CreateRoomParticipantMutation = {
     __typename?: "mutation_root";
-    insert_room_Participant_one?: { __typename?: "room_Participant"; id: any } | null | undefined;
+    insert_room_Participant_one?: { __typename?: "room_Participant"; id: any } | null;
 };
 
 export type RemoveRoomParticipantMutationVariables = Exact<{
@@ -38127,10 +38974,7 @@ export type RemoveRoomParticipantMutationVariables = Exact<{
 
 export type RemoveRoomParticipantMutation = {
     __typename?: "mutation_root";
-    delete_room_Participant?:
-        | { __typename?: "room_Participant_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    delete_room_Participant?: { __typename?: "room_Participant_mutation_response"; affected_rows: number } | null;
 };
 
 export type CountRoomParticipantsQueryVariables = Exact<{
@@ -38141,7 +38985,7 @@ export type CountRoomParticipantsQuery = {
     __typename?: "query_root";
     room_Participant_aggregate: {
         __typename?: "room_Participant_aggregate";
-        aggregate?: { __typename?: "room_Participant_aggregate_fields"; count: number } | null | undefined;
+        aggregate?: { __typename?: "room_Participant_aggregate_fields"; count: number } | null;
     };
 };
 
@@ -38151,7 +38995,7 @@ export type InsertVonageSessionLayoutMutationVariables = Exact<{
 
 export type InsertVonageSessionLayoutMutation = {
     __typename?: "mutation_root";
-    insert_video_VonageSessionLayout_one?: { __typename?: "video_VonageSessionLayout"; id: any } | null | undefined;
+    insert_video_VonageSessionLayout_one?: { __typename?: "video_VonageSessionLayout"; id: any } | null;
 };
 
 export type GetRoomParticipantDetailsQueryVariables = Exact<{
@@ -38164,14 +39008,14 @@ export type GetRoomParticipantDetailsQuery = {
     room_Participant: Array<{
         __typename?: "room_Participant";
         id: any;
-        vonageConnectionId?: string | null | undefined;
-        chimeRegistrantId?: string | null | undefined;
+        vonageConnectionId?: string | null;
+        chimeRegistrantId?: string | null;
         room: {
             __typename?: "room_Room";
             id: any;
             conferenceId: any;
-            publicVonageSessionId?: string | null | undefined;
-            chimeMeeting?: { __typename?: "room_ChimeMeeting"; id: any; chimeMeetingId: string } | null | undefined;
+            publicVonageSessionId?: string | null;
+            chimeMeeting?: { __typename?: "room_ChimeMeeting"; id: any; chimeMeetingId: string } | null;
         };
     }>;
 };
@@ -38179,14 +39023,14 @@ export type GetRoomParticipantDetailsQuery = {
 export type RoomParticipantFragment = {
     __typename?: "room_Participant";
     id: any;
-    vonageConnectionId?: string | null | undefined;
-    chimeRegistrantId?: string | null | undefined;
+    vonageConnectionId?: string | null;
+    chimeRegistrantId?: string | null;
     room: {
         __typename?: "room_Room";
         id: any;
         conferenceId: any;
-        publicVonageSessionId?: string | null | undefined;
-        chimeMeeting?: { __typename?: "room_ChimeMeeting"; id: any; chimeMeetingId: string } | null | undefined;
+        publicVonageSessionId?: string | null;
+        chimeMeeting?: { __typename?: "room_ChimeMeeting"; id: any; chimeMeetingId: string } | null;
     };
 };
 
@@ -38196,10 +39040,7 @@ export type DeleteRoomParticipantsCreatedBeforeMutationVariables = Exact<{
 
 export type DeleteRoomParticipantsCreatedBeforeMutation = {
     __typename?: "mutation_root";
-    delete_room_Participant?:
-        | { __typename?: "room_Participant_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    delete_room_Participant?: { __typename?: "room_Participant_mutation_response"; affected_rows: number } | null;
 };
 
 export type CreateTranscriptionJobMutationVariables = Exact<{
@@ -38212,7 +39053,7 @@ export type CreateTranscriptionJobMutationVariables = Exact<{
 
 export type CreateTranscriptionJobMutation = {
     __typename?: "mutation_root";
-    insert_video_TranscriptionJob_one?: { __typename?: "video_TranscriptionJob"; id: any } | null | undefined;
+    insert_video_TranscriptionJob_one?: { __typename?: "video_TranscriptionJob"; id: any } | null;
 };
 
 export type GetTranscriptionJobQueryVariables = Exact<{
@@ -38238,10 +39079,7 @@ export type CompleteVideoRenderJobMutationVariables = Exact<{
 
 export type CompleteVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob_by_pk?:
-        | { __typename?: "video_VideoRenderJob"; id: any; elementId: any }
-        | null
-        | undefined;
+    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any; elementId: any } | null;
 };
 
 export type FailVideoRenderJobMutationVariables = Exact<{
@@ -38251,10 +39089,11 @@ export type FailVideoRenderJobMutationVariables = Exact<{
 
 export type FailVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob_by_pk?:
-        | { __typename?: "video_VideoRenderJob"; id: any; conferencePrepareJobId: any }
-        | null
-        | undefined;
+    update_video_VideoRenderJob_by_pk?: {
+        __typename?: "video_VideoRenderJob";
+        id: any;
+        conferencePrepareJobId: any;
+    } | null;
 };
 
 export type ExpireVideoRenderJobMutationVariables = Exact<{
@@ -38264,7 +39103,7 @@ export type ExpireVideoRenderJobMutationVariables = Exact<{
 
 export type ExpireVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any } | null | undefined;
+    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any } | null;
 };
 
 export type UpdateVideoRenderJobMutationVariables = Exact<{
@@ -38274,7 +39113,7 @@ export type UpdateVideoRenderJobMutationVariables = Exact<{
 
 export type UpdateVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any } | null | undefined;
+    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any } | null;
 };
 
 export type CountUnfinishedVideoRenderJobsQueryVariables = Exact<{
@@ -38285,7 +39124,7 @@ export type CountUnfinishedVideoRenderJobsQuery = {
     __typename?: "query_root";
     video_VideoRenderJob_aggregate: {
         __typename?: "video_VideoRenderJob_aggregate";
-        aggregate?: { __typename?: "video_VideoRenderJob_aggregate_fields"; count: number } | null | undefined;
+        aggregate?: { __typename?: "video_VideoRenderJob_aggregate_fields"; count: number } | null;
     };
 };
 
@@ -38295,20 +39134,17 @@ export type GetBroadcastVideoRenderJobDetailsQueryVariables = Exact<{
 
 export type GetBroadcastVideoRenderJobDetailsQuery = {
     __typename?: "query_root";
-    video_VideoRenderJob_by_pk?:
-        | {
-              __typename?: "video_VideoRenderJob";
-              id: any;
-              elementId: any;
-              jobStatusName: Job_Queues_JobStatus_Enum;
-              conferencePrepareJob: {
-                  __typename?: "job_queues_PrepareJob";
-                  id: any;
-                  jobStatusName: Job_Queues_JobStatus_Enum;
-              };
-          }
-        | null
-        | undefined;
+    video_VideoRenderJob_by_pk?: {
+        __typename?: "video_VideoRenderJob";
+        id: any;
+        elementId: any;
+        jobStatusName: Job_Queues_JobStatus_Enum;
+        conferencePrepareJob: {
+            __typename?: "job_queues_PrepareJob";
+            id: any;
+            jobStatusName: Job_Queues_JobStatus_Enum;
+        };
+    } | null;
 };
 
 export type OngoingArchivableVideoRoomEventsWithRoomInfoQueryVariables = Exact<{
@@ -38328,35 +39164,26 @@ export type GetEventBroadcastDetailsQueryVariables = Exact<{
 
 export type GetEventBroadcastDetailsQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              room: {
-                  __typename?: "room_Room";
-                  id: any;
-                  channelStack?:
-                      | {
-                            __typename?: "video_ChannelStack";
-                            rtmpAInputUri: string;
-                            rtmpBInputUri?: string | null | undefined;
-                            id: any;
-                        }
-                      | null
-                      | undefined;
-              };
-              eventVonageSession?:
-                  | {
-                        __typename?: "video_EventVonageSession";
-                        sessionId: string;
-                        id: any;
-                        rtmpInputName: Video_RtmpInput_Enum;
-                    }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        room: {
+            __typename?: "room_Room";
+            id: any;
+            channelStack?: {
+                __typename?: "video_ChannelStack";
+                rtmpAInputUri: string;
+                rtmpBInputUri?: string | null;
+                id: any;
+            } | null;
+        };
+        eventVonageSession?: {
+            __typename?: "video_EventVonageSession";
+            sessionId: string;
+            id: any;
+            rtmpInputName: Video_RtmpInput_Enum;
+        } | null;
+    } | null;
 };
 
 export type GetRoomArchiveDetailsQueryVariables = Exact<{
@@ -38365,10 +39192,7 @@ export type GetRoomArchiveDetailsQueryVariables = Exact<{
 
 export type GetRoomArchiveDetailsQuery = {
     __typename?: "query_root";
-    room_Room_by_pk?:
-        | { __typename?: "room_Room"; publicVonageSessionId?: string | null | undefined; id: any }
-        | null
-        | undefined;
+    room_Room_by_pk?: { __typename?: "room_Room"; publicVonageSessionId?: string | null; id: any } | null;
 };
 
 export type CreateVonageRoomRecordingMutationVariables = Exact<{
@@ -38377,7 +39201,7 @@ export type CreateVonageRoomRecordingMutationVariables = Exact<{
 
 export type CreateVonageRoomRecordingMutation = {
     __typename?: "mutation_root";
-    insert_video_VonageRoomRecording_one?: { __typename?: "video_VonageRoomRecording"; id: any } | null | undefined;
+    insert_video_VonageRoomRecording_one?: { __typename?: "video_VonageRoomRecording"; id: any } | null;
 };
 
 export type DisableEventRecordingFlagMutationVariables = Exact<{
@@ -38386,7 +39210,7 @@ export type DisableEventRecordingFlagMutationVariables = Exact<{
 
 export type DisableEventRecordingFlagMutation = {
     __typename?: "mutation_root";
-    update_schedule_Event_by_pk?: { __typename?: "schedule_Event"; id: any } | null | undefined;
+    update_schedule_Event_by_pk?: { __typename?: "schedule_Event"; id: any } | null;
 };
 
 export type GetEventByVonageSessionIdQueryVariables = Exact<{
@@ -38409,10 +39233,7 @@ export type CreateVonageParticipantStreamMutationVariables = Exact<{
 
 export type CreateVonageParticipantStreamMutation = {
     __typename?: "mutation_root";
-    insert_video_VonageParticipantStream_one?:
-        | { __typename?: "video_VonageParticipantStream"; id: any }
-        | null
-        | undefined;
+    insert_video_VonageParticipantStream_one?: { __typename?: "video_VonageParticipantStream"; id: any } | null;
 };
 
 export type RemoveVonageParticipantStreamMutationVariables = Exact<{
@@ -38426,10 +39247,10 @@ export type RemoveVonageParticipantStreamMutationVariables = Exact<{
 
 export type RemoveVonageParticipantStreamMutation = {
     __typename?: "mutation_root";
-    update_video_VonageParticipantStream?:
-        | { __typename?: "video_VonageParticipantStream_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_video_VonageParticipantStream?: {
+        __typename?: "video_VonageParticipantStream_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type GetVonageSessionLayoutQueryVariables = Exact<{
@@ -38438,11 +39259,7 @@ export type GetVonageSessionLayoutQueryVariables = Exact<{
 
 export type GetVonageSessionLayoutQuery = {
     __typename?: "query_root";
-    video_VonageSessionLayout: Array<{
-        __typename?: "video_VonageSessionLayout";
-        id: any;
-        layoutData?: any | null | undefined;
-    }>;
+    video_VonageSessionLayout: Array<{ __typename?: "video_VonageSessionLayout"; id: any; layoutData?: any | null }>;
 };
 
 export type UpdateProfilePhotoMutationVariables = Exact<{
@@ -38457,10 +39274,7 @@ export type UpdateProfilePhotoMutationVariables = Exact<{
 
 export type UpdateProfilePhotoMutation = {
     __typename?: "mutation_root";
-    update_registrant_Profile?:
-        | { __typename?: "registrant_Profile_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_registrant_Profile?: { __typename?: "registrant_Profile_mutation_response"; affected_rows: number } | null;
 };
 
 export const Configuration_RecordingEmailNotificationsEnabledFragmentDoc = {

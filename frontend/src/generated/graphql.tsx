@@ -7061,6 +7061,10 @@ export type Conference_Conference = {
     readonly shufflePeriods_aggregate: Room_ShufflePeriod_Aggregate;
     readonly slug: Scalars["String"];
     /** An array relationship */
+    readonly sponsorshipTiers: ReadonlyArray<Sponsor_Tier>;
+    /** An aggregate relationship */
+    readonly sponsorshipTiers_aggregate: Sponsor_Tier_Aggregate;
+    /** An array relationship */
     readonly subconferences: ReadonlyArray<Conference_Subconference>;
     /** An aggregate relationship */
     readonly subconferences_aggregate: Conference_Subconference_Aggregate;
@@ -7252,6 +7256,24 @@ export type Conference_ConferenceShufflePeriods_AggregateArgs = {
 };
 
 /** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceSponsorshipTiersArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceSponsorshipTiers_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
 export type Conference_ConferenceSubconferencesArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Conference_Subconference_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -7350,6 +7372,7 @@ export type Conference_Conference_Bool_Exp = {
     readonly shortName?: InputMaybe<String_Comparison_Exp>;
     readonly shufflePeriods?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
     readonly slug?: InputMaybe<String_Comparison_Exp>;
+    readonly sponsorshipTiers?: InputMaybe<Sponsor_Tier_Bool_Exp>;
     readonly subconferences?: InputMaybe<Conference_Subconference_Bool_Exp>;
     readonly tags?: InputMaybe<Collection_Tag_Bool_Exp>;
     readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -7394,6 +7417,7 @@ export type Conference_Conference_Insert_Input = {
     readonly shortName?: InputMaybe<Scalars["String"]>;
     readonly shufflePeriods?: InputMaybe<Room_ShufflePeriod_Arr_Rel_Insert_Input>;
     readonly slug?: InputMaybe<Scalars["String"]>;
+    readonly sponsorshipTiers?: InputMaybe<Sponsor_Tier_Arr_Rel_Insert_Input>;
     readonly subconferences?: InputMaybe<Conference_Subconference_Arr_Rel_Insert_Input>;
     readonly tags?: InputMaybe<Collection_Tag_Arr_Rel_Insert_Input>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -7505,6 +7529,7 @@ export type Conference_Conference_Order_By = {
     readonly shortName?: InputMaybe<Order_By>;
     readonly shufflePeriods_aggregate?: InputMaybe<Room_ShufflePeriod_Aggregate_Order_By>;
     readonly slug?: InputMaybe<Order_By>;
+    readonly sponsorshipTiers_aggregate?: InputMaybe<Sponsor_Tier_Aggregate_Order_By>;
     readonly subconferences_aggregate?: InputMaybe<Conference_Subconference_Aggregate_Order_By>;
     readonly tags_aggregate?: InputMaybe<Collection_Tag_Aggregate_Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
@@ -8573,7 +8598,29 @@ export type Conference_Subconference = {
     readonly name: Scalars["String"];
     readonly shortName: Scalars["String"];
     readonly slug: Scalars["String"];
+    /** An array relationship */
+    readonly sponsorshipTiers: ReadonlyArray<Sponsor_Tier>;
+    /** An aggregate relationship */
+    readonly sponsorshipTiers_aggregate: Sponsor_Tier_Aggregate;
     readonly updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceSponsorshipTiersArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceSponsorshipTiers_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
 };
 
 /** aggregated selection of "conference.Subconference" */
@@ -8625,6 +8672,7 @@ export type Conference_Subconference_Bool_Exp = {
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly shortName?: InputMaybe<String_Comparison_Exp>;
     readonly slug?: InputMaybe<String_Comparison_Exp>;
+    readonly sponsorshipTiers?: InputMaybe<Sponsor_Tier_Bool_Exp>;
     readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -8651,6 +8699,7 @@ export type Conference_Subconference_Insert_Input = {
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly shortName?: InputMaybe<Scalars["String"]>;
     readonly slug?: InputMaybe<Scalars["String"]>;
+    readonly sponsorshipTiers?: InputMaybe<Sponsor_Tier_Arr_Rel_Insert_Input>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -8734,6 +8783,7 @@ export type Conference_Subconference_Order_By = {
     readonly name?: InputMaybe<Order_By>;
     readonly shortName?: InputMaybe<Order_By>;
     readonly slug?: InputMaybe<Order_By>;
+    readonly sponsorshipTiers_aggregate?: InputMaybe<Sponsor_Tier_Aggregate_Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
 };
 
@@ -9700,6 +9750,10 @@ export type Content_Item = {
     readonly room?: Maybe<Room_Room>;
     readonly shortTitle?: Maybe<Scalars["String"]>;
     /** An array relationship */
+    readonly sponsorshipTierMemberships: ReadonlyArray<Sponsor_TierMember>;
+    /** An aggregate relationship */
+    readonly sponsorshipTierMemberships_aggregate: Sponsor_TierMember_Aggregate;
+    /** An array relationship */
     readonly stats: ReadonlyArray<Analytics_ContentItemStats>;
     /** An aggregate relationship */
     readonly stats_aggregate: Analytics_ContentItemStats_Aggregate;
@@ -9820,6 +9874,24 @@ export type Content_ItemItemTags_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Content_ItemTag_Order_By>>;
     where?: InputMaybe<Content_ItemTag_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemSponsorshipTierMembershipsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemSponsorshipTierMemberships_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
 };
 
 /** columns and relationships of "content.Item" */
@@ -10845,6 +10917,7 @@ export type Content_Item_Bool_Exp = {
     readonly originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly shortTitle?: InputMaybe<String_Comparison_Exp>;
+    readonly sponsorshipTierMemberships?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
     readonly stats?: InputMaybe<Analytics_ContentItemStats_Bool_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly title?: InputMaybe<String_Comparison_Exp>;
@@ -10881,6 +10954,7 @@ export type Content_Item_Insert_Input = {
     readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly shortTitle?: InputMaybe<Scalars["String"]>;
+    readonly sponsorshipTierMemberships?: InputMaybe<Sponsor_TierMember_Arr_Rel_Insert_Input>;
     readonly stats?: InputMaybe<Analytics_ContentItemStats_Arr_Rel_Insert_Input>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly title?: InputMaybe<Scalars["String"]>;
@@ -10987,6 +11061,7 @@ export type Content_Item_Order_By = {
     readonly originatingDataId?: InputMaybe<Order_By>;
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly shortTitle?: InputMaybe<Order_By>;
+    readonly sponsorshipTierMemberships_aggregate?: InputMaybe<Sponsor_TierMember_Aggregate_Order_By>;
     readonly stats_aggregate?: InputMaybe<Analytics_ContentItemStats_Aggregate_Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly title?: InputMaybe<Order_By>;
@@ -13999,6 +14074,14 @@ export type Mutation_Root = {
     readonly delete_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** delete single row from the table: "schedule.StarredEvent" */
     readonly delete_schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+    /** delete data from the table: "sponsor.Tier" */
+    readonly delete_sponsor_Tier?: Maybe<Sponsor_Tier_Mutation_Response>;
+    /** delete data from the table: "sponsor.TierMember" */
+    readonly delete_sponsor_TierMember?: Maybe<Sponsor_TierMember_Mutation_Response>;
+    /** delete single row from the table: "sponsor.TierMember" */
+    readonly delete_sponsor_TierMember_by_pk?: Maybe<Sponsor_TierMember>;
+    /** delete single row from the table: "sponsor.Tier" */
+    readonly delete_sponsor_Tier_by_pk?: Maybe<Sponsor_Tier>;
     /** delete data from the table: "system.Configuration" */
     readonly delete_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
     /** delete data from the table: "system.ConfigurationKey" */
@@ -14381,6 +14464,14 @@ export type Mutation_Root = {
     readonly insert_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** insert a single row into the table: "schedule.StarredEvent" */
     readonly insert_schedule_StarredEvent_one?: Maybe<Schedule_StarredEvent>;
+    /** insert data into the table: "sponsor.Tier" */
+    readonly insert_sponsor_Tier?: Maybe<Sponsor_Tier_Mutation_Response>;
+    /** insert data into the table: "sponsor.TierMember" */
+    readonly insert_sponsor_TierMember?: Maybe<Sponsor_TierMember_Mutation_Response>;
+    /** insert a single row into the table: "sponsor.TierMember" */
+    readonly insert_sponsor_TierMember_one?: Maybe<Sponsor_TierMember>;
+    /** insert a single row into the table: "sponsor.Tier" */
+    readonly insert_sponsor_Tier_one?: Maybe<Sponsor_Tier>;
     /** insert data into the table: "system.Configuration" */
     readonly insert_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
     /** insert data into the table: "system.ConfigurationKey" */
@@ -14774,6 +14865,14 @@ export type Mutation_Root = {
     readonly update_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** update single row of the table: "schedule.StarredEvent" */
     readonly update_schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+    /** update data of the table: "sponsor.Tier" */
+    readonly update_sponsor_Tier?: Maybe<Sponsor_Tier_Mutation_Response>;
+    /** update data of the table: "sponsor.TierMember" */
+    readonly update_sponsor_TierMember?: Maybe<Sponsor_TierMember_Mutation_Response>;
+    /** update single row of the table: "sponsor.TierMember" */
+    readonly update_sponsor_TierMember_by_pk?: Maybe<Sponsor_TierMember>;
+    /** update single row of the table: "sponsor.Tier" */
+    readonly update_sponsor_Tier_by_pk?: Maybe<Sponsor_Tier>;
     /** update data of the table: "system.Configuration" */
     readonly update_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
     /** update data of the table: "system.ConfigurationKey" */
@@ -15625,6 +15724,26 @@ export type Mutation_RootDelete_Schedule_StarredEventArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Schedule_StarredEvent_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Sponsor_TierArgs = {
+    where: Sponsor_Tier_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Sponsor_TierMemberArgs = {
+    where: Sponsor_TierMember_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Sponsor_TierMember_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Sponsor_Tier_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -16734,6 +16853,30 @@ export type Mutation_RootInsert_Schedule_StarredEventArgs = {
 export type Mutation_RootInsert_Schedule_StarredEvent_OneArgs = {
     object: Schedule_StarredEvent_Insert_Input;
     on_conflict?: InputMaybe<Schedule_StarredEvent_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Sponsor_TierArgs = {
+    objects: ReadonlyArray<Sponsor_Tier_Insert_Input>;
+    on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Sponsor_TierMemberArgs = {
+    objects: ReadonlyArray<Sponsor_TierMember_Insert_Input>;
+    on_conflict?: InputMaybe<Sponsor_TierMember_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Sponsor_TierMember_OneArgs = {
+    object: Sponsor_TierMember_Insert_Input;
+    on_conflict?: InputMaybe<Sponsor_TierMember_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Sponsor_Tier_OneArgs = {
+    object: Sponsor_Tier_Insert_Input;
+    on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
 };
 
 /** mutation root */
@@ -18146,6 +18289,34 @@ export type Mutation_RootUpdate_Schedule_StarredEvent_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Sponsor_TierArgs = {
+    _inc?: InputMaybe<Sponsor_Tier_Inc_Input>;
+    _set?: InputMaybe<Sponsor_Tier_Set_Input>;
+    where: Sponsor_Tier_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Sponsor_TierMemberArgs = {
+    _inc?: InputMaybe<Sponsor_TierMember_Inc_Input>;
+    _set?: InputMaybe<Sponsor_TierMember_Set_Input>;
+    where: Sponsor_TierMember_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Sponsor_TierMember_By_PkArgs = {
+    _inc?: InputMaybe<Sponsor_TierMember_Inc_Input>;
+    _set?: InputMaybe<Sponsor_TierMember_Set_Input>;
+    pk_columns: Sponsor_TierMember_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Sponsor_Tier_By_PkArgs = {
+    _inc?: InputMaybe<Sponsor_Tier_Inc_Input>;
+    _set?: InputMaybe<Sponsor_Tier_Set_Input>;
+    pk_columns: Sponsor_Tier_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_System_ConfigurationArgs = {
     _append?: InputMaybe<System_Configuration_Append_Input>;
     _delete_at_path?: InputMaybe<System_Configuration_Delete_At_Path_Input>;
@@ -18962,6 +19133,18 @@ export type Query_Root = {
     readonly schedule_searchEvents: ReadonlyArray<Schedule_Event>;
     /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
     readonly schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
+    /** fetch data from the table: "sponsor.Tier" */
+    readonly sponsor_Tier: ReadonlyArray<Sponsor_Tier>;
+    /** fetch data from the table: "sponsor.TierMember" */
+    readonly sponsor_TierMember: ReadonlyArray<Sponsor_TierMember>;
+    /** fetch aggregated fields from the table: "sponsor.TierMember" */
+    readonly sponsor_TierMember_aggregate: Sponsor_TierMember_Aggregate;
+    /** fetch data from the table: "sponsor.TierMember" using primary key columns */
+    readonly sponsor_TierMember_by_pk?: Maybe<Sponsor_TierMember>;
+    /** fetch aggregated fields from the table: "sponsor.Tier" */
+    readonly sponsor_Tier_aggregate: Sponsor_Tier_Aggregate;
+    /** fetch data from the table: "sponsor.Tier" using primary key columns */
+    readonly sponsor_Tier_by_pk?: Maybe<Sponsor_Tier>;
     /** fetch data from the table: "system.Configuration" */
     readonly system_Configuration: ReadonlyArray<System_Configuration>;
     /** fetch data from the table: "system.ConfigurationKey" */
@@ -20744,6 +20927,46 @@ export type Query_RootSchedule_SearchEvents_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
     where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+export type Query_RootSponsor_TierArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+export type Query_RootSponsor_TierMemberArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+export type Query_RootSponsor_TierMember_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+export type Query_RootSponsor_TierMember_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootSponsor_Tier_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+export type Query_RootSponsor_Tier_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Query_RootSystem_ConfigurationArgs = {
@@ -28761,6 +28984,738 @@ export type Schedule_SearchEvents_Args = {
     readonly search?: InputMaybe<Scalars["String"]>;
 };
 
+/** columns and relationships of "sponsor.Tier" */
+export type Sponsor_Tier = {
+    readonly __typename?: "sponsor_Tier";
+    readonly colour?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    readonly conference: Conference_Conference;
+    readonly conferenceId: Scalars["uuid"];
+    readonly created_at: Scalars["timestamptz"];
+    readonly description: Scalars["String"];
+    readonly id: Scalars["uuid"];
+    /** An array relationship */
+    readonly members: ReadonlyArray<Sponsor_TierMember>;
+    /** An aggregate relationship */
+    readonly members_aggregate: Sponsor_TierMember_Aggregate;
+    readonly name: Scalars["String"];
+    readonly priority: Scalars["Int"];
+    readonly showLogos: Scalars["Boolean"];
+    readonly size: Scalars["numeric"];
+    /** An object relationship */
+    readonly subconference?: Maybe<Conference_Subconference>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "sponsor.Tier" */
+export type Sponsor_TierMembersArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+/** columns and relationships of "sponsor.Tier" */
+export type Sponsor_TierMembers_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+/** columns and relationships of "sponsor.TierMember" */
+export type Sponsor_TierMember = {
+    readonly __typename?: "sponsor_TierMember";
+    readonly created_at: Scalars["timestamptz"];
+    readonly id: Scalars["uuid"];
+    /** An object relationship */
+    readonly item: Content_Item;
+    readonly itemId: Scalars["uuid"];
+    readonly priority?: Maybe<Scalars["Int"]>;
+    /** An object relationship */
+    readonly tier: Sponsor_Tier;
+    readonly tierId: Scalars["uuid"];
+    readonly updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "sponsor.TierMember" */
+export type Sponsor_TierMember_Aggregate = {
+    readonly __typename?: "sponsor_TierMember_aggregate";
+    readonly aggregate?: Maybe<Sponsor_TierMember_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Sponsor_TierMember>;
+};
+
+/** aggregate fields of "sponsor.TierMember" */
+export type Sponsor_TierMember_Aggregate_Fields = {
+    readonly __typename?: "sponsor_TierMember_aggregate_fields";
+    readonly avg?: Maybe<Sponsor_TierMember_Avg_Fields>;
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Sponsor_TierMember_Max_Fields>;
+    readonly min?: Maybe<Sponsor_TierMember_Min_Fields>;
+    readonly stddev?: Maybe<Sponsor_TierMember_Stddev_Fields>;
+    readonly stddev_pop?: Maybe<Sponsor_TierMember_Stddev_Pop_Fields>;
+    readonly stddev_samp?: Maybe<Sponsor_TierMember_Stddev_Samp_Fields>;
+    readonly sum?: Maybe<Sponsor_TierMember_Sum_Fields>;
+    readonly var_pop?: Maybe<Sponsor_TierMember_Var_Pop_Fields>;
+    readonly var_samp?: Maybe<Sponsor_TierMember_Var_Samp_Fields>;
+    readonly variance?: Maybe<Sponsor_TierMember_Variance_Fields>;
+};
+
+/** aggregate fields of "sponsor.TierMember" */
+export type Sponsor_TierMember_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Aggregate_Order_By = {
+    readonly avg?: InputMaybe<Sponsor_TierMember_Avg_Order_By>;
+    readonly count?: InputMaybe<Order_By>;
+    readonly max?: InputMaybe<Sponsor_TierMember_Max_Order_By>;
+    readonly min?: InputMaybe<Sponsor_TierMember_Min_Order_By>;
+    readonly stddev?: InputMaybe<Sponsor_TierMember_Stddev_Order_By>;
+    readonly stddev_pop?: InputMaybe<Sponsor_TierMember_Stddev_Pop_Order_By>;
+    readonly stddev_samp?: InputMaybe<Sponsor_TierMember_Stddev_Samp_Order_By>;
+    readonly sum?: InputMaybe<Sponsor_TierMember_Sum_Order_By>;
+    readonly var_pop?: InputMaybe<Sponsor_TierMember_Var_Pop_Order_By>;
+    readonly var_samp?: InputMaybe<Sponsor_TierMember_Var_Samp_Order_By>;
+    readonly variance?: InputMaybe<Sponsor_TierMember_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "sponsor.TierMember" */
+export type Sponsor_TierMember_Arr_Rel_Insert_Input = {
+    readonly data: ReadonlyArray<Sponsor_TierMember_Insert_Input>;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Sponsor_TierMember_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Sponsor_TierMember_Avg_Fields = {
+    readonly __typename?: "sponsor_TierMember_avg_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Avg_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "sponsor.TierMember". All fields are combined with a logical 'AND'. */
+export type Sponsor_TierMember_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Bool_Exp>>;
+    readonly _not?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Bool_Exp>>;
+    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly item?: InputMaybe<Content_Item_Bool_Exp>;
+    readonly itemId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly priority?: InputMaybe<Int_Comparison_Exp>;
+    readonly tier?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+    readonly tierId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "sponsor.TierMember" */
+export enum Sponsor_TierMember_Constraint {
+    /** unique or primary key constraint */
+    TierMemberPkey = "TierMember_pkey",
+    /** unique or primary key constraint */
+    TierMemberTierIdItemIdKey = "TierMember_tierId_itemId_key",
+}
+
+/** input type for incrementing numeric columns in table "sponsor.TierMember" */
+export type Sponsor_TierMember_Inc_Input = {
+    readonly priority?: InputMaybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "sponsor.TierMember" */
+export type Sponsor_TierMember_Insert_Input = {
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
+    readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly priority?: InputMaybe<Scalars["Int"]>;
+    readonly tier?: InputMaybe<Sponsor_Tier_Obj_Rel_Insert_Input>;
+    readonly tierId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Sponsor_TierMember_Max_Fields = {
+    readonly __typename?: "sponsor_TierMember_max_fields";
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly priority?: Maybe<Scalars["Int"]>;
+    readonly tierId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Max_Order_By = {
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly itemId?: InputMaybe<Order_By>;
+    readonly priority?: InputMaybe<Order_By>;
+    readonly tierId?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Sponsor_TierMember_Min_Fields = {
+    readonly __typename?: "sponsor_TierMember_min_fields";
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly priority?: Maybe<Scalars["Int"]>;
+    readonly tierId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Min_Order_By = {
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly itemId?: InputMaybe<Order_By>;
+    readonly priority?: InputMaybe<Order_By>;
+    readonly tierId?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "sponsor.TierMember" */
+export type Sponsor_TierMember_Mutation_Response = {
+    readonly __typename?: "sponsor_TierMember_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Sponsor_TierMember>;
+};
+
+/** on conflict condition type for table "sponsor.TierMember" */
+export type Sponsor_TierMember_On_Conflict = {
+    readonly constraint: Sponsor_TierMember_Constraint;
+    readonly update_columns?: ReadonlyArray<Sponsor_TierMember_Update_Column>;
+    readonly where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "sponsor.TierMember". */
+export type Sponsor_TierMember_Order_By = {
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly item?: InputMaybe<Content_Item_Order_By>;
+    readonly itemId?: InputMaybe<Order_By>;
+    readonly priority?: InputMaybe<Order_By>;
+    readonly tier?: InputMaybe<Sponsor_Tier_Order_By>;
+    readonly tierId?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: sponsor_TierMember */
+export type Sponsor_TierMember_Pk_Columns_Input = {
+    readonly id: Scalars["uuid"];
+};
+
+/** select columns of table "sponsor.TierMember" */
+export enum Sponsor_TierMember_Select_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    TierId = "tierId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "sponsor.TierMember" */
+export type Sponsor_TierMember_Set_Input = {
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly priority?: InputMaybe<Scalars["Int"]>;
+    readonly tierId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Sponsor_TierMember_Stddev_Fields = {
+    readonly __typename?: "sponsor_TierMember_stddev_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Stddev_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Sponsor_TierMember_Stddev_Pop_Fields = {
+    readonly __typename?: "sponsor_TierMember_stddev_pop_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Stddev_Pop_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Sponsor_TierMember_Stddev_Samp_Fields = {
+    readonly __typename?: "sponsor_TierMember_stddev_samp_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Stddev_Samp_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Sponsor_TierMember_Sum_Fields = {
+    readonly __typename?: "sponsor_TierMember_sum_fields";
+    readonly priority?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Sum_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "sponsor.TierMember" */
+export enum Sponsor_TierMember_Update_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    TierId = "tierId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Sponsor_TierMember_Var_Pop_Fields = {
+    readonly __typename?: "sponsor_TierMember_var_pop_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Var_Pop_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Sponsor_TierMember_Var_Samp_Fields = {
+    readonly __typename?: "sponsor_TierMember_var_samp_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Var_Samp_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Sponsor_TierMember_Variance_Fields = {
+    readonly __typename?: "sponsor_TierMember_variance_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "sponsor.TierMember" */
+export type Sponsor_TierMember_Variance_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+};
+
+/** aggregated selection of "sponsor.Tier" */
+export type Sponsor_Tier_Aggregate = {
+    readonly __typename?: "sponsor_Tier_aggregate";
+    readonly aggregate?: Maybe<Sponsor_Tier_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Sponsor_Tier>;
+};
+
+/** aggregate fields of "sponsor.Tier" */
+export type Sponsor_Tier_Aggregate_Fields = {
+    readonly __typename?: "sponsor_Tier_aggregate_fields";
+    readonly avg?: Maybe<Sponsor_Tier_Avg_Fields>;
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Sponsor_Tier_Max_Fields>;
+    readonly min?: Maybe<Sponsor_Tier_Min_Fields>;
+    readonly stddev?: Maybe<Sponsor_Tier_Stddev_Fields>;
+    readonly stddev_pop?: Maybe<Sponsor_Tier_Stddev_Pop_Fields>;
+    readonly stddev_samp?: Maybe<Sponsor_Tier_Stddev_Samp_Fields>;
+    readonly sum?: Maybe<Sponsor_Tier_Sum_Fields>;
+    readonly var_pop?: Maybe<Sponsor_Tier_Var_Pop_Fields>;
+    readonly var_samp?: Maybe<Sponsor_Tier_Var_Samp_Fields>;
+    readonly variance?: Maybe<Sponsor_Tier_Variance_Fields>;
+};
+
+/** aggregate fields of "sponsor.Tier" */
+export type Sponsor_Tier_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Sponsor_Tier_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "sponsor.Tier" */
+export type Sponsor_Tier_Aggregate_Order_By = {
+    readonly avg?: InputMaybe<Sponsor_Tier_Avg_Order_By>;
+    readonly count?: InputMaybe<Order_By>;
+    readonly max?: InputMaybe<Sponsor_Tier_Max_Order_By>;
+    readonly min?: InputMaybe<Sponsor_Tier_Min_Order_By>;
+    readonly stddev?: InputMaybe<Sponsor_Tier_Stddev_Order_By>;
+    readonly stddev_pop?: InputMaybe<Sponsor_Tier_Stddev_Pop_Order_By>;
+    readonly stddev_samp?: InputMaybe<Sponsor_Tier_Stddev_Samp_Order_By>;
+    readonly sum?: InputMaybe<Sponsor_Tier_Sum_Order_By>;
+    readonly var_pop?: InputMaybe<Sponsor_Tier_Var_Pop_Order_By>;
+    readonly var_samp?: InputMaybe<Sponsor_Tier_Var_Samp_Order_By>;
+    readonly variance?: InputMaybe<Sponsor_Tier_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "sponsor.Tier" */
+export type Sponsor_Tier_Arr_Rel_Insert_Input = {
+    readonly data: ReadonlyArray<Sponsor_Tier_Insert_Input>;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Sponsor_Tier_Avg_Fields = {
+    readonly __typename?: "sponsor_Tier_avg_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+    readonly size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Avg_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "sponsor.Tier". All fields are combined with a logical 'AND'. */
+export type Sponsor_Tier_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Sponsor_Tier_Bool_Exp>>;
+    readonly _not?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Sponsor_Tier_Bool_Exp>>;
+    readonly colour?: InputMaybe<String_Comparison_Exp>;
+    readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly description?: InputMaybe<String_Comparison_Exp>;
+    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly members?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+    readonly name?: InputMaybe<String_Comparison_Exp>;
+    readonly priority?: InputMaybe<Int_Comparison_Exp>;
+    readonly showLogos?: InputMaybe<Boolean_Comparison_Exp>;
+    readonly size?: InputMaybe<Numeric_Comparison_Exp>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
+    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "sponsor.Tier" */
+export enum Sponsor_Tier_Constraint {
+    /** unique or primary key constraint */
+    TierConferenceIdSubconferenceIdNameKey = "Tier_conferenceId_subconferenceId_name_key",
+    /** unique or primary key constraint */
+    TierPkey = "Tier_pkey",
+}
+
+/** input type for incrementing numeric columns in table "sponsor.Tier" */
+export type Sponsor_Tier_Inc_Input = {
+    readonly priority?: InputMaybe<Scalars["Int"]>;
+    readonly size?: InputMaybe<Scalars["numeric"]>;
+};
+
+/** input type for inserting data into table "sponsor.Tier" */
+export type Sponsor_Tier_Insert_Input = {
+    readonly colour?: InputMaybe<Scalars["String"]>;
+    readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly description?: InputMaybe<Scalars["String"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly members?: InputMaybe<Sponsor_TierMember_Arr_Rel_Insert_Input>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+    readonly priority?: InputMaybe<Scalars["Int"]>;
+    readonly showLogos?: InputMaybe<Scalars["Boolean"]>;
+    readonly size?: InputMaybe<Scalars["numeric"]>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Sponsor_Tier_Max_Fields = {
+    readonly __typename?: "sponsor_Tier_max_fields";
+    readonly colour?: Maybe<Scalars["String"]>;
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly description?: Maybe<Scalars["String"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+    readonly priority?: Maybe<Scalars["Int"]>;
+    readonly size?: Maybe<Scalars["numeric"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Max_Order_By = {
+    readonly colour?: InputMaybe<Order_By>;
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly description?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Sponsor_Tier_Min_Fields = {
+    readonly __typename?: "sponsor_Tier_min_fields";
+    readonly colour?: Maybe<Scalars["String"]>;
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly description?: Maybe<Scalars["String"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+    readonly priority?: Maybe<Scalars["Int"]>;
+    readonly size?: Maybe<Scalars["numeric"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Min_Order_By = {
+    readonly colour?: InputMaybe<Order_By>;
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly description?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "sponsor.Tier" */
+export type Sponsor_Tier_Mutation_Response = {
+    readonly __typename?: "sponsor_Tier_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Sponsor_Tier>;
+};
+
+/** input type for inserting object relation for remote table "sponsor.Tier" */
+export type Sponsor_Tier_Obj_Rel_Insert_Input = {
+    readonly data: Sponsor_Tier_Insert_Input;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
+};
+
+/** on conflict condition type for table "sponsor.Tier" */
+export type Sponsor_Tier_On_Conflict = {
+    readonly constraint: Sponsor_Tier_Constraint;
+    readonly update_columns?: ReadonlyArray<Sponsor_Tier_Update_Column>;
+    readonly where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "sponsor.Tier". */
+export type Sponsor_Tier_Order_By = {
+    readonly colour?: InputMaybe<Order_By>;
+    readonly conference?: InputMaybe<Conference_Conference_Order_By>;
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly description?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly members_aggregate?: InputMaybe<Sponsor_TierMember_Aggregate_Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+    readonly priority?: InputMaybe<Order_By>;
+    readonly showLogos?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: sponsor_Tier */
+export type Sponsor_Tier_Pk_Columns_Input = {
+    readonly id: Scalars["uuid"];
+};
+
+/** select columns of table "sponsor.Tier" */
+export enum Sponsor_Tier_Select_Column {
+    /** column name */
+    Colour = "colour",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Description = "description",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Name = "name",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    ShowLogos = "showLogos",
+    /** column name */
+    Size = "size",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "sponsor.Tier" */
+export type Sponsor_Tier_Set_Input = {
+    readonly colour?: InputMaybe<Scalars["String"]>;
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly description?: InputMaybe<Scalars["String"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+    readonly priority?: InputMaybe<Scalars["Int"]>;
+    readonly showLogos?: InputMaybe<Scalars["Boolean"]>;
+    readonly size?: InputMaybe<Scalars["numeric"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Sponsor_Tier_Stddev_Fields = {
+    readonly __typename?: "sponsor_Tier_stddev_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+    readonly size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Stddev_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Sponsor_Tier_Stddev_Pop_Fields = {
+    readonly __typename?: "sponsor_Tier_stddev_pop_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+    readonly size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Stddev_Pop_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Sponsor_Tier_Stddev_Samp_Fields = {
+    readonly __typename?: "sponsor_Tier_stddev_samp_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+    readonly size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Stddev_Samp_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Sponsor_Tier_Sum_Fields = {
+    readonly __typename?: "sponsor_Tier_sum_fields";
+    readonly priority?: Maybe<Scalars["Int"]>;
+    readonly size?: Maybe<Scalars["numeric"]>;
+};
+
+/** order by sum() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Sum_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "sponsor.Tier" */
+export enum Sponsor_Tier_Update_Column {
+    /** column name */
+    Colour = "colour",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Description = "description",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Name = "name",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    ShowLogos = "showLogos",
+    /** column name */
+    Size = "size",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Sponsor_Tier_Var_Pop_Fields = {
+    readonly __typename?: "sponsor_Tier_var_pop_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+    readonly size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Var_Pop_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Sponsor_Tier_Var_Samp_Fields = {
+    readonly __typename?: "sponsor_Tier_var_samp_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+    readonly size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Var_Samp_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Sponsor_Tier_Variance_Fields = {
+    readonly __typename?: "sponsor_Tier_variance_fields";
+    readonly priority?: Maybe<Scalars["Float"]>;
+    readonly size?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "sponsor.Tier" */
+export type Sponsor_Tier_Variance_Order_By = {
+    readonly priority?: InputMaybe<Order_By>;
+    readonly size?: InputMaybe<Order_By>;
+};
+
 export type Subscription_Root = {
     readonly __typename?: "subscription_root";
     /** fetch data from the table: "Email" */
@@ -29251,6 +30206,18 @@ export type Subscription_Root = {
     readonly schedule_searchEvents: ReadonlyArray<Schedule_Event>;
     /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
     readonly schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
+    /** fetch data from the table: "sponsor.Tier" */
+    readonly sponsor_Tier: ReadonlyArray<Sponsor_Tier>;
+    /** fetch data from the table: "sponsor.TierMember" */
+    readonly sponsor_TierMember: ReadonlyArray<Sponsor_TierMember>;
+    /** fetch aggregated fields from the table: "sponsor.TierMember" */
+    readonly sponsor_TierMember_aggregate: Sponsor_TierMember_Aggregate;
+    /** fetch data from the table: "sponsor.TierMember" using primary key columns */
+    readonly sponsor_TierMember_by_pk?: Maybe<Sponsor_TierMember>;
+    /** fetch aggregated fields from the table: "sponsor.Tier" */
+    readonly sponsor_Tier_aggregate: Sponsor_Tier_Aggregate;
+    /** fetch data from the table: "sponsor.Tier" using primary key columns */
+    readonly sponsor_Tier_by_pk?: Maybe<Sponsor_Tier>;
     /** fetch data from the table: "system.Configuration" */
     readonly system_Configuration: ReadonlyArray<System_Configuration>;
     /** fetch data from the table: "system.ConfigurationKey" */
@@ -31027,6 +31994,46 @@ export type Subscription_RootSchedule_SearchEvents_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
     where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_TierArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_TierMemberArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_TierMember_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_TierMember_Order_By>>;
+    where?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_TierMember_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootSponsor_Tier_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Sponsor_Tier_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Sponsor_Tier_Order_By>>;
+    where?: InputMaybe<Sponsor_Tier_Bool_Exp>;
+};
+
+export type Subscription_RootSponsor_Tier_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Subscription_RootSystem_ConfigurationArgs = {
@@ -38941,7 +39948,39 @@ export type GetSponsorBoothsQuery = {
                 readonly registrantId?: any | null;
             };
         }>;
+        readonly sponsorshipTierMemberships: ReadonlyArray<{
+            readonly __typename?: "sponsor_TierMember";
+            readonly id: any;
+            readonly itemId: any;
+            readonly tierId: any;
+            readonly priority?: number | null;
+        }>;
     }>;
+    readonly sponsor_Tier: ReadonlyArray<{
+        readonly __typename?: "sponsor_Tier";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly name: string;
+        readonly description: string;
+        readonly priority: number;
+        readonly colour?: string | null;
+        readonly size: any;
+        readonly showLogos: boolean;
+    }>;
+};
+
+export type SponsorBoothsList_TierFragment = {
+    readonly __typename?: "sponsor_Tier";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
+    readonly name: string;
+    readonly description: string;
+    readonly priority: number;
+    readonly colour?: string | null;
+    readonly size: any;
+    readonly showLogos: boolean;
 };
 
 export type SponsorBoothsList_ItemFragment = {
@@ -38976,6 +40015,13 @@ export type SponsorBoothsList_ItemFragment = {
             readonly id: any;
             readonly registrantId?: any | null;
         };
+    }>;
+    readonly sponsorshipTierMemberships: ReadonlyArray<{
+        readonly __typename?: "sponsor_TierMember";
+        readonly id: any;
+        readonly itemId: any;
+        readonly tierId: any;
+        readonly priority?: number | null;
     }>;
 };
 
@@ -47229,6 +48275,19 @@ export const RoomTile_RoomFragmentDoc = gql`
     }
     ${RoomTile_EventFragmentDoc}
 `;
+export const SponsorBoothsList_TierFragmentDoc = gql`
+    fragment SponsorBoothsList_Tier on sponsor_Tier {
+        id
+        conferenceId
+        subconferenceId
+        name
+        description
+        priority
+        colour
+        size
+        showLogos
+    }
+`;
 export const SponsorBoothsList_ItemFragmentDoc = gql`
     fragment SponsorBoothsList_Item on content_Item {
         id
@@ -47261,6 +48320,12 @@ export const SponsorBoothsList_ItemFragmentDoc = gql`
                 registrantId
             }
             roleName
+        }
+        sponsorshipTierMemberships {
+            id
+            itemId
+            tierId
+            priority
         }
     }
 `;
@@ -49803,14 +50868,15 @@ export function useRoomTile_GetRoomQuery(options: Omit<Urql.UseQueryArgs<RoomTil
 }
 export const GetSponsorBoothsDocument = gql`
     query GetSponsorBooths($conferenceId: uuid!) {
-        content_Item(
-            where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SPONSOR } }
-            order_by: { title: asc }
-        ) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SPONSOR } }) {
             ...SponsorBoothsList_Item
+        }
+        sponsor_Tier(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...SponsorBoothsList_Tier
         }
     }
     ${SponsorBoothsList_ItemFragmentDoc}
+    ${SponsorBoothsList_TierFragmentDoc}
 `;
 
 export function useGetSponsorBoothsQuery(options: Omit<Urql.UseQueryArgs<GetSponsorBoothsQueryVariables>, "query">) {
@@ -55799,6 +56865,36 @@ export type GraphCacheKeysConfig = {
     schedule_StarredEvent_mutation_response?: (
         data: WithTypename<Schedule_StarredEvent_Mutation_Response>
     ) => null | string;
+    sponsor_Tier?: (data: WithTypename<Sponsor_Tier>) => null | string;
+    sponsor_TierMember?: (data: WithTypename<Sponsor_TierMember>) => null | string;
+    sponsor_TierMember_aggregate?: (data: WithTypename<Sponsor_TierMember_Aggregate>) => null | string;
+    sponsor_TierMember_aggregate_fields?: (data: WithTypename<Sponsor_TierMember_Aggregate_Fields>) => null | string;
+    sponsor_TierMember_avg_fields?: (data: WithTypename<Sponsor_TierMember_Avg_Fields>) => null | string;
+    sponsor_TierMember_max_fields?: (data: WithTypename<Sponsor_TierMember_Max_Fields>) => null | string;
+    sponsor_TierMember_min_fields?: (data: WithTypename<Sponsor_TierMember_Min_Fields>) => null | string;
+    sponsor_TierMember_mutation_response?: (data: WithTypename<Sponsor_TierMember_Mutation_Response>) => null | string;
+    sponsor_TierMember_stddev_fields?: (data: WithTypename<Sponsor_TierMember_Stddev_Fields>) => null | string;
+    sponsor_TierMember_stddev_pop_fields?: (data: WithTypename<Sponsor_TierMember_Stddev_Pop_Fields>) => null | string;
+    sponsor_TierMember_stddev_samp_fields?: (
+        data: WithTypename<Sponsor_TierMember_Stddev_Samp_Fields>
+    ) => null | string;
+    sponsor_TierMember_sum_fields?: (data: WithTypename<Sponsor_TierMember_Sum_Fields>) => null | string;
+    sponsor_TierMember_var_pop_fields?: (data: WithTypename<Sponsor_TierMember_Var_Pop_Fields>) => null | string;
+    sponsor_TierMember_var_samp_fields?: (data: WithTypename<Sponsor_TierMember_Var_Samp_Fields>) => null | string;
+    sponsor_TierMember_variance_fields?: (data: WithTypename<Sponsor_TierMember_Variance_Fields>) => null | string;
+    sponsor_Tier_aggregate?: (data: WithTypename<Sponsor_Tier_Aggregate>) => null | string;
+    sponsor_Tier_aggregate_fields?: (data: WithTypename<Sponsor_Tier_Aggregate_Fields>) => null | string;
+    sponsor_Tier_avg_fields?: (data: WithTypename<Sponsor_Tier_Avg_Fields>) => null | string;
+    sponsor_Tier_max_fields?: (data: WithTypename<Sponsor_Tier_Max_Fields>) => null | string;
+    sponsor_Tier_min_fields?: (data: WithTypename<Sponsor_Tier_Min_Fields>) => null | string;
+    sponsor_Tier_mutation_response?: (data: WithTypename<Sponsor_Tier_Mutation_Response>) => null | string;
+    sponsor_Tier_stddev_fields?: (data: WithTypename<Sponsor_Tier_Stddev_Fields>) => null | string;
+    sponsor_Tier_stddev_pop_fields?: (data: WithTypename<Sponsor_Tier_Stddev_Pop_Fields>) => null | string;
+    sponsor_Tier_stddev_samp_fields?: (data: WithTypename<Sponsor_Tier_Stddev_Samp_Fields>) => null | string;
+    sponsor_Tier_sum_fields?: (data: WithTypename<Sponsor_Tier_Sum_Fields>) => null | string;
+    sponsor_Tier_var_pop_fields?: (data: WithTypename<Sponsor_Tier_Var_Pop_Fields>) => null | string;
+    sponsor_Tier_var_samp_fields?: (data: WithTypename<Sponsor_Tier_Var_Samp_Fields>) => null | string;
+    sponsor_Tier_variance_fields?: (data: WithTypename<Sponsor_Tier_Variance_Fields>) => null | string;
     system_Configuration?: (data: WithTypename<System_Configuration>) => null | string;
     system_ConfigurationKey?: (data: WithTypename<System_ConfigurationKey>) => null | string;
     system_ConfigurationKey_aggregate?: (data: WithTypename<System_ConfigurationKey_Aggregate>) => null | string;
@@ -57280,6 +58376,36 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootSchedule_SearchEvents_AggregateArgs,
             WithTypename<Schedule_Event_Aggregate> | string
+        >;
+        sponsor_Tier?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSponsor_TierArgs,
+            Array<WithTypename<Sponsor_Tier> | string>
+        >;
+        sponsor_TierMember?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSponsor_TierMemberArgs,
+            Array<WithTypename<Sponsor_TierMember> | string>
+        >;
+        sponsor_TierMember_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSponsor_TierMember_AggregateArgs,
+            WithTypename<Sponsor_TierMember_Aggregate> | string
+        >;
+        sponsor_TierMember_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSponsor_TierMember_By_PkArgs,
+            WithTypename<Sponsor_TierMember> | string
+        >;
+        sponsor_Tier_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSponsor_Tier_AggregateArgs,
+            WithTypename<Sponsor_Tier_Aggregate> | string
+        >;
+        sponsor_Tier_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSponsor_Tier_By_PkArgs,
+            WithTypename<Sponsor_Tier> | string
         >;
         system_Configuration?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -62686,6 +63812,16 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        sponsorshipTiers?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Conference_ConferenceSponsorshipTiersArgs,
+            Array<WithTypename<Sponsor_Tier> | string>
+        >;
+        sponsorshipTiers_aggregate?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Conference_ConferenceSponsorshipTiers_AggregateArgs,
+            WithTypename<Sponsor_Tier_Aggregate> | string
+        >;
         subconferences?: GraphCacheResolver<
             WithTypename<Conference_Conference>,
             Conference_ConferenceSubconferencesArgs,
@@ -63418,6 +64554,16 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        sponsorshipTiers?: GraphCacheResolver<
+            WithTypename<Conference_Subconference>,
+            Conference_SubconferenceSponsorshipTiersArgs,
+            Array<WithTypename<Sponsor_Tier> | string>
+        >;
+        sponsorshipTiers_aggregate?: GraphCacheResolver<
+            WithTypename<Conference_Subconference>,
+            Conference_SubconferenceSponsorshipTiers_AggregateArgs,
+            WithTypename<Sponsor_Tier_Aggregate> | string
+        >;
         updated_at?: GraphCacheResolver<
             WithTypename<Conference_Subconference>,
             Record<string, never>,
@@ -64128,6 +65274,16 @@ export type GraphCacheResolvers = {
         >;
         room?: GraphCacheResolver<WithTypename<Content_Item>, Record<string, never>, WithTypename<Room_Room> | string>;
         shortTitle?: GraphCacheResolver<WithTypename<Content_Item>, Record<string, never>, Scalars["String"] | string>;
+        sponsorshipTierMemberships?: GraphCacheResolver<
+            WithTypename<Content_Item>,
+            Content_ItemSponsorshipTierMembershipsArgs,
+            Array<WithTypename<Sponsor_TierMember> | string>
+        >;
+        sponsorshipTierMemberships_aggregate?: GraphCacheResolver<
+            WithTypename<Content_Item>,
+            Content_ItemSponsorshipTierMemberships_AggregateArgs,
+            WithTypename<Sponsor_TierMember_Aggregate> | string
+        >;
         stats?: GraphCacheResolver<
             WithTypename<Content_Item>,
             Content_ItemStatsArgs,
@@ -72659,6 +73815,551 @@ export type GraphCacheResolvers = {
             Array<WithTypename<Schedule_StarredEvent> | string>
         >;
     };
+    sponsor_Tier?: {
+        colour?: GraphCacheResolver<WithTypename<Sponsor_Tier>, Record<string, never>, Scalars["String"] | string>;
+        conference?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier>,
+            Record<string, never>,
+            WithTypename<Conference_Conference> | string
+        >;
+        conferenceId?: GraphCacheResolver<WithTypename<Sponsor_Tier>, Record<string, never>, Scalars["uuid"] | string>;
+        created_at?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        description?: GraphCacheResolver<WithTypename<Sponsor_Tier>, Record<string, never>, Scalars["String"] | string>;
+        id?: GraphCacheResolver<WithTypename<Sponsor_Tier>, Record<string, never>, Scalars["uuid"] | string>;
+        members?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier>,
+            Sponsor_TierMembersArgs,
+            Array<WithTypename<Sponsor_TierMember> | string>
+        >;
+        members_aggregate?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier>,
+            Sponsor_TierMembers_AggregateArgs,
+            WithTypename<Sponsor_TierMember_Aggregate> | string
+        >;
+        name?: GraphCacheResolver<WithTypename<Sponsor_Tier>, Record<string, never>, Scalars["String"] | string>;
+        priority?: GraphCacheResolver<WithTypename<Sponsor_Tier>, Record<string, never>, Scalars["Int"] | string>;
+        showLogos?: GraphCacheResolver<WithTypename<Sponsor_Tier>, Record<string, never>, Scalars["Boolean"] | string>;
+        size?: GraphCacheResolver<WithTypename<Sponsor_Tier>, Record<string, never>, Scalars["numeric"] | string>;
+        subconference?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier>,
+            Record<string, never>,
+            WithTypename<Conference_Subconference> | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    sponsor_TierMember?: {
+        created_at?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<WithTypename<Sponsor_TierMember>, Record<string, never>, Scalars["uuid"] | string>;
+        item?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember>,
+            Record<string, never>,
+            WithTypename<Content_Item> | string
+        >;
+        itemId?: GraphCacheResolver<WithTypename<Sponsor_TierMember>, Record<string, never>, Scalars["uuid"] | string>;
+        priority?: GraphCacheResolver<WithTypename<Sponsor_TierMember>, Record<string, never>, Scalars["Int"] | string>;
+        tier?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier> | string
+        >;
+        tierId?: GraphCacheResolver<WithTypename<Sponsor_TierMember>, Record<string, never>, Scalars["uuid"] | string>;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    sponsor_TierMember_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Sponsor_TierMember> | string>
+        >;
+    };
+    sponsor_TierMember_aggregate_fields?: {
+        avg?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Avg_Fields> | string
+        >;
+        count?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Sponsor_TierMember_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Min_Fields> | string
+        >;
+        stddev?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Stddev_Fields> | string
+        >;
+        stddev_pop?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Stddev_Pop_Fields> | string
+        >;
+        stddev_samp?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Stddev_Samp_Fields> | string
+        >;
+        sum?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Sum_Fields> | string
+        >;
+        var_pop?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Var_Pop_Fields> | string
+        >;
+        var_samp?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Var_Samp_Fields> | string
+        >;
+        variance?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_TierMember_Variance_Fields> | string
+        >;
+    };
+    sponsor_TierMember_avg_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_TierMember_max_fields?: {
+        created_at?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        itemId?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        tierId?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    sponsor_TierMember_min_fields?: {
+        created_at?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        itemId?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        tierId?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    sponsor_TierMember_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Sponsor_TierMember> | string>
+        >;
+    };
+    sponsor_TierMember_stddev_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_TierMember_stddev_pop_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_TierMember_stddev_samp_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_TierMember_sum_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+    };
+    sponsor_TierMember_var_pop_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_TierMember_var_samp_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_TierMember_variance_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_TierMember_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_Tier_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Sponsor_Tier> | string>
+        >;
+    };
+    sponsor_Tier_aggregate_fields?: {
+        avg?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Avg_Fields> | string
+        >;
+        count?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Sponsor_Tier_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Min_Fields> | string
+        >;
+        stddev?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Stddev_Fields> | string
+        >;
+        stddev_pop?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Stddev_Pop_Fields> | string
+        >;
+        stddev_samp?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Stddev_Samp_Fields> | string
+        >;
+        sum?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Sum_Fields> | string
+        >;
+        var_pop?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Var_Pop_Fields> | string
+        >;
+        var_samp?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Var_Samp_Fields> | string
+        >;
+        variance?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Sponsor_Tier_Variance_Fields> | string
+        >;
+    };
+    sponsor_Tier_avg_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_Tier_max_fields?: {
+        colour?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        description?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        id?: GraphCacheResolver<WithTypename<Sponsor_Tier_Max_Fields>, Record<string, never>, Scalars["uuid"] | string>;
+        name?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Max_Fields>,
+            Record<string, never>,
+            Scalars["numeric"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    sponsor_Tier_min_fields?: {
+        colour?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        description?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        id?: GraphCacheResolver<WithTypename<Sponsor_Tier_Min_Fields>, Record<string, never>, Scalars["uuid"] | string>;
+        name?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Min_Fields>,
+            Record<string, never>,
+            Scalars["numeric"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    sponsor_Tier_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Sponsor_Tier> | string>
+        >;
+    };
+    sponsor_Tier_stddev_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_Tier_stddev_pop_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_Tier_stddev_samp_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_Tier_sum_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Sum_Fields>,
+            Record<string, never>,
+            Scalars["numeric"] | string
+        >;
+    };
+    sponsor_Tier_var_pop_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_Tier_var_samp_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    sponsor_Tier_variance_fields?: {
+        priority?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        size?: GraphCacheResolver<
+            WithTypename<Sponsor_Tier_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
     system_Configuration?: {
         configurationKey?: GraphCacheResolver<
             WithTypename<System_Configuration>,
@@ -76699,6 +78400,22 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootDelete_Schedule_StarredEvent_By_PkArgs,
         Maybe<WithTypename<Schedule_StarredEvent>>
     >;
+    delete_sponsor_Tier?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Sponsor_TierArgs,
+        Maybe<WithTypename<Sponsor_Tier_Mutation_Response>>
+    >;
+    delete_sponsor_TierMember?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Sponsor_TierMemberArgs,
+        Maybe<WithTypename<Sponsor_TierMember_Mutation_Response>>
+    >;
+    delete_sponsor_TierMember_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Sponsor_TierMember_By_PkArgs,
+        Maybe<WithTypename<Sponsor_TierMember>>
+    >;
+    delete_sponsor_Tier_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Sponsor_Tier_By_PkArgs,
+        Maybe<WithTypename<Sponsor_Tier>>
+    >;
     delete_system_Configuration?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_System_ConfigurationArgs,
         Maybe<WithTypename<System_Configuration_Mutation_Response>>
@@ -77463,6 +79180,22 @@ export type GraphCacheOptimisticUpdaters = {
     insert_schedule_StarredEvent_one?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Schedule_StarredEvent_OneArgs,
         Maybe<WithTypename<Schedule_StarredEvent>>
+    >;
+    insert_sponsor_Tier?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Sponsor_TierArgs,
+        Maybe<WithTypename<Sponsor_Tier_Mutation_Response>>
+    >;
+    insert_sponsor_TierMember?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Sponsor_TierMemberArgs,
+        Maybe<WithTypename<Sponsor_TierMember_Mutation_Response>>
+    >;
+    insert_sponsor_TierMember_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Sponsor_TierMember_OneArgs,
+        Maybe<WithTypename<Sponsor_TierMember>>
+    >;
+    insert_sponsor_Tier_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Sponsor_Tier_OneArgs,
+        Maybe<WithTypename<Sponsor_Tier>>
     >;
     insert_system_Configuration?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_System_ConfigurationArgs,
@@ -78272,6 +80005,22 @@ export type GraphCacheOptimisticUpdaters = {
     update_schedule_StarredEvent_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Schedule_StarredEvent_By_PkArgs,
         Maybe<WithTypename<Schedule_StarredEvent>>
+    >;
+    update_sponsor_Tier?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Sponsor_TierArgs,
+        Maybe<WithTypename<Sponsor_Tier_Mutation_Response>>
+    >;
+    update_sponsor_TierMember?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Sponsor_TierMemberArgs,
+        Maybe<WithTypename<Sponsor_TierMember_Mutation_Response>>
+    >;
+    update_sponsor_TierMember_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Sponsor_TierMember_By_PkArgs,
+        Maybe<WithTypename<Sponsor_TierMember>>
+    >;
+    update_sponsor_Tier_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Sponsor_Tier_By_PkArgs,
+        Maybe<WithTypename<Sponsor_Tier>>
     >;
     update_system_Configuration?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_System_ConfigurationArgs,
@@ -79104,6 +80853,22 @@ export type GraphCacheUpdaters = {
         delete_schedule_StarredEvent_by_pk?: GraphCacheUpdateResolver<
             { delete_schedule_StarredEvent_by_pk: Maybe<WithTypename<Schedule_StarredEvent>> },
             Mutation_RootDelete_Schedule_StarredEvent_By_PkArgs
+        >;
+        delete_sponsor_Tier?: GraphCacheUpdateResolver<
+            { delete_sponsor_Tier: Maybe<WithTypename<Sponsor_Tier_Mutation_Response>> },
+            Mutation_RootDelete_Sponsor_TierArgs
+        >;
+        delete_sponsor_TierMember?: GraphCacheUpdateResolver<
+            { delete_sponsor_TierMember: Maybe<WithTypename<Sponsor_TierMember_Mutation_Response>> },
+            Mutation_RootDelete_Sponsor_TierMemberArgs
+        >;
+        delete_sponsor_TierMember_by_pk?: GraphCacheUpdateResolver<
+            { delete_sponsor_TierMember_by_pk: Maybe<WithTypename<Sponsor_TierMember>> },
+            Mutation_RootDelete_Sponsor_TierMember_By_PkArgs
+        >;
+        delete_sponsor_Tier_by_pk?: GraphCacheUpdateResolver<
+            { delete_sponsor_Tier_by_pk: Maybe<WithTypename<Sponsor_Tier>> },
+            Mutation_RootDelete_Sponsor_Tier_By_PkArgs
         >;
         delete_system_Configuration?: GraphCacheUpdateResolver<
             { delete_system_Configuration: Maybe<WithTypename<System_Configuration_Mutation_Response>> },
@@ -79952,6 +81717,22 @@ export type GraphCacheUpdaters = {
         insert_schedule_StarredEvent_one?: GraphCacheUpdateResolver<
             { insert_schedule_StarredEvent_one: Maybe<WithTypename<Schedule_StarredEvent>> },
             Mutation_RootInsert_Schedule_StarredEvent_OneArgs
+        >;
+        insert_sponsor_Tier?: GraphCacheUpdateResolver<
+            { insert_sponsor_Tier: Maybe<WithTypename<Sponsor_Tier_Mutation_Response>> },
+            Mutation_RootInsert_Sponsor_TierArgs
+        >;
+        insert_sponsor_TierMember?: GraphCacheUpdateResolver<
+            { insert_sponsor_TierMember: Maybe<WithTypename<Sponsor_TierMember_Mutation_Response>> },
+            Mutation_RootInsert_Sponsor_TierMemberArgs
+        >;
+        insert_sponsor_TierMember_one?: GraphCacheUpdateResolver<
+            { insert_sponsor_TierMember_one: Maybe<WithTypename<Sponsor_TierMember>> },
+            Mutation_RootInsert_Sponsor_TierMember_OneArgs
+        >;
+        insert_sponsor_Tier_one?: GraphCacheUpdateResolver<
+            { insert_sponsor_Tier_one: Maybe<WithTypename<Sponsor_Tier>> },
+            Mutation_RootInsert_Sponsor_Tier_OneArgs
         >;
         insert_system_Configuration?: GraphCacheUpdateResolver<
             { insert_system_Configuration: Maybe<WithTypename<System_Configuration_Mutation_Response>> },
@@ -80848,6 +82629,22 @@ export type GraphCacheUpdaters = {
         update_schedule_StarredEvent_by_pk?: GraphCacheUpdateResolver<
             { update_schedule_StarredEvent_by_pk: Maybe<WithTypename<Schedule_StarredEvent>> },
             Mutation_RootUpdate_Schedule_StarredEvent_By_PkArgs
+        >;
+        update_sponsor_Tier?: GraphCacheUpdateResolver<
+            { update_sponsor_Tier: Maybe<WithTypename<Sponsor_Tier_Mutation_Response>> },
+            Mutation_RootUpdate_Sponsor_TierArgs
+        >;
+        update_sponsor_TierMember?: GraphCacheUpdateResolver<
+            { update_sponsor_TierMember: Maybe<WithTypename<Sponsor_TierMember_Mutation_Response>> },
+            Mutation_RootUpdate_Sponsor_TierMemberArgs
+        >;
+        update_sponsor_TierMember_by_pk?: GraphCacheUpdateResolver<
+            { update_sponsor_TierMember_by_pk: Maybe<WithTypename<Sponsor_TierMember>> },
+            Mutation_RootUpdate_Sponsor_TierMember_By_PkArgs
+        >;
+        update_sponsor_Tier_by_pk?: GraphCacheUpdateResolver<
+            { update_sponsor_Tier_by_pk: Maybe<WithTypename<Sponsor_Tier>> },
+            Mutation_RootUpdate_Sponsor_Tier_By_PkArgs
         >;
         update_system_Configuration?: GraphCacheUpdateResolver<
             { update_system_Configuration: Maybe<WithTypename<System_Configuration_Mutation_Response>> },
@@ -81999,6 +83796,30 @@ export type GraphCacheUpdaters = {
         schedule_searchEvents_aggregate?: GraphCacheUpdateResolver<
             { schedule_searchEvents_aggregate: WithTypename<Schedule_Event_Aggregate> },
             Subscription_RootSchedule_SearchEvents_AggregateArgs
+        >;
+        sponsor_Tier?: GraphCacheUpdateResolver<
+            { sponsor_Tier: Array<WithTypename<Sponsor_Tier>> },
+            Subscription_RootSponsor_TierArgs
+        >;
+        sponsor_TierMember?: GraphCacheUpdateResolver<
+            { sponsor_TierMember: Array<WithTypename<Sponsor_TierMember>> },
+            Subscription_RootSponsor_TierMemberArgs
+        >;
+        sponsor_TierMember_aggregate?: GraphCacheUpdateResolver<
+            { sponsor_TierMember_aggregate: WithTypename<Sponsor_TierMember_Aggregate> },
+            Subscription_RootSponsor_TierMember_AggregateArgs
+        >;
+        sponsor_TierMember_by_pk?: GraphCacheUpdateResolver<
+            { sponsor_TierMember_by_pk: Maybe<WithTypename<Sponsor_TierMember>> },
+            Subscription_RootSponsor_TierMember_By_PkArgs
+        >;
+        sponsor_Tier_aggregate?: GraphCacheUpdateResolver<
+            { sponsor_Tier_aggregate: WithTypename<Sponsor_Tier_Aggregate> },
+            Subscription_RootSponsor_Tier_AggregateArgs
+        >;
+        sponsor_Tier_by_pk?: GraphCacheUpdateResolver<
+            { sponsor_Tier_by_pk: Maybe<WithTypename<Sponsor_Tier>> },
+            Subscription_RootSponsor_Tier_By_PkArgs
         >;
         system_Configuration?: GraphCacheUpdateResolver<
             { system_Configuration: Array<WithTypename<System_Configuration>> },

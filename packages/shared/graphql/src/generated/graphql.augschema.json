@@ -302,10 +302,10 @@
                         }
                     },
                     {
-                        "name": "items",
-                        "description": "A column map for an array relationship",
+                        "name": "item",
+                        "description": "A column map for an object relationship",
                         "type": {
-                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
                             "columns": {
                                 "id": "chatId"
                             }
@@ -342,10 +342,10 @@
                         }
                     },
                     {
-                        "name": "rooms",
-                        "description": "A column map for an array relationship",
+                        "name": "room",
+                        "description": "A column map for an object relationship",
                         "type": {
-                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
                             "columns": {
                                 "id": "chatId"
                             }
@@ -1297,6 +1297,16 @@
                         }
                     },
                     {
+                        "name": "sponsorshipTiers",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "conferenceId"
+                            }
+                        }
+                    },
+                    {
                         "name": "subconferences",
                         "description": "A column map for an array relationship",
                         "type": {
@@ -1535,6 +1545,13 @@
                                 {
                                     "relationshipName": "conference",
                                     "table": {
+                                        "name": "Tier",
+                                        "schema": "sponsor"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
                                         "name": "ChannelStack",
                                         "schema": "video"
                                     }
@@ -1578,6 +1595,13 @@
                                     "relationshipName": "conference",
                                     "table": {
                                         "name": "VonageSessionLayout",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "conference",
+                                    "table": {
+                                        "name": "VonageVideoPlaybackCommand",
                                         "schema": "video"
                                     }
                                 },
@@ -1847,6 +1871,16 @@
                         }
                     },
                     {
+                        "name": "sponsorshipTiers",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "subconferenceId"
+                            }
+                        }
+                    },
+                    {
                         "name": "referencedBy",
                         "description": "A list of relationships that refer to this table",
                         "type": {
@@ -1871,6 +1905,20 @@
                                     "table": {
                                         "name": "SubconferenceMembership",
                                         "schema": "registrant"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "subconference",
+                                    "table": {
+                                        "name": "Tier",
+                                        "schema": "sponsor"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "subconference",
+                                    "table": {
+                                        "name": "VonageVideoPlaybackCommand",
+                                        "schema": "video"
                                     }
                                 }
                             ]
@@ -2163,17 +2211,17 @@
                         "type": {
                             "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
                             "columns": {
-                                "id": "originatingItemId"
+                                "id": "itemId"
                             }
                         }
                     },
                     {
-                        "name": "rooms",
+                        "name": "sponsorshipTierMemberships",
                         "description": "A column map for an array relationship",
                         "type": {
                             "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
                             "columns": {
-                                "id": "originatingItemId"
+                                "id": "itemId"
                             }
                         }
                     },
@@ -2228,7 +2276,7 @@
                                     }
                                 },
                                 {
-                                    "relationshipName": "items",
+                                    "relationshipName": "item",
                                     "table": {
                                         "name": "Chat",
                                         "schema": "chat"
@@ -2284,7 +2332,7 @@
                                     }
                                 },
                                 {
-                                    "relationshipName": "originatingItem",
+                                    "relationshipName": "item",
                                     "table": {
                                         "name": "Room",
                                         "schema": "room"
@@ -2295,6 +2343,13 @@
                                     "table": {
                                         "name": "Event",
                                         "schema": "schedule"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "item",
+                                    "table": {
+                                        "name": "TierMember",
+                                        "schema": "sponsor"
                                     }
                                 }
                             ]
@@ -3780,6 +3835,13 @@
                                         "name": "VonageRoomRecording",
                                         "schema": "video"
                                     }
+                                },
+                                {
+                                    "relationshipName": "registrant",
+                                    "table": {
+                                        "name": "VonageVideoPlaybackCommand",
+                                        "schema": "video"
+                                    }
                                 }
                             ]
                         }
@@ -4231,6 +4293,16 @@
                         }
                     },
                     {
+                        "name": "item",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "itemId": "id"
+                            }
+                        }
+                    },
+                    {
                         "name": "livestreamDuration",
                         "description": "A column map for an object relationship",
                         "type": {
@@ -4257,26 +4329,6 @@
                             "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
                             "columns": {
                                 "originatingDataId": "id"
-                            }
-                        }
-                    },
-                    {
-                        "name": "originatingEvent",
-                        "description": "A column map for an object relationship",
-                        "type": {
-                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
-                            "columns": {
-                                "originatingEventId": "id"
-                            }
-                        }
-                    },
-                    {
-                        "name": "originatingItem",
-                        "description": "A column map for an object relationship",
-                        "type": {
-                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
-                            "columns": {
-                                "originatingItemId": "id"
                             }
                         }
                     },
@@ -4391,7 +4443,7 @@
                                     }
                                 },
                                 {
-                                    "relationshipName": "rooms",
+                                    "relationshipName": "room",
                                     "table": {
                                         "name": "Chat",
                                         "schema": "chat"
@@ -4413,13 +4465,6 @@
                                 },
                                 {
                                     "relationshipName": "room",
-                                    "table": {
-                                        "name": "Item",
-                                        "schema": "content"
-                                    }
-                                },
-                                {
-                                    "relationshipName": "rooms",
                                     "table": {
                                         "name": "Item",
                                         "schema": "content"
@@ -4513,6 +4558,13 @@
                                     "relationshipName": "rooms",
                                     "table": {
                                         "name": "VonageSessionLayout",
+                                        "schema": "video"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "rooms",
+                                    "table": {
+                                        "name": "VonageVideoPlaybackCommand",
                                         "schema": "video"
                                     }
                                 }
@@ -5074,13 +5126,6 @@
                                     }
                                 },
                                 {
-                                    "relationshipName": "originatingEvent",
-                                    "table": {
-                                        "name": "Room",
-                                        "schema": "room"
-                                    }
-                                },
-                                {
                                     "relationshipName": "events",
                                     "table": {
                                         "name": "ShufflePeriod",
@@ -5321,6 +5366,125 @@
                         "type": {
                             "kind": "REFERENCE_MAP",
                             "values": []
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "sponsor_Tier",
+                "schemaName": "sponsor",
+                "tableName": "Tier",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "members",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "id": "tierId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "subconference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "subconferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "sponsorshipTiers",
+                                    "table": {
+                                        "name": "Conference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "sponsorshipTiers",
+                                    "table": {
+                                        "name": "Subconference",
+                                        "schema": "conference"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "tier",
+                                    "table": {
+                                        "name": "TierMember",
+                                        "schema": "sponsor"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "sponsor_TierMember",
+                "schemaName": "sponsor",
+                "tableName": "TierMember",
+                "fields": [
+                    {
+                        "name": "item",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "itemId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "tier",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "tierId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": [
+                                {
+                                    "relationshipName": "sponsorshipTierMemberships",
+                                    "table": {
+                                        "name": "Item",
+                                        "schema": "content"
+                                    }
+                                },
+                                {
+                                    "relationshipName": "members",
+                                    "table": {
+                                        "name": "Tier",
+                                        "schema": "sponsor"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -5775,6 +5939,13 @@
                                         "name": "VonageSessionLayout",
                                         "schema": "video"
                                     }
+                                },
+                                {
+                                    "relationshipName": "eventVonageSession",
+                                    "table": {
+                                        "name": "VonageVideoPlaybackCommand",
+                                        "schema": "video"
+                                    }
                                 }
                             ]
                         }
@@ -6193,6 +6364,72 @@
                                     }
                                 }
                             ]
+                        }
+                    }
+                ]
+            },
+            {
+                "kind": "OBJECT",
+                "name": "video_VonageVideoPlaybackCommand",
+                "schemaName": "video",
+                "tableName": "VonageVideoPlaybackCommand",
+                "fields": [
+                    {
+                        "name": "conference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "conferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "eventVonageSession",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "vonageSessionId": "sessionId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "registrant",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "createdByRegistrantId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "rooms",
+                        "description": "A column map for an array relationship",
+                        "type": {
+                            "kind": "ARRAY_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "vonageSessionId": "publicVonageSessionId"
+                            }
+                        }
+                    },
+                    {
+                        "name": "subconference",
+                        "description": "A column map for an object relationship",
+                        "type": {
+                            "kind": "OBJECT_RELATIONSHIP_KEY_MAP",
+                            "columns": {
+                                "subconferenceId": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "referencedBy",
+                        "description": "A list of relationships that refer to this table",
+                        "type": {
+                            "kind": "REFERENCE_MAP",
+                            "values": []
                         }
                     }
                 ]

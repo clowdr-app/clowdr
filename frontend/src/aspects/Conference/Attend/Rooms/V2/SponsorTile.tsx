@@ -31,7 +31,13 @@ function getLogoUrlFromData(data: any): string | null {
     return null;
 }
 
-export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_ItemFragment }): JSX.Element {
+export default function SponsorTile({
+    sponsor,
+    showLogo = true,
+}: {
+    sponsor: SponsorBoothsList_ItemFragment;
+    showLogo?: boolean;
+}): JSX.Element {
     const { conferencePath } = useAuthParameters();
 
     const shadow = useColorModeValue("md", "light-md");
@@ -86,7 +92,7 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
             tabIndex={0}
         >
             <Tooltip label={sponsor.title}>
-                {logoUrl ? (
+                {logoUrl && showLogo ? (
                     <Image src={logoUrl} alt={sponsor.title} p={5} maxW="100%" maxH="100%" objectFit="contain" />
                 ) : (
                     <AspectRatio ratio={16 / 9} w="100%">

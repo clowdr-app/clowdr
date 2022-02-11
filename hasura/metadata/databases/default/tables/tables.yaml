@@ -79,6 +79,8 @@
 - "!include schedule_EventProgramPersonRole.yaml"
 - "!include schedule_OverlappingEvents.yaml"
 - "!include schedule_StarredEvent.yaml"
+- "!include sponsor_Tier.yaml"
+- "!include sponsor_TierMember.yaml"
 - "!include system_Configuration.yaml"
 - "!include system_ConfigurationKey.yaml"
 - "!include system_ConfigurationPermissionGrant.yaml"

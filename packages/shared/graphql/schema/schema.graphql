@@ -9902,6 +9902,56 @@ type conference_Conference {
     """
     An array relationship
     """
+    sponsorshipTiers(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_Tier_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_Tier_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_Tier_bool_exp
+    ): [sponsor_Tier!]!
+    """
+    An aggregate relationship
+    """
+    sponsorshipTiers_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_Tier_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_Tier_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_Tier_bool_exp
+    ): sponsor_Tier_aggregate!
+    """
+    An array relationship
+    """
     subconferences(
         """
         distinct select on columns
@@ -10069,6 +10119,7 @@ input conference_Conference_bool_exp {
     shortName: String_comparison_exp
     shufflePeriods: room_ShufflePeriod_bool_exp
     slug: String_comparison_exp
+    sponsorshipTiers: sponsor_Tier_bool_exp
     subconferences: conference_Subconference_bool_exp
     tags: collection_Tag_bool_exp
     updatedAt: timestamptz_comparison_exp
@@ -10127,6 +10178,7 @@ input conference_Conference_insert_input {
     shortName: String
     shufflePeriods: room_ShufflePeriod_arr_rel_insert_input
     slug: String
+    sponsorshipTiers: sponsor_Tier_arr_rel_insert_input
     subconferences: conference_Subconference_arr_rel_insert_input
     tags: collection_Tag_arr_rel_insert_input
     updatedAt: timestamptz
@@ -10257,6 +10309,7 @@ input conference_Conference_order_by {
     shortName: order_by
     shufflePeriods_aggregate: room_ShufflePeriod_aggregate_order_by
     slug: order_by
+    sponsorshipTiers_aggregate: sponsor_Tier_aggregate_order_by
     subconferences_aggregate: conference_Subconference_aggregate_order_by
     tags_aggregate: collection_Tag_aggregate_order_by
     updatedAt: order_by
@@ -11850,6 +11903,56 @@ type conference_Subconference {
     name: String!
     shortName: String!
     slug: String!
+    """
+    An array relationship
+    """
+    sponsorshipTiers(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_Tier_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_Tier_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_Tier_bool_exp
+    ): [sponsor_Tier!]!
+    """
+    An aggregate relationship
+    """
+    sponsorshipTiers_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_Tier_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_Tier_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_Tier_bool_exp
+    ): sponsor_Tier_aggregate!
     updated_at: timestamptz!
 }
 
@@ -11906,6 +12009,7 @@ input conference_Subconference_bool_exp {
     name: String_comparison_exp
     shortName: String_comparison_exp
     slug: String_comparison_exp
+    sponsorshipTiers: sponsor_Tier_bool_exp
     updated_at: timestamptz_comparison_exp
 }
 
@@ -11944,6 +12048,7 @@ input conference_Subconference_insert_input {
     name: String
     shortName: String
     slug: String
+    sponsorshipTiers: sponsor_Tier_arr_rel_insert_input
     updated_at: timestamptz
 }
 
@@ -12046,6 +12151,7 @@ input conference_Subconference_order_by {
     name: order_by
     shortName: order_by
     slug: order_by
+    sponsorshipTiers_aggregate: sponsor_Tier_aggregate_order_by
     updated_at: order_by
 }
 
@@ -13687,6 +13793,56 @@ type content_Item {
     """
     An array relationship
     """
+    sponsorshipTierMemberships(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_TierMember_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_TierMember_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_TierMember_bool_exp
+    ): [sponsor_TierMember!]!
+    """
+    An aggregate relationship
+    """
+    sponsorshipTierMemberships_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_TierMember_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_TierMember_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_TierMember_bool_exp
+    ): sponsor_TierMember_aggregate!
+    """
+    An array relationship
+    """
     stats(
         """
         distinct select on columns
@@ -15060,6 +15216,7 @@ input content_Item_bool_exp {
     originatingDataId: uuid_comparison_exp
     room: room_Room_bool_exp
     shortTitle: String_comparison_exp
+    sponsorshipTierMemberships: sponsor_TierMember_bool_exp
     stats: analytics_ContentItemStats_bool_exp
     subconferenceId: uuid_comparison_exp
     title: String_comparison_exp
@@ -15104,6 +15261,7 @@ input content_Item_insert_input {
     originatingDataId: uuid
     room: room_Room_obj_rel_insert_input
     shortTitle: String
+    sponsorshipTierMemberships: sponsor_TierMember_arr_rel_insert_input
     stats: analytics_ContentItemStats_arr_rel_insert_input
     subconferenceId: uuid
     title: String
@@ -15229,6 +15387,7 @@ input content_Item_order_by {
     originatingDataId: order_by
     room: room_Room_order_by
     shortTitle: order_by
+    sponsorshipTierMemberships_aggregate: sponsor_TierMember_aggregate_order_by
     stats_aggregate: analytics_ContentItemStats_aggregate_order_by
     subconferenceId: order_by
     title: order_by
@@ -19872,6 +20031,32 @@ type mutation_root {
     """
     delete_schedule_StarredEvent_by_pk(id: uuid!): schedule_StarredEvent
     """
+    delete data from the table: "sponsor.Tier"
+    """
+    delete_sponsor_Tier(
+        """
+        filter the rows which have to be deleted
+        """
+        where: sponsor_Tier_bool_exp!
+    ): sponsor_Tier_mutation_response
+    """
+    delete data from the table: "sponsor.TierMember"
+    """
+    delete_sponsor_TierMember(
+        """
+        filter the rows which have to be deleted
+        """
+        where: sponsor_TierMember_bool_exp!
+    ): sponsor_TierMember_mutation_response
+    """
+    delete single row from the table: "sponsor.TierMember"
+    """
+    delete_sponsor_TierMember_by_pk(id: uuid!): sponsor_TierMember
+    """
+    delete single row from the table: "sponsor.Tier"
+    """
+    delete_sponsor_Tier_by_pk(id: uuid!): sponsor_Tier
+    """
     delete data from the table: "system.Configuration"
     """
     delete_system_Configuration(
@@ -22096,6 +22281,58 @@ type mutation_root {
         """
         on_conflict: schedule_StarredEvent_on_conflict
     ): schedule_StarredEvent
+    """
+    insert data into the table: "sponsor.Tier"
+    """
+    insert_sponsor_Tier(
+        """
+        the rows to be inserted
+        """
+        objects: [sponsor_Tier_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: sponsor_Tier_on_conflict
+    ): sponsor_Tier_mutation_response
+    """
+    insert data into the table: "sponsor.TierMember"
+    """
+    insert_sponsor_TierMember(
+        """
+        the rows to be inserted
+        """
+        objects: [sponsor_TierMember_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: sponsor_TierMember_on_conflict
+    ): sponsor_TierMember_mutation_response
+    """
+    insert a single row into the table: "sponsor.TierMember"
+    """
+    insert_sponsor_TierMember_one(
+        """
+        the row to be inserted
+        """
+        object: sponsor_TierMember_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: sponsor_TierMember_on_conflict
+    ): sponsor_TierMember
+    """
+    insert a single row into the table: "sponsor.Tier"
+    """
+    insert_sponsor_Tier_one(
+        """
+        the row to be inserted
+        """
+        object: sponsor_Tier_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: sponsor_Tier_on_conflict
+    ): sponsor_Tier
     """
     insert data into the table: "system.Configuration"
     """
@@ -25143,6 +25380,68 @@ type mutation_root {
         _set: schedule_StarredEvent_set_input
         pk_columns: schedule_StarredEvent_pk_columns_input!
     ): schedule_StarredEvent
+    """
+    update data of the table: "sponsor.Tier"
+    """
+    update_sponsor_Tier(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: sponsor_Tier_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: sponsor_Tier_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: sponsor_Tier_bool_exp!
+    ): sponsor_Tier_mutation_response
+    """
+    update data of the table: "sponsor.TierMember"
+    """
+    update_sponsor_TierMember(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: sponsor_TierMember_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: sponsor_TierMember_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: sponsor_TierMember_bool_exp!
+    ): sponsor_TierMember_mutation_response
+    """
+    update single row of the table: "sponsor.TierMember"
+    """
+    update_sponsor_TierMember_by_pk(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: sponsor_TierMember_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: sponsor_TierMember_set_input
+        pk_columns: sponsor_TierMember_pk_columns_input!
+    ): sponsor_TierMember
+    """
+    update single row of the table: "sponsor.Tier"
+    """
+    update_sponsor_Tier_by_pk(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: sponsor_Tier_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: sponsor_Tier_set_input
+        pk_columns: sponsor_Tier_pk_columns_input!
+    ): sponsor_Tier
     """
     update data of the table: "system.Configuration"
     """
@@ -30397,6 +30696,114 @@ type query_root {
         """
         where: schedule_Event_bool_exp
     ): schedule_Event_aggregate!
+    """
+    fetch data from the table: "sponsor.Tier"
+    """
+    sponsor_Tier(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_Tier_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_Tier_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_Tier_bool_exp
+    ): [sponsor_Tier!]!
+    """
+    fetch data from the table: "sponsor.TierMember"
+    """
+    sponsor_TierMember(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_TierMember_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_TierMember_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_TierMember_bool_exp
+    ): [sponsor_TierMember!]!
+    """
+    fetch aggregated fields from the table: "sponsor.TierMember"
+    """
+    sponsor_TierMember_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_TierMember_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_TierMember_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_TierMember_bool_exp
+    ): sponsor_TierMember_aggregate!
+    """
+    fetch data from the table: "sponsor.TierMember" using primary key columns
+    """
+    sponsor_TierMember_by_pk(id: uuid!): sponsor_TierMember
+    """
+    fetch aggregated fields from the table: "sponsor.Tier"
+    """
+    sponsor_Tier_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_Tier_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_Tier_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_Tier_bool_exp
+    ): sponsor_Tier_aggregate!
+    """
+    fetch data from the table: "sponsor.Tier" using primary key columns
+    """
+    sponsor_Tier_by_pk(id: uuid!): sponsor_Tier
     """
     fetch data from the table: "system.Configuration"
     """
@@ -41935,6 +42342,970 @@ input schedule_searchEvents_args {
     search: String
 }
 
+"""
+columns and relationships of "sponsor.Tier"
+"""
+type sponsor_Tier {
+    colour: String
+    """
+    An object relationship
+    """
+    conference: conference_Conference!
+    conferenceId: uuid!
+    created_at: timestamptz!
+    description: String!
+    id: uuid!
+    """
+    An array relationship
+    """
+    members(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_TierMember_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_TierMember_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_TierMember_bool_exp
+    ): [sponsor_TierMember!]!
+    """
+    An aggregate relationship
+    """
+    members_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_TierMember_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_TierMember_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_TierMember_bool_exp
+    ): sponsor_TierMember_aggregate!
+    name: String!
+    priority: Int!
+    showLogos: Boolean!
+    size: numeric!
+    """
+    An object relationship
+    """
+    subconference: conference_Subconference
+    subconferenceId: uuid
+    updated_at: timestamptz!
+}
+
+"""
+columns and relationships of "sponsor.TierMember"
+"""
+type sponsor_TierMember {
+    created_at: timestamptz!
+    id: uuid!
+    """
+    An object relationship
+    """
+    item: content_Item!
+    itemId: uuid!
+    priority: Int
+    """
+    An object relationship
+    """
+    tier: sponsor_Tier!
+    tierId: uuid!
+    updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "sponsor.TierMember"
+"""
+type sponsor_TierMember_aggregate {
+    aggregate: sponsor_TierMember_aggregate_fields
+    nodes: [sponsor_TierMember!]!
+}
+
+"""
+aggregate fields of "sponsor.TierMember"
+"""
+type sponsor_TierMember_aggregate_fields {
+    avg: sponsor_TierMember_avg_fields
+    count(columns: [sponsor_TierMember_select_column!], distinct: Boolean): Int!
+    max: sponsor_TierMember_max_fields
+    min: sponsor_TierMember_min_fields
+    stddev: sponsor_TierMember_stddev_fields
+    stddev_pop: sponsor_TierMember_stddev_pop_fields
+    stddev_samp: sponsor_TierMember_stddev_samp_fields
+    sum: sponsor_TierMember_sum_fields
+    var_pop: sponsor_TierMember_var_pop_fields
+    var_samp: sponsor_TierMember_var_samp_fields
+    variance: sponsor_TierMember_variance_fields
+}
+
+"""
+order by aggregate values of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_aggregate_order_by {
+    avg: sponsor_TierMember_avg_order_by
+    count: order_by
+    max: sponsor_TierMember_max_order_by
+    min: sponsor_TierMember_min_order_by
+    stddev: sponsor_TierMember_stddev_order_by
+    stddev_pop: sponsor_TierMember_stddev_pop_order_by
+    stddev_samp: sponsor_TierMember_stddev_samp_order_by
+    sum: sponsor_TierMember_sum_order_by
+    var_pop: sponsor_TierMember_var_pop_order_by
+    var_samp: sponsor_TierMember_var_samp_order_by
+    variance: sponsor_TierMember_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "sponsor.TierMember"
+"""
+input sponsor_TierMember_arr_rel_insert_input {
+    data: [sponsor_TierMember_insert_input!]!
+    """
+    on conflict condition
+    """
+    on_conflict: sponsor_TierMember_on_conflict
+}
+
+"""
+aggregate avg on columns
+"""
+type sponsor_TierMember_avg_fields {
+    priority: Float
+}
+
+"""
+order by avg() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_avg_order_by {
+    priority: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "sponsor.TierMember". All fields are combined with a logical 'AND'.
+"""
+input sponsor_TierMember_bool_exp {
+    _and: [sponsor_TierMember_bool_exp!]
+    _not: sponsor_TierMember_bool_exp
+    _or: [sponsor_TierMember_bool_exp!]
+    created_at: timestamptz_comparison_exp
+    id: uuid_comparison_exp
+    item: content_Item_bool_exp
+    itemId: uuid_comparison_exp
+    priority: Int_comparison_exp
+    tier: sponsor_Tier_bool_exp
+    tierId: uuid_comparison_exp
+    updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "sponsor.TierMember"
+"""
+enum sponsor_TierMember_constraint {
+    """
+    unique or primary key constraint
+    """
+    TierMember_pkey
+    """
+    unique or primary key constraint
+    """
+    TierMember_tierId_itemId_key
+}
+
+"""
+input type for incrementing numeric columns in table "sponsor.TierMember"
+"""
+input sponsor_TierMember_inc_input {
+    priority: Int
+}
+
+"""
+input type for inserting data into table "sponsor.TierMember"
+"""
+input sponsor_TierMember_insert_input {
+    created_at: timestamptz
+    id: uuid
+    item: content_Item_obj_rel_insert_input
+    itemId: uuid
+    priority: Int
+    tier: sponsor_Tier_obj_rel_insert_input
+    tierId: uuid
+    updated_at: timestamptz
+}
+
+"""
+aggregate max on columns
+"""
+type sponsor_TierMember_max_fields {
+    created_at: timestamptz
+    id: uuid
+    itemId: uuid
+    priority: Int
+    tierId: uuid
+    updated_at: timestamptz
+}
+
+"""
+order by max() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_max_order_by {
+    created_at: order_by
+    id: order_by
+    itemId: order_by
+    priority: order_by
+    tierId: order_by
+    updated_at: order_by
+}
+
+"""
+aggregate min on columns
+"""
+type sponsor_TierMember_min_fields {
+    created_at: timestamptz
+    id: uuid
+    itemId: uuid
+    priority: Int
+    tierId: uuid
+    updated_at: timestamptz
+}
+
+"""
+order by min() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_min_order_by {
+    created_at: order_by
+    id: order_by
+    itemId: order_by
+    priority: order_by
+    tierId: order_by
+    updated_at: order_by
+}
+
+"""
+response of any mutation on the table "sponsor.TierMember"
+"""
+type sponsor_TierMember_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [sponsor_TierMember!]!
+}
+
+"""
+on conflict condition type for table "sponsor.TierMember"
+"""
+input sponsor_TierMember_on_conflict {
+    constraint: sponsor_TierMember_constraint!
+    update_columns: [sponsor_TierMember_update_column!]! = []
+    where: sponsor_TierMember_bool_exp
+}
+
+"""
+Ordering options when selecting data from "sponsor.TierMember".
+"""
+input sponsor_TierMember_order_by {
+    created_at: order_by
+    id: order_by
+    item: content_Item_order_by
+    itemId: order_by
+    priority: order_by
+    tier: sponsor_Tier_order_by
+    tierId: order_by
+    updated_at: order_by
+}
+
+"""
+primary key columns input for table: sponsor_TierMember
+"""
+input sponsor_TierMember_pk_columns_input {
+    id: uuid!
+}
+
+"""
+select columns of table "sponsor.TierMember"
+"""
+enum sponsor_TierMember_select_column {
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    itemId
+    """
+    column name
+    """
+    priority
+    """
+    column name
+    """
+    tierId
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+input type for updating data in table "sponsor.TierMember"
+"""
+input sponsor_TierMember_set_input {
+    created_at: timestamptz
+    id: uuid
+    itemId: uuid
+    priority: Int
+    tierId: uuid
+    updated_at: timestamptz
+}
+
+"""
+aggregate stddev on columns
+"""
+type sponsor_TierMember_stddev_fields {
+    priority: Float
+}
+
+"""
+order by stddev() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_stddev_order_by {
+    priority: order_by
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type sponsor_TierMember_stddev_pop_fields {
+    priority: Float
+}
+
+"""
+order by stddev_pop() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_stddev_pop_order_by {
+    priority: order_by
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type sponsor_TierMember_stddev_samp_fields {
+    priority: Float
+}
+
+"""
+order by stddev_samp() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_stddev_samp_order_by {
+    priority: order_by
+}
+
+"""
+aggregate sum on columns
+"""
+type sponsor_TierMember_sum_fields {
+    priority: Int
+}
+
+"""
+order by sum() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_sum_order_by {
+    priority: order_by
+}
+
+"""
+update columns of table "sponsor.TierMember"
+"""
+enum sponsor_TierMember_update_column {
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    itemId
+    """
+    column name
+    """
+    priority
+    """
+    column name
+    """
+    tierId
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+aggregate var_pop on columns
+"""
+type sponsor_TierMember_var_pop_fields {
+    priority: Float
+}
+
+"""
+order by var_pop() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_var_pop_order_by {
+    priority: order_by
+}
+
+"""
+aggregate var_samp on columns
+"""
+type sponsor_TierMember_var_samp_fields {
+    priority: Float
+}
+
+"""
+order by var_samp() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_var_samp_order_by {
+    priority: order_by
+}
+
+"""
+aggregate variance on columns
+"""
+type sponsor_TierMember_variance_fields {
+    priority: Float
+}
+
+"""
+order by variance() on columns of table "sponsor.TierMember"
+"""
+input sponsor_TierMember_variance_order_by {
+    priority: order_by
+}
+
+"""
+aggregated selection of "sponsor.Tier"
+"""
+type sponsor_Tier_aggregate {
+    aggregate: sponsor_Tier_aggregate_fields
+    nodes: [sponsor_Tier!]!
+}
+
+"""
+aggregate fields of "sponsor.Tier"
+"""
+type sponsor_Tier_aggregate_fields {
+    avg: sponsor_Tier_avg_fields
+    count(columns: [sponsor_Tier_select_column!], distinct: Boolean): Int!
+    max: sponsor_Tier_max_fields
+    min: sponsor_Tier_min_fields
+    stddev: sponsor_Tier_stddev_fields
+    stddev_pop: sponsor_Tier_stddev_pop_fields
+    stddev_samp: sponsor_Tier_stddev_samp_fields
+    sum: sponsor_Tier_sum_fields
+    var_pop: sponsor_Tier_var_pop_fields
+    var_samp: sponsor_Tier_var_samp_fields
+    variance: sponsor_Tier_variance_fields
+}
+
+"""
+order by aggregate values of table "sponsor.Tier"
+"""
+input sponsor_Tier_aggregate_order_by {
+    avg: sponsor_Tier_avg_order_by
+    count: order_by
+    max: sponsor_Tier_max_order_by
+    min: sponsor_Tier_min_order_by
+    stddev: sponsor_Tier_stddev_order_by
+    stddev_pop: sponsor_Tier_stddev_pop_order_by
+    stddev_samp: sponsor_Tier_stddev_samp_order_by
+    sum: sponsor_Tier_sum_order_by
+    var_pop: sponsor_Tier_var_pop_order_by
+    var_samp: sponsor_Tier_var_samp_order_by
+    variance: sponsor_Tier_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "sponsor.Tier"
+"""
+input sponsor_Tier_arr_rel_insert_input {
+    data: [sponsor_Tier_insert_input!]!
+    """
+    on conflict condition
+    """
+    on_conflict: sponsor_Tier_on_conflict
+}
+
+"""
+aggregate avg on columns
+"""
+type sponsor_Tier_avg_fields {
+    priority: Float
+    size: Float
+}
+
+"""
+order by avg() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_avg_order_by {
+    priority: order_by
+    size: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "sponsor.Tier". All fields are combined with a logical 'AND'.
+"""
+input sponsor_Tier_bool_exp {
+    _and: [sponsor_Tier_bool_exp!]
+    _not: sponsor_Tier_bool_exp
+    _or: [sponsor_Tier_bool_exp!]
+    colour: String_comparison_exp
+    conference: conference_Conference_bool_exp
+    conferenceId: uuid_comparison_exp
+    created_at: timestamptz_comparison_exp
+    description: String_comparison_exp
+    id: uuid_comparison_exp
+    members: sponsor_TierMember_bool_exp
+    name: String_comparison_exp
+    priority: Int_comparison_exp
+    showLogos: Boolean_comparison_exp
+    size: numeric_comparison_exp
+    subconference: conference_Subconference_bool_exp
+    subconferenceId: uuid_comparison_exp
+    updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "sponsor.Tier"
+"""
+enum sponsor_Tier_constraint {
+    """
+    unique or primary key constraint
+    """
+    Tier_conferenceId_subconferenceId_name_key
+    """
+    unique or primary key constraint
+    """
+    Tier_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "sponsor.Tier"
+"""
+input sponsor_Tier_inc_input {
+    priority: Int
+    size: numeric
+}
+
+"""
+input type for inserting data into table "sponsor.Tier"
+"""
+input sponsor_Tier_insert_input {
+    colour: String
+    conference: conference_Conference_obj_rel_insert_input
+    conferenceId: uuid
+    created_at: timestamptz
+    description: String
+    id: uuid
+    members: sponsor_TierMember_arr_rel_insert_input
+    name: String
+    priority: Int
+    showLogos: Boolean
+    size: numeric
+    subconference: conference_Subconference_obj_rel_insert_input
+    subconferenceId: uuid
+    updated_at: timestamptz
+}
+
+"""
+aggregate max on columns
+"""
+type sponsor_Tier_max_fields {
+    colour: String
+    conferenceId: uuid
+    created_at: timestamptz
+    description: String
+    id: uuid
+    name: String
+    priority: Int
+    size: numeric
+    subconferenceId: uuid
+    updated_at: timestamptz
+}
+
+"""
+order by max() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_max_order_by {
+    colour: order_by
+    conferenceId: order_by
+    created_at: order_by
+    description: order_by
+    id: order_by
+    name: order_by
+    priority: order_by
+    size: order_by
+    subconferenceId: order_by
+    updated_at: order_by
+}
+
+"""
+aggregate min on columns
+"""
+type sponsor_Tier_min_fields {
+    colour: String
+    conferenceId: uuid
+    created_at: timestamptz
+    description: String
+    id: uuid
+    name: String
+    priority: Int
+    size: numeric
+    subconferenceId: uuid
+    updated_at: timestamptz
+}
+
+"""
+order by min() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_min_order_by {
+    colour: order_by
+    conferenceId: order_by
+    created_at: order_by
+    description: order_by
+    id: order_by
+    name: order_by
+    priority: order_by
+    size: order_by
+    subconferenceId: order_by
+    updated_at: order_by
+}
+
+"""
+response of any mutation on the table "sponsor.Tier"
+"""
+type sponsor_Tier_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [sponsor_Tier!]!
+}
+
+"""
+input type for inserting object relation for remote table "sponsor.Tier"
+"""
+input sponsor_Tier_obj_rel_insert_input {
+    data: sponsor_Tier_insert_input!
+    """
+    on conflict condition
+    """
+    on_conflict: sponsor_Tier_on_conflict
+}
+
+"""
+on conflict condition type for table "sponsor.Tier"
+"""
+input sponsor_Tier_on_conflict {
+    constraint: sponsor_Tier_constraint!
+    update_columns: [sponsor_Tier_update_column!]! = []
+    where: sponsor_Tier_bool_exp
+}
+
+"""
+Ordering options when selecting data from "sponsor.Tier".
+"""
+input sponsor_Tier_order_by {
+    colour: order_by
+    conference: conference_Conference_order_by
+    conferenceId: order_by
+    created_at: order_by
+    description: order_by
+    id: order_by
+    members_aggregate: sponsor_TierMember_aggregate_order_by
+    name: order_by
+    priority: order_by
+    showLogos: order_by
+    size: order_by
+    subconference: conference_Subconference_order_by
+    subconferenceId: order_by
+    updated_at: order_by
+}
+
+"""
+primary key columns input for table: sponsor_Tier
+"""
+input sponsor_Tier_pk_columns_input {
+    id: uuid!
+}
+
+"""
+select columns of table "sponsor.Tier"
+"""
+enum sponsor_Tier_select_column {
+    """
+    column name
+    """
+    colour
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    description
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    name
+    """
+    column name
+    """
+    priority
+    """
+    column name
+    """
+    showLogos
+    """
+    column name
+    """
+    size
+    """
+    column name
+    """
+    subconferenceId
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+input type for updating data in table "sponsor.Tier"
+"""
+input sponsor_Tier_set_input {
+    colour: String
+    conferenceId: uuid
+    created_at: timestamptz
+    description: String
+    id: uuid
+    name: String
+    priority: Int
+    showLogos: Boolean
+    size: numeric
+    subconferenceId: uuid
+    updated_at: timestamptz
+}
+
+"""
+aggregate stddev on columns
+"""
+type sponsor_Tier_stddev_fields {
+    priority: Float
+    size: Float
+}
+
+"""
+order by stddev() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_stddev_order_by {
+    priority: order_by
+    size: order_by
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type sponsor_Tier_stddev_pop_fields {
+    priority: Float
+    size: Float
+}
+
+"""
+order by stddev_pop() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_stddev_pop_order_by {
+    priority: order_by
+    size: order_by
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type sponsor_Tier_stddev_samp_fields {
+    priority: Float
+    size: Float
+}
+
+"""
+order by stddev_samp() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_stddev_samp_order_by {
+    priority: order_by
+    size: order_by
+}
+
+"""
+aggregate sum on columns
+"""
+type sponsor_Tier_sum_fields {
+    priority: Int
+    size: numeric
+}
+
+"""
+order by sum() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_sum_order_by {
+    priority: order_by
+    size: order_by
+}
+
+"""
+update columns of table "sponsor.Tier"
+"""
+enum sponsor_Tier_update_column {
+    """
+    column name
+    """
+    colour
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    description
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    name
+    """
+    column name
+    """
+    priority
+    """
+    column name
+    """
+    showLogos
+    """
+    column name
+    """
+    size
+    """
+    column name
+    """
+    subconferenceId
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+aggregate var_pop on columns
+"""
+type sponsor_Tier_var_pop_fields {
+    priority: Float
+    size: Float
+}
+
+"""
+order by var_pop() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_var_pop_order_by {
+    priority: order_by
+    size: order_by
+}
+
+"""
+aggregate var_samp on columns
+"""
+type sponsor_Tier_var_samp_fields {
+    priority: Float
+    size: Float
+}
+
+"""
+order by var_samp() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_var_samp_order_by {
+    priority: order_by
+    size: order_by
+}
+
+"""
+aggregate variance on columns
+"""
+type sponsor_Tier_variance_fields {
+    priority: Float
+    size: Float
+}
+
+"""
+order by variance() on columns of table "sponsor.Tier"
+"""
+input sponsor_Tier_variance_order_by {
+    priority: order_by
+    size: order_by
+}
+
 type subscription_root {
     """
     fetch data from the table: "Email"
@@ -46467,6 +47838,114 @@ type subscription_root {
         """
         where: schedule_Event_bool_exp
     ): schedule_Event_aggregate!
+    """
+    fetch data from the table: "sponsor.Tier"
+    """
+    sponsor_Tier(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_Tier_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_Tier_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_Tier_bool_exp
+    ): [sponsor_Tier!]!
+    """
+    fetch data from the table: "sponsor.TierMember"
+    """
+    sponsor_TierMember(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_TierMember_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_TierMember_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_TierMember_bool_exp
+    ): [sponsor_TierMember!]!
+    """
+    fetch aggregated fields from the table: "sponsor.TierMember"
+    """
+    sponsor_TierMember_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_TierMember_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_TierMember_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_TierMember_bool_exp
+    ): sponsor_TierMember_aggregate!
+    """
+    fetch data from the table: "sponsor.TierMember" using primary key columns
+    """
+    sponsor_TierMember_by_pk(id: uuid!): sponsor_TierMember
+    """
+    fetch aggregated fields from the table: "sponsor.Tier"
+    """
+    sponsor_Tier_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [sponsor_Tier_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [sponsor_Tier_order_by!]
+        """
+        filter the rows returned
+        """
+        where: sponsor_Tier_bool_exp
+    ): sponsor_Tier_aggregate!
+    """
+    fetch data from the table: "sponsor.Tier" using primary key columns
+    """
+    sponsor_Tier_by_pk(id: uuid!): sponsor_Tier
     """
     fetch data from the table: "system.Configuration"
     """

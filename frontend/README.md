@@ -15,9 +15,7 @@ React web app that forms the main Midspace frontend.
 1. `cp .env.example .env`
 1. Configure your `.env` file according to the [Frontend
    Configuration](#frontend-configuration) section below.
-1. Run the VSCode task `Single -- GraphQL Codegen` and select `frontend` (Hasura must be running when you do this).
-1. Build and test the system locally (see [Local Development](#local-development)
-   below).
+1. Return to the main README for steps to generate GraphQL client code and start your local working copy.
 1. **Production**: If using Netlify, then:
    - Once you have set up Hasura Cloud, create a Netlify account and
      follow the steps below.
@@ -42,9 +40,6 @@ need to regenerate the GraphQL code. You can do this using the VSCode Task
 `Single -- GraphQL Codegen` and selecting `frontend` (Hasura must be running).
 
 ## Local Development
-
-See root README _Local Development_ instructions for local development for
-which tasks to run.
 
 If the environment configuration changes, or for example, the `package.json`
 commands change, then you will need to restart tasks for this frontend.

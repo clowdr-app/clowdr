@@ -94,6 +94,18 @@ Midspace relies on various cloud services, which will need to be configured for 
    ReadMe](services/realtime/README.md#Setting-up)
 1. Follow the Frontend setup: [Midspace Frontend
    ReadMe](frontend/README.md#Setting-up)
+1. Generate all GraphQL client code
+   1. `cd packages/shared/graphql`
+   1. `cp .env.example .env`
+   1. Set environment variable values in `.env` as per other parts of Midspace,
+      likely just `HASURA_ADMIN_SECRET`.
+   1. Run the VSCode task `All -- GraphQL Codegen`. If there are errors, check
+      that `.env` files have been populated in all relevant subdirectories as
+      described in previous steps.
+
+## Local Development &mdash; Final Steps
+
+Once you have finished setup, it's easy to run the entire environment with a single VSCode task: "Run All -- Local Development". This task starts PacketRiot tunnels as well as all Midspace services.
 1. Once the system is up and running, open the app in your browser, log in,
    then navigate to `https://<your-domain>/su` and follow the instructions to
    set up a superuser.
@@ -109,10 +121,6 @@ Midspace relies on various cloud services, which will need to be configured for 
    - Fill out values for all available keys.
    - Refer to the `description` field of each key (in `system.ConfigurationKey`)
      for expected values.
-
-## Local Development
-
-Once you have finished setup, it's easy to run the entire environment with a single VSCode task: "Run All -- Local Development". This task starts PacketRiot tunnels as well as all Midspace services.
 
 If you alter environment config, Docker Compose config, etc., then all tasks must be restarted. Tasks can be killed in VSCode using Ctrl+C or by closing the terminal window they are running in. To kill Docker containers, you will need to manually terminate the container (e.g. by pressing the stop button in Docker Desktop)
 

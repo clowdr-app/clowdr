@@ -16,7 +16,6 @@ It is built with Nest.js and the AWS CDK.
 1. Install npm packages: `npm i`
 1. `cp .env.example .env`
 1. Configure your `.env` file according to the embedded instructions. You will need various outputs from the AWS CDK deployment.
-1. Run the `Single -- GraphQL Codegen` task in VSCode and select `service-playout` to generate the GraphQL query code (Hasura must be running when you do this).
 
 Now return to the main README.
 

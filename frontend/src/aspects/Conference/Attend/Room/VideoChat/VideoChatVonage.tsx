@@ -12,7 +12,7 @@ import { GetRoomVonageSessionIdDocument } from "../../../../../generated/graphql
 import { useRealTime } from "../../../../Hooks/useRealTime";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import { useGetAccessToken } from "../Vonage/useGetAccessToken";
-import { RecordingAlert } from "./RecordingAlert";
+import type { VonageRoom } from "../Vonage/VonageRoom";
 
 gql`
     query GetRoomVonageSessionId($roomId: uuid!) {
@@ -74,21 +74,17 @@ export function VideoChatVonage({
 
     return publicVonageSessionId && sharedRoomContext ? (
         <>
-            <portals.OutPortal
+            <portals.OutPortal<typeof VonageRoom>
                 node={sharedRoomContext.vonagePortalNode}
                 vonageSessionId={publicVonageSessionId}
                 disable={!enable}
                 getAccessToken={getAccessToken}
+                completeGetAccessToken={completeGetAccessToken}
                 isBackstageRoom={false}
                 canControlRecording={(!eventId && !room.item) || isPresenterOrChairOrOrganizer}
                 roomId={room.id}
                 eventId={eventId}
-            />
-            <RecordingAlert
-                isOpen={completeGetAccessToken.current !== undefined}
                 eventIsFuture={eventIsFuture}
-                onAccept={completeGetAccessToken.current?.resolve}
-                onReject={completeGetAccessToken.current?.reject}
             />
         </>
     ) : (

@@ -12,6 +12,7 @@ import {
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
+import type { VonageRoom } from "../Vonage/VonageRoom";
 import { BackstageControls } from "./Controls/BackstageControls";
 
 gql`
@@ -131,7 +132,7 @@ export function EventVonageRoomInner({
             {!isRaiseHandPreJoin ? <BackstageControls event={event} hlsUri={hlsUri} /> : undefined}
             <Box w="100%">
                 {event.eventVonageSession && sharedRoomContext ? (
-                    <portals.OutPortal
+                    <portals.OutPortal<typeof VonageRoom>
                         node={sharedRoomContext.vonagePortalNode}
                         eventId={event.id}
                         vonageSessionId={event.eventVonageSession.sessionId}
@@ -144,7 +145,6 @@ export function EventVonageRoomInner({
                         completeJoinRef={completeJoinRef}
                         onLeave={onLeave}
                         canControlRecording={isPresenterOrChairOrOrganizer}
-                        isPresenterOrChairOrOrganizer={isPresenterOrChairOrOrganizer}
                     />
                 ) : (
                     <>No room session available.</>

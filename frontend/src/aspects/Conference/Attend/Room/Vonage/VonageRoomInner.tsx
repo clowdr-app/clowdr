@@ -1,32 +1,28 @@
-import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { AppLayoutContext } from "../../../../App/AppLayoutContext";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { useAWSTranscription } from "../Transcription/AWSTranscribe";
 import { AutoplayAlert } from "../VideoChat/AutoplayAlert";
+import { RecordingAlert } from "./Components/RecordingAlert";
+import { InCall } from "./InCall";
 import { PreJoin } from "./PreJoin";
 import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
 import { useVonageRoom, VonageRoomStateActionType } from "./State/VonageRoomProvider";
-import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
 export function VonageRoomInner({
     stop,
-    joinRoomButtonText,
-    requireMicrophoneOrCamera,
-    cancelJoin,
     roomId,
     eventId,
 }: {
     stop: boolean;
-    joinRoomButtonText?: string;
-    requireMicrophoneOrCamera: boolean;
     cancelJoin?: () => void;
     roomId?: string;
     eventId?: string;
 }): JSX.Element {
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
-    const { state, dispatch } = useVonageRoom();
+    const { state, dispatch, settings } = useVonageRoom();
     const { camera, connected, joining, vonage, leaveRoom } = useContext(VonageComputedStateContext);
 
     const registrant = useCurrentRegistrant();
@@ -45,9 +41,10 @@ export function VonageRoomInner({
     );
     useAWSTranscription(camera, onPartialTranscript, onCompleteTranscript);
 
-    const preJoin = useMemo(
-        () => (connected ? undefined : <PreJoin cameraPreviewRef={cameraPreviewRef} />),
-        [connected]
+    const uiEl = useMemo(
+        () =>
+            connected ? <InCall /> : <PreJoin cameraPreviewRef={cameraPreviewRef} roomId={roomId} eventId={eventId} />,
+        [connected, roomId, eventId]
     );
 
     // Camera / microphone enable/disable control
@@ -103,38 +100,18 @@ export function VonageRoomInner({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stop]);
 
-    const controlBarBgColor = useColorModeValue(
-        "RoomControlBar.backgroundColor-light",
-        "RoomControlBar.backgroundColor-dark"
-    );
-
     const { mainPaneHeight } = useContext(AppLayoutContext);
 
     return (
-        <Box width="100%" isolation="isolate" h={`${mainPaneHeight}px`}>
+        <Box w="100%" isolation="isolate" h={`${mainPaneHeight}px`}>
             <AutoplayAlert connected={connected} />
-            <Flex
-                mt={connected ? undefined : 4}
-                justifyContent="center"
-                alignItems="center"
-                flexWrap="wrap"
-                w="100%"
-                pos={connected ? "absolute" : undefined}
-                bottom={0}
-                left={0}
-                bgColor={connected ? controlBarBgColor : undefined}
-                zIndex={2}
-            >
-                {preJoin}
-                {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
-                <VonageRoomControlBar
-                    onCancelJoinRoom={cancelJoin}
-                    joinRoomButtonText={joinRoomButtonText}
-                    requireMicrophoneOrCamera={requireMicrophoneOrCamera}
-                    roomId={roomId}
-                    eventId={eventId}
-                />
-            </Flex>
+            <RecordingAlert
+                isOpen={settings.completeGetAccessToken?.current !== undefined}
+                eventIsFuture={settings.eventIsFuture}
+                onAccept={settings.completeGetAccessToken?.current?.resolve}
+                onReject={settings.completeGetAccessToken?.current?.reject}
+            />
+            {uiEl}
         </Box>
     );
 }

@@ -26,6 +26,7 @@ import {
     TagLeftIcon,
     Text,
     Tooltip,
+    useColorModeValue,
     useDisclosure,
     VStack,
     WrapItem,
@@ -63,17 +64,10 @@ gql`
 
 export function VonageRoomControlBar({
     onCancelJoinRoom,
-    joinRoomButtonText = "Join Room",
-    joiningRoomButtonText = "Waiting to be admitted",
-    requireMicrophoneOrCamera,
-
     roomId,
     eventId,
 }: {
     onCancelJoinRoom?: () => void;
-    joinRoomButtonText?: string;
-    joiningRoomButtonText?: string;
-    requireMicrophoneOrCamera: boolean;
     roomId?: string;
     eventId?: string;
 }): JSX.Element {
@@ -458,6 +452,11 @@ export function VonageRoomControlBar({
         };
     }, [chatId, globalChatState]);
 
+    const controlBarBgColor = useColorModeValue(
+        "RoomControlBar.backgroundColor-light",
+        "RoomControlBar.backgroundColor-dark"
+    );
+
     const [subtitlesVisible, setSubtitlesVisible] = useState<boolean>(false);
     return (
         <>
@@ -474,6 +473,7 @@ export function VonageRoomControlBar({
                 gridRowGap={2}
                 gridColumnGap={2}
                 w={vonage.state.type === StateType.Connected ? "100%" : "auto"}
+                bgColor={controlBarBgColor}
             >
                 <ControlBarButtonGroup
                     label="Devices"
@@ -485,7 +485,7 @@ export function VonageRoomControlBar({
                         text="Settings"
                         isLoading={isOpening}
                         icon="cog"
-                        onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
+                        onClick={() => onOpen(true, !joining || !settings.requireMicrophoneOrCamera)}
                         isEnabled={!joining}
                     />
                     <ControlBarButton
@@ -609,7 +609,7 @@ export function VonageRoomControlBar({
                 ) : (
                     <Tooltip
                         label={
-                            requireMicrophoneOrCamera &&
+                            settings.requireMicrophoneOrCamera &&
                             !state.microphoneIntendedEnabled &&
                             !state.cameraIntendedEnabled
                                 ? "Microphone or camera required"
@@ -628,7 +628,7 @@ export function VonageRoomControlBar({
                                 isLoading={!onCancelJoinRoom && joining}
                                 isDisabled={
                                     !joining &&
-                                    requireMicrophoneOrCamera &&
+                                    settings.requireMicrophoneOrCamera &&
                                     !state.microphoneIntendedEnabled &&
                                     !state.cameraIntendedEnabled
                                 }
@@ -640,7 +640,9 @@ export function VonageRoomControlBar({
                                 <HStack alignItems="flex-end">
                                     {joining ? <Spinner size="sm" speed="2.5s" thickness="4px" /> : undefined}
                                     <chakra.span fontSize="xl">
-                                        {joining ? joiningRoomButtonText : joinRoomButtonText}
+                                        {joining
+                                            ? settings.joiningRoomButtonText ?? "Waiting to be admitted"
+                                            : settings.joinRoomButtonText ?? "Join room"}
                                     </chakra.span>
                                 </HStack>
                                 {joining ? (

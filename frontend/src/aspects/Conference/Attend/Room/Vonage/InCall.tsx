@@ -16,7 +16,7 @@ import { StateType } from "./State/VonageGlobalState";
 import type { AvailableStream } from "./State/VonageLayoutProvider";
 import { useVonageLayout } from "./State/VonageLayoutProvider";
 import { useVonageRoom } from "./State/VonageRoomProvider";
-import VideoChatVideoPlayer from "./VideoPlayback/VideoChatVideoPlayer";
+import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
 export function InCall(): JSX.Element {
     const registrant = useCurrentRegistrant();
@@ -318,7 +318,7 @@ export function InCall(): JSX.Element {
 
     return (
         <>
-            {connected ? <VideoChatVideoPlayer /> : undefined}
+            {/* {connected ? <VideoChatVideoPlayer /> : undefined} */}
             {connected ? (
                 <Box position="relative" width="100%" zIndex={1}>
                     <Layout
@@ -326,6 +326,7 @@ export function InCall(): JSX.Element {
                         allowedToControlLayout={settings.canControlRecording}
                         streamActivities={streamActivities}
                     />
+                    <VonageRoomControlBar />
                 </Box>
             ) : undefined}
             {[...streamPortalNodes.values()].map((x) => x.element)}

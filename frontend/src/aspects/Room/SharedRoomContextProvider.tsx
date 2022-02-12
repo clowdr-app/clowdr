@@ -10,8 +10,8 @@ const VonageRoom = React.lazy(() =>
 );
 
 function useValue() {
-    const vonageNode = useMemo(() => portals.createHtmlPortalNode(), []);
-    const chimeNode = useMemo(() => portals.createHtmlPortalNode(), []);
+    const vonageNode = useMemo(() => portals.createHtmlPortalNode<typeof VonageRoom>(), []);
+    const chimeNode = useMemo(() => portals.createHtmlPortalNode<typeof ChimeRoom>(), []);
 
     const ctx = useMemo(() => ({ vonagePortalNode: vonageNode, chimePortalNode: chimeNode }), [vonageNode, chimeNode]);
 
@@ -37,6 +37,7 @@ export function SharedRoomContextProvider({ children }: { children: JSX.Element 
                         isRaiseHandWaiting={undefined}
                         requireMicrophoneOrCamera={false}
                         completeJoinRef={undefined}
+                        completeGetAccessToken={undefined}
                         canControlRecording={false}
                         layout={undefined}
                     />

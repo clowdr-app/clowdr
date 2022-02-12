@@ -125,6 +125,19 @@ export interface VonageRoomSettings {
     isBackstageRoom: boolean;
     canControlRecording: boolean;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
+    joinRoomButtonText?: string;
+    joiningRoomButtonText?: string;
+    requireMicrophoneOrCamera: boolean;
+    completeGetAccessToken?: React.MutableRefObject<
+        | {
+              resolve: () => void;
+              reject: (reason?: any) => void;
+          }
+        | undefined
+    >;
+    eventIsFuture: boolean;
+    roomId?: string;
+    eventId?: string;
 }
 
 interface VonageRoomContext {
@@ -141,6 +154,10 @@ const defaultVonageRoomSettings: VonageRoomSettings = {
     onPermissionsProblem: () => {
         //
     },
+    joinRoomButtonText: undefined,
+    joiningRoomButtonText: undefined,
+    requireMicrophoneOrCamera: false,
+    eventIsFuture: false,
 };
 
 export const VonageContext = React.createContext<VonageRoomContext>({
@@ -239,11 +256,31 @@ export function VonageRoomStateProvider({
     onPermissionsProblem,
     isBackstageRoom,
     canControlRecording,
+    joinRoomButtonText,
+    joiningRoomButtonText,
+    requireMicrophoneOrCamera,
+    completeGetAccessToken,
+    eventIsFuture,
+    eventId,
+    roomId,
     children,
 }: {
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     isBackstageRoom: boolean;
     canControlRecording: boolean;
+    joinRoomButtonText?: string;
+    joiningRoomButtonText?: string;
+    requireMicrophoneOrCamera: boolean;
+    completeGetAccessToken?: React.MutableRefObject<
+        | {
+              resolve: () => void;
+              reject: (reason?: any) => void;
+          }
+        | undefined
+    >;
+    eventIsFuture?: boolean;
+    eventId?: string;
+    roomId?: string;
     children: JSX.Element;
 }): JSX.Element {
     const [preferredCamera, setPreferredCamera] = useRestorableState<string | null>(
@@ -505,12 +542,26 @@ export function VonageRoomStateProvider({
                     canControlRecording,
                     isBackstageRoom,
                     onPermissionsProblem,
+                    joinRoomButtonText,
+                    joiningRoomButtonText,
+                    requireMicrophoneOrCamera,
+                    completeGetAccessToken,
+                    eventIsFuture,
+                    eventId,
+                    roomId,
                 }
             ),
         [
             canControlRecording,
             isBackstageRoom,
             onPermissionsProblem,
+            joinRoomButtonText,
+            joiningRoomButtonText,
+            requireMicrophoneOrCamera,
+            completeGetAccessToken,
+            eventIsFuture,
+            eventId,
+            roomId,
             maxSimultaneousScreenSharesResponse?.data?.conference_Configuration_by_pk?.value,
         ]
     );

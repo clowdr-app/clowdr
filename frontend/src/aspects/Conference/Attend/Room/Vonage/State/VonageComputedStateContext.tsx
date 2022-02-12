@@ -37,6 +37,7 @@ interface Outputs {
     onTranscriptRef: React.MutableRefObject<((data: TranscriptData) => void) | undefined>;
     joinRoom: () => Promise<void>;
     leaveRoom: () => Promise<void>;
+    cancelJoin?: () => void;
 }
 
 function useValue({
@@ -281,6 +282,7 @@ function useValue({
             joining,
             joinRoom,
             leaveRoom,
+            cancelJoin,
             isRecordingActive: recordingState.isRecordingActive,
             onTranscriptRef: transcript.onTranscriptRef,
         }),
@@ -294,6 +296,7 @@ function useValue({
             joining,
             joinRoom,
             leaveRoom,
+            cancelJoin,
             recordingState.isRecordingActive,
             transcript.onTranscriptRef,
         ]

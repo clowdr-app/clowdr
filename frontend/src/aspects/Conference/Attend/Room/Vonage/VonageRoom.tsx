@@ -56,8 +56,10 @@ export function VonageRoom({
     isRaiseHandWaiting,
     requireMicrophoneOrCamera = false,
     completeJoinRef,
+    completeGetAccessToken,
     onLeave,
     canControlRecording,
+    eventIsFuture,
 }: {
     roomId: string | null;
     eventId: string | null;
@@ -69,9 +71,17 @@ export function VonageRoom({
     isRaiseHandWaiting?: boolean;
     requireMicrophoneOrCamera?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
+    completeGetAccessToken?: React.MutableRefObject<
+        | {
+              resolve: () => void;
+              reject: (reason?: any) => void;
+          }
+        | undefined
+    >;
     onLeave?: () => void;
     canControlRecording: boolean;
     layout?: VonageLayout;
+    eventIsFuture?: boolean;
 }): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();
 
@@ -119,6 +129,15 @@ export function VonageRoom({
             onPermissionsProblem={onPermissionsProblem}
             isBackstageRoom={isBackstageRoom}
             canControlRecording={canControlRecording}
+            joinRoomButtonText={
+                isBackstageRoom ? (raiseHandPrejoinEventId ? "I'm ready" : "Connect to the backstage") : undefined
+            }
+            joiningRoomButtonText={undefined}
+            requireMicrophoneOrCamera={requireMicrophoneOrCamera}
+            completeGetAccessToken={completeGetAccessToken}
+            eventIsFuture={eventIsFuture}
+            eventId={eventId ?? undefined}
+            roomId={roomId ?? undefined}
         >
             <ChatProfileModalProvider>
                 <VonageLayoutProvider vonageSessionId={vonageSessionId}>
@@ -164,15 +183,6 @@ export function VonageRoom({
                             >
                                 <VonageRoomInner
                                     stop={!roomCouldBeInUse || disable}
-                                    requireMicrophoneOrCamera={requireMicrophoneOrCamera}
-                                    joinRoomButtonText={
-                                        isBackstageRoom
-                                            ? raiseHandPrejoinEventId
-                                                ? "I'm ready"
-                                                : "Connect to the backstage"
-                                            : undefined
-                                    }
-                                    cancelJoin={cancelJoin}
                                     roomId={roomId ?? undefined}
                                     eventId={eventId ?? undefined}
                                 />

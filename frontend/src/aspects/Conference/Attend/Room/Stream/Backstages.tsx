@@ -23,6 +23,7 @@ import type { Room_EventSummaryFragment } from "../../../../../generated/graphql
 import { Room_Mode_Enum } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Hooks/useRealTime";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
+import type { VonageRoom } from "../Vonage/VonageRoom";
 import Backstage from "./Backstage";
 import { isEventNow, isEventSoon } from "./isEventAt";
 
@@ -146,11 +147,11 @@ export default function Backstages({
         () =>
             showBackstage && !selectedEventId && sharedRoomContext ? (
                 <Box display="none">
-                    <portals.OutPortal
+                    <portals.OutPortal<typeof VonageRoom>
                         eventId={null}
                         node={sharedRoomContext.vonagePortalNode}
                         vonageSessionId=""
-                        getAccessToken={() => ""}
+                        getAccessToken={async () => ""}
                         disable={true}
                         isBackstageRoom={true}
                     />

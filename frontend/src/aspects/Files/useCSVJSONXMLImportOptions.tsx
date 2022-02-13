@@ -40,10 +40,11 @@ export type ImportOptions = {
           quoteChar: string;
           escapeChar: string;
           hasHeaders: boolean;
+          skipFirstLine?: boolean;
       }
 );
 
-function defaultImportOptions(fileInfo: FileInfo): ImportOptions {
+function defaultImportOptions(fileInfo: FileInfo, defaultSkipFirstLine: boolean): ImportOptions {
     switch (fileInfo.type) {
         case "CSV":
             return {
@@ -56,6 +57,7 @@ function defaultImportOptions(fileInfo: FileInfo): ImportOptions {
                 quoteChar: '"',
                 hasHeaders: true,
                 encoding: "utf-8",
+                skipFirstLine: defaultSkipFirstLine,
             };
         case "JSON":
             return { file: fileInfo.file, type: "JSON", encoding: "utf-8" };
@@ -67,13 +69,18 @@ function defaultImportOptions(fileInfo: FileInfo): ImportOptions {
 function ImportOptionsPanel({
     options,
     setOptions,
+    defaultSkipFirstLine = false,
 }: {
     options: ImportOptions;
     setOptions: (newOptions: ImportOptions) => void;
+    defaultSkipFirstLine?: boolean;
 }): JSX.Element {
-    const defaultOpts = defaultImportOptions({
-        ...options,
-    });
+    const defaultOpts = defaultImportOptions(
+        {
+            ...options,
+        },
+        defaultSkipFirstLine
+    );
     switch (options.type) {
         case "CSV":
             assert.truthy(defaultOpts.type === "CSV");
@@ -238,20 +245,26 @@ function ImportOptionsPanel({
     }
 }
 
-export default function useCSVJSONXMLImportOptions(fileInfos: FileInfo[]): {
+export default function useCSVJSONXMLImportOptions(
+    fileInfos: FileInfo[],
+    defaultSkipFirstLine = false
+): {
     importOptions: ImportOptions[];
     replaceImportOptions: (newOptions: ImportOptions[]) => void;
     openOptionsButton: JSX.Element;
     optionsComponent: JSX.Element;
+    defaultSkipFirstLine?: boolean;
 } {
-    const [importOptions, setImportOptions] = useState<ImportOptions[]>(fileInfos.map(defaultImportOptions));
+    const [importOptions, setImportOptions] = useState<ImportOptions[]>(
+        fileInfos.map((x) => defaultImportOptions(x, defaultSkipFirstLine))
+    );
     const [cachedOptions, setCachedOptions] = useState<ImportOptions[]>(importOptions);
     const [selectedFileIndex, setSelectedFileIndex] = useState<number>(-1);
 
     useEffect(() => {
-        setImportOptions(fileInfos.map(defaultImportOptions));
+        setImportOptions(fileInfos.map((x) => defaultImportOptions(x, defaultSkipFirstLine)));
         setSelectedFileIndex(0);
-    }, [fileInfos]);
+    }, [fileInfos, defaultSkipFirstLine]);
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const selectedOptions =
@@ -271,7 +284,7 @@ export default function useCSVJSONXMLImportOptions(fileInfos: FileInfo[]): {
             replaceImportOptions: setImportOptions,
             openOptionsButton: (
                 <Button disabled={importOptions.length === 0} onClick={onOpen}>
-                    Importer options
+                    File format options
                 </Button>
             ),
             optionsComponent: (
@@ -279,7 +292,7 @@ export default function useCSVJSONXMLImportOptions(fileInfos: FileInfo[]): {
                     <Modal scrollBehavior="inside" isCentered isOpen={isOpen} onClose={onClose}>
                         <ModalOverlay />
                         <ModalContent>
-                            <ModalHeader>Importer Options</ModalHeader>
+                            <ModalHeader>File Format Options</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody>
                                 <Select
@@ -306,13 +319,14 @@ export default function useCSVJSONXMLImportOptions(fileInfos: FileInfo[]): {
                                                     return newOptions;
                                                 });
                                             }}
+                                            defaultSkipFirstLine={defaultSkipFirstLine}
                                         />
                                     )}
                                 </Box>
                             </ModalBody>
 
                             <ModalFooter>
-                                <Button colorScheme="pink" mr={3} onClick={onClose}>
+                                <Button colorScheme="PrimaryActionButton" mr={3} onClick={onClose}>
                                     Done
                                 </Button>
                             </ModalFooter>
@@ -321,6 +335,15 @@ export default function useCSVJSONXMLImportOptions(fileInfos: FileInfo[]): {
                 </>
             ),
         }),
-        [cachedOptions, importOptions, isOpen, onClose, onOpen, selectedFileIndex, selectedOptions]
+        [
+            cachedOptions,
+            importOptions,
+            isOpen,
+            onClose,
+            onOpen,
+            selectedFileIndex,
+            selectedOptions,
+            defaultSkipFirstLine,
+        ]
     );
 }

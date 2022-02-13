@@ -1260,7 +1260,7 @@ function EditableScheduleTable(): JSX.Element {
             {
                 render: function ImportButton(_selectedData) {
                     return (
-                        <LinkButton colorScheme="purple" to={`${conferencePath}/manage/import/schedule`}>
+                        <LinkButton colorScheme="purple" to={`${conferencePath}/manage/import/program`}>
                             Import
                         </LinkButton>
                     );

@@ -17042,6 +17042,819 @@ enum job_queues_CustomEmailJob_update_column {
 }
 
 """
+columns and relationships of "job_queues.ImportJob"
+"""
+type job_queues_ImportJob {
+    completed_at: timestamptz
+    """
+    An object relationship
+    """
+    conference: conference_Conference!
+    conferenceId: uuid!
+    createdBy: uuid
+    created_at: timestamptz!
+    """
+    An object relationship
+    """
+    creator: registrant_Registrant
+    data(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb!
+    errors(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb
+    id: uuid!
+    options(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb!
+    """
+    An array relationship
+    """
+    outputs(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJobOutput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJobOutput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJobOutput_bool_exp
+    ): [job_queues_ImportJobOutput!]!
+    """
+    An aggregate relationship
+    """
+    outputs_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJobOutput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJobOutput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJobOutput_bool_exp
+    ): job_queues_ImportJobOutput_aggregate!
+    progress: Int!
+    progressMaximum: Int!
+    status: String!
+    """
+    An object relationship
+    """
+    subconference: conference_Subconference
+    subconferenceId: uuid
+    updated_at: timestamptz!
+}
+
+"""
+columns and relationships of "job_queues.ImportJobOutput"
+"""
+type job_queues_ImportJobOutput {
+    created_at: timestamptz!
+    id: uuid!
+    jobId: uuid!
+    name: String!
+    updated_at: timestamptz!
+    value(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb!
+}
+
+"""
+aggregated selection of "job_queues.ImportJobOutput"
+"""
+type job_queues_ImportJobOutput_aggregate {
+    aggregate: job_queues_ImportJobOutput_aggregate_fields
+    nodes: [job_queues_ImportJobOutput!]!
+}
+
+"""
+aggregate fields of "job_queues.ImportJobOutput"
+"""
+type job_queues_ImportJobOutput_aggregate_fields {
+    count(columns: [job_queues_ImportJobOutput_select_column!], distinct: Boolean): Int!
+    max: job_queues_ImportJobOutput_max_fields
+    min: job_queues_ImportJobOutput_min_fields
+}
+
+"""
+order by aggregate values of table "job_queues.ImportJobOutput"
+"""
+input job_queues_ImportJobOutput_aggregate_order_by {
+    count: order_by
+    max: job_queues_ImportJobOutput_max_order_by
+    min: job_queues_ImportJobOutput_min_order_by
+}
+
+"""
+append existing jsonb value of filtered columns with new jsonb value
+"""
+input job_queues_ImportJobOutput_append_input {
+    value: jsonb
+}
+
+"""
+input type for inserting array relation for remote table "job_queues.ImportJobOutput"
+"""
+input job_queues_ImportJobOutput_arr_rel_insert_input {
+    data: [job_queues_ImportJobOutput_insert_input!]!
+    """
+    on conflict condition
+    """
+    on_conflict: job_queues_ImportJobOutput_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "job_queues.ImportJobOutput". All fields are combined with a logical 'AND'.
+"""
+input job_queues_ImportJobOutput_bool_exp {
+    _and: [job_queues_ImportJobOutput_bool_exp!]
+    _not: job_queues_ImportJobOutput_bool_exp
+    _or: [job_queues_ImportJobOutput_bool_exp!]
+    created_at: timestamptz_comparison_exp
+    id: uuid_comparison_exp
+    jobId: uuid_comparison_exp
+    name: String_comparison_exp
+    updated_at: timestamptz_comparison_exp
+    value: jsonb_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "job_queues.ImportJobOutput"
+"""
+enum job_queues_ImportJobOutput_constraint {
+    """
+    unique or primary key constraint
+    """
+    ImportJobOutput_jobId_name_key
+    """
+    unique or primary key constraint
+    """
+    ImportJobOutput_pkey
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input job_queues_ImportJobOutput_delete_at_path_input {
+    value: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input job_queues_ImportJobOutput_delete_elem_input {
+    value: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input job_queues_ImportJobOutput_delete_key_input {
+    value: String
+}
+
+"""
+input type for inserting data into table "job_queues.ImportJobOutput"
+"""
+input job_queues_ImportJobOutput_insert_input {
+    created_at: timestamptz
+    id: uuid
+    jobId: uuid
+    name: String
+    updated_at: timestamptz
+    value: jsonb
+}
+
+"""
+aggregate max on columns
+"""
+type job_queues_ImportJobOutput_max_fields {
+    created_at: timestamptz
+    id: uuid
+    jobId: uuid
+    name: String
+    updated_at: timestamptz
+}
+
+"""
+order by max() on columns of table "job_queues.ImportJobOutput"
+"""
+input job_queues_ImportJobOutput_max_order_by {
+    created_at: order_by
+    id: order_by
+    jobId: order_by
+    name: order_by
+    updated_at: order_by
+}
+
+"""
+aggregate min on columns
+"""
+type job_queues_ImportJobOutput_min_fields {
+    created_at: timestamptz
+    id: uuid
+    jobId: uuid
+    name: String
+    updated_at: timestamptz
+}
+
+"""
+order by min() on columns of table "job_queues.ImportJobOutput"
+"""
+input job_queues_ImportJobOutput_min_order_by {
+    created_at: order_by
+    id: order_by
+    jobId: order_by
+    name: order_by
+    updated_at: order_by
+}
+
+"""
+response of any mutation on the table "job_queues.ImportJobOutput"
+"""
+type job_queues_ImportJobOutput_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [job_queues_ImportJobOutput!]!
+}
+
+"""
+on conflict condition type for table "job_queues.ImportJobOutput"
+"""
+input job_queues_ImportJobOutput_on_conflict {
+    constraint: job_queues_ImportJobOutput_constraint!
+    update_columns: [job_queues_ImportJobOutput_update_column!]! = []
+    where: job_queues_ImportJobOutput_bool_exp
+}
+
+"""
+Ordering options when selecting data from "job_queues.ImportJobOutput".
+"""
+input job_queues_ImportJobOutput_order_by {
+    created_at: order_by
+    id: order_by
+    jobId: order_by
+    name: order_by
+    updated_at: order_by
+    value: order_by
+}
+
+"""
+primary key columns input for table: job_queues_ImportJobOutput
+"""
+input job_queues_ImportJobOutput_pk_columns_input {
+    id: uuid!
+}
+
+"""
+prepend existing jsonb value of filtered columns with new jsonb value
+"""
+input job_queues_ImportJobOutput_prepend_input {
+    value: jsonb
+}
+
+"""
+select columns of table "job_queues.ImportJobOutput"
+"""
+enum job_queues_ImportJobOutput_select_column {
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    jobId
+    """
+    column name
+    """
+    name
+    """
+    column name
+    """
+    updated_at
+    """
+    column name
+    """
+    value
+}
+
+"""
+input type for updating data in table "job_queues.ImportJobOutput"
+"""
+input job_queues_ImportJobOutput_set_input {
+    created_at: timestamptz
+    id: uuid
+    jobId: uuid
+    name: String
+    updated_at: timestamptz
+    value: jsonb
+}
+
+"""
+update columns of table "job_queues.ImportJobOutput"
+"""
+enum job_queues_ImportJobOutput_update_column {
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    jobId
+    """
+    column name
+    """
+    name
+    """
+    column name
+    """
+    updated_at
+    """
+    column name
+    """
+    value
+}
+
+"""
+aggregated selection of "job_queues.ImportJob"
+"""
+type job_queues_ImportJob_aggregate {
+    aggregate: job_queues_ImportJob_aggregate_fields
+    nodes: [job_queues_ImportJob!]!
+}
+
+"""
+aggregate fields of "job_queues.ImportJob"
+"""
+type job_queues_ImportJob_aggregate_fields {
+    avg: job_queues_ImportJob_avg_fields
+    count(columns: [job_queues_ImportJob_select_column!], distinct: Boolean): Int!
+    max: job_queues_ImportJob_max_fields
+    min: job_queues_ImportJob_min_fields
+    stddev: job_queues_ImportJob_stddev_fields
+    stddev_pop: job_queues_ImportJob_stddev_pop_fields
+    stddev_samp: job_queues_ImportJob_stddev_samp_fields
+    sum: job_queues_ImportJob_sum_fields
+    var_pop: job_queues_ImportJob_var_pop_fields
+    var_samp: job_queues_ImportJob_var_samp_fields
+    variance: job_queues_ImportJob_variance_fields
+}
+
+"""
+append existing jsonb value of filtered columns with new jsonb value
+"""
+input job_queues_ImportJob_append_input {
+    data: jsonb
+    errors: jsonb
+    options: jsonb
+}
+
+"""
+aggregate avg on columns
+"""
+type job_queues_ImportJob_avg_fields {
+    progress: Float
+    progressMaximum: Float
+}
+
+"""
+Boolean expression to filter rows from the table "job_queues.ImportJob". All fields are combined with a logical 'AND'.
+"""
+input job_queues_ImportJob_bool_exp {
+    _and: [job_queues_ImportJob_bool_exp!]
+    _not: job_queues_ImportJob_bool_exp
+    _or: [job_queues_ImportJob_bool_exp!]
+    completed_at: timestamptz_comparison_exp
+    conference: conference_Conference_bool_exp
+    conferenceId: uuid_comparison_exp
+    createdBy: uuid_comparison_exp
+    created_at: timestamptz_comparison_exp
+    creator: registrant_Registrant_bool_exp
+    data: jsonb_comparison_exp
+    errors: jsonb_comparison_exp
+    id: uuid_comparison_exp
+    options: jsonb_comparison_exp
+    outputs: job_queues_ImportJobOutput_bool_exp
+    progress: Int_comparison_exp
+    progressMaximum: Int_comparison_exp
+    status: String_comparison_exp
+    subconference: conference_Subconference_bool_exp
+    subconferenceId: uuid_comparison_exp
+    updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "job_queues.ImportJob"
+"""
+enum job_queues_ImportJob_constraint {
+    """
+    unique or primary key constraint
+    """
+    ImportJob_conferenceId_status_key
+    """
+    unique or primary key constraint
+    """
+    ImportJob_conferenceId_subconferenceId_status_key
+    """
+    unique or primary key constraint
+    """
+    ImportJob_pkey
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input job_queues_ImportJob_delete_at_path_input {
+    data: [String!]
+    errors: [String!]
+    options: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input job_queues_ImportJob_delete_elem_input {
+    data: Int
+    errors: Int
+    options: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input job_queues_ImportJob_delete_key_input {
+    data: String
+    errors: String
+    options: String
+}
+
+"""
+input type for incrementing numeric columns in table "job_queues.ImportJob"
+"""
+input job_queues_ImportJob_inc_input {
+    progress: Int
+    progressMaximum: Int
+}
+
+"""
+input type for inserting data into table "job_queues.ImportJob"
+"""
+input job_queues_ImportJob_insert_input {
+    completed_at: timestamptz
+    conference: conference_Conference_obj_rel_insert_input
+    conferenceId: uuid
+    createdBy: uuid
+    created_at: timestamptz
+    creator: registrant_Registrant_obj_rel_insert_input
+    data: jsonb
+    errors: jsonb
+    id: uuid
+    options: jsonb
+    outputs: job_queues_ImportJobOutput_arr_rel_insert_input
+    progress: Int
+    progressMaximum: Int
+    status: String
+    subconference: conference_Subconference_obj_rel_insert_input
+    subconferenceId: uuid
+    updated_at: timestamptz
+}
+
+"""
+aggregate max on columns
+"""
+type job_queues_ImportJob_max_fields {
+    completed_at: timestamptz
+    conferenceId: uuid
+    createdBy: uuid
+    created_at: timestamptz
+    id: uuid
+    progress: Int
+    progressMaximum: Int
+    status: String
+    subconferenceId: uuid
+    updated_at: timestamptz
+}
+
+"""
+aggregate min on columns
+"""
+type job_queues_ImportJob_min_fields {
+    completed_at: timestamptz
+    conferenceId: uuid
+    createdBy: uuid
+    created_at: timestamptz
+    id: uuid
+    progress: Int
+    progressMaximum: Int
+    status: String
+    subconferenceId: uuid
+    updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "job_queues.ImportJob"
+"""
+type job_queues_ImportJob_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [job_queues_ImportJob!]!
+}
+
+"""
+on conflict condition type for table "job_queues.ImportJob"
+"""
+input job_queues_ImportJob_on_conflict {
+    constraint: job_queues_ImportJob_constraint!
+    update_columns: [job_queues_ImportJob_update_column!]! = []
+    where: job_queues_ImportJob_bool_exp
+}
+
+"""
+Ordering options when selecting data from "job_queues.ImportJob".
+"""
+input job_queues_ImportJob_order_by {
+    completed_at: order_by
+    conference: conference_Conference_order_by
+    conferenceId: order_by
+    createdBy: order_by
+    created_at: order_by
+    creator: registrant_Registrant_order_by
+    data: order_by
+    errors: order_by
+    id: order_by
+    options: order_by
+    outputs_aggregate: job_queues_ImportJobOutput_aggregate_order_by
+    progress: order_by
+    progressMaximum: order_by
+    status: order_by
+    subconference: conference_Subconference_order_by
+    subconferenceId: order_by
+    updated_at: order_by
+}
+
+"""
+primary key columns input for table: job_queues_ImportJob
+"""
+input job_queues_ImportJob_pk_columns_input {
+    id: uuid!
+}
+
+"""
+prepend existing jsonb value of filtered columns with new jsonb value
+"""
+input job_queues_ImportJob_prepend_input {
+    data: jsonb
+    errors: jsonb
+    options: jsonb
+}
+
+"""
+select columns of table "job_queues.ImportJob"
+"""
+enum job_queues_ImportJob_select_column {
+    """
+    column name
+    """
+    completed_at
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    createdBy
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    data
+    """
+    column name
+    """
+    errors
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    options
+    """
+    column name
+    """
+    progress
+    """
+    column name
+    """
+    progressMaximum
+    """
+    column name
+    """
+    status
+    """
+    column name
+    """
+    subconferenceId
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+input type for updating data in table "job_queues.ImportJob"
+"""
+input job_queues_ImportJob_set_input {
+    completed_at: timestamptz
+    conferenceId: uuid
+    createdBy: uuid
+    created_at: timestamptz
+    data: jsonb
+    errors: jsonb
+    id: uuid
+    options: jsonb
+    progress: Int
+    progressMaximum: Int
+    status: String
+    subconferenceId: uuid
+    updated_at: timestamptz
+}
+
+"""
+aggregate stddev on columns
+"""
+type job_queues_ImportJob_stddev_fields {
+    progress: Float
+    progressMaximum: Float
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type job_queues_ImportJob_stddev_pop_fields {
+    progress: Float
+    progressMaximum: Float
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type job_queues_ImportJob_stddev_samp_fields {
+    progress: Float
+    progressMaximum: Float
+}
+
+"""
+aggregate sum on columns
+"""
+type job_queues_ImportJob_sum_fields {
+    progress: Int
+    progressMaximum: Int
+}
+
+"""
+update columns of table "job_queues.ImportJob"
+"""
+enum job_queues_ImportJob_update_column {
+    """
+    column name
+    """
+    completed_at
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    createdBy
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    data
+    """
+    column name
+    """
+    errors
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    options
+    """
+    column name
+    """
+    progress
+    """
+    column name
+    """
+    progressMaximum
+    """
+    column name
+    """
+    status
+    """
+    column name
+    """
+    subconferenceId
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+aggregate var_pop on columns
+"""
+type job_queues_ImportJob_var_pop_fields {
+    progress: Float
+    progressMaximum: Float
+}
+
+"""
+aggregate var_samp on columns
+"""
+type job_queues_ImportJob_var_samp_fields {
+    progress: Float
+    progressMaximum: Float
+}
+
+"""
+aggregate variance on columns
+"""
+type job_queues_ImportJob_variance_fields {
+    progress: Float
+    progressMaximum: Float
+}
+
+"""
 columns and relationships of "job_queues.InvitationEmailJob"
 """
 type job_queues_InvitationEmailJob {
@@ -19589,6 +20402,32 @@ type mutation_root {
     """
     delete_job_queues_CustomEmailJob_by_pk(id: uuid!): job_queues_CustomEmailJob
     """
+    delete data from the table: "job_queues.ImportJob"
+    """
+    delete_job_queues_ImportJob(
+        """
+        filter the rows which have to be deleted
+        """
+        where: job_queues_ImportJob_bool_exp!
+    ): job_queues_ImportJob_mutation_response
+    """
+    delete data from the table: "job_queues.ImportJobOutput"
+    """
+    delete_job_queues_ImportJobOutput(
+        """
+        filter the rows which have to be deleted
+        """
+        where: job_queues_ImportJobOutput_bool_exp!
+    ): job_queues_ImportJobOutput_mutation_response
+    """
+    delete single row from the table: "job_queues.ImportJobOutput"
+    """
+    delete_job_queues_ImportJobOutput_by_pk(id: uuid!): job_queues_ImportJobOutput
+    """
+    delete single row from the table: "job_queues.ImportJob"
+    """
+    delete_job_queues_ImportJob_by_pk(id: uuid!): job_queues_ImportJob
+    """
     delete data from the table: "job_queues.InvitationEmailJob"
     """
     delete_job_queues_InvitationEmailJob(
@@ -21397,6 +22236,58 @@ type mutation_root {
         """
         on_conflict: job_queues_CustomEmailJob_on_conflict
     ): job_queues_CustomEmailJob
+    """
+    insert data into the table: "job_queues.ImportJob"
+    """
+    insert_job_queues_ImportJob(
+        """
+        the rows to be inserted
+        """
+        objects: [job_queues_ImportJob_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: job_queues_ImportJob_on_conflict
+    ): job_queues_ImportJob_mutation_response
+    """
+    insert data into the table: "job_queues.ImportJobOutput"
+    """
+    insert_job_queues_ImportJobOutput(
+        """
+        the rows to be inserted
+        """
+        objects: [job_queues_ImportJobOutput_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: job_queues_ImportJobOutput_on_conflict
+    ): job_queues_ImportJobOutput_mutation_response
+    """
+    insert a single row into the table: "job_queues.ImportJobOutput"
+    """
+    insert_job_queues_ImportJobOutput_one(
+        """
+        the row to be inserted
+        """
+        object: job_queues_ImportJobOutput_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: job_queues_ImportJobOutput_on_conflict
+    ): job_queues_ImportJobOutput
+    """
+    insert a single row into the table: "job_queues.ImportJob"
+    """
+    insert_job_queues_ImportJob_one(
+        """
+        the row to be inserted
+        """
+        object: job_queues_ImportJob_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: job_queues_ImportJob_on_conflict
+    ): job_queues_ImportJob
     """
     insert data into the table: "job_queues.InvitationEmailJob"
     """
@@ -24294,6 +25185,140 @@ type mutation_root {
         _set: job_queues_CustomEmailJob_set_input
         pk_columns: job_queues_CustomEmailJob_pk_columns_input!
     ): job_queues_CustomEmailJob
+    """
+    update data of the table: "job_queues.ImportJob"
+    """
+    update_job_queues_ImportJob(
+        """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: job_queues_ImportJob_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: job_queues_ImportJob_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: job_queues_ImportJob_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: job_queues_ImportJob_delete_key_input
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: job_queues_ImportJob_inc_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: job_queues_ImportJob_prepend_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: job_queues_ImportJob_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: job_queues_ImportJob_bool_exp!
+    ): job_queues_ImportJob_mutation_response
+    """
+    update data of the table: "job_queues.ImportJobOutput"
+    """
+    update_job_queues_ImportJobOutput(
+        """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: job_queues_ImportJobOutput_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: job_queues_ImportJobOutput_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: job_queues_ImportJobOutput_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: job_queues_ImportJobOutput_delete_key_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: job_queues_ImportJobOutput_prepend_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: job_queues_ImportJobOutput_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: job_queues_ImportJobOutput_bool_exp!
+    ): job_queues_ImportJobOutput_mutation_response
+    """
+    update single row of the table: "job_queues.ImportJobOutput"
+    """
+    update_job_queues_ImportJobOutput_by_pk(
+        """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: job_queues_ImportJobOutput_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: job_queues_ImportJobOutput_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: job_queues_ImportJobOutput_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: job_queues_ImportJobOutput_delete_key_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: job_queues_ImportJobOutput_prepend_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: job_queues_ImportJobOutput_set_input
+        pk_columns: job_queues_ImportJobOutput_pk_columns_input!
+    ): job_queues_ImportJobOutput
+    """
+    update single row of the table: "job_queues.ImportJob"
+    """
+    update_job_queues_ImportJob_by_pk(
+        """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: job_queues_ImportJob_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: job_queues_ImportJob_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: job_queues_ImportJob_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: job_queues_ImportJob_delete_key_input
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: job_queues_ImportJob_inc_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: job_queues_ImportJob_prepend_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: job_queues_ImportJob_set_input
+        pk_columns: job_queues_ImportJob_pk_columns_input!
+    ): job_queues_ImportJob
     """
     update data of the table: "job_queues.InvitationEmailJob"
     """
@@ -28651,6 +29676,114 @@ type query_root {
     fetch data from the table: "job_queues.CustomEmailJob" using primary key columns
     """
     job_queues_CustomEmailJob_by_pk(id: uuid!): job_queues_CustomEmailJob
+    """
+    fetch data from the table: "job_queues.ImportJob"
+    """
+    job_queues_ImportJob(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJob_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJob_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJob_bool_exp
+    ): [job_queues_ImportJob!]!
+    """
+    fetch data from the table: "job_queues.ImportJobOutput"
+    """
+    job_queues_ImportJobOutput(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJobOutput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJobOutput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJobOutput_bool_exp
+    ): [job_queues_ImportJobOutput!]!
+    """
+    fetch aggregated fields from the table: "job_queues.ImportJobOutput"
+    """
+    job_queues_ImportJobOutput_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJobOutput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJobOutput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJobOutput_bool_exp
+    ): job_queues_ImportJobOutput_aggregate!
+    """
+    fetch data from the table: "job_queues.ImportJobOutput" using primary key columns
+    """
+    job_queues_ImportJobOutput_by_pk(id: uuid!): job_queues_ImportJobOutput
+    """
+    fetch aggregated fields from the table: "job_queues.ImportJob"
+    """
+    job_queues_ImportJob_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJob_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJob_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJob_bool_exp
+    ): job_queues_ImportJob_aggregate!
+    """
+    fetch data from the table: "job_queues.ImportJob" using primary key columns
+    """
+    job_queues_ImportJob_by_pk(id: uuid!): job_queues_ImportJob
     """
     fetch data from the table: "job_queues.InvitationEmailJob"
     """
@@ -45794,6 +46927,114 @@ type subscription_root {
     fetch data from the table: "job_queues.CustomEmailJob" using primary key columns
     """
     job_queues_CustomEmailJob_by_pk(id: uuid!): job_queues_CustomEmailJob
+    """
+    fetch data from the table: "job_queues.ImportJob"
+    """
+    job_queues_ImportJob(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJob_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJob_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJob_bool_exp
+    ): [job_queues_ImportJob!]!
+    """
+    fetch data from the table: "job_queues.ImportJobOutput"
+    """
+    job_queues_ImportJobOutput(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJobOutput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJobOutput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJobOutput_bool_exp
+    ): [job_queues_ImportJobOutput!]!
+    """
+    fetch aggregated fields from the table: "job_queues.ImportJobOutput"
+    """
+    job_queues_ImportJobOutput_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJobOutput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJobOutput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJobOutput_bool_exp
+    ): job_queues_ImportJobOutput_aggregate!
+    """
+    fetch data from the table: "job_queues.ImportJobOutput" using primary key columns
+    """
+    job_queues_ImportJobOutput_by_pk(id: uuid!): job_queues_ImportJobOutput
+    """
+    fetch aggregated fields from the table: "job_queues.ImportJob"
+    """
+    job_queues_ImportJob_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [job_queues_ImportJob_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [job_queues_ImportJob_order_by!]
+        """
+        filter the rows returned
+        """
+        where: job_queues_ImportJob_bool_exp
+    ): job_queues_ImportJob_aggregate!
+    """
+    fetch data from the table: "job_queues.ImportJob" using primary key columns
+    """
+    job_queues_ImportJob_by_pk(id: uuid!): job_queues_ImportJob
     """
     fetch data from the table: "job_queues.InvitationEmailJob"
     """

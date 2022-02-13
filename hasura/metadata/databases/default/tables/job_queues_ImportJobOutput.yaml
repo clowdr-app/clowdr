@@ -1,0 +1,3 @@
+table:
+  name: ImportJobOutput
+  schema: job_queues

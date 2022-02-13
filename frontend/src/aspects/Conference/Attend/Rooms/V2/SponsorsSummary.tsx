@@ -1,6 +1,7 @@
-import { Divider, Heading, Text, VStack, Wrap, WrapItem } from "@chakra-ui/react";
+import { Box, Divider, Heading, VStack, Wrap, WrapItem } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { SponsorBoothsList_ItemFragment, SponsorBoothsList_TierFragment } from "../../../../../generated/graphql";
+import { Markdown } from "../../../../Chakra/Markdown";
 import SponsorTile from "./SponsorTile";
 
 export interface SponsorshipTier {
@@ -29,9 +30,9 @@ export default function SponsorsSummary({
                                 {tier.info.name}
                             </Heading>
                             {tier.info.description?.length ? (
-                                <Text pl={1} textAlign={leftAlign ? "left" : "center"}>
-                                    {tier.info.description}
-                                </Text>
+                                <Box pl={1} textAlign={leftAlign ? "left" : "center"}>
+                                    <Markdown>{tier.info.description}</Markdown>
+                                </Box>
                             ) : undefined}{" "}
                         </>
                     ) : undefined}

@@ -1240,6 +1240,119 @@ importers:
       node-env-run: 4.0.2
       pino-pretty: 7.2.0
 
+  services/importer:
+    specifiers:
+      '@graphql-codegen/cli': ^2.5.0
+      '@graphql-codegen/typescript': ^2.4.3
+      '@graphql-codegen/typescript-operations': ^2.2.4
+      '@graphql-codegen/typescript-urql': ^3.5.1
+      '@graphql-typed-document-node/core': ^3.1.1
+      '@midspace/component-clients': workspace:*
+      '@midspace/graphql': workspace:*
+      '@midspace/hasura': workspace:*
+      '@midspace/server-utils': workspace:*
+      '@midspace/shared-types': workspace:*
+      '@socket.io/redis-emitter': ^4.1.0
+      '@types/amqplib': ^0.8.2
+      '@types/cors': ^2.8.12
+      '@types/express': ^4.17.13
+      '@types/generic-pool': ^3.1.10
+      '@types/jsonwebtoken': ^8.5.6
+      '@types/jwk-to-pem': ^2.0.1
+      '@types/node-fetch': ^2.5.12
+      '@types/ramda': ^0.27.64
+      '@types/redis': ^2.8.32
+      '@types/redlock': ^4.0.2
+      '@types/uuid': ^8.3.4
+      '@types/web-push': ^3.3.2
+      '@types/ws': ^8.2.2
+      '@urql/core': ^2.4.1
+      '@urql/exchange-retry': ^0.3.2
+      amqplib: ^0.8.0
+      assert: ^2.0.0
+      async-mutex: ^0.3.2
+      body-parser: ^1.19.1
+      bufferutil: ^4.0.6
+      concurrently: ^6.4.0
+      cors: ^2.8.5
+      cpy-cli: ^3.1.1
+      dotenv: ^16.0.0
+      express: ^4.17.1
+      generic-pool: ^3.8.2
+      graphql: ^15.7.2
+      graphql-tag: ^2.12.6
+      jsonwebtoken: ^8.5.1
+      jwk-to-pem: ^2.0.5
+      jwks-rsa: ^2.0.5
+      node-env-run: ^4.0.2
+      node-fetch: ^2.6.7
+      pino: ^7.6.4
+      pino-http: ^6.6.0
+      pino-pretty: ^7.2.0
+      ramda: ^0.28.0
+      redis: ^3.1.2
+      redlock: ^4.2.0
+      typescript: ^4.5.5
+      typescript-is: ^0.19.0
+      utf-8-validate: ^5.0.8
+      uuid: ^8.3.2
+    dependencies:
+      '@graphql-typed-document-node/core': 3.1.1_graphql@15.7.2
+      '@midspace/component-clients': link:../../packages/node/component-clients
+      '@midspace/graphql': link:../../packages/shared/graphql
+      '@midspace/hasura': link:../../packages/shared/hasura
+      '@midspace/server-utils': link:../../packages/node/server-utils
+      '@midspace/shared-types': link:../../packages/shared/shared-types
+      '@socket.io/redis-emitter': 4.1.0
+      '@types/amqplib': 0.8.2
+      '@types/cors': 2.8.12
+      '@types/express': 4.17.13
+      '@types/generic-pool': 3.1.10
+      '@types/jsonwebtoken': 8.5.6
+      '@types/jwk-to-pem': 2.0.1
+      '@types/node-fetch': 2.5.12
+      '@types/ramda': 0.27.64
+      '@types/redis': 2.8.32
+      '@types/redlock': 4.0.2
+      '@types/uuid': 8.3.4
+      '@types/web-push': 3.3.2
+      '@types/ws': 8.2.2
+      '@urql/core': 2.4.1_graphql@15.7.2
+      '@urql/exchange-retry': 0.3.2_graphql@15.7.2
+      amqplib: 0.8.0
+      assert: 2.0.0
+      async-mutex: 0.3.2
+      body-parser: 1.19.1
+      bufferutil: 4.0.6
+      cors: 2.8.5
+      cpy-cli: 3.1.1
+      express: 4.17.1
+      generic-pool: 3.8.2
+      graphql: 15.7.2
+      graphql-tag: 2.12.6_graphql@15.7.2
+      jsonwebtoken: 8.5.1
+      jwk-to-pem: 2.0.5
+      jwks-rsa: 2.0.5
+      node-env-run: 4.0.2
+      node-fetch: 2.6.7
+      pino: 7.6.4
+      pino-http: 6.6.0
+      ramda: 0.28.0
+      redis: 3.1.2
+      redlock: 4.2.0
+      typescript: 4.5.5
+      typescript-is: 0.19.0_typescript@4.5.5
+      utf-8-validate: 5.0.8
+      uuid: 8.3.2
+    devDependencies:
+      '@graphql-codegen/cli': 2.5.0_9eeb1dfb0c837fcddd85032aa8a27418
+      '@graphql-codegen/typescript': 2.4.3_graphql@15.7.2
+      '@graphql-codegen/typescript-operations': 2.2.4_graphql@15.7.2
+      '@graphql-codegen/typescript-urql': 3.5.1_a200a8b101ce12e4e050343b0b6fa1a4
+      concurrently: 6.4.0
+      dotenv: 16.0.0
+      pino-pretty: 7.2.0
+
   services/playout:
     specifiers:
       '@apollo/client': ^3.4.17
@@ -6432,12 +6545,6 @@ packages:
       tslib: 2.3.1
     dev: false
 
-  /@babel/code-frame/7.15.8:
-    resolution: {integrity: sha512-2IAnmn8zbvC/jKYhq5Ki9I+DwjlrtMPUCH/CpHvqI4dNnlwHwsxoIhlc8WcYY5LSYknXQtAlFYuHfqAFCvQ4Wg==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/highlight': 7.14.5
-
   /@babel/code-frame/7.16.7:
     resolution: {integrity: sha512-iAXqUn8IIeBTNd72xsFlgaXHkMBMt6y4HJp1tIaK465CWLT/fG1aqB7ykr95gHHmlBdGbFeWWfyB4NJJ0nmeIg==}
     engines: {node: '>=6.9.0'}
@@ -6729,6 +6836,7 @@ packages:
   /@babel/helper-validator-identifier/7.15.7:
     resolution: {integrity: sha512-K4JvCtQqad9OY2+yTU8w+E82ywk/fe+ELNlt1G8z3bVGlZfn/hOcQQsUhGhW/N+tb3fxK800wLtKOE/aM0m72w==}
     engines: {node: '>=6.9.0'}
+    dev: true
 
   /@babel/helper-validator-identifier/7.16.7:
     resolution: {integrity: sha512-hsEnFemeiW4D08A5gUAZxLBTXpZ39P+a+DGDsHw1yxqyQ/jzFEnxf5uTEGp+3bzAbNOxU1paTgYS4ECU/IgfDw==}
@@ -6759,14 +6867,6 @@ packages:
       '@babel/types': 7.17.0
     transitivePeerDependencies:
       - supports-color
-
-  /@babel/highlight/7.14.5:
-    resolution: {integrity: sha512-qf9u2WFWVV0MppaL877j2dBtQIDgmidgjGk5VIMw3OadXvYaXn66U1BFlH2t4+t3i+8PhedppRv+i40ABzd+gg==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/helper-validator-identifier': 7.15.7
-      chalk: 2.4.2
-      js-tokens: 4.0.0
 
   /@babel/highlight/7.16.10:
     resolution: {integrity: sha512-5FnTQLSLswEj6IkgVw5KusNUUFY9ZGqe/TRFnP/BKYHYgfh7tc+C7mwiy95/yNP7Dh9x580Vv8r7u7ZfTBFxdw==}
@@ -16506,7 +16606,6 @@ packages:
   /common-tags/1.8.2:
     resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}
     engines: {node: '>=4.0.0'}
-    dev: true
 
   /commondir/1.0.1:
     resolution: {integrity: sha1-3dgA2gxmEnOTzKWVDqloo6rxJTs=}
@@ -16591,7 +16690,7 @@ packages:
     hasBin: true
     dependencies:
       chalk: 4.1.2
-      date-fns: 2.25.0
+      date-fns: 2.28.0
       lodash: 4.17.21
       rxjs: 6.6.7
       spawn-command: 0.0.2-1
@@ -17210,15 +17309,9 @@ packages:
     resolution: {integrity: sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==}
     dev: true
 
-  /date-fns/2.25.0:
-    resolution: {integrity: sha512-ovYRFnTrbGPD4nqaEqescPEv1mNwvt+UTqI3Ay9SzNtey9NZnYu6E2qCcBBgJ6/2VF1zGGygpyTDITqpQQ5e+w==}
-    engines: {node: '>=0.11'}
-    dev: true
-
   /date-fns/2.28.0:
     resolution: {integrity: sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==}
     engines: {node: '>=0.11'}
-    dev: false
 
   /dateformat/3.0.3:
     resolution: {integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==}
@@ -17972,7 +18065,7 @@ packages:
       is-shared-array-buffer: 1.0.1
       is-string: 1.0.7
       is-weakref: 1.0.1
-      object-inspect: 1.11.0
+      object-inspect: 1.12.0
       object-keys: 1.1.1
       object.assign: 4.1.2
       string.prototype.trimend: 1.0.4
@@ -19126,7 +19219,7 @@ packages:
       vue-template-compiler:
         optional: true
     dependencies:
-      '@babel/code-frame': 7.15.8
+      '@babel/code-frame': 7.16.7
       '@types/json-schema': 7.0.9
       chalk: 4.1.2
       chokidar: 3.5.2
@@ -19158,7 +19251,7 @@ packages:
       vue-template-compiler:
         optional: true
     dependencies:
-      '@babel/code-frame': 7.15.8
+      '@babel/code-frame': 7.16.7
       '@types/json-schema': 7.0.9
       chalk: 4.1.2
       chokidar: 3.5.2
@@ -19190,7 +19283,7 @@ packages:
       vue-template-compiler:
         optional: true
     dependencies:
-      '@babel/code-frame': 7.15.8
+      '@babel/code-frame': 7.16.7
       '@types/json-schema': 7.0.9
       chalk: 4.1.2
       chokidar: 3.5.2
@@ -20612,7 +20705,7 @@ packages:
       mute-stream: 0.0.8
       ora: 5.4.1
       run-async: 2.4.1
-      rxjs: 7.4.0
+      rxjs: 7.5.3
       string-width: 4.2.3
       strip-ansi: 6.0.1
       through: 2.3.8
@@ -21126,7 +21219,7 @@ packages:
     peerDependencies:
       ws: '*'
     dependencies:
-      ws: 8.2.3
+      ws: 8.2.3_bffff4271b89d628e8333ead80d3d8e8
     dev: true
 
   /isstream/0.1.2:
@@ -23664,9 +23757,9 @@ packages:
       '@types/debug': 4.1.7
       '@types/node': 10.17.60
       '@types/yargs': 15.0.10
-      common-tags: 1.8.0
+      common-tags: 1.8.2
       cross-spawn: 7.0.3
-      debug: 4.3.2
+      debug: 4.3.3
       dotenv: 8.6.0
       pkginfo: 0.4.1
       upath: 1.2.0
@@ -23873,12 +23966,8 @@ packages:
     engines: {node: '>= 6'}
     dev: false
 
-  /object-inspect/1.11.0:
-    resolution: {integrity: sha512-jp7ikS6Sd3GxQfZJPyH3cjcbJF6GZPClgdV+EFygjFLQ5FmW/dRUnTd9PQ9k0JhoNDabWFbpF1yCdSWCC6gexg==}
-
   /object-inspect/1.12.0:
     resolution: {integrity: sha512-Ho2z80bVIvJloH+YzRmpZVQe87+qASmBUKZDWgx9cu+KDrX2ZDH/3tMy+gXbZETVGs2M8YdxObOh7XAtim9Y0g==}
-    dev: true
 
   /object-is/1.1.5:
     resolution: {integrity: sha512-3cyDsyHgtmi7I7DfSSI2LDp6SK2lwvtbg0p0R1e0RvTqF5ceGx+K2dfSjm1bKDMVCFEDAQvy+o8c6a7VujOddw==}
@@ -26431,7 +26520,6 @@ packages:
     resolution: {integrity: sha512-6162iC/N7L7K8q3UvdOMWix1ju+esADGrDaPrTu5XJmCv69YNdYoUaop/iatN8GHK+YHOdszPP+qygA0yi04zQ==}
     dependencies:
       tslib: 2.3.1
-    dev: true
 
   /sade/1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
@@ -26731,7 +26819,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       get-intrinsic: 1.1.1
-      object-inspect: 1.11.0
+      object-inspect: 1.12.0
 
   /signal-exit/3.0.3:
     resolution: {integrity: sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==}

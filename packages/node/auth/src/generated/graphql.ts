@@ -12282,6 +12282,615 @@ export enum Job_Queues_CustomEmailJob_Update_Column {
     UpdatedAt = "updated_at",
 }
 
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJob = {
+    __typename?: "job_queues_ImportJob";
+    completed_at?: Maybe<Scalars["timestamptz"]>;
+    /** An object relationship */
+    conference: Conference_Conference;
+    conferenceId: Scalars["uuid"];
+    createdBy?: Maybe<Scalars["uuid"]>;
+    created_at: Scalars["timestamptz"];
+    /** An object relationship */
+    creator?: Maybe<Registrant_Registrant>;
+    data: Scalars["jsonb"];
+    errors?: Maybe<Scalars["jsonb"]>;
+    id: Scalars["uuid"];
+    options: Scalars["jsonb"];
+    /** An array relationship */
+    outputs: Array<Job_Queues_ImportJobOutput>;
+    /** An aggregate relationship */
+    outputs_aggregate: Job_Queues_ImportJobOutput_Aggregate;
+    progress: Scalars["Int"];
+    progressMaximum: Scalars["Int"];
+    status: Scalars["String"];
+    /** An object relationship */
+    subconference?: Maybe<Conference_Subconference>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
+    updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobDataArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobErrorsArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobOptionsArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobOutputsArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobOutputs_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+/** columns and relationships of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput = {
+    __typename?: "job_queues_ImportJobOutput";
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    jobId: Scalars["uuid"];
+    name: Scalars["String"];
+    updated_at: Scalars["timestamptz"];
+    value: Scalars["jsonb"];
+};
+
+/** columns and relationships of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutputValueArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregated selection of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Aggregate = {
+    __typename?: "job_queues_ImportJobOutput_aggregate";
+    aggregate?: Maybe<Job_Queues_ImportJobOutput_Aggregate_Fields>;
+    nodes: Array<Job_Queues_ImportJobOutput>;
+};
+
+/** aggregate fields of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Aggregate_Fields = {
+    __typename?: "job_queues_ImportJobOutput_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Job_Queues_ImportJobOutput_Max_Fields>;
+    min?: Maybe<Job_Queues_ImportJobOutput_Min_Fields>;
+};
+
+/** aggregate fields of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Job_Queues_ImportJobOutput_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Aggregate_Order_By = {
+    count?: InputMaybe<Order_By>;
+    max?: InputMaybe<Job_Queues_ImportJobOutput_Max_Order_By>;
+    min?: InputMaybe<Job_Queues_ImportJobOutput_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_ImportJobOutput_Append_Input = {
+    value?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Arr_Rel_Insert_Input = {
+    data: Array<Job_Queues_ImportJobOutput_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: InputMaybe<Job_Queues_ImportJobOutput_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.ImportJobOutput". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ImportJobOutput_Bool_Exp = {
+    _and?: InputMaybe<Array<Job_Queues_ImportJobOutput_Bool_Exp>>;
+    _not?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+    _or?: InputMaybe<Array<Job_Queues_ImportJobOutput_Bool_Exp>>;
+    created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    id?: InputMaybe<Uuid_Comparison_Exp>;
+    jobId?: InputMaybe<Uuid_Comparison_Exp>;
+    name?: InputMaybe<String_Comparison_Exp>;
+    updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    value?: InputMaybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.ImportJobOutput" */
+export enum Job_Queues_ImportJobOutput_Constraint {
+    /** unique or primary key constraint */
+    ImportJobOutputJobIdNameKey = "ImportJobOutput_jobId_name_key",
+    /** unique or primary key constraint */
+    ImportJobOutputPkey = "ImportJobOutput_pkey",
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_ImportJobOutput_Delete_At_Path_Input = {
+    value?: InputMaybe<Array<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_ImportJobOutput_Delete_Elem_Input = {
+    value?: InputMaybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_ImportJobOutput_Delete_Key_Input = {
+    value?: InputMaybe<Scalars["String"]>;
+};
+
+/** input type for inserting data into table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Insert_Input = {
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    jobId?: InputMaybe<Scalars["uuid"]>;
+    name?: InputMaybe<Scalars["String"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    value?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_ImportJobOutput_Max_Fields = {
+    __typename?: "job_queues_ImportJobOutput_max_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobId?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Max_Order_By = {
+    created_at?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    jobId?: InputMaybe<Order_By>;
+    name?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_ImportJobOutput_Min_Fields = {
+    __typename?: "job_queues_ImportJobOutput_min_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobId?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Min_Order_By = {
+    created_at?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    jobId?: InputMaybe<Order_By>;
+    name?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Mutation_Response = {
+    __typename?: "job_queues_ImportJobOutput_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Job_Queues_ImportJobOutput>;
+};
+
+/** on conflict condition type for table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_On_Conflict = {
+    constraint: Job_Queues_ImportJobOutput_Constraint;
+    update_columns?: Array<Job_Queues_ImportJobOutput_Update_Column>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "job_queues.ImportJobOutput". */
+export type Job_Queues_ImportJobOutput_Order_By = {
+    created_at?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    jobId?: InputMaybe<Order_By>;
+    name?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+    value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: job_queues_ImportJobOutput */
+export type Job_Queues_ImportJobOutput_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_ImportJobOutput_Prepend_Input = {
+    value?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "job_queues.ImportJobOutput" */
+export enum Job_Queues_ImportJobOutput_Select_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobId = "jobId",
+    /** column name */
+    Name = "name",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    Value = "value",
+}
+
+/** input type for updating data in table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Set_Input = {
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    jobId?: InputMaybe<Scalars["uuid"]>;
+    name?: InputMaybe<Scalars["String"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    value?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** update columns of table "job_queues.ImportJobOutput" */
+export enum Job_Queues_ImportJobOutput_Update_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobId = "jobId",
+    /** column name */
+    Name = "name",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    Value = "value",
+}
+
+/** aggregated selection of "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Aggregate = {
+    __typename?: "job_queues_ImportJob_aggregate";
+    aggregate?: Maybe<Job_Queues_ImportJob_Aggregate_Fields>;
+    nodes: Array<Job_Queues_ImportJob>;
+};
+
+/** aggregate fields of "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Aggregate_Fields = {
+    __typename?: "job_queues_ImportJob_aggregate_fields";
+    avg?: Maybe<Job_Queues_ImportJob_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Job_Queues_ImportJob_Max_Fields>;
+    min?: Maybe<Job_Queues_ImportJob_Min_Fields>;
+    stddev?: Maybe<Job_Queues_ImportJob_Stddev_Fields>;
+    stddev_pop?: Maybe<Job_Queues_ImportJob_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Job_Queues_ImportJob_Stddev_Samp_Fields>;
+    sum?: Maybe<Job_Queues_ImportJob_Sum_Fields>;
+    var_pop?: Maybe<Job_Queues_ImportJob_Var_Pop_Fields>;
+    var_samp?: Maybe<Job_Queues_ImportJob_Var_Samp_Fields>;
+    variance?: Maybe<Job_Queues_ImportJob_Variance_Fields>;
+};
+
+/** aggregate fields of "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Job_Queues_ImportJob_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_ImportJob_Append_Input = {
+    data?: InputMaybe<Scalars["jsonb"]>;
+    errors?: InputMaybe<Scalars["jsonb"]>;
+    options?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** aggregate avg on columns */
+export type Job_Queues_ImportJob_Avg_Fields = {
+    __typename?: "job_queues_ImportJob_avg_fields";
+    progress?: Maybe<Scalars["Float"]>;
+    progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.ImportJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ImportJob_Bool_Exp = {
+    _and?: InputMaybe<Array<Job_Queues_ImportJob_Bool_Exp>>;
+    _not?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+    _or?: InputMaybe<Array<Job_Queues_ImportJob_Bool_Exp>>;
+    completed_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    createdBy?: InputMaybe<Uuid_Comparison_Exp>;
+    created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    creator?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    data?: InputMaybe<Jsonb_Comparison_Exp>;
+    errors?: InputMaybe<Jsonb_Comparison_Exp>;
+    id?: InputMaybe<Uuid_Comparison_Exp>;
+    options?: InputMaybe<Jsonb_Comparison_Exp>;
+    outputs?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+    progress?: InputMaybe<Int_Comparison_Exp>;
+    progressMaximum?: InputMaybe<Int_Comparison_Exp>;
+    status?: InputMaybe<String_Comparison_Exp>;
+    subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
+    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.ImportJob" */
+export enum Job_Queues_ImportJob_Constraint {
+    /** unique or primary key constraint */
+    ImportJobConferenceIdStatusKey = "ImportJob_conferenceId_status_key",
+    /** unique or primary key constraint */
+    ImportJobConferenceIdSubconferenceIdStatusKey = "ImportJob_conferenceId_subconferenceId_status_key",
+    /** unique or primary key constraint */
+    ImportJobPkey = "ImportJob_pkey",
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_ImportJob_Delete_At_Path_Input = {
+    data?: InputMaybe<Array<Scalars["String"]>>;
+    errors?: InputMaybe<Array<Scalars["String"]>>;
+    options?: InputMaybe<Array<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_ImportJob_Delete_Elem_Input = {
+    data?: InputMaybe<Scalars["Int"]>;
+    errors?: InputMaybe<Scalars["Int"]>;
+    options?: InputMaybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_ImportJob_Delete_Key_Input = {
+    data?: InputMaybe<Scalars["String"]>;
+    errors?: InputMaybe<Scalars["String"]>;
+    options?: InputMaybe<Scalars["String"]>;
+};
+
+/** input type for incrementing numeric columns in table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Inc_Input = {
+    progress?: InputMaybe<Scalars["Int"]>;
+    progressMaximum?: InputMaybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Insert_Input = {
+    completed_at?: InputMaybe<Scalars["timestamptz"]>;
+    conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    createdBy?: InputMaybe<Scalars["uuid"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    creator?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    data?: InputMaybe<Scalars["jsonb"]>;
+    errors?: InputMaybe<Scalars["jsonb"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    options?: InputMaybe<Scalars["jsonb"]>;
+    outputs?: InputMaybe<Job_Queues_ImportJobOutput_Arr_Rel_Insert_Input>;
+    progress?: InputMaybe<Scalars["Int"]>;
+    progressMaximum?: InputMaybe<Scalars["Int"]>;
+    status?: InputMaybe<Scalars["String"]>;
+    subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_ImportJob_Max_Fields = {
+    __typename?: "job_queues_ImportJob_max_fields";
+    completed_at?: Maybe<Scalars["timestamptz"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    createdBy?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    progress?: Maybe<Scalars["Int"]>;
+    progressMaximum?: Maybe<Scalars["Int"]>;
+    status?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_ImportJob_Min_Fields = {
+    __typename?: "job_queues_ImportJob_min_fields";
+    completed_at?: Maybe<Scalars["timestamptz"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    createdBy?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    progress?: Maybe<Scalars["Int"]>;
+    progressMaximum?: Maybe<Scalars["Int"]>;
+    status?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Mutation_Response = {
+    __typename?: "job_queues_ImportJob_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Job_Queues_ImportJob>;
+};
+
+/** on conflict condition type for table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_On_Conflict = {
+    constraint: Job_Queues_ImportJob_Constraint;
+    update_columns?: Array<Job_Queues_ImportJob_Update_Column>;
+    where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "job_queues.ImportJob". */
+export type Job_Queues_ImportJob_Order_By = {
+    completed_at?: InputMaybe<Order_By>;
+    conference?: InputMaybe<Conference_Conference_Order_By>;
+    conferenceId?: InputMaybe<Order_By>;
+    createdBy?: InputMaybe<Order_By>;
+    created_at?: InputMaybe<Order_By>;
+    creator?: InputMaybe<Registrant_Registrant_Order_By>;
+    data?: InputMaybe<Order_By>;
+    errors?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    options?: InputMaybe<Order_By>;
+    outputs_aggregate?: InputMaybe<Job_Queues_ImportJobOutput_Aggregate_Order_By>;
+    progress?: InputMaybe<Order_By>;
+    progressMaximum?: InputMaybe<Order_By>;
+    status?: InputMaybe<Order_By>;
+    subconference?: InputMaybe<Conference_Subconference_Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: job_queues_ImportJob */
+export type Job_Queues_ImportJob_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_ImportJob_Prepend_Input = {
+    data?: InputMaybe<Scalars["jsonb"]>;
+    errors?: InputMaybe<Scalars["jsonb"]>;
+    options?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "job_queues.ImportJob" */
+export enum Job_Queues_ImportJob_Select_Column {
+    /** column name */
+    CompletedAt = "completed_at",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedBy = "createdBy",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Data = "data",
+    /** column name */
+    Errors = "errors",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Options = "options",
+    /** column name */
+    Progress = "progress",
+    /** column name */
+    ProgressMaximum = "progressMaximum",
+    /** column name */
+    Status = "status",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Set_Input = {
+    completed_at?: InputMaybe<Scalars["timestamptz"]>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    createdBy?: InputMaybe<Scalars["uuid"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    data?: InputMaybe<Scalars["jsonb"]>;
+    errors?: InputMaybe<Scalars["jsonb"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    options?: InputMaybe<Scalars["jsonb"]>;
+    progress?: InputMaybe<Scalars["Int"]>;
+    progressMaximum?: InputMaybe<Scalars["Int"]>;
+    status?: InputMaybe<Scalars["String"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Job_Queues_ImportJob_Stddev_Fields = {
+    __typename?: "job_queues_ImportJob_stddev_fields";
+    progress?: Maybe<Scalars["Float"]>;
+    progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Job_Queues_ImportJob_Stddev_Pop_Fields = {
+    __typename?: "job_queues_ImportJob_stddev_pop_fields";
+    progress?: Maybe<Scalars["Float"]>;
+    progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Job_Queues_ImportJob_Stddev_Samp_Fields = {
+    __typename?: "job_queues_ImportJob_stddev_samp_fields";
+    progress?: Maybe<Scalars["Float"]>;
+    progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Job_Queues_ImportJob_Sum_Fields = {
+    __typename?: "job_queues_ImportJob_sum_fields";
+    progress?: Maybe<Scalars["Int"]>;
+    progressMaximum?: Maybe<Scalars["Int"]>;
+};
+
+/** update columns of table "job_queues.ImportJob" */
+export enum Job_Queues_ImportJob_Update_Column {
+    /** column name */
+    CompletedAt = "completed_at",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedBy = "createdBy",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Data = "data",
+    /** column name */
+    Errors = "errors",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Options = "options",
+    /** column name */
+    Progress = "progress",
+    /** column name */
+    ProgressMaximum = "progressMaximum",
+    /** column name */
+    Status = "status",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Job_Queues_ImportJob_Var_Pop_Fields = {
+    __typename?: "job_queues_ImportJob_var_pop_fields";
+    progress?: Maybe<Scalars["Float"]>;
+    progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Job_Queues_ImportJob_Var_Samp_Fields = {
+    __typename?: "job_queues_ImportJob_var_samp_fields";
+    progress?: Maybe<Scalars["Float"]>;
+    progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Job_Queues_ImportJob_Variance_Fields = {
+    __typename?: "job_queues_ImportJob_variance_fields";
+    progress?: Maybe<Scalars["Float"]>;
+    progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
 /** columns and relationships of "job_queues.InvitationEmailJob" */
 export type Job_Queues_InvitationEmailJob = {
     __typename?: "job_queues_InvitationEmailJob";
@@ -13927,6 +14536,14 @@ export type Mutation_Root = {
     delete_job_queues_CustomEmailJob?: Maybe<Job_Queues_CustomEmailJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.CustomEmailJob" */
     delete_job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
+    /** delete data from the table: "job_queues.ImportJob" */
+    delete_job_queues_ImportJob?: Maybe<Job_Queues_ImportJob_Mutation_Response>;
+    /** delete data from the table: "job_queues.ImportJobOutput" */
+    delete_job_queues_ImportJobOutput?: Maybe<Job_Queues_ImportJobOutput_Mutation_Response>;
+    /** delete single row from the table: "job_queues.ImportJobOutput" */
+    delete_job_queues_ImportJobOutput_by_pk?: Maybe<Job_Queues_ImportJobOutput>;
+    /** delete single row from the table: "job_queues.ImportJob" */
+    delete_job_queues_ImportJob_by_pk?: Maybe<Job_Queues_ImportJob>;
     /** delete data from the table: "job_queues.InvitationEmailJob" */
     delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.InvitationEmailJob" */
@@ -14317,6 +14934,14 @@ export type Mutation_Root = {
     insert_job_queues_CustomEmailJob?: Maybe<Job_Queues_CustomEmailJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.CustomEmailJob" */
     insert_job_queues_CustomEmailJob_one?: Maybe<Job_Queues_CustomEmailJob>;
+    /** insert data into the table: "job_queues.ImportJob" */
+    insert_job_queues_ImportJob?: Maybe<Job_Queues_ImportJob_Mutation_Response>;
+    /** insert data into the table: "job_queues.ImportJobOutput" */
+    insert_job_queues_ImportJobOutput?: Maybe<Job_Queues_ImportJobOutput_Mutation_Response>;
+    /** insert a single row into the table: "job_queues.ImportJobOutput" */
+    insert_job_queues_ImportJobOutput_one?: Maybe<Job_Queues_ImportJobOutput>;
+    /** insert a single row into the table: "job_queues.ImportJob" */
+    insert_job_queues_ImportJob_one?: Maybe<Job_Queues_ImportJob>;
     /** insert data into the table: "job_queues.InvitationEmailJob" */
     insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.InvitationEmailJob" */
@@ -14718,6 +15343,14 @@ export type Mutation_Root = {
     update_job_queues_CustomEmailJob?: Maybe<Job_Queues_CustomEmailJob_Mutation_Response>;
     /** update single row of the table: "job_queues.CustomEmailJob" */
     update_job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
+    /** update data of the table: "job_queues.ImportJob" */
+    update_job_queues_ImportJob?: Maybe<Job_Queues_ImportJob_Mutation_Response>;
+    /** update data of the table: "job_queues.ImportJobOutput" */
+    update_job_queues_ImportJobOutput?: Maybe<Job_Queues_ImportJobOutput_Mutation_Response>;
+    /** update single row of the table: "job_queues.ImportJobOutput" */
+    update_job_queues_ImportJobOutput_by_pk?: Maybe<Job_Queues_ImportJobOutput>;
+    /** update single row of the table: "job_queues.ImportJob" */
+    update_job_queues_ImportJob_by_pk?: Maybe<Job_Queues_ImportJob>;
     /** update data of the table: "job_queues.InvitationEmailJob" */
     update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
     /** update single row of the table: "job_queues.InvitationEmailJob" */
@@ -15373,6 +16006,26 @@ export type Mutation_RootDelete_Job_Queues_CustomEmailJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_CustomEmailJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ImportJobArgs = {
+    where: Job_Queues_ImportJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ImportJobOutputArgs = {
+    where: Job_Queues_ImportJobOutput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ImportJobOutput_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ImportJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -16434,6 +17087,30 @@ export type Mutation_RootInsert_Job_Queues_CustomEmailJobArgs = {
 export type Mutation_RootInsert_Job_Queues_CustomEmailJob_OneArgs = {
     object: Job_Queues_CustomEmailJob_Insert_Input;
     on_conflict?: InputMaybe<Job_Queues_CustomEmailJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ImportJobArgs = {
+    objects: Array<Job_Queues_ImportJob_Insert_Input>;
+    on_conflict?: InputMaybe<Job_Queues_ImportJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ImportJobOutputArgs = {
+    objects: Array<Job_Queues_ImportJobOutput_Insert_Input>;
+    on_conflict?: InputMaybe<Job_Queues_ImportJobOutput_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ImportJobOutput_OneArgs = {
+    object: Job_Queues_ImportJobOutput_Insert_Input;
+    on_conflict?: InputMaybe<Job_Queues_ImportJobOutput_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ImportJob_OneArgs = {
+    object: Job_Queues_ImportJob_Insert_Input;
+    on_conflict?: InputMaybe<Job_Queues_ImportJob_On_Conflict>;
 };
 
 /** mutation root */
@@ -17794,6 +18471,52 @@ export type Mutation_RootUpdate_Job_Queues_CustomEmailJob_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ImportJobArgs = {
+    _append?: InputMaybe<Job_Queues_ImportJob_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_ImportJob_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_ImportJob_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_ImportJob_Delete_Key_Input>;
+    _inc?: InputMaybe<Job_Queues_ImportJob_Inc_Input>;
+    _prepend?: InputMaybe<Job_Queues_ImportJob_Prepend_Input>;
+    _set?: InputMaybe<Job_Queues_ImportJob_Set_Input>;
+    where: Job_Queues_ImportJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ImportJobOutputArgs = {
+    _append?: InputMaybe<Job_Queues_ImportJobOutput_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_ImportJobOutput_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_ImportJobOutput_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_ImportJobOutput_Delete_Key_Input>;
+    _prepend?: InputMaybe<Job_Queues_ImportJobOutput_Prepend_Input>;
+    _set?: InputMaybe<Job_Queues_ImportJobOutput_Set_Input>;
+    where: Job_Queues_ImportJobOutput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ImportJobOutput_By_PkArgs = {
+    _append?: InputMaybe<Job_Queues_ImportJobOutput_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_ImportJobOutput_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_ImportJobOutput_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_ImportJobOutput_Delete_Key_Input>;
+    _prepend?: InputMaybe<Job_Queues_ImportJobOutput_Prepend_Input>;
+    _set?: InputMaybe<Job_Queues_ImportJobOutput_Set_Input>;
+    pk_columns: Job_Queues_ImportJobOutput_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ImportJob_By_PkArgs = {
+    _append?: InputMaybe<Job_Queues_ImportJob_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_ImportJob_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_ImportJob_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_ImportJob_Delete_Key_Input>;
+    _inc?: InputMaybe<Job_Queues_ImportJob_Inc_Input>;
+    _prepend?: InputMaybe<Job_Queues_ImportJob_Prepend_Input>;
+    _set?: InputMaybe<Job_Queues_ImportJob_Set_Input>;
+    pk_columns: Job_Queues_ImportJob_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_InvitationEmailJobArgs = {
     _append?: InputMaybe<Job_Queues_InvitationEmailJob_Append_Input>;
     _delete_at_path?: InputMaybe<Job_Queues_InvitationEmailJob_Delete_At_Path_Input>;
@@ -18901,6 +19624,18 @@ export type Query_Root = {
     job_queues_CustomEmailJob_aggregate: Job_Queues_CustomEmailJob_Aggregate;
     /** fetch data from the table: "job_queues.CustomEmailJob" using primary key columns */
     job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
+    /** fetch data from the table: "job_queues.ImportJob" */
+    job_queues_ImportJob: Array<Job_Queues_ImportJob>;
+    /** fetch data from the table: "job_queues.ImportJobOutput" */
+    job_queues_ImportJobOutput: Array<Job_Queues_ImportJobOutput>;
+    /** fetch aggregated fields from the table: "job_queues.ImportJobOutput" */
+    job_queues_ImportJobOutput_aggregate: Job_Queues_ImportJobOutput_Aggregate;
+    /** fetch data from the table: "job_queues.ImportJobOutput" using primary key columns */
+    job_queues_ImportJobOutput_by_pk?: Maybe<Job_Queues_ImportJobOutput>;
+    /** fetch aggregated fields from the table: "job_queues.ImportJob" */
+    job_queues_ImportJob_aggregate: Job_Queues_ImportJob_Aggregate;
+    /** fetch data from the table: "job_queues.ImportJob" using primary key columns */
+    job_queues_ImportJob_by_pk?: Maybe<Job_Queues_ImportJob>;
     /** fetch data from the table: "job_queues.InvitationEmailJob" */
     job_queues_InvitationEmailJob: Array<Job_Queues_InvitationEmailJob>;
     /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -20169,6 +20904,46 @@ export type Query_RootJob_Queues_CustomEmailJob_AggregateArgs = {
 };
 
 export type Query_RootJob_Queues_CustomEmailJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootJob_Queues_ImportJobArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJob_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJob_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ImportJobOutputArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ImportJobOutput_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ImportJobOutput_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootJob_Queues_ImportJob_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJob_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJob_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ImportJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -29975,6 +30750,18 @@ export type Subscription_Root = {
     job_queues_CustomEmailJob_aggregate: Job_Queues_CustomEmailJob_Aggregate;
     /** fetch data from the table: "job_queues.CustomEmailJob" using primary key columns */
     job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
+    /** fetch data from the table: "job_queues.ImportJob" */
+    job_queues_ImportJob: Array<Job_Queues_ImportJob>;
+    /** fetch data from the table: "job_queues.ImportJobOutput" */
+    job_queues_ImportJobOutput: Array<Job_Queues_ImportJobOutput>;
+    /** fetch aggregated fields from the table: "job_queues.ImportJobOutput" */
+    job_queues_ImportJobOutput_aggregate: Job_Queues_ImportJobOutput_Aggregate;
+    /** fetch data from the table: "job_queues.ImportJobOutput" using primary key columns */
+    job_queues_ImportJobOutput_by_pk?: Maybe<Job_Queues_ImportJobOutput>;
+    /** fetch aggregated fields from the table: "job_queues.ImportJob" */
+    job_queues_ImportJob_aggregate: Job_Queues_ImportJob_Aggregate;
+    /** fetch data from the table: "job_queues.ImportJob" using primary key columns */
+    job_queues_ImportJob_by_pk?: Maybe<Job_Queues_ImportJob>;
     /** fetch data from the table: "job_queues.InvitationEmailJob" */
     job_queues_InvitationEmailJob: Array<Job_Queues_InvitationEmailJob>;
     /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -31236,6 +32023,46 @@ export type Subscription_RootJob_Queues_CustomEmailJob_AggregateArgs = {
 };
 
 export type Subscription_RootJob_Queues_CustomEmailJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootJob_Queues_ImportJobArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJob_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJob_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ImportJobOutputArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ImportJobOutput_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ImportJobOutput_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootJob_Queues_ImportJob_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Job_Queues_ImportJob_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Job_Queues_ImportJob_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ImportJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 

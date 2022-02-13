@@ -239,7 +239,7 @@ export default function useCSVJSONXMLFileSelector(): {
                     </Box>
                     <Text as="aside" p={5}>
                         <Heading as="h4" fontSize="normal" textAlign="left" mb={2}>
-                            Accepted files
+                            Selected files
                         </Heading>
                         {acceptedFileItems}
                         {fileRejectionItems.length > 0 ? (

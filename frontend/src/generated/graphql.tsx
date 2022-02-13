@@ -1,4 +1,3 @@
-import { useQuery } from "@midspace/urql-hasura-cache-generic-resolver/useQuery";
 import type {
     OptimisticMutationResolver as GraphCacheOptimisticMutationResolver,
     Resolver as GraphCacheResolver,
@@ -12293,6 +12292,615 @@ export enum Job_Queues_CustomEmailJob_Update_Column {
     UpdatedAt = "updated_at",
 }
 
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJob = {
+    readonly __typename?: "job_queues_ImportJob";
+    readonly completed_at?: Maybe<Scalars["timestamptz"]>;
+    /** An object relationship */
+    readonly conference: Conference_Conference;
+    readonly conferenceId: Scalars["uuid"];
+    readonly createdBy?: Maybe<Scalars["uuid"]>;
+    readonly created_at: Scalars["timestamptz"];
+    /** An object relationship */
+    readonly creator?: Maybe<Registrant_Registrant>;
+    readonly data: Scalars["jsonb"];
+    readonly errors?: Maybe<Scalars["jsonb"]>;
+    readonly id: Scalars["uuid"];
+    readonly options: Scalars["jsonb"];
+    /** An array relationship */
+    readonly outputs: ReadonlyArray<Job_Queues_ImportJobOutput>;
+    /** An aggregate relationship */
+    readonly outputs_aggregate: Job_Queues_ImportJobOutput_Aggregate;
+    readonly progress: Scalars["Int"];
+    readonly progressMaximum: Scalars["Int"];
+    readonly status: Scalars["String"];
+    /** An object relationship */
+    readonly subconference?: Maybe<Conference_Subconference>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobDataArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobErrorsArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobOptionsArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobOutputsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+/** columns and relationships of "job_queues.ImportJob" */
+export type Job_Queues_ImportJobOutputs_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+/** columns and relationships of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput = {
+    readonly __typename?: "job_queues_ImportJobOutput";
+    readonly created_at: Scalars["timestamptz"];
+    readonly id: Scalars["uuid"];
+    readonly jobId: Scalars["uuid"];
+    readonly name: Scalars["String"];
+    readonly updated_at: Scalars["timestamptz"];
+    readonly value: Scalars["jsonb"];
+};
+
+/** columns and relationships of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutputValueArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregated selection of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Aggregate = {
+    readonly __typename?: "job_queues_ImportJobOutput_aggregate";
+    readonly aggregate?: Maybe<Job_Queues_ImportJobOutput_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Job_Queues_ImportJobOutput>;
+};
+
+/** aggregate fields of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Aggregate_Fields = {
+    readonly __typename?: "job_queues_ImportJobOutput_aggregate_fields";
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Job_Queues_ImportJobOutput_Max_Fields>;
+    readonly min?: Maybe<Job_Queues_ImportJobOutput_Min_Fields>;
+};
+
+/** aggregate fields of "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Aggregate_Order_By = {
+    readonly count?: InputMaybe<Order_By>;
+    readonly max?: InputMaybe<Job_Queues_ImportJobOutput_Max_Order_By>;
+    readonly min?: InputMaybe<Job_Queues_ImportJobOutput_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_ImportJobOutput_Append_Input = {
+    readonly value?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Arr_Rel_Insert_Input = {
+    readonly data: ReadonlyArray<Job_Queues_ImportJobOutput_Insert_Input>;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Job_Queues_ImportJobOutput_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.ImportJobOutput". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ImportJobOutput_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Bool_Exp>>;
+    readonly _not?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Bool_Exp>>;
+    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly jobId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly name?: InputMaybe<String_Comparison_Exp>;
+    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly value?: InputMaybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.ImportJobOutput" */
+export enum Job_Queues_ImportJobOutput_Constraint {
+    /** unique or primary key constraint */
+    ImportJobOutputJobIdNameKey = "ImportJobOutput_jobId_name_key",
+    /** unique or primary key constraint */
+    ImportJobOutputPkey = "ImportJobOutput_pkey",
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_ImportJobOutput_Delete_At_Path_Input = {
+    readonly value?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_ImportJobOutput_Delete_Elem_Input = {
+    readonly value?: InputMaybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_ImportJobOutput_Delete_Key_Input = {
+    readonly value?: InputMaybe<Scalars["String"]>;
+};
+
+/** input type for inserting data into table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Insert_Input = {
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly jobId?: InputMaybe<Scalars["uuid"]>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly value?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_ImportJobOutput_Max_Fields = {
+    readonly __typename?: "job_queues_ImportJobOutput_max_fields";
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly jobId?: Maybe<Scalars["uuid"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Max_Order_By = {
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly jobId?: InputMaybe<Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_ImportJobOutput_Min_Fields = {
+    readonly __typename?: "job_queues_ImportJobOutput_min_fields";
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly jobId?: Maybe<Scalars["uuid"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Min_Order_By = {
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly jobId?: InputMaybe<Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Mutation_Response = {
+    readonly __typename?: "job_queues_ImportJobOutput_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Job_Queues_ImportJobOutput>;
+};
+
+/** on conflict condition type for table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_On_Conflict = {
+    readonly constraint: Job_Queues_ImportJobOutput_Constraint;
+    readonly update_columns?: ReadonlyArray<Job_Queues_ImportJobOutput_Update_Column>;
+    readonly where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "job_queues.ImportJobOutput". */
+export type Job_Queues_ImportJobOutput_Order_By = {
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly jobId?: InputMaybe<Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+    readonly value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: job_queues_ImportJobOutput */
+export type Job_Queues_ImportJobOutput_Pk_Columns_Input = {
+    readonly id: Scalars["uuid"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_ImportJobOutput_Prepend_Input = {
+    readonly value?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "job_queues.ImportJobOutput" */
+export enum Job_Queues_ImportJobOutput_Select_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobId = "jobId",
+    /** column name */
+    Name = "name",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    Value = "value",
+}
+
+/** input type for updating data in table "job_queues.ImportJobOutput" */
+export type Job_Queues_ImportJobOutput_Set_Input = {
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly jobId?: InputMaybe<Scalars["uuid"]>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly value?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** update columns of table "job_queues.ImportJobOutput" */
+export enum Job_Queues_ImportJobOutput_Update_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobId = "jobId",
+    /** column name */
+    Name = "name",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    Value = "value",
+}
+
+/** aggregated selection of "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Aggregate = {
+    readonly __typename?: "job_queues_ImportJob_aggregate";
+    readonly aggregate?: Maybe<Job_Queues_ImportJob_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Job_Queues_ImportJob>;
+};
+
+/** aggregate fields of "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Aggregate_Fields = {
+    readonly __typename?: "job_queues_ImportJob_aggregate_fields";
+    readonly avg?: Maybe<Job_Queues_ImportJob_Avg_Fields>;
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Job_Queues_ImportJob_Max_Fields>;
+    readonly min?: Maybe<Job_Queues_ImportJob_Min_Fields>;
+    readonly stddev?: Maybe<Job_Queues_ImportJob_Stddev_Fields>;
+    readonly stddev_pop?: Maybe<Job_Queues_ImportJob_Stddev_Pop_Fields>;
+    readonly stddev_samp?: Maybe<Job_Queues_ImportJob_Stddev_Samp_Fields>;
+    readonly sum?: Maybe<Job_Queues_ImportJob_Sum_Fields>;
+    readonly var_pop?: Maybe<Job_Queues_ImportJob_Var_Pop_Fields>;
+    readonly var_samp?: Maybe<Job_Queues_ImportJob_Var_Samp_Fields>;
+    readonly variance?: Maybe<Job_Queues_ImportJob_Variance_Fields>;
+};
+
+/** aggregate fields of "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_ImportJob_Append_Input = {
+    readonly data?: InputMaybe<Scalars["jsonb"]>;
+    readonly errors?: InputMaybe<Scalars["jsonb"]>;
+    readonly options?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** aggregate avg on columns */
+export type Job_Queues_ImportJob_Avg_Fields = {
+    readonly __typename?: "job_queues_ImportJob_avg_fields";
+    readonly progress?: Maybe<Scalars["Float"]>;
+    readonly progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.ImportJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ImportJob_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Bool_Exp>>;
+    readonly _not?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Bool_Exp>>;
+    readonly completed_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly createdBy?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly creator?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    readonly data?: InputMaybe<Jsonb_Comparison_Exp>;
+    readonly errors?: InputMaybe<Jsonb_Comparison_Exp>;
+    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly options?: InputMaybe<Jsonb_Comparison_Exp>;
+    readonly outputs?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+    readonly progress?: InputMaybe<Int_Comparison_Exp>;
+    readonly progressMaximum?: InputMaybe<Int_Comparison_Exp>;
+    readonly status?: InputMaybe<String_Comparison_Exp>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
+    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.ImportJob" */
+export enum Job_Queues_ImportJob_Constraint {
+    /** unique or primary key constraint */
+    ImportJobConferenceIdStatusKey = "ImportJob_conferenceId_status_key",
+    /** unique or primary key constraint */
+    ImportJobConferenceIdSubconferenceIdStatusKey = "ImportJob_conferenceId_subconferenceId_status_key",
+    /** unique or primary key constraint */
+    ImportJobPkey = "ImportJob_pkey",
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_ImportJob_Delete_At_Path_Input = {
+    readonly data?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
+    readonly errors?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
+    readonly options?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_ImportJob_Delete_Elem_Input = {
+    readonly data?: InputMaybe<Scalars["Int"]>;
+    readonly errors?: InputMaybe<Scalars["Int"]>;
+    readonly options?: InputMaybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_ImportJob_Delete_Key_Input = {
+    readonly data?: InputMaybe<Scalars["String"]>;
+    readonly errors?: InputMaybe<Scalars["String"]>;
+    readonly options?: InputMaybe<Scalars["String"]>;
+};
+
+/** input type for incrementing numeric columns in table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Inc_Input = {
+    readonly progress?: InputMaybe<Scalars["Int"]>;
+    readonly progressMaximum?: InputMaybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Insert_Input = {
+    readonly completed_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly createdBy?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly creator?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    readonly data?: InputMaybe<Scalars["jsonb"]>;
+    readonly errors?: InputMaybe<Scalars["jsonb"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly options?: InputMaybe<Scalars["jsonb"]>;
+    readonly outputs?: InputMaybe<Job_Queues_ImportJobOutput_Arr_Rel_Insert_Input>;
+    readonly progress?: InputMaybe<Scalars["Int"]>;
+    readonly progressMaximum?: InputMaybe<Scalars["Int"]>;
+    readonly status?: InputMaybe<Scalars["String"]>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_ImportJob_Max_Fields = {
+    readonly __typename?: "job_queues_ImportJob_max_fields";
+    readonly completed_at?: Maybe<Scalars["timestamptz"]>;
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly createdBy?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly progress?: Maybe<Scalars["Int"]>;
+    readonly progressMaximum?: Maybe<Scalars["Int"]>;
+    readonly status?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_ImportJob_Min_Fields = {
+    readonly __typename?: "job_queues_ImportJob_min_fields";
+    readonly completed_at?: Maybe<Scalars["timestamptz"]>;
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly createdBy?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly progress?: Maybe<Scalars["Int"]>;
+    readonly progressMaximum?: Maybe<Scalars["Int"]>;
+    readonly status?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Mutation_Response = {
+    readonly __typename?: "job_queues_ImportJob_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Job_Queues_ImportJob>;
+};
+
+/** on conflict condition type for table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_On_Conflict = {
+    readonly constraint: Job_Queues_ImportJob_Constraint;
+    readonly update_columns?: ReadonlyArray<Job_Queues_ImportJob_Update_Column>;
+    readonly where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "job_queues.ImportJob". */
+export type Job_Queues_ImportJob_Order_By = {
+    readonly completed_at?: InputMaybe<Order_By>;
+    readonly conference?: InputMaybe<Conference_Conference_Order_By>;
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly createdBy?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly creator?: InputMaybe<Registrant_Registrant_Order_By>;
+    readonly data?: InputMaybe<Order_By>;
+    readonly errors?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly options?: InputMaybe<Order_By>;
+    readonly outputs_aggregate?: InputMaybe<Job_Queues_ImportJobOutput_Aggregate_Order_By>;
+    readonly progress?: InputMaybe<Order_By>;
+    readonly progressMaximum?: InputMaybe<Order_By>;
+    readonly status?: InputMaybe<Order_By>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: job_queues_ImportJob */
+export type Job_Queues_ImportJob_Pk_Columns_Input = {
+    readonly id: Scalars["uuid"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_ImportJob_Prepend_Input = {
+    readonly data?: InputMaybe<Scalars["jsonb"]>;
+    readonly errors?: InputMaybe<Scalars["jsonb"]>;
+    readonly options?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "job_queues.ImportJob" */
+export enum Job_Queues_ImportJob_Select_Column {
+    /** column name */
+    CompletedAt = "completed_at",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedBy = "createdBy",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Data = "data",
+    /** column name */
+    Errors = "errors",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Options = "options",
+    /** column name */
+    Progress = "progress",
+    /** column name */
+    ProgressMaximum = "progressMaximum",
+    /** column name */
+    Status = "status",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "job_queues.ImportJob" */
+export type Job_Queues_ImportJob_Set_Input = {
+    readonly completed_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly createdBy?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly data?: InputMaybe<Scalars["jsonb"]>;
+    readonly errors?: InputMaybe<Scalars["jsonb"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly options?: InputMaybe<Scalars["jsonb"]>;
+    readonly progress?: InputMaybe<Scalars["Int"]>;
+    readonly progressMaximum?: InputMaybe<Scalars["Int"]>;
+    readonly status?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Job_Queues_ImportJob_Stddev_Fields = {
+    readonly __typename?: "job_queues_ImportJob_stddev_fields";
+    readonly progress?: Maybe<Scalars["Float"]>;
+    readonly progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Job_Queues_ImportJob_Stddev_Pop_Fields = {
+    readonly __typename?: "job_queues_ImportJob_stddev_pop_fields";
+    readonly progress?: Maybe<Scalars["Float"]>;
+    readonly progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Job_Queues_ImportJob_Stddev_Samp_Fields = {
+    readonly __typename?: "job_queues_ImportJob_stddev_samp_fields";
+    readonly progress?: Maybe<Scalars["Float"]>;
+    readonly progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Job_Queues_ImportJob_Sum_Fields = {
+    readonly __typename?: "job_queues_ImportJob_sum_fields";
+    readonly progress?: Maybe<Scalars["Int"]>;
+    readonly progressMaximum?: Maybe<Scalars["Int"]>;
+};
+
+/** update columns of table "job_queues.ImportJob" */
+export enum Job_Queues_ImportJob_Update_Column {
+    /** column name */
+    CompletedAt = "completed_at",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedBy = "createdBy",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Data = "data",
+    /** column name */
+    Errors = "errors",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Options = "options",
+    /** column name */
+    Progress = "progress",
+    /** column name */
+    ProgressMaximum = "progressMaximum",
+    /** column name */
+    Status = "status",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Job_Queues_ImportJob_Var_Pop_Fields = {
+    readonly __typename?: "job_queues_ImportJob_var_pop_fields";
+    readonly progress?: Maybe<Scalars["Float"]>;
+    readonly progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Job_Queues_ImportJob_Var_Samp_Fields = {
+    readonly __typename?: "job_queues_ImportJob_var_samp_fields";
+    readonly progress?: Maybe<Scalars["Float"]>;
+    readonly progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Job_Queues_ImportJob_Variance_Fields = {
+    readonly __typename?: "job_queues_ImportJob_variance_fields";
+    readonly progress?: Maybe<Scalars["Float"]>;
+    readonly progressMaximum?: Maybe<Scalars["Float"]>;
+};
+
 /** columns and relationships of "job_queues.InvitationEmailJob" */
 export type Job_Queues_InvitationEmailJob = {
     readonly __typename?: "job_queues_InvitationEmailJob";
@@ -13938,6 +14546,14 @@ export type Mutation_Root = {
     readonly delete_job_queues_CustomEmailJob?: Maybe<Job_Queues_CustomEmailJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.CustomEmailJob" */
     readonly delete_job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
+    /** delete data from the table: "job_queues.ImportJob" */
+    readonly delete_job_queues_ImportJob?: Maybe<Job_Queues_ImportJob_Mutation_Response>;
+    /** delete data from the table: "job_queues.ImportJobOutput" */
+    readonly delete_job_queues_ImportJobOutput?: Maybe<Job_Queues_ImportJobOutput_Mutation_Response>;
+    /** delete single row from the table: "job_queues.ImportJobOutput" */
+    readonly delete_job_queues_ImportJobOutput_by_pk?: Maybe<Job_Queues_ImportJobOutput>;
+    /** delete single row from the table: "job_queues.ImportJob" */
+    readonly delete_job_queues_ImportJob_by_pk?: Maybe<Job_Queues_ImportJob>;
     /** delete data from the table: "job_queues.InvitationEmailJob" */
     readonly delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.InvitationEmailJob" */
@@ -14328,6 +14944,14 @@ export type Mutation_Root = {
     readonly insert_job_queues_CustomEmailJob?: Maybe<Job_Queues_CustomEmailJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.CustomEmailJob" */
     readonly insert_job_queues_CustomEmailJob_one?: Maybe<Job_Queues_CustomEmailJob>;
+    /** insert data into the table: "job_queues.ImportJob" */
+    readonly insert_job_queues_ImportJob?: Maybe<Job_Queues_ImportJob_Mutation_Response>;
+    /** insert data into the table: "job_queues.ImportJobOutput" */
+    readonly insert_job_queues_ImportJobOutput?: Maybe<Job_Queues_ImportJobOutput_Mutation_Response>;
+    /** insert a single row into the table: "job_queues.ImportJobOutput" */
+    readonly insert_job_queues_ImportJobOutput_one?: Maybe<Job_Queues_ImportJobOutput>;
+    /** insert a single row into the table: "job_queues.ImportJob" */
+    readonly insert_job_queues_ImportJob_one?: Maybe<Job_Queues_ImportJob>;
     /** insert data into the table: "job_queues.InvitationEmailJob" */
     readonly insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.InvitationEmailJob" */
@@ -14729,6 +15353,14 @@ export type Mutation_Root = {
     readonly update_job_queues_CustomEmailJob?: Maybe<Job_Queues_CustomEmailJob_Mutation_Response>;
     /** update single row of the table: "job_queues.CustomEmailJob" */
     readonly update_job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
+    /** update data of the table: "job_queues.ImportJob" */
+    readonly update_job_queues_ImportJob?: Maybe<Job_Queues_ImportJob_Mutation_Response>;
+    /** update data of the table: "job_queues.ImportJobOutput" */
+    readonly update_job_queues_ImportJobOutput?: Maybe<Job_Queues_ImportJobOutput_Mutation_Response>;
+    /** update single row of the table: "job_queues.ImportJobOutput" */
+    readonly update_job_queues_ImportJobOutput_by_pk?: Maybe<Job_Queues_ImportJobOutput>;
+    /** update single row of the table: "job_queues.ImportJob" */
+    readonly update_job_queues_ImportJob_by_pk?: Maybe<Job_Queues_ImportJob>;
     /** update data of the table: "job_queues.InvitationEmailJob" */
     readonly update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
     /** update single row of the table: "job_queues.InvitationEmailJob" */
@@ -15384,6 +16016,26 @@ export type Mutation_RootDelete_Job_Queues_CustomEmailJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_CustomEmailJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ImportJobArgs = {
+    where: Job_Queues_ImportJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ImportJobOutputArgs = {
+    where: Job_Queues_ImportJobOutput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ImportJobOutput_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ImportJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -16445,6 +17097,30 @@ export type Mutation_RootInsert_Job_Queues_CustomEmailJobArgs = {
 export type Mutation_RootInsert_Job_Queues_CustomEmailJob_OneArgs = {
     object: Job_Queues_CustomEmailJob_Insert_Input;
     on_conflict?: InputMaybe<Job_Queues_CustomEmailJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ImportJobArgs = {
+    objects: ReadonlyArray<Job_Queues_ImportJob_Insert_Input>;
+    on_conflict?: InputMaybe<Job_Queues_ImportJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ImportJobOutputArgs = {
+    objects: ReadonlyArray<Job_Queues_ImportJobOutput_Insert_Input>;
+    on_conflict?: InputMaybe<Job_Queues_ImportJobOutput_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ImportJobOutput_OneArgs = {
+    object: Job_Queues_ImportJobOutput_Insert_Input;
+    on_conflict?: InputMaybe<Job_Queues_ImportJobOutput_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ImportJob_OneArgs = {
+    object: Job_Queues_ImportJob_Insert_Input;
+    on_conflict?: InputMaybe<Job_Queues_ImportJob_On_Conflict>;
 };
 
 /** mutation root */
@@ -17805,6 +18481,52 @@ export type Mutation_RootUpdate_Job_Queues_CustomEmailJob_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ImportJobArgs = {
+    _append?: InputMaybe<Job_Queues_ImportJob_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_ImportJob_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_ImportJob_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_ImportJob_Delete_Key_Input>;
+    _inc?: InputMaybe<Job_Queues_ImportJob_Inc_Input>;
+    _prepend?: InputMaybe<Job_Queues_ImportJob_Prepend_Input>;
+    _set?: InputMaybe<Job_Queues_ImportJob_Set_Input>;
+    where: Job_Queues_ImportJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ImportJobOutputArgs = {
+    _append?: InputMaybe<Job_Queues_ImportJobOutput_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_ImportJobOutput_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_ImportJobOutput_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_ImportJobOutput_Delete_Key_Input>;
+    _prepend?: InputMaybe<Job_Queues_ImportJobOutput_Prepend_Input>;
+    _set?: InputMaybe<Job_Queues_ImportJobOutput_Set_Input>;
+    where: Job_Queues_ImportJobOutput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ImportJobOutput_By_PkArgs = {
+    _append?: InputMaybe<Job_Queues_ImportJobOutput_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_ImportJobOutput_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_ImportJobOutput_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_ImportJobOutput_Delete_Key_Input>;
+    _prepend?: InputMaybe<Job_Queues_ImportJobOutput_Prepend_Input>;
+    _set?: InputMaybe<Job_Queues_ImportJobOutput_Set_Input>;
+    pk_columns: Job_Queues_ImportJobOutput_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ImportJob_By_PkArgs = {
+    _append?: InputMaybe<Job_Queues_ImportJob_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_ImportJob_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_ImportJob_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_ImportJob_Delete_Key_Input>;
+    _inc?: InputMaybe<Job_Queues_ImportJob_Inc_Input>;
+    _prepend?: InputMaybe<Job_Queues_ImportJob_Prepend_Input>;
+    _set?: InputMaybe<Job_Queues_ImportJob_Set_Input>;
+    pk_columns: Job_Queues_ImportJob_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_InvitationEmailJobArgs = {
     _append?: InputMaybe<Job_Queues_InvitationEmailJob_Append_Input>;
     _delete_at_path?: InputMaybe<Job_Queues_InvitationEmailJob_Delete_At_Path_Input>;
@@ -18912,6 +19634,18 @@ export type Query_Root = {
     readonly job_queues_CustomEmailJob_aggregate: Job_Queues_CustomEmailJob_Aggregate;
     /** fetch data from the table: "job_queues.CustomEmailJob" using primary key columns */
     readonly job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
+    /** fetch data from the table: "job_queues.ImportJob" */
+    readonly job_queues_ImportJob: ReadonlyArray<Job_Queues_ImportJob>;
+    /** fetch data from the table: "job_queues.ImportJobOutput" */
+    readonly job_queues_ImportJobOutput: ReadonlyArray<Job_Queues_ImportJobOutput>;
+    /** fetch aggregated fields from the table: "job_queues.ImportJobOutput" */
+    readonly job_queues_ImportJobOutput_aggregate: Job_Queues_ImportJobOutput_Aggregate;
+    /** fetch data from the table: "job_queues.ImportJobOutput" using primary key columns */
+    readonly job_queues_ImportJobOutput_by_pk?: Maybe<Job_Queues_ImportJobOutput>;
+    /** fetch aggregated fields from the table: "job_queues.ImportJob" */
+    readonly job_queues_ImportJob_aggregate: Job_Queues_ImportJob_Aggregate;
+    /** fetch data from the table: "job_queues.ImportJob" using primary key columns */
+    readonly job_queues_ImportJob_by_pk?: Maybe<Job_Queues_ImportJob>;
     /** fetch data from the table: "job_queues.InvitationEmailJob" */
     readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
     /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -20180,6 +20914,46 @@ export type Query_RootJob_Queues_CustomEmailJob_AggregateArgs = {
 };
 
 export type Query_RootJob_Queues_CustomEmailJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootJob_Queues_ImportJobArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ImportJobOutputArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ImportJobOutput_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ImportJobOutput_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootJob_Queues_ImportJob_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ImportJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -29986,6 +30760,18 @@ export type Subscription_Root = {
     readonly job_queues_CustomEmailJob_aggregate: Job_Queues_CustomEmailJob_Aggregate;
     /** fetch data from the table: "job_queues.CustomEmailJob" using primary key columns */
     readonly job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
+    /** fetch data from the table: "job_queues.ImportJob" */
+    readonly job_queues_ImportJob: ReadonlyArray<Job_Queues_ImportJob>;
+    /** fetch data from the table: "job_queues.ImportJobOutput" */
+    readonly job_queues_ImportJobOutput: ReadonlyArray<Job_Queues_ImportJobOutput>;
+    /** fetch aggregated fields from the table: "job_queues.ImportJobOutput" */
+    readonly job_queues_ImportJobOutput_aggregate: Job_Queues_ImportJobOutput_Aggregate;
+    /** fetch data from the table: "job_queues.ImportJobOutput" using primary key columns */
+    readonly job_queues_ImportJobOutput_by_pk?: Maybe<Job_Queues_ImportJobOutput>;
+    /** fetch aggregated fields from the table: "job_queues.ImportJob" */
+    readonly job_queues_ImportJob_aggregate: Job_Queues_ImportJob_Aggregate;
+    /** fetch data from the table: "job_queues.ImportJob" using primary key columns */
+    readonly job_queues_ImportJob_by_pk?: Maybe<Job_Queues_ImportJob>;
     /** fetch data from the table: "job_queues.InvitationEmailJob" */
     readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
     /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -31247,6 +32033,46 @@ export type Subscription_RootJob_Queues_CustomEmailJob_AggregateArgs = {
 };
 
 export type Subscription_RootJob_Queues_CustomEmailJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootJob_Queues_ImportJobArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ImportJobOutputArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ImportJobOutput_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJobOutput_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJobOutput_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ImportJobOutput_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootJob_Queues_ImportJob_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Job_Queues_ImportJob_Order_By>>;
+    where?: InputMaybe<Job_Queues_ImportJob_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ImportJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -43997,6 +44823,47 @@ export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = {
     }>;
 };
 
+export type ImportJobFragment = {
+    readonly __typename?: "job_queues_ImportJob";
+    readonly id: any;
+    readonly updated_at: any;
+    readonly completed_at?: any | null;
+    readonly status: string;
+    readonly progress: number;
+    readonly progressMaximum: number;
+    readonly errors?: any | null;
+};
+
+export type GetImportJobsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type GetImportJobsQuery = {
+    readonly __typename?: "query_root";
+    readonly job_queues_ImportJob: ReadonlyArray<{
+        readonly __typename?: "job_queues_ImportJob";
+        readonly id: any;
+        readonly updated_at: any;
+        readonly completed_at?: any | null;
+        readonly status: string;
+        readonly progress: number;
+        readonly progressMaximum: number;
+        readonly errors?: any | null;
+    }>;
+};
+
+export type StartImportJobMutationVariables = Exact<{
+    object: Job_Queues_ImportJob_Insert_Input;
+}>;
+
+export type StartImportJobMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_job_queues_ImportJob_one?: {
+        readonly __typename?: "job_queues_ImportJob";
+        readonly id: any;
+    } | null;
+};
+
 export type ImportRegistrantsMutationVariables = Exact<{
     insertRegistrants: ReadonlyArray<Registrant_Registrant_Insert_Input> | Registrant_Registrant_Insert_Input;
     insertInvitations: ReadonlyArray<Registrant_Invitation_Insert_Input> | Registrant_Invitation_Insert_Input;
@@ -49127,6 +49994,17 @@ export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
     }
     ${UploadYouTubeVideos_YouTubeUploadFragmentDoc}
 `;
+export const ImportJobFragmentDoc = gql`
+    fragment ImportJob on job_queues_ImportJob {
+        id
+        updated_at
+        completed_at
+        status
+        progress
+        progressMaximum
+        errors
+    }
+`;
 export const ManageGroups_GroupFragmentDoc = gql`
     fragment ManageGroups_Group on registrant_Group {
         conferenceId
@@ -49695,7 +50573,7 @@ export const GetSlugForUrlDocument = gql`
 `;
 
 export function useGetSlugForUrlQuery(options: Omit<Urql.UseQueryArgs<GetSlugForUrlQueryVariables>, "query">) {
-    return useQuery<GetSlugForUrlQuery>({ query: GetSlugForUrlDocument, ...options });
+    return Urql.useQuery<GetSlugForUrlQuery>({ query: GetSlugForUrlDocument, ...options });
 }
 export const InitialChatStateDocument = gql`
     query InitialChatState($registrantId: uuid!) {
@@ -49711,7 +50589,7 @@ export const InitialChatStateDocument = gql`
 `;
 
 export function useInitialChatStateQuery(options: Omit<Urql.UseQueryArgs<InitialChatStateQueryVariables>, "query">) {
-    return useQuery<InitialChatStateQuery>({ query: InitialChatStateDocument, ...options });
+    return Urql.useQuery<InitialChatStateQuery>({ query: InitialChatStateDocument, ...options });
 }
 export const SelectInitialChatStateDocument = gql`
     query SelectInitialChatState($chatId: uuid!, $registrantId: uuid!) {
@@ -49725,7 +50603,7 @@ export const SelectInitialChatStateDocument = gql`
 export function useSelectInitialChatStateQuery(
     options: Omit<Urql.UseQueryArgs<SelectInitialChatStateQueryVariables>, "query">
 ) {
-    return useQuery<SelectInitialChatStateQuery>({ query: SelectInitialChatStateDocument, ...options });
+    return Urql.useQuery<SelectInitialChatStateQuery>({ query: SelectInitialChatStateDocument, ...options });
 }
 export const SelectInitialChatStatesDocument = gql`
     query SelectInitialChatStates($chatIds: [uuid!]!, $registrantId: uuid!) {
@@ -49739,7 +50617,7 @@ export const SelectInitialChatStatesDocument = gql`
 export function useSelectInitialChatStatesQuery(
     options: Omit<Urql.UseQueryArgs<SelectInitialChatStatesQueryVariables>, "query">
 ) {
-    return useQuery<SelectInitialChatStatesQuery>({ query: SelectInitialChatStatesDocument, ...options });
+    return Urql.useQuery<SelectInitialChatStatesQuery>({ query: SelectInitialChatStatesDocument, ...options });
 }
 export const SubscribeChatDocument = gql`
     mutation SubscribeChat($chatId: uuid!, $registrantId: uuid!) {
@@ -49815,7 +50693,7 @@ export const SelectMessagesPageDocument = gql`
 export function useSelectMessagesPageQuery(
     options: Omit<Urql.UseQueryArgs<SelectMessagesPageQueryVariables>, "query">
 ) {
-    return useQuery<SelectMessagesPageQuery>({ query: SelectMessagesPageDocument, ...options });
+    return Urql.useQuery<SelectMessagesPageQuery>({ query: SelectMessagesPageDocument, ...options });
 }
 export const InsertChatFlagDocument = gql`
     mutation InsertChatFlag($messageSId: uuid!, $registrantId: uuid!, $type: chat_FlagType_enum!, $reason: String!) {
@@ -49846,7 +50724,7 @@ export const GetChatPathDocument = gql`
 `;
 
 export function useGetChatPathQuery(options: Omit<Urql.UseQueryArgs<GetChatPathQueryVariables>, "query">) {
-    return useQuery<GetChatPathQuery>({ query: GetChatPathDocument, ...options });
+    return Urql.useQuery<GetChatPathQuery>({ query: GetChatPathDocument, ...options });
 }
 export const ConferenceLandingPageItemDocument = gql`
     query ConferenceLandingPageItem($conferenceId: uuid!) {
@@ -49860,7 +50738,7 @@ export const ConferenceLandingPageItemDocument = gql`
 export function useConferenceLandingPageItemQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceLandingPageItemQueryVariables>, "query">
 ) {
-    return useQuery<ConferenceLandingPageItemQuery>({ query: ConferenceLandingPageItemDocument, ...options });
+    return Urql.useQuery<ConferenceLandingPageItemQuery>({ query: ConferenceLandingPageItemDocument, ...options });
 }
 export const ItemElements_GetItemDocument = gql`
     query ItemElements_GetItem($itemId: uuid!) {
@@ -49874,7 +50752,7 @@ export const ItemElements_GetItemDocument = gql`
 export function useItemElements_GetItemQuery(
     options: Omit<Urql.UseQueryArgs<ItemElements_GetItemQueryVariables>, "query">
 ) {
-    return useQuery<ItemElements_GetItemQuery>({ query: ItemElements_GetItemDocument, ...options });
+    return Urql.useQuery<ItemElements_GetItemQuery>({ query: ItemElements_GetItemDocument, ...options });
 }
 export const ContentOfTagDocument = gql`
     query ContentOfTag($id: uuid!) {
@@ -49886,7 +50764,7 @@ export const ContentOfTagDocument = gql`
 `;
 
 export function useContentOfTagQuery(options: Omit<Urql.UseQueryArgs<ContentOfTagQueryVariables>, "query">) {
-    return useQuery<ContentOfTagQuery>({ query: ContentOfTagDocument, ...options });
+    return Urql.useQuery<ContentOfTagQuery>({ query: ContentOfTagDocument, ...options });
 }
 export const TagsDocument = gql`
     query Tags($conferenceId: uuid!) {
@@ -49898,7 +50776,7 @@ export const TagsDocument = gql`
 `;
 
 export function useTagsQuery(options: Omit<Urql.UseQueryArgs<TagsQueryVariables>, "query">) {
-    return useQuery<TagsQuery>({ query: TagsDocument, ...options });
+    return Urql.useQuery<TagsQuery>({ query: TagsDocument, ...options });
 }
 export const GetItemDocument = gql`
     query GetItem($itemId: uuid!) {
@@ -49922,7 +50800,7 @@ export const GetItemDocument = gql`
 `;
 
 export function useGetItemQuery(options: Omit<Urql.UseQueryArgs<GetItemQueryVariables>, "query">) {
-    return useQuery<GetItemQuery>({ query: GetItemDocument, ...options });
+    return Urql.useQuery<GetItemQuery>({ query: GetItemDocument, ...options });
 }
 export const ContinuationChoices_ContinuationsDocument = gql`
     query ContinuationChoices_Continuations($fromId: uuid!, $nowStart: timestamptz, $nowEnd: timestamptz) {
@@ -49957,7 +50835,7 @@ export const ContinuationChoices_ContinuationsDocument = gql`
 export function useContinuationChoices_ContinuationsQuery(
     options: Omit<Urql.UseQueryArgs<ContinuationChoices_ContinuationsQueryVariables>, "query">
 ) {
-    return useQuery<ContinuationChoices_ContinuationsQuery>({
+    return Urql.useQuery<ContinuationChoices_ContinuationsQuery>({
         query: ContinuationChoices_ContinuationsDocument,
         ...options,
     });
@@ -49981,7 +50859,7 @@ export const ContinuationChoices_RoomsDocument = gql`
 export function useContinuationChoices_RoomsQuery(
     options: Omit<Urql.UseQueryArgs<ContinuationChoices_RoomsQueryVariables>, "query">
 ) {
-    return useQuery<ContinuationChoices_RoomsQuery>({ query: ContinuationChoices_RoomsDocument, ...options });
+    return Urql.useQuery<ContinuationChoices_RoomsQuery>({ query: ContinuationChoices_RoomsDocument, ...options });
 }
 export const SelectExhibitionDocument = gql`
     query SelectExhibition($id: uuid!) {
@@ -49997,7 +50875,7 @@ export const SelectExhibitionDocument = gql`
 `;
 
 export function useSelectExhibitionQuery(options: Omit<Urql.UseQueryArgs<SelectExhibitionQueryVariables>, "query">) {
-    return useQuery<SelectExhibitionQuery>({ query: SelectExhibitionDocument, ...options });
+    return Urql.useQuery<SelectExhibitionQuery>({ query: SelectExhibitionDocument, ...options });
 }
 export const SelectAllExhibitionsDocument = gql`
     query SelectAllExhibitions($conferenceId: uuid!) {
@@ -50011,7 +50889,7 @@ export const SelectAllExhibitionsDocument = gql`
 export function useSelectAllExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<SelectAllExhibitionsQueryVariables>, "query">
 ) {
-    return useQuery<SelectAllExhibitionsQuery>({ query: SelectAllExhibitionsDocument, ...options });
+    return Urql.useQuery<SelectAllExhibitionsQuery>({ query: SelectAllExhibitionsDocument, ...options });
 }
 export const RegistrantByIdDocument = gql`
     query RegistrantById($conferenceId: uuid!, $registrantId: uuid!) {
@@ -50023,7 +50901,7 @@ export const RegistrantByIdDocument = gql`
 `;
 
 export function useRegistrantByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantByIdQueryVariables>, "query">) {
-    return useQuery<RegistrantByIdQuery>({ query: RegistrantByIdDocument, ...options });
+    return Urql.useQuery<RegistrantByIdQuery>({ query: RegistrantByIdDocument, ...options });
 }
 export const RegistrantInvitedEmailAddressDocument = gql`
     query RegistrantInvitedEmailAddress($registrantId: uuid!) {
@@ -50038,7 +50916,7 @@ export const RegistrantInvitedEmailAddressDocument = gql`
 export function useRegistrantInvitedEmailAddressQuery(
     options: Omit<Urql.UseQueryArgs<RegistrantInvitedEmailAddressQueryVariables>, "query">
 ) {
-    return useQuery<RegistrantInvitedEmailAddressQuery>({
+    return Urql.useQuery<RegistrantInvitedEmailAddressQuery>({
         query: RegistrantInvitedEmailAddressDocument,
         ...options,
     });
@@ -50102,7 +50980,7 @@ export const RegistrantEventsWithBackstagesDocument = gql`
 export function useRegistrantEventsWithBackstagesQuery(
     options: Omit<Urql.UseQueryArgs<RegistrantEventsWithBackstagesQueryVariables>, "query">
 ) {
-    return useQuery<RegistrantEventsWithBackstagesQuery>({
+    return Urql.useQuery<RegistrantEventsWithBackstagesQuery>({
         query: RegistrantEventsWithBackstagesDocument,
         ...options,
     });
@@ -50117,7 +50995,7 @@ export const ProfilePage_ItemsDocument = gql`
 `;
 
 export function useProfilePage_ItemsQuery(options: Omit<Urql.UseQueryArgs<ProfilePage_ItemsQueryVariables>, "query">) {
-    return useQuery<ProfilePage_ItemsQuery>({ query: ProfilePage_ItemsDocument, ...options });
+    return Urql.useQuery<ProfilePage_ItemsQuery>({ query: ProfilePage_ItemsDocument, ...options });
 }
 export const MyRecordingsDocument = gql`
     query MyRecordings($registrantId: uuid!) {
@@ -50142,7 +51020,7 @@ export const MyRecordingsDocument = gql`
 `;
 
 export function useMyRecordingsQuery(options: Omit<Urql.UseQueryArgs<MyRecordingsQueryVariables>, "query">) {
-    return useQuery<MyRecordingsQuery>({ query: MyRecordingsDocument, ...options });
+    return Urql.useQuery<MyRecordingsQuery>({ query: MyRecordingsDocument, ...options });
 }
 export const SelectRegistrantsDocument = gql`
     query SelectRegistrants($conferenceId: uuid!) {
@@ -50154,7 +51032,7 @@ export const SelectRegistrantsDocument = gql`
 `;
 
 export function useSelectRegistrantsQuery(options: Omit<Urql.UseQueryArgs<SelectRegistrantsQueryVariables>, "query">) {
-    return useQuery<SelectRegistrantsQuery>({ query: SelectRegistrantsDocument, ...options });
+    return Urql.useQuery<SelectRegistrantsQuery>({ query: SelectRegistrantsDocument, ...options });
 }
 export const SearchRegistrantsDocument = gql`
     query SearchRegistrants($conferenceId: uuid!, $search: String!) {
@@ -50180,7 +51058,7 @@ export const SearchRegistrantsDocument = gql`
 `;
 
 export function useSearchRegistrantsQuery(options: Omit<Urql.UseQueryArgs<SearchRegistrantsQueryVariables>, "query">) {
-    return useQuery<SearchRegistrantsQuery>({ query: SearchRegistrantsDocument, ...options });
+    return Urql.useQuery<SearchRegistrantsQuery>({ query: SearchRegistrantsDocument, ...options });
 }
 export const Registrant_RegistrantCreateRoomDocument = gql`
     mutation registrant_RegistrantCreateRoom(
@@ -50218,7 +51096,7 @@ export const Room_GetEventsDocument = gql`
 `;
 
 export function useRoom_GetEventsQuery(options: Omit<Urql.UseQueryArgs<Room_GetEventsQueryVariables>, "query">) {
-    return useQuery<Room_GetEventsQuery>({ query: Room_GetEventsDocument, ...options });
+    return Urql.useQuery<Room_GetEventsQuery>({ query: Room_GetEventsDocument, ...options });
 }
 export const Room_GetDefaultVideoRoomBackendDocument = gql`
     query Room_GetDefaultVideoRoomBackend {
@@ -50231,7 +51109,7 @@ export const Room_GetDefaultVideoRoomBackendDocument = gql`
 export function useRoom_GetDefaultVideoRoomBackendQuery(
     options?: Omit<Urql.UseQueryArgs<Room_GetDefaultVideoRoomBackendQueryVariables>, "query">
 ) {
-    return useQuery<Room_GetDefaultVideoRoomBackendQuery>({
+    return Urql.useQuery<Room_GetDefaultVideoRoomBackendQuery>({
         query: Room_GetDefaultVideoRoomBackendDocument,
         ...options,
     });
@@ -50263,7 +51141,7 @@ export const RoomPage_GetRoomDetailsDocument = gql`
 export function useRoomPage_GetRoomDetailsQuery(
     options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomDetailsQueryVariables>, "query">
 ) {
-    return useQuery<RoomPage_GetRoomDetailsQuery>({ query: RoomPage_GetRoomDetailsDocument, ...options });
+    return Urql.useQuery<RoomPage_GetRoomDetailsQuery>({ query: RoomPage_GetRoomDetailsDocument, ...options });
 }
 export const RoomPage_IsAdminDocument = gql`
     query RoomPage_IsAdmin($roomId: uuid!, $registrantId: uuid!) {
@@ -50279,7 +51157,7 @@ export const RoomPage_IsAdminDocument = gql`
 `;
 
 export function useRoomPage_IsAdminQuery(options: Omit<Urql.UseQueryArgs<RoomPage_IsAdminQueryVariables>, "query">) {
-    return useQuery<RoomPage_IsAdminQuery>({ query: RoomPage_IsAdminDocument, ...options });
+    return Urql.useQuery<RoomPage_IsAdminQuery>({ query: RoomPage_IsAdminDocument, ...options });
 }
 export const RoomPage_GetRoomChannelStackDocument = gql`
     query RoomPage_GetRoomChannelStack($roomId: uuid!) {
@@ -50293,7 +51171,7 @@ export const RoomPage_GetRoomChannelStackDocument = gql`
 export function useRoomPage_GetRoomChannelStackQuery(
     options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomChannelStackQueryVariables>, "query">
 ) {
-    return useQuery<RoomPage_GetRoomChannelStackQuery>({
+    return Urql.useQuery<RoomPage_GetRoomChannelStackQuery>({
         query: RoomPage_GetRoomChannelStackDocument,
         ...options,
     });
@@ -50314,7 +51192,7 @@ export const GetEventVonageDetailsDocument = gql`
 export function useGetEventVonageDetailsQuery(
     options: Omit<Urql.UseQueryArgs<GetEventVonageDetailsQueryVariables>, "query">
 ) {
-    return useQuery<GetEventVonageDetailsQuery>({ query: GetEventVonageDetailsDocument, ...options });
+    return Urql.useQuery<GetEventVonageDetailsQuery>({ query: GetEventVonageDetailsDocument, ...options });
 }
 export const RoomSponsorContent_GetElementsDocument = gql`
     query RoomSponsorContent_GetElements($itemId: uuid!) {
@@ -50328,7 +51206,7 @@ export const RoomSponsorContent_GetElementsDocument = gql`
 export function useRoomSponsorContent_GetElementsQuery(
     options: Omit<Urql.UseQueryArgs<RoomSponsorContent_GetElementsQueryVariables>, "query">
 ) {
-    return useQuery<RoomSponsorContent_GetElementsQuery>({
+    return Urql.useQuery<RoomSponsorContent_GetElementsQuery>({
         query: RoomSponsorContent_GetElementsDocument,
         ...options,
     });
@@ -50394,7 +51272,7 @@ export const ImmediateSwitch_GetElementsDocument = gql`
 export function useImmediateSwitch_GetElementsQuery(
     options: Omit<Urql.UseQueryArgs<ImmediateSwitch_GetElementsQueryVariables>, "query">
 ) {
-    return useQuery<ImmediateSwitch_GetElementsQuery>({ query: ImmediateSwitch_GetElementsDocument, ...options });
+    return Urql.useQuery<ImmediateSwitch_GetElementsQuery>({ query: ImmediateSwitch_GetElementsDocument, ...options });
 }
 export const ImmediateSwitch_CreateDocument = gql`
     mutation ImmediateSwitch_Create($data: jsonb!, $eventId: uuid!, $conferenceId: uuid!) {
@@ -50427,7 +51305,7 @@ export const LiveIndicator_GetLatestDocument = gql`
 export function useLiveIndicator_GetLatestQuery(
     options: Omit<Urql.UseQueryArgs<LiveIndicator_GetLatestQueryVariables>, "query">
 ) {
-    return useQuery<LiveIndicator_GetLatestQuery>({ query: LiveIndicator_GetLatestDocument, ...options });
+    return Urql.useQuery<LiveIndicator_GetLatestQuery>({ query: LiveIndicator_GetLatestDocument, ...options });
 }
 export const LiveIndicator_GetElementDocument = gql`
     query LiveIndicator_GetElement($elementId: uuid!) {
@@ -50441,7 +51319,7 @@ export const LiveIndicator_GetElementDocument = gql`
 export function useLiveIndicator_GetElementQuery(
     options: Omit<Urql.UseQueryArgs<LiveIndicator_GetElementQueryVariables>, "query">
 ) {
-    return useQuery<LiveIndicator_GetElementQuery>({ query: LiveIndicator_GetElementDocument, ...options });
+    return Urql.useQuery<LiveIndicator_GetElementQuery>({ query: LiveIndicator_GetElementDocument, ...options });
 }
 export const EnableBackstageStreamPreviewDocument = gql`
     query EnableBackstageStreamPreview($conferenceId: uuid!) {
@@ -50456,7 +51334,7 @@ export const EnableBackstageStreamPreviewDocument = gql`
 export function useEnableBackstageStreamPreviewQuery(
     options: Omit<Urql.UseQueryArgs<EnableBackstageStreamPreviewQueryVariables>, "query">
 ) {
-    return useQuery<EnableBackstageStreamPreviewQuery>({
+    return Urql.useQuery<EnableBackstageStreamPreviewQuery>({
         query: EnableBackstageStreamPreviewDocument,
         ...options,
     });
@@ -50471,7 +51349,7 @@ export const GetEventDetailsDocument = gql`
 `;
 
 export function useGetEventDetailsQuery(options: Omit<Urql.UseQueryArgs<GetEventDetailsQueryVariables>, "query">) {
-    return useQuery<GetEventDetailsQuery>({ query: GetEventDetailsDocument, ...options });
+    return Urql.useQuery<GetEventDetailsQuery>({ query: GetEventDetailsDocument, ...options });
 }
 export const TranscribeGeneratePresignedUrlDocument = gql`
     query TranscribeGeneratePresignedUrl($languageCode: String!, $sampleRate: String!) {
@@ -50484,7 +51362,7 @@ export const TranscribeGeneratePresignedUrlDocument = gql`
 export function useTranscribeGeneratePresignedUrlQuery(
     options: Omit<Urql.UseQueryArgs<TranscribeGeneratePresignedUrlQueryVariables>, "query">
 ) {
-    return useQuery<TranscribeGeneratePresignedUrlQuery>({
+    return Urql.useQuery<TranscribeGeneratePresignedUrlQuery>({
         query: TranscribeGeneratePresignedUrlDocument,
         ...options,
     });
@@ -50506,7 +51384,7 @@ export const VideoPlayer_GetElementDocument = gql`
 export function useVideoPlayer_GetElementQuery(
     options: Omit<Urql.UseQueryArgs<VideoPlayer_GetElementQueryVariables>, "query">
 ) {
-    return useQuery<VideoPlayer_GetElementQuery>({ query: VideoPlayer_GetElementDocument, ...options });
+    return Urql.useQuery<VideoPlayer_GetElementQuery>({ query: VideoPlayer_GetElementDocument, ...options });
 }
 export const GetRoomChimeDataDocument = gql`
     mutation GetRoomChimeData($roomId: uuid!, $registrantId: uuid!) {
@@ -50562,7 +51440,7 @@ export const GetRoomVonageSessionIdDocument = gql`
 export function useGetRoomVonageSessionIdQuery(
     options: Omit<Urql.UseQueryArgs<GetRoomVonageSessionIdQueryVariables>, "query">
 ) {
-    return useQuery<GetRoomVonageSessionIdQuery>({ query: GetRoomVonageSessionIdDocument, ...options });
+    return Urql.useQuery<GetRoomVonageSessionIdQuery>({ query: GetRoomVonageSessionIdDocument, ...options });
 }
 export const GetEventVideosDocument = gql`
     query GetEventVideos($eventId: uuid!) {
@@ -50605,7 +51483,7 @@ export const GetEventVideosDocument = gql`
 `;
 
 export function useGetEventVideosQuery(options: Omit<Urql.UseQueryArgs<GetEventVideosQueryVariables>, "query">) {
-    return useQuery<GetEventVideosQuery>({ query: GetEventVideosDocument, ...options });
+    return Urql.useQuery<GetEventVideosQuery>({ query: GetEventVideosDocument, ...options });
 }
 export const GetRoomVideosDocument = gql`
     query GetRoomVideos($roomId: uuid!) {
@@ -50624,7 +51502,7 @@ export const GetRoomVideosDocument = gql`
 `;
 
 export function useGetRoomVideosQuery(options: Omit<Urql.UseQueryArgs<GetRoomVideosQueryVariables>, "query">) {
-    return useQuery<GetRoomVideosQuery>({ query: GetRoomVideosDocument, ...options });
+    return Urql.useQuery<GetRoomVideosQuery>({ query: GetRoomVideosDocument, ...options });
 }
 export const VonageVideoPlaybackContext_InsertCommandDocument = gql`
     mutation VonageVideoPlaybackContext_InsertCommand($object: video_VonageVideoPlaybackCommand_insert_input!) {
@@ -50658,7 +51536,7 @@ export const VonageVideoPlaybackContext_GetLatestCommandDocument = gql`
 export function useVonageVideoPlaybackContext_GetLatestCommandQuery(
     options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetLatestCommandQueryVariables>, "query">
 ) {
-    return useQuery<VonageVideoPlaybackContext_GetLatestCommandQuery>({
+    return Urql.useQuery<VonageVideoPlaybackContext_GetLatestCommandQuery>({
         query: VonageVideoPlaybackContext_GetLatestCommandDocument,
         ...options,
     });
@@ -50676,7 +51554,7 @@ export const VonageVideoPlaybackContext_GetElementDocument = gql`
 export function useVonageVideoPlaybackContext_GetElementQuery(
     options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetElementQueryVariables>, "query">
 ) {
-    return useQuery<VonageVideoPlaybackContext_GetElementQuery>({
+    return Urql.useQuery<VonageVideoPlaybackContext_GetElementQuery>({
         query: VonageVideoPlaybackContext_GetElementDocument,
         ...options,
     });
@@ -50699,7 +51577,7 @@ export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
 export function useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery(
     options: Omit<Urql.UseQueryArgs<VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>, "query">
 ) {
-    return useQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery>({
+    return Urql.useQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery>({
         query: VonageLayoutProvider_GetLatestVonageSessionLayoutDocument,
         ...options,
     });
@@ -50801,7 +51679,7 @@ export const GetAllRoomsDocument = gql`
 `;
 
 export function useGetAllRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllRoomsQueryVariables>, "query">) {
-    return useQuery<GetAllRoomsQuery>({ query: GetAllRoomsDocument, ...options });
+    return Urql.useQuery<GetAllRoomsQuery>({ query: GetAllRoomsDocument, ...options });
 }
 export const GetAllTodaysRoomsDocument = gql`
     query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
@@ -50833,7 +51711,7 @@ export const GetAllTodaysRoomsDocument = gql`
 `;
 
 export function useGetAllTodaysRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllTodaysRoomsQueryVariables>, "query">) {
-    return useQuery<GetAllTodaysRoomsQuery>({ query: GetAllTodaysRoomsDocument, ...options });
+    return Urql.useQuery<GetAllTodaysRoomsQuery>({ query: GetAllTodaysRoomsDocument, ...options });
 }
 export const GetSocialRoomsDocument = gql`
     query GetSocialRooms($conferenceId: uuid!) {
@@ -50852,7 +51730,7 @@ export const GetSocialRoomsDocument = gql`
 `;
 
 export function useGetSocialRoomsQuery(options: Omit<Urql.UseQueryArgs<GetSocialRoomsQueryVariables>, "query">) {
-    return useQuery<GetSocialRoomsQuery>({ query: GetSocialRoomsDocument, ...options });
+    return Urql.useQuery<GetSocialRoomsQuery>({ query: GetSocialRoomsDocument, ...options });
 }
 export const RoomTile_GetRoomDocument = gql`
     query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) {
@@ -50864,7 +51742,7 @@ export const RoomTile_GetRoomDocument = gql`
 `;
 
 export function useRoomTile_GetRoomQuery(options: Omit<Urql.UseQueryArgs<RoomTile_GetRoomQueryVariables>, "query">) {
-    return useQuery<RoomTile_GetRoomQuery>({ query: RoomTile_GetRoomDocument, ...options });
+    return Urql.useQuery<RoomTile_GetRoomQuery>({ query: RoomTile_GetRoomDocument, ...options });
 }
 export const GetSponsorBoothsDocument = gql`
     query GetSponsorBooths($conferenceId: uuid!) {
@@ -50880,7 +51758,7 @@ export const GetSponsorBoothsDocument = gql`
 `;
 
 export function useGetSponsorBoothsQuery(options: Omit<Urql.UseQueryArgs<GetSponsorBoothsQueryVariables>, "query">) {
-    return useQuery<GetSponsorBoothsQuery>({ query: GetSponsorBoothsDocument, ...options });
+    return Urql.useQuery<GetSponsorBoothsQuery>({ query: GetSponsorBoothsDocument, ...options });
 }
 export const Schedule_HappeningSoonDocument = gql`
     query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
@@ -50916,7 +51794,7 @@ export const Schedule_HappeningSoonDocument = gql`
 export function useSchedule_HappeningSoonQuery(
     options: Omit<Urql.UseQueryArgs<Schedule_HappeningSoonQueryVariables>, "query">
 ) {
-    return useQuery<Schedule_HappeningSoonQuery>({ query: Schedule_HappeningSoonDocument, ...options });
+    return Urql.useQuery<Schedule_HappeningSoonQuery>({ query: Schedule_HappeningSoonDocument, ...options });
 }
 export const StarEventButton_GetStarsDocument = gql`
     query StarEventButton_GetStars($eventIds: [uuid!]!, $registrantId: uuid!) {
@@ -50930,7 +51808,7 @@ export const StarEventButton_GetStarsDocument = gql`
 export function useStarEventButton_GetStarsQuery(
     options: Omit<Urql.UseQueryArgs<StarEventButton_GetStarsQueryVariables>, "query">
 ) {
-    return useQuery<StarEventButton_GetStarsQuery>({ query: StarEventButton_GetStarsDocument, ...options });
+    return Urql.useQuery<StarEventButton_GetStarsQuery>({ query: StarEventButton_GetStarsDocument, ...options });
 }
 export const StarEventButton_InsertStarsDocument = gql`
     mutation StarEventButton_InsertStars($objects: [schedule_StarredEvent_insert_input!]!) {
@@ -50975,7 +51853,7 @@ export const Schedule_SelectItemDocument = gql`
 export function useSchedule_SelectItemQuery(
     options: Omit<Urql.UseQueryArgs<Schedule_SelectItemQueryVariables>, "query">
 ) {
-    return useQuery<Schedule_SelectItemQuery>({ query: Schedule_SelectItemDocument, ...options });
+    return Urql.useQuery<Schedule_SelectItemQuery>({ query: Schedule_SelectItemDocument, ...options });
 }
 export const Schedule_SelectSummariesDocument = gql`
     query Schedule_SelectSummaries($conferenceId: uuid!) {
@@ -51007,7 +51885,7 @@ export const Schedule_SelectSummariesDocument = gql`
 export function useSchedule_SelectSummariesQuery(
     options: Omit<Urql.UseQueryArgs<Schedule_SelectSummariesQueryVariables>, "query">
 ) {
-    return useQuery<Schedule_SelectSummariesQuery>({ query: Schedule_SelectSummariesDocument, ...options });
+    return Urql.useQuery<Schedule_SelectSummariesQuery>({ query: Schedule_SelectSummariesDocument, ...options });
 }
 export const StarredEvents_SelectEventIdsDocument = gql`
     query StarredEvents_SelectEventIds($registrantId: uuid!) {
@@ -51024,7 +51902,7 @@ export const StarredEvents_SelectEventIdsDocument = gql`
 export function useStarredEvents_SelectEventIdsQuery(
     options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventIdsQueryVariables>, "query">
 ) {
-    return useQuery<StarredEvents_SelectEventIdsQuery>({
+    return Urql.useQuery<StarredEvents_SelectEventIdsQuery>({
         query: StarredEvents_SelectEventIdsDocument,
         ...options,
     });
@@ -51055,7 +51933,7 @@ export const ScheduleV2_DayLightweightEventsDocument = gql`
 export function useScheduleV2_DayLightweightEventsQuery(
     options: Omit<Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>, "query">
 ) {
-    return useQuery<ScheduleV2_DayLightweightEventsQuery>({
+    return Urql.useQuery<ScheduleV2_DayLightweightEventsQuery>({
         query: ScheduleV2_DayLightweightEventsDocument,
         ...options,
     });
@@ -51072,7 +51950,7 @@ export const ScheduleV2_DayEventsDocument = gql`
 export function useScheduleV2_DayEventsQuery(
     options: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, "query">
 ) {
-    return useQuery<ScheduleV2_DayEventsQuery>({ query: ScheduleV2_DayEventsDocument, ...options });
+    return Urql.useQuery<ScheduleV2_DayEventsQuery>({ query: ScheduleV2_DayEventsDocument, ...options });
 }
 export const ScheduleV2_RoomsDocument = gql`
     query ScheduleV2_Rooms($conferenceId: uuid!) {
@@ -51084,7 +51962,7 @@ export const ScheduleV2_RoomsDocument = gql`
 `;
 
 export function useScheduleV2_RoomsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_RoomsQueryVariables>, "query">) {
-    return useQuery<ScheduleV2_RoomsQuery>({ query: ScheduleV2_RoomsDocument, ...options });
+    return Urql.useQuery<ScheduleV2_RoomsQuery>({ query: ScheduleV2_RoomsDocument, ...options });
 }
 export const ScheduleV2_TagsDocument = gql`
     query ScheduleV2_Tags($conferenceId: uuid!) {
@@ -51096,7 +51974,7 @@ export const ScheduleV2_TagsDocument = gql`
 `;
 
 export function useScheduleV2_TagsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_TagsQueryVariables>, "query">) {
-    return useQuery<ScheduleV2_TagsQuery>({ query: ScheduleV2_TagsDocument, ...options });
+    return Urql.useQuery<ScheduleV2_TagsQuery>({ query: ScheduleV2_TagsDocument, ...options });
 }
 export const ScheduleV2_AllEvents_ParamsDocument = gql`
     query ScheduleV2_AllEvents_Params($conferenceId: uuid!) {
@@ -51124,7 +52002,7 @@ export const ScheduleV2_AllEvents_ParamsDocument = gql`
 export function useScheduleV2_AllEvents_ParamsQuery(
     options: Omit<Urql.UseQueryArgs<ScheduleV2_AllEvents_ParamsQueryVariables>, "query">
 ) {
-    return useQuery<ScheduleV2_AllEvents_ParamsQuery>({ query: ScheduleV2_AllEvents_ParamsDocument, ...options });
+    return Urql.useQuery<ScheduleV2_AllEvents_ParamsQuery>({ query: ScheduleV2_AllEvents_ParamsDocument, ...options });
 }
 export const SearchPanel_ItemsDocument = gql`
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
@@ -51136,7 +52014,7 @@ export const SearchPanel_ItemsDocument = gql`
 `;
 
 export function useSearchPanel_ItemsQuery(options: Omit<Urql.UseQueryArgs<SearchPanel_ItemsQueryVariables>, "query">) {
-    return useQuery<SearchPanel_ItemsQuery>({ query: SearchPanel_ItemsDocument, ...options });
+    return Urql.useQuery<SearchPanel_ItemsQuery>({ query: SearchPanel_ItemsDocument, ...options });
 }
 export const SearchPanel_EventsDocument = gql`
     query SearchPanel_Events($conferenceId: uuid!, $search: String!) {
@@ -51153,7 +52031,7 @@ export const SearchPanel_EventsDocument = gql`
 export function useSearchPanel_EventsQuery(
     options: Omit<Urql.UseQueryArgs<SearchPanel_EventsQueryVariables>, "query">
 ) {
-    return useQuery<SearchPanel_EventsQuery>({ query: SearchPanel_EventsDocument, ...options });
+    return Urql.useQuery<SearchPanel_EventsQuery>({ query: SearchPanel_EventsDocument, ...options });
 }
 export const SearchPanel_PeopleDocument = gql`
     query SearchPanel_People($conferenceId: uuid!, $search: String!) {
@@ -51167,7 +52045,7 @@ export const SearchPanel_PeopleDocument = gql`
 export function useSearchPanel_PeopleQuery(
     options: Omit<Urql.UseQueryArgs<SearchPanel_PeopleQueryVariables>, "query">
 ) {
-    return useQuery<SearchPanel_PeopleQuery>({ query: SearchPanel_PeopleDocument, ...options });
+    return Urql.useQuery<SearchPanel_PeopleQuery>({ query: SearchPanel_PeopleDocument, ...options });
 }
 export const SelectSwagBagsDocument = gql`
     query SelectSwagBags($conferenceId: uuid!) {
@@ -51179,7 +52057,7 @@ export const SelectSwagBagsDocument = gql`
 `;
 
 export function useSelectSwagBagsQuery(options: Omit<Urql.UseQueryArgs<SelectSwagBagsQueryVariables>, "query">) {
-    return useQuery<SelectSwagBagsQuery>({ query: SelectSwagBagsDocument, ...options });
+    return Urql.useQuery<SelectSwagBagsQuery>({ query: SelectSwagBagsDocument, ...options });
 }
 export const ConferenceBySlugDocument = gql`
     query ConferenceBySlug($slug: String!) {
@@ -51191,7 +52069,7 @@ export const ConferenceBySlugDocument = gql`
 `;
 
 export function useConferenceBySlugQuery(options: Omit<Urql.UseQueryArgs<ConferenceBySlugQueryVariables>, "query">) {
-    return useQuery<ConferenceBySlugQuery>({ query: ConferenceBySlugDocument, ...options });
+    return Urql.useQuery<ConferenceBySlugQuery>({ query: ConferenceBySlugDocument, ...options });
 }
 export const ConferenceStatsDocument = gql`
     query ConferenceStats($id: uuid!) {
@@ -51261,7 +52139,7 @@ export const ConferenceStatsDocument = gql`
 `;
 
 export function useConferenceStatsQuery(options: Omit<Urql.UseQueryArgs<ConferenceStatsQueryVariables>, "query">) {
-    return useQuery<ConferenceStatsQuery>({ query: ConferenceStatsDocument, ...options });
+    return Urql.useQuery<ConferenceStatsQuery>({ query: ConferenceStatsDocument, ...options });
 }
 export const GetChannelStacksDocument = gql`
     query GetChannelStacks($conferenceId: uuid!) {
@@ -51280,7 +52158,7 @@ export const GetChannelStacksDocument = gql`
 `;
 
 export function useGetChannelStacksQuery(options: Omit<Urql.UseQueryArgs<GetChannelStacksQueryVariables>, "query">) {
-    return useQuery<GetChannelStacksQuery>({ query: GetChannelStacksDocument, ...options });
+    return Urql.useQuery<GetChannelStacksQuery>({ query: GetChannelStacksDocument, ...options });
 }
 export const ConferenceConfiguration_GetConferenceConfigurationsDocument = gql`
     query ConferenceConfiguration_GetConferenceConfigurations($conferenceId: uuid!) {
@@ -51294,7 +52172,7 @@ export const ConferenceConfiguration_GetConferenceConfigurationsDocument = gql`
 export function useConferenceConfiguration_GetConferenceConfigurationsQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>, "query">
 ) {
-    return useQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery>({
+    return Urql.useQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery>({
         query: ConferenceConfiguration_GetConferenceConfigurationsDocument,
         ...options,
     });
@@ -51320,7 +52198,7 @@ export const EventVonageControls_GetEventsDocument = gql`
 export function useEventVonageControls_GetEventsQuery(
     options: Omit<Urql.UseQueryArgs<EventVonageControls_GetEventsQueryVariables>, "query">
 ) {
-    return useQuery<EventVonageControls_GetEventsQuery>({
+    return Urql.useQuery<EventVonageControls_GetEventsQuery>({
         query: EventVonageControls_GetEventsDocument,
         ...options,
     });
@@ -51371,7 +52249,7 @@ export const MonitorLivestreamsDocument = gql`
 export function useMonitorLivestreamsQuery(
     options: Omit<Urql.UseQueryArgs<MonitorLivestreamsQueryVariables>, "query">
 ) {
-    return useQuery<MonitorLivestreamsQuery>({ query: MonitorLivestreamsDocument, ...options });
+    return Urql.useQuery<MonitorLivestreamsQuery>({ query: MonitorLivestreamsDocument, ...options });
 }
 export const CreateConferencePrepareJobDocument = gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
@@ -51412,7 +52290,7 @@ export const GetConferencePrepareJobsDocument = gql`
 export function useGetConferencePrepareJobsQuery(
     options: Omit<Urql.UseQueryArgs<GetConferencePrepareJobsQueryVariables>, "query">
 ) {
-    return useQuery<GetConferencePrepareJobsQuery>({ query: GetConferencePrepareJobsDocument, ...options });
+    return Urql.useQuery<GetConferencePrepareJobsQuery>({ query: GetConferencePrepareJobsDocument, ...options });
 }
 export const ManageModeration_SelectFlagsDocument = gql`
     query ManageModeration_SelectFlags($conferenceId: uuid!) {
@@ -51426,7 +52304,7 @@ export const ManageModeration_SelectFlagsDocument = gql`
 export function useManageModeration_SelectFlagsQuery(
     options: Omit<Urql.UseQueryArgs<ManageModeration_SelectFlagsQueryVariables>, "query">
 ) {
-    return useQuery<ManageModeration_SelectFlagsQuery>({
+    return Urql.useQuery<ManageModeration_SelectFlagsQuery>({
         query: ManageModeration_SelectFlagsDocument,
         ...options,
     });
@@ -51796,7 +52674,7 @@ export const PreshowChecklistDocument = gql`
 `;
 
 export function usePreshowChecklistQuery(options: Omit<Urql.UseQueryArgs<PreshowChecklistQueryVariables>, "query">) {
-    return useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
+    return Urql.useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
 }
 export const UpdateConferenceDocument = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
@@ -51830,7 +52708,7 @@ export const MultiSettingUpdater_GetConfigurationsDocument = gql`
 export function useMultiSettingUpdater_GetConfigurationsQuery(
     options: Omit<Urql.UseQueryArgs<MultiSettingUpdater_GetConfigurationsQueryVariables>, "query">
 ) {
-    return useQuery<MultiSettingUpdater_GetConfigurationsQuery>({
+    return Urql.useQuery<MultiSettingUpdater_GetConfigurationsQuery>({
         query: MultiSettingUpdater_GetConfigurationsDocument,
         ...options,
     });
@@ -51868,7 +52746,7 @@ export const SettingUpdater_GetConfigurationDocument = gql`
 export function useSettingUpdater_GetConfigurationQuery(
     options: Omit<Urql.UseQueryArgs<SettingUpdater_GetConfigurationQueryVariables>, "query">
 ) {
-    return useQuery<SettingUpdater_GetConfigurationQuery>({
+    return Urql.useQuery<SettingUpdater_GetConfigurationQuery>({
         query: SettingUpdater_GetConfigurationDocument,
         ...options,
     });
@@ -51922,7 +52800,7 @@ export const ManageContent_SelectAllItemsDocument = gql`
 export function useManageContent_SelectAllItemsQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllItemsQueryVariables>, "query">
 ) {
-    return useQuery<ManageContent_SelectAllItemsQuery>({
+    return Urql.useQuery<ManageContent_SelectAllItemsQuery>({
         query: ManageContent_SelectAllItemsDocument,
         ...options,
     });
@@ -51939,7 +52817,7 @@ export const ManageContent_SelectItemsForExportDocument = gql`
 export function useManageContent_SelectItemsForExportQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemsForExportQueryVariables>, "query">
 ) {
-    return useQuery<ManageContent_SelectItemsForExportQuery>({
+    return Urql.useQuery<ManageContent_SelectItemsForExportQuery>({
         query: ManageContent_SelectItemsForExportDocument,
         ...options,
     });
@@ -51960,7 +52838,7 @@ export const ManageContent_SelectItemDocument = gql`
 export function useManageContent_SelectItemQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemQueryVariables>, "query">
 ) {
-    return useQuery<ManageContent_SelectItemQuery>({ query: ManageContent_SelectItemDocument, ...options });
+    return Urql.useQuery<ManageContent_SelectItemQuery>({ query: ManageContent_SelectItemDocument, ...options });
 }
 export const ManageContent_SelectItemPeopleDocument = gql`
     query ManageContent_SelectItemPeople($itemId: uuid!) {
@@ -51974,7 +52852,7 @@ export const ManageContent_SelectItemPeopleDocument = gql`
 export function useManageContent_SelectItemPeopleQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemPeopleQueryVariables>, "query">
 ) {
-    return useQuery<ManageContent_SelectItemPeopleQuery>({
+    return Urql.useQuery<ManageContent_SelectItemPeopleQuery>({
         query: ManageContent_SelectItemPeopleDocument,
         ...options,
     });
@@ -52058,7 +52936,7 @@ export const ManageContent_SelectAllTagsDocument = gql`
 export function useManageContent_SelectAllTagsQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllTagsQueryVariables>, "query">
 ) {
-    return useQuery<ManageContent_SelectAllTagsQuery>({ query: ManageContent_SelectAllTagsDocument, ...options });
+    return Urql.useQuery<ManageContent_SelectAllTagsQuery>({ query: ManageContent_SelectAllTagsDocument, ...options });
 }
 export const ManageContent_SelectAllExhibitionsDocument = gql`
     query ManageContent_SelectAllExhibitions($conferenceId: uuid!) {
@@ -52072,7 +52950,7 @@ export const ManageContent_SelectAllExhibitionsDocument = gql`
 export function useManageContent_SelectAllExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllExhibitionsQueryVariables>, "query">
 ) {
-    return useQuery<ManageContent_SelectAllExhibitionsQuery>({
+    return Urql.useQuery<ManageContent_SelectAllExhibitionsQuery>({
         query: ManageContent_SelectAllExhibitionsDocument,
         ...options,
     });
@@ -52103,7 +52981,7 @@ export const SelectAllContentDocument = gql`
 `;
 
 export function useSelectAllContentQuery(options: Omit<Urql.UseQueryArgs<SelectAllContentQueryVariables>, "query">) {
-    return useQuery<SelectAllContentQuery>({ query: SelectAllContentDocument, ...options });
+    return Urql.useQuery<SelectAllContentQuery>({ query: SelectAllContentDocument, ...options });
 }
 export const InsertDeleteItemsDocument = gql`
     mutation InsertDeleteItems($newGroups: [content_Item_insert_input!]!, $deleteGroupIds: [uuid!]!) {
@@ -52510,7 +53388,7 @@ export const CombineVideosModal_GetCombineVideosJobDocument = gql`
 export function useCombineVideosModal_GetCombineVideosJobQuery(
     options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetCombineVideosJobQueryVariables>, "query">
 ) {
-    return useQuery<CombineVideosModal_GetCombineVideosJobQuery>({
+    return Urql.useQuery<CombineVideosModal_GetCombineVideosJobQuery>({
         query: CombineVideosModal_GetCombineVideosJobDocument,
         ...options,
     });
@@ -52534,7 +53412,7 @@ export const CombineVideosModal_GetElementsDocument = gql`
 export function useCombineVideosModal_GetElementsQuery(
     options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetElementsQueryVariables>, "query">
 ) {
-    return useQuery<CombineVideosModal_GetElementsQuery>({
+    return Urql.useQuery<CombineVideosModal_GetElementsQuery>({
         query: CombineVideosModal_GetElementsDocument,
         ...options,
     });
@@ -52549,7 +53427,7 @@ export const SEoUm_InfosDocument = gql`
 `;
 
 export function useSEoUm_InfosQuery(options: Omit<Urql.UseQueryArgs<SEoUm_InfosQueryVariables>, "query">) {
-    return useQuery<SEoUm_InfosQuery>({ query: SEoUm_InfosDocument, ...options });
+    return Urql.useQuery<SEoUm_InfosQuery>({ query: SEoUm_InfosDocument, ...options });
 }
 export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
     query UpdateExhibitionDescriptiveItems_SelectExhibitions($conferenceId: uuid!) {
@@ -52565,7 +53443,7 @@ export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
 export function useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>, "query">
 ) {
-    return useQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery>({
+    return Urql.useQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery>({
         query: UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument,
         ...options,
     });
@@ -52658,7 +53536,7 @@ export const ManageContent_SelectItemExhibitionsDocument = gql`
 export function useManageContent_SelectItemExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemExhibitionsQueryVariables>, "query">
 ) {
-    return useQuery<ManageContent_SelectItemExhibitionsQuery>({
+    return Urql.useQuery<ManageContent_SelectItemExhibitionsQuery>({
         query: ManageContent_SelectItemExhibitionsDocument,
         ...options,
     });
@@ -52790,7 +53668,7 @@ export const ManageContent_SelectProgramPeopleDocument = gql`
 export function useManageContent_SelectProgramPeopleQuery(
     options: Omit<Urql.UseQueryArgs<ManageContent_SelectProgramPeopleQueryVariables>, "query">
 ) {
-    return useQuery<ManageContent_SelectProgramPeopleQuery>({
+    return Urql.useQuery<ManageContent_SelectProgramPeopleQuery>({
         query: ManageContent_SelectProgramPeopleDocument,
         ...options,
     });
@@ -52922,7 +53800,7 @@ export const SubmissionRequestsModalDataDocument = gql`
 export function useSubmissionRequestsModalDataQuery(
     options: Omit<Urql.UseQueryArgs<SubmissionRequestsModalDataQueryVariables>, "query">
 ) {
-    return useQuery<SubmissionRequestsModalDataQuery>({ query: SubmissionRequestsModalDataDocument, ...options });
+    return Urql.useQuery<SubmissionRequestsModalDataQuery>({ query: SubmissionRequestsModalDataDocument, ...options });
 }
 export const SubmissionsReviewModalDataDocument = gql`
     query SubmissionsReviewModalData($itemIds: [uuid!]!) {
@@ -52936,7 +53814,7 @@ export const SubmissionsReviewModalDataDocument = gql`
 export function useSubmissionsReviewModalDataQuery(
     options: Omit<Urql.UseQueryArgs<SubmissionsReviewModalDataQueryVariables>, "query">
 ) {
-    return useQuery<SubmissionsReviewModalDataQuery>({ query: SubmissionsReviewModalDataDocument, ...options });
+    return Urql.useQuery<SubmissionsReviewModalDataQuery>({ query: SubmissionsReviewModalDataDocument, ...options });
 }
 export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
     query ConfigureEmailTemplates_GetConferenceConfigurations($conferenceId: uuid!) {
@@ -52950,7 +53828,7 @@ export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
 export function useConfigureEmailTemplates_GetConferenceConfigurationsQuery(
     options: Omit<Urql.UseQueryArgs<ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>, "query">
 ) {
-    return useQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery>({
+    return Urql.useQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery>({
         query: ConfigureEmailTemplates_GetConferenceConfigurationsDocument,
         ...options,
     });
@@ -52999,7 +53877,7 @@ export const DownloadVideos_GetAllVideosDocument = gql`
 export function useDownloadVideos_GetAllVideosQuery(
     options: Omit<Urql.UseQueryArgs<DownloadVideos_GetAllVideosQueryVariables>, "query">
 ) {
-    return useQuery<DownloadVideos_GetAllVideosQuery>({ query: DownloadVideos_GetAllVideosDocument, ...options });
+    return Urql.useQuery<DownloadVideos_GetAllVideosQuery>({ query: DownloadVideos_GetAllVideosDocument, ...options });
 }
 export const ChooseElementByTagModal_GetTagsDocument = gql`
     query ChooseElementByTagModal_GetTags($conferenceId: uuid!) {
@@ -53014,7 +53892,7 @@ export const ChooseElementByTagModal_GetTagsDocument = gql`
 export function useChooseElementByTagModal_GetTagsQuery(
     options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetTagsQueryVariables>, "query">
 ) {
-    return useQuery<ChooseElementByTagModal_GetTagsQuery>({
+    return Urql.useQuery<ChooseElementByTagModal_GetTagsQuery>({
         query: ChooseElementByTagModal_GetTagsDocument,
         ...options,
     });
@@ -53044,7 +53922,7 @@ export const ChooseElementByTagModal_GetVideoElementsDocument = gql`
 export function useChooseElementByTagModal_GetVideoElementsQuery(
     options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetVideoElementsQueryVariables>, "query">
 ) {
-    return useQuery<ChooseElementByTagModal_GetVideoElementsQuery>({
+    return Urql.useQuery<ChooseElementByTagModal_GetVideoElementsQuery>({
         query: ChooseElementByTagModal_GetVideoElementsDocument,
         ...options,
     });
@@ -53062,7 +53940,7 @@ export const ChooseElementModal_GetItemsDocument = gql`
 export function useChooseElementModal_GetItemsQuery(
     options: Omit<Urql.UseQueryArgs<ChooseElementModal_GetItemsQueryVariables>, "query">
 ) {
-    return useQuery<ChooseElementModal_GetItemsQuery>({ query: ChooseElementModal_GetItemsDocument, ...options });
+    return Urql.useQuery<ChooseElementModal_GetItemsQuery>({ query: ChooseElementModal_GetItemsDocument, ...options });
 }
 export const ChooseElementModal_GetVideoElementsDocument = gql`
     query ChooseElementModal_GetVideoElements($itemId: uuid) {
@@ -53081,7 +53959,7 @@ export const ChooseElementModal_GetVideoElementsDocument = gql`
 export function useChooseElementModal_GetVideoElementsQuery(
     options?: Omit<Urql.UseQueryArgs<ChooseElementModal_GetVideoElementsQueryVariables>, "query">
 ) {
-    return useQuery<ChooseElementModal_GetVideoElementsQuery>({
+    return Urql.useQuery<ChooseElementModal_GetVideoElementsQuery>({
         query: ChooseElementModal_GetVideoElementsDocument,
         ...options,
     });
@@ -53111,7 +53989,7 @@ export const ManageExport_GetRegistrantGoogleAccountsDocument = gql`
 export function useManageExport_GetRegistrantGoogleAccountsQuery(
     options: Omit<Urql.UseQueryArgs<ManageExport_GetRegistrantGoogleAccountsQueryVariables>, "query">
 ) {
-    return useQuery<ManageExport_GetRegistrantGoogleAccountsQuery>({
+    return Urql.useQuery<ManageExport_GetRegistrantGoogleAccountsQuery>({
         query: ManageExport_GetRegistrantGoogleAccountsDocument,
         ...options,
     });
@@ -53144,7 +54022,7 @@ export const UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument = gql`
 export function useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery(
     options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>, "query">
 ) {
-    return useQuery<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery>({
+    return Urql.useQuery<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery>({
         query: UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument,
         ...options,
     });
@@ -53184,7 +54062,7 @@ export const UploadYouTubeVideos_GetElementsDocument = gql`
 export function useUploadYouTubeVideos_GetElementsQuery(
     options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetElementsQueryVariables>, "query">
 ) {
-    return useQuery<UploadYouTubeVideos_GetElementsQuery>({
+    return Urql.useQuery<UploadYouTubeVideos_GetElementsQuery>({
         query: UploadYouTubeVideos_GetElementsDocument,
         ...options,
     });
@@ -53255,7 +54133,7 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
 export function useUploadYouTubeVideos_GetTemplateDataQuery(
     options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetTemplateDataQueryVariables>, "query">
 ) {
-    return useQuery<UploadYouTubeVideos_GetTemplateDataQuery>({
+    return Urql.useQuery<UploadYouTubeVideos_GetTemplateDataQuery>({
         query: UploadYouTubeVideos_GetTemplateDataDocument,
         ...options,
     });
@@ -53291,10 +54169,37 @@ export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
 export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery(
     options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>, "query">
 ) {
-    return useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>({
+    return Urql.useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>({
         query: UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument,
         ...options,
     });
+}
+export const GetImportJobsDocument = gql`
+    query GetImportJobs($conferenceId: uuid!) {
+        job_queues_ImportJob(
+            where: { conferenceId: { _eq: $conferenceId } }
+            order_by: [{ created_at: desc }]
+            limit: 1
+        ) {
+            ...ImportJob
+        }
+    }
+    ${ImportJobFragmentDoc}
+`;
+
+export function useGetImportJobsQuery(options: Omit<Urql.UseQueryArgs<GetImportJobsQueryVariables>, "query">) {
+    return Urql.useQuery<GetImportJobsQuery>({ query: GetImportJobsDocument, ...options });
+}
+export const StartImportJobDocument = gql`
+    mutation StartImportJob($object: job_queues_ImportJob_insert_input!) {
+        insert_job_queues_ImportJob_one(object: $object) {
+            id
+        }
+    }
+`;
+
+export function useStartImportJobMutation() {
+    return Urql.useMutation<StartImportJobMutation, StartImportJobMutationVariables>(StartImportJobDocument);
 }
 export const ImportRegistrantsDocument = gql`
     mutation ImportRegistrants(
@@ -53327,7 +54232,7 @@ export const SelectAllGroupsDocument = gql`
 `;
 
 export function useSelectAllGroupsQuery(options: Omit<Urql.UseQueryArgs<SelectAllGroupsQueryVariables>, "query">) {
-    return useQuery<SelectAllGroupsQuery>({ query: SelectAllGroupsDocument, ...options });
+    return Urql.useQuery<SelectAllGroupsQuery>({ query: SelectAllGroupsDocument, ...options });
 }
 export const CreateDeleteGroupsDocument = gql`
     mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [registrant_Group_insert_input!]!) {
@@ -53378,7 +54283,7 @@ export const ManageProgramPeople_SelectAllPeopleDocument = gql`
 export function useManageProgramPeople_SelectAllPeopleQuery(
     options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllPeopleQueryVariables>, "query">
 ) {
-    return useQuery<ManageProgramPeople_SelectAllPeopleQuery>({
+    return Urql.useQuery<ManageProgramPeople_SelectAllPeopleQuery>({
         query: ManageProgramPeople_SelectAllPeopleDocument,
         ...options,
     });
@@ -53395,7 +54300,7 @@ export const ManageProgramPeople_SelectAllRegistrantsDocument = gql`
 export function useManageProgramPeople_SelectAllRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllRegistrantsQueryVariables>, "query">
 ) {
-    return useQuery<ManageProgramPeople_SelectAllRegistrantsQuery>({
+    return Urql.useQuery<ManageProgramPeople_SelectAllRegistrantsQuery>({
         query: ManageProgramPeople_SelectAllRegistrantsDocument,
         ...options,
     });
@@ -53469,7 +54374,7 @@ export const SelectAllRoomsWithParticipantsDocument = gql`
 export function useSelectAllRoomsWithParticipantsQuery(
     options: Omit<Urql.UseQueryArgs<SelectAllRoomsWithParticipantsQueryVariables>, "query">
 ) {
-    return useQuery<SelectAllRoomsWithParticipantsQuery>({
+    return Urql.useQuery<SelectAllRoomsWithParticipantsQuery>({
         query: SelectAllRoomsWithParticipantsDocument,
         ...options,
     });
@@ -53487,7 +54392,7 @@ export const ManageRooms_SelectGroupsDocument = gql`
 export function useManageRooms_SelectGroupsQuery(
     options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupsQueryVariables>, "query">
 ) {
-    return useQuery<ManageRooms_SelectGroupsQuery>({ query: ManageRooms_SelectGroupsDocument, ...options });
+    return Urql.useQuery<ManageRooms_SelectGroupsQuery>({ query: ManageRooms_SelectGroupsDocument, ...options });
 }
 export const ManageRooms_SelectItemsDocument = gql`
     query ManageRooms_SelectItems($conferenceId: uuid!) {
@@ -53502,7 +54407,7 @@ export const ManageRooms_SelectItemsDocument = gql`
 export function useManageRooms_SelectItemsQuery(
     options: Omit<Urql.UseQueryArgs<ManageRooms_SelectItemsQueryVariables>, "query">
 ) {
-    return useQuery<ManageRooms_SelectItemsQuery>({ query: ManageRooms_SelectItemsDocument, ...options });
+    return Urql.useQuery<ManageRooms_SelectItemsQuery>({ query: ManageRooms_SelectItemsDocument, ...options });
 }
 export const ManageRooms_SelectGroupRegistrantsDocument = gql`
     query ManageRooms_SelectGroupRegistrants($groupId: uuid!) {
@@ -53517,7 +54422,7 @@ export const ManageRooms_SelectGroupRegistrantsDocument = gql`
 export function useManageRooms_SelectGroupRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupRegistrantsQueryVariables>, "query">
 ) {
-    return useQuery<ManageRooms_SelectGroupRegistrantsQuery>({
+    return Urql.useQuery<ManageRooms_SelectGroupRegistrantsQuery>({
         query: ManageRooms_SelectGroupRegistrantsDocument,
         ...options,
     });
@@ -53534,7 +54439,7 @@ export const ManageRooms_SelectRoomPeopleDocument = gql`
 export function useManageRooms_SelectRoomPeopleQuery(
     options: Omit<Urql.UseQueryArgs<ManageRooms_SelectRoomPeopleQueryVariables>, "query">
 ) {
-    return useQuery<ManageRooms_SelectRoomPeopleQuery>({
+    return Urql.useQuery<ManageRooms_SelectRoomPeopleQuery>({
         query: ManageRooms_SelectRoomPeopleDocument,
         ...options,
     });
@@ -53646,7 +54551,7 @@ export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
 export function useGetIsExternalRtmpBroadcastEnabledQuery(
     options: Omit<Urql.UseQueryArgs<GetIsExternalRtmpBroadcastEnabledQueryVariables>, "query">
 ) {
-    return useQuery<GetIsExternalRtmpBroadcastEnabledQuery>({
+    return Urql.useQuery<GetIsExternalRtmpBroadcastEnabledQuery>({
         query: GetIsExternalRtmpBroadcastEnabledDocument,
         ...options,
     });
@@ -53664,7 +54569,7 @@ export const ConferenceTechSupportAddressDocument = gql`
 export function useConferenceTechSupportAddressQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceTechSupportAddressQueryVariables>, "query">
 ) {
-    return useQuery<ConferenceTechSupportAddressQuery>({
+    return Urql.useQuery<ConferenceTechSupportAddressQuery>({
         query: ConferenceTechSupportAddressDocument,
         ...options,
     });
@@ -53681,7 +54586,7 @@ export const SelectAllRegistrantsDocument = gql`
 export function useSelectAllRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<SelectAllRegistrantsQueryVariables>, "query">
 ) {
-    return useQuery<SelectAllRegistrantsQuery>({ query: SelectAllRegistrantsDocument, ...options });
+    return Urql.useQuery<SelectAllRegistrantsQuery>({ query: SelectAllRegistrantsDocument, ...options });
 }
 export const ManageRegistrants_SelectProfilesDocument = gql`
     query ManageRegistrants_SelectProfiles($registrantIds: [uuid!]!) {
@@ -53695,7 +54600,7 @@ export const ManageRegistrants_SelectProfilesDocument = gql`
 export function useManageRegistrants_SelectProfilesQuery(
     options: Omit<Urql.UseQueryArgs<ManageRegistrants_SelectProfilesQueryVariables>, "query">
 ) {
-    return useQuery<ManageRegistrants_SelectProfilesQuery>({
+    return Urql.useQuery<ManageRegistrants_SelectProfilesQuery>({
         query: ManageRegistrants_SelectProfilesDocument,
         ...options,
     });
@@ -53859,7 +54764,7 @@ export const GetRoomRtmpOutputDocument = gql`
 `;
 
 export function useGetRoomRtmpOutputQuery(options: Omit<Urql.UseQueryArgs<GetRoomRtmpOutputQueryVariables>, "query">) {
-    return useQuery<GetRoomRtmpOutputQuery>({ query: GetRoomRtmpOutputDocument, ...options });
+    return Urql.useQuery<GetRoomRtmpOutputQuery>({ query: GetRoomRtmpOutputDocument, ...options });
 }
 export const InsertRoomRtmpOutputDocument = gql`
     mutation InsertRoomRtmpOutput($roomId: uuid!, $url: String!, $key: String!) {
@@ -53933,7 +54838,7 @@ export const AddEventPeople_SelectItemPeopleDocument = gql`
 export function useAddEventPeople_SelectItemPeopleQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectItemPeopleQueryVariables>, "query">
 ) {
-    return useQuery<AddEventPeople_SelectItemPeopleQuery>({
+    return Urql.useQuery<AddEventPeople_SelectItemPeopleQuery>({
         query: AddEventPeople_SelectItemPeopleDocument,
         ...options,
     });
@@ -53950,7 +54855,7 @@ export const AddEventPeople_SelectProgramPeopleDocument = gql`
 export function useAddEventPeople_SelectProgramPeopleQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeopleQueryVariables>, "query">
 ) {
-    return useQuery<AddEventPeople_SelectProgramPeopleQuery>({
+    return Urql.useQuery<AddEventPeople_SelectProgramPeopleQuery>({
         query: AddEventPeople_SelectProgramPeopleDocument,
         ...options,
     });
@@ -53967,7 +54872,7 @@ export const AddEventPeople_SelectRegistrantsDocument = gql`
 export function useAddEventPeople_SelectRegistrantsQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrantsQueryVariables>, "query">
 ) {
-    return useQuery<AddEventPeople_SelectRegistrantsQuery>({
+    return Urql.useQuery<AddEventPeople_SelectRegistrantsQuery>({
         query: AddEventPeople_SelectRegistrantsDocument,
         ...options,
     });
@@ -53984,7 +54889,7 @@ export const AddEventPeople_SelectProgramPeople_ByRegistrantDocument = gql`
 export function useAddEventPeople_SelectProgramPeople_ByRegistrantQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>, "query">
 ) {
-    return useQuery<AddEventPeople_SelectProgramPeople_ByRegistrantQuery>({
+    return Urql.useQuery<AddEventPeople_SelectProgramPeople_ByRegistrantQuery>({
         query: AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
         ...options,
     });
@@ -54001,7 +54906,7 @@ export const AddEventPeople_SelectGroupsDocument = gql`
 export function useAddEventPeople_SelectGroupsQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectGroupsQueryVariables>, "query">
 ) {
-    return useQuery<AddEventPeople_SelectGroupsQuery>({ query: AddEventPeople_SelectGroupsDocument, ...options });
+    return Urql.useQuery<AddEventPeople_SelectGroupsQuery>({ query: AddEventPeople_SelectGroupsDocument, ...options });
 }
 export const AddEventPeople_SelectRegistrants_ByGroupDocument = gql`
     query AddEventPeople_SelectRegistrants_ByGroup($groupId: uuid!) {
@@ -54015,7 +54920,7 @@ export const AddEventPeople_SelectRegistrants_ByGroupDocument = gql`
 export function useAddEventPeople_SelectRegistrants_ByGroupQuery(
     options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrants_ByGroupQueryVariables>, "query">
 ) {
-    return useQuery<AddEventPeople_SelectRegistrants_ByGroupQuery>({
+    return Urql.useQuery<AddEventPeople_SelectRegistrants_ByGroupQuery>({
         query: AddEventPeople_SelectRegistrants_ByGroupDocument,
         ...options,
     });
@@ -54071,7 +54976,7 @@ export const ContinuationsEditor_SelectContinuationsDocument = gql`
 export function useContinuationsEditor_SelectContinuationsQuery(
     options: Omit<Urql.UseQueryArgs<ContinuationsEditor_SelectContinuationsQueryVariables>, "query">
 ) {
-    return useQuery<ContinuationsEditor_SelectContinuationsQuery>({
+    return Urql.useQuery<ContinuationsEditor_SelectContinuationsQuery>({
         query: ContinuationsEditor_SelectContinuationsDocument,
         ...options,
     });
@@ -54148,7 +55053,7 @@ export const CreateContinuationModal_RoomsDocument = gql`
 export function useCreateContinuationModal_RoomsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_RoomsQueryVariables>, "query">
 ) {
-    return useQuery<CreateContinuationModal_RoomsQuery>({
+    return Urql.useQuery<CreateContinuationModal_RoomsQuery>({
         query: CreateContinuationModal_RoomsDocument,
         ...options,
     });
@@ -54184,7 +55089,7 @@ export const CreateContinuationModal_EventsDocument = gql`
 export function useCreateContinuationModal_EventsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_EventsQueryVariables>, "query">
 ) {
-    return useQuery<CreateContinuationModal_EventsQuery>({
+    return Urql.useQuery<CreateContinuationModal_EventsQuery>({
         query: CreateContinuationModal_EventsDocument,
         ...options,
     });
@@ -54202,7 +55107,7 @@ export const CreateContinuationModal_ItemsDocument = gql`
 export function useCreateContinuationModal_ItemsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ItemsQueryVariables>, "query">
 ) {
-    return useQuery<CreateContinuationModal_ItemsQuery>({
+    return Urql.useQuery<CreateContinuationModal_ItemsQuery>({
         query: CreateContinuationModal_ItemsDocument,
         ...options,
     });
@@ -54220,7 +55125,7 @@ export const CreateContinuationModal_ExhibitionsDocument = gql`
 export function useCreateContinuationModal_ExhibitionsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ExhibitionsQueryVariables>, "query">
 ) {
-    return useQuery<CreateContinuationModal_ExhibitionsQuery>({
+    return Urql.useQuery<CreateContinuationModal_ExhibitionsQuery>({
         query: CreateContinuationModal_ExhibitionsDocument,
         ...options,
     });
@@ -54238,7 +55143,7 @@ export const CreateContinuationModal_ShufflePeriodsDocument = gql`
 export function useCreateContinuationModal_ShufflePeriodsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ShufflePeriodsQueryVariables>, "query">
 ) {
-    return useQuery<CreateContinuationModal_ShufflePeriodsQuery>({
+    return Urql.useQuery<CreateContinuationModal_ShufflePeriodsQuery>({
         query: CreateContinuationModal_ShufflePeriodsDocument,
         ...options,
     });
@@ -54256,7 +55161,7 @@ export const CreateContinuationModal_TagsDocument = gql`
 export function useCreateContinuationModal_TagsQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_TagsQueryVariables>, "query">
 ) {
-    return useQuery<CreateContinuationModal_TagsQuery>({
+    return Urql.useQuery<CreateContinuationModal_TagsQuery>({
         query: CreateContinuationModal_TagsDocument,
         ...options,
     });
@@ -54274,7 +55179,7 @@ export const CreateContinuationModal_ProfileDocument = gql`
 export function useCreateContinuationModal_ProfileQuery(
     options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ProfileQueryVariables>, "query">
 ) {
-    return useQuery<CreateContinuationModal_ProfileQuery>({
+    return Urql.useQuery<CreateContinuationModal_ProfileQuery>({
         query: CreateContinuationModal_ProfileDocument,
         ...options,
     });
@@ -54291,7 +55196,7 @@ export const SelectEventStreamTextEventIdDocument = gql`
 export function useSelectEventStreamTextEventIdQuery(
     options: Omit<Urql.UseQueryArgs<SelectEventStreamTextEventIdQueryVariables>, "query">
 ) {
-    return useQuery<SelectEventStreamTextEventIdQuery>({
+    return Urql.useQuery<SelectEventStreamTextEventIdQuery>({
         query: SelectEventStreamTextEventIdDocument,
         ...options,
     });
@@ -54368,7 +55273,7 @@ export const ManageSchedule_ShufflePeriodsDocument = gql`
 export function useManageSchedule_ShufflePeriodsQuery(
     options: Omit<Urql.UseQueryArgs<ManageSchedule_ShufflePeriodsQueryVariables>, "query">
 ) {
-    return useQuery<ManageSchedule_ShufflePeriodsQuery>({
+    return Urql.useQuery<ManageSchedule_ShufflePeriodsQuery>({
         query: ManageSchedule_ShufflePeriodsDocument,
         ...options,
     });
@@ -54517,7 +55422,7 @@ export const SelectWholeScheduleDocument = gql`
 export function useSelectWholeScheduleQuery(
     options: Omit<Urql.UseQueryArgs<SelectWholeScheduleQueryVariables>, "query">
 ) {
-    return useQuery<SelectWholeScheduleQuery>({ query: SelectWholeScheduleDocument, ...options });
+    return Urql.useQuery<SelectWholeScheduleQuery>({ query: SelectWholeScheduleDocument, ...options });
 }
 export const InsertRoomsDocument = gql`
     mutation InsertRooms($newRooms: [room_Room_insert_input!]!) {
@@ -54701,7 +55606,7 @@ export const ManageShufflePeriods_SelectAllDocument = gql`
 export function useManageShufflePeriods_SelectAllQuery(
     options: Omit<Urql.UseQueryArgs<ManageShufflePeriods_SelectAllQueryVariables>, "query">
 ) {
-    return useQuery<ManageShufflePeriods_SelectAllQuery>({
+    return Urql.useQuery<ManageShufflePeriods_SelectAllQuery>({
         query: ManageShufflePeriods_SelectAllDocument,
         ...options,
     });
@@ -54751,7 +55656,7 @@ export const ConferenceTakenDocument = gql`
 `;
 
 export function useConferenceTakenQuery(options: Omit<Urql.UseQueryArgs<ConferenceTakenQueryVariables>, "query">) {
-    return useQuery<ConferenceTakenQuery>({ query: ConferenceTakenDocument, ...options });
+    return Urql.useQuery<ConferenceTakenQuery>({ query: ConferenceTakenDocument, ...options });
 }
 export const CreateConferenceDocument = gql`
     mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!, $userId: String!) {
@@ -54862,7 +55767,7 @@ export const RegistrantsByIdDocument = gql`
 `;
 
 export function useRegistrantsByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantsByIdQueryVariables>, "query">) {
-    return useQuery<RegistrantsByIdQuery>({ query: RegistrantsByIdDocument, ...options });
+    return Urql.useQuery<RegistrantsByIdQuery>({ query: RegistrantsByIdDocument, ...options });
 }
 export const RegistrantsByUserIdDocument = gql`
     query RegistrantsByUserId($conferenceId: uuid!, $userIds: [String!]!) {
@@ -54876,7 +55781,7 @@ export const RegistrantsByUserIdDocument = gql`
 export function useRegistrantsByUserIdQuery(
     options: Omit<Urql.UseQueryArgs<RegistrantsByUserIdQueryVariables>, "query">
 ) {
-    return useQuery<RegistrantsByUserIdQuery>({ query: RegistrantsByUserIdDocument, ...options });
+    return Urql.useQuery<RegistrantsByUserIdQuery>({ query: RegistrantsByUserIdDocument, ...options });
 }
 export const ConferenceById_WithUserDocument = gql`
     query ConferenceById_WithUser($id: uuid!, $userId: String!) {
@@ -54892,7 +55797,7 @@ export const ConferenceById_WithUserDocument = gql`
 export function useConferenceById_WithUserQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceById_WithUserQueryVariables>, "query">
 ) {
-    return useQuery<ConferenceById_WithUserQuery>({ query: ConferenceById_WithUserDocument, ...options });
+    return Urql.useQuery<ConferenceById_WithUserQuery>({ query: ConferenceById_WithUserDocument, ...options });
 }
 export const ConferenceById_WithoutUserDocument = gql`
     query ConferenceById_WithoutUser($id: uuid!) {
@@ -54906,7 +55811,7 @@ export const ConferenceById_WithoutUserDocument = gql`
 export function useConferenceById_WithoutUserQuery(
     options: Omit<Urql.UseQueryArgs<ConferenceById_WithoutUserQueryVariables>, "query">
 ) {
-    return useQuery<ConferenceById_WithoutUserQuery>({ query: ConferenceById_WithoutUserDocument, ...options });
+    return Urql.useQuery<ConferenceById_WithoutUserQuery>({ query: ConferenceById_WithoutUserDocument, ...options });
 }
 export const GetForceUserRefreshConfigDocument = gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
@@ -54921,7 +55826,7 @@ export const GetForceUserRefreshConfigDocument = gql`
 export function useGetForceUserRefreshConfigQuery(
     options: Omit<Urql.UseQueryArgs<GetForceUserRefreshConfigQueryVariables>, "query">
 ) {
-    return useQuery<GetForceUserRefreshConfigQuery>({ query: GetForceUserRefreshConfigDocument, ...options });
+    return Urql.useQuery<GetForceUserRefreshConfigQuery>({ query: GetForceUserRefreshConfigDocument, ...options });
 }
 export const GoogleOAuth_SubmitGoogleOAuthCodeDocument = gql`
     mutation GoogleOAuth_SubmitGoogleOAuthCode($code: String!, $state: String!) {
@@ -54950,7 +55855,7 @@ export const SelectInvitationForAcceptDocument = gql`
 export function useSelectInvitationForAcceptQuery(
     options: Omit<Urql.UseQueryArgs<SelectInvitationForAcceptQueryVariables>, "query">
 ) {
-    return useQuery<SelectInvitationForAcceptQuery>({ query: SelectInvitationForAcceptDocument, ...options });
+    return Urql.useQuery<SelectInvitationForAcceptQuery>({ query: SelectInvitationForAcceptDocument, ...options });
 }
 export const Invitation_ConfirmCurrentDocument = gql`
     mutation Invitation_ConfirmCurrent($inviteCode: uuid!) {
@@ -54980,7 +55885,7 @@ export const GetEventsInNextHourDocument = gql`
 export function useGetEventsInNextHourQuery(
     options: Omit<Urql.UseQueryArgs<GetEventsInNextHourQueryVariables>, "query">
 ) {
-    return useQuery<GetEventsInNextHourQuery>({ query: GetEventsInNextHourDocument, ...options });
+    return Urql.useQuery<GetEventsInNextHourQuery>({ query: GetEventsInNextHourDocument, ...options });
 }
 export const CountSwagBagsDocument = gql`
     query CountSwagBags($conferenceId: uuid!) {
@@ -54993,7 +55898,7 @@ export const CountSwagBagsDocument = gql`
 `;
 
 export function useCountSwagBagsQuery(options: Omit<Urql.UseQueryArgs<CountSwagBagsQueryVariables>, "query">) {
-    return useQuery<CountSwagBagsQuery>({ query: CountSwagBagsDocument, ...options });
+    return Urql.useQuery<CountSwagBagsQuery>({ query: CountSwagBagsDocument, ...options });
 }
 export const CreateDmDocument = gql`
     mutation CreateDm($registrantIds: [uuid]!, $conferenceId: uuid!) {
@@ -55026,7 +55931,7 @@ export const GetItemChatIdDocument = gql`
 `;
 
 export function useGetItemChatIdQuery(options: Omit<Urql.UseQueryArgs<GetItemChatIdQueryVariables>, "query">) {
-    return useQuery<GetItemChatIdQuery>({ query: GetItemChatIdDocument, ...options });
+    return Urql.useQuery<GetItemChatIdQuery>({ query: GetItemChatIdDocument, ...options });
 }
 export const GetConferenceLandingPageItemIdDocument = gql`
     query GetConferenceLandingPageItemId($conferenceId: uuid!) {
@@ -55041,7 +55946,7 @@ export const GetConferenceLandingPageItemIdDocument = gql`
 export function useGetConferenceLandingPageItemIdQuery(
     options: Omit<Urql.UseQueryArgs<GetConferenceLandingPageItemIdQueryVariables>, "query">
 ) {
-    return useQuery<GetConferenceLandingPageItemIdQuery>({
+    return Urql.useQuery<GetConferenceLandingPageItemIdQuery>({
         query: GetConferenceLandingPageItemIdDocument,
         ...options,
     });
@@ -55057,7 +55962,7 @@ export const GetRoomChatIdDocument = gql`
 `;
 
 export function useGetRoomChatIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomChatIdQueryVariables>, "query">) {
-    return useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
+    return Urql.useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
 }
 export const GetVapidPublicKeyDocument = gql`
     query GetVAPIDPublicKey {
@@ -55068,7 +55973,7 @@ export const GetVapidPublicKeyDocument = gql`
 `;
 
 export function useGetVapidPublicKeyQuery(options?: Omit<Urql.UseQueryArgs<GetVapidPublicKeyQueryVariables>, "query">) {
-    return useQuery<GetVapidPublicKeyQuery>({ query: GetVapidPublicKeyDocument, ...options });
+    return Urql.useQuery<GetVapidPublicKeyQuery>({ query: GetVapidPublicKeyDocument, ...options });
 }
 export const UpsertPushNotificationSubscriptionDocument = gql`
     mutation UpsertPushNotificationSubscription($object: PushNotificationSubscription_insert_input!) {
@@ -55111,7 +56016,7 @@ export const GetRoomMembersDocument = gql`
 `;
 
 export function useGetRoomMembersQuery(options: Omit<Urql.UseQueryArgs<GetRoomMembersQueryVariables>, "query">) {
-    return useQuery<GetRoomMembersQuery>({ query: GetRoomMembersDocument, ...options });
+    return Urql.useQuery<GetRoomMembersQuery>({ query: GetRoomMembersDocument, ...options });
 }
 export const GetAllRoomParticipantsDocument = gql`
     query GetAllRoomParticipants($conferenceId: uuid!) {
@@ -55125,7 +56030,7 @@ export const GetAllRoomParticipantsDocument = gql`
 export function useGetAllRoomParticipantsQuery(
     options: Omit<Urql.UseQueryArgs<GetAllRoomParticipantsQueryVariables>, "query">
 ) {
-    return useQuery<GetAllRoomParticipantsQuery>({ query: GetAllRoomParticipantsDocument, ...options });
+    return Urql.useQuery<GetAllRoomParticipantsQuery>({ query: GetAllRoomParticipantsDocument, ...options });
 }
 export const SearchAllDocument = gql`
     query SearchAll($conferenceId: uuid!, $search: String!, $limit: Int!, $offset: Int!) {
@@ -55150,7 +56055,7 @@ export const SearchAllDocument = gql`
 `;
 
 export function useSearchAllQuery(options: Omit<Urql.UseQueryArgs<SearchAllQueryVariables>, "query">) {
-    return useQuery<SearchAllQuery>({ query: SearchAllDocument, ...options });
+    return Urql.useQuery<SearchAllQuery>({ query: SearchAllDocument, ...options });
 }
 export const MyShuffleQueueEntryDocument = gql`
     query MyShuffleQueueEntry($id: bigint!) {
@@ -55164,7 +56069,7 @@ export const MyShuffleQueueEntryDocument = gql`
 export function useMyShuffleQueueEntryQuery(
     options: Omit<Urql.UseQueryArgs<MyShuffleQueueEntryQueryVariables>, "query">
 ) {
-    return useQuery<MyShuffleQueueEntryQuery>({ query: MyShuffleQueueEntryDocument, ...options });
+    return Urql.useQuery<MyShuffleQueueEntryQuery>({ query: MyShuffleQueueEntryDocument, ...options });
 }
 export const ShufflePeriodsDocument = gql`
     query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) {
@@ -55176,7 +56081,7 @@ export const ShufflePeriodsDocument = gql`
 `;
 
 export function useShufflePeriodsQuery(options: Omit<Urql.UseQueryArgs<ShufflePeriodsQueryVariables>, "query">) {
-    return useQuery<ShufflePeriodsQuery>({ query: ShufflePeriodsDocument, ...options });
+    return Urql.useQuery<ShufflePeriodsQuery>({ query: ShufflePeriodsDocument, ...options });
 }
 export const JoinShuffleQueueDocument = gql`
     mutation JoinShuffleQueue($shufflePeriodId: uuid!, $registrantId: uuid!) {
@@ -55205,7 +56110,7 @@ export const GetShuffleRoomsParticipantsCountDocument = gql`
 export function useGetShuffleRoomsParticipantsCountQuery(
     options: Omit<Urql.UseQueryArgs<GetShuffleRoomsParticipantsCountQueryVariables>, "query">
 ) {
-    return useQuery<GetShuffleRoomsParticipantsCountQuery>({
+    return Urql.useQuery<GetShuffleRoomsParticipantsCountQuery>({
         query: GetShuffleRoomsParticipantsCountDocument,
         ...options,
     });
@@ -55244,7 +56149,7 @@ export const GetElementDocument = gql`
 `;
 
 export function useGetElementQuery(options: Omit<Urql.UseQueryArgs<GetElementQueryVariables>, "query">) {
-    return useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
+    return Urql.useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
 }
 export const SubmitUploadableElementDocument = gql`
     mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!, $elementId: uuid!) {
@@ -55272,7 +56177,7 @@ export const GetUploadAgreementDocument = gql`
 export function useGetUploadAgreementQuery(
     options?: Omit<Urql.UseQueryArgs<GetUploadAgreementQueryVariables>, "query">
 ) {
-    return useQuery<GetUploadAgreementQuery>({ query: GetUploadAgreementDocument, ...options });
+    return Urql.useQuery<GetUploadAgreementQuery>({ query: GetUploadAgreementDocument, ...options });
 }
 export const ItemByPersonAccessTokenDocument = gql`
     query ItemByPersonAccessToken($accessToken: String!, $itemId: uuid!) {
@@ -55299,7 +56204,7 @@ export const ItemByPersonAccessTokenDocument = gql`
 export function useItemByPersonAccessTokenQuery(
     options: Omit<Urql.UseQueryArgs<ItemByPersonAccessTokenQueryVariables>, "query">
 ) {
-    return useQuery<ItemByPersonAccessTokenQuery>({ query: ItemByPersonAccessTokenDocument, ...options });
+    return Urql.useQuery<ItemByPersonAccessTokenQuery>({ query: ItemByPersonAccessTokenDocument, ...options });
 }
 export const ItemsByPersonAccessTokenDocument = gql`
     query ItemsByPersonAccessToken($accessToken: String!) {
@@ -55322,7 +56227,7 @@ export const ItemsByPersonAccessTokenDocument = gql`
 export function useItemsByPersonAccessTokenQuery(
     options: Omit<Urql.UseQueryArgs<ItemsByPersonAccessTokenQueryVariables>, "query">
 ) {
-    return useQuery<ItemsByPersonAccessTokenQuery>({ query: ItemsByPersonAccessTokenDocument, ...options });
+    return Urql.useQuery<ItemsByPersonAccessTokenQuery>({ query: ItemsByPersonAccessTokenDocument, ...options });
 }
 export const InitialiseSuperUserDocument = gql`
     mutation InitialiseSuperUser {
@@ -55348,7 +56253,7 @@ export const SuperUserStateDocument = gql`
 `;
 
 export function useSuperUserStateQuery(options?: Omit<Urql.UseQueryArgs<SuperUserStateQueryVariables>, "query">) {
-    return useQuery<SuperUserStateQuery>({ query: SuperUserStateDocument, ...options });
+    return Urql.useQuery<SuperUserStateQuery>({ query: SuperUserStateDocument, ...options });
 }
 export const UserSuPermissionsDocument = gql`
     query UserSUPermissions($userId: String!) {
@@ -55360,7 +56265,7 @@ export const UserSuPermissionsDocument = gql`
 `;
 
 export function useUserSuPermissionsQuery(options: Omit<Urql.UseQueryArgs<UserSuPermissionsQueryVariables>, "query">) {
-    return useQuery<UserSuPermissionsQuery>({ query: UserSuPermissionsDocument, ...options });
+    return Urql.useQuery<UserSuPermissionsQuery>({ query: UserSuPermissionsDocument, ...options });
 }
 export const SelectSuPermissionsDocument = gql`
     query SelectSUPermissions {
@@ -55374,7 +56279,7 @@ export const SelectSuPermissionsDocument = gql`
 export function useSelectSuPermissionsQuery(
     options?: Omit<Urql.UseQueryArgs<SelectSuPermissionsQueryVariables>, "query">
 ) {
-    return useQuery<SelectSuPermissionsQuery>({ query: SelectSuPermissionsDocument, ...options });
+    return Urql.useQuery<SelectSuPermissionsQuery>({ query: SelectSuPermissionsDocument, ...options });
 }
 export const SuPermissionGrants_AllUsersDocument = gql`
     query SUPermissionGrants_AllUsers {
@@ -55388,7 +56293,7 @@ export const SuPermissionGrants_AllUsersDocument = gql`
 export function useSuPermissionGrants_AllUsersQuery(
     options?: Omit<Urql.UseQueryArgs<SuPermissionGrants_AllUsersQueryVariables>, "query">
 ) {
-    return useQuery<SuPermissionGrants_AllUsersQuery>({ query: SuPermissionGrants_AllUsersDocument, ...options });
+    return Urql.useQuery<SuPermissionGrants_AllUsersQuery>({ query: SuPermissionGrants_AllUsersDocument, ...options });
 }
 export const InsertSuPermissionGrantDocument = gql`
     mutation InsertSUPermissionGrant($object: system_SuperUserPermissionGrant_insert_input!) {
@@ -55462,7 +56367,7 @@ export const SelectSysConfigPermissionsDocument = gql`
 export function useSelectSysConfigPermissionsQuery(
     options?: Omit<Urql.UseQueryArgs<SelectSysConfigPermissionsQueryVariables>, "query">
 ) {
-    return useQuery<SelectSysConfigPermissionsQuery>({ query: SelectSysConfigPermissionsDocument, ...options });
+    return Urql.useQuery<SelectSysConfigPermissionsQuery>({ query: SelectSysConfigPermissionsDocument, ...options });
 }
 export const InsertSysConfigPermissionGrantDocument = gql`
     mutation InsertSysConfigPermissionGrant($object: system_ConfigurationPermissionGrant_insert_input!) {
@@ -55505,7 +56410,7 @@ export const UserSysConfigPermissionsDocument = gql`
 export function useUserSysConfigPermissionsQuery(
     options: Omit<Urql.UseQueryArgs<UserSysConfigPermissionsQueryVariables>, "query">
 ) {
-    return useQuery<UserSysConfigPermissionsQuery>({ query: UserSysConfigPermissionsDocument, ...options });
+    return Urql.useQuery<UserSysConfigPermissionsQuery>({ query: UserSysConfigPermissionsDocument, ...options });
 }
 export const AllSystemConfigurationsDocument = gql`
     query AllSystemConfigurations {
@@ -55519,7 +56424,7 @@ export const AllSystemConfigurationsDocument = gql`
 export function useAllSystemConfigurationsQuery(
     options?: Omit<Urql.UseQueryArgs<AllSystemConfigurationsQueryVariables>, "query">
 ) {
-    return useQuery<AllSystemConfigurationsQuery>({ query: AllSystemConfigurationsDocument, ...options });
+    return Urql.useQuery<AllSystemConfigurationsQuery>({ query: AllSystemConfigurationsDocument, ...options });
 }
 export const InsertSystemConfigurationDocument = gql`
     mutation InsertSystemConfiguration($object: system_Configuration_insert_input!) {
@@ -55574,7 +56479,7 @@ export const SelectCurrentUserDocument = gql`
 `;
 
 export function useSelectCurrentUserQuery(options: Omit<Urql.UseQueryArgs<SelectCurrentUserQueryVariables>, "query">) {
-    return useQuery<SelectCurrentUserQuery>({ query: SelectCurrentUserDocument, ...options });
+    return Urql.useQuery<SelectCurrentUserQuery>({ query: SelectCurrentUserDocument, ...options });
 }
 export const TermsConfigsDocument = gql`
     query TermsConfigs {
@@ -55617,7 +56522,7 @@ export const TermsConfigsDocument = gql`
 `;
 
 export function useTermsConfigsQuery(options?: Omit<Urql.UseQueryArgs<TermsConfigsQueryVariables>, "query">) {
-    return useQuery<TermsConfigsQuery>({ query: TermsConfigsDocument, ...options });
+    return Urql.useQuery<TermsConfigsQuery>({ query: TermsConfigsDocument, ...options });
 }
 export const AgreeToTermsDocument = gql`
     mutation AgreeToTerms($userId: String!, $at: timestamptz!) {
@@ -55648,7 +56553,7 @@ export function useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQ
         "query"
     >
 ) {
-    return useQuery<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery>({
+    return Urql.useQuery<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery>({
         query: VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocument,
         ...options,
     });
@@ -56370,6 +57275,42 @@ export type GraphCacheKeysConfig = {
     job_queues_CustomEmailJob_mutation_response?: (
         data: WithTypename<Job_Queues_CustomEmailJob_Mutation_Response>
     ) => null | string;
+    job_queues_ImportJob?: (data: WithTypename<Job_Queues_ImportJob>) => null | string;
+    job_queues_ImportJobOutput?: (data: WithTypename<Job_Queues_ImportJobOutput>) => null | string;
+    job_queues_ImportJobOutput_aggregate?: (data: WithTypename<Job_Queues_ImportJobOutput_Aggregate>) => null | string;
+    job_queues_ImportJobOutput_aggregate_fields?: (
+        data: WithTypename<Job_Queues_ImportJobOutput_Aggregate_Fields>
+    ) => null | string;
+    job_queues_ImportJobOutput_max_fields?: (
+        data: WithTypename<Job_Queues_ImportJobOutput_Max_Fields>
+    ) => null | string;
+    job_queues_ImportJobOutput_min_fields?: (
+        data: WithTypename<Job_Queues_ImportJobOutput_Min_Fields>
+    ) => null | string;
+    job_queues_ImportJobOutput_mutation_response?: (
+        data: WithTypename<Job_Queues_ImportJobOutput_Mutation_Response>
+    ) => null | string;
+    job_queues_ImportJob_aggregate?: (data: WithTypename<Job_Queues_ImportJob_Aggregate>) => null | string;
+    job_queues_ImportJob_aggregate_fields?: (
+        data: WithTypename<Job_Queues_ImportJob_Aggregate_Fields>
+    ) => null | string;
+    job_queues_ImportJob_avg_fields?: (data: WithTypename<Job_Queues_ImportJob_Avg_Fields>) => null | string;
+    job_queues_ImportJob_max_fields?: (data: WithTypename<Job_Queues_ImportJob_Max_Fields>) => null | string;
+    job_queues_ImportJob_min_fields?: (data: WithTypename<Job_Queues_ImportJob_Min_Fields>) => null | string;
+    job_queues_ImportJob_mutation_response?: (
+        data: WithTypename<Job_Queues_ImportJob_Mutation_Response>
+    ) => null | string;
+    job_queues_ImportJob_stddev_fields?: (data: WithTypename<Job_Queues_ImportJob_Stddev_Fields>) => null | string;
+    job_queues_ImportJob_stddev_pop_fields?: (
+        data: WithTypename<Job_Queues_ImportJob_Stddev_Pop_Fields>
+    ) => null | string;
+    job_queues_ImportJob_stddev_samp_fields?: (
+        data: WithTypename<Job_Queues_ImportJob_Stddev_Samp_Fields>
+    ) => null | string;
+    job_queues_ImportJob_sum_fields?: (data: WithTypename<Job_Queues_ImportJob_Sum_Fields>) => null | string;
+    job_queues_ImportJob_var_pop_fields?: (data: WithTypename<Job_Queues_ImportJob_Var_Pop_Fields>) => null | string;
+    job_queues_ImportJob_var_samp_fields?: (data: WithTypename<Job_Queues_ImportJob_Var_Samp_Fields>) => null | string;
+    job_queues_ImportJob_variance_fields?: (data: WithTypename<Job_Queues_ImportJob_Variance_Fields>) => null | string;
     job_queues_InvitationEmailJob?: (data: WithTypename<Job_Queues_InvitationEmailJob>) => null | string;
     job_queues_InvitationEmailJob_aggregate?: (
         data: WithTypename<Job_Queues_InvitationEmailJob_Aggregate>
@@ -57821,6 +58762,36 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootJob_Queues_CustomEmailJob_By_PkArgs,
             WithTypename<Job_Queues_CustomEmailJob> | string
+        >;
+        job_queues_ImportJob?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootJob_Queues_ImportJobArgs,
+            Array<WithTypename<Job_Queues_ImportJob> | string>
+        >;
+        job_queues_ImportJobOutput?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootJob_Queues_ImportJobOutputArgs,
+            Array<WithTypename<Job_Queues_ImportJobOutput> | string>
+        >;
+        job_queues_ImportJobOutput_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootJob_Queues_ImportJobOutput_AggregateArgs,
+            WithTypename<Job_Queues_ImportJobOutput_Aggregate> | string
+        >;
+        job_queues_ImportJobOutput_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootJob_Queues_ImportJobOutput_By_PkArgs,
+            WithTypename<Job_Queues_ImportJobOutput> | string
+        >;
+        job_queues_ImportJob_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootJob_Queues_ImportJob_AggregateArgs,
+            WithTypename<Job_Queues_ImportJob_Aggregate> | string
+        >;
+        job_queues_ImportJob_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootJob_Queues_ImportJob_By_PkArgs,
+            WithTypename<Job_Queues_ImportJob> | string
         >;
         job_queues_InvitationEmailJob?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -66971,6 +67942,502 @@ export type GraphCacheResolvers = {
             WithTypename<Job_Queues_CustomEmailJob_Mutation_Response>,
             Record<string, never>,
             Array<WithTypename<Job_Queues_CustomEmailJob> | string>
+        >;
+    };
+    job_queues_ImportJob?: {
+        completed_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        conference?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            WithTypename<Conference_Conference> | string
+        >;
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        createdBy?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        creator?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            WithTypename<Registrant_Registrant> | string
+        >;
+        data?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Job_Queues_ImportJobDataArgs,
+            Scalars["jsonb"] | string
+        >;
+        errors?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Job_Queues_ImportJobErrorsArgs,
+            Scalars["jsonb"] | string
+        >;
+        id?: GraphCacheResolver<WithTypename<Job_Queues_ImportJob>, Record<string, never>, Scalars["uuid"] | string>;
+        options?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Job_Queues_ImportJobOptionsArgs,
+            Scalars["jsonb"] | string
+        >;
+        outputs?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Job_Queues_ImportJobOutputsArgs,
+            Array<WithTypename<Job_Queues_ImportJobOutput> | string>
+        >;
+        outputs_aggregate?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Job_Queues_ImportJobOutputs_AggregateArgs,
+            WithTypename<Job_Queues_ImportJobOutput_Aggregate> | string
+        >;
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        status?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        subconference?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            WithTypename<Conference_Subconference> | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    job_queues_ImportJobOutput?: {
+        created_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        jobId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        name?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        value?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput>,
+            Job_Queues_ImportJobOutputValueArgs,
+            Scalars["jsonb"] | string
+        >;
+    };
+    job_queues_ImportJobOutput_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Aggregate>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJobOutput_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Job_Queues_ImportJobOutput> | string>
+        >;
+    };
+    job_queues_ImportJobOutput_aggregate_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Aggregate_Fields>,
+            Job_Queues_ImportJobOutput_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJobOutput_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJobOutput_Min_Fields> | string
+        >;
+    };
+    job_queues_ImportJobOutput_max_fields?: {
+        created_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        jobId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        name?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    job_queues_ImportJobOutput_min_fields?: {
+        created_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        jobId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        name?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    job_queues_ImportJobOutput_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJobOutput_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Job_Queues_ImportJobOutput> | string>
+        >;
+    };
+    job_queues_ImportJob_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Job_Queues_ImportJob> | string>
+        >;
+    };
+    job_queues_ImportJob_aggregate_fields?: {
+        avg?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Avg_Fields> | string
+        >;
+        count?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Job_Queues_ImportJob_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Min_Fields> | string
+        >;
+        stddev?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Stddev_Fields> | string
+        >;
+        stddev_pop?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Stddev_Pop_Fields> | string
+        >;
+        stddev_samp?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Stddev_Samp_Fields> | string
+        >;
+        sum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Sum_Fields> | string
+        >;
+        var_pop?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Var_Pop_Fields> | string
+        >;
+        var_samp?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Var_Samp_Fields> | string
+        >;
+        variance?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Job_Queues_ImportJob_Variance_Fields> | string
+        >;
+    };
+    job_queues_ImportJob_avg_fields?: {
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    job_queues_ImportJob_max_fields?: {
+        completed_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        createdBy?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        status?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    job_queues_ImportJob_min_fields?: {
+        completed_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        createdBy?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        status?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    job_queues_ImportJob_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Job_Queues_ImportJob> | string>
+        >;
+    };
+    job_queues_ImportJob_stddev_fields?: {
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    job_queues_ImportJob_stddev_pop_fields?: {
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    job_queues_ImportJob_stddev_samp_fields?: {
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    job_queues_ImportJob_sum_fields?: {
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+    };
+    job_queues_ImportJob_var_pop_fields?: {
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    job_queues_ImportJob_var_samp_fields?: {
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    job_queues_ImportJob_variance_fields?: {
+        progress?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        progressMaximum?: GraphCacheResolver<
+            WithTypename<Job_Queues_ImportJob_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
         >;
     };
     job_queues_InvitationEmailJob?: {
@@ -78128,6 +79595,22 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootDelete_Job_Queues_CustomEmailJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_CustomEmailJob>>
     >;
+    delete_job_queues_ImportJob?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Job_Queues_ImportJobArgs,
+        Maybe<WithTypename<Job_Queues_ImportJob_Mutation_Response>>
+    >;
+    delete_job_queues_ImportJobOutput?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Job_Queues_ImportJobOutputArgs,
+        Maybe<WithTypename<Job_Queues_ImportJobOutput_Mutation_Response>>
+    >;
+    delete_job_queues_ImportJobOutput_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Job_Queues_ImportJobOutput_By_PkArgs,
+        Maybe<WithTypename<Job_Queues_ImportJobOutput>>
+    >;
+    delete_job_queues_ImportJob_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Job_Queues_ImportJob_By_PkArgs,
+        Maybe<WithTypename<Job_Queues_ImportJob>>
+    >;
     delete_job_queues_InvitationEmailJob?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Job_Queues_InvitationEmailJobArgs,
         Maybe<WithTypename<Job_Queues_InvitationEmailJob_Mutation_Response>>
@@ -78908,6 +80391,22 @@ export type GraphCacheOptimisticUpdaters = {
     insert_job_queues_CustomEmailJob_one?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Job_Queues_CustomEmailJob_OneArgs,
         Maybe<WithTypename<Job_Queues_CustomEmailJob>>
+    >;
+    insert_job_queues_ImportJob?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Job_Queues_ImportJobArgs,
+        Maybe<WithTypename<Job_Queues_ImportJob_Mutation_Response>>
+    >;
+    insert_job_queues_ImportJobOutput?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Job_Queues_ImportJobOutputArgs,
+        Maybe<WithTypename<Job_Queues_ImportJobOutput_Mutation_Response>>
+    >;
+    insert_job_queues_ImportJobOutput_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Job_Queues_ImportJobOutput_OneArgs,
+        Maybe<WithTypename<Job_Queues_ImportJobOutput>>
+    >;
+    insert_job_queues_ImportJob_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Job_Queues_ImportJob_OneArgs,
+        Maybe<WithTypename<Job_Queues_ImportJob>>
     >;
     insert_job_queues_InvitationEmailJob?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Job_Queues_InvitationEmailJobArgs,
@@ -79734,6 +81233,22 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootUpdate_Job_Queues_CustomEmailJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_CustomEmailJob>>
     >;
+    update_job_queues_ImportJob?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Job_Queues_ImportJobArgs,
+        Maybe<WithTypename<Job_Queues_ImportJob_Mutation_Response>>
+    >;
+    update_job_queues_ImportJobOutput?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Job_Queues_ImportJobOutputArgs,
+        Maybe<WithTypename<Job_Queues_ImportJobOutput_Mutation_Response>>
+    >;
+    update_job_queues_ImportJobOutput_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Job_Queues_ImportJobOutput_By_PkArgs,
+        Maybe<WithTypename<Job_Queues_ImportJobOutput>>
+    >;
+    update_job_queues_ImportJob_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Job_Queues_ImportJob_By_PkArgs,
+        Maybe<WithTypename<Job_Queues_ImportJob>>
+    >;
     update_job_queues_InvitationEmailJob?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Job_Queues_InvitationEmailJobArgs,
         Maybe<WithTypename<Job_Queues_InvitationEmailJob_Mutation_Response>>
@@ -80541,6 +82056,22 @@ export type GraphCacheUpdaters = {
         delete_job_queues_CustomEmailJob_by_pk?: GraphCacheUpdateResolver<
             { delete_job_queues_CustomEmailJob_by_pk: Maybe<WithTypename<Job_Queues_CustomEmailJob>> },
             Mutation_RootDelete_Job_Queues_CustomEmailJob_By_PkArgs
+        >;
+        delete_job_queues_ImportJob?: GraphCacheUpdateResolver<
+            { delete_job_queues_ImportJob: Maybe<WithTypename<Job_Queues_ImportJob_Mutation_Response>> },
+            Mutation_RootDelete_Job_Queues_ImportJobArgs
+        >;
+        delete_job_queues_ImportJobOutput?: GraphCacheUpdateResolver<
+            { delete_job_queues_ImportJobOutput: Maybe<WithTypename<Job_Queues_ImportJobOutput_Mutation_Response>> },
+            Mutation_RootDelete_Job_Queues_ImportJobOutputArgs
+        >;
+        delete_job_queues_ImportJobOutput_by_pk?: GraphCacheUpdateResolver<
+            { delete_job_queues_ImportJobOutput_by_pk: Maybe<WithTypename<Job_Queues_ImportJobOutput>> },
+            Mutation_RootDelete_Job_Queues_ImportJobOutput_By_PkArgs
+        >;
+        delete_job_queues_ImportJob_by_pk?: GraphCacheUpdateResolver<
+            { delete_job_queues_ImportJob_by_pk: Maybe<WithTypename<Job_Queues_ImportJob>> },
+            Mutation_RootDelete_Job_Queues_ImportJob_By_PkArgs
         >;
         delete_job_queues_InvitationEmailJob?: GraphCacheUpdateResolver<
             {
@@ -81409,6 +82940,22 @@ export type GraphCacheUpdaters = {
         insert_job_queues_CustomEmailJob_one?: GraphCacheUpdateResolver<
             { insert_job_queues_CustomEmailJob_one: Maybe<WithTypename<Job_Queues_CustomEmailJob>> },
             Mutation_RootInsert_Job_Queues_CustomEmailJob_OneArgs
+        >;
+        insert_job_queues_ImportJob?: GraphCacheUpdateResolver<
+            { insert_job_queues_ImportJob: Maybe<WithTypename<Job_Queues_ImportJob_Mutation_Response>> },
+            Mutation_RootInsert_Job_Queues_ImportJobArgs
+        >;
+        insert_job_queues_ImportJobOutput?: GraphCacheUpdateResolver<
+            { insert_job_queues_ImportJobOutput: Maybe<WithTypename<Job_Queues_ImportJobOutput_Mutation_Response>> },
+            Mutation_RootInsert_Job_Queues_ImportJobOutputArgs
+        >;
+        insert_job_queues_ImportJobOutput_one?: GraphCacheUpdateResolver<
+            { insert_job_queues_ImportJobOutput_one: Maybe<WithTypename<Job_Queues_ImportJobOutput>> },
+            Mutation_RootInsert_Job_Queues_ImportJobOutput_OneArgs
+        >;
+        insert_job_queues_ImportJob_one?: GraphCacheUpdateResolver<
+            { insert_job_queues_ImportJob_one: Maybe<WithTypename<Job_Queues_ImportJob>> },
+            Mutation_RootInsert_Job_Queues_ImportJob_OneArgs
         >;
         insert_job_queues_InvitationEmailJob?: GraphCacheUpdateResolver<
             {
@@ -82317,6 +83864,22 @@ export type GraphCacheUpdaters = {
         update_job_queues_CustomEmailJob_by_pk?: GraphCacheUpdateResolver<
             { update_job_queues_CustomEmailJob_by_pk: Maybe<WithTypename<Job_Queues_CustomEmailJob>> },
             Mutation_RootUpdate_Job_Queues_CustomEmailJob_By_PkArgs
+        >;
+        update_job_queues_ImportJob?: GraphCacheUpdateResolver<
+            { update_job_queues_ImportJob: Maybe<WithTypename<Job_Queues_ImportJob_Mutation_Response>> },
+            Mutation_RootUpdate_Job_Queues_ImportJobArgs
+        >;
+        update_job_queues_ImportJobOutput?: GraphCacheUpdateResolver<
+            { update_job_queues_ImportJobOutput: Maybe<WithTypename<Job_Queues_ImportJobOutput_Mutation_Response>> },
+            Mutation_RootUpdate_Job_Queues_ImportJobOutputArgs
+        >;
+        update_job_queues_ImportJobOutput_by_pk?: GraphCacheUpdateResolver<
+            { update_job_queues_ImportJobOutput_by_pk: Maybe<WithTypename<Job_Queues_ImportJobOutput>> },
+            Mutation_RootUpdate_Job_Queues_ImportJobOutput_By_PkArgs
+        >;
+        update_job_queues_ImportJob_by_pk?: GraphCacheUpdateResolver<
+            { update_job_queues_ImportJob_by_pk: Maybe<WithTypename<Job_Queues_ImportJob>> },
+            Mutation_RootUpdate_Job_Queues_ImportJob_By_PkArgs
         >;
         update_job_queues_InvitationEmailJob?: GraphCacheUpdateResolver<
             {
@@ -83350,6 +84913,30 @@ export type GraphCacheUpdaters = {
         job_queues_CustomEmailJob_by_pk?: GraphCacheUpdateResolver<
             { job_queues_CustomEmailJob_by_pk: Maybe<WithTypename<Job_Queues_CustomEmailJob>> },
             Subscription_RootJob_Queues_CustomEmailJob_By_PkArgs
+        >;
+        job_queues_ImportJob?: GraphCacheUpdateResolver<
+            { job_queues_ImportJob: Array<WithTypename<Job_Queues_ImportJob>> },
+            Subscription_RootJob_Queues_ImportJobArgs
+        >;
+        job_queues_ImportJobOutput?: GraphCacheUpdateResolver<
+            { job_queues_ImportJobOutput: Array<WithTypename<Job_Queues_ImportJobOutput>> },
+            Subscription_RootJob_Queues_ImportJobOutputArgs
+        >;
+        job_queues_ImportJobOutput_aggregate?: GraphCacheUpdateResolver<
+            { job_queues_ImportJobOutput_aggregate: WithTypename<Job_Queues_ImportJobOutput_Aggregate> },
+            Subscription_RootJob_Queues_ImportJobOutput_AggregateArgs
+        >;
+        job_queues_ImportJobOutput_by_pk?: GraphCacheUpdateResolver<
+            { job_queues_ImportJobOutput_by_pk: Maybe<WithTypename<Job_Queues_ImportJobOutput>> },
+            Subscription_RootJob_Queues_ImportJobOutput_By_PkArgs
+        >;
+        job_queues_ImportJob_aggregate?: GraphCacheUpdateResolver<
+            { job_queues_ImportJob_aggregate: WithTypename<Job_Queues_ImportJob_Aggregate> },
+            Subscription_RootJob_Queues_ImportJob_AggregateArgs
+        >;
+        job_queues_ImportJob_by_pk?: GraphCacheUpdateResolver<
+            { job_queues_ImportJob_by_pk: Maybe<WithTypename<Job_Queues_ImportJob>> },
+            Subscription_RootJob_Queues_ImportJob_By_PkArgs
         >;
         job_queues_InvitationEmailJob?: GraphCacheUpdateResolver<
             { job_queues_InvitationEmailJob: Array<WithTypename<Job_Queues_InvitationEmailJob>> },

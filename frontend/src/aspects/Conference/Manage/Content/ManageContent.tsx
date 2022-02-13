@@ -792,7 +792,7 @@ export default function ManageContentV2(): JSX.Element {
                         <LinkButton
                             key="import-button"
                             colorScheme="purple"
-                            to={`${conferencePath}/manage/import/content`}
+                            to={`${conferencePath}/manage/import/program`}
                         >
                             Import
                         </LinkButton>

@@ -26,24 +26,39 @@ async function parseFile<T>(options: ImportOptions, parser: Parser<T>): Promise<
     try {
         const buf = await options.file.arrayBuffer();
         const decoder = new TextDecoder(options.encoding, { fatal: true });
-        const str = decoder.decode(buf);
+        let str = decoder.decode(buf);
 
         let data: any;
         switch (options.type) {
             case "CSV":
                 {
+                    if (options.skipFirstLine) {
+                        str = str.substring(str.indexOf("\n") + 1);
+                    }
+
                     const csvParsed = Papa.parse(str, {
                         delimiter: options.delimiter,
                         escapeChar: options.escapeChar,
                         quoteChar: options.quoteChar,
                         header: options.hasHeaders,
                         skipEmptyLines: true,
-                        transformHeader: (h) => h.trim(),
+                        transformHeader: (h) => {
+                            let idx = h.indexOf("(");
+                            h = idx > -1 ? h.substring(0, idx) : h;
+                            idx = h.indexOf("\r");
+                            h = idx > -1 ? h.substring(0, idx) : h;
+                            idx = h.indexOf("\n");
+                            h = idx > -1 ? h.substring(0, idx) : h;
+                            return h.trim();
+                        },
                     });
                     if (csvParsed.errors.length) {
                         return {
                             fileName: options.file.name,
-                            error: csvParsed.errors.reduce((acc, err) => `${acc}; ${err}`, ""),
+                            error: csvParsed.errors.reduce(
+                                (acc, err) => `${acc}\n\nRow: ${err.row}: ${err.message}`,
+                                ""
+                            ),
                         };
                     } else {
                         data = csvParsed.data;
@@ -107,7 +122,7 @@ async function parseFile<T>(options: ImportOptions, parser: Parser<T>): Promise<
     } catch (e: any) {
         return {
             fileName: options.file.name,
-            error: e.message,
+            error: e.message ?? e.toString(),
         };
     }
 }

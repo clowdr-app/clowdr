@@ -38,6 +38,8 @@
 - "!include job_queues_ChannelStackUpdateJob.yaml"
 - "!include job_queues_CombineVideosJob.yaml"
 - "!include job_queues_CustomEmailJob.yaml"
+- "!include job_queues_ImportJob.yaml"
+- "!include job_queues_ImportJobOutput.yaml"
 - "!include job_queues_InvitationEmailJob.yaml"
 - "!include job_queues_JobStatus.yaml"
 - "!include job_queues_MediaPackageHarvestJob.yaml"

@@ -196,6 +196,20 @@
             "args": ["dev"]
         },
         {
+            "label": "Importer Service -- Local Development",
+            "type": "shell",
+            "isBackground": true,
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/services/importer"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["dev"]
+        },
+        {
             "label": "Frontend -- Local Development",
             "type": "shell",
             "command": "pnpm",
@@ -320,6 +334,7 @@
                 "Caches Service -- Local Development",
                 "Real-time Service -- Local Development",
                 "Playout Service -- Local Development",
+                "Importer Service -- Local Development",
                 "Frontend -- Local Development"
             ],
             "dependsOrder": "parallel",
@@ -491,6 +506,7 @@
                 "service-actions",
                 "service-playout",
                 "service-realtime",
+                "service-importer",
                 "auth",
                 "caches",
                 "graphql",

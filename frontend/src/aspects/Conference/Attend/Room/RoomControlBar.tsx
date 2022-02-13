@@ -34,7 +34,7 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomPage_RoomDeta
     const listModal = useDisclosure();
 
     return (
-        <HStack justifyContent="flex-end">
+        <HStack justifyContent="flex-end" px={4}>
             <Button aria-label="Members of this room" title="Members of this room" onClick={listModal.onOpen} size="sm">
                 <>
                     <FAIcon icon="users" iconStyle="s" mr={3} />

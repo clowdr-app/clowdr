@@ -16,11 +16,13 @@ export default function StreamChooser({
     isRecordingMode: boolean;
 }): JSX.Element {
     const {
-        availableStreams,
-        layout: { layout },
-        updateLayout,
-        saveLayout,
-        layoutChooser_isOpen,
+        layout: {
+            availableStreams,
+            layout: { layout },
+            updateLayout,
+            saveLayout,
+            layoutChooser_isOpen,
+        },
     } = useVonageLayout();
 
     const changeLayout = useCallback(

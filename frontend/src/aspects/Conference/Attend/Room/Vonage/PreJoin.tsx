@@ -2,6 +2,7 @@ import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
 import { Box, Center, chakra, HStack, useConst, useToast } from "@chakra-ui/react";
 import React, { useContext, useEffect } from "react";
+import { AppLayoutContext } from "../../../../App/AppLayoutContext";
 import FAIcon from "../../../../Chakra/FAIcon";
 import { getAudioContext } from "../../../../Utils/getAudioContext";
 import { backgroundImage } from "./resources";
@@ -31,8 +32,10 @@ export function PreJoin({
         }
     }, [cameraPreviewRef, state.cameraStream, toast]);
 
+    const { mainPaneHeight } = useContext(AppLayoutContext);
+
     return (
-        <HStack w="auto" h="100%" alignItems="center" justifyContent="center">
+        <HStack w="100%" h={`${mainPaneHeight}px`} alignItems="center" justifyContent="center">
             <Box position="relative" mb={4}>
                 <Box position="absolute" width="100%" height="100%">
                     <Box

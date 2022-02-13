@@ -57,7 +57,7 @@ function useValue({
 
     const vonage = useVonageGlobalState();
     const { dispatch, settings } = useVonageRoom();
-    const layout = useVonageLayout();
+    const { layout } = useVonageLayout();
 
     const [connected, setConnected] = useState<boolean>(false);
     const [streams, setStreams] = useState<OT.Stream[]>([]);

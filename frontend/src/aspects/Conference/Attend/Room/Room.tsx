@@ -677,8 +677,6 @@ function RoomInner({
                     maxW="100%"
                     pb="8ex"
                 >
-                    {controlBarEl}
-
                     {showBackstage ? backStageEl : undefined}
 
                     {!showBackstage ? (
@@ -742,6 +740,13 @@ function RoomInner({
                                     }
                                 />
                             </Box>
+                        </>
+                    ) : undefined}
+
+                    {controlBarEl}
+
+                    {!showBackstage ? (
+                        <>
                             <StreamTextCaptions streamTextEventId={currentRoomEvent?.streamTextEventId} />
                             {contentEl}
                         </>

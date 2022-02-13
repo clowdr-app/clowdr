@@ -9,8 +9,8 @@ import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalPro
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
 import { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructionsContext";
+import type { VonageBroadcastLayout } from "./State/useVonageBroadcastLayout";
 import { VonageComputedStateProvider } from "./State/VonageComputedStateContext";
-import type { VonageLayout } from "./State/VonageLayoutProvider";
 import { VonageLayoutProvider } from "./State/VonageLayoutProvider";
 import { VonageRoomStateProvider } from "./State/VonageRoomProvider";
 import type { CompleteGetAccessToken } from "./useGetAccessToken";
@@ -75,7 +75,7 @@ export function VonageRoom({
     completeGetAccessToken?: CompleteGetAccessToken | null;
     onLeave?: () => void;
     canControlRecording: boolean;
-    layout?: VonageLayout;
+    layout?: VonageBroadcastLayout;
     eventIsFuture?: boolean;
 }): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();

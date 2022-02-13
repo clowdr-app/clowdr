@@ -64,7 +64,9 @@ export function VonageRoomControlBar({
 }): JSX.Element {
     const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
-    const { layoutChooser_isOpen, layoutChooser_onOpen, layoutChooser_onClose } = useVonageLayout();
+    const {
+        layout: { layoutChooser_isOpen, layoutChooser_onOpen, layoutChooser_onClose },
+    } = useVonageLayout();
     const { isRecordingActive, joining, joinRoom, leaveRoom, onTranscriptRef, setRecentlyToggledRecording } =
         useContext(VonageComputedStateContext);
 

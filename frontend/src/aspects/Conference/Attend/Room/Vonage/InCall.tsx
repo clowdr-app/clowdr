@@ -1,28 +1,34 @@
-import { Box } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import React, { useContext, useEffect, useMemo } from "react";
 import * as portals from "react-reverse-portal";
 import { validate } from "uuid";
+import { AppLayoutContext } from "../../../../App/AppLayoutContext";
 import { useUserId } from "../../../../Auth";
 import type { RegistrantIdSpec } from "../../../RegistrantsContext";
 import { useRegistrants } from "../../../RegistrantsContext";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { CameraViewport } from "./Components/CameraViewport";
-import Layout from "./Components/Layout";
 import type { Viewport } from "./Components/LayoutTypes";
 import SelfCameraComponent from "./Components/SelfCamera";
 import SelfScreenComponent from "./Components/SelfScreen";
+import type { AvailableStream } from "./State/useVonageBroadcastLayout";
+import { DisplayType } from "./State/useVonageDisplay";
 import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
 import { StateType } from "./State/VonageGlobalState";
-import type { AvailableStream } from "./State/VonageLayoutProvider";
 import { useVonageLayout } from "./State/VonageLayoutProvider";
 import { useVonageRoom } from "./State/VonageRoomProvider";
+import { Gallery } from "./VideoGrid/Gallery";
+import Layout from "./VideoGrid/Layout";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
 export function InCall(): JSX.Element {
     const registrant = useCurrentRegistrant();
     const { state, settings } = useVonageRoom();
     const { camera, connected, connections, streams, screen, vonage } = useContext(VonageComputedStateContext);
-    const { setAvailableStreams, refetchLayout } = useVonageLayout();
+    const {
+        layout: { setAvailableStreams, refetchLayout },
+        display,
+    } = useVonageLayout();
 
     const userId = useUserId();
     const registrantIdSpecs = useMemo(
@@ -136,10 +142,10 @@ export function InCall(): JSX.Element {
     const screenPortalNode = React.useMemo(() => portals.createHtmlPortalNode(), []);
     const cameraPortalNode = React.useMemo(() => portals.createHtmlPortalNode(), []);
     const [streamPortalNodes, setStreamPortalNodes] = React.useState(
-        new Map<string, { node: portals.HtmlPortalNode; element: JSX.Element }>()
+        new Map<string, { node: portals.HtmlPortalNode<typeof CameraViewport>; element: JSX.Element }>()
     );
     const [connectionPortalNodes, setConnectionPortalNodes] = React.useState(
-        new Map<string, { node: portals.HtmlPortalNode; element: JSX.Element }>()
+        new Map<string, { node: portals.HtmlPortalNode<typeof CameraViewport>; element: JSX.Element }>()
     );
 
     const streamActivities = useMemo<
@@ -154,8 +160,14 @@ export function InCall(): JSX.Element {
 
     const viewports = useMemo<Viewport[]>(() => {
         const result: Viewport[] = [];
-        const streamPortalNodesResult = new Map(streamPortalNodes);
-        const connectionPortalNodesResult = new Map(connectionPortalNodes);
+        const streamPortalNodesResult = new Map<
+            string,
+            { node: portals.HtmlPortalNode<typeof CameraViewport>; element: JSX.Element }
+        >(streamPortalNodes);
+        const connectionPortalNodesResult = new Map<
+            string,
+            { node: portals.HtmlPortalNode<typeof CameraViewport>; element: JSX.Element }
+        >(connectionPortalNodes);
 
         if (vonage.state.type === StateType.Connected) {
             if (vonage.state.session) {
@@ -316,18 +328,26 @@ export function InCall(): JSX.Element {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connected]);
 
+    const { mainPaneHeight } = useContext(AppLayoutContext);
+
+    const displayEl = useMemo(() => {
+        switch (display.currentDisplay.type) {
+            case DisplayType.Auto:
+            case DisplayType.Gallery:
+                return <Gallery streamActivities={streamActivities} viewports={viewports} />;
+            case DisplayType.BroadcastLayout:
+                return <Layout viewports={viewports} allowedToControlLayout={settings.canControlRecording} />;
+        }
+    }, [display.currentDisplay.type, settings.canControlRecording, streamActivities, viewports]);
+
     return (
         <>
             {/* {connected ? <VideoChatVideoPlayer /> : undefined} */}
             {connected ? (
-                <Box position="relative" width="100%" zIndex={1}>
-                    <Layout
-                        viewports={viewports}
-                        allowedToControlLayout={settings.canControlRecording}
-                        streamActivities={streamActivities}
-                    />
+                <VStack h={mainPaneHeight} width="100%" zIndex={1} alignItems="stretch">
+                    <Box flexGrow={1}>{displayEl}</Box>
                     <VonageRoomControlBar />
-                </Box>
+                </VStack>
             ) : undefined}
             {[...streamPortalNodes.values()].map((x) => x.element)}
             {[...connectionPortalNodes.values()].map((x) => x.element)}

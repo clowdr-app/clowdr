@@ -1,6 +1,5 @@
 import { Box } from "@chakra-ui/react";
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import { AppLayoutContext } from "../../../../App/AppLayoutContext";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { useAWSTranscription } from "../Transcription/AWSTranscribe";
 import { AutoplayAlert } from "../VideoChat/AutoplayAlert";
@@ -100,10 +99,8 @@ export function VonageRoomInner({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stop]);
 
-    const { mainPaneHeight } = useContext(AppLayoutContext);
-
     return (
-        <Box w="100%" isolation="isolate" h={`${mainPaneHeight}px`}>
+        <Box w="100%" isolation="isolate">
             <AutoplayAlert connected={connected} />
             <RecordingAlert />
             {uiEl}

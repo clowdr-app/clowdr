@@ -9,6 +9,7 @@ import { useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery } 
 import { useRestorableState } from "../../../../../Hooks/useRestorableState";
 import { useConference } from "../../../../useConference";
 import type { DevicesProps } from "../../VideoChat/PermissionInstructionsContext";
+import type { CompleteGetAccessToken } from "../useGetAccessToken";
 
 export interface VonageRoomState {
     preferredCameraId: string | null;
@@ -128,13 +129,7 @@ export interface VonageRoomSettings {
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
     requireMicrophoneOrCamera: boolean;
-    completeGetAccessToken?: React.MutableRefObject<
-        | {
-              resolve: () => void;
-              reject: (reason?: any) => void;
-          }
-        | undefined
-    >;
+    completeGetAccessToken: CompleteGetAccessToken | null;
     eventIsFuture: boolean;
     roomId?: string;
     eventId?: string;
@@ -158,6 +153,7 @@ const defaultVonageRoomSettings: VonageRoomSettings = {
     joiningRoomButtonText: undefined,
     requireMicrophoneOrCamera: false,
     eventIsFuture: false,
+    completeGetAccessToken: null,
 };
 
 export const VonageContext = React.createContext<VonageRoomContext>({
@@ -271,13 +267,7 @@ export function VonageRoomStateProvider({
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
     requireMicrophoneOrCamera: boolean;
-    completeGetAccessToken?: React.MutableRefObject<
-        | {
-              resolve: () => void;
-              reject: (reason?: any) => void;
-          }
-        | undefined
-    >;
+    completeGetAccessToken?: CompleteGetAccessToken | null;
     eventIsFuture?: boolean;
     eventId?: string;
     roomId?: string;

@@ -1,6 +1,7 @@
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useCallbackRef } from "use-callback-ref";
 import { useGetEventVonageTokenMutation, useGetRoomVonageTokenMutation } from "../../../../../generated/graphql";
 import { makeContext } from "../../../../GQL/make-context";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
@@ -22,6 +23,8 @@ gql`
     }
 `;
 
+export type CompleteGetAccessToken = { resolve: () => void; reject: (reason?: any) => void };
+
 export function useGetAccessToken(roomId: string, eventId?: string) {
     const [, getRoomVonageToken] = useGetRoomVonageTokenMutation();
     const [, getEventVonageToken] = useGetEventVonageTokenMutation();
@@ -37,7 +40,8 @@ export function useGetAccessToken(roomId: string, eventId?: string) {
         [roomId]
     );
 
-    const completeGetAccessToken = useRef<{ resolve: () => void; reject: (reason?: any) => void } | undefined>();
+    const [completeGetAccessToken, setCompleteGetAccessToken] = useState<CompleteGetAccessToken | null>(null);
+    const completeGetAccessTokenRef = useCallbackRef<CompleteGetAccessToken>(null, setCompleteGetAccessToken);
 
     const getAccessToken = useCallback(() => {
         return new Promise<string>((resolve, reject) => {
@@ -56,13 +60,13 @@ export function useGetAccessToken(roomId: string, eventId?: string) {
                         const token = result.data.joinEventVonageSession.accessToken;
 
                         if (result.data.joinEventVonageSession.isRecorded) {
-                            completeGetAccessToken.current = {
+                            completeGetAccessTokenRef.current = {
                                 resolve: () => {
-                                    completeGetAccessToken.current = undefined;
+                                    completeGetAccessTokenRef.current = null;
                                     resolve(token);
                                 },
                                 reject: (reason) => {
-                                    completeGetAccessToken.current = undefined;
+                                    completeGetAccessTokenRef.current = null;
                                     reject(reason);
                                 },
                             };
@@ -86,13 +90,13 @@ export function useGetAccessToken(roomId: string, eventId?: string) {
                         const token = result.data.joinRoomVonageSession.accessToken;
 
                         if (result.data.joinRoomVonageSession.isRecorded) {
-                            completeGetAccessToken.current = {
+                            completeGetAccessTokenRef.current = {
                                 resolve: () => {
-                                    completeGetAccessToken.current = undefined;
+                                    completeGetAccessTokenRef.current = null;
                                     resolve(token);
                                 },
                                 reject: (reason) => {
-                                    completeGetAccessToken.current = undefined;
+                                    completeGetAccessTokenRef.current = null;
                                     reject(reason);
                                 },
                             };
@@ -103,7 +107,7 @@ export function useGetAccessToken(roomId: string, eventId?: string) {
                     .catch(reject);
             }
         });
-    }, [context, eventId, getEventVonageToken, getRoomVonageToken, registrantId, roomId]);
+    }, [completeGetAccessTokenRef, context, eventId, getEventVonageToken, getRoomVonageToken, registrantId, roomId]);
 
     return {
         getAccessToken,

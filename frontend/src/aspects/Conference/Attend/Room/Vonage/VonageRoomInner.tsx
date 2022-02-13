@@ -22,7 +22,7 @@ export function VonageRoomInner({
 }): JSX.Element {
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
-    const { state, dispatch, settings } = useVonageRoom();
+    const { state, dispatch } = useVonageRoom();
     const { camera, connected, joining, vonage, leaveRoom } = useContext(VonageComputedStateContext);
 
     const registrant = useCurrentRegistrant();
@@ -105,12 +105,7 @@ export function VonageRoomInner({
     return (
         <Box w="100%" isolation="isolate" h={`${mainPaneHeight}px`}>
             <AutoplayAlert connected={connected} />
-            <RecordingAlert
-                isOpen={settings.completeGetAccessToken?.current !== undefined}
-                eventIsFuture={settings.eventIsFuture}
-                onAccept={settings.completeGetAccessToken?.current?.resolve}
-                onReject={settings.completeGetAccessToken?.current?.reject}
-            />
+            <RecordingAlert />
             {uiEl}
         </Box>
     );

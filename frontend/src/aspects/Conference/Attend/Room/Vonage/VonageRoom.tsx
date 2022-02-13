@@ -13,6 +13,7 @@ import { VonageComputedStateProvider } from "./State/VonageComputedStateContext"
 import type { VonageLayout } from "./State/VonageLayoutProvider";
 import { VonageLayoutProvider } from "./State/VonageLayoutProvider";
 import { VonageRoomStateProvider } from "./State/VonageRoomProvider";
+import type { CompleteGetAccessToken } from "./useGetAccessToken";
 import { AutoplayProvider } from "./VideoPlayback/AutoplayContext";
 import { VonageVideoPlaybackProvider } from "./VideoPlayback/VonageVideoPlaybackContext";
 import { VonageRoomInner } from "./VonageRoomInner";
@@ -71,13 +72,7 @@ export function VonageRoom({
     isRaiseHandWaiting?: boolean;
     requireMicrophoneOrCamera?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
-    completeGetAccessToken?: React.MutableRefObject<
-        | {
-              resolve: () => void;
-              reject: (reason?: any) => void;
-          }
-        | undefined
-    >;
+    completeGetAccessToken?: CompleteGetAccessToken | null;
     onLeave?: () => void;
     canControlRecording: boolean;
     layout?: VonageLayout;

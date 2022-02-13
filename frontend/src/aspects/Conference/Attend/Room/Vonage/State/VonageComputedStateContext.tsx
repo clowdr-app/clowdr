@@ -38,6 +38,9 @@ interface Outputs {
     joinRoom: () => Promise<void>;
     leaveRoom: () => Promise<void>;
     cancelJoin?: () => void;
+    recentlyConnected: boolean;
+    recentlyToggledRecording: boolean;
+    setRecentlyToggledRecording: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function useValue({
@@ -271,6 +274,29 @@ function useValue({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vonageSessionId]);
 
+    const [recentlyConnected, setRecentlyConnected] = useState<boolean>(false);
+    const [recentlyToggledRecording, setRecentlyToggledRecording] = useState<boolean>(false);
+    useEffect(() => {
+        let tId: number | undefined;
+        if (vonage.state.type === StateType.Connected) {
+            setRecentlyConnected(true);
+
+            tId = setTimeout(
+                (() => {
+                    setRecentlyConnected(false);
+                }) as TimerHandler,
+                30000
+            );
+        } else {
+            setRecentlyConnected(false);
+        }
+        return () => {
+            if (tId) {
+                clearTimeout(tId);
+            }
+        };
+    }, [vonage.state.type]);
+
     return useMemo(
         () => ({
             vonage,
@@ -285,6 +311,9 @@ function useValue({
             cancelJoin,
             isRecordingActive: recordingState.isRecordingActive,
             onTranscriptRef: transcript.onTranscriptRef,
+            recentlyConnected,
+            recentlyToggledRecording,
+            setRecentlyToggledRecording,
         }),
         [
             vonage,
@@ -299,6 +328,8 @@ function useValue({
             cancelJoin,
             recordingState.isRecordingActive,
             transcript.onTranscriptRef,
+            recentlyConnected,
+            recentlyToggledRecording,
         ]
     );
 }

@@ -1,17 +1,9 @@
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogOverlay,
     Box,
     Button,
-    ButtonGroup,
     chakra,
     Flex,
-    Heading,
     HStack,
     IconButton,
     Popover,
@@ -24,7 +16,6 @@ import {
     Tag,
     TagLabel,
     TagLeftIcon,
-    Text,
     Tooltip,
     useColorModeValue,
     useDisclosure,
@@ -74,7 +65,8 @@ export function VonageRoomControlBar({
     const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
     const { layoutChooser_isOpen, layoutChooser_onOpen, layoutChooser_onClose } = useVonageLayout();
-    const { isRecordingActive, joining, joinRoom, leaveRoom, onTranscriptRef } = useContext(VonageComputedStateContext);
+    const { isRecordingActive, joining, joinRoom, leaveRoom, onTranscriptRef, setRecentlyToggledRecording } =
+        useContext(VonageComputedStateContext);
 
     const [toggleVonageRecordingResponse, toggleVonageRecording] = useToggleVonageRecordingStateMutation();
 
@@ -373,47 +365,6 @@ export function VonageRoomControlBar({
         [vonage.state]
     );
 
-    const {
-        isOpen: isRecordingAlertOpen,
-        onOpen: onRecordingAlertOpen,
-        onClose: onRecordingAlertClose,
-    } = useDisclosure();
-    const recordingAlert_LeastDestructiveRef = useRef<HTMLButtonElement | null>(null);
-    const [recentlyConnected, setRecentlyConnected] = useState<boolean>(false);
-    const [recentlyToggledRecording, setRecentlyToggledRecording] = useState<boolean>(false);
-    useEffect(() => {
-        if (!isRecordingActive || vonage.state.type !== StateType.Connected) {
-            onRecordingAlertClose();
-        }
-    }, [isRecordingActive, onRecordingAlertClose, vonage.state.type]);
-    useEffect(() => {
-        let tId: number | undefined;
-        if (vonage.state.type === StateType.Connected) {
-            setRecentlyConnected(true);
-
-            tId = setTimeout(
-                (() => {
-                    setRecentlyConnected(false);
-                }) as TimerHandler,
-                30000
-            );
-        } else {
-            setRecentlyConnected(false);
-        }
-        return () => {
-            if (tId) {
-                clearTimeout(tId);
-            }
-        };
-    }, [vonage.state.type]);
-    useEffect(() => {
-        if (isRecordingActive && !recentlyConnected && !recentlyToggledRecording) {
-            onRecordingAlertOpen();
-        }
-        setRecentlyToggledRecording(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isRecordingActive]);
-
     const buttonsDirection = vonage.state.type === StateType.Connected ? "row" : "column";
 
     useEffect(() => {
@@ -670,49 +621,6 @@ export function VonageRoomControlBar({
                 onClose={onClose}
                 onOpen={() => onOpen(true, true)}
             />
-            <AlertDialog
-                isOpen={isRecordingAlertOpen}
-                onClose={onRecordingAlertClose}
-                leastDestructiveRef={recordingAlert_LeastDestructiveRef}
-            >
-                <AlertDialogOverlay />
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <Heading as="h1" fontSize="md">
-                            Recording has started
-                        </Heading>
-                    </AlertDialogHeader>
-                    <AlertDialogBody>
-                        <VStack>
-                            <Text>
-                                Recording of the video-call in this room has started. The recording will be managed by
-                                the conference and be made available to you when recording ends. For further
-                                information, please contact your conference organizers.
-                            </Text>
-                            <Text>You can find recordings under the My Stuff menu on the left.</Text>
-                        </VStack>
-                    </AlertDialogBody>
-                    <AlertDialogFooter>
-                        <ButtonGroup spacing={2}>
-                            <Button
-                                onClick={() => {
-                                    leaveRoom();
-                                    onRecordingAlertClose();
-                                }}
-                            >
-                                Disconnect
-                            </Button>
-                            <Button
-                                ref={recordingAlert_LeastDestructiveRef}
-                                colorScheme="PrimaryActionButton"
-                                onClick={() => onRecordingAlertClose()}
-                            >
-                                Ok, stay connected
-                            </Button>
-                        </ButtonGroup>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </>
     );
 }

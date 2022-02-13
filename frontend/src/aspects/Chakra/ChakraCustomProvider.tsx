@@ -143,6 +143,12 @@ export function useConferenceTheme(): ConferenceThemeContext {
     return conf;
 }
 
+export function generateDefaultTheme() {
+    return extendTheme(baseThemeExtensions, {
+        colors: applyComponentColorTheme(colors, componentMap),
+    });
+}
+
 export default function ChakraCustomProvider({
     children,
 }: {
@@ -158,9 +164,7 @@ export default function ChakraCustomProvider({
                           conferenceComponentMap
                       ),
                   })
-                : extendTheme(baseThemeExtensions, {
-                      colors: applyComponentColorTheme(colors, componentMap),
-                  }),
+                : generateDefaultTheme(),
         [conferenceComponentMap]
     );
     const ctx = useMemo(

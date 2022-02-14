@@ -1,40 +1,18 @@
 import { useDisclosure, useToast } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import {
     isVonageSessionLayoutData,
     VonageSessionLayoutType,
     type VonageSessionLayoutData,
 } from "@midspace/shared-types/vonage";
-import { gql } from "@urql/core";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
     useInsertVonageSessionLayoutMutation,
     useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery,
 } from "../../../../../../generated/graphql";
+import { makeContext } from "../../../../../GQL/make-context";
 import { useConference } from "../../../../useConference";
 import { VonageComputedStateContext } from "./VonageComputedStateContext";
-
-gql`
-    query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
-        video_VonageSessionLayout(
-            where: { vonageSessionId: { _eq: $vonageSessionId } }
-            order_by: { created_at: desc }
-            limit: 1
-        ) {
-            id
-            layoutData
-            created_at
-            vonageSessionId
-        }
-    }
-
-    mutation InsertVonageSessionLayout($vonageSessionId: String!, $conferenceId: uuid!, $layoutData: jsonb!) {
-        insert_video_VonageSessionLayout(
-            objects: { vonageSessionId: $vonageSessionId, conferenceId: $conferenceId, layoutData: $layoutData }
-        ) {
-            affected_rows
-        }
-    }
-`;
 
 export interface AvailableStream {
     streamId?: string;
@@ -64,7 +42,15 @@ export interface VonageBroadcastLayout {
     layoutChooser_onClose: () => void;
 }
 
-export function useVonageBroadcastLayout(vonageSessionId: string): VonageBroadcastLayout {
+export type RoomOrEventId =
+    | { type: "event"; id: string }
+    | { type: "room"; id: string }
+    | { type: "room-with-event"; roomId: string; eventId: string };
+
+export function useVonageBroadcastLayout(
+    vonageSessionId: string,
+    roomOrEventId: RoomOrEventId | null
+): VonageBroadcastLayout {
     const [result, refetchLayout] = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
         variables: {
             vonageSessionId,
@@ -102,11 +88,34 @@ export function useVonageBroadcastLayout(vonageSessionId: string): VonageBroadca
         [initialLayoutData, layoutData]
     );
 
+    // todo: make permissions work for event layouts
     const [, insertLayout] = useInsertVonageSessionLayoutMutation();
     const toast = useToast();
     const { id: conferenceId } = useConference();
 
     const [availableStreams, setAvailableStreams] = useState<AvailableStream[]>([]);
+
+    const saveContext = useMemo(() => {
+        if (!roomOrEventId) {
+            return undefined;
+        }
+        switch (roomOrEventId.type) {
+            case "room":
+                return makeContext({
+                    [AuthHeader.Role]: HasuraRoleName.RoomAdmin,
+                    [AuthHeader.RoomId]: roomOrEventId.id,
+                });
+            case "room-with-event":
+                return makeContext({
+                    [AuthHeader.Role]: HasuraRoleName.RoomMember,
+                    [AuthHeader.RoomId]: roomOrEventId.roomId,
+                });
+            case "event":
+                return makeContext({
+                    [AuthHeader.Role]: HasuraRoleName.Attendee,
+                });
+        }
+    }, [roomOrEventId]);
 
     const saveLayout = useCallback(
         async (_layoutData?: { layout: VonageSessionLayoutData; createdAt: number } | null) => {
@@ -194,22 +203,37 @@ export function useVonageBroadcastLayout(vonageSessionId: string): VonageBroadca
                         layout: data,
                         createdAt: _layoutData?.createdAt ?? layoutData?.createdAt ?? Date.now(),
                     });
-                    await insertLayout({
-                        conferenceId,
-                        vonageSessionId,
-                        layoutData: data,
-                    });
+                    const result = await insertLayout(
+                        {
+                            conferenceId,
+                            vonageSessionId,
+                            layoutData: data,
+                        },
+                        saveContext
+                    );
+                    if (result.error) {
+                        throw result.error;
+                    }
                 }
             } catch (e) {
                 console.error("Failed to insert Vonage layout", e);
                 toast({
                     status: "error",
-                    title: "Could not set the Vonage layout",
+                    title: "Could not set the layout",
                     description: "If this error persists, you may need to leave and re-enter the room.",
                 });
             }
         },
-        [vonageSessionId, layoutData, availableStreams, insertLayout, conferenceId, toast]
+        [
+            vonageSessionId,
+            layoutData?.layout,
+            layoutData?.createdAt,
+            availableStreams,
+            insertLayout,
+            conferenceId,
+            saveContext,
+            toast,
+        ]
     );
 
     const {

@@ -70,6 +70,15 @@ array_relationships:
       table:
         name: ChannelStackCreateJob
         schema: job_queues
+- name: currentEvents
+  using:
+    manual_configuration:
+      column_mapping:
+        id: roomId
+      insertion_order: null
+      remote_table:
+        name: CurrentEvents
+        schema: schedule
 - name: events
   using:
     foreign_key_constraint_on:

@@ -81,7 +81,7 @@ export function VideoChatVonage({
                 getAccessToken={getAccessToken}
                 completeGetAccessToken={completeGetAccessToken}
                 isBackstageRoom={false}
-                canControlRecording={(!eventId && !room.item) || isPresenterOrChairOrOrganizer}
+                canControlRecording={isPresenterOrChairOrOrganizer}
                 roomId={room.id}
                 eventId={eventId}
                 eventIsFuture={eventIsFuture}

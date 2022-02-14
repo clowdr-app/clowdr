@@ -14,12 +14,14 @@ import type { ElementDataBlob, ZoomBlob } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
     Registrant_RegistrantRole_Enum,
+    RoomPage_RoomDetailsFragment,
+    Room_EventSummaryFragment,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
+    Room_PersonRole_Enum,
     Schedule_EventProgramPersonRole_Enum,
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventsQuery,
@@ -714,6 +716,9 @@ function RoomInner({
                                     eventIsFuture={!currentRoomEvent}
                                     isPresenterOrChairOrOrganizer={
                                         currentRegistrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+                                        roomDetails.roomMemberships.some(
+                                            (membership) => membership.personRoleName === Room_PersonRole_Enum.Admin
+                                        ) ||
                                         (currentRoomEvent
                                             ? currentRoomEvent.eventPeople.some(
                                                   (person) =>
@@ -721,7 +726,7 @@ function RoomInner({
                                                       person.roleName !==
                                                           Schedule_EventProgramPersonRole_Enum.Participant
                                               )
-                                            : nextRoomEvent &&
+                                            : /*nextRoomEvent &&
                                               nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat
                                             ? nextRoomEvent.eventPeople.some(
                                                   (person) =>
@@ -729,13 +734,15 @@ function RoomInner({
                                                       person.roleName !==
                                                           Schedule_EventProgramPersonRole_Enum.Participant
                                               )
-                                            : !!roomDetails.item?.selfPeople.some(
-                                                  (itemPerson) =>
-                                                      itemPerson.roleName.toUpperCase() === "AUTHOR" ||
-                                                      itemPerson.roleName.toUpperCase() === "PRESENTER" ||
-                                                      itemPerson.roleName.toUpperCase() === "CHAIR" ||
-                                                      itemPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
-                                                      itemPerson.roleName.toUpperCase() === "ORGANIZER"
+                                            :*/ Boolean(
+                                                  roomDetails.item?.selfPeople.some(
+                                                      (itemPerson) =>
+                                                          itemPerson.roleName.toUpperCase() === "AUTHOR" ||
+                                                          itemPerson.roleName.toUpperCase() === "PRESENTER" ||
+                                                          itemPerson.roleName.toUpperCase() === "CHAIR" ||
+                                                          itemPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
+                                                          itemPerson.roleName.toUpperCase() === "ORGANIZER"
+                                                  )
                                               ))
                                     }
                                 />

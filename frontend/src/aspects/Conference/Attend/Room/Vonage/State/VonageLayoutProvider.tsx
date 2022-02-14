@@ -1,9 +1,33 @@
 import type { PropsWithChildren } from "react";
 import React, { useMemo } from "react";
-import type { VonageBroadcastLayout } from "./useVonageBroadcastLayout";
+import { gql } from "urql";
+import type { RoomOrEventId, VonageBroadcastLayout } from "./useVonageBroadcastLayout";
 import { useVonageBroadcastLayout } from "./useVonageBroadcastLayout";
 import type { VonageDisplay } from "./useVonageDisplay";
 import { useVonageDisplay } from "./useVonageDisplay";
+
+gql`
+    query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
+        video_VonageSessionLayout(
+            where: { vonageSessionId: { _eq: $vonageSessionId } }
+            order_by: { created_at: desc }
+            limit: 1
+        ) {
+            id
+            layoutData
+            created_at
+            vonageSessionId
+        }
+    }
+
+    mutation InsertVonageSessionLayout($vonageSessionId: String!, $conferenceId: uuid!, $layoutData: jsonb!) {
+        insert_video_VonageSessionLayout(
+            objects: { vonageSessionId: $vonageSessionId, conferenceId: $conferenceId, layoutData: $layoutData }
+        ) {
+            affected_rows
+        }
+    }
+`;
 
 export interface VonageLayout {
     layout: VonageBroadcastLayout;
@@ -12,8 +36,8 @@ export interface VonageLayout {
 
 export const VonageLayoutContext = React.createContext<VonageLayout | undefined>(undefined);
 
-function useValue(vonageSessionId: string): VonageLayout {
-    const layout = useVonageBroadcastLayout(vonageSessionId);
+function useValue(vonageSessionId: string, type: RoomOrEventId | null): VonageLayout {
+    const layout = useVonageBroadcastLayout(vonageSessionId, type);
     const display = useVonageDisplay();
 
     return useMemo(
@@ -27,9 +51,12 @@ function useValue(vonageSessionId: string): VonageLayout {
 
 export function VonageLayoutProvider({
     vonageSessionId,
+    type,
     children,
-}: PropsWithChildren<{ vonageSessionId: string }>): JSX.Element {
-    return <VonageLayoutContext.Provider value={useValue(vonageSessionId)}>{children}</VonageLayoutContext.Provider>;
+}: PropsWithChildren<{ vonageSessionId: string; type: RoomOrEventId | null }>): JSX.Element {
+    return (
+        <VonageLayoutContext.Provider value={useValue(vonageSessionId, type)}>{children}</VonageLayoutContext.Provider>
+    );
 }
 
 export function useVonageLayout(): VonageLayout {

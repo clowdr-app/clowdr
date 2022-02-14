@@ -14,6 +14,7 @@ import {
     Spinner,
     Tooltip,
     useColorModeValue,
+    useToast,
     WrapItem,
 } from "@chakra-ui/react";
 import { AuthHeader } from "@midspace/shared-types/auth";
@@ -409,6 +410,8 @@ export function VonageRoomControlBar({
     );
 
     const [subtitlesVisible, setSubtitlesVisible] = useState<boolean>(false);
+    const toast = useToast();
+
     return (
         <>
             {vonage.state.type === StateType.Connected && subtitlesVisible && (
@@ -511,13 +514,19 @@ export function VonageRoomControlBar({
                         isLoading={toggleVonageRecordingResponse.fetching}
                         isActive={isRecordingActive}
                         isDestructive
-                        onClick={() => {
+                        onClick={async () => {
                             if (vonage.state.type === StateType.Connected) {
                                 setRecentlyToggledRecording(true);
-                                toggleVonageRecording({
+                                const result = await toggleVonageRecording({
                                     vonageSessionId: vonage.state.session.sessionId,
                                     recordingActive: !isRecordingActive,
                                 });
+                                if (result.error) {
+                                    toast({
+                                        status: "error",
+                                        title: `Failed to ${isRecordingActive ? "stop" : "start"} room recording`,
+                                    });
+                                }
                             }
                         }}
                         isEnabled={!joining}
@@ -535,12 +544,12 @@ export function VonageRoomControlBar({
                         isEnabled={!joining}
                     />
                 </ControlBarButtonGroup>
+                {vonage.state.type === StateType.Connected ? <ChangeDisplayMenu /> : undefined}
                 {vonage.state.type === StateType.Connected &&
                 settings.canControlRecording &&
                 !settings.isBackstageRoom ? (
                     <PlayVideoMenuButton roomId={roomId} eventId={eventId} />
                 ) : undefined}
-                {vonage.state.type === StateType.Connected ? <ChangeDisplayMenu /> : undefined}
                 {vonage.state.type === StateType.Connected && chat ? (
                     <Popover placement="top">
                         <PopoverTrigger>

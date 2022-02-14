@@ -9,7 +9,7 @@ import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalPro
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
 import { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructionsContext";
-import type { VonageBroadcastLayout } from "./State/useVonageBroadcastLayout";
+import type { RoomOrEventId, VonageBroadcastLayout } from "./State/useVonageBroadcastLayout";
 import { VonageComputedStateProvider } from "./State/VonageComputedStateContext";
 import { VonageLayoutProvider } from "./State/VonageLayoutProvider";
 import { VonageRoomStateProvider } from "./State/VonageRoomProvider";
@@ -119,6 +119,28 @@ export function VonageRoom({
         [isBackstageRoom, raiseHand, raiseHandPrejoinEventId]
     );
 
+    const roomType = useMemo(
+        (): RoomOrEventId | null =>
+            roomId
+                ? eventId && !eventIsFuture
+                    ? {
+                          type: "room-with-event",
+                          roomId,
+                          eventId,
+                      }
+                    : {
+                          type: "room",
+                          id: roomId,
+                      }
+                : eventId
+                ? {
+                      type: "event",
+                      id: eventId,
+                  }
+                : null,
+        [eventId, eventIsFuture, roomId]
+    );
+
     return mRegistrant ? (
         <VonageRoomStateProvider
             onPermissionsProblem={onPermissionsProblem}
@@ -170,7 +192,7 @@ export function VonageRoom({
                     cancelJoin={cancelJoin}
                     onRecordingIdReceived={onRecordingIdReceived}
                 >
-                    <VonageLayoutProvider vonageSessionId={vonageSessionId}>
+                    <VonageLayoutProvider vonageSessionId={vonageSessionId} type={roomType}>
                         <AutoplayProvider>
                             <VonageVideoPlaybackProvider
                                 vonageSessionId={vonageSessionId}

@@ -5,12 +5,13 @@ import {
     type VonageSessionLayoutData,
 } from "@midspace/shared-types/vonage";
 import { gql } from "@urql/core";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
     useInsertVonageSessionLayoutMutation,
     useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery,
 } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
+import { VonageComputedStateContext } from "./VonageComputedStateContext";
 
 gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
@@ -243,6 +244,13 @@ export function useVonageBroadcastLayout(vonageSessionId: string): VonageBroadca
     useEffect(() => {
         setLayoutData(null);
     }, [vonageSessionId]);
+
+    const { layoutData: receivedLayoutData } = useContext(VonageComputedStateContext);
+    useEffect(() => {
+        if (receivedLayoutData) {
+            setLayoutData(receivedLayoutData);
+        }
+    }, [receivedLayoutData]);
 
     return layout;
 }

@@ -5,10 +5,10 @@ import React, { useContext, useEffect } from "react";
 import { AppLayoutContext } from "../../../../App/AppLayoutContext";
 import FAIcon from "../../../../Chakra/FAIcon";
 import { getAudioContext } from "../../../../Utils/getAudioContext";
+import { VonageRoomControlBar } from "./ControlBar/VonageRoomControlBar";
 import { backgroundImage } from "./resources";
 import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
 import { useVonageRoom } from "./State/VonageRoomProvider";
-import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
 export function PreJoin({
     cameraPreviewRef,

@@ -1,4 +1,5 @@
-import { Box } from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Center, VStack } from "@chakra-ui/react";
+import useSize from "@react-hook/size";
 import React, { useContext, useMemo } from "react";
 import type { Viewport } from "../Components/LayoutTypes";
 import { VisualLayoutType } from "../Components/LayoutTypes";
@@ -26,16 +27,58 @@ export default function Layout({
     const isRecordingMode = settings.isBackstageRoom || isRecordingActive;
 
     const { layout } = useVonageLayout();
-    const visualLayout = useVisualLayout(layout.layout.layout, isRecordingMode, viewports);
+    const visualLayout = useVisualLayout(layout.layout.layout, viewports);
+
+    const layoutPanelRef = React.useRef(null);
+    const [layoutPanelWidth, layoutPanelHeight] = useSize(layoutPanelRef);
+
+    const tooTall = layoutPanelHeight * (16 / 9) >= layoutPanelWidth;
+    const height = tooTall ? layoutPanelWidth * (9 / 16) : layoutPanelHeight;
+    const width = tooTall ? layoutPanelWidth : layoutPanelHeight * (16 / 9);
+
+    const noVideosEl = useMemo(
+        () => (
+            <Center h="100%" w="100%">
+                <Alert
+                    status="info"
+                    variant="subtle"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                    p={8}
+                    maxW="60ch"
+                >
+                    <AlertIcon boxSize="8" />
+                    <AlertTitle fontSize="lg" my={4}>
+                        No videos to display.
+                    </AlertTitle>
+                    <AlertDescription mr={2}>
+                        There are no videos to display in TV view right now. Switch to gallery view to see the{" "}
+                        {visualLayout.overflowViewports.length} participants in this room.
+                    </AlertDescription>
+                </Alert>
+            </Center>
+        ),
+        [visualLayout.overflowViewports.length]
+    );
 
     const layoutEl = useMemo(() => {
         switch (visualLayout.type) {
             case VisualLayoutType.BestFit_NoScreenshare:
-                return <BestFit_NoScreenshare visualLayout={visualLayout} />;
+                return visualLayout.viewports.length ? (
+                    <BestFit_NoScreenshare visualLayout={visualLayout} />
+                ) : (
+                    noVideosEl
+                );
 
             case VisualLayoutType.BestFit_Screenshare_HorizontalSplit:
             case VisualLayoutType.BestFit_Screenshare_VerticalSplit:
-                return <BestFit_Screenshare visualLayout={visualLayout} />;
+                return visualLayout.viewports.length || visualLayout.screenshareViewport ? (
+                    <BestFit_Screenshare visualLayout={visualLayout} />
+                ) : (
+                    noVideosEl
+                );
 
             case VisualLayoutType.Single:
                 return (
@@ -81,11 +124,13 @@ export default function Layout({
                     />
                 );
         }
-    }, [allowedToControlLayout, isRecordingMode, visualLayout]);
+    }, [allowedToControlLayout, isRecordingMode, noVideosEl, visualLayout]);
 
     return (
-        <Box w="100%" h="100%" display="block" overflow="hidden">
-            {layoutEl}
-        </Box>
+        <VStack h="100%" justifyContent="center" ref={layoutPanelRef}>
+            <Box w={`${width}px`} h={`${height}px`}>
+                {layoutEl}
+            </Box>
+        </VStack>
     );
 }

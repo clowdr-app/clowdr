@@ -14,15 +14,8 @@ export function Single({
     isRecordingMode: boolean;
 }): JSX.Element {
     return (
-        <Center border="3px solid" borderColor="gray.900">
-            <AspectRatio
-                ratio={16 / 9}
-                w="100%"
-                maxW="calc((16 / 9) * (90vh - 250px))"
-                bgColor="gray.500"
-                mr={1}
-                pos="relative"
-            >
+        <Center h="100%" w="100%" borderColor="gray.900">
+            <AspectRatio ratio={16 / 9} w="100%" bgColor="gray.500" mr={1} pos="relative">
                 <Box h="100%" w="100%" bgColor="gray.500">
                     {visualLayout.viewport ? (
                         <portals.OutPortal

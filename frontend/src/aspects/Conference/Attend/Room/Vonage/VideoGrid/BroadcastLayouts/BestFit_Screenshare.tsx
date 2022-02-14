@@ -6,15 +6,8 @@ import { VisualLayoutType } from "../../Components/LayoutTypes";
 
 export function BestFit_Screenshare({ visualLayout }: { visualLayout: VizLayout_BestFit_Screenshare }): JSX.Element {
     return visualLayout.type === VisualLayoutType.BestFit_Screenshare_HorizontalSplit ? (
-        <Center border="3px solid" borderColor="gray.900">
-            <AspectRatio
-                ratio={16 / 9}
-                w="100%"
-                maxW="calc((16 / 9) * (90vh - 250px))"
-                bgColor="gray.500"
-                mr={1}
-                pos="relative"
-            >
+        <Center borderColor="gray.900" w="100%" h="100%">
+            <AspectRatio ratio={16 / 9} w="100%" maxH="100%" bgColor="gray.500" pos="relative">
                 <Box>
                     <Box w="100%" h="80%" bgColor="gray.500" top={0} left={0} pos="absolute">
                         {visualLayout.screenshareViewport ? (
@@ -48,15 +41,8 @@ export function BestFit_Screenshare({ visualLayout }: { visualLayout: VizLayout_
             </AspectRatio>
         </Center>
     ) : (
-        <Center border="3px solid" borderColor="gray.900">
-            <AspectRatio
-                ratio={16 / 9}
-                w="100%"
-                maxW="calc((16 / 9) * (90vh - 250px))"
-                bgColor="gray.500"
-                mr={1}
-                pos="relative"
-            >
+        <Center borderColor="gray.900" w="100%" h="100%">
+            <AspectRatio ratio={16 / 9} w="100%" maxH="100%" bgColor="gray.500" pos="relative">
                 <Box>
                     <Box w="85%" h="100%" bgColor="gray.500" top={0} left="15%" pos="absolute">
                         {visualLayout.screenshareViewport ? (

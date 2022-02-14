@@ -11,6 +11,7 @@ import { CameraViewport } from "./Components/CameraViewport";
 import type { Viewport } from "./Components/LayoutTypes";
 import SelfCameraComponent from "./Components/SelfCamera";
 import SelfScreenComponent from "./Components/SelfScreen";
+import { VonageRoomControlBar } from "./ControlBar/VonageRoomControlBar";
 import type { AvailableStream } from "./State/useVonageBroadcastLayout";
 import { DisplayType } from "./State/useVonageDisplay";
 import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
@@ -19,7 +20,6 @@ import { useVonageLayout } from "./State/VonageLayoutProvider";
 import { useVonageRoom } from "./State/VonageRoomProvider";
 import { Gallery } from "./VideoGrid/Gallery";
 import Layout from "./VideoGrid/Layout";
-import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
 export function InCall(): JSX.Element {
     const registrant = useCurrentRegistrant();
@@ -331,21 +331,21 @@ export function InCall(): JSX.Element {
     const { mainPaneHeight } = useContext(AppLayoutContext);
 
     const displayEl = useMemo(() => {
-        switch (display.currentDisplay.type) {
-            case DisplayType.Auto:
+        switch (display.actualDisplay.type) {
             case DisplayType.Gallery:
                 return <Gallery streamActivities={streamActivities} viewports={viewports} />;
             case DisplayType.BroadcastLayout:
                 return <Layout viewports={viewports} allowedToControlLayout={settings.canControlRecording} />;
         }
-    }, [display.currentDisplay.type, settings.canControlRecording, streamActivities, viewports]);
+    }, [display.actualDisplay.type, settings.canControlRecording, streamActivities, viewports]);
 
     return (
         <>
-            {/* {connected ? <VideoChatVideoPlayer /> : undefined} */}
             {connected ? (
-                <VStack h={mainPaneHeight} width="100%" zIndex={1} alignItems="stretch">
-                    <Box flexGrow={1}>{displayEl}</Box>
+                <VStack h={mainPaneHeight} width="100%" zIndex={1} alignItems="stretch" spacing={0}>
+                    <Box flexGrow={1} flexShrink={1} minH={0}>
+                        {displayEl}
+                    </Box>
                     <VonageRoomControlBar />
                 </VStack>
             ) : undefined}

@@ -1,4 +1,4 @@
-import { AspectRatio, Box, Center } from "@chakra-ui/react";
+import { AspectRatio, Box } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import * as portals from "react-reverse-portal";
 import CameraPlaceholderImage from "../../Components/CameraPlaceholder";
@@ -76,68 +76,59 @@ export function DualScreen({
                 }
 
                 return (
-                    <Center border="3px solid" borderColor="gray.900">
-                        <AspectRatio
-                            ratio={16 / 9}
-                            w="100%"
-                            maxW="calc((16 / 9) * (90vh - 250px))"
-                            bgColor="gray.500"
-                            mr={1}
-                            pos="relative"
-                        >
-                            <Box>
-                                <Box
-                                    w="86%"
-                                    h={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
-                                    bgColor="gray.500"
-                                    top={0}
-                                    left="14%"
-                                    pos="absolute"
-                                >
-                                    {visualLayout.largeAreaViewport1 ? (
-                                        <portals.OutPortal
-                                            node={visualLayout.largeAreaViewport1.component}
-                                            enableVideo={true}
-                                            resolution="high"
-                                            framerate={30}
-                                        />
-                                    ) : undefined}
-                                    {allowedToControlLayout ? (
-                                        <StreamChooser
-                                            positionKey="position1"
-                                            centered={!visualLayout.largeAreaViewport1}
-                                            isRecordingMode={isRecordingMode}
-                                        />
-                                    ) : undefined}
-                                </Box>
-                                <Box
-                                    w="86%"
-                                    h={visualLayout.narrow === 2 ? "25%" : visualLayout.narrow === 1 ? "75%" : "50%"}
-                                    bgColor="gray.500"
-                                    top={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
-                                    left="14%"
-                                    pos="absolute"
-                                >
-                                    {visualLayout.largeAreaViewport2 ? (
-                                        <portals.OutPortal
-                                            node={visualLayout.largeAreaViewport2.component}
-                                            enableVideo={true}
-                                            resolution="high"
-                                            framerate={30}
-                                        />
-                                    ) : undefined}
-                                    {allowedToControlLayout ? (
-                                        <StreamChooser
-                                            positionKey="position2"
-                                            centered={!visualLayout.largeAreaViewport2}
-                                            isRecordingMode={isRecordingMode}
-                                        />
-                                    ) : undefined}
-                                </Box>
-                                {sideBoxes}
+                    <AspectRatio ratio={16 / 9} w="100%" bgColor="gray.500" mr={1} pos="relative">
+                        <Box>
+                            <Box
+                                w="86%"
+                                h={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
+                                bgColor="gray.500"
+                                top={0}
+                                left="14%"
+                                pos="absolute"
+                            >
+                                {visualLayout.largeAreaViewport1 ? (
+                                    <portals.OutPortal
+                                        node={visualLayout.largeAreaViewport1.component}
+                                        enableVideo={true}
+                                        resolution="high"
+                                        framerate={30}
+                                    />
+                                ) : undefined}
+                                {allowedToControlLayout ? (
+                                    <StreamChooser
+                                        positionKey="position1"
+                                        centered={!visualLayout.largeAreaViewport1}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                ) : undefined}
                             </Box>
-                        </AspectRatio>
-                    </Center>
+                            <Box
+                                w="86%"
+                                h={visualLayout.narrow === 2 ? "25%" : visualLayout.narrow === 1 ? "75%" : "50%"}
+                                bgColor="gray.500"
+                                top={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
+                                left="14%"
+                                pos="absolute"
+                            >
+                                {visualLayout.largeAreaViewport2 ? (
+                                    <portals.OutPortal
+                                        node={visualLayout.largeAreaViewport2.component}
+                                        enableVideo={true}
+                                        resolution="high"
+                                        framerate={30}
+                                    />
+                                ) : undefined}
+                                {allowedToControlLayout ? (
+                                    <StreamChooser
+                                        positionKey="position2"
+                                        centered={!visualLayout.largeAreaViewport2}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                ) : undefined}
+                            </Box>
+                            {sideBoxes}
+                        </Box>
+                    </AspectRatio>
                 );
             }
             case VisualLayoutType.DualScreen_Vertical: {
@@ -199,68 +190,59 @@ export function DualScreen({
                 }
 
                 return (
-                    <Center border="3px solid" borderColor="gray.900">
-                        <AspectRatio
-                            ratio={16 / 9}
-                            w="100%"
-                            maxW="calc((16 / 9) * (90vh - 250px))"
-                            bgColor="gray.500"
-                            mr={1}
-                            pos="relative"
-                        >
-                            <Box>
-                                <Box
-                                    w={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
-                                    h="75%"
-                                    bgColor="gray.600"
-                                    top={0}
-                                    left={0}
-                                    pos="absolute"
-                                >
-                                    {visualLayout.largeAreaViewport1 ? (
-                                        <portals.OutPortal
-                                            node={visualLayout.largeAreaViewport1.component}
-                                            enableVideo={true}
-                                            resolution="high"
-                                            framerate={30}
-                                        />
-                                    ) : undefined}
-                                    {allowedToControlLayout ? (
-                                        <StreamChooser
-                                            positionKey="position1"
-                                            centered={!visualLayout.largeAreaViewport1}
-                                            isRecordingMode={isRecordingMode}
-                                        />
-                                    ) : undefined}
-                                </Box>
-                                <Box
-                                    w={visualLayout.narrow === 2 ? "25%" : visualLayout.narrow === 1 ? "75%" : "50%"}
-                                    h="75%"
-                                    bgColor="gray.500"
-                                    top={0}
-                                    left={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
-                                    pos="absolute"
-                                >
-                                    {visualLayout.largeAreaViewport2 ? (
-                                        <portals.OutPortal
-                                            node={visualLayout.largeAreaViewport2.component}
-                                            enableVideo={true}
-                                            resolution="high"
-                                            framerate={30}
-                                        />
-                                    ) : undefined}
-                                    {allowedToControlLayout ? (
-                                        <StreamChooser
-                                            positionKey="position2"
-                                            centered={!visualLayout.largeAreaViewport2}
-                                            isRecordingMode={isRecordingMode}
-                                        />
-                                    ) : undefined}
-                                </Box>
-                                {sideBoxes}
+                    <AspectRatio ratio={16 / 9} w="100%" bgColor="gray.500" mr={1} pos="relative">
+                        <Box>
+                            <Box
+                                w={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
+                                h="75%"
+                                bgColor="gray.600"
+                                top={0}
+                                left={0}
+                                pos="absolute"
+                            >
+                                {visualLayout.largeAreaViewport1 ? (
+                                    <portals.OutPortal
+                                        node={visualLayout.largeAreaViewport1.component}
+                                        enableVideo={true}
+                                        resolution="high"
+                                        framerate={30}
+                                    />
+                                ) : undefined}
+                                {allowedToControlLayout ? (
+                                    <StreamChooser
+                                        positionKey="position1"
+                                        centered={!visualLayout.largeAreaViewport1}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                ) : undefined}
                             </Box>
-                        </AspectRatio>
-                    </Center>
+                            <Box
+                                w={visualLayout.narrow === 2 ? "25%" : visualLayout.narrow === 1 ? "75%" : "50%"}
+                                h="75%"
+                                bgColor="gray.500"
+                                top={0}
+                                left={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
+                                pos="absolute"
+                            >
+                                {visualLayout.largeAreaViewport2 ? (
+                                    <portals.OutPortal
+                                        node={visualLayout.largeAreaViewport2.component}
+                                        enableVideo={true}
+                                        resolution="high"
+                                        framerate={30}
+                                    />
+                                ) : undefined}
+                                {allowedToControlLayout ? (
+                                    <StreamChooser
+                                        positionKey="position2"
+                                        centered={!visualLayout.largeAreaViewport2}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                ) : undefined}
+                            </Box>
+                            {sideBoxes}
+                        </Box>
+                    </AspectRatio>
                 );
             }
         }

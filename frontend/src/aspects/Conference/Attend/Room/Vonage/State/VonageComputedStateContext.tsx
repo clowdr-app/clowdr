@@ -1,4 +1,5 @@
 import { createStandaloneToast, useToast } from "@chakra-ui/react";
+import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { theme } from "../../../../../Chakra/ChakraCustomProvider";
@@ -9,7 +10,6 @@ import { useTranscript } from "../Transcript/useTranscript";
 import type { TranscriptData, VonageGlobalState } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
-import { useVonageLayout } from "./VonageLayoutProvider";
 import { useVonageRoom, VonageRoomStateActionType } from "./VonageRoomProvider";
 
 const standaloneToast = createStandaloneToast({ theme });
@@ -41,6 +41,10 @@ interface Outputs {
     recentlyConnected: boolean;
     recentlyToggledRecording: boolean;
     setRecentlyToggledRecording: React.Dispatch<React.SetStateAction<boolean>>;
+    layoutData: {
+        layout: VonageSessionLayoutData;
+        createdAt: number;
+    } | null;
 }
 
 function useValue({
@@ -57,7 +61,6 @@ function useValue({
 
     const vonage = useVonageGlobalState();
     const { dispatch, settings } = useVonageRoom();
-    const { layout } = useVonageLayout();
 
     const [connected, setConnected] = useState<boolean>(false);
     const [streams, setStreams] = useState<OT.Stream[]>([]);
@@ -222,12 +225,14 @@ function useValue({
         [onRecordingIdReceived]
     );
 
-    const onLayoutReceived = useCallback(
-        (layoutData) => {
-            layout?.updateLayout((old) => (!old || old.createdAt < layoutData.createdAt ? layoutData : old));
-        },
-        [layout]
-    );
+    const [layoutData, setLayoutData] = useState<{
+        layout: VonageSessionLayoutData;
+        createdAt: number;
+    } | null>(null);
+
+    const onLayoutReceived = useCallback((layoutData) => {
+        setLayoutData((old) => (!old || old.createdAt < layoutData.createdAt ? layoutData : old));
+    }, []);
 
     useEvent(vonage, "streams-changed", setStreams);
     useEvent(vonage, "connections-changed", setConnections);
@@ -314,6 +319,7 @@ function useValue({
             recentlyConnected,
             recentlyToggledRecording,
             setRecentlyToggledRecording,
+            layoutData,
         }),
         [
             vonage,
@@ -330,6 +336,7 @@ function useValue({
             transcript.onTranscriptRef,
             recentlyConnected,
             recentlyToggledRecording,
+            layoutData,
         ]
     );
 }

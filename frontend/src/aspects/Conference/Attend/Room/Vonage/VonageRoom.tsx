@@ -135,42 +135,42 @@ export function VonageRoom({
             roomId={roomId ?? undefined}
         >
             <ChatProfileModalProvider>
-                <VonageLayoutProvider vonageSessionId={vonageSessionId}>
-                    <VonageComputedStateProvider
-                        getAccessToken={getAccessToken}
-                        vonageSessionId={vonageSessionId}
-                        overrideJoining={
-                            isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined
-                        }
-                        beginJoin={
-                            isBackstageRoom && raiseHandPrejoinEventId
-                                ? () => {
-                                      if (raiseHandPrejoinEventId) {
-                                          raiseHand.raise(raiseHandPrejoinEventId);
-                                      }
+                <VonageComputedStateProvider
+                    getAccessToken={getAccessToken}
+                    vonageSessionId={vonageSessionId}
+                    overrideJoining={
+                        isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined
+                    }
+                    beginJoin={
+                        isBackstageRoom && raiseHandPrejoinEventId
+                            ? () => {
+                                  if (raiseHandPrejoinEventId) {
+                                      raiseHand.raise(raiseHandPrejoinEventId);
                                   }
-                                : undefined
-                        }
-                        completeJoinRef={completeJoinRef}
-                        onRoomJoined={
-                            isBackstageRoom && eventId
-                                ? (joined) => {
-                                      if (!joined) {
-                                          if (eventId) {
-                                              deleteEventParticipant({
-                                                  eventId,
-                                                  registrantId: mRegistrant.id,
-                                              });
-                                          }
+                              }
+                            : undefined
+                    }
+                    completeJoinRef={completeJoinRef}
+                    onRoomJoined={
+                        isBackstageRoom && eventId
+                            ? (joined) => {
+                                  if (!joined) {
+                                      if (eventId) {
+                                          deleteEventParticipant({
+                                              eventId,
+                                              registrantId: mRegistrant.id,
+                                          });
+                                      }
 
-                                          onLeave?.();
-                                      }
+                                      onLeave?.();
                                   }
-                                : undefined
-                        }
-                        cancelJoin={cancelJoin}
-                        onRecordingIdReceived={onRecordingIdReceived}
-                    >
+                              }
+                            : undefined
+                    }
+                    cancelJoin={cancelJoin}
+                    onRecordingIdReceived={onRecordingIdReceived}
+                >
+                    <VonageLayoutProvider vonageSessionId={vonageSessionId}>
                         <AutoplayProvider>
                             <VonageVideoPlaybackProvider
                                 vonageSessionId={vonageSessionId}
@@ -183,8 +183,8 @@ export function VonageRoom({
                                 />
                             </VonageVideoPlaybackProvider>
                         </AutoplayProvider>
-                    </VonageComputedStateProvider>
-                </VonageLayoutProvider>
+                    </VonageLayoutProvider>
+                </VonageComputedStateProvider>
             </ChatProfileModalProvider>
         </VonageRoomStateProvider>
     ) : (

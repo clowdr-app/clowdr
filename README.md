@@ -43,10 +43,12 @@ marked **Production** as well.
    - We also recommend you install the "recommended extensions" listed in the
      `.vscode/extensions` folder. VSCode may offer to install them automatically.
    - If using Windows:
+     1. Note that you may encounter issues setting up a development environment that are specific to Windows, in which case README pull requests are welcome!
      1. Install [Git command line](https://git-scm.com/download/win) if you haven't already.
      1. Open or restart VSCode, and open a terminal with menu Terminal -> New Terminal
      1. Next to the big + sign in the right side of the terminal header, there's a dropdown with tooltip "Launch Profile...". Click it and select Git Bash.
-1. [Node.js 16](https://nodejs.org/en/) (and NPM 7.8 or later)
+1. [Node.js 17](https://nodejs.org/en/)
+1. [pnpm 16.30 or later](https://pnpm.io/installation)
 1. [Docker Desktop](https://docs.docker.com/compose/cli-command/#installing-compose-v2) - Midspace uses Docker Compose, now included in the Docker CLI.
 1. [Hasura CLI](https://hasura.io/docs/latest/graphql/core/hasura-cli/install-hasura-cli.html#install-hasura-cli)
 1. **Full Setup:** [AWS CLI](https://aws.amazon.com/cli/) and [awsvault](https://github.com/99designs/aws-vault)
@@ -74,12 +76,9 @@ Midspace relies on various cloud services, which will need to be configured for 
 ## Setting Up Local Working Copy
 
 1. Clone this repository
-1. Install top-level and shared npm packages:
+1. Install all node packages (pnpm descends into subdirectories and creates all necessary `node_modules` directories):
    ```
-   npm i
-   cd shared
-     npm i
-     cd ..
+   pnpm i
    ```
 1. Follow the Hasura setup: [Midspace Hasura ReadMe](hasura/README.md#Setting-up)
 1. Follow the Actions Service setup: [Midspace Actions Service
@@ -103,9 +102,11 @@ Midspace relies on various cloud services, which will need to be configured for 
       that `.env` files have been populated in all relevant subdirectories as
       described in previous steps.
 
-## Local Development &mdash; Final Steps
-
+### Starting your local working copy
 Once you have finished setup, it's easy to run the entire environment with a single VSCode task: "Run All -- Local Development". This task starts PacketRiot tunnels as well as all Midspace services.
+
+## Final Steps
+
 1. Once the system is up and running, open the app in your browser, log in,
    then navigate to `https://<your-domain>/su` and follow the instructions to
    set up a superuser.

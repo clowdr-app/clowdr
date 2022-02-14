@@ -10,7 +10,6 @@ This service is based on Heroku, Websockets using Sockets.io, and Redis. It prov
 ## Setting up
 
 1. `cd services/realtime`
-1. Install npm packages: `npm i`
 1. `cp .env.example .env`
 1. Replace the placeholder values in `.env` for the environment variables listed in the table at the bottom of this page.
 1. You should have already configured and started the Docker services. Open [http://localhost:15672](http://localhost:15672) in a web browser and log in with the default username and password, both `admin`.

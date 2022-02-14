@@ -13,7 +13,6 @@ It is built with Nest.js and the AWS CDK.
 ## Setting Up
 
 1. `cd services/playout`
-1. Install npm packages: `npm i`
 1. `cp .env.example .env`
 1. Configure your `.env` file according to the embedded instructions. You will need various outputs from the AWS CDK deployment.
 
@@ -28,4 +27,4 @@ commands change, then you will need to restart tasks for this microservice.
 
 ## Testing
 
-This service uses the recommended Nest.js test framework, Jest. Run `npm run test` to execute tests.
+This service uses the recommended Nest.js test framework, Jest. Run `pnpm test` to execute tests.

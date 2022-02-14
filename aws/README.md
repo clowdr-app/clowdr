@@ -91,7 +91,6 @@ If you just want to get up and running as quickly as possible, and you do not ca
 ## Setting up local env files
 
 1. `cd` into the `aws` folder
-1. Install npm modules: `npm i`
 1. `cp env.sandbox.example env.sandbox` and fill in environment variable values following the instructions in comments `env.sandbox`. It is recommended to generate a secure random `VONAGE_API_KEY`.
 1. Optional Configure additional env files for each instance of Midspace you want to deploy (e.g. personal sandbox, staging, production).
    - The env file must be named `.env.<profile>`, where `<profile>` is the name of an AWS profile that you configured.

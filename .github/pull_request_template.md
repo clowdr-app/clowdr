@@ -21,7 +21,7 @@ pulling this new code. Please tick (i.e. put an 'x' in) the boxes for the
 actions that are necessary.
 
 - [ ] Run GraphQL Codegen in the [frontend/actions service/playout service/realtime service]
-- [ ] Re-install NPM packages in [insert name of folder]
+- [ ] Re-install node packages in [insert name of folder]
 - [ ] Apply Hasura migrations
 - [ ] Apply Hasura metadata
 - [ ] Update Auth0 rules

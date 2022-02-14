@@ -10,7 +10,7 @@
 
   - You can easily type it on Windows by pressing `Win + .` and typing `card f, Return`
 
-- When making a commit that requires packages to be installed (e.g. running `npm install`), prepend your commit message with the 'package' emoji (📦).
+- When making a commit that requires packages to be installed (e.g. running `pnpm install`), prepend your commit message with the 'package' emoji (📦).
 - When making a commit that changes the AWS stacks and requires a redeploy, prepend your commit message with the 'cloud' emoji (☁).
 - When making a commit that changes environment variables required, prepend your commit message with the 'deciduous tree' emoji (🌳).
 - When making a commit that changes the authentication/authorization system(s), prepend your commit message the 'locked with key' emoji (🔐)

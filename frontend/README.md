@@ -11,7 +11,6 @@ React web app that forms the main Midspace frontend.
 ## Setting up
 
 1. `cd frontend`
-1. Install npm packages: `npm i`
 1. `cp .env.example .env`
 1. Configure your `.env` file according to the [Frontend
    Configuration](#frontend-configuration) section below.
@@ -79,15 +78,14 @@ libraries that we use for writing better tests:
 
 ## Production builds
 
-- Install `serve` tool system-wide for testing production builds: `npm i -g serve`
 - Use the VSCode (build) task: `Frontend -- Production Build`
 - Use the VSCode task: `Frontend -- Serve Production Build`
 
 Alternatively:
 
-1. To build: `frontend> npm run build` Builds a static copy of the frontend to
+1. To build: `frontend> pnpm build` Builds a static copy of the frontend to
    the `build/` folder using snowpack & webpack.
-1. To test: `frontend> serve -s build` Serves the static build locally for
+1. To test: `frontend> pnpx serve -s build` Serves the static build locally for
    checking.
 
 ## Deployment to Netlify
@@ -96,7 +94,7 @@ The frontend can easily be deployed using Netlify:
 
 1. Connect to GitHub, select the relevant repo and branch
 1. Leave the base directory blank
-1. Build command: `cd shared && npm ci && cd ../frontend && npm ci && npm run build`
+1. Build command: `cd ../frontend && pnpm build`
 1. Publish directory: `frontend/build`
 1. Environment variables: As below
 
@@ -119,8 +117,8 @@ variables in the build which start with `VITE_`.
 | _AWS_                             |                                                                                      |          |
 | VITE_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |
 | NPM_VERSION                       | `7.3` (only required in Netlify)                                                     | Only     |
-| NODE_VERSION                      | `15.4` (only required in Netlify)                                                    | Only     |
-| _Vonage Video API_                |                                                                                      |          |
+| NODE_VERSION                      | `17.4` (only required in Netlify)                                                    | Only     |
+| _Vonage Video API_                |                                                                                      |
 | VITE_OPENTOK_API_KEY              | API key for the Vonage Video API project                                             |          |
 | VITE_PRESENCE_SERVICE_URL         | URL to the presence service.                                                         |          |
 | _Other_                           |                                                                                      |          |

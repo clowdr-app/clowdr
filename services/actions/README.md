@@ -17,7 +17,6 @@ Eventually this may be split into multiple microservices.
 ## Setting Up Actions Service Local Working Copy
 
 1. `cd services/actions`
-1. Install npm packages: `npm i`
 1. `cp .env.example .env`
 1. Configure your `.env` according to the [Actions Service Configuration](#actions-service-configuration) table below
    - **Quick setup**: Set all the environment variables related to AWS to `XXXX`. BCP: This will not actually work right now, but let's give it a try this way and see how much further we can get.
@@ -73,9 +72,6 @@ Heroku deployment is a little tricky because this is a monorepo.
 
 ## Notes
 
-- The `package.json` in the `clowdr` root directory uses an NPM post-install
-  hook to install dependencies in this directory too.
-  - This is also necessary for the Heroku build
 - The `Procfile` is used by Heroku to start this service. It exists in the
   `clowdr` root directory points at the compiled `build/server.js`.
 

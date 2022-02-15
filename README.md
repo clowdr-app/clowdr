@@ -101,6 +101,10 @@ Midspace relies on various cloud services, which will need to be configured for 
    1. Run the VSCode task `All -- GraphQL Codegen`. If there are errors, check
       that `.env` files have been populated in all relevant subdirectories as
       described in previous steps.
+   1. **Fixup currently required after running GraphQL Codegen:** Some changes are made to the file `frontend/src/generate/graphql.tsx` that need to be undone:
+      1. Restore this line at the beginning of the file:
+         ```import { useQuery } from "@midspace/urql-hasura-cache-generic-resolver/useQuery";```
+      1. Revert all instances of `Urql.useQuery<` back to  `useQuery<`.
 
 ### Starting your local working copy
 Once you have finished setup, it's easy to run the entire environment with a single VSCode task: "Run All -- Local Development". This task starts PacketRiot tunnels as well as all Midspace services.

@@ -47,20 +47,22 @@ export default function Layout({
                     justifyContent="center"
                     textAlign="center"
                     p={8}
-                    maxW="60ch"
+                    maxW="40ch"
+                    colorScheme="RoomNoVideoAlert"
                 >
                     <AlertIcon boxSize="8" />
                     <AlertTitle fontSize="lg" my={4}>
-                        No videos to display.
+                        Nobody has their video turned on right now
                     </AlertTitle>
                     <AlertDescription mr={2}>
-                        There are no videos to display in TV view right now. Switch to gallery view to see the{" "}
-                        {visualLayout.overflowViewports.length} participants in this room.
+                        {settings.isBackstageRoom
+                            ? "Nothing will be visible during your event broadcast until someone turns on their camera or shares their screen."
+                            : "No video tiles will appear in the recording until someone turns on their camera or shares their screen."}
                     </AlertDescription>
                 </Alert>
             </Center>
         ),
-        [visualLayout.overflowViewports.length]
+        [settings.isBackstageRoom]
     );
 
     const layoutEl = useMemo(() => {

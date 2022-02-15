@@ -24,6 +24,7 @@ const componentMap: ComponentMap = {
     InactiveRoomControlBarButton: generateColorScheme("purple"),
     ActiveRoomControlBarButton: generateColorScheme("pink"),
     RoomControlBarNotice: generateColorScheme("gray"),
+    RoomNoVideoAlert: generateColorScheme("purple"),
     MainMenuHeaderBar: {
         backgroundColor: {
             light: "purple.700",

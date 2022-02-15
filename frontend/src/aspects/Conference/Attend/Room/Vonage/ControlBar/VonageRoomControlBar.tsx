@@ -35,9 +35,8 @@ import { DisplayType } from "../State/useVonageDisplay";
 import { VonageComputedStateContext } from "../State/VonageComputedStateContext";
 import { StateType } from "../State/VonageGlobalState";
 import { useVonageGlobalState } from "../State/VonageGlobalStateProvider";
-import { useVonageLayout } from "../State/VonageLayoutProvider";
+import { useVonageLayout, VonageLayoutContext } from "../State/VonageLayoutProvider";
 import { useVonageRoom, VonageRoomStateActionType } from "../State/VonageRoomProvider";
-import { ChangeDisplayMenu } from "./ChangeDisplayMenu";
 import { ControlBarButton } from "./ControlBarButton";
 import { ControlBarButtonGroup } from "./ControlBarButtonGroup";
 import PlayVideoMenuButton from "./PlayVideoMenu";
@@ -410,6 +409,8 @@ export function VonageRoomControlBar({
     );
 
     const [subtitlesVisible, setSubtitlesVisible] = useState<boolean>(false);
+
+    const layout = useContext(VonageLayoutContext);
     const toast = useToast();
 
     return (
@@ -532,7 +533,31 @@ export function VonageRoomControlBar({
                         isEnabled={!joining}
                     />
                     <ControlBarButton
-                        label={{ active: "Cancel", inactive: "Layout" }}
+                        label={{
+                            active: "Browse all participants",
+                            inactive: "Show preview of the recording",
+                        }}
+                        icon={{
+                            active: { style: "s", icon: "chalkboard-teacher" },
+                            inactive: { style: "s", icon: "chalkboard-teacher" },
+                        }}
+                        isVisible={settings.isBackstageRoom || isRecordingActive}
+                        isActive={layout?.display?.actualDisplay?.type === DisplayType.BroadcastLayout}
+                        isLimited={settings.isBackstageRoom ? "Showing broadcast preview" : false}
+                        onClick={() =>
+                            layout?.display?.setChosenDisplay(
+                                layout?.display?.chosenDisplay?.type === DisplayType.Gallery
+                                    ? { type: DisplayType.Auto }
+                                    : { type: DisplayType.Gallery }
+                            )
+                        }
+                        isEnabled={!joining}
+                    />
+                    <ControlBarButton
+                        label={{
+                            active: "Cancel",
+                            inactive: settings.isBackstageRoom ? "Change broadcast layout" : "Change recording layout",
+                        }}
                         icon="th-large"
                         isVisible={
                             vonage.state.type === StateType.Connected &&
@@ -544,7 +569,6 @@ export function VonageRoomControlBar({
                         isEnabled={!joining}
                     />
                 </ControlBarButtonGroup>
-                {vonage.state.type === StateType.Connected ? <ChangeDisplayMenu /> : undefined}
                 {vonage.state.type === StateType.Connected &&
                 settings.canControlRecording &&
                 !settings.isBackstageRoom ? (

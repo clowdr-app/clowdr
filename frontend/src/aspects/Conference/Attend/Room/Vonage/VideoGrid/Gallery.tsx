@@ -4,6 +4,7 @@ import * as portals from "react-reverse-portal";
 import usePolling from "../../../../../Hooks/usePolling";
 import useResizeObserver from "../../../../../Hooks/useResizeObserver";
 import type { Viewport } from "../Components/LayoutTypes";
+import VideoChatVideoPlayer from "../VideoPlayback/VideoChatVideoPlayer";
 
 export function Gallery({
     viewports,
@@ -80,6 +81,7 @@ export function Gallery({
 
     return (
         <Box ref={containerRef}>
+            <VideoChatVideoPlayer />
             {viewports.length > 0 ? (
                 <SimpleGrid columns={overflowAreaColumns} gap={2} mt={2}>
                     {screenFeeds.map((viewport) => (

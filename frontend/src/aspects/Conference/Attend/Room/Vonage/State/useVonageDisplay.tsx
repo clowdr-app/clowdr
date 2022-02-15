@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { VonageComputedStateContext } from "./VonageComputedStateContext";
 import { useVonageRoom } from "./VonageRoomProvider";
 
@@ -39,8 +39,14 @@ export type VonageDisplay = {
 
 export function useVonageDisplay(): VonageDisplay {
     const { settings } = useVonageRoom();
-    const { isRecordingActive } = useContext(VonageComputedStateContext);
+    const { isRecordingActive, connected } = useContext(VonageComputedStateContext);
     const [chosenDisplay, setChosenDisplay] = useState<Auto | Gallery | BroadcastLayout>({ type: DisplayType.Auto });
+
+    useEffect(() => {
+        if (!connected) {
+            setChosenDisplay({ type: DisplayType.Auto });
+        }
+    }, [connected]);
 
     const actualDisplay = useMemo<Gallery | BroadcastLayout>(
         () =>

@@ -9646,6 +9646,12 @@ type conference_Conference {
         """
         where: content_Item_bool_exp
     ): content_Item_aggregate!
+    logoS3Data(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb
     name: String!
     """
     An array relationship
@@ -10079,6 +10085,13 @@ input conference_Conference_aggregate_order_by {
 }
 
 """
+append existing jsonb value of filtered columns with new jsonb value
+"""
+input conference_Conference_append_input {
+    logoS3Data: jsonb
+}
+
+"""
 input type for inserting array relation for remote table "conference.Conference"
 """
 input conference_Conference_arr_rel_insert_input {
@@ -10111,6 +10124,7 @@ input conference_Conference_bool_exp {
     exhibitions: collection_Exhibition_bool_exp
     id: uuid_comparison_exp
     items: content_Item_bool_exp
+    logoS3Data: jsonb_comparison_exp
     name: String_comparison_exp
     originatingDatas: conference_OriginatingData_bool_exp
     programPeople: collection_ProgramPerson_bool_exp
@@ -10152,6 +10166,27 @@ enum conference_Conference_constraint {
 }
 
 """
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input conference_Conference_delete_at_path_input {
+    logoS3Data: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input conference_Conference_delete_elem_input {
+    logoS3Data: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input conference_Conference_delete_key_input {
+    logoS3Data: String
+}
+
+"""
 input type for inserting data into table "conference.Conference"
 """
 input conference_Conference_insert_input {
@@ -10170,6 +10205,7 @@ input conference_Conference_insert_input {
     exhibitions: collection_Exhibition_arr_rel_insert_input
     id: uuid
     items: content_Item_arr_rel_insert_input
+    logoS3Data: jsonb
     name: String
     originatingDatas: conference_OriginatingData_arr_rel_insert_input
     programPeople: collection_ProgramPerson_arr_rel_insert_input
@@ -10301,6 +10337,7 @@ input conference_Conference_order_by {
     exhibitions_aggregate: collection_Exhibition_aggregate_order_by
     id: order_by
     items_aggregate: content_Item_aggregate_order_by
+    logoS3Data: order_by
     name: order_by
     originatingDatas_aggregate: conference_OriginatingData_aggregate_order_by
     programPeople_aggregate: collection_ProgramPerson_aggregate_order_by
@@ -10320,6 +10357,13 @@ primary key columns input for table: conference_Conference
 """
 input conference_Conference_pk_columns_input {
     id: uuid!
+}
+
+"""
+prepend existing jsonb value of filtered columns with new jsonb value
+"""
+input conference_Conference_prepend_input {
+    logoS3Data: jsonb
 }
 
 """
@@ -10357,6 +10401,10 @@ enum conference_Conference_select_column {
     """
     column name
     """
+    logoS3Data
+    """
+    column name
+    """
     name
     """
     column name
@@ -10383,6 +10431,7 @@ input conference_Conference_set_input {
     defaultProgramVisibilityLevel: String
     demoCodeId: uuid
     id: uuid
+    logoS3Data: jsonb
     name: String
     shortName: String
     slug: String
@@ -10421,6 +10470,10 @@ enum conference_Conference_update_column {
     column name
     """
     id
+    """
+    column name
+    """
+    logoS3Data
     """
     column name
     """
@@ -23598,6 +23651,26 @@ type mutation_root {
     """
     update_conference_Conference(
         """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: conference_Conference_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: conference_Conference_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: conference_Conference_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: conference_Conference_delete_key_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: conference_Conference_prepend_input
+        """
         sets the columns of the filtered rows to the given values
         """
         _set: conference_Conference_set_input
@@ -23610,6 +23683,26 @@ type mutation_root {
     update single row of the table: "conference.Conference"
     """
     update_conference_Conference_by_pk(
+        """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: conference_Conference_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: conference_Conference_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: conference_Conference_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: conference_Conference_delete_key_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: conference_Conference_prepend_input
         """
         sets the columns of the filtered rows to the given values
         """

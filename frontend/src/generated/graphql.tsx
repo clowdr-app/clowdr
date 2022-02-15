@@ -7037,6 +7037,7 @@ export type Conference_Conference = {
     readonly items: ReadonlyArray<Content_Item>;
     /** An aggregate relationship */
     readonly items_aggregate: Content_Item_Aggregate;
+    readonly logoS3Data?: Maybe<Scalars["jsonb"]>;
     readonly name: Scalars["String"];
     /** An array relationship */
     readonly originatingDatas: ReadonlyArray<Conference_OriginatingData>;
@@ -7163,6 +7164,11 @@ export type Conference_ConferenceItems_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Content_Item_Order_By>>;
     where?: InputMaybe<Content_Item_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceLogoS3DataArgs = {
+    path?: InputMaybe<Scalars["String"]>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7337,6 +7343,11 @@ export type Conference_Conference_Aggregate_Order_By = {
     readonly min?: InputMaybe<Conference_Conference_Min_Order_By>;
 };
 
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Conference_Conference_Append_Input = {
+    readonly logoS3Data?: InputMaybe<Scalars["jsonb"]>;
+};
+
 /** input type for inserting array relation for remote table "conference.Conference" */
 export type Conference_Conference_Arr_Rel_Insert_Input = {
     readonly data: ReadonlyArray<Conference_Conference_Insert_Input>;
@@ -7364,6 +7375,7 @@ export type Conference_Conference_Bool_Exp = {
     readonly exhibitions?: InputMaybe<Collection_Exhibition_Bool_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly items?: InputMaybe<Content_Item_Bool_Exp>;
+    readonly logoS3Data?: InputMaybe<Jsonb_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly originatingDatas?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
@@ -7392,6 +7404,21 @@ export enum Conference_Conference_Constraint {
     ConferenceSlugKey = "Conference_slug_key",
 }
 
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Conference_Conference_Delete_At_Path_Input = {
+    readonly logoS3Data?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Conference_Conference_Delete_Elem_Input = {
+    readonly logoS3Data?: InputMaybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Conference_Conference_Delete_Key_Input = {
+    readonly logoS3Data?: InputMaybe<Scalars["String"]>;
+};
+
 /** input type for inserting data into table "conference.Conference" */
 export type Conference_Conference_Insert_Input = {
     readonly announcementsChatId?: InputMaybe<Scalars["uuid"]>;
@@ -7409,6 +7436,7 @@ export type Conference_Conference_Insert_Input = {
     readonly exhibitions?: InputMaybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
+    readonly logoS3Data?: InputMaybe<Scalars["jsonb"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly originatingDatas?: InputMaybe<Conference_OriginatingData_Arr_Rel_Insert_Input>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
@@ -7521,6 +7549,7 @@ export type Conference_Conference_Order_By = {
     readonly exhibitions_aggregate?: InputMaybe<Collection_Exhibition_Aggregate_Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
+    readonly logoS3Data?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly originatingDatas_aggregate?: InputMaybe<Conference_OriginatingData_Aggregate_Order_By>;
     readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
@@ -7540,6 +7569,11 @@ export type Conference_Conference_Pk_Columns_Input = {
     readonly id: Scalars["uuid"];
 };
 
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Conference_Conference_Prepend_Input = {
+    readonly logoS3Data?: InputMaybe<Scalars["jsonb"]>;
+};
+
 /** select columns of table "conference.Conference" */
 export enum Conference_Conference_Select_Column {
     /** column name */
@@ -7556,6 +7590,8 @@ export enum Conference_Conference_Select_Column {
     DemoCodeId = "demoCodeId",
     /** column name */
     Id = "id",
+    /** column name */
+    LogoS3Data = "logoS3Data",
     /** column name */
     Name = "name",
     /** column name */
@@ -7575,6 +7611,7 @@ export type Conference_Conference_Set_Input = {
     readonly defaultProgramVisibilityLevel?: InputMaybe<Scalars["String"]>;
     readonly demoCodeId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly logoS3Data?: InputMaybe<Scalars["jsonb"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly shortName?: InputMaybe<Scalars["String"]>;
     readonly slug?: InputMaybe<Scalars["String"]>;
@@ -7597,6 +7634,8 @@ export enum Conference_Conference_Update_Column {
     DemoCodeId = "demoCodeId",
     /** column name */
     Id = "id",
+    /** column name */
+    LogoS3Data = "logoS3Data",
     /** column name */
     Name = "name",
     /** column name */
@@ -17512,12 +17551,22 @@ export type Mutation_RootUpdate_Collection_Tag_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Conference_ConferenceArgs = {
+    _append?: InputMaybe<Conference_Conference_Append_Input>;
+    _delete_at_path?: InputMaybe<Conference_Conference_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Conference_Conference_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Conference_Conference_Delete_Key_Input>;
+    _prepend?: InputMaybe<Conference_Conference_Prepend_Input>;
     _set?: InputMaybe<Conference_Conference_Set_Input>;
     where: Conference_Conference_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootUpdate_Conference_Conference_By_PkArgs = {
+    _append?: InputMaybe<Conference_Conference_Append_Input>;
+    _delete_at_path?: InputMaybe<Conference_Conference_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Conference_Conference_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Conference_Conference_Delete_Key_Input>;
+    _prepend?: InputMaybe<Conference_Conference_Prepend_Input>;
     _set?: InputMaybe<Conference_Conference_Set_Input>;
     pk_columns: Conference_Conference_Pk_Columns_Input;
 };
@@ -37011,7 +37060,7 @@ export type GetSlugForUrlQueryVariables = Exact<{
 
 export type GetSlugForUrlQuery = {
     readonly __typename?: "query_root";
-    readonly getSlug: { readonly __typename?: "GetSlugOutput"; readonly slug?: string | null };
+    readonly getSlug: { readonly __typename?: "GetSlugOutput"; readonly slug?: string | null | undefined };
 };
 
 export type ChatState_SubdMessageFragment = {
@@ -37020,7 +37069,7 @@ export type ChatState_SubdMessageFragment = {
     readonly chatId: any;
     readonly message: string;
     readonly type: Chat_MessageType_Enum;
-    readonly senderId?: any | null;
+    readonly senderId?: any | null | undefined;
 };
 
 export type InitialChatState_ChatFragment = {
@@ -37031,28 +37080,34 @@ export type InitialChatState_ChatFragment = {
     readonly enableMandatoryPin: boolean;
     readonly enableMandatorySubscribe: boolean;
     readonly restrictToAdmins: boolean;
-    readonly item?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-    } | null;
-    readonly room?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly roomMemberships: ReadonlyArray<{
-            readonly __typename?: "room_RoomMembership";
-            readonly id: any;
-            readonly registrant: {
-                readonly __typename?: "registrant_Registrant";
-                readonly id: any;
-                readonly displayName: string;
-            };
-        }>;
-    } | null;
+    readonly item?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly title: string;
+              readonly shortTitle?: string | null | undefined;
+          }
+        | null
+        | undefined;
+    readonly room?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly name: string;
+              readonly priority: number;
+              readonly managementModeName: Room_ManagementMode_Enum;
+              readonly roomMemberships: ReadonlyArray<{
+                  readonly __typename?: "room_RoomMembership";
+                  readonly id: any;
+                  readonly registrant: {
+                      readonly __typename?: "registrant_Registrant";
+                      readonly id: any;
+                      readonly displayName: string;
+                  };
+              }>;
+          }
+        | null
+        | undefined;
     readonly pins: ReadonlyArray<{
         readonly __typename?: "chat_Pin";
         readonly registrantId: any;
@@ -37085,28 +37140,34 @@ export type InitialChatStateQuery = {
             readonly enableMandatoryPin: boolean;
             readonly enableMandatorySubscribe: boolean;
             readonly restrictToAdmins: boolean;
-            readonly item?: {
-                readonly __typename?: "content_Item";
-                readonly id: any;
-                readonly title: string;
-                readonly shortTitle?: string | null;
-            } | null;
-            readonly room?: {
-                readonly __typename?: "room_Room";
-                readonly id: any;
-                readonly name: string;
-                readonly priority: number;
-                readonly managementModeName: Room_ManagementMode_Enum;
-                readonly roomMemberships: ReadonlyArray<{
-                    readonly __typename?: "room_RoomMembership";
-                    readonly id: any;
-                    readonly registrant: {
-                        readonly __typename?: "registrant_Registrant";
-                        readonly id: any;
-                        readonly displayName: string;
-                    };
-                }>;
-            } | null;
+            readonly item?:
+                | {
+                      readonly __typename?: "content_Item";
+                      readonly id: any;
+                      readonly title: string;
+                      readonly shortTitle?: string | null | undefined;
+                  }
+                | null
+                | undefined;
+            readonly room?:
+                | {
+                      readonly __typename?: "room_Room";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly priority: number;
+                      readonly managementModeName: Room_ManagementMode_Enum;
+                      readonly roomMemberships: ReadonlyArray<{
+                          readonly __typename?: "room_RoomMembership";
+                          readonly id: any;
+                          readonly registrant: {
+                              readonly __typename?: "registrant_Registrant";
+                              readonly id: any;
+                              readonly displayName: string;
+                          };
+                      }>;
+                  }
+                | null
+                | undefined;
             readonly pins: ReadonlyArray<{
                 readonly __typename?: "chat_Pin";
                 readonly registrantId: any;
@@ -37130,49 +37191,58 @@ export type SelectInitialChatStateQueryVariables = Exact<{
 
 export type SelectInitialChatStateQuery = {
     readonly __typename?: "query_root";
-    readonly chat_Chat_by_pk?: {
-        readonly __typename?: "chat_Chat";
-        readonly id: any;
-        readonly enableAutoPin: boolean;
-        readonly enableAutoSubscribe: boolean;
-        readonly enableMandatoryPin: boolean;
-        readonly enableMandatorySubscribe: boolean;
-        readonly restrictToAdmins: boolean;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly shortTitle?: string | null;
-        } | null;
-        readonly room?: {
-            readonly __typename?: "room_Room";
-            readonly id: any;
-            readonly name: string;
-            readonly priority: number;
-            readonly managementModeName: Room_ManagementMode_Enum;
-            readonly roomMemberships: ReadonlyArray<{
-                readonly __typename?: "room_RoomMembership";
-                readonly id: any;
-                readonly registrant: {
-                    readonly __typename?: "registrant_Registrant";
-                    readonly id: any;
-                    readonly displayName: string;
-                };
-            }>;
-        } | null;
-        readonly pins: ReadonlyArray<{
-            readonly __typename?: "chat_Pin";
-            readonly registrantId: any;
-            readonly chatId: any;
-            readonly wasManuallyPinned: boolean;
-        }>;
-        readonly subscriptions: ReadonlyArray<{
-            readonly __typename?: "chat_Subscription";
-            readonly registrantId: any;
-            readonly chatId: any;
-            readonly wasManuallySubscribed: boolean;
-        }>;
-    } | null;
+    readonly chat_Chat_by_pk?:
+        | {
+              readonly __typename?: "chat_Chat";
+              readonly id: any;
+              readonly enableAutoPin: boolean;
+              readonly enableAutoSubscribe: boolean;
+              readonly enableMandatoryPin: boolean;
+              readonly enableMandatorySubscribe: boolean;
+              readonly restrictToAdmins: boolean;
+              readonly item?:
+                  | {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly title: string;
+                        readonly shortTitle?: string | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly room?:
+                  | {
+                        readonly __typename?: "room_Room";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly priority: number;
+                        readonly managementModeName: Room_ManagementMode_Enum;
+                        readonly roomMemberships: ReadonlyArray<{
+                            readonly __typename?: "room_RoomMembership";
+                            readonly id: any;
+                            readonly registrant: {
+                                readonly __typename?: "registrant_Registrant";
+                                readonly id: any;
+                                readonly displayName: string;
+                            };
+                        }>;
+                    }
+                  | null
+                  | undefined;
+              readonly pins: ReadonlyArray<{
+                  readonly __typename?: "chat_Pin";
+                  readonly registrantId: any;
+                  readonly chatId: any;
+                  readonly wasManuallyPinned: boolean;
+              }>;
+              readonly subscriptions: ReadonlyArray<{
+                  readonly __typename?: "chat_Subscription";
+                  readonly registrantId: any;
+                  readonly chatId: any;
+                  readonly wasManuallySubscribed: boolean;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type SelectInitialChatStatesQueryVariables = Exact<{
@@ -37190,28 +37260,34 @@ export type SelectInitialChatStatesQuery = {
         readonly enableMandatoryPin: boolean;
         readonly enableMandatorySubscribe: boolean;
         readonly restrictToAdmins: boolean;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly shortTitle?: string | null;
-        } | null;
-        readonly room?: {
-            readonly __typename?: "room_Room";
-            readonly id: any;
-            readonly name: string;
-            readonly priority: number;
-            readonly managementModeName: Room_ManagementMode_Enum;
-            readonly roomMemberships: ReadonlyArray<{
-                readonly __typename?: "room_RoomMembership";
-                readonly id: any;
-                readonly registrant: {
-                    readonly __typename?: "registrant_Registrant";
-                    readonly id: any;
-                    readonly displayName: string;
-                };
-            }>;
-        } | null;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly title: string;
+                  readonly shortTitle?: string | null | undefined;
+              }
+            | null
+            | undefined;
+        readonly room?:
+            | {
+                  readonly __typename?: "room_Room";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly priority: number;
+                  readonly managementModeName: Room_ManagementMode_Enum;
+                  readonly roomMemberships: ReadonlyArray<{
+                      readonly __typename?: "room_RoomMembership";
+                      readonly id: any;
+                      readonly registrant: {
+                          readonly __typename?: "registrant_Registrant";
+                          readonly id: any;
+                          readonly displayName: string;
+                      };
+                  }>;
+              }
+            | null
+            | undefined;
         readonly pins: ReadonlyArray<{
             readonly __typename?: "chat_Pin";
             readonly registrantId: any;
@@ -37234,14 +37310,17 @@ export type SubscribeChatMutationVariables = Exact<{
 
 export type SubscribeChatMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_chat_Subscription?: {
-        readonly __typename?: "chat_Subscription_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "chat_Subscription";
-            readonly chatId: any;
-            readonly registrantId: any;
-        }>;
-    } | null;
+    readonly insert_chat_Subscription?:
+        | {
+              readonly __typename?: "chat_Subscription_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "chat_Subscription";
+                  readonly chatId: any;
+                  readonly registrantId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UnsubscribeChatMutationVariables = Exact<{
@@ -37251,11 +37330,10 @@ export type UnsubscribeChatMutationVariables = Exact<{
 
 export type UnsubscribeChatMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_chat_Subscription_by_pk?: {
-        readonly __typename?: "chat_Subscription";
-        readonly registrantId: any;
-        readonly chatId: any;
-    } | null;
+    readonly delete_chat_Subscription_by_pk?:
+        | { readonly __typename?: "chat_Subscription"; readonly registrantId: any; readonly chatId: any }
+        | null
+        | undefined;
 };
 
 export type PinChatMutationVariables = Exact<{
@@ -37265,14 +37343,17 @@ export type PinChatMutationVariables = Exact<{
 
 export type PinChatMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_chat_Pin?: {
-        readonly __typename?: "chat_Pin_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "chat_Pin";
-            readonly chatId: any;
-            readonly registrantId: any;
-        }>;
-    } | null;
+    readonly insert_chat_Pin?:
+        | {
+              readonly __typename?: "chat_Pin_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "chat_Pin";
+                  readonly chatId: any;
+                  readonly registrantId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UnpinChatMutationVariables = Exact<{
@@ -37282,11 +37363,10 @@ export type UnpinChatMutationVariables = Exact<{
 
 export type UnpinChatMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_chat_Pin_by_pk?: {
-        readonly __typename?: "chat_Pin";
-        readonly registrantId: any;
-        readonly chatId: any;
-    } | null;
+    readonly delete_chat_Pin_by_pk?:
+        | { readonly __typename?: "chat_Pin"; readonly registrantId: any; readonly chatId: any }
+        | null
+        | undefined;
 };
 
 export type ChatReactionDataFragment = {
@@ -37297,7 +37377,7 @@ export type ChatReactionDataFragment = {
     readonly symbol: string;
     readonly type: Chat_ReactionType_Enum;
     readonly messageSId: any;
-    readonly duplicateSId?: any | null;
+    readonly duplicateSId?: any | null | undefined;
     readonly created_at: any;
     readonly updated_at: any;
     readonly chatId: any;
@@ -37307,11 +37387,11 @@ export type ChatMessageDataFragment = {
     readonly __typename?: "chat_Message";
     readonly created_at: any;
     readonly data: any;
-    readonly duplicatedMessageSId?: any | null;
+    readonly duplicatedMessageSId?: any | null | undefined;
     readonly id: number;
     readonly sId: any;
     readonly message: string;
-    readonly senderId?: any | null;
+    readonly senderId?: any | null | undefined;
     readonly type: Chat_MessageType_Enum;
     readonly chatId: any;
     readonly reactions: ReadonlyArray<{
@@ -37322,7 +37402,7 @@ export type ChatMessageDataFragment = {
         readonly symbol: string;
         readonly type: Chat_ReactionType_Enum;
         readonly messageSId: any;
-        readonly duplicateSId?: any | null;
+        readonly duplicateSId?: any | null | undefined;
         readonly created_at: any;
         readonly updated_at: any;
         readonly chatId: any;
@@ -37341,11 +37421,11 @@ export type SelectMessagesPageQuery = {
         readonly __typename?: "chat_Message";
         readonly created_at: any;
         readonly data: any;
-        readonly duplicatedMessageSId?: any | null;
+        readonly duplicatedMessageSId?: any | null | undefined;
         readonly id: number;
         readonly sId: any;
         readonly message: string;
-        readonly senderId?: any | null;
+        readonly senderId?: any | null | undefined;
         readonly type: Chat_MessageType_Enum;
         readonly chatId: any;
         readonly reactions: ReadonlyArray<{
@@ -37356,7 +37436,7 @@ export type SelectMessagesPageQuery = {
             readonly symbol: string;
             readonly type: Chat_ReactionType_Enum;
             readonly messageSId: any;
-            readonly duplicateSId?: any | null;
+            readonly duplicateSId?: any | null | undefined;
             readonly created_at: any;
             readonly updated_at: any;
             readonly chatId: any;
@@ -37368,9 +37448,9 @@ export type ShortChatMessageDataFragment = {
     readonly __typename?: "chat_Message";
     readonly created_at: any;
     readonly data: any;
-    readonly duplicatedMessageSId?: any | null;
+    readonly duplicatedMessageSId?: any | null | undefined;
     readonly message: string;
-    readonly senderId?: any | null;
+    readonly senderId?: any | null | undefined;
     readonly type: Chat_MessageType_Enum;
     readonly chatId: any;
     readonly sId: any;
@@ -37384,18 +37464,18 @@ export type ShortChatReactionDataFragment = {
     readonly type: Chat_ReactionType_Enum;
     readonly messageSId: any;
     readonly sId: any;
-    readonly duplicateSId?: any | null;
+    readonly duplicateSId?: any | null | undefined;
 };
 
 export type ChatFlagDataFragment = {
     readonly __typename?: "chat_Flag";
-    readonly discussionChatId?: any | null;
-    readonly flaggedById?: any | null;
+    readonly discussionChatId?: any | null | undefined;
+    readonly flaggedById?: any | null | undefined;
     readonly id: number;
     readonly messageSId: any;
-    readonly notes?: string | null;
-    readonly resolution?: string | null;
-    readonly resolved_at?: any | null;
+    readonly notes?: string | null | undefined;
+    readonly resolution?: string | null | undefined;
+    readonly resolved_at?: any | null | undefined;
     readonly type: Chat_FlagType_Enum;
     readonly updated_at: any;
     readonly created_at: any;
@@ -37410,19 +37490,22 @@ export type InsertChatFlagMutationVariables = Exact<{
 
 export type InsertChatFlagMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_chat_Flag_one?: {
-        readonly __typename?: "chat_Flag";
-        readonly discussionChatId?: any | null;
-        readonly flaggedById?: any | null;
-        readonly id: number;
-        readonly messageSId: any;
-        readonly notes?: string | null;
-        readonly resolution?: string | null;
-        readonly resolved_at?: any | null;
-        readonly type: Chat_FlagType_Enum;
-        readonly updated_at: any;
-        readonly created_at: any;
-    } | null;
+    readonly insert_chat_Flag_one?:
+        | {
+              readonly __typename?: "chat_Flag";
+              readonly discussionChatId?: any | null | undefined;
+              readonly flaggedById?: any | null | undefined;
+              readonly id: number;
+              readonly messageSId: any;
+              readonly notes?: string | null | undefined;
+              readonly resolution?: string | null | undefined;
+              readonly resolved_at?: any | null | undefined;
+              readonly type: Chat_FlagType_Enum;
+              readonly updated_at: any;
+              readonly created_at: any;
+          }
+        | null
+        | undefined;
 };
 
 export type GetChatPathQueryVariables = Exact<{
@@ -37431,12 +37514,15 @@ export type GetChatPathQueryVariables = Exact<{
 
 export type GetChatPathQuery = {
     readonly __typename?: "query_root";
-    readonly chat_Chat_by_pk?: {
-        readonly __typename?: "chat_Chat";
-        readonly id: any;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any } | null;
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any } | null;
-    } | null;
+    readonly chat_Chat_by_pk?:
+        | {
+              readonly __typename?: "chat_Chat";
+              readonly id: any;
+              readonly room?: { readonly __typename?: "room_Room"; readonly id: any } | null | undefined;
+              readonly item?: { readonly __typename?: "content_Item"; readonly id: any } | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type ConferenceLandingPageItemQueryVariables = Exact<{
@@ -37451,35 +37537,41 @@ export type ConferenceLandingPageItemQuery = {
         readonly conferenceId: any;
         readonly title: string;
         readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-        } | null;
+        readonly chatId?: any | null | undefined;
+        readonly chat?:
+            | {
+                  readonly __typename?: "chat_Chat";
+                  readonly id: any;
+                  readonly room?:
+                      | { readonly __typename?: "room_Room"; readonly id: any; readonly name: string }
+                      | null
+                      | undefined;
+              }
+            | null
+            | undefined;
         readonly elements: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly id: any;
             readonly itemId: any;
             readonly data: any;
-            readonly layoutData?: any | null;
+            readonly layoutData?: any | null | undefined;
             readonly name: string;
             readonly typeName: Content_ElementType_Enum;
             readonly isHidden: boolean;
-            readonly hasBeenSubmitted?: boolean | null;
+            readonly hasBeenSubmitted?: boolean | null | undefined;
         }>;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
             readonly itemId: any;
             readonly roleName: string;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
             readonly person: {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
                 readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
+                readonly affiliation?: string | null | undefined;
+                readonly registrantId?: any | null | undefined;
                 readonly conferenceId: any;
             };
         }>;
@@ -37517,13 +37609,13 @@ export type ProgramPersonDataFragment = {
     readonly id: any;
     readonly itemId: any;
     readonly roleName: string;
-    readonly priority?: number | null;
+    readonly priority?: number | null | undefined;
     readonly person: {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
         readonly conferenceId: any;
     };
 };
@@ -37540,71 +37632,80 @@ export type ItemElements_GetItemQueryVariables = Exact<{
 
 export type ItemElements_GetItemQuery = {
     readonly __typename?: "query_root";
-    readonly content_Item_by_pk?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly title: string;
-        readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-        } | null;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly itemId: any;
-            readonly data: any;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly typeName: Content_ElementType_Enum;
-            readonly isHidden: boolean;
-            readonly hasBeenSubmitted?: boolean | null;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly roleName: string;
-            readonly priority?: number | null;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tag: {
-                readonly __typename?: "collection_Tag";
-                readonly id: any;
-                readonly name: string;
-                readonly colour: string;
-                readonly priority: number;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibition: {
-                readonly __typename?: "collection_Exhibition";
-                readonly id: any;
-                readonly name: string;
-                readonly priority: number;
-                readonly colour: string;
-                readonly conferenceId: any;
-            };
-        }>;
-    } | null;
+    readonly content_Item_by_pk?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly title: string;
+              readonly typeName: Content_ItemType_Enum;
+              readonly chatId?: any | null | undefined;
+              readonly chat?:
+                  | {
+                        readonly __typename?: "chat_Chat";
+                        readonly id: any;
+                        readonly room?:
+                            | { readonly __typename?: "room_Room"; readonly id: any; readonly name: string }
+                            | null
+                            | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly elements: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly data: any;
+                  readonly layoutData?: any | null | undefined;
+                  readonly name: string;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly isHidden: boolean;
+                  readonly hasBeenSubmitted?: boolean | null | undefined;
+              }>;
+              readonly itemPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly roleName: string;
+                  readonly priority?: number | null | undefined;
+                  readonly person: {
+                      readonly __typename?: "collection_ProgramPerson";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly affiliation?: string | null | undefined;
+                      readonly registrantId?: any | null | undefined;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly itemTags: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly tag: {
+                      readonly __typename?: "collection_Tag";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly colour: string;
+                      readonly priority: number;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly itemExhibitions: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly exhibition: {
+                      readonly __typename?: "collection_Exhibition";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly priority: number;
+                      readonly colour: string;
+                      readonly conferenceId: any;
+                  };
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ElementDataFragment = {
@@ -37612,11 +37713,11 @@ export type ElementDataFragment = {
     readonly id: any;
     readonly itemId: any;
     readonly data: any;
-    readonly layoutData?: any | null;
+    readonly layoutData?: any | null | undefined;
     readonly name: string;
     readonly typeName: Content_ElementType_Enum;
     readonly isHidden: boolean;
-    readonly hasBeenSubmitted?: boolean | null;
+    readonly hasBeenSubmitted?: boolean | null | undefined;
 };
 
 export type ItemElements_ItemDataFragment = {
@@ -37625,35 +37726,41 @@ export type ItemElements_ItemDataFragment = {
     readonly conferenceId: any;
     readonly title: string;
     readonly typeName: Content_ItemType_Enum;
-    readonly chatId?: any | null;
-    readonly chat?: {
-        readonly __typename?: "chat_Chat";
-        readonly id: any;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-    } | null;
+    readonly chatId?: any | null | undefined;
+    readonly chat?:
+        | {
+              readonly __typename?: "chat_Chat";
+              readonly id: any;
+              readonly room?:
+                  | { readonly __typename?: "room_Room"; readonly id: any; readonly name: string }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
     readonly elements: ReadonlyArray<{
         readonly __typename?: "content_Element";
         readonly id: any;
         readonly itemId: any;
         readonly data: any;
-        readonly layoutData?: any | null;
+        readonly layoutData?: any | null | undefined;
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
         readonly isHidden: boolean;
-        readonly hasBeenSubmitted?: boolean | null;
+        readonly hasBeenSubmitted?: boolean | null | undefined;
     }>;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
         readonly itemId: any;
         readonly roleName: string;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly person: {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
+            readonly affiliation?: string | null | undefined;
+            readonly registrantId?: any | null | undefined;
             readonly conferenceId: any;
         };
     }>;
@@ -37716,13 +37823,16 @@ export type ItemExhibitionDataFragment = {
 export type ItemRoomEventFragment = {
     readonly __typename?: "schedule_Event";
     readonly startTime: any;
-    readonly exhibitionId?: any | null;
+    readonly exhibitionId?: any | null | undefined;
     readonly id: any;
     readonly durationSeconds: number;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly name: string;
     readonly intendedRoomModeName: Room_Mode_Enum;
-    readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+    readonly item?:
+        | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+        | null
+        | undefined;
 };
 
 export type ItemList_ItemDataFragment = {
@@ -37734,13 +37844,13 @@ export type ItemList_ItemDataFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly roleName: string;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly person: {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
+            readonly affiliation?: string | null | undefined;
+            readonly registrantId?: any | null | undefined;
             readonly conferenceId: any;
         };
     }>;
@@ -37760,13 +37870,13 @@ export type ItemList_ItemTagDataFragment = {
             readonly id: any;
             readonly itemId: any;
             readonly roleName: string;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
             readonly person: {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
                 readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
+                readonly affiliation?: string | null | undefined;
+                readonly registrantId?: any | null | undefined;
                 readonly conferenceId: any;
             };
         }>;
@@ -37801,13 +37911,13 @@ export type ContentOfTagQuery = {
                 readonly id: any;
                 readonly itemId: any;
                 readonly roleName: string;
-                readonly priority?: number | null;
+                readonly priority?: number | null | undefined;
                 readonly person: {
                     readonly __typename?: "collection_ProgramPerson";
                     readonly id: any;
                     readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
+                    readonly affiliation?: string | null | undefined;
+                    readonly registrantId?: any | null | undefined;
                     readonly conferenceId: any;
                 };
             }>;
@@ -37836,108 +37946,123 @@ export type GetItemQueryVariables = Exact<{
 
 export type GetItemQuery = {
     readonly __typename?: "query_root";
-    readonly content_Item_by_pk?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly title: string;
-        readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
-        readonly descriptionOfExhibitions: ReadonlyArray<{
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly descriptiveItemId?: any | null;
-        }>;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-        } | null;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly itemId: any;
-            readonly data: any;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly typeName: Content_ElementType_Enum;
-            readonly isHidden: boolean;
-            readonly hasBeenSubmitted?: boolean | null;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly roleName: string;
-            readonly priority?: number | null;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tag: {
-                readonly __typename?: "collection_Tag";
-                readonly id: any;
-                readonly name: string;
-                readonly colour: string;
-                readonly priority: number;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibition: {
-                readonly __typename?: "collection_Exhibition";
-                readonly id: any;
-                readonly name: string;
-                readonly priority: number;
-                readonly colour: string;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
-    } | null;
+    readonly content_Item_by_pk?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly title: string;
+              readonly typeName: Content_ItemType_Enum;
+              readonly chatId?: any | null | undefined;
+              readonly descriptionOfExhibitions: ReadonlyArray<{
+                  readonly __typename?: "collection_Exhibition";
+                  readonly id: any;
+                  readonly descriptiveItemId?: any | null | undefined;
+              }>;
+              readonly chat?:
+                  | {
+                        readonly __typename?: "chat_Chat";
+                        readonly id: any;
+                        readonly room?:
+                            | { readonly __typename?: "room_Room"; readonly id: any; readonly name: string }
+                            | null
+                            | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly elements: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly data: any;
+                  readonly layoutData?: any | null | undefined;
+                  readonly name: string;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly isHidden: boolean;
+                  readonly hasBeenSubmitted?: boolean | null | undefined;
+              }>;
+              readonly itemPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly roleName: string;
+                  readonly priority?: number | null | undefined;
+                  readonly person: {
+                      readonly __typename?: "collection_ProgramPerson";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly affiliation?: string | null | undefined;
+                      readonly registrantId?: any | null | undefined;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly itemTags: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly tag: {
+                      readonly __typename?: "collection_Tag";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly colour: string;
+                      readonly priority: number;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly itemExhibitions: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly exhibition: {
+                      readonly __typename?: "collection_Exhibition";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly priority: number;
+                      readonly colour: string;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly room?:
+                  | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly startTime: any;
         readonly roomId: any;
-        readonly exhibitionId?: any | null;
+        readonly exhibitionId?: any | null | undefined;
         readonly id: any;
         readonly durationSeconds: number;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly name: string;
         readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly itemId?: any | null;
+        readonly itemId?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly name: string; readonly id: any };
     }>;
 };
 
 export type ItemPage_ItemRoomsFragment = {
     readonly __typename?: "content_Item";
-    readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+    readonly room?:
+        | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+        | null
+        | undefined;
 };
 
 export type ItemEventFragment = {
     readonly __typename?: "schedule_Event";
     readonly startTime: any;
     readonly roomId: any;
-    readonly exhibitionId?: any | null;
+    readonly exhibitionId?: any | null | undefined;
     readonly id: any;
     readonly durationSeconds: number;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly name: string;
     readonly intendedRoomModeName: Room_Mode_Enum;
-    readonly itemId?: any | null;
+    readonly itemId?: any | null | undefined;
     readonly room: { readonly __typename?: "room_Room"; readonly name: string; readonly id: any };
 };
 
@@ -37950,8 +38075,8 @@ export type ContinuationChoices_ContinuationFragment = {
     readonly priority: number;
     readonly colour: string;
     readonly description: string;
-    readonly fromEvent?: any | null;
-    readonly fromShuffleQueue?: any | null;
+    readonly fromEvent?: any | null | undefined;
+    readonly fromShuffleQueue?: any | null | undefined;
 };
 
 export type ContinuationChoices_ContinuationsQueryVariables = Exact<{
@@ -37971,8 +38096,8 @@ export type ContinuationChoices_ContinuationsQuery = {
         readonly priority: number;
         readonly colour: string;
         readonly description: string;
-        readonly fromEvent?: any | null;
-        readonly fromShuffleQueue?: any | null;
+        readonly fromEvent?: any | null | undefined;
+        readonly fromShuffleQueue?: any | null | undefined;
     }>;
     readonly room_ShufflePeriod: ReadonlyArray<{
         readonly __typename?: "room_ShufflePeriod";
@@ -37984,9 +38109,9 @@ export type ContinuationChoices_ContinuationsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly roomId: any;
-        readonly shufflePeriodId?: any | null;
+        readonly shufflePeriodId?: any | null | undefined;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
     }>;
 };
 
@@ -37999,7 +38124,10 @@ export type ContinuationChoices_RoomsQuery = {
     readonly content_Item: ReadonlyArray<{
         readonly __typename?: "content_Item";
         readonly id: any;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+        readonly room?:
+            | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+            | null
+            | undefined;
     }>;
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
@@ -38018,32 +38146,32 @@ export type ExhibitionItemFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly data: any;
-        readonly layoutData?: any | null;
+        readonly layoutData?: any | null | undefined;
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
         readonly isHidden: boolean;
-        readonly hasBeenSubmitted?: boolean | null;
+        readonly hasBeenSubmitted?: boolean | null | undefined;
     }>;
     readonly events: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly roomId: any;
-        readonly itemId?: any | null;
+        readonly itemId?: any | null | undefined;
     }>;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
         readonly itemId: any;
         readonly roleName: string;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly person: {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
+            readonly affiliation?: string | null | undefined;
+            readonly registrantId?: any | null | undefined;
             readonly conferenceId: any;
         };
     }>;
@@ -38060,7 +38188,10 @@ export type ExhibitionItemFragment = {
             readonly conferenceId: any;
         };
     }>;
-    readonly discussionRoom?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+    readonly discussionRoom?:
+        | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+        | null
+        | undefined;
 };
 
 export type ExhibitionWithContentFragment = {
@@ -38070,79 +38201,91 @@ export type ExhibitionWithContentFragment = {
     readonly colour: string;
     readonly priority: number;
     readonly conferenceId: any;
-    readonly descriptiveItem?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly title: string;
-        readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-        } | null;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly itemId: any;
-            readonly data: any;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly typeName: Content_ElementType_Enum;
-            readonly isHidden: boolean;
-            readonly hasBeenSubmitted?: boolean | null;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly roleName: string;
-            readonly priority?: number | null;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tag: {
-                readonly __typename?: "collection_Tag";
-                readonly id: any;
-                readonly name: string;
-                readonly colour: string;
-                readonly priority: number;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibition: {
-                readonly __typename?: "collection_Exhibition";
-                readonly id: any;
-                readonly name: string;
-                readonly priority: number;
-                readonly colour: string;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
-    } | null;
+    readonly descriptiveItem?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly title: string;
+              readonly typeName: Content_ItemType_Enum;
+              readonly chatId?: any | null | undefined;
+              readonly chat?:
+                  | {
+                        readonly __typename?: "chat_Chat";
+                        readonly id: any;
+                        readonly room?:
+                            | { readonly __typename?: "room_Room"; readonly id: any; readonly name: string }
+                            | null
+                            | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly elements: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly data: any;
+                  readonly layoutData?: any | null | undefined;
+                  readonly name: string;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly isHidden: boolean;
+                  readonly hasBeenSubmitted?: boolean | null | undefined;
+              }>;
+              readonly itemPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly roleName: string;
+                  readonly priority?: number | null | undefined;
+                  readonly person: {
+                      readonly __typename?: "collection_ProgramPerson";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly affiliation?: string | null | undefined;
+                      readonly registrantId?: any | null | undefined;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly itemTags: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly tag: {
+                      readonly __typename?: "collection_Tag";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly colour: string;
+                      readonly priority: number;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly itemExhibitions: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly exhibition: {
+                      readonly __typename?: "collection_Exhibition";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly priority: number;
+                      readonly colour: string;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly room?:
+                  | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
     readonly items: ReadonlyArray<{
         readonly __typename?: "content_ItemExhibition";
         readonly id: any;
         readonly itemId: any;
         readonly exhibitionId: any;
-        readonly layout?: any | null;
-        readonly priority?: number | null;
+        readonly layout?: any | null | undefined;
+        readonly priority?: number | null | undefined;
         readonly item: {
             readonly __typename?: "content_Item";
             readonly id: any;
@@ -38153,32 +38296,32 @@ export type ExhibitionWithContentFragment = {
                 readonly id: any;
                 readonly itemId: any;
                 readonly data: any;
-                readonly layoutData?: any | null;
+                readonly layoutData?: any | null | undefined;
                 readonly name: string;
                 readonly typeName: Content_ElementType_Enum;
                 readonly isHidden: boolean;
-                readonly hasBeenSubmitted?: boolean | null;
+                readonly hasBeenSubmitted?: boolean | null | undefined;
             }>;
             readonly events: ReadonlyArray<{
                 readonly __typename?: "schedule_Event";
                 readonly id: any;
                 readonly startTime: any;
-                readonly endTime?: any | null;
+                readonly endTime?: any | null | undefined;
                 readonly roomId: any;
-                readonly itemId?: any | null;
+                readonly itemId?: any | null | undefined;
             }>;
             readonly itemPeople: ReadonlyArray<{
                 readonly __typename?: "content_ItemProgramPerson";
                 readonly id: any;
                 readonly itemId: any;
                 readonly roleName: string;
-                readonly priority?: number | null;
+                readonly priority?: number | null | undefined;
                 readonly person: {
                     readonly __typename?: "collection_ProgramPerson";
                     readonly id: any;
                     readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
+                    readonly affiliation?: string | null | undefined;
+                    readonly registrantId?: any | null | undefined;
                     readonly conferenceId: any;
                 };
             }>;
@@ -38195,11 +38338,10 @@ export type ExhibitionWithContentFragment = {
                     readonly conferenceId: any;
                 };
             }>;
-            readonly discussionRoom?: {
-                readonly __typename?: "room_Room";
-                readonly id: any;
-                readonly created_at: any;
-            } | null;
+            readonly discussionRoom?:
+                | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+                | null
+                | undefined;
         };
     }>;
 };
@@ -38210,157 +38352,171 @@ export type SelectExhibitionQueryVariables = Exact<{
 
 export type SelectExhibitionQuery = {
     readonly __typename?: "query_root";
-    readonly collection_Exhibition_by_pk?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly name: string;
-        readonly colour: string;
-        readonly priority: number;
-        readonly conferenceId: any;
-        readonly descriptiveItem?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly title: string;
-            readonly typeName: Content_ItemType_Enum;
-            readonly chatId?: any | null;
-            readonly chat?: {
-                readonly __typename?: "chat_Chat";
-                readonly id: any;
-                readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-            } | null;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly itemId: any;
-                readonly data: any;
-                readonly layoutData?: any | null;
-                readonly name: string;
-                readonly typeName: Content_ElementType_Enum;
-                readonly isHidden: boolean;
-                readonly hasBeenSubmitted?: boolean | null;
-            }>;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly itemId: any;
-                readonly roleName: string;
-                readonly priority?: number | null;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
-                    readonly conferenceId: any;
-                };
-            }>;
-            readonly itemTags: ReadonlyArray<{
-                readonly __typename?: "content_ItemTag";
-                readonly id: any;
-                readonly itemId: any;
-                readonly tag: {
-                    readonly __typename?: "collection_Tag";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly colour: string;
-                    readonly priority: number;
-                    readonly conferenceId: any;
-                };
-            }>;
-            readonly itemExhibitions: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly itemId: any;
-                readonly exhibition: {
-                    readonly __typename?: "collection_Exhibition";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly priority: number;
-                    readonly colour: string;
-                    readonly conferenceId: any;
-                };
-            }>;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
-        } | null;
-        readonly items: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-            readonly layout?: any | null;
-            readonly priority?: number | null;
-            readonly item: {
-                readonly __typename?: "content_Item";
-                readonly id: any;
-                readonly title: string;
-                readonly typeName: Content_ItemType_Enum;
-                readonly elements: ReadonlyArray<{
-                    readonly __typename?: "content_Element";
-                    readonly id: any;
-                    readonly itemId: any;
-                    readonly data: any;
-                    readonly layoutData?: any | null;
-                    readonly name: string;
-                    readonly typeName: Content_ElementType_Enum;
-                    readonly isHidden: boolean;
-                    readonly hasBeenSubmitted?: boolean | null;
-                }>;
-                readonly events: ReadonlyArray<{
-                    readonly __typename?: "schedule_Event";
-                    readonly id: any;
-                    readonly startTime: any;
-                    readonly endTime?: any | null;
-                    readonly roomId: any;
-                    readonly itemId?: any | null;
-                }>;
-                readonly itemPeople: ReadonlyArray<{
-                    readonly __typename?: "content_ItemProgramPerson";
-                    readonly id: any;
-                    readonly itemId: any;
-                    readonly roleName: string;
-                    readonly priority?: number | null;
-                    readonly person: {
-                        readonly __typename?: "collection_ProgramPerson";
+    readonly collection_Exhibition_by_pk?:
+        | {
+              readonly __typename?: "collection_Exhibition";
+              readonly id: any;
+              readonly name: string;
+              readonly colour: string;
+              readonly priority: number;
+              readonly conferenceId: any;
+              readonly descriptiveItem?:
+                  | {
+                        readonly __typename?: "content_Item";
                         readonly id: any;
-                        readonly name: string;
-                        readonly affiliation?: string | null;
-                        readonly registrantId?: any | null;
                         readonly conferenceId: any;
-                    };
-                }>;
-                readonly itemTags: ReadonlyArray<{
-                    readonly __typename?: "content_ItemTag";
-                    readonly id: any;
-                    readonly itemId: any;
-                    readonly tag: {
-                        readonly __typename?: "collection_Tag";
-                        readonly id: any;
-                        readonly name: string;
-                        readonly colour: string;
-                        readonly priority: number;
-                        readonly conferenceId: any;
-                    };
-                }>;
-                readonly discussionRoom?: {
-                    readonly __typename?: "room_Room";
-                    readonly id: any;
-                    readonly created_at: any;
-                } | null;
-            };
-        }>;
-    } | null;
+                        readonly title: string;
+                        readonly typeName: Content_ItemType_Enum;
+                        readonly chatId?: any | null | undefined;
+                        readonly chat?:
+                            | {
+                                  readonly __typename?: "chat_Chat";
+                                  readonly id: any;
+                                  readonly room?:
+                                      | { readonly __typename?: "room_Room"; readonly id: any; readonly name: string }
+                                      | null
+                                      | undefined;
+                              }
+                            | null
+                            | undefined;
+                        readonly elements: ReadonlyArray<{
+                            readonly __typename?: "content_Element";
+                            readonly id: any;
+                            readonly itemId: any;
+                            readonly data: any;
+                            readonly layoutData?: any | null | undefined;
+                            readonly name: string;
+                            readonly typeName: Content_ElementType_Enum;
+                            readonly isHidden: boolean;
+                            readonly hasBeenSubmitted?: boolean | null | undefined;
+                        }>;
+                        readonly itemPeople: ReadonlyArray<{
+                            readonly __typename?: "content_ItemProgramPerson";
+                            readonly id: any;
+                            readonly itemId: any;
+                            readonly roleName: string;
+                            readonly priority?: number | null | undefined;
+                            readonly person: {
+                                readonly __typename?: "collection_ProgramPerson";
+                                readonly id: any;
+                                readonly name: string;
+                                readonly affiliation?: string | null | undefined;
+                                readonly registrantId?: any | null | undefined;
+                                readonly conferenceId: any;
+                            };
+                        }>;
+                        readonly itemTags: ReadonlyArray<{
+                            readonly __typename?: "content_ItemTag";
+                            readonly id: any;
+                            readonly itemId: any;
+                            readonly tag: {
+                                readonly __typename?: "collection_Tag";
+                                readonly id: any;
+                                readonly name: string;
+                                readonly colour: string;
+                                readonly priority: number;
+                                readonly conferenceId: any;
+                            };
+                        }>;
+                        readonly itemExhibitions: ReadonlyArray<{
+                            readonly __typename?: "content_ItemExhibition";
+                            readonly id: any;
+                            readonly itemId: any;
+                            readonly exhibition: {
+                                readonly __typename?: "collection_Exhibition";
+                                readonly id: any;
+                                readonly name: string;
+                                readonly priority: number;
+                                readonly colour: string;
+                                readonly conferenceId: any;
+                            };
+                        }>;
+                        readonly room?:
+                            | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+                            | null
+                            | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly items: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly exhibitionId: any;
+                  readonly layout?: any | null | undefined;
+                  readonly priority?: number | null | undefined;
+                  readonly item: {
+                      readonly __typename?: "content_Item";
+                      readonly id: any;
+                      readonly title: string;
+                      readonly typeName: Content_ItemType_Enum;
+                      readonly elements: ReadonlyArray<{
+                          readonly __typename?: "content_Element";
+                          readonly id: any;
+                          readonly itemId: any;
+                          readonly data: any;
+                          readonly layoutData?: any | null | undefined;
+                          readonly name: string;
+                          readonly typeName: Content_ElementType_Enum;
+                          readonly isHidden: boolean;
+                          readonly hasBeenSubmitted?: boolean | null | undefined;
+                      }>;
+                      readonly events: ReadonlyArray<{
+                          readonly __typename?: "schedule_Event";
+                          readonly id: any;
+                          readonly startTime: any;
+                          readonly endTime?: any | null | undefined;
+                          readonly roomId: any;
+                          readonly itemId?: any | null | undefined;
+                      }>;
+                      readonly itemPeople: ReadonlyArray<{
+                          readonly __typename?: "content_ItemProgramPerson";
+                          readonly id: any;
+                          readonly itemId: any;
+                          readonly roleName: string;
+                          readonly priority?: number | null | undefined;
+                          readonly person: {
+                              readonly __typename?: "collection_ProgramPerson";
+                              readonly id: any;
+                              readonly name: string;
+                              readonly affiliation?: string | null | undefined;
+                              readonly registrantId?: any | null | undefined;
+                              readonly conferenceId: any;
+                          };
+                      }>;
+                      readonly itemTags: ReadonlyArray<{
+                          readonly __typename?: "content_ItemTag";
+                          readonly id: any;
+                          readonly itemId: any;
+                          readonly tag: {
+                              readonly __typename?: "collection_Tag";
+                              readonly id: any;
+                              readonly name: string;
+                              readonly colour: string;
+                              readonly priority: number;
+                              readonly conferenceId: any;
+                          };
+                      }>;
+                      readonly discussionRoom?:
+                          | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+                          | null
+                          | undefined;
+                  };
+              }>;
+          }
+        | null
+        | undefined;
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly startTime: any;
         readonly roomId: any;
-        readonly exhibitionId?: any | null;
+        readonly exhibitionId?: any | null | undefined;
         readonly id: any;
         readonly durationSeconds: number;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly name: string;
         readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly itemId?: any | null;
+        readonly itemId?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly name: string; readonly id: any };
     }>;
 };
@@ -38386,13 +38542,13 @@ export type ExhibitionSummaryFragment = {
                 readonly id: any;
                 readonly itemId: any;
                 readonly roleName: string;
-                readonly priority?: number | null;
+                readonly priority?: number | null | undefined;
                 readonly person: {
                     readonly __typename?: "collection_ProgramPerson";
                     readonly id: any;
                     readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
+                    readonly affiliation?: string | null | undefined;
+                    readonly registrantId?: any | null | undefined;
                     readonly conferenceId: any;
                 };
             }>;
@@ -38440,13 +38596,13 @@ export type SelectAllExhibitionsQuery = {
                     readonly id: any;
                     readonly itemId: any;
                     readonly roleName: string;
-                    readonly priority?: number | null;
+                    readonly priority?: number | null | undefined;
                     readonly person: {
                         readonly __typename?: "collection_ProgramPerson";
                         readonly id: any;
                         readonly name: string;
-                        readonly affiliation?: string | null;
-                        readonly registrantId?: any | null;
+                        readonly affiliation?: string | null | undefined;
+                        readonly registrantId?: any | null | undefined;
                         readonly conferenceId: any;
                     };
                 }>;
@@ -38478,27 +38634,30 @@ export type RegistrantByIdQuery = {
     readonly registrant_Registrant: ReadonlyArray<{
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
-        readonly userId?: string | null;
+        readonly userId?: string | null | undefined;
         readonly conferenceId: any;
         readonly displayName: string;
         readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly badges?: any | null;
-            readonly affiliation?: string | null;
-            readonly affiliationURL?: string | null;
-            readonly country?: string | null;
-            readonly timezoneUTCOffset?: number | null;
-            readonly bio?: string | null;
-            readonly website?: string | null;
-            readonly github?: string | null;
-            readonly twitter?: string | null;
-            readonly pronouns?: any | null;
-            readonly photoURL_50x50?: string | null;
-            readonly photoURL_350x350?: string | null;
-            readonly hasBeenEdited: boolean;
-        } | null;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly badges?: any | null | undefined;
+                  readonly affiliation?: string | null | undefined;
+                  readonly affiliationURL?: string | null | undefined;
+                  readonly country?: string | null | undefined;
+                  readonly timezoneUTCOffset?: number | null | undefined;
+                  readonly bio?: string | null | undefined;
+                  readonly website?: string | null | undefined;
+                  readonly github?: string | null | undefined;
+                  readonly twitter?: string | null | undefined;
+                  readonly pronouns?: any | null | undefined;
+                  readonly photoURL_50x50?: string | null | undefined;
+                  readonly photoURL_350x350?: string | null | undefined;
+                  readonly hasBeenEdited: boolean;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -38523,23 +38682,26 @@ export type UpdateProfileMutationVariables = Exact<{
 
 export type UpdateProfileMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_registrant_Profile_by_pk?: {
-        readonly __typename?: "registrant_Profile";
-        readonly registrantId: any;
-        readonly badges?: any | null;
-        readonly affiliation?: string | null;
-        readonly affiliationURL?: string | null;
-        readonly country?: string | null;
-        readonly timezoneUTCOffset?: number | null;
-        readonly bio?: string | null;
-        readonly website?: string | null;
-        readonly github?: string | null;
-        readonly twitter?: string | null;
-        readonly pronouns?: any | null;
-        readonly photoURL_50x50?: string | null;
-        readonly photoURL_350x350?: string | null;
-        readonly hasBeenEdited: boolean;
-    } | null;
+    readonly update_registrant_Profile_by_pk?:
+        | {
+              readonly __typename?: "registrant_Profile";
+              readonly registrantId: any;
+              readonly badges?: any | null | undefined;
+              readonly affiliation?: string | null | undefined;
+              readonly affiliationURL?: string | null | undefined;
+              readonly country?: string | null | undefined;
+              readonly timezoneUTCOffset?: number | null | undefined;
+              readonly bio?: string | null | undefined;
+              readonly website?: string | null | undefined;
+              readonly github?: string | null | undefined;
+              readonly twitter?: string | null | undefined;
+              readonly pronouns?: any | null | undefined;
+              readonly photoURL_50x50?: string | null | undefined;
+              readonly photoURL_350x350?: string | null | undefined;
+              readonly hasBeenEdited: boolean;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateRegistrantDisplayNameMutationVariables = Exact<{
@@ -38549,31 +38711,37 @@ export type UpdateRegistrantDisplayNameMutationVariables = Exact<{
 
 export type UpdateRegistrantDisplayNameMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_registrant_Registrant_by_pk?: {
-        readonly __typename?: "registrant_Registrant";
-        readonly id: any;
-        readonly userId?: string | null;
-        readonly conferenceId: any;
-        readonly displayName: string;
-        readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly badges?: any | null;
-            readonly affiliation?: string | null;
-            readonly affiliationURL?: string | null;
-            readonly country?: string | null;
-            readonly timezoneUTCOffset?: number | null;
-            readonly bio?: string | null;
-            readonly website?: string | null;
-            readonly github?: string | null;
-            readonly twitter?: string | null;
-            readonly pronouns?: any | null;
-            readonly photoURL_50x50?: string | null;
-            readonly photoURL_350x350?: string | null;
-            readonly hasBeenEdited: boolean;
-        } | null;
-    } | null;
+    readonly update_registrant_Registrant_by_pk?:
+        | {
+              readonly __typename?: "registrant_Registrant";
+              readonly id: any;
+              readonly userId?: string | null | undefined;
+              readonly conferenceId: any;
+              readonly displayName: string;
+              readonly conferenceRole: Registrant_RegistrantRole_Enum;
+              readonly profile?:
+                  | {
+                        readonly __typename?: "registrant_Profile";
+                        readonly registrantId: any;
+                        readonly badges?: any | null | undefined;
+                        readonly affiliation?: string | null | undefined;
+                        readonly affiliationURL?: string | null | undefined;
+                        readonly country?: string | null | undefined;
+                        readonly timezoneUTCOffset?: number | null | undefined;
+                        readonly bio?: string | null | undefined;
+                        readonly website?: string | null | undefined;
+                        readonly github?: string | null | undefined;
+                        readonly twitter?: string | null | undefined;
+                        readonly pronouns?: any | null | undefined;
+                        readonly photoURL_50x50?: string | null | undefined;
+                        readonly photoURL_350x350?: string | null | undefined;
+                        readonly hasBeenEdited: boolean;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type SubmitProfilePhotoMutationVariables = Exact<{
@@ -38583,25 +38751,31 @@ export type SubmitProfilePhotoMutationVariables = Exact<{
 
 export type SubmitProfilePhotoMutation = {
     readonly __typename?: "mutation_root";
-    readonly updateProfilePhoto?: {
-        readonly __typename?: "UpdateProfilePhotoResponse";
-        readonly ok: boolean;
-        readonly photoURL_350x350?: string | null;
-        readonly photoURL_50x50?: string | null;
-    } | null;
+    readonly updateProfilePhoto?:
+        | {
+              readonly __typename?: "UpdateProfilePhotoResponse";
+              readonly ok: boolean;
+              readonly photoURL_350x350?: string | null | undefined;
+              readonly photoURL_50x50?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type MyBackstages_EventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
     readonly conferenceId: any;
-    readonly itemId?: any | null;
-    readonly endTime?: any | null;
+    readonly itemId?: any | null | undefined;
+    readonly endTime?: any | null | undefined;
     readonly intendedRoomModeName: Room_Mode_Enum;
     readonly name: string;
     readonly roomId: any;
     readonly startTime: any;
-    readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+    readonly item?:
+        | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+        | null
+        | undefined;
     readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
 };
 
@@ -38615,13 +38789,16 @@ export type RegistrantEventsWithBackstagesQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly conferenceId: any;
-        readonly itemId?: any | null;
-        readonly endTime?: any | null;
+        readonly itemId?: any | null | undefined;
+        readonly endTime?: any | null | undefined;
         readonly intendedRoomModeName: Room_Mode_Enum;
         readonly name: string;
         readonly roomId: any;
         readonly startTime: any;
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
     }>;
 };
@@ -38642,13 +38819,13 @@ export type ProfilePage_ItemsQuery = {
             readonly id: any;
             readonly itemId: any;
             readonly roleName: string;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
             readonly person: {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
                 readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
+                readonly affiliation?: string | null | undefined;
+                readonly registrantId?: any | null | undefined;
                 readonly conferenceId: any;
             };
         }>;
@@ -38682,9 +38859,12 @@ export type MyRecordingsQuery = {
             readonly __typename?: "video_VonageRoomRecording";
             readonly id: any;
             readonly startedAt: any;
-            readonly endedAt?: any | null;
-            readonly s3Url?: string | null;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
+            readonly endedAt?: any | null | undefined;
+            readonly s3Url?: string | null | undefined;
+            readonly room?:
+                | { readonly __typename?: "room_Room"; readonly id: any; readonly name: string }
+                | null
+                | undefined;
         };
     }>;
 };
@@ -38698,27 +38878,30 @@ export type SelectRegistrantsQuery = {
     readonly registrant_Registrant: ReadonlyArray<{
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
-        readonly userId?: string | null;
+        readonly userId?: string | null | undefined;
         readonly conferenceId: any;
         readonly displayName: string;
         readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly badges?: any | null;
-            readonly affiliation?: string | null;
-            readonly affiliationURL?: string | null;
-            readonly country?: string | null;
-            readonly timezoneUTCOffset?: number | null;
-            readonly bio?: string | null;
-            readonly website?: string | null;
-            readonly github?: string | null;
-            readonly twitter?: string | null;
-            readonly pronouns?: any | null;
-            readonly photoURL_50x50?: string | null;
-            readonly photoURL_350x350?: string | null;
-            readonly hasBeenEdited: boolean;
-        } | null;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly badges?: any | null | undefined;
+                  readonly affiliation?: string | null | undefined;
+                  readonly affiliationURL?: string | null | undefined;
+                  readonly country?: string | null | undefined;
+                  readonly timezoneUTCOffset?: number | null | undefined;
+                  readonly bio?: string | null | undefined;
+                  readonly website?: string | null | undefined;
+                  readonly github?: string | null | undefined;
+                  readonly twitter?: string | null | undefined;
+                  readonly pronouns?: any | null | undefined;
+                  readonly photoURL_50x50?: string | null | undefined;
+                  readonly photoURL_350x350?: string | null | undefined;
+                  readonly hasBeenEdited: boolean;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -38732,27 +38915,30 @@ export type SearchRegistrantsQuery = {
     readonly registrant_Registrant: ReadonlyArray<{
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
-        readonly userId?: string | null;
+        readonly userId?: string | null | undefined;
         readonly conferenceId: any;
         readonly displayName: string;
         readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly badges?: any | null;
-            readonly affiliation?: string | null;
-            readonly affiliationURL?: string | null;
-            readonly country?: string | null;
-            readonly timezoneUTCOffset?: number | null;
-            readonly bio?: string | null;
-            readonly website?: string | null;
-            readonly github?: string | null;
-            readonly twitter?: string | null;
-            readonly pronouns?: any | null;
-            readonly photoURL_50x50?: string | null;
-            readonly photoURL_350x350?: string | null;
-            readonly hasBeenEdited: boolean;
-        } | null;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly badges?: any | null | undefined;
+                  readonly affiliation?: string | null | undefined;
+                  readonly affiliationURL?: string | null | undefined;
+                  readonly country?: string | null | undefined;
+                  readonly timezoneUTCOffset?: number | null | undefined;
+                  readonly bio?: string | null | undefined;
+                  readonly website?: string | null | undefined;
+                  readonly github?: string | null | undefined;
+                  readonly twitter?: string | null | undefined;
+                  readonly pronouns?: any | null | undefined;
+                  readonly photoURL_50x50?: string | null | undefined;
+                  readonly photoURL_350x350?: string | null | undefined;
+                  readonly hasBeenEdited: boolean;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -38764,35 +38950,40 @@ export type Registrant_RegistrantCreateRoomMutationVariables = Exact<{
 
 export type Registrant_RegistrantCreateRoomMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_room_Room_one?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
-        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-    } | null;
+    readonly insert_room_Room_one?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly name: string;
+              readonly priority: number;
+              readonly managementModeName: Room_ManagementMode_Enum;
+              readonly itemId?: any | null | undefined;
+              readonly item?:
+                  | {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly itemPeople: ReadonlyArray<{
+                            readonly __typename?: "content_ItemProgramPerson";
+                            readonly id: any;
+                            readonly roleName: string;
+                            readonly person: {
+                                readonly __typename?: "collection_ProgramPerson";
+                                readonly id: any;
+                                readonly registrantId?: any | null | undefined;
+                            };
+                        }>;
+                    }
+                  | null
+                  | undefined;
+              readonly chat?:
+                  | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+                  | null
+                  | undefined;
+              readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type Room_GetEventsQueryVariables = Exact<{
@@ -38810,59 +39001,68 @@ export type Room_GetEventsQuery = {
         readonly conferenceId: any;
         readonly startTime: any;
         readonly name: string;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly streamTextEventId?: string | null;
-        readonly shufflePeriod?: {
-            readonly __typename?: "room_ShufflePeriod";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly endAt: any;
-            readonly maxRegistrantsPerRoom: number;
-            readonly name: string;
-            readonly roomDurationMinutes: number;
-            readonly startAt: any;
-            readonly targetRegistrantsPerRoom: number;
-            readonly waitRoomMaxDurationSeconds: number;
-            readonly queueEntries: ReadonlyArray<{
-                readonly __typename?: "room_ShuffleQueueEntry";
-                readonly id: any;
-                readonly registrantId: any;
-                readonly created_at: any;
-                readonly updated_at: any;
-                readonly isExpired: boolean;
-                readonly shufflePeriodId: any;
-                readonly shuffleRoom?: {
-                    readonly __typename?: "room_ShuffleRoom";
-                    readonly id: any;
-                    readonly startedAt: any;
-                    readonly isEnded: boolean;
-                    readonly roomId: any;
-                } | null;
-            }>;
-        } | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly typeName: Content_ItemType_Enum;
-            readonly chatId?: any | null;
-            readonly videoElements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly name: string;
-                readonly typeName: Content_ElementType_Enum;
-                readonly itemId: any;
-            }>;
-            readonly zoomItems: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly data: any;
-                readonly name: string;
-            }>;
-        } | null;
+        readonly itemId?: any | null | undefined;
+        readonly exhibitionId?: any | null | undefined;
+        readonly streamTextEventId?: string | null | undefined;
+        readonly shufflePeriod?:
+            | {
+                  readonly __typename?: "room_ShufflePeriod";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly endAt: any;
+                  readonly maxRegistrantsPerRoom: number;
+                  readonly name: string;
+                  readonly roomDurationMinutes: number;
+                  readonly startAt: any;
+                  readonly targetRegistrantsPerRoom: number;
+                  readonly waitRoomMaxDurationSeconds: number;
+                  readonly queueEntries: ReadonlyArray<{
+                      readonly __typename?: "room_ShuffleQueueEntry";
+                      readonly id: any;
+                      readonly registrantId: any;
+                      readonly created_at: any;
+                      readonly updated_at: any;
+                      readonly isExpired: boolean;
+                      readonly shufflePeriodId: any;
+                      readonly shuffleRoom?:
+                          | {
+                                readonly __typename?: "room_ShuffleRoom";
+                                readonly id: any;
+                                readonly startedAt: any;
+                                readonly isEnded: boolean;
+                                readonly roomId: any;
+                            }
+                          | null
+                          | undefined;
+                  }>;
+              }
+            | null
+            | undefined;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly title: string;
+                  readonly typeName: Content_ItemType_Enum;
+                  readonly chatId?: any | null | undefined;
+                  readonly videoElements: ReadonlyArray<{
+                      readonly __typename?: "content_Element";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly typeName: Content_ElementType_Enum;
+                      readonly itemId: any;
+                  }>;
+                  readonly zoomItems: ReadonlyArray<{
+                      readonly __typename?: "content_Element";
+                      readonly id: any;
+                      readonly data: any;
+                      readonly name: string;
+                  }>;
+              }
+            | null
+            | undefined;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
@@ -38872,8 +39072,8 @@ export type Room_GetEventsQuery = {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
                 readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
+                readonly affiliation?: string | null | undefined;
+                readonly registrantId?: any | null | undefined;
             };
         }>;
     }>;
@@ -38886,59 +39086,68 @@ export type Room_EventSummaryFragment = {
     readonly conferenceId: any;
     readonly startTime: any;
     readonly name: string;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly intendedRoomModeName: Room_Mode_Enum;
-    readonly itemId?: any | null;
-    readonly exhibitionId?: any | null;
-    readonly streamTextEventId?: string | null;
-    readonly shufflePeriod?: {
-        readonly __typename?: "room_ShufflePeriod";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly endAt: any;
-        readonly maxRegistrantsPerRoom: number;
-        readonly name: string;
-        readonly roomDurationMinutes: number;
-        readonly startAt: any;
-        readonly targetRegistrantsPerRoom: number;
-        readonly waitRoomMaxDurationSeconds: number;
-        readonly queueEntries: ReadonlyArray<{
-            readonly __typename?: "room_ShuffleQueueEntry";
-            readonly id: any;
-            readonly registrantId: any;
-            readonly created_at: any;
-            readonly updated_at: any;
-            readonly isExpired: boolean;
-            readonly shufflePeriodId: any;
-            readonly shuffleRoom?: {
-                readonly __typename?: "room_ShuffleRoom";
-                readonly id: any;
-                readonly startedAt: any;
-                readonly isEnded: boolean;
-                readonly roomId: any;
-            } | null;
-        }>;
-    } | null;
-    readonly item?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
-        readonly videoElements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly name: string;
-            readonly typeName: Content_ElementType_Enum;
-            readonly itemId: any;
-        }>;
-        readonly zoomItems: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly data: any;
-            readonly name: string;
-        }>;
-    } | null;
+    readonly itemId?: any | null | undefined;
+    readonly exhibitionId?: any | null | undefined;
+    readonly streamTextEventId?: string | null | undefined;
+    readonly shufflePeriod?:
+        | {
+              readonly __typename?: "room_ShufflePeriod";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly endAt: any;
+              readonly maxRegistrantsPerRoom: number;
+              readonly name: string;
+              readonly roomDurationMinutes: number;
+              readonly startAt: any;
+              readonly targetRegistrantsPerRoom: number;
+              readonly waitRoomMaxDurationSeconds: number;
+              readonly queueEntries: ReadonlyArray<{
+                  readonly __typename?: "room_ShuffleQueueEntry";
+                  readonly id: any;
+                  readonly registrantId: any;
+                  readonly created_at: any;
+                  readonly updated_at: any;
+                  readonly isExpired: boolean;
+                  readonly shufflePeriodId: any;
+                  readonly shuffleRoom?:
+                      | {
+                            readonly __typename?: "room_ShuffleRoom";
+                            readonly id: any;
+                            readonly startedAt: any;
+                            readonly isEnded: boolean;
+                            readonly roomId: any;
+                        }
+                      | null
+                      | undefined;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly item?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly title: string;
+              readonly typeName: Content_ItemType_Enum;
+              readonly chatId?: any | null | undefined;
+              readonly videoElements: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly itemId: any;
+              }>;
+              readonly zoomItems: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly id: any;
+                  readonly data: any;
+                  readonly name: string;
+              }>;
+          }
+        | null
+        | undefined;
     readonly eventPeople: ReadonlyArray<{
         readonly __typename?: "schedule_EventProgramPerson";
         readonly id: any;
@@ -38948,8 +39157,8 @@ export type Room_EventSummaryFragment = {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
+            readonly affiliation?: string | null | undefined;
+            readonly registrantId?: any | null | undefined;
         };
     }>;
 };
@@ -38958,7 +39167,10 @@ export type Room_GetDefaultVideoRoomBackendQueryVariables = Exact<{ [key: string
 
 export type Room_GetDefaultVideoRoomBackendQuery = {
     readonly __typename?: "query_root";
-    readonly system_Configuration_by_pk?: { readonly __typename?: "system_Configuration"; readonly value: any } | null;
+    readonly system_Configuration_by_pk?:
+        | { readonly __typename?: "system_Configuration"; readonly value: any }
+        | null
+        | undefined;
 };
 
 export type AddParticipantToRoomMutationVariables = Exact<{
@@ -38968,7 +39180,10 @@ export type AddParticipantToRoomMutationVariables = Exact<{
 
 export type AddParticipantToRoomMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_room_RoomMembership_one?: { readonly __typename?: "room_RoomMembership"; readonly id: any } | null;
+    readonly insert_room_RoomMembership_one?:
+        | { readonly __typename?: "room_RoomMembership"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
@@ -38978,46 +39193,52 @@ export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
 
 export type RoomPage_GetRoomDetailsQuery = {
     readonly __typename?: "query_root";
-    readonly room_Room_by_pk?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
-        readonly isProgramRoom?: boolean | null;
-        readonly publicVonageSessionId?: string | null;
-        readonly chatId?: any | null;
-        readonly itemId?: any | null;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly backendName?: Room_Backend_Enum | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly typeName: Content_ItemType_Enum;
-            readonly title: string;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly data: any;
-                readonly layoutData?: any | null;
-                readonly typeName: Content_ElementType_Enum;
-                readonly updatedAt: any;
-            }>;
-            readonly selfPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-            }>;
-        } | null;
-        readonly shuffleRooms: ReadonlyArray<{
-            readonly __typename?: "room_ShuffleRoom";
-            readonly id: any;
-            readonly startedAt: any;
-            readonly durationMinutes: number;
-            readonly reshuffleUponEnd: boolean;
-            readonly shufflePeriodId: any;
-            readonly roomId: any;
-        }>;
-    } | null;
+    readonly room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly name: string;
+              readonly currentModeName: Room_Mode_Enum;
+              readonly isProgramRoom?: boolean | null | undefined;
+              readonly publicVonageSessionId?: string | null | undefined;
+              readonly chatId?: any | null | undefined;
+              readonly itemId?: any | null | undefined;
+              readonly managementModeName: Room_ManagementMode_Enum;
+              readonly backendName?: Room_Backend_Enum | null | undefined;
+              readonly item?:
+                  | {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly typeName: Content_ItemType_Enum;
+                        readonly title: string;
+                        readonly elements: ReadonlyArray<{
+                            readonly __typename?: "content_Element";
+                            readonly id: any;
+                            readonly data: any;
+                            readonly layoutData?: any | null | undefined;
+                            readonly typeName: Content_ElementType_Enum;
+                            readonly updatedAt: any;
+                        }>;
+                        readonly selfPeople: ReadonlyArray<{
+                            readonly __typename?: "content_ItemProgramPerson";
+                            readonly id: any;
+                            readonly roleName: string;
+                        }>;
+                    }
+                  | null
+                  | undefined;
+              readonly shuffleRooms: ReadonlyArray<{
+                  readonly __typename?: "room_ShuffleRoom";
+                  readonly id: any;
+                  readonly startedAt: any;
+                  readonly durationMinutes: number;
+                  readonly reshuffleUponEnd: boolean;
+                  readonly shufflePeriodId: any;
+                  readonly roomId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type RoomPage_RoomDetailsFragment = {
@@ -39025,31 +39246,34 @@ export type RoomPage_RoomDetailsFragment = {
     readonly id: any;
     readonly name: string;
     readonly currentModeName: Room_Mode_Enum;
-    readonly isProgramRoom?: boolean | null;
-    readonly publicVonageSessionId?: string | null;
-    readonly chatId?: any | null;
-    readonly itemId?: any | null;
+    readonly isProgramRoom?: boolean | null | undefined;
+    readonly publicVonageSessionId?: string | null | undefined;
+    readonly chatId?: any | null | undefined;
+    readonly itemId?: any | null | undefined;
     readonly managementModeName: Room_ManagementMode_Enum;
-    readonly backendName?: Room_Backend_Enum | null;
-    readonly item?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly typeName: Content_ItemType_Enum;
-        readonly title: string;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly data: any;
-            readonly layoutData?: any | null;
-            readonly typeName: Content_ElementType_Enum;
-            readonly updatedAt: any;
-        }>;
-        readonly selfPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly roleName: string;
-        }>;
-    } | null;
+    readonly backendName?: Room_Backend_Enum | null | undefined;
+    readonly item?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly typeName: Content_ItemType_Enum;
+              readonly title: string;
+              readonly elements: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly id: any;
+                  readonly data: any;
+                  readonly layoutData?: any | null | undefined;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly updatedAt: any;
+              }>;
+              readonly selfPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly roleName: string;
+              }>;
+          }
+        | null
+        | undefined;
     readonly shuffleRooms: ReadonlyArray<{
         readonly __typename?: "room_ShuffleRoom";
         readonly id: any;
@@ -39087,7 +39311,7 @@ export type RoomPage_GetRoomChannelStackQuery = {
         readonly __typename?: "video_ChannelStack";
         readonly cloudFrontDomain: string;
         readonly endpointUri: string;
-        readonly roomId?: any | null;
+        readonly roomId?: any | null | undefined;
         readonly id: any;
     }>;
 };
@@ -39096,7 +39320,7 @@ export type RoomPage_RoomChannelStackFragment = {
     readonly __typename?: "video_ChannelStack";
     readonly cloudFrontDomain: string;
     readonly endpointUri: string;
-    readonly roomId?: any | null;
+    readonly roomId?: any | null | undefined;
     readonly id: any;
 };
 
@@ -39106,16 +39330,22 @@ export type GetEventVonageDetailsQueryVariables = Exact<{
 
 export type GetEventVonageDetailsQuery = {
     readonly __typename?: "query_root";
-    readonly schedule_Event_by_pk?: {
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly eventVonageSession?: {
-            readonly __typename?: "video_EventVonageSession";
-            readonly sessionId: string;
-            readonly eventId: any;
-            readonly id: any;
-        } | null;
-    } | null;
+    readonly schedule_Event_by_pk?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly id: any;
+              readonly eventVonageSession?:
+                  | {
+                        readonly __typename?: "video_EventVonageSession";
+                        readonly sessionId: string;
+                        readonly eventId: any;
+                        readonly id: any;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type RoomSponsorContent_GetElementsQueryVariables = Exact<{
@@ -39135,7 +39365,7 @@ export type RoomSponsorContent_GetElementsQuery = {
             readonly isHidden: boolean;
             readonly typeName: Content_ElementType_Enum;
             readonly data: any;
-            readonly layoutData?: any | null;
+            readonly layoutData?: any | null | undefined;
             readonly itemId: any;
         }>;
     }>;
@@ -39152,7 +39382,7 @@ export type RoomSponsorContent_ItemDataFragment = {
         readonly isHidden: boolean;
         readonly typeName: Content_ElementType_Enum;
         readonly data: any;
-        readonly layoutData?: any | null;
+        readonly layoutData?: any | null | undefined;
         readonly itemId: any;
     }>;
 };
@@ -39164,7 +39394,7 @@ export type RoomSponsorContent_ElementDataFragment = {
     readonly isHidden: boolean;
     readonly typeName: Content_ElementType_Enum;
     readonly data: any;
-    readonly layoutData?: any | null;
+    readonly layoutData?: any | null | undefined;
     readonly itemId: any;
 };
 
@@ -39211,45 +39441,54 @@ export type ImmediateSwitch_GetElementsQueryVariables = Exact<{
 
 export type ImmediateSwitch_GetElementsQuery = {
     readonly __typename?: "query_root";
-    readonly schedule_Event_by_pk?: {
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly name: string;
-                readonly itemId: any;
-                readonly typeName: Content_ElementType_Enum;
-            }>;
-        } | null;
-        readonly exhibition?: {
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly items: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly itemId: any;
-                readonly item: {
-                    readonly __typename?: "content_Item";
-                    readonly id: any;
-                    readonly title: string;
-                    readonly elements: ReadonlyArray<{
-                        readonly __typename?: "content_Element";
+    readonly schedule_Event_by_pk?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly id: any;
+              readonly itemId?: any | null | undefined;
+              readonly exhibitionId?: any | null | undefined;
+              readonly item?:
+                  | {
+                        readonly __typename?: "content_Item";
                         readonly id: any;
-                        readonly name: string;
-                        readonly itemId: any;
-                        readonly typeName: Content_ElementType_Enum;
-                    }>;
-                };
-            }>;
-        } | null;
-    } | null;
+                        readonly title: string;
+                        readonly elements: ReadonlyArray<{
+                            readonly __typename?: "content_Element";
+                            readonly id: any;
+                            readonly name: string;
+                            readonly itemId: any;
+                            readonly typeName: Content_ElementType_Enum;
+                        }>;
+                    }
+                  | null
+                  | undefined;
+              readonly exhibition?:
+                  | {
+                        readonly __typename?: "collection_Exhibition";
+                        readonly id: any;
+                        readonly items: ReadonlyArray<{
+                            readonly __typename?: "content_ItemExhibition";
+                            readonly id: any;
+                            readonly itemId: any;
+                            readonly item: {
+                                readonly __typename?: "content_Item";
+                                readonly id: any;
+                                readonly title: string;
+                                readonly elements: ReadonlyArray<{
+                                    readonly __typename?: "content_Element";
+                                    readonly id: any;
+                                    readonly name: string;
+                                    readonly itemId: any;
+                                    readonly typeName: Content_ElementType_Enum;
+                                }>;
+                            };
+                        }>;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type ImmediateSwitch_CreateMutationVariables = Exact<{
@@ -39260,10 +39499,10 @@ export type ImmediateSwitch_CreateMutationVariables = Exact<{
 
 export type ImmediateSwitch_CreateMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_video_ImmediateSwitch_one?: {
-        readonly __typename?: "video_ImmediateSwitch";
-        readonly id: any;
-    } | null;
+    readonly insert_video_ImmediateSwitch_one?:
+        | { readonly __typename?: "video_ImmediateSwitch"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type LiveIndicator_GetLatestQueryVariables = Exact<{
@@ -39276,8 +39515,8 @@ export type LiveIndicator_GetLatestQuery = {
         readonly __typename?: "video_ImmediateSwitch";
         readonly id: any;
         readonly data: any;
-        readonly executedAt?: any | null;
-        readonly eventId?: any | null;
+        readonly executedAt?: any | null | undefined;
+        readonly eventId?: any | null | undefined;
     }>;
 };
 
@@ -39287,11 +39526,10 @@ export type LiveIndicator_GetElementQueryVariables = Exact<{
 
 export type LiveIndicator_GetElementQuery = {
     readonly __typename?: "query_root";
-    readonly content_Element_by_pk?: {
-        readonly __typename?: "content_Element";
-        readonly id: any;
-        readonly data: any;
-    } | null;
+    readonly content_Element_by_pk?:
+        | { readonly __typename?: "content_Element"; readonly id: any; readonly data: any }
+        | null
+        | undefined;
 };
 
 export type EnableBackstageStreamPreviewQueryVariables = Exact<{
@@ -39300,12 +39538,15 @@ export type EnableBackstageStreamPreviewQueryVariables = Exact<{
 
 export type EnableBackstageStreamPreviewQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Configuration_by_pk?: {
-        readonly __typename?: "conference_Configuration";
-        readonly key: Conference_ConfigurationKey_Enum;
-        readonly conferenceId: any;
-        readonly value: any;
-    } | null;
+    readonly conference_Configuration_by_pk?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly conferenceId: any;
+              readonly value: any;
+          }
+        | null
+        | undefined;
 };
 
 export type GetEventDetailsQueryVariables = Exact<{
@@ -39314,33 +39555,39 @@ export type GetEventDetailsQueryVariables = Exact<{
 
 export type GetEventDetailsQuery = {
     readonly __typename?: "query_root";
-    readonly schedule_Event_by_pk?: {
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly startTime: any;
-        readonly name: string;
-        readonly durationSeconds: number;
-        readonly endTime?: any | null;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly eventVonageSession?: {
-            readonly __typename?: "video_EventVonageSession";
-            readonly id: any;
-            readonly sessionId: string;
-            readonly eventId: any;
-        } | null;
-        readonly eventPeople: ReadonlyArray<{
-            readonly __typename?: "schedule_EventProgramPerson";
-            readonly id: any;
-            readonly personId: any;
-            readonly roleName: Schedule_EventProgramPersonRole_Enum;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly registrantId?: any | null;
-            };
-        }>;
-    } | null;
+    readonly schedule_Event_by_pk?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly startTime: any;
+              readonly name: string;
+              readonly durationSeconds: number;
+              readonly endTime?: any | null | undefined;
+              readonly intendedRoomModeName: Room_Mode_Enum;
+              readonly eventVonageSession?:
+                  | {
+                        readonly __typename?: "video_EventVonageSession";
+                        readonly id: any;
+                        readonly sessionId: string;
+                        readonly eventId: any;
+                    }
+                  | null
+                  | undefined;
+              readonly eventPeople: ReadonlyArray<{
+                  readonly __typename?: "schedule_EventProgramPerson";
+                  readonly id: any;
+                  readonly personId: any;
+                  readonly roleName: Schedule_EventProgramPersonRole_Enum;
+                  readonly person: {
+                      readonly __typename?: "collection_ProgramPerson";
+                      readonly id: any;
+                      readonly registrantId?: any | null | undefined;
+                  };
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type RoomEventDetailsFragment = {
@@ -39350,14 +39597,17 @@ export type RoomEventDetailsFragment = {
     readonly startTime: any;
     readonly name: string;
     readonly durationSeconds: number;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly intendedRoomModeName: Room_Mode_Enum;
-    readonly eventVonageSession?: {
-        readonly __typename?: "video_EventVonageSession";
-        readonly id: any;
-        readonly sessionId: string;
-        readonly eventId: any;
-    } | null;
+    readonly eventVonageSession?:
+        | {
+              readonly __typename?: "video_EventVonageSession";
+              readonly id: any;
+              readonly sessionId: string;
+              readonly eventId: any;
+          }
+        | null
+        | undefined;
     readonly eventPeople: ReadonlyArray<{
         readonly __typename?: "schedule_EventProgramPerson";
         readonly id: any;
@@ -39366,7 +39616,7 @@ export type RoomEventDetailsFragment = {
         readonly person: {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
-            readonly registrantId?: any | null;
+            readonly registrantId?: any | null | undefined;
         };
     }>;
 };
@@ -39390,13 +39640,16 @@ export type VideoPlayer_GetElementQueryVariables = Exact<{
 
 export type VideoPlayer_GetElementQuery = {
     readonly __typename?: "query_root";
-    readonly content_Element_by_pk?: {
-        readonly __typename?: "content_Element";
-        readonly id: any;
-        readonly typeName: Content_ElementType_Enum;
-        readonly data: any;
-        readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
-    } | null;
+    readonly content_Element_by_pk?:
+        | {
+              readonly __typename?: "content_Element";
+              readonly id: any;
+              readonly typeName: Content_ElementType_Enum;
+              readonly data: any;
+              readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
+          }
+        | null
+        | undefined;
 };
 
 export type GetRoomChimeDataMutationVariables = Exact<{
@@ -39406,12 +39659,15 @@ export type GetRoomChimeDataMutationVariables = Exact<{
 
 export type GetRoomChimeDataMutation = {
     readonly __typename?: "mutation_root";
-    readonly joinRoomChimeSession?: {
-        readonly __typename?: "JoinRoomChimeSessionOutput";
-        readonly registrant?: any | null;
-        readonly meeting?: any | null;
-        readonly message?: string | null;
-    } | null;
+    readonly joinRoomChimeSession?:
+        | {
+              readonly __typename?: "JoinRoomChimeSessionOutput";
+              readonly registrant?: any | null | undefined;
+              readonly meeting?: any | null | undefined;
+              readonly message?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type GetEventVonageTokenMutationVariables = Exact<{
@@ -39421,11 +39677,14 @@ export type GetEventVonageTokenMutationVariables = Exact<{
 
 export type GetEventVonageTokenMutation = {
     readonly __typename?: "mutation_root";
-    readonly joinEventVonageSession?: {
-        readonly __typename?: "JoinEventVonageSessionOutput";
-        readonly accessToken?: string | null;
-        readonly isRecorded?: boolean | null;
-    } | null;
+    readonly joinEventVonageSession?:
+        | {
+              readonly __typename?: "JoinEventVonageSessionOutput";
+              readonly accessToken?: string | null | undefined;
+              readonly isRecorded?: boolean | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type GetRoomVonageTokenMutationVariables = Exact<{
@@ -39435,12 +39694,15 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 
 export type GetRoomVonageTokenMutation = {
     readonly __typename?: "mutation_root";
-    readonly joinRoomVonageSession?: {
-        readonly __typename?: "JoinRoomVonageSessionOutput";
-        readonly accessToken?: string | null;
-        readonly sessionId?: string | null;
-        readonly isRecorded?: boolean | null;
-    } | null;
+    readonly joinRoomVonageSession?:
+        | {
+              readonly __typename?: "JoinRoomVonageSessionOutput";
+              readonly accessToken?: string | null | undefined;
+              readonly sessionId?: string | null | undefined;
+              readonly isRecorded?: boolean | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type GetRoomVonageSessionIdQueryVariables = Exact<{
@@ -39449,11 +39711,14 @@ export type GetRoomVonageSessionIdQueryVariables = Exact<{
 
 export type GetRoomVonageSessionIdQuery = {
     readonly __typename?: "query_root";
-    readonly room_Room_by_pk?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly publicVonageSessionId?: string | null;
-    } | null;
+    readonly room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly publicVonageSessionId?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type GetEventVideosQueryVariables = Exact<{
@@ -39462,46 +39727,55 @@ export type GetEventVideosQueryVariables = Exact<{
 
 export type GetEventVideosQuery = {
     readonly __typename?: "query_root";
-    readonly schedule_Event_by_pk?: {
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly name: string;
-                readonly itemId: any;
-                readonly typeName: Content_ElementType_Enum;
-            }>;
-        } | null;
-        readonly exhibition?: {
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly items: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly priority?: number | null;
-                readonly exhibitionId: any;
-                readonly itemId: any;
-                readonly item: {
-                    readonly __typename?: "content_Item";
-                    readonly id: any;
-                    readonly title: string;
-                    readonly elements: ReadonlyArray<{
-                        readonly __typename?: "content_Element";
+    readonly schedule_Event_by_pk?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly id: any;
+              readonly itemId?: any | null | undefined;
+              readonly item?:
+                  | {
+                        readonly __typename?: "content_Item";
                         readonly id: any;
-                        readonly name: string;
-                        readonly itemId: any;
-                        readonly typeName: Content_ElementType_Enum;
-                    }>;
-                };
-            }>;
-        } | null;
-    } | null;
+                        readonly title: string;
+                        readonly elements: ReadonlyArray<{
+                            readonly __typename?: "content_Element";
+                            readonly id: any;
+                            readonly name: string;
+                            readonly itemId: any;
+                            readonly typeName: Content_ElementType_Enum;
+                        }>;
+                    }
+                  | null
+                  | undefined;
+              readonly exhibition?:
+                  | {
+                        readonly __typename?: "collection_Exhibition";
+                        readonly id: any;
+                        readonly items: ReadonlyArray<{
+                            readonly __typename?: "content_ItemExhibition";
+                            readonly id: any;
+                            readonly priority?: number | null | undefined;
+                            readonly exhibitionId: any;
+                            readonly itemId: any;
+                            readonly item: {
+                                readonly __typename?: "content_Item";
+                                readonly id: any;
+                                readonly title: string;
+                                readonly elements: ReadonlyArray<{
+                                    readonly __typename?: "content_Element";
+                                    readonly id: any;
+                                    readonly name: string;
+                                    readonly itemId: any;
+                                    readonly typeName: Content_ElementType_Enum;
+                                }>;
+                            };
+                        }>;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type GetRoomVideosQueryVariables = Exact<{
@@ -39510,20 +39784,26 @@ export type GetRoomVideosQueryVariables = Exact<{
 
 export type GetRoomVideosQuery = {
     readonly __typename?: "query_root";
-    readonly room_Room_by_pk?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly name: string;
-            }>;
-        } | null;
-    } | null;
+    readonly room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly item?:
+                  | {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly title: string;
+                        readonly elements: ReadonlyArray<{
+                            readonly __typename?: "content_Element";
+                            readonly id: any;
+                            readonly name: string;
+                        }>;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type VonageVideoPlaybackContext_InsertCommandMutationVariables = Exact<{
@@ -39532,10 +39812,10 @@ export type VonageVideoPlaybackContext_InsertCommandMutationVariables = Exact<{
 
 export type VonageVideoPlaybackContext_InsertCommandMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_video_VonageVideoPlaybackCommand_one?: {
-        readonly __typename?: "video_VonageVideoPlaybackCommand";
-        readonly id: any;
-    } | null;
+    readonly insert_video_VonageVideoPlaybackCommand_one?:
+        | { readonly __typename?: "video_VonageVideoPlaybackCommand"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type VonageVideoPlaybackContext_GetLatestCommandQueryVariables = Exact<{
@@ -39548,7 +39828,7 @@ export type VonageVideoPlaybackContext_GetLatestCommandQuery = {
         readonly __typename?: "video_VonageVideoPlaybackCommand";
         readonly id: any;
         readonly command: any;
-        readonly createdByRegistrantId?: any | null;
+        readonly createdByRegistrantId?: any | null | undefined;
         readonly createdAt: any;
     }>;
 };
@@ -39559,12 +39839,15 @@ export type VonageVideoPlaybackContext_GetElementQueryVariables = Exact<{
 
 export type VonageVideoPlaybackContext_GetElementQuery = {
     readonly __typename?: "query_root";
-    readonly content_Element_by_pk?: {
-        readonly __typename?: "content_Element";
-        readonly id: any;
-        readonly typeName: Content_ElementType_Enum;
-        readonly data: any;
-    } | null;
+    readonly content_Element_by_pk?:
+        | {
+              readonly __typename?: "content_Element";
+              readonly id: any;
+              readonly typeName: Content_ElementType_Enum;
+              readonly data: any;
+          }
+        | null
+        | undefined;
 };
 
 export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables = Exact<{
@@ -39576,7 +39859,7 @@ export type VonageLayoutProvider_GetLatestVonageSessionLayoutQuery = {
     readonly video_VonageSessionLayout: ReadonlyArray<{
         readonly __typename?: "video_VonageSessionLayout";
         readonly id: any;
-        readonly layoutData?: any | null;
+        readonly layoutData?: any | null | undefined;
         readonly created_at: any;
         readonly vonageSessionId: string;
     }>;
@@ -39590,10 +39873,10 @@ export type InsertVonageSessionLayoutMutationVariables = Exact<{
 
 export type InsertVonageSessionLayoutMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_video_VonageSessionLayout?: {
-        readonly __typename?: "video_VonageSessionLayout_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly insert_video_VonageSessionLayout?:
+        | { readonly __typename?: "video_VonageSessionLayout_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type DeleteEventParticipantMutationVariables = Exact<{
@@ -39603,10 +39886,16 @@ export type DeleteEventParticipantMutationVariables = Exact<{
 
 export type DeleteEventParticipantMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_schedule_EventProgramPerson?: {
-        readonly __typename?: "schedule_EventProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_EventProgramPerson"; readonly id: any }>;
-    } | null;
+    readonly delete_schedule_EventProgramPerson?:
+        | {
+              readonly __typename?: "schedule_EventProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "schedule_EventProgramPerson";
+                  readonly id: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type SaveVonageRoomRecordingMutationVariables = Exact<{
@@ -39616,13 +39905,16 @@ export type SaveVonageRoomRecordingMutationVariables = Exact<{
 
 export type SaveVonageRoomRecordingMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_registrant_SavedVonageRoomRecording_one?: {
-        readonly __typename?: "registrant_SavedVonageRoomRecording";
-        readonly id: any;
-        readonly recordingId: any;
-        readonly registrantId: any;
-        readonly isHidden: boolean;
-    } | null;
+    readonly insert_registrant_SavedVonageRoomRecording_one?:
+        | {
+              readonly __typename?: "registrant_SavedVonageRoomRecording";
+              readonly id: any;
+              readonly recordingId: any;
+              readonly registrantId: any;
+              readonly isHidden: boolean;
+          }
+        | null
+        | undefined;
 };
 
 export type ToggleVonageRecordingStateMutationVariables = Exact<{
@@ -39632,11 +39924,14 @@ export type ToggleVonageRecordingStateMutationVariables = Exact<{
 
 export type ToggleVonageRecordingStateMutation = {
     readonly __typename?: "mutation_root";
-    readonly toggleVonageRecordingState?: {
-        readonly __typename?: "ToggleVonageRecordingStateOutput";
-        readonly allowed: boolean;
-        readonly recordingState: boolean;
-    } | null;
+    readonly toggleVonageRecordingState?:
+        | {
+              readonly __typename?: "ToggleVonageRecordingStateOutput";
+              readonly allowed: boolean;
+              readonly recordingState: boolean;
+          }
+        | null
+        | undefined;
 };
 
 export type GetAllRoomsQueryVariables = Exact<{
@@ -39652,26 +39947,28 @@ export type GetAllRoomsQuery = {
         readonly name: string;
         readonly priority: number;
         readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
+        readonly itemId?: any | null | undefined;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly itemPeople: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly id: any;
+                      readonly roleName: string;
+                      readonly person: {
+                          readonly __typename?: "collection_ProgramPerson";
+                          readonly id: any;
+                          readonly registrantId?: any | null | undefined;
+                      };
+                  }>;
+              }
+            | null
+            | undefined;
+        readonly chat?:
+            | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+            | null
+            | undefined;
         readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
     }>;
     readonly programRooms: ReadonlyArray<{
@@ -39681,26 +39978,28 @@ export type GetAllRoomsQuery = {
         readonly name: string;
         readonly priority: number;
         readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
+        readonly itemId?: any | null | undefined;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly itemPeople: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly id: any;
+                      readonly roleName: string;
+                      readonly person: {
+                          readonly __typename?: "collection_ProgramPerson";
+                          readonly id: any;
+                          readonly registrantId?: any | null | undefined;
+                      };
+                  }>;
+              }
+            | null
+            | undefined;
+        readonly chat?:
+            | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+            | null
+            | undefined;
         readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
     }>;
 };
@@ -39720,26 +40019,28 @@ export type GetAllTodaysRoomsQuery = {
         readonly name: string;
         readonly priority: number;
         readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
+        readonly itemId?: any | null | undefined;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly itemPeople: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly id: any;
+                      readonly roleName: string;
+                      readonly person: {
+                          readonly __typename?: "collection_ProgramPerson";
+                          readonly id: any;
+                          readonly registrantId?: any | null | undefined;
+                      };
+                  }>;
+              }
+            | null
+            | undefined;
+        readonly chat?:
+            | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+            | null
+            | undefined;
         readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
     }>;
     readonly programRooms: ReadonlyArray<{
@@ -39749,26 +40050,28 @@ export type GetAllTodaysRoomsQuery = {
         readonly name: string;
         readonly priority: number;
         readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
+        readonly itemId?: any | null | undefined;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly itemPeople: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly id: any;
+                      readonly roleName: string;
+                      readonly person: {
+                          readonly __typename?: "collection_ProgramPerson";
+                          readonly id: any;
+                          readonly registrantId?: any | null | undefined;
+                      };
+                  }>;
+              }
+            | null
+            | undefined;
+        readonly chat?:
+            | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+            | null
+            | undefined;
         readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
     }>;
 };
@@ -39780,26 +40083,28 @@ export type RoomListRoomDetailsFragment = {
     readonly name: string;
     readonly priority: number;
     readonly managementModeName: Room_ManagementMode_Enum;
-    readonly itemId?: any | null;
-    readonly item?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly roleName: string;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly registrantId?: any | null;
-            };
-        }>;
-    } | null;
-    readonly chat?: {
-        readonly __typename?: "chat_Chat";
-        readonly id: any;
-        readonly enableMandatoryPin: boolean;
-    } | null;
+    readonly itemId?: any | null | undefined;
+    readonly item?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly itemPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly roleName: string;
+                  readonly person: {
+                      readonly __typename?: "collection_ProgramPerson";
+                      readonly id: any;
+                      readonly registrantId?: any | null | undefined;
+                  };
+              }>;
+          }
+        | null
+        | undefined;
+    readonly chat?:
+        | { readonly __typename?: "chat_Chat"; readonly id: any; readonly enableMandatoryPin: boolean }
+        | null
+        | undefined;
     readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
 };
 
@@ -39814,9 +40119,9 @@ export type GetSocialRoomsQuery = {
         readonly id: any;
         readonly name: string;
         readonly priority: number;
-        readonly chatId?: any | null;
+        readonly chatId?: any | null | undefined;
         readonly conferenceId: any;
-        readonly itemId?: any | null;
+        readonly itemId?: any | null | undefined;
     }>;
 };
 
@@ -39825,9 +40130,9 @@ export type SocialRoomFragment = {
     readonly id: any;
     readonly name: string;
     readonly priority: number;
-    readonly chatId?: any | null;
+    readonly chatId?: any | null | undefined;
     readonly conferenceId: any;
-    readonly itemId?: any | null;
+    readonly itemId?: any | null | undefined;
 };
 
 export type RoomTile_GetRoomQueryVariables = Exact<{
@@ -39838,31 +40143,39 @@ export type RoomTile_GetRoomQueryVariables = Exact<{
 
 export type RoomTile_GetRoomQuery = {
     readonly __typename?: "query_root";
-    readonly room_Room_by_pk?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly name: string;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
-        readonly events?: ReadonlyArray<{
-            readonly __typename?: "schedule_Event";
-            readonly id: any;
-            readonly roomId: any;
-            readonly name: string;
-            readonly intendedRoomModeName: Room_Mode_Enum;
-            readonly startTime: any;
-            readonly endTime?: any | null;
-            readonly exhibitionId?: any | null;
-            readonly itemId?: any | null;
-            readonly exhibition?: {
-                readonly __typename?: "collection_Exhibition";
-                readonly id: any;
-                readonly name: string;
-            } | null;
-            readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
-        }>;
-    } | null;
+    readonly room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly name: string;
+              readonly managementModeName: Room_ManagementMode_Enum;
+              readonly itemId?: any | null | undefined;
+              readonly item?:
+                  | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+                  | null
+                  | undefined;
+              readonly events?: ReadonlyArray<{
+                  readonly __typename?: "schedule_Event";
+                  readonly id: any;
+                  readonly roomId: any;
+                  readonly name: string;
+                  readonly intendedRoomModeName: Room_Mode_Enum;
+                  readonly startTime: any;
+                  readonly endTime?: any | null | undefined;
+                  readonly exhibitionId?: any | null | undefined;
+                  readonly itemId?: any | null | undefined;
+                  readonly exhibition?:
+                      | { readonly __typename?: "collection_Exhibition"; readonly id: any; readonly name: string }
+                      | null
+                      | undefined;
+                  readonly item?:
+                      | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+                      | null
+                      | undefined;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type RoomTile_RoomFragment = {
@@ -39870,8 +40183,11 @@ export type RoomTile_RoomFragment = {
     readonly id: any;
     readonly name: string;
     readonly managementModeName: Room_ManagementMode_Enum;
-    readonly itemId?: any | null;
-    readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+    readonly itemId?: any | null | undefined;
+    readonly item?:
+        | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+        | null
+        | undefined;
     readonly events?: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
@@ -39879,15 +40195,17 @@ export type RoomTile_RoomFragment = {
         readonly name: string;
         readonly intendedRoomModeName: Room_Mode_Enum;
         readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibition?: {
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly name: string;
-        } | null;
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly endTime?: any | null | undefined;
+        readonly exhibitionId?: any | null | undefined;
+        readonly itemId?: any | null | undefined;
+        readonly exhibition?:
+            | { readonly __typename?: "collection_Exhibition"; readonly id: any; readonly name: string }
+            | null
+            | undefined;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
     }>;
 };
 
@@ -39898,15 +40216,17 @@ export type RoomTile_EventFragment = {
     readonly name: string;
     readonly intendedRoomModeName: Room_Mode_Enum;
     readonly startTime: any;
-    readonly endTime?: any | null;
-    readonly exhibitionId?: any | null;
-    readonly itemId?: any | null;
-    readonly exhibition?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly name: string;
-    } | null;
-    readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+    readonly endTime?: any | null | undefined;
+    readonly exhibitionId?: any | null | undefined;
+    readonly itemId?: any | null | undefined;
+    readonly exhibition?:
+        | { readonly __typename?: "collection_Exhibition"; readonly id: any; readonly name: string }
+        | null
+        | undefined;
+    readonly item?:
+        | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+        | null
+        | undefined;
 };
 
 export type GetSponsorBoothsQueryVariables = Exact<{
@@ -39921,18 +40241,21 @@ export type GetSponsorBoothsQuery = {
         readonly conferenceId: any;
         readonly typeName: Content_ItemType_Enum;
         readonly title: string;
-        readonly room?: {
-            readonly __typename?: "room_Room";
-            readonly id: any;
-            readonly priority: number;
-            readonly created_at: any;
-            readonly conferenceId: any;
-        } | null;
+        readonly room?:
+            | {
+                  readonly __typename?: "room_Room";
+                  readonly id: any;
+                  readonly priority: number;
+                  readonly created_at: any;
+                  readonly conferenceId: any;
+              }
+            | null
+            | undefined;
         readonly logo: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly id: any;
             readonly data: any;
-            readonly layoutData?: any | null;
+            readonly layoutData?: any | null | undefined;
             readonly typeName: Content_ElementType_Enum;
             readonly updatedAt: any;
         }>;
@@ -39945,7 +40268,7 @@ export type GetSponsorBoothsQuery = {
             readonly person: {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
-                readonly registrantId?: any | null;
+                readonly registrantId?: any | null | undefined;
             };
         }>;
         readonly sponsorshipTierMemberships: ReadonlyArray<{
@@ -39953,18 +40276,18 @@ export type GetSponsorBoothsQuery = {
             readonly id: any;
             readonly itemId: any;
             readonly tierId: any;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
         }>;
     }>;
     readonly sponsor_Tier: ReadonlyArray<{
         readonly __typename?: "sponsor_Tier";
         readonly id: any;
         readonly conferenceId: any;
-        readonly subconferenceId?: any | null;
+        readonly subconferenceId?: any | null | undefined;
         readonly name: string;
         readonly description: string;
         readonly priority: number;
-        readonly colour?: string | null;
+        readonly colour?: string | null | undefined;
         readonly size: any;
         readonly showLogos: boolean;
     }>;
@@ -39974,11 +40297,11 @@ export type SponsorBoothsList_TierFragment = {
     readonly __typename?: "sponsor_Tier";
     readonly id: any;
     readonly conferenceId: any;
-    readonly subconferenceId?: any | null;
+    readonly subconferenceId?: any | null | undefined;
     readonly name: string;
     readonly description: string;
     readonly priority: number;
-    readonly colour?: string | null;
+    readonly colour?: string | null | undefined;
     readonly size: any;
     readonly showLogos: boolean;
 };
@@ -39989,18 +40312,21 @@ export type SponsorBoothsList_ItemFragment = {
     readonly conferenceId: any;
     readonly typeName: Content_ItemType_Enum;
     readonly title: string;
-    readonly room?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly priority: number;
-        readonly created_at: any;
-        readonly conferenceId: any;
-    } | null;
+    readonly room?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly priority: number;
+              readonly created_at: any;
+              readonly conferenceId: any;
+          }
+        | null
+        | undefined;
     readonly logo: ReadonlyArray<{
         readonly __typename?: "content_Element";
         readonly id: any;
         readonly data: any;
-        readonly layoutData?: any | null;
+        readonly layoutData?: any | null | undefined;
         readonly typeName: Content_ElementType_Enum;
         readonly updatedAt: any;
     }>;
@@ -40013,7 +40339,7 @@ export type SponsorBoothsList_ItemFragment = {
         readonly person: {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
-            readonly registrantId?: any | null;
+            readonly registrantId?: any | null | undefined;
         };
     }>;
     readonly sponsorshipTierMemberships: ReadonlyArray<{
@@ -40021,7 +40347,7 @@ export type SponsorBoothsList_ItemFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly tierId: any;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
     }>;
 };
 
@@ -40042,37 +40368,40 @@ export type Schedule_HappeningSoonQuery = {
         readonly name: string;
         readonly startTime: any;
         readonly durationSeconds: number;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly shortTitle?: string | null;
-            readonly typeName: Content_ItemType_Enum;
-            readonly conferenceId: any;
-            readonly itemTags: ReadonlyArray<{
-                readonly __typename?: "content_ItemTag";
-                readonly id: any;
-                readonly itemId: any;
-                readonly tagId: any;
-            }>;
-            readonly itemExhibitions: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly itemId: any;
-                readonly exhibitionId: any;
-            }>;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly itemId: any;
-                readonly personId: any;
-                readonly priority?: number | null;
-                readonly roleName: string;
-            }>;
-        } | null;
+        readonly itemId?: any | null | undefined;
+        readonly exhibitionId?: any | null | undefined;
+        readonly shufflePeriodId?: any | null | undefined;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly title: string;
+                  readonly shortTitle?: string | null | undefined;
+                  readonly typeName: Content_ItemType_Enum;
+                  readonly conferenceId: any;
+                  readonly itemTags: ReadonlyArray<{
+                      readonly __typename?: "content_ItemTag";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly tagId: any;
+                  }>;
+                  readonly itemExhibitions: ReadonlyArray<{
+                      readonly __typename?: "content_ItemExhibition";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly exhibitionId: any;
+                  }>;
+                  readonly itemPeople: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly personId: any;
+                      readonly priority?: number | null | undefined;
+                      readonly roleName: string;
+                  }>;
+              }
+            | null
+            | undefined;
         readonly room: {
             readonly __typename?: "room_Room";
             readonly id: any;
@@ -40087,8 +40416,8 @@ export type Schedule_HappeningSoonQuery = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
         readonly conferenceId: any;
     }>;
     readonly collection_Tag: ReadonlyArray<{
@@ -40129,15 +40458,18 @@ export type StarEventButton_InsertStarsMutationVariables = Exact<{
 
 export type StarEventButton_InsertStarsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_schedule_StarredEvent?: {
-        readonly __typename?: "schedule_StarredEvent_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "schedule_StarredEvent";
-            readonly id: any;
-            readonly eventId: any;
-            readonly registrantId: any;
-        }>;
-    } | null;
+    readonly insert_schedule_StarredEvent?:
+        | {
+              readonly __typename?: "schedule_StarredEvent_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "schedule_StarredEvent";
+                  readonly id: any;
+                  readonly eventId: any;
+                  readonly registrantId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type StarEventButton_DeleteStarsMutationVariables = Exact<{
@@ -40146,10 +40478,13 @@ export type StarEventButton_DeleteStarsMutationVariables = Exact<{
 
 export type StarEventButton_DeleteStarsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_schedule_StarredEvent?: {
-        readonly __typename?: "schedule_StarredEvent_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_StarredEvent"; readonly id: any }>;
-    } | null;
+    readonly delete_schedule_StarredEvent?:
+        | {
+              readonly __typename?: "schedule_StarredEvent_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_StarredEvent"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type Schedule_ElementFragment = {
@@ -40157,7 +40492,7 @@ export type Schedule_ElementFragment = {
     readonly id: any;
     readonly typeName: Content_ElementType_Enum;
     readonly name: string;
-    readonly layoutData?: any | null;
+    readonly layoutData?: any | null | undefined;
     readonly data: any;
     readonly itemId: any;
 };
@@ -40166,8 +40501,8 @@ export type Schedule_ProgramPersonFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
     readonly name: string;
-    readonly affiliation?: string | null;
-    readonly registrantId?: any | null;
+    readonly affiliation?: string | null | undefined;
+    readonly registrantId?: any | null | undefined;
     readonly conferenceId: any;
 };
 
@@ -40176,7 +40511,7 @@ export type Schedule_ItemPersonFragment = {
     readonly id: any;
     readonly itemId: any;
     readonly personId: any;
-    readonly priority?: number | null;
+    readonly priority?: number | null | undefined;
     readonly roleName: string;
 };
 
@@ -40184,7 +40519,7 @@ export type Schedule_ItemFieldsFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly title: string;
-    readonly shortTitle?: string | null;
+    readonly shortTitle?: string | null | undefined;
     readonly typeName: Content_ItemType_Enum;
     readonly conferenceId: any;
     readonly itemTags: ReadonlyArray<{
@@ -40204,7 +40539,7 @@ export type Schedule_ItemFieldsFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly personId: any;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly roleName: string;
     }>;
 };
@@ -40213,7 +40548,7 @@ export type Schedule_ItemFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly title: string;
-    readonly shortTitle?: string | null;
+    readonly shortTitle?: string | null | undefined;
     readonly typeName: Content_ItemType_Enum;
     readonly conferenceId: any;
     readonly abstractElements: ReadonlyArray<{
@@ -40221,7 +40556,7 @@ export type Schedule_ItemFragment = {
         readonly id: any;
         readonly typeName: Content_ElementType_Enum;
         readonly name: string;
-        readonly layoutData?: any | null;
+        readonly layoutData?: any | null | undefined;
         readonly data: any;
         readonly itemId: any;
     }>;
@@ -40230,7 +40565,7 @@ export type Schedule_ItemFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly personId: any;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly roleName: string;
     }>;
     readonly itemTags: ReadonlyArray<{
@@ -40253,43 +40588,46 @@ export type Schedule_SelectItemQueryVariables = Exact<{
 
 export type Schedule_SelectItemQuery = {
     readonly __typename?: "query_root";
-    readonly content_Item_by_pk?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly typeName: Content_ItemType_Enum;
-        readonly conferenceId: any;
-        readonly abstractElements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly name: string;
-            readonly layoutData?: any | null;
-            readonly data: any;
-            readonly itemId: any;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tagId: any;
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-        }>;
-    } | null;
+    readonly content_Item_by_pk?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly title: string;
+              readonly shortTitle?: string | null | undefined;
+              readonly typeName: Content_ItemType_Enum;
+              readonly conferenceId: any;
+              readonly abstractElements: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly id: any;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly name: string;
+                  readonly layoutData?: any | null | undefined;
+                  readonly data: any;
+                  readonly itemId: any;
+              }>;
+              readonly itemPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly personId: any;
+                  readonly priority?: number | null | undefined;
+                  readonly roleName: string;
+              }>;
+              readonly itemTags: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly tagId: any;
+              }>;
+              readonly itemExhibitions: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly exhibitionId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type Schedule_EventSummaryFragment = {
@@ -40301,9 +40639,9 @@ export type Schedule_EventSummaryFragment = {
     readonly name: string;
     readonly startTime: any;
     readonly durationSeconds: number;
-    readonly itemId?: any | null;
-    readonly exhibitionId?: any | null;
-    readonly shufflePeriodId?: any | null;
+    readonly itemId?: any | null | undefined;
+    readonly exhibitionId?: any | null | undefined;
+    readonly shufflePeriodId?: any | null | undefined;
 };
 
 export type Schedule_RoomSummaryFragment = {
@@ -40349,15 +40687,15 @@ export type Schedule_SelectSummariesQuery = {
         readonly name: string;
         readonly startTime: any;
         readonly durationSeconds: number;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
+        readonly itemId?: any | null | undefined;
+        readonly exhibitionId?: any | null | undefined;
+        readonly shufflePeriodId?: any | null | undefined;
     }>;
     readonly content_Item: ReadonlyArray<{
         readonly __typename?: "content_Item";
         readonly id: any;
         readonly title: string;
-        readonly shortTitle?: string | null;
+        readonly shortTitle?: string | null | undefined;
         readonly typeName: Content_ItemType_Enum;
         readonly conferenceId: any;
         readonly itemTags: ReadonlyArray<{
@@ -40377,7 +40715,7 @@ export type Schedule_SelectSummariesQuery = {
             readonly id: any;
             readonly itemId: any;
             readonly personId: any;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
             readonly roleName: string;
         }>;
     }>;
@@ -40385,8 +40723,8 @@ export type Schedule_SelectSummariesQuery = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
         readonly conferenceId: any;
     }>;
     readonly collection_Tag: ReadonlyArray<{
@@ -40418,7 +40756,7 @@ export type ScheduleV2_LightweightEventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
     readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly roomId: any;
     readonly conferenceId: any;
 };
@@ -40436,7 +40774,7 @@ export type ScheduleV2_DayLightweightEventsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly roomId: any;
         readonly conferenceId: any;
     }>;
@@ -40456,46 +40794,49 @@ export type ScheduleV2_DayEventsQuery = {
         readonly name: string;
         readonly startTime: any;
         readonly durationSeconds: number;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly shortTitle?: string | null;
-            readonly typeName: Content_ItemType_Enum;
-            readonly abstractElements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly typeName: Content_ElementType_Enum;
-                readonly name: string;
-                readonly layoutData?: any | null;
-                readonly data: any;
-            }>;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly priority?: number | null;
-                readonly roleName: string;
-                readonly itemId: any;
-                readonly personId: any;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
-                    readonly conferenceId: any;
-                };
-            }>;
-            readonly itemTags: ReadonlyArray<{
-                readonly __typename?: "content_ItemTag";
-                readonly id: any;
-                readonly itemId: any;
-                readonly tagId: any;
-            }>;
-        } | null;
+        readonly itemId?: any | null | undefined;
+        readonly exhibitionId?: any | null | undefined;
+        readonly shufflePeriodId?: any | null | undefined;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly title: string;
+                  readonly shortTitle?: string | null | undefined;
+                  readonly typeName: Content_ItemType_Enum;
+                  readonly abstractElements: ReadonlyArray<{
+                      readonly __typename?: "content_Element";
+                      readonly id: any;
+                      readonly typeName: Content_ElementType_Enum;
+                      readonly name: string;
+                      readonly layoutData?: any | null | undefined;
+                      readonly data: any;
+                  }>;
+                  readonly itemPeople: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly id: any;
+                      readonly priority?: number | null | undefined;
+                      readonly roleName: string;
+                      readonly itemId: any;
+                      readonly personId: any;
+                      readonly person: {
+                          readonly __typename?: "collection_ProgramPerson";
+                          readonly id: any;
+                          readonly name: string;
+                          readonly affiliation?: string | null | undefined;
+                          readonly registrantId?: any | null | undefined;
+                          readonly conferenceId: any;
+                      };
+                  }>;
+                  readonly itemTags: ReadonlyArray<{
+                      readonly __typename?: "content_ItemTag";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly tagId: any;
+                  }>;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -40504,7 +40845,7 @@ export type ScheduleV2_ElementFragment = {
     readonly id: any;
     readonly typeName: Content_ElementType_Enum;
     readonly name: string;
-    readonly layoutData?: any | null;
+    readonly layoutData?: any | null | undefined;
     readonly data: any;
 };
 
@@ -40512,15 +40853,15 @@ export type ScheduleV2_ProgramPersonFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
     readonly name: string;
-    readonly affiliation?: string | null;
-    readonly registrantId?: any | null;
+    readonly affiliation?: string | null | undefined;
+    readonly registrantId?: any | null | undefined;
     readonly conferenceId: any;
 };
 
 export type ScheduleV2_ItemPersonFragment = {
     readonly __typename?: "content_ItemProgramPerson";
     readonly id: any;
-    readonly priority?: number | null;
+    readonly priority?: number | null | undefined;
     readonly roleName: string;
     readonly itemId: any;
     readonly personId: any;
@@ -40528,8 +40869,8 @@ export type ScheduleV2_ItemPersonFragment = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
         readonly conferenceId: any;
     };
 };
@@ -40538,7 +40879,7 @@ export type ScheduleV2_ItemElementsFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly title: string;
-    readonly shortTitle?: string | null;
+    readonly shortTitle?: string | null | undefined;
     readonly typeName: Content_ItemType_Enum;
     readonly itemTags: ReadonlyArray<{
         readonly __typename?: "content_ItemTag";
@@ -40549,7 +40890,7 @@ export type ScheduleV2_ItemElementsFragment = {
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly roleName: string;
         readonly itemId: any;
         readonly personId: any;
@@ -40557,8 +40898,8 @@ export type ScheduleV2_ItemElementsFragment = {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
+            readonly affiliation?: string | null | undefined;
+            readonly registrantId?: any | null | undefined;
             readonly conferenceId: any;
         };
     }>;
@@ -40572,46 +40913,49 @@ export type ScheduleV2_EventFragment = {
     readonly name: string;
     readonly startTime: any;
     readonly durationSeconds: number;
-    readonly itemId?: any | null;
-    readonly exhibitionId?: any | null;
-    readonly shufflePeriodId?: any | null;
-    readonly item?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly typeName: Content_ItemType_Enum;
-        readonly abstractElements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly name: string;
-            readonly layoutData?: any | null;
-            readonly data: any;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tagId: any;
-        }>;
-    } | null;
+    readonly itemId?: any | null | undefined;
+    readonly exhibitionId?: any | null | undefined;
+    readonly shufflePeriodId?: any | null | undefined;
+    readonly item?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly title: string;
+              readonly shortTitle?: string | null | undefined;
+              readonly typeName: Content_ItemType_Enum;
+              readonly abstractElements: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly id: any;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly name: string;
+                  readonly layoutData?: any | null | undefined;
+                  readonly data: any;
+              }>;
+              readonly itemPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly priority?: number | null | undefined;
+                  readonly roleName: string;
+                  readonly itemId: any;
+                  readonly personId: any;
+                  readonly person: {
+                      readonly __typename?: "collection_ProgramPerson";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly affiliation?: string | null | undefined;
+                      readonly registrantId?: any | null | undefined;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly itemTags: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly tagId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ScheduleV2_RoomFragment = {
@@ -40677,7 +41021,7 @@ export type ScheduleV2_AllEvents_ParamsQuery = {
     readonly latestEndingEvent: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly conferenceId: any;
     }>;
 };
@@ -40692,13 +41036,13 @@ export type SearchPanel_ItemFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly roleName: string;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly person: {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
+            readonly affiliation?: string | null | undefined;
+            readonly registrantId?: any | null | undefined;
             readonly conferenceId: any;
         };
     }>;
@@ -40734,13 +41078,13 @@ export type SearchPanel_ItemsQuery = {
             readonly id: any;
             readonly itemId: any;
             readonly roleName: string;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
             readonly person: {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
                 readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
+                readonly affiliation?: string | null | undefined;
+                readonly registrantId?: any | null | undefined;
                 readonly conferenceId: any;
             };
         }>;
@@ -40764,92 +41108,98 @@ export type SearchPanel_EventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
     readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly conferenceId: any;
-    readonly exhibitionId?: any | null;
+    readonly exhibitionId?: any | null | undefined;
     readonly intendedRoomModeName: Room_Mode_Enum;
-    readonly itemId?: any | null;
+    readonly itemId?: any | null | undefined;
     readonly name: string;
     readonly roomId: any;
-    readonly exhibition?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly name: string;
-        readonly items: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-            readonly item: {
-                readonly __typename?: "content_Item";
-                readonly id: any;
-                readonly title: string;
-                readonly conferenceId: any;
-                readonly itemPeople: ReadonlyArray<{
-                    readonly __typename?: "content_ItemProgramPerson";
-                    readonly id: any;
-                    readonly itemId: any;
-                    readonly roleName: string;
-                    readonly priority?: number | null;
-                    readonly person: {
-                        readonly __typename?: "collection_ProgramPerson";
-                        readonly id: any;
-                        readonly name: string;
-                        readonly affiliation?: string | null;
-                        readonly registrantId?: any | null;
-                        readonly conferenceId: any;
-                    };
-                }>;
-                readonly itemTags: ReadonlyArray<{
-                    readonly __typename?: "content_ItemTag";
-                    readonly id: any;
-                    readonly itemId: any;
-                    readonly tag: {
-                        readonly __typename?: "collection_Tag";
-                        readonly id: any;
-                        readonly name: string;
-                        readonly colour: string;
-                        readonly priority: number;
-                        readonly conferenceId: any;
-                    };
-                }>;
-            };
-        }>;
-    } | null;
-    readonly item?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly conferenceId: any;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly roleName: string;
-            readonly priority?: number | null;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tag: {
-                readonly __typename?: "collection_Tag";
-                readonly id: any;
-                readonly name: string;
-                readonly colour: string;
-                readonly priority: number;
-                readonly conferenceId: any;
-            };
-        }>;
-    } | null;
+    readonly exhibition?:
+        | {
+              readonly __typename?: "collection_Exhibition";
+              readonly id: any;
+              readonly name: string;
+              readonly items: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly exhibitionId: any;
+                  readonly item: {
+                      readonly __typename?: "content_Item";
+                      readonly id: any;
+                      readonly title: string;
+                      readonly conferenceId: any;
+                      readonly itemPeople: ReadonlyArray<{
+                          readonly __typename?: "content_ItemProgramPerson";
+                          readonly id: any;
+                          readonly itemId: any;
+                          readonly roleName: string;
+                          readonly priority?: number | null | undefined;
+                          readonly person: {
+                              readonly __typename?: "collection_ProgramPerson";
+                              readonly id: any;
+                              readonly name: string;
+                              readonly affiliation?: string | null | undefined;
+                              readonly registrantId?: any | null | undefined;
+                              readonly conferenceId: any;
+                          };
+                      }>;
+                      readonly itemTags: ReadonlyArray<{
+                          readonly __typename?: "content_ItemTag";
+                          readonly id: any;
+                          readonly itemId: any;
+                          readonly tag: {
+                              readonly __typename?: "collection_Tag";
+                              readonly id: any;
+                              readonly name: string;
+                              readonly colour: string;
+                              readonly priority: number;
+                              readonly conferenceId: any;
+                          };
+                      }>;
+                  };
+              }>;
+          }
+        | null
+        | undefined;
+    readonly item?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly title: string;
+              readonly conferenceId: any;
+              readonly itemPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly roleName: string;
+                  readonly priority?: number | null | undefined;
+                  readonly person: {
+                      readonly __typename?: "collection_ProgramPerson";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly affiliation?: string | null | undefined;
+                      readonly registrantId?: any | null | undefined;
+                      readonly conferenceId: any;
+                  };
+              }>;
+              readonly itemTags: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly tag: {
+                      readonly __typename?: "collection_Tag";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly colour: string;
+                      readonly priority: number;
+                      readonly conferenceId: any;
+                  };
+              }>;
+          }
+        | null
+        | undefined;
     readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
 };
 
@@ -40864,92 +41214,98 @@ export type SearchPanel_EventsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly conferenceId: any;
-        readonly exhibitionId?: any | null;
+        readonly exhibitionId?: any | null | undefined;
         readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly itemId?: any | null;
+        readonly itemId?: any | null | undefined;
         readonly name: string;
         readonly roomId: any;
-        readonly exhibition?: {
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly name: string;
-            readonly items: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly itemId: any;
-                readonly exhibitionId: any;
-                readonly item: {
-                    readonly __typename?: "content_Item";
-                    readonly id: any;
-                    readonly title: string;
-                    readonly conferenceId: any;
-                    readonly itemPeople: ReadonlyArray<{
-                        readonly __typename?: "content_ItemProgramPerson";
-                        readonly id: any;
-                        readonly itemId: any;
-                        readonly roleName: string;
-                        readonly priority?: number | null;
-                        readonly person: {
-                            readonly __typename?: "collection_ProgramPerson";
-                            readonly id: any;
-                            readonly name: string;
-                            readonly affiliation?: string | null;
-                            readonly registrantId?: any | null;
-                            readonly conferenceId: any;
-                        };
-                    }>;
-                    readonly itemTags: ReadonlyArray<{
-                        readonly __typename?: "content_ItemTag";
-                        readonly id: any;
-                        readonly itemId: any;
-                        readonly tag: {
-                            readonly __typename?: "collection_Tag";
-                            readonly id: any;
-                            readonly name: string;
-                            readonly colour: string;
-                            readonly priority: number;
-                            readonly conferenceId: any;
-                        };
-                    }>;
-                };
-            }>;
-        } | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly conferenceId: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly itemId: any;
-                readonly roleName: string;
-                readonly priority?: number | null;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
-                    readonly conferenceId: any;
-                };
-            }>;
-            readonly itemTags: ReadonlyArray<{
-                readonly __typename?: "content_ItemTag";
-                readonly id: any;
-                readonly itemId: any;
-                readonly tag: {
-                    readonly __typename?: "collection_Tag";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly colour: string;
-                    readonly priority: number;
-                    readonly conferenceId: any;
-                };
-            }>;
-        } | null;
+        readonly exhibition?:
+            | {
+                  readonly __typename?: "collection_Exhibition";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly items: ReadonlyArray<{
+                      readonly __typename?: "content_ItemExhibition";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly exhibitionId: any;
+                      readonly item: {
+                          readonly __typename?: "content_Item";
+                          readonly id: any;
+                          readonly title: string;
+                          readonly conferenceId: any;
+                          readonly itemPeople: ReadonlyArray<{
+                              readonly __typename?: "content_ItemProgramPerson";
+                              readonly id: any;
+                              readonly itemId: any;
+                              readonly roleName: string;
+                              readonly priority?: number | null | undefined;
+                              readonly person: {
+                                  readonly __typename?: "collection_ProgramPerson";
+                                  readonly id: any;
+                                  readonly name: string;
+                                  readonly affiliation?: string | null | undefined;
+                                  readonly registrantId?: any | null | undefined;
+                                  readonly conferenceId: any;
+                              };
+                          }>;
+                          readonly itemTags: ReadonlyArray<{
+                              readonly __typename?: "content_ItemTag";
+                              readonly id: any;
+                              readonly itemId: any;
+                              readonly tag: {
+                                  readonly __typename?: "collection_Tag";
+                                  readonly id: any;
+                                  readonly name: string;
+                                  readonly colour: string;
+                                  readonly priority: number;
+                                  readonly conferenceId: any;
+                              };
+                          }>;
+                      };
+                  }>;
+              }
+            | null
+            | undefined;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly title: string;
+                  readonly conferenceId: any;
+                  readonly itemPeople: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly roleName: string;
+                      readonly priority?: number | null | undefined;
+                      readonly person: {
+                          readonly __typename?: "collection_ProgramPerson";
+                          readonly id: any;
+                          readonly name: string;
+                          readonly affiliation?: string | null | undefined;
+                          readonly registrantId?: any | null | undefined;
+                          readonly conferenceId: any;
+                      };
+                  }>;
+                  readonly itemTags: ReadonlyArray<{
+                      readonly __typename?: "content_ItemTag";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly tag: {
+                          readonly __typename?: "collection_Tag";
+                          readonly id: any;
+                          readonly name: string;
+                          readonly colour: string;
+                          readonly priority: number;
+                          readonly conferenceId: any;
+                      };
+                  }>;
+              }
+            | null
+            | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
     }>;
 };
@@ -40958,8 +41314,8 @@ export type SearchPanel_PersonFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
     readonly name: string;
-    readonly affiliation?: string | null;
-    readonly registrantId?: any | null;
+    readonly affiliation?: string | null | undefined;
+    readonly registrantId?: any | null | undefined;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
@@ -40978,8 +41334,8 @@ export type SearchPanel_PeopleQuery = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
@@ -40999,11 +41355,11 @@ export type SwagBagFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly data: any;
-        readonly layoutData?: any | null;
+        readonly layoutData?: any | null | undefined;
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
         readonly isHidden: boolean;
-        readonly hasBeenSubmitted?: boolean | null;
+        readonly hasBeenSubmitted?: boolean | null | undefined;
     }>;
 };
 
@@ -41024,11 +41380,11 @@ export type SelectSwagBagsQuery = {
             readonly id: any;
             readonly itemId: any;
             readonly data: any;
-            readonly layoutData?: any | null;
+            readonly layoutData?: any | null | undefined;
             readonly name: string;
             readonly typeName: Content_ElementType_Enum;
             readonly isHidden: boolean;
-            readonly hasBeenSubmitted?: boolean | null;
+            readonly hasBeenSubmitted?: boolean | null | undefined;
         }>;
     }>;
 };
@@ -41052,80 +41408,84 @@ export type ConferenceStatsQueryVariables = Exact<{
 
 export type ConferenceStatsQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Conference_by_pk?: {
-        readonly __typename?: "conference_Conference";
-        readonly id: any;
-        readonly completedRegistrationsStat?: {
-            readonly __typename?: "analytics_CompletedRegistrations";
-            readonly count?: any | null;
-            readonly id?: any | null;
-        } | null;
-        readonly items: ReadonlyArray<{
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly conferenceId: any;
-            readonly stats: ReadonlyArray<{
-                readonly __typename?: "analytics_ContentItemStats";
-                readonly id: any;
-                readonly itemId: any;
-                readonly viewCount: number;
-                readonly updated_at: any;
-            }>;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly name: string;
-                readonly typeName: Content_ElementType_Enum;
-                readonly itemId: any;
-                readonly stats: ReadonlyArray<{
-                    readonly __typename?: "analytics_ContentElementStats";
-                    readonly id: any;
-                    readonly elementId: any;
-                    readonly viewCount: number;
-                    readonly updated_at: any;
-                }>;
-            }>;
-        }>;
-        readonly rooms: ReadonlyArray<{
-            readonly __typename?: "room_Room";
-            readonly id: any;
-            readonly name: string;
-            readonly managementModeName: Room_ManagementMode_Enum;
-            readonly presenceCounts: ReadonlyArray<{
-                readonly __typename?: "analytics_RoomPresence";
-                readonly created_at: any;
-                readonly count: any;
-            }>;
-            readonly stats: ReadonlyArray<{
-                readonly __typename?: "analytics_RoomStats";
-                readonly created_at: any;
-                readonly hlsViewCount: number;
-                readonly roomId: any;
-            }>;
-            readonly events: ReadonlyArray<{
-                readonly __typename?: "schedule_Event";
-                readonly id: any;
-                readonly name: string;
-                readonly roomId: any;
-                readonly itemId?: any | null;
-                readonly exhibitionId?: any | null;
-                readonly startTime: any;
-                readonly endTime?: any | null;
-                readonly intendedRoomModeName: Room_Mode_Enum;
-                readonly item?: {
-                    readonly __typename?: "content_Item";
-                    readonly id: any;
-                    readonly title: string;
-                } | null;
-                readonly exhibition?: {
-                    readonly __typename?: "collection_Exhibition";
-                    readonly id: any;
-                    readonly name: string;
-                } | null;
-            }>;
-        }>;
-    } | null;
+    readonly conference_Conference_by_pk?:
+        | {
+              readonly __typename?: "conference_Conference";
+              readonly id: any;
+              readonly completedRegistrationsStat?:
+                  | {
+                        readonly __typename?: "analytics_CompletedRegistrations";
+                        readonly count?: any | null | undefined;
+                        readonly id?: any | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly items: ReadonlyArray<{
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly title: string;
+                  readonly conferenceId: any;
+                  readonly stats: ReadonlyArray<{
+                      readonly __typename?: "analytics_ContentItemStats";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly viewCount: number;
+                      readonly updated_at: any;
+                  }>;
+                  readonly elements: ReadonlyArray<{
+                      readonly __typename?: "content_Element";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly typeName: Content_ElementType_Enum;
+                      readonly itemId: any;
+                      readonly stats: ReadonlyArray<{
+                          readonly __typename?: "analytics_ContentElementStats";
+                          readonly id: any;
+                          readonly elementId: any;
+                          readonly viewCount: number;
+                          readonly updated_at: any;
+                      }>;
+                  }>;
+              }>;
+              readonly rooms: ReadonlyArray<{
+                  readonly __typename?: "room_Room";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly managementModeName: Room_ManagementMode_Enum;
+                  readonly presenceCounts: ReadonlyArray<{
+                      readonly __typename?: "analytics_RoomPresence";
+                      readonly created_at: any;
+                      readonly count: any;
+                  }>;
+                  readonly stats: ReadonlyArray<{
+                      readonly __typename?: "analytics_RoomStats";
+                      readonly created_at: any;
+                      readonly hlsViewCount: number;
+                      readonly roomId: any;
+                  }>;
+                  readonly events: ReadonlyArray<{
+                      readonly __typename?: "schedule_Event";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly roomId: any;
+                      readonly itemId?: any | null | undefined;
+                      readonly exhibitionId?: any | null | undefined;
+                      readonly startTime: any;
+                      readonly endTime?: any | null | undefined;
+                      readonly intendedRoomModeName: Room_Mode_Enum;
+                      readonly item?:
+                          | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+                          | null
+                          | undefined;
+                      readonly exhibition?:
+                          | { readonly __typename?: "collection_Exhibition"; readonly id: any; readonly name: string }
+                          | null
+                          | undefined;
+                  }>;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type GetChannelStacksQueryVariables = Exact<{
@@ -41139,13 +41499,16 @@ export type GetChannelStacksQuery = {
         readonly name: string;
         readonly id: any;
         readonly conferenceId: any;
-        readonly channelStack?: {
-            readonly __typename?: "video_ChannelStack";
-            readonly cloudFrontDomain: string;
-            readonly endpointUri: string;
-            readonly id: any;
-            readonly roomId?: any | null;
-        } | null;
+        readonly channelStack?:
+            | {
+                  readonly __typename?: "video_ChannelStack";
+                  readonly cloudFrontDomain: string;
+                  readonly endpointUri: string;
+                  readonly id: any;
+                  readonly roomId?: any | null | undefined;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -41182,8 +41545,11 @@ export type EventVonageControls_GetEventsQuery = {
         readonly name: string;
         readonly conferenceId: any;
         readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly itemId?: any | null | undefined;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
     }>;
 };
 
@@ -41193,10 +41559,10 @@ export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
 
 export type EventVonageControls_StopEventBroadcastMutation = {
     readonly __typename?: "mutation_root";
-    readonly stopEventBroadcast?: {
-        readonly __typename?: "StopEventBroadcastOutput";
-        readonly broadcastsStopped: number;
-    } | null;
+    readonly stopEventBroadcast?:
+        | { readonly __typename?: "StopEventBroadcastOutput"; readonly broadcastsStopped: number }
+        | null
+        | undefined;
 };
 
 export type MonitorLivestreamsQueryVariables = Exact<{
@@ -41214,16 +41580,19 @@ export type MonitorLivestreamsQuery = {
         readonly intendedRoomModeName: Room_Mode_Enum;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly roomId: any;
-        readonly itemId?: any | null;
+        readonly itemId?: any | null | undefined;
         readonly room: {
             readonly __typename?: "room_Room";
             readonly id: any;
             readonly name: string;
             readonly priority: number;
         };
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
@@ -41234,35 +41603,41 @@ export type MonitorLivestreamsQuery = {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
                 readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly registrant?: {
-                    readonly __typename?: "registrant_Registrant";
-                    readonly id: any;
-                    readonly userId?: string | null;
-                } | null;
+                readonly affiliation?: string | null | undefined;
+                readonly registrantId?: any | null | undefined;
+                readonly registrant?:
+                    | {
+                          readonly __typename?: "registrant_Registrant";
+                          readonly id: any;
+                          readonly userId?: string | null | undefined;
+                      }
+                    | null
+                    | undefined;
             };
         }>;
-        readonly eventVonageSession?: {
-            readonly __typename?: "video_EventVonageSession";
-            readonly id: any;
-            readonly sessionId: string;
-            readonly eventId: any;
-            readonly participantStreams: ReadonlyArray<{
-                readonly __typename?: "video_VonageParticipantStream";
-                readonly id: any;
-                readonly registrantId: any;
-                readonly vonageStreamType: string;
-                readonly vonageSessionId: string;
-            }>;
-        } | null;
+        readonly eventVonageSession?:
+            | {
+                  readonly __typename?: "video_EventVonageSession";
+                  readonly id: any;
+                  readonly sessionId: string;
+                  readonly eventId: any;
+                  readonly participantStreams: ReadonlyArray<{
+                      readonly __typename?: "video_VonageParticipantStream";
+                      readonly id: any;
+                      readonly registrantId: any;
+                      readonly vonageStreamType: string;
+                      readonly vonageSessionId: string;
+                  }>;
+              }
+            | null
+            | undefined;
     }>;
     readonly prerecordedEvents: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly conferenceId: any;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly intendedRoomModeName: Room_Mode_Enum;
         readonly roomId: any;
         readonly room: {
@@ -41279,7 +41654,7 @@ export type MonitorLivestreams_PrerecEventFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly intendedRoomModeName: Room_Mode_Enum;
     readonly roomId: any;
     readonly room: {
@@ -41300,13 +41675,16 @@ export type MonitorLivestreams_PersonFragment = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
-        readonly registrant?: {
-            readonly __typename?: "registrant_Registrant";
-            readonly id: any;
-            readonly userId?: string | null;
-        } | null;
+        readonly affiliation?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
+        readonly registrant?:
+            | {
+                  readonly __typename?: "registrant_Registrant";
+                  readonly id: any;
+                  readonly userId?: string | null | undefined;
+              }
+            | null
+            | undefined;
     };
 };
 
@@ -41317,16 +41695,19 @@ export type MonitorLivestreams_EventFragment = {
     readonly intendedRoomModeName: Room_Mode_Enum;
     readonly name: string;
     readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly roomId: any;
-    readonly itemId?: any | null;
+    readonly itemId?: any | null | undefined;
     readonly room: {
         readonly __typename?: "room_Room";
         readonly id: any;
         readonly name: string;
         readonly priority: number;
     };
-    readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+    readonly item?:
+        | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+        | null
+        | undefined;
     readonly eventPeople: ReadonlyArray<{
         readonly __typename?: "schedule_EventProgramPerson";
         readonly id: any;
@@ -41337,28 +41718,34 @@ export type MonitorLivestreams_EventFragment = {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
-            readonly registrant?: {
-                readonly __typename?: "registrant_Registrant";
-                readonly id: any;
-                readonly userId?: string | null;
-            } | null;
+            readonly affiliation?: string | null | undefined;
+            readonly registrantId?: any | null | undefined;
+            readonly registrant?:
+                | {
+                      readonly __typename?: "registrant_Registrant";
+                      readonly id: any;
+                      readonly userId?: string | null | undefined;
+                  }
+                | null
+                | undefined;
         };
     }>;
-    readonly eventVonageSession?: {
-        readonly __typename?: "video_EventVonageSession";
-        readonly id: any;
-        readonly sessionId: string;
-        readonly eventId: any;
-        readonly participantStreams: ReadonlyArray<{
-            readonly __typename?: "video_VonageParticipantStream";
-            readonly id: any;
-            readonly registrantId: any;
-            readonly vonageStreamType: string;
-            readonly vonageSessionId: string;
-        }>;
-    } | null;
+    readonly eventVonageSession?:
+        | {
+              readonly __typename?: "video_EventVonageSession";
+              readonly id: any;
+              readonly sessionId: string;
+              readonly eventId: any;
+              readonly participantStreams: ReadonlyArray<{
+                  readonly __typename?: "video_VonageParticipantStream";
+                  readonly id: any;
+                  readonly registrantId: any;
+                  readonly vonageStreamType: string;
+                  readonly vonageSessionId: string;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type CreateConferencePrepareJobMutationVariables = Exact<{
@@ -41367,11 +41754,10 @@ export type CreateConferencePrepareJobMutationVariables = Exact<{
 
 export type CreateConferencePrepareJobMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_job_queues_PrepareJob_one?: {
-        readonly __typename?: "job_queues_PrepareJob";
-        readonly id: any;
-        readonly conferenceId: any;
-    } | null;
+    readonly insert_job_queues_PrepareJob_one?:
+        | { readonly __typename?: "job_queues_PrepareJob"; readonly id: any; readonly conferenceId: any }
+        | null
+        | undefined;
 };
 
 export type GetConferencePrepareJobsQueryVariables = Exact<{
@@ -41384,7 +41770,7 @@ export type GetConferencePrepareJobsQuery = {
         readonly __typename?: "job_queues_PrepareJob";
         readonly id: any;
         readonly jobStatusName: Job_Queues_JobStatus_Enum;
-        readonly message?: string | null;
+        readonly message?: string | null | undefined;
         readonly updatedAt: any;
         readonly createdAt: any;
         readonly videoRenderJobs: ReadonlyArray<{
@@ -41399,13 +41785,13 @@ export type GetConferencePrepareJobsQuery = {
 
 export type ManageModeration_ChatFlagFragment = {
     readonly __typename?: "chat_Flag";
-    readonly discussionChatId?: any | null;
-    readonly flaggedById?: any | null;
+    readonly discussionChatId?: any | null | undefined;
+    readonly flaggedById?: any | null | undefined;
     readonly id: number;
     readonly messageSId: any;
-    readonly notes?: string | null;
-    readonly resolution?: string | null;
-    readonly resolved_at?: any | null;
+    readonly notes?: string | null | undefined;
+    readonly resolution?: string | null | undefined;
+    readonly resolved_at?: any | null | undefined;
     readonly type: Chat_FlagType_Enum;
     readonly updated_at: any;
     readonly created_at: any;
@@ -41413,11 +41799,11 @@ export type ManageModeration_ChatFlagFragment = {
         readonly __typename?: "chat_Message";
         readonly created_at: any;
         readonly data: any;
-        readonly duplicatedMessageSId?: any | null;
+        readonly duplicatedMessageSId?: any | null | undefined;
         readonly id: number;
         readonly sId: any;
         readonly message: string;
-        readonly senderId?: any | null;
+        readonly senderId?: any | null | undefined;
         readonly type: Chat_MessageType_Enum;
         readonly chatId: any;
         readonly reactions: ReadonlyArray<{
@@ -41428,7 +41814,7 @@ export type ManageModeration_ChatFlagFragment = {
             readonly symbol: string;
             readonly type: Chat_ReactionType_Enum;
             readonly messageSId: any;
-            readonly duplicateSId?: any | null;
+            readonly duplicateSId?: any | null | undefined;
             readonly created_at: any;
             readonly updated_at: any;
             readonly chatId: any;
@@ -41444,13 +41830,13 @@ export type ManageModeration_SelectFlagsQuery = {
     readonly __typename?: "query_root";
     readonly chat_Flag: ReadonlyArray<{
         readonly __typename?: "chat_Flag";
-        readonly discussionChatId?: any | null;
-        readonly flaggedById?: any | null;
+        readonly discussionChatId?: any | null | undefined;
+        readonly flaggedById?: any | null | undefined;
         readonly id: number;
         readonly messageSId: any;
-        readonly notes?: string | null;
-        readonly resolution?: string | null;
-        readonly resolved_at?: any | null;
+        readonly notes?: string | null | undefined;
+        readonly resolution?: string | null | undefined;
+        readonly resolved_at?: any | null | undefined;
         readonly type: Chat_FlagType_Enum;
         readonly updated_at: any;
         readonly created_at: any;
@@ -41458,11 +41844,11 @@ export type ManageModeration_SelectFlagsQuery = {
             readonly __typename?: "chat_Message";
             readonly created_at: any;
             readonly data: any;
-            readonly duplicatedMessageSId?: any | null;
+            readonly duplicatedMessageSId?: any | null | undefined;
             readonly id: number;
             readonly sId: any;
             readonly message: string;
-            readonly senderId?: any | null;
+            readonly senderId?: any | null | undefined;
             readonly type: Chat_MessageType_Enum;
             readonly chatId: any;
             readonly reactions: ReadonlyArray<{
@@ -41473,7 +41859,7 @@ export type ManageModeration_SelectFlagsQuery = {
                 readonly symbol: string;
                 readonly type: Chat_ReactionType_Enum;
                 readonly messageSId: any;
-                readonly duplicateSId?: any | null;
+                readonly duplicateSId?: any | null | undefined;
                 readonly created_at: any;
                 readonly updated_at: any;
                 readonly chatId: any;
@@ -41489,19 +41875,22 @@ export type ManageModeration_UpdateFlagMutationVariables = Exact<{
 
 export type ManageModeration_UpdateFlagMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_chat_Flag_by_pk?: {
-        readonly __typename?: "chat_Flag";
-        readonly discussionChatId?: any | null;
-        readonly flaggedById?: any | null;
-        readonly id: number;
-        readonly messageSId: any;
-        readonly notes?: string | null;
-        readonly resolution?: string | null;
-        readonly resolved_at?: any | null;
-        readonly type: Chat_FlagType_Enum;
-        readonly updated_at: any;
-        readonly created_at: any;
-    } | null;
+    readonly update_chat_Flag_by_pk?:
+        | {
+              readonly __typename?: "chat_Flag";
+              readonly discussionChatId?: any | null | undefined;
+              readonly flaggedById?: any | null | undefined;
+              readonly id: number;
+              readonly messageSId: any;
+              readonly notes?: string | null | undefined;
+              readonly resolution?: string | null | undefined;
+              readonly resolved_at?: any | null | undefined;
+              readonly type: Chat_FlagType_Enum;
+              readonly updated_at: any;
+              readonly created_at: any;
+          }
+        | null
+        | undefined;
 };
 
 export type PreshowChecklistQueryVariables = Exact<{
@@ -41533,8 +41922,8 @@ export type PreshowChecklistQuery = {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
                 readonly name: string;
-                readonly affiliation?: string | null;
-                readonly email?: string | null;
+                readonly affiliation?: string | null | undefined;
+                readonly email?: string | null | undefined;
             };
         }>;
     }>;
@@ -41542,15 +41931,15 @@ export type PreshowChecklistQuery = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
+        readonly affiliation?: string | null | undefined;
+        readonly email?: string | null | undefined;
     }>;
     readonly requiredProgramPeopleNotRegistered: ReadonlyArray<{
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
+        readonly affiliation?: string | null | undefined;
+        readonly email?: string | null | undefined;
     }>;
     readonly submissionsNotReceived: ReadonlyArray<{
         readonly __typename?: "content_Element";
@@ -41564,65 +41953,80 @@ export type PreshowChecklistQuery = {
         readonly id: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
     }>;
     readonly livestreamEventsWithoutRegisteredChair: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
     }>;
     readonly prerecordedEventsWithoutVideo: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
     }>;
     readonly prerecordedEventsWithVideo: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly name: string;
-                readonly data: any;
-            }>;
-        } | null;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly title: string;
+                  readonly elements: ReadonlyArray<{
+                      readonly __typename?: "content_Element";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly data: any;
+                  }>;
+              }
+            | null
+            | undefined;
     }>;
     readonly zoomEvents: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly name: string;
-                readonly data: any;
-            }>;
-        } | null;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly title: string;
+                  readonly elements: ReadonlyArray<{
+                      readonly __typename?: "content_Element";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly data: any;
+                  }>;
+              }
+            | null
+            | undefined;
     }>;
     readonly allLiveEventsWithPeople: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
@@ -41630,26 +42034,28 @@ export type PreshowChecklistQuery = {
         readonly name: string;
         readonly intendedRoomModeName: Room_Mode_Enum;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly itemPeopleWithRegistrant: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly personId: any;
-            }>;
-            readonly itemPeopleWithoutRegistrant: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly personId: any;
-            }>;
-        } | null;
-        readonly exhibition?: {
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly name: string;
-        } | null;
+        readonly item?:
+            | {
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly title: string;
+                  readonly itemPeopleWithRegistrant: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly personId: any;
+                  }>;
+                  readonly itemPeopleWithoutRegistrant: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly personId: any;
+                  }>;
+              }
+            | null
+            | undefined;
+        readonly exhibition?:
+            | { readonly __typename?: "collection_Exhibition"; readonly id: any; readonly name: string }
+            | null
+            | undefined;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
@@ -41671,7 +42077,7 @@ export type PreshowChecklistQuery = {
         readonly id: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
     }>;
     readonly exhibitionEventsWithoutDiscussionRooms: ReadonlyArray<{
@@ -41679,63 +42085,78 @@ export type PreshowChecklistQuery = {
         readonly id: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly exhibition?: {
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly name: string;
-            readonly items: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
-            }>;
-        } | null;
+        readonly exhibition?:
+            | {
+                  readonly __typename?: "collection_Exhibition";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly items: ReadonlyArray<{
+                      readonly __typename?: "content_ItemExhibition";
+                      readonly id: any;
+                      readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
+                  }>;
+              }
+            | null
+            | undefined;
     }>;
     readonly liveEventsWithoutContent: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly endTime?: any | null | undefined;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
     }>;
     readonly overlappingEvents: ReadonlyArray<{
         readonly __typename?: "schedule_OverlappingEvents";
-        readonly eventX?: {
-            readonly __typename?: "schedule_Event";
-            readonly id: any;
-            readonly name: string;
-            readonly startTime: any;
-            readonly endTime?: any | null;
-            readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        } | null;
-        readonly eventY?: {
-            readonly __typename?: "schedule_Event";
-            readonly id: any;
-            readonly name: string;
-            readonly startTime: any;
-            readonly endTime?: any | null;
-        } | null;
+        readonly eventX?:
+            | {
+                  readonly __typename?: "schedule_Event";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly startTime: any;
+                  readonly endTime?: any | null | undefined;
+                  readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
+              }
+            | null
+            | undefined;
+        readonly eventY?:
+            | {
+                  readonly __typename?: "schedule_Event";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly startTime: any;
+                  readonly endTime?: any | null | undefined;
+              }
+            | null
+            | undefined;
     }>;
     readonly shortEvents: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
     }>;
     readonly roomsWithStreams: ReadonlyArray<{
         readonly __typename?: "room_Room";
         readonly id: any;
         readonly name: string;
-        readonly livestreamDuration?: {
-            readonly __typename?: "room_LivestreamDurations";
-            readonly sum?: any | null;
-        } | null;
+        readonly livestreamDuration?:
+            | { readonly __typename?: "room_LivestreamDurations"; readonly sum?: any | null | undefined }
+            | null
+            | undefined;
     }>;
     readonly eventsWithNegativeDuration: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
@@ -41744,7 +42165,10 @@ export type PreshowChecklistQuery = {
         readonly startTime: any;
         readonly durationSeconds: number;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
     }>;
 };
 
@@ -41757,16 +42181,19 @@ export type UpdateConferenceMutationVariables = Exact<{
 
 export type UpdateConferenceMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_conference_Conference?: {
-        readonly __typename?: "conference_Conference_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "conference_Conference";
-            readonly id: any;
-            readonly name: string;
-            readonly shortName: string;
-            readonly slug: string;
-        }>;
-    } | null;
+    readonly update_conference_Conference?:
+        | {
+              readonly __typename?: "conference_Conference_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "conference_Conference";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly shortName: string;
+                  readonly slug: string;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type MultiSettingUpdater_GetConfigurationsQueryVariables = Exact<{
@@ -41791,14 +42218,17 @@ export type MultiSettingUpdater_DeleteConfigurationsMutationVariables = Exact<{
 
 export type MultiSettingUpdater_DeleteConfigurationsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_conference_Configuration?: {
-        readonly __typename?: "conference_Configuration_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-        }>;
-    } | null;
+    readonly delete_conference_Configuration?:
+        | {
+              readonly __typename?: "conference_Configuration_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type SettingUpdater_GetConfigurationQueryVariables = Exact<{
@@ -41808,12 +42238,15 @@ export type SettingUpdater_GetConfigurationQueryVariables = Exact<{
 
 export type SettingUpdater_GetConfigurationQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Configuration_by_pk?: {
-        readonly __typename?: "conference_Configuration";
-        readonly conferenceId: any;
-        readonly key: Conference_ConfigurationKey_Enum;
-        readonly value: any;
-    } | null;
+    readonly conference_Configuration_by_pk?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
 };
 
 export type SettingUpdater_SetConfigurationMutationVariables = Exact<{
@@ -41824,12 +42257,15 @@ export type SettingUpdater_SetConfigurationMutationVariables = Exact<{
 
 export type SettingUpdater_SetConfigurationMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_conference_Configuration_one?: {
-        readonly __typename?: "conference_Configuration";
-        readonly conferenceId: any;
-        readonly key: Conference_ConfigurationKey_Enum;
-        readonly value: any;
-    } | null;
+    readonly insert_conference_Configuration_one?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
 };
 
 export type SettingUpdater_DeleteConfigurationMutationVariables = Exact<{
@@ -41839,11 +42275,14 @@ export type SettingUpdater_DeleteConfigurationMutationVariables = Exact<{
 
 export type SettingUpdater_DeleteConfigurationMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_conference_Configuration_by_pk?: {
-        readonly __typename?: "conference_Configuration";
-        readonly conferenceId: any;
-        readonly key: Conference_ConfigurationKey_Enum;
-    } | null;
+    readonly delete_conference_Configuration_by_pk?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_ItemTagFragment = {
@@ -41858,8 +42297,8 @@ export type ManageContent_ItemExhibitionFragment = {
     readonly id: any;
     readonly itemId: any;
     readonly exhibitionId: any;
-    readonly priority?: number | null;
-    readonly layout?: any | null;
+    readonly priority?: number | null | undefined;
+    readonly layout?: any | null | undefined;
     readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
 };
 
@@ -41868,7 +42307,7 @@ export type ManageContent_ItemScalarsFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly title: string;
-    readonly shortTitle?: string | null;
+    readonly shortTitle?: string | null | undefined;
     readonly typeName: Content_ItemType_Enum;
 };
 
@@ -41877,7 +42316,7 @@ export type ManageContent_ItemFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly title: string;
-    readonly shortTitle?: string | null;
+    readonly shortTitle?: string | null | undefined;
     readonly typeName: Content_ItemType_Enum;
     readonly itemTags: ReadonlyArray<{
         readonly __typename?: "content_ItemTag";
@@ -41892,7 +42331,7 @@ export type ManageContent_OriginatingDataFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly sourceId: string;
-    readonly data?: any | null;
+    readonly data?: any | null | undefined;
 };
 
 export type ManageContent_RoomFragment = {
@@ -41909,8 +42348,8 @@ export type ManageContent_ElementFragment = {
     readonly name: string;
     readonly typeName: Content_ElementType_Enum;
     readonly data: any;
-    readonly layoutData?: any | null;
-    readonly uploadsRemaining?: number | null;
+    readonly layoutData?: any | null | undefined;
+    readonly uploadsRemaining?: number | null | undefined;
     readonly isHidden: boolean;
     readonly updatedAt: any;
     readonly conferenceId: any;
@@ -41920,9 +42359,9 @@ export type ManageContent_ProgramPersonFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
     readonly name: string;
-    readonly affiliation?: string | null;
-    readonly email?: string | null;
-    readonly registrantId?: any | null;
+    readonly affiliation?: string | null | undefined;
+    readonly email?: string | null | undefined;
+    readonly registrantId?: any | null | undefined;
     readonly conferenceId: any;
 };
 
@@ -41930,16 +42369,16 @@ export type ManageContent_ItemProgramPersonFragment = {
     readonly __typename?: "content_ItemProgramPerson";
     readonly id: any;
     readonly itemId: any;
-    readonly priority?: number | null;
+    readonly priority?: number | null | undefined;
     readonly roleName: string;
     readonly personId: any;
     readonly person: {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly email?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
         readonly conferenceId: any;
     };
 };
@@ -41947,21 +42386,22 @@ export type ManageContent_ItemProgramPersonFragment = {
 export type ManageContent_ItemSecondaryFragment = {
     readonly __typename?: "content_Item";
     readonly typeName: Content_ItemType_Enum;
-    readonly chatId?: any | null;
-    readonly originatingDataId?: any | null;
-    readonly room?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly name: string;
-        readonly conferenceId: any;
-    } | null;
-    readonly originatingData?: {
-        readonly __typename?: "conference_OriginatingData";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly sourceId: string;
-        readonly data?: any | null;
-    } | null;
+    readonly chatId?: any | null | undefined;
+    readonly originatingDataId?: any | null | undefined;
+    readonly room?:
+        | { readonly __typename?: "room_Room"; readonly id: any; readonly name: string; readonly conferenceId: any }
+        | null
+        | undefined;
+    readonly originatingData?:
+        | {
+              readonly __typename?: "conference_OriginatingData";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly sourceId: string;
+              readonly data?: any | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_ItemForExportFragment = {
@@ -41969,10 +42409,10 @@ export type ManageContent_ItemForExportFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly title: string;
-    readonly shortTitle?: string | null;
+    readonly shortTitle?: string | null | undefined;
     readonly typeName: Content_ItemType_Enum;
-    readonly originatingDataId?: any | null;
-    readonly chatId?: any | null;
+    readonly originatingDataId?: any | null | undefined;
+    readonly chatId?: any | null | undefined;
     readonly itemTags: ReadonlyArray<{
         readonly __typename?: "content_ItemTag";
         readonly id: any;
@@ -41984,23 +42424,26 @@ export type ManageContent_ItemForExportFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly exhibitionId: any;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
     }>;
-    readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly conferenceId: any } | null;
+    readonly room?:
+        | { readonly __typename?: "room_Room"; readonly id: any; readonly conferenceId: any }
+        | null
+        | undefined;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
         readonly itemId: any;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly roleName: string;
         readonly personId: any;
         readonly person: {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly registrantId?: any | null;
+            readonly affiliation?: string | null | undefined;
+            readonly email?: string | null | undefined;
+            readonly registrantId?: any | null | undefined;
             readonly conferenceId: any;
         };
     }>;
@@ -42011,8 +42454,8 @@ export type ManageContent_ItemForExportFragment = {
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
         readonly data: any;
-        readonly layoutData?: any | null;
-        readonly uploadsRemaining?: number | null;
+        readonly layoutData?: any | null | undefined;
+        readonly uploadsRemaining?: number | null | undefined;
         readonly isHidden: boolean;
         readonly updatedAt: any;
         readonly conferenceId: any;
@@ -42030,7 +42473,7 @@ export type ManageContent_SelectAllItemsQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly title: string;
-        readonly shortTitle?: string | null;
+        readonly shortTitle?: string | null | undefined;
         readonly typeName: Content_ItemType_Enum;
         readonly itemTags: ReadonlyArray<{
             readonly __typename?: "content_ItemTag";
@@ -42052,10 +42495,10 @@ export type ManageContent_SelectItemsForExportQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly title: string;
-        readonly shortTitle?: string | null;
+        readonly shortTitle?: string | null | undefined;
         readonly typeName: Content_ItemType_Enum;
-        readonly originatingDataId?: any | null;
-        readonly chatId?: any | null;
+        readonly originatingDataId?: any | null | undefined;
+        readonly chatId?: any | null | undefined;
         readonly itemTags: ReadonlyArray<{
             readonly __typename?: "content_ItemTag";
             readonly id: any;
@@ -42067,23 +42510,26 @@ export type ManageContent_SelectItemsForExportQuery = {
             readonly id: any;
             readonly itemId: any;
             readonly exhibitionId: any;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
         }>;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly conferenceId: any } | null;
+        readonly room?:
+            | { readonly __typename?: "room_Room"; readonly id: any; readonly conferenceId: any }
+            | null
+            | undefined;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
             readonly itemId: any;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
             readonly roleName: string;
             readonly personId: any;
             readonly person: {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
                 readonly name: string;
-                readonly affiliation?: string | null;
-                readonly email?: string | null;
-                readonly registrantId?: any | null;
+                readonly affiliation?: string | null | undefined;
+                readonly email?: string | null | undefined;
+                readonly registrantId?: any | null | undefined;
                 readonly conferenceId: any;
             };
         }>;
@@ -42094,8 +42540,8 @@ export type ManageContent_SelectItemsForExportQuery = {
             readonly name: string;
             readonly typeName: Content_ElementType_Enum;
             readonly data: any;
-            readonly layoutData?: any | null;
-            readonly uploadsRemaining?: number | null;
+            readonly layoutData?: any | null | undefined;
+            readonly uploadsRemaining?: number | null | undefined;
             readonly isHidden: boolean;
             readonly updatedAt: any;
             readonly conferenceId: any;
@@ -42109,25 +42555,34 @@ export type ManageContent_SelectItemQueryVariables = Exact<{
 
 export type ManageContent_SelectItemQuery = {
     readonly __typename?: "query_root";
-    readonly content_Item_by_pk?: {
-        readonly __typename?: "content_Item";
-        readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
-        readonly originatingDataId?: any | null;
-        readonly room?: {
-            readonly __typename?: "room_Room";
-            readonly id: any;
-            readonly name: string;
-            readonly conferenceId: any;
-        } | null;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
-    } | null;
+    readonly content_Item_by_pk?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly typeName: Content_ItemType_Enum;
+              readonly chatId?: any | null | undefined;
+              readonly originatingDataId?: any | null | undefined;
+              readonly room?:
+                  | {
+                        readonly __typename?: "room_Room";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly conferenceId: any;
+                    }
+                  | null
+                  | undefined;
+              readonly originatingData?:
+                  | {
+                        readonly __typename?: "conference_OriginatingData";
+                        readonly id: any;
+                        readonly conferenceId: any;
+                        readonly sourceId: string;
+                        readonly data?: any | null | undefined;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
     readonly content_Element: ReadonlyArray<{
         readonly __typename?: "content_Element";
         readonly id: any;
@@ -42135,8 +42590,8 @@ export type ManageContent_SelectItemQuery = {
         readonly name: string;
         readonly typeName: Content_ElementType_Enum;
         readonly data: any;
-        readonly layoutData?: any | null;
-        readonly uploadsRemaining?: number | null;
+        readonly layoutData?: any | null | undefined;
+        readonly uploadsRemaining?: number | null | undefined;
         readonly isHidden: boolean;
         readonly updatedAt: any;
         readonly conferenceId: any;
@@ -42153,16 +42608,16 @@ export type ManageContent_SelectItemPeopleQuery = {
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
         readonly itemId: any;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly roleName: string;
         readonly personId: any;
         readonly person: {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly registrantId?: any | null;
+            readonly affiliation?: string | null | undefined;
+            readonly email?: string | null | undefined;
+            readonly registrantId?: any | null | undefined;
             readonly conferenceId: any;
         };
     }>;
@@ -42175,24 +42630,30 @@ export type ManageContent_InsertItemMutationVariables = Exact<{
 
 export type ManageContent_InsertItemMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_content_Item_one?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly typeName: Content_ItemType_Enum;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tagId: any;
-        }>;
-    } | null;
-    readonly insert_content_ItemTag?: {
-        readonly __typename?: "content_ItemTag_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemTag"; readonly id: any }>;
-    } | null;
+    readonly insert_content_Item_one?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly title: string;
+              readonly shortTitle?: string | null | undefined;
+              readonly typeName: Content_ItemType_Enum;
+              readonly itemTags: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly tagId: any;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly insert_content_ItemTag?:
+        | {
+              readonly __typename?: "content_ItemTag_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemTag"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_UpdateItemMutationVariables = Exact<{
@@ -42204,27 +42665,36 @@ export type ManageContent_UpdateItemMutationVariables = Exact<{
 
 export type ManageContent_UpdateItemMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_content_ItemTag?: {
-        readonly __typename?: "content_ItemTag_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tagId: any;
-        }>;
-    } | null;
-    readonly delete_content_ItemTag?: {
-        readonly __typename?: "content_ItemTag_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemTag"; readonly id: any }>;
-    } | null;
-    readonly update_content_Item_by_pk?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly typeName: Content_ItemType_Enum;
-    } | null;
+    readonly insert_content_ItemTag?:
+        | {
+              readonly __typename?: "content_ItemTag_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly tagId: any;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly delete_content_ItemTag?:
+        | {
+              readonly __typename?: "content_ItemTag_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemTag"; readonly id: any }>;
+          }
+        | null
+        | undefined;
+    readonly update_content_Item_by_pk?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly title: string;
+              readonly shortTitle?: string | null | undefined;
+              readonly typeName: Content_ItemType_Enum;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_DeleteItemsMutationVariables = Exact<{
@@ -42233,10 +42703,13 @@ export type ManageContent_DeleteItemsMutationVariables = Exact<{
 
 export type ManageContent_DeleteItemsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_content_Item?: {
-        readonly __typename?: "content_Item_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_Item"; readonly id: any }>;
-    } | null;
+    readonly delete_content_Item?:
+        | {
+              readonly __typename?: "content_Item_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "content_Item"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_TagFragment = {
@@ -42272,7 +42745,7 @@ export type ManageContent_ExhibitionFragment = {
     readonly colour: string;
     readonly priority: number;
     readonly isHidden: boolean;
-    readonly descriptiveItemId?: any | null;
+    readonly descriptiveItemId?: any | null | undefined;
     readonly items: ReadonlyArray<{
         readonly __typename?: "content_ItemExhibition";
         readonly id: any;
@@ -42294,7 +42767,7 @@ export type ManageContent_SelectAllExhibitionsQuery = {
         readonly colour: string;
         readonly priority: number;
         readonly isHidden: boolean;
-        readonly descriptiveItemId?: any | null;
+        readonly descriptiveItemId?: any | null | undefined;
         readonly items: ReadonlyArray<{
             readonly __typename?: "content_ItemExhibition";
             readonly id: any;
@@ -42311,10 +42784,10 @@ export type ElementInfoFragment = {
     readonly data: any;
     readonly id: any;
     readonly isHidden: boolean;
-    readonly layoutData?: any | null;
+    readonly layoutData?: any | null | undefined;
     readonly name: string;
-    readonly originatingDataId?: any | null;
-    readonly uploadsRemaining?: number | null;
+    readonly originatingDataId?: any | null | undefined;
+    readonly uploadsRemaining?: number | null | undefined;
 };
 
 export type OriginatingDataInfoFragment = {
@@ -42322,7 +42795,7 @@ export type OriginatingDataInfoFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly sourceId: string;
-    readonly data?: any | null;
+    readonly data?: any | null | undefined;
 };
 
 export type ProgramPersonInfoFragment = {
@@ -42330,10 +42803,10 @@ export type ProgramPersonInfoFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly name: string;
-    readonly affiliation?: string | null;
-    readonly email?: string | null;
-    readonly originatingDataId?: any | null;
-    readonly registrantId?: any | null;
+    readonly affiliation?: string | null | undefined;
+    readonly email?: string | null | undefined;
+    readonly originatingDataId?: any | null | undefined;
+    readonly registrantId?: any | null | undefined;
 };
 
 export type ItemTagInfoFragment = {
@@ -42348,8 +42821,8 @@ export type ItemExhibitionInfoFragment = {
     readonly id: any;
     readonly itemId: any;
     readonly exhibitionId: any;
-    readonly priority?: number | null;
-    readonly layout?: any | null;
+    readonly priority?: number | null | undefined;
+    readonly layout?: any | null | undefined;
 };
 
 export type ItemPersonInfoFragment = {
@@ -42357,7 +42830,7 @@ export type ItemPersonInfoFragment = {
     readonly id: any;
     readonly itemId: any;
     readonly personId: any;
-    readonly priority?: number | null;
+    readonly priority?: number | null | undefined;
     readonly roleName: string;
 };
 
@@ -42367,8 +42840,8 @@ export type ItemFullNestedInfoFragment = {
     readonly conferenceId: any;
     readonly typeName: Content_ItemType_Enum;
     readonly title: string;
-    readonly shortTitle?: string | null;
-    readonly originatingDataId?: any | null;
+    readonly shortTitle?: string | null | undefined;
+    readonly originatingDataId?: any | null | undefined;
     readonly elements: ReadonlyArray<{
         readonly __typename?: "content_Element";
         readonly conferenceId: any;
@@ -42377,10 +42850,10 @@ export type ItemFullNestedInfoFragment = {
         readonly data: any;
         readonly id: any;
         readonly isHidden: boolean;
-        readonly layoutData?: any | null;
+        readonly layoutData?: any | null | undefined;
         readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly uploadsRemaining?: number | null;
+        readonly originatingDataId?: any | null | undefined;
+        readonly uploadsRemaining?: number | null | undefined;
     }>;
     readonly itemTags: ReadonlyArray<{
         readonly __typename?: "content_ItemTag";
@@ -42393,18 +42866,21 @@ export type ItemFullNestedInfoFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly exhibitionId: any;
-        readonly priority?: number | null;
-        readonly layout?: any | null;
+        readonly priority?: number | null | undefined;
+        readonly layout?: any | null | undefined;
     }>;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
         readonly itemId: any;
         readonly personId: any;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly roleName: string;
     }>;
-    readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+    readonly room?:
+        | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+        | null
+        | undefined;
 };
 
 export type TagInfoFragment = {
@@ -42413,7 +42889,7 @@ export type TagInfoFragment = {
     readonly conferenceId: any;
     readonly colour: string;
     readonly name: string;
-    readonly originatingDataId?: any | null;
+    readonly originatingDataId?: any | null | undefined;
     readonly priority: number;
 };
 
@@ -42439,8 +42915,8 @@ export type SelectAllContentQuery = {
         readonly conferenceId: any;
         readonly typeName: Content_ItemType_Enum;
         readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly originatingDataId?: any | null;
+        readonly shortTitle?: string | null | undefined;
+        readonly originatingDataId?: any | null | undefined;
         readonly elements: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly conferenceId: any;
@@ -42449,10 +42925,10 @@ export type SelectAllContentQuery = {
             readonly data: any;
             readonly id: any;
             readonly isHidden: boolean;
-            readonly layoutData?: any | null;
+            readonly layoutData?: any | null | undefined;
             readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly uploadsRemaining?: number | null;
+            readonly originatingDataId?: any | null | undefined;
+            readonly uploadsRemaining?: number | null | undefined;
         }>;
         readonly itemTags: ReadonlyArray<{
             readonly __typename?: "content_ItemTag";
@@ -42465,35 +42941,38 @@ export type SelectAllContentQuery = {
             readonly id: any;
             readonly itemId: any;
             readonly exhibitionId: any;
-            readonly priority?: number | null;
-            readonly layout?: any | null;
+            readonly priority?: number | null | undefined;
+            readonly layout?: any | null | undefined;
         }>;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
             readonly itemId: any;
             readonly personId: any;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
             readonly roleName: string;
         }>;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+        readonly room?:
+            | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+            | null
+            | undefined;
     }>;
     readonly collection_ProgramPerson: ReadonlyArray<{
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
-        readonly originatingDataId?: any | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly email?: string | null | undefined;
+        readonly originatingDataId?: any | null | undefined;
+        readonly registrantId?: any | null | undefined;
     }>;
     readonly conference_OriginatingData: ReadonlyArray<{
         readonly __typename?: "conference_OriginatingData";
         readonly id: any;
         readonly conferenceId: any;
         readonly sourceId: string;
-        readonly data?: any | null;
+        readonly data?: any | null | undefined;
     }>;
     readonly collection_Tag: ReadonlyArray<{
         readonly __typename?: "collection_Tag";
@@ -42501,7 +42980,7 @@ export type SelectAllContentQuery = {
         readonly conferenceId: any;
         readonly colour: string;
         readonly name: string;
-        readonly originatingDataId?: any | null;
+        readonly originatingDataId?: any | null | undefined;
         readonly priority: number;
     }>;
     readonly collection_Exhibition: ReadonlyArray<{
@@ -42522,58 +43001,67 @@ export type InsertDeleteItemsMutationVariables = Exact<{
 
 export type InsertDeleteItemsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_content_Item?: {
-        readonly __typename?: "content_Item_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly typeName: Content_ItemType_Enum;
-            readonly title: string;
-            readonly shortTitle?: string | null;
-            readonly originatingDataId?: any | null;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly conferenceId: any;
-                readonly itemId: any;
-                readonly typeName: Content_ElementType_Enum;
-                readonly data: any;
-                readonly id: any;
-                readonly isHidden: boolean;
-                readonly layoutData?: any | null;
-                readonly name: string;
-                readonly originatingDataId?: any | null;
-                readonly uploadsRemaining?: number | null;
-            }>;
-            readonly itemTags: ReadonlyArray<{
-                readonly __typename?: "content_ItemTag";
-                readonly id: any;
-                readonly tagId: any;
-                readonly itemId: any;
-            }>;
-            readonly itemExhibitions: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly itemId: any;
-                readonly exhibitionId: any;
-                readonly priority?: number | null;
-                readonly layout?: any | null;
-            }>;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly itemId: any;
-                readonly personId: any;
-                readonly priority?: number | null;
-                readonly roleName: string;
-            }>;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
-        }>;
-    } | null;
-    readonly delete_content_Item?: {
-        readonly __typename?: "content_Item_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_Item"; readonly id: any }>;
-    } | null;
+    readonly insert_content_Item?:
+        | {
+              readonly __typename?: "content_Item_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "content_Item";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly typeName: Content_ItemType_Enum;
+                  readonly title: string;
+                  readonly shortTitle?: string | null | undefined;
+                  readonly originatingDataId?: any | null | undefined;
+                  readonly elements: ReadonlyArray<{
+                      readonly __typename?: "content_Element";
+                      readonly conferenceId: any;
+                      readonly itemId: any;
+                      readonly typeName: Content_ElementType_Enum;
+                      readonly data: any;
+                      readonly id: any;
+                      readonly isHidden: boolean;
+                      readonly layoutData?: any | null | undefined;
+                      readonly name: string;
+                      readonly originatingDataId?: any | null | undefined;
+                      readonly uploadsRemaining?: number | null | undefined;
+                  }>;
+                  readonly itemTags: ReadonlyArray<{
+                      readonly __typename?: "content_ItemTag";
+                      readonly id: any;
+                      readonly tagId: any;
+                      readonly itemId: any;
+                  }>;
+                  readonly itemExhibitions: ReadonlyArray<{
+                      readonly __typename?: "content_ItemExhibition";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly exhibitionId: any;
+                      readonly priority?: number | null | undefined;
+                      readonly layout?: any | null | undefined;
+                  }>;
+                  readonly itemPeople: ReadonlyArray<{
+                      readonly __typename?: "content_ItemProgramPerson";
+                      readonly id: any;
+                      readonly itemId: any;
+                      readonly personId: any;
+                      readonly priority?: number | null | undefined;
+                      readonly roleName: string;
+                  }>;
+                  readonly room?:
+                      | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+                      | null
+                      | undefined;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly delete_content_Item?:
+        | {
+              readonly __typename?: "content_Item_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "content_Item"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertElementsMutationVariables = Exact<{
@@ -42582,22 +43070,25 @@ export type InsertElementsMutationVariables = Exact<{
 
 export type InsertElementsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly conferenceId: any;
-            readonly itemId: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly data: any;
-            readonly id: any;
-            readonly isHidden: boolean;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly uploadsRemaining?: number | null;
-        }>;
-    } | null;
+    readonly insert_content_Element?:
+        | {
+              readonly __typename?: "content_Element_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly conferenceId: any;
+                  readonly itemId: any;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly data: any;
+                  readonly id: any;
+                  readonly isHidden: boolean;
+                  readonly layoutData?: any | null | undefined;
+                  readonly name: string;
+                  readonly originatingDataId?: any | null | undefined;
+                  readonly uploadsRemaining?: number | null | undefined;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertOriginatingDatasMutationVariables = Exact<{
@@ -42606,16 +43097,19 @@ export type InsertOriginatingDatasMutationVariables = Exact<{
 
 export type InsertOriginatingDatasMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_conference_OriginatingData?: {
-        readonly __typename?: "conference_OriginatingData_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        }>;
-    } | null;
+    readonly insert_conference_OriginatingData?:
+        | {
+              readonly __typename?: "conference_OriginatingData_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "conference_OriginatingData";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly sourceId: string;
+                  readonly data?: any | null | undefined;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteOriginatingDatasMutationVariables = Exact<{
@@ -42624,10 +43118,16 @@ export type DeleteOriginatingDatasMutationVariables = Exact<{
 
 export type DeleteOriginatingDatasMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_conference_OriginatingData?: {
-        readonly __typename?: "conference_OriginatingData_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "conference_OriginatingData"; readonly id: any }>;
-    } | null;
+    readonly delete_conference_OriginatingData?:
+        | {
+              readonly __typename?: "conference_OriginatingData_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "conference_OriginatingData";
+                  readonly id: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertTagsMutationVariables = Exact<{
@@ -42636,18 +43136,21 @@ export type InsertTagsMutationVariables = Exact<{
 
 export type InsertTagsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_collection_Tag?: {
-        readonly __typename?: "collection_Tag_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_Tag";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly colour: string;
-            readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly priority: number;
-        }>;
-    } | null;
+    readonly insert_collection_Tag?:
+        | {
+              readonly __typename?: "collection_Tag_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "collection_Tag";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly colour: string;
+                  readonly name: string;
+                  readonly originatingDataId?: any | null | undefined;
+                  readonly priority: number;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertExhibitionsMutationVariables = Exact<{
@@ -42656,18 +43159,21 @@ export type InsertExhibitionsMutationVariables = Exact<{
 
 export type InsertExhibitionsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_collection_Exhibition?: {
-        readonly __typename?: "collection_Exhibition_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly colour: string;
-            readonly name: string;
-            readonly priority: number;
-            readonly isHidden: boolean;
-        }>;
-    } | null;
+    readonly insert_collection_Exhibition?:
+        | {
+              readonly __typename?: "collection_Exhibition_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "collection_Exhibition";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly colour: string;
+                  readonly name: string;
+                  readonly priority: number;
+                  readonly isHidden: boolean;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteTagsMutationVariables = Exact<{
@@ -42676,10 +43182,13 @@ export type DeleteTagsMutationVariables = Exact<{
 
 export type DeleteTagsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_collection_Tag?: {
-        readonly __typename?: "collection_Tag_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Tag"; readonly id: any }>;
-    } | null;
+    readonly delete_collection_Tag?:
+        | {
+              readonly __typename?: "collection_Tag_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Tag"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteExhibitionsMutationVariables = Exact<{
@@ -42688,10 +43197,13 @@ export type DeleteExhibitionsMutationVariables = Exact<{
 
 export type DeleteExhibitionsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_collection_Exhibition?: {
-        readonly __typename?: "collection_Exhibition_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Exhibition"; readonly id: any }>;
-    } | null;
+    readonly delete_collection_Exhibition?:
+        | {
+              readonly __typename?: "collection_Exhibition_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Exhibition"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertProgramPeopleMutationVariables = Exact<{
@@ -42700,19 +43212,22 @@ export type InsertProgramPeopleMutationVariables = Exact<{
 
 export type InsertProgramPeopleMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_collection_ProgramPerson?: {
-        readonly __typename?: "collection_ProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly originatingDataId?: any | null;
-            readonly registrantId?: any | null;
-        }>;
-    } | null;
+    readonly insert_collection_ProgramPerson?:
+        | {
+              readonly __typename?: "collection_ProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "collection_ProgramPerson";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly name: string;
+                  readonly affiliation?: string | null | undefined;
+                  readonly email?: string | null | undefined;
+                  readonly originatingDataId?: any | null | undefined;
+                  readonly registrantId?: any | null | undefined;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteProgramPeopleMutationVariables = Exact<{
@@ -42721,10 +43236,13 @@ export type DeleteProgramPeopleMutationVariables = Exact<{
 
 export type DeleteProgramPeopleMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_collection_ProgramPerson?: {
-        readonly __typename?: "collection_ProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "collection_ProgramPerson"; readonly id: any }>;
-    } | null;
+    readonly delete_collection_ProgramPerson?:
+        | {
+              readonly __typename?: "collection_ProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "collection_ProgramPerson"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateItemMutationVariables = Exact<{
@@ -42745,114 +43263,147 @@ export type UpdateItemMutationVariables = Exact<{
 
 export type UpdateItemMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly conferenceId: any;
-            readonly itemId: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly data: any;
-            readonly id: any;
-            readonly isHidden: boolean;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly uploadsRemaining?: number | null;
-        }>;
-    } | null;
-    readonly insert_content_ItemTag?: {
-        readonly __typename?: "content_ItemTag_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly tagId: any;
-            readonly itemId: any;
-        }>;
-    } | null;
-    readonly insert_content_ItemExhibition?: {
-        readonly __typename?: "content_ItemExhibition_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-            readonly priority?: number | null;
-            readonly layout?: any | null;
-        }>;
-    } | null;
-    readonly insert_content_ItemProgramPerson?: {
-        readonly __typename?: "content_ItemProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-        }>;
-    } | null;
-    readonly update_content_Item_by_pk?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly typeName: Content_ItemType_Enum;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly originatingDataId?: any | null;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly conferenceId: any;
-            readonly itemId: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly data: any;
-            readonly id: any;
-            readonly isHidden: boolean;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly uploadsRemaining?: number | null;
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly tagId: any;
-            readonly itemId: any;
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-            readonly priority?: number | null;
-            readonly layout?: any | null;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-        }>;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
-    } | null;
-    readonly delete_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_Element"; readonly id: any }>;
-    } | null;
-    readonly delete_content_ItemTag?: {
-        readonly __typename?: "content_ItemTag_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemTag"; readonly id: any }>;
-    } | null;
-    readonly delete_content_ItemExhibition?: {
-        readonly __typename?: "content_ItemExhibition_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemExhibition"; readonly id: any }>;
-    } | null;
-    readonly delete_content_ItemProgramPerson?: {
-        readonly __typename?: "content_ItemProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemProgramPerson"; readonly id: any }>;
-    } | null;
+    readonly insert_content_Element?:
+        | {
+              readonly __typename?: "content_Element_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly conferenceId: any;
+                  readonly itemId: any;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly data: any;
+                  readonly id: any;
+                  readonly isHidden: boolean;
+                  readonly layoutData?: any | null | undefined;
+                  readonly name: string;
+                  readonly originatingDataId?: any | null | undefined;
+                  readonly uploadsRemaining?: number | null | undefined;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly insert_content_ItemTag?:
+        | {
+              readonly __typename?: "content_ItemTag_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly tagId: any;
+                  readonly itemId: any;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly insert_content_ItemExhibition?:
+        | {
+              readonly __typename?: "content_ItemExhibition_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly exhibitionId: any;
+                  readonly priority?: number | null | undefined;
+                  readonly layout?: any | null | undefined;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly insert_content_ItemProgramPerson?:
+        | {
+              readonly __typename?: "content_ItemProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly personId: any;
+                  readonly priority?: number | null | undefined;
+                  readonly roleName: string;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly update_content_Item_by_pk?:
+        | {
+              readonly __typename?: "content_Item";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly typeName: Content_ItemType_Enum;
+              readonly title: string;
+              readonly shortTitle?: string | null | undefined;
+              readonly originatingDataId?: any | null | undefined;
+              readonly elements: ReadonlyArray<{
+                  readonly __typename?: "content_Element";
+                  readonly conferenceId: any;
+                  readonly itemId: any;
+                  readonly typeName: Content_ElementType_Enum;
+                  readonly data: any;
+                  readonly id: any;
+                  readonly isHidden: boolean;
+                  readonly layoutData?: any | null | undefined;
+                  readonly name: string;
+                  readonly originatingDataId?: any | null | undefined;
+                  readonly uploadsRemaining?: number | null | undefined;
+              }>;
+              readonly itemTags: ReadonlyArray<{
+                  readonly __typename?: "content_ItemTag";
+                  readonly id: any;
+                  readonly tagId: any;
+                  readonly itemId: any;
+              }>;
+              readonly itemExhibitions: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly exhibitionId: any;
+                  readonly priority?: number | null | undefined;
+                  readonly layout?: any | null | undefined;
+              }>;
+              readonly itemPeople: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+                  readonly itemId: any;
+                  readonly personId: any;
+                  readonly priority?: number | null | undefined;
+                  readonly roleName: string;
+              }>;
+              readonly room?:
+                  | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
+    readonly delete_content_Element?:
+        | {
+              readonly __typename?: "content_Element_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "content_Element"; readonly id: any }>;
+          }
+        | null
+        | undefined;
+    readonly delete_content_ItemTag?:
+        | {
+              readonly __typename?: "content_ItemTag_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemTag"; readonly id: any }>;
+          }
+        | null
+        | undefined;
+    readonly delete_content_ItemExhibition?:
+        | {
+              readonly __typename?: "content_ItemExhibition_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemExhibition"; readonly id: any }>;
+          }
+        | null
+        | undefined;
+    readonly delete_content_ItemProgramPerson?:
+        | {
+              readonly __typename?: "content_ItemProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "content_ItemProgramPerson";
+                  readonly id: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateElementMutationVariables = Exact<{
@@ -42868,19 +43419,22 @@ export type UpdateElementMutationVariables = Exact<{
 
 export type UpdateElementMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_content_Element_by_pk?: {
-        readonly __typename?: "content_Element";
-        readonly conferenceId: any;
-        readonly itemId: any;
-        readonly typeName: Content_ElementType_Enum;
-        readonly data: any;
-        readonly id: any;
-        readonly isHidden: boolean;
-        readonly layoutData?: any | null;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly uploadsRemaining?: number | null;
-    } | null;
+    readonly update_content_Element_by_pk?:
+        | {
+              readonly __typename?: "content_Element";
+              readonly conferenceId: any;
+              readonly itemId: any;
+              readonly typeName: Content_ElementType_Enum;
+              readonly data: any;
+              readonly id: any;
+              readonly isHidden: boolean;
+              readonly layoutData?: any | null | undefined;
+              readonly name: string;
+              readonly originatingDataId?: any | null | undefined;
+              readonly uploadsRemaining?: number | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateGroupPersonMutationVariables = Exact<{
@@ -42891,14 +43445,17 @@ export type UpdateGroupPersonMutationVariables = Exact<{
 
 export type UpdateGroupPersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_content_ItemProgramPerson_by_pk?: {
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly personId: any;
-        readonly priority?: number | null;
-        readonly roleName: string;
-    } | null;
+    readonly update_content_ItemProgramPerson_by_pk?:
+        | {
+              readonly __typename?: "content_ItemProgramPerson";
+              readonly id: any;
+              readonly itemId: any;
+              readonly personId: any;
+              readonly priority?: number | null | undefined;
+              readonly roleName: string;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateGroupExhibitionMutationVariables = Exact<{
@@ -42909,14 +43466,17 @@ export type UpdateGroupExhibitionMutationVariables = Exact<{
 
 export type UpdateGroupExhibitionMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_content_ItemExhibition_by_pk?: {
-        readonly __typename?: "content_ItemExhibition";
-        readonly id: any;
-        readonly itemId: any;
-        readonly exhibitionId: any;
-        readonly priority?: number | null;
-        readonly layout?: any | null;
-    } | null;
+    readonly update_content_ItemExhibition_by_pk?:
+        | {
+              readonly __typename?: "content_ItemExhibition";
+              readonly id: any;
+              readonly itemId: any;
+              readonly exhibitionId: any;
+              readonly priority?: number | null | undefined;
+              readonly layout?: any | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdatePersonMutationVariables = Exact<{
@@ -42930,19 +43490,22 @@ export type UpdatePersonMutationVariables = Exact<{
 
 export type UpdatePersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_collection_ProgramPerson?: {
-        readonly __typename?: "collection_ProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly originatingDataId?: any | null;
-            readonly registrantId?: any | null;
-        }>;
-    } | null;
+    readonly update_collection_ProgramPerson?:
+        | {
+              readonly __typename?: "collection_ProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "collection_ProgramPerson";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly name: string;
+                  readonly affiliation?: string | null | undefined;
+                  readonly email?: string | null | undefined;
+                  readonly originatingDataId?: any | null | undefined;
+                  readonly registrantId?: any | null | undefined;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateTagMutationVariables = Exact<{
@@ -42955,15 +43518,18 @@ export type UpdateTagMutationVariables = Exact<{
 
 export type UpdateTagMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_collection_Tag_by_pk?: {
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly colour: string;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly priority: number;
-    } | null;
+    readonly update_collection_Tag_by_pk?:
+        | {
+              readonly __typename?: "collection_Tag";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly colour: string;
+              readonly name: string;
+              readonly originatingDataId?: any | null | undefined;
+              readonly priority: number;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateExhibitionMutationVariables = Exact<{
@@ -42976,15 +43542,18 @@ export type UpdateExhibitionMutationVariables = Exact<{
 
 export type UpdateExhibitionMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_collection_Exhibition_by_pk?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly colour: string;
-        readonly name: string;
-        readonly priority: number;
-        readonly isHidden: boolean;
-    } | null;
+    readonly update_collection_Exhibition_by_pk?:
+        | {
+              readonly __typename?: "collection_Exhibition";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly colour: string;
+              readonly name: string;
+              readonly priority: number;
+              readonly isHidden: boolean;
+          }
+        | null
+        | undefined;
 };
 
 export type BulkEdit_AddElementsMutationVariables = Exact<{
@@ -42993,10 +43562,10 @@ export type BulkEdit_AddElementsMutationVariables = Exact<{
 
 export type BulkEdit_AddElementsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly insert_content_Element?:
+        | { readonly __typename?: "content_Element_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
@@ -43008,10 +43577,10 @@ export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
 
 export type CombineVideosModal_CreateCombineVideosJobMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_job_queues_CombineVideosJob_one?: {
-        readonly __typename?: "job_queues_CombineVideosJob";
-        readonly id: any;
-    } | null;
+    readonly insert_job_queues_CombineVideosJob_one?:
+        | { readonly __typename?: "job_queues_CombineVideosJob"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type CombineVideosModal_GetCombineVideosJobQueryVariables = Exact<{
@@ -43023,7 +43592,7 @@ export type CombineVideosModal_GetCombineVideosJobQuery = {
     readonly job_queues_CombineVideosJob: ReadonlyArray<{
         readonly __typename?: "job_queues_CombineVideosJob";
         readonly id: any;
-        readonly message?: string | null;
+        readonly message?: string | null | undefined;
         readonly jobStatusName: Job_Queues_JobStatus_Enum;
         readonly data: any;
         readonly conferenceId: any;
@@ -43107,7 +43676,7 @@ export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery = {
         readonly id: any;
         readonly name: string;
         readonly conferenceId: any;
-        readonly descriptiveItemId?: any | null;
+        readonly descriptiveItemId?: any | null | undefined;
     }>;
 };
 
@@ -43118,11 +43687,14 @@ export type UpdateExhibitionDescriptiveItemMutationVariables = Exact<{
 
 export type UpdateExhibitionDescriptiveItemMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_collection_Exhibition_by_pk?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly descriptiveItemId?: any | null;
-    } | null;
+    readonly update_collection_Exhibition_by_pk?:
+        | {
+              readonly __typename?: "collection_Exhibition";
+              readonly id: any;
+              readonly descriptiveItemId?: any | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateLayoutMutationVariables = Exact<{
@@ -43132,10 +43704,10 @@ export type UpdateLayoutMutationVariables = Exact<{
 
 export type UpdateLayoutMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly update_content_Element?:
+        | { readonly __typename?: "content_Element_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type UpdateIsHiddenMutationVariables = Exact<{
@@ -43145,10 +43717,10 @@ export type UpdateIsHiddenMutationVariables = Exact<{
 
 export type UpdateIsHiddenMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly update_content_Element?:
+        | { readonly __typename?: "content_Element_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type UpdateUploadsRemainingMutationVariables = Exact<{
@@ -43158,10 +43730,10 @@ export type UpdateUploadsRemainingMutationVariables = Exact<{
 
 export type UpdateUploadsRemainingMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly update_content_Element?:
+        | { readonly __typename?: "content_Element_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type ManageContent_DeleteElementMutationVariables = Exact<{
@@ -43170,7 +43742,10 @@ export type ManageContent_DeleteElementMutationVariables = Exact<{
 
 export type ManageContent_DeleteElementMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_content_Element_by_pk?: { readonly __typename?: "content_Element"; readonly id: any } | null;
+    readonly delete_content_Element_by_pk?:
+        | { readonly __typename?: "content_Element"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type ManageContent_UpdateElementMutationVariables = Exact<{
@@ -43180,19 +43755,22 @@ export type ManageContent_UpdateElementMutationVariables = Exact<{
 
 export type ManageContent_UpdateElementMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_content_Element_by_pk?: {
-        readonly __typename?: "content_Element";
-        readonly id: any;
-        readonly itemId: any;
-        readonly name: string;
-        readonly typeName: Content_ElementType_Enum;
-        readonly data: any;
-        readonly layoutData?: any | null;
-        readonly uploadsRemaining?: number | null;
-        readonly isHidden: boolean;
-        readonly updatedAt: any;
-        readonly conferenceId: any;
-    } | null;
+    readonly update_content_Element_by_pk?:
+        | {
+              readonly __typename?: "content_Element";
+              readonly id: any;
+              readonly itemId: any;
+              readonly name: string;
+              readonly typeName: Content_ElementType_Enum;
+              readonly data: any;
+              readonly layoutData?: any | null | undefined;
+              readonly uploadsRemaining?: number | null | undefined;
+              readonly isHidden: boolean;
+              readonly updatedAt: any;
+              readonly conferenceId: any;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_SelectItemExhibitionsQueryVariables = Exact<{
@@ -43206,8 +43784,8 @@ export type ManageContent_SelectItemExhibitionsQuery = {
         readonly id: any;
         readonly itemId: any;
         readonly exhibitionId: any;
-        readonly priority?: number | null;
-        readonly layout?: any | null;
+        readonly priority?: number | null | undefined;
+        readonly layout?: any | null | undefined;
         readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
     }>;
 };
@@ -43220,15 +43798,18 @@ export type ManageContent_InsertItemExhibitionMutationVariables = Exact<{
 
 export type ManageContent_InsertItemExhibitionMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_content_ItemExhibition_one?: {
-        readonly __typename?: "content_ItemExhibition";
-        readonly id: any;
-        readonly itemId: any;
-        readonly exhibitionId: any;
-        readonly priority?: number | null;
-        readonly layout?: any | null;
-        readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
-    } | null;
+    readonly insert_content_ItemExhibition_one?:
+        | {
+              readonly __typename?: "content_ItemExhibition";
+              readonly id: any;
+              readonly itemId: any;
+              readonly exhibitionId: any;
+              readonly priority?: number | null | undefined;
+              readonly layout?: any | null | undefined;
+              readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_UpdateItemExhibitionMutationVariables = Exact<{
@@ -43238,15 +43819,18 @@ export type ManageContent_UpdateItemExhibitionMutationVariables = Exact<{
 
 export type ManageContent_UpdateItemExhibitionMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_content_ItemExhibition_by_pk?: {
-        readonly __typename?: "content_ItemExhibition";
-        readonly id: any;
-        readonly itemId: any;
-        readonly exhibitionId: any;
-        readonly priority?: number | null;
-        readonly layout?: any | null;
-        readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
-    } | null;
+    readonly update_content_ItemExhibition_by_pk?:
+        | {
+              readonly __typename?: "content_ItemExhibition";
+              readonly id: any;
+              readonly itemId: any;
+              readonly exhibitionId: any;
+              readonly priority?: number | null | undefined;
+              readonly layout?: any | null | undefined;
+              readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_DeleteItemExhibitionMutationVariables = Exact<{
@@ -43255,10 +43839,10 @@ export type ManageContent_DeleteItemExhibitionMutationVariables = Exact<{
 
 export type ManageContent_DeleteItemExhibitionMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_content_ItemExhibition_by_pk?: {
-        readonly __typename?: "content_ItemExhibition";
-        readonly id: any;
-    } | null;
+    readonly delete_content_ItemExhibition_by_pk?:
+        | { readonly __typename?: "content_ItemExhibition"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type ManageContent_InsertExhibitionMutationVariables = Exact<{
@@ -43267,21 +43851,24 @@ export type ManageContent_InsertExhibitionMutationVariables = Exact<{
 
 export type ManageContent_InsertExhibitionMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_collection_Exhibition_one?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly colour: string;
-        readonly priority: number;
-        readonly isHidden: boolean;
-        readonly descriptiveItemId?: any | null;
-        readonly items: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-        }>;
-    } | null;
+    readonly insert_collection_Exhibition_one?:
+        | {
+              readonly __typename?: "collection_Exhibition";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly name: string;
+              readonly colour: string;
+              readonly priority: number;
+              readonly isHidden: boolean;
+              readonly descriptiveItemId?: any | null | undefined;
+              readonly items: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_UpdateExhibitionMutationVariables = Exact<{
@@ -43291,21 +43878,24 @@ export type ManageContent_UpdateExhibitionMutationVariables = Exact<{
 
 export type ManageContent_UpdateExhibitionMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_collection_Exhibition_by_pk?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly colour: string;
-        readonly priority: number;
-        readonly isHidden: boolean;
-        readonly descriptiveItemId?: any | null;
-        readonly items: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-        }>;
-    } | null;
+    readonly update_collection_Exhibition_by_pk?:
+        | {
+              readonly __typename?: "collection_Exhibition";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly name: string;
+              readonly colour: string;
+              readonly priority: number;
+              readonly isHidden: boolean;
+              readonly descriptiveItemId?: any | null | undefined;
+              readonly items: ReadonlyArray<{
+                  readonly __typename?: "content_ItemExhibition";
+                  readonly id: any;
+                  readonly itemId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_DeleteExhibitionsMutationVariables = Exact<{
@@ -43314,10 +43904,13 @@ export type ManageContent_DeleteExhibitionsMutationVariables = Exact<{
 
 export type ManageContent_DeleteExhibitionsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_collection_Exhibition?: {
-        readonly __typename?: "collection_Exhibition_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Exhibition"; readonly id: any }>;
-    } | null;
+    readonly delete_collection_Exhibition?:
+        | {
+              readonly __typename?: "collection_Exhibition_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Exhibition"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type AddContentMenu_CreateElementMutationVariables = Exact<{
@@ -43326,19 +43919,22 @@ export type AddContentMenu_CreateElementMutationVariables = Exact<{
 
 export type AddContentMenu_CreateElementMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_content_Element_one?: {
-        readonly __typename?: "content_Element";
-        readonly id: any;
-        readonly itemId: any;
-        readonly name: string;
-        readonly typeName: Content_ElementType_Enum;
-        readonly data: any;
-        readonly layoutData?: any | null;
-        readonly uploadsRemaining?: number | null;
-        readonly isHidden: boolean;
-        readonly updatedAt: any;
-        readonly conferenceId: any;
-    } | null;
+    readonly insert_content_Element_one?:
+        | {
+              readonly __typename?: "content_Element";
+              readonly id: any;
+              readonly itemId: any;
+              readonly name: string;
+              readonly typeName: Content_ElementType_Enum;
+              readonly data: any;
+              readonly layoutData?: any | null | undefined;
+              readonly uploadsRemaining?: number | null | undefined;
+              readonly isHidden: boolean;
+              readonly updatedAt: any;
+              readonly conferenceId: any;
+          }
+        | null
+        | undefined;
 };
 
 export type Item_CreateRoomMutationVariables = Exact<{
@@ -43348,11 +43944,14 @@ export type Item_CreateRoomMutationVariables = Exact<{
 
 export type Item_CreateRoomMutation = {
     readonly __typename?: "mutation_root";
-    readonly createItemRoom?: {
-        readonly __typename?: "CreateItemRoomOutput";
-        readonly roomId?: string | null;
-        readonly message?: string | null;
-    } | null;
+    readonly createItemRoom?:
+        | {
+              readonly __typename?: "CreateItemRoomOutput";
+              readonly roomId?: string | null | undefined;
+              readonly message?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_SelectProgramPeopleQueryVariables = Exact<{
@@ -43365,9 +43964,9 @@ export type ManageContent_SelectProgramPeopleQuery = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly email?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
         readonly conferenceId: any;
     }>;
 };
@@ -43381,23 +43980,26 @@ export type ManageContent_InsertItemProgramPersonMutationVariables = Exact<{
 
 export type ManageContent_InsertItemProgramPersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_content_ItemProgramPerson_one?: {
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly priority?: number | null;
-        readonly roleName: string;
-        readonly personId: any;
-        readonly person: {
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly registrantId?: any | null;
-            readonly conferenceId: any;
-        };
-    } | null;
+    readonly insert_content_ItemProgramPerson_one?:
+        | {
+              readonly __typename?: "content_ItemProgramPerson";
+              readonly id: any;
+              readonly itemId: any;
+              readonly priority?: number | null | undefined;
+              readonly roleName: string;
+              readonly personId: any;
+              readonly person: {
+                  readonly __typename?: "collection_ProgramPerson";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly affiliation?: string | null | undefined;
+                  readonly email?: string | null | undefined;
+                  readonly registrantId?: any | null | undefined;
+                  readonly conferenceId: any;
+              };
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_UpdateItemProgramPersonMutationVariables = Exact<{
@@ -43408,23 +44010,26 @@ export type ManageContent_UpdateItemProgramPersonMutationVariables = Exact<{
 
 export type ManageContent_UpdateItemProgramPersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_content_ItemProgramPerson_by_pk?: {
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly priority?: number | null;
-        readonly roleName: string;
-        readonly personId: any;
-        readonly person: {
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly registrantId?: any | null;
-            readonly conferenceId: any;
-        };
-    } | null;
+    readonly update_content_ItemProgramPerson_by_pk?:
+        | {
+              readonly __typename?: "content_ItemProgramPerson";
+              readonly id: any;
+              readonly itemId: any;
+              readonly priority?: number | null | undefined;
+              readonly roleName: string;
+              readonly personId: any;
+              readonly person: {
+                  readonly __typename?: "collection_ProgramPerson";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly affiliation?: string | null | undefined;
+                  readonly email?: string | null | undefined;
+                  readonly registrantId?: any | null | undefined;
+                  readonly conferenceId: any;
+              };
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_DeleteItemProgramPersonMutationVariables = Exact<{
@@ -43433,10 +44038,10 @@ export type ManageContent_DeleteItemProgramPersonMutationVariables = Exact<{
 
 export type ManageContent_DeleteItemProgramPersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_content_ItemProgramPerson_by_pk?: {
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-    } | null;
+    readonly delete_content_ItemProgramPerson_by_pk?:
+        | { readonly __typename?: "content_ItemProgramPerson"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type ManageContent_InsertTagMutationVariables = Exact<{
@@ -43445,14 +44050,17 @@ export type ManageContent_InsertTagMutationVariables = Exact<{
 
 export type ManageContent_InsertTagMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_collection_Tag_one?: {
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly colour: string;
-        readonly priority: number;
-    } | null;
+    readonly insert_collection_Tag_one?:
+        | {
+              readonly __typename?: "collection_Tag";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly name: string;
+              readonly colour: string;
+              readonly priority: number;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_UpdateTagMutationVariables = Exact<{
@@ -43462,14 +44070,17 @@ export type ManageContent_UpdateTagMutationVariables = Exact<{
 
 export type ManageContent_UpdateTagMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_collection_Tag_by_pk?: {
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly colour: string;
-        readonly priority: number;
-    } | null;
+    readonly update_collection_Tag_by_pk?:
+        | {
+              readonly __typename?: "collection_Tag";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly name: string;
+              readonly colour: string;
+              readonly priority: number;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageContent_DeleteTagsMutationVariables = Exact<{
@@ -43478,10 +44089,13 @@ export type ManageContent_DeleteTagsMutationVariables = Exact<{
 
 export type ManageContent_DeleteTagsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_collection_Tag?: {
-        readonly __typename?: "collection_Tag_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Tag"; readonly id: any }>;
-    } | null;
+    readonly delete_collection_Tag?:
+        | {
+              readonly __typename?: "collection_Tag_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Tag"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
@@ -43492,10 +44106,13 @@ export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
 
 export type InsertSubmissionRequestEmailJobsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_job_queues_SubmissionRequestEmailJob?: {
-        readonly __typename?: "job_queues_SubmissionRequestEmailJob_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly insert_job_queues_SubmissionRequestEmailJob?:
+        | {
+              readonly __typename?: "job_queues_SubmissionRequestEmailJob_mutation_response";
+              readonly affected_rows: number;
+          }
+        | null
+        | undefined;
 };
 
 export type SubmissionRequestsModalDataQueryVariables = Exact<{
@@ -43516,14 +44133,14 @@ export type SubmissionRequestsModalDataQuery = {
         readonly id: any;
         readonly title: string;
         readonly typeName: Content_ItemType_Enum;
-        readonly hasUnsubmittedElements?: boolean | null;
+        readonly hasUnsubmittedElements?: boolean | null | undefined;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
             readonly itemId: any;
             readonly personId: any;
             readonly roleName: string;
-            readonly hasSubmissionRequestBeenSent?: boolean | null;
+            readonly hasSubmissionRequestBeenSent?: boolean | null | undefined;
         }>;
     }>;
 };
@@ -43540,14 +44157,14 @@ export type SubmissionRequestsModal_ItemFragment = {
     readonly id: any;
     readonly title: string;
     readonly typeName: Content_ItemType_Enum;
-    readonly hasUnsubmittedElements?: boolean | null;
+    readonly hasUnsubmittedElements?: boolean | null | undefined;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
         readonly itemId: any;
         readonly personId: any;
         readonly roleName: string;
-        readonly hasSubmissionRequestBeenSent?: boolean | null;
+        readonly hasSubmissionRequestBeenSent?: boolean | null | undefined;
     }>;
 };
 
@@ -43561,7 +44178,7 @@ export type SubmissionsReviewModalDataQuery = {
         readonly __typename?: "content_Item";
         readonly id: any;
         readonly title: string;
-        readonly hasUnsubmittedElements?: boolean | null;
+        readonly hasUnsubmittedElements?: boolean | null | undefined;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
@@ -43590,7 +44207,7 @@ export type SubmissionsReviewModal_ItemFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly title: string;
-    readonly hasUnsubmittedElements?: boolean | null;
+    readonly hasUnsubmittedElements?: boolean | null | undefined;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
@@ -43653,12 +44270,15 @@ export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariabl
 
 export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_conference_Configuration_one?: {
-        readonly __typename?: "conference_Configuration";
-        readonly conferenceId: any;
-        readonly key: Conference_ConfigurationKey_Enum;
-        readonly value: any;
-    } | null;
+    readonly insert_conference_Configuration_one?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
 };
 
 export type DownloadVideos_GetAllVideosQueryVariables = Exact<{
@@ -43751,7 +44371,10 @@ export type ManageExport_GetGoogleOAuthUrlMutationVariables = Exact<{
 
 export type ManageExport_GetGoogleOAuthUrlMutation = {
     readonly __typename?: "mutation_root";
-    readonly getGoogleOAuthUrl?: { readonly __typename?: "GetGoogleOAuthUrlOutput"; readonly url: string } | null;
+    readonly getGoogleOAuthUrl?:
+        | { readonly __typename?: "GetGoogleOAuthUrlOutput"; readonly url: string }
+        | null
+        | undefined;
 };
 
 export type ManageExport_GetRegistrantGoogleAccountsQueryVariables = Exact<{
@@ -43765,7 +44388,7 @@ export type ManageExport_GetRegistrantGoogleAccountsQuery = {
         readonly id: any;
         readonly registrantId: any;
         readonly googleAccountEmail: string;
-        readonly youTubeData?: any | null;
+        readonly youTubeData?: any | null | undefined;
     }>;
 };
 
@@ -43774,7 +44397,7 @@ export type ManageExport_RegistrantGoogleAccountFragment = {
     readonly id: any;
     readonly registrantId: any;
     readonly googleAccountEmail: string;
-    readonly youTubeData?: any | null;
+    readonly youTubeData?: any | null | undefined;
 };
 
 export type ManageExport_DeleteRegistrantGoogleAccountMutationVariables = Exact<{
@@ -43783,10 +44406,10 @@ export type ManageExport_DeleteRegistrantGoogleAccountMutationVariables = Exact<
 
 export type ManageExport_DeleteRegistrantGoogleAccountMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_registrant_GoogleAccount_by_pk?: {
-        readonly __typename?: "registrant_GoogleAccount";
-        readonly id: any;
-    } | null;
+    readonly delete_registrant_GoogleAccount_by_pk?:
+        | { readonly __typename?: "registrant_GoogleAccount"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables = Exact<{
@@ -43800,7 +44423,7 @@ export type UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery = {
         readonly id: any;
         readonly registrantId: any;
         readonly googleAccountEmail: string;
-        readonly youTubeData?: any | null;
+        readonly youTubeData?: any | null | undefined;
     }>;
 };
 
@@ -43812,13 +44435,16 @@ export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables = 
 
 export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_job_queues_UploadYouTubeVideoJob?: {
-        readonly __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "job_queues_UploadYouTubeVideoJob";
-            readonly id: any;
-        }>;
-    } | null;
+    readonly insert_job_queues_UploadYouTubeVideoJob?:
+        | {
+              readonly __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "job_queues_UploadYouTubeVideoJob";
+                  readonly id: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UploadYouTubeVideos_GetElementsQueryVariables = Exact<{
@@ -43850,7 +44476,7 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = {
         readonly item: {
             readonly __typename?: "content_Item";
             readonly id: any;
-            readonly shortTitle?: string | null;
+            readonly shortTitle?: string | null | undefined;
             readonly title: string;
             readonly elements: ReadonlyArray<{
                 readonly __typename?: "content_Element";
@@ -43861,7 +44487,7 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = {
                     readonly id: any;
                     readonly videoTitle: string;
                     readonly videoId: string;
-                    readonly elementId?: any | null;
+                    readonly elementId?: any | null | undefined;
                 }>;
             }>;
             readonly abstractElements: ReadonlyArray<{
@@ -43891,12 +44517,12 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = {
                 readonly itemId: any;
                 readonly personId: any;
                 readonly roleName: string;
-                readonly priority?: number | null;
+                readonly priority?: number | null | undefined;
                 readonly person: {
                     readonly __typename?: "collection_ProgramPerson";
                     readonly id: any;
                     readonly name: string;
-                    readonly affiliation?: string | null;
+                    readonly affiliation?: string | null | undefined;
                 };
             }>;
             readonly presenters: ReadonlyArray<{
@@ -43905,12 +44531,12 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = {
                 readonly itemId: any;
                 readonly personId: any;
                 readonly roleName: string;
-                readonly priority?: number | null;
+                readonly priority?: number | null | undefined;
                 readonly person: {
                     readonly __typename?: "collection_ProgramPerson";
                     readonly id: any;
                     readonly name: string;
-                    readonly affiliation?: string | null;
+                    readonly affiliation?: string | null | undefined;
                 };
             }>;
         };
@@ -43932,11 +44558,14 @@ export type UploadYouTubeVideos_RefreshYouTubeDataMutationVariables = Exact<{
 
 export type UploadYouTubeVideos_RefreshYouTubeDataMutation = {
     readonly __typename?: "mutation_root";
-    readonly refreshYouTubeData?: {
-        readonly __typename?: "RefreshYouTubeDataOutput";
-        readonly message?: string | null;
-        readonly success: boolean;
-    } | null;
+    readonly refreshYouTubeData?:
+        | {
+              readonly __typename?: "RefreshYouTubeDataOutput";
+              readonly message?: string | null | undefined;
+              readonly success: boolean;
+          }
+        | null
+        | undefined;
 };
 
 export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables = Exact<{
@@ -43951,7 +44580,7 @@ export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = {
         readonly conferenceId: any;
         readonly createdAt: any;
         readonly jobStatusName: Job_Queues_JobStatus_Enum;
-        readonly message?: string | null;
+        readonly message?: string | null | undefined;
         readonly element: { readonly __typename?: "content_Element"; readonly id: any; readonly name: string };
         readonly youTubeUploads: ReadonlyArray<{
             readonly __typename?: "video_YouTubeUpload";
@@ -43983,7 +44612,7 @@ export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = {
     readonly conferenceId: any;
     readonly createdAt: any;
     readonly jobStatusName: Job_Queues_JobStatus_Enum;
-    readonly message?: string | null;
+    readonly message?: string | null | undefined;
     readonly element: { readonly __typename?: "content_Element"; readonly id: any; readonly name: string };
     readonly youTubeUploads: ReadonlyArray<{
         readonly __typename?: "video_YouTubeUpload";
@@ -44007,18 +44636,18 @@ export type ImportRegistrantsMutationVariables = Exact<{
 
 export type ImportRegistrantsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_registrant_Registrant?: {
-        readonly __typename?: "registrant_Registrant_mutation_response";
-        readonly affected_rows: number;
-    } | null;
-    readonly insert_registrant_Invitation?: {
-        readonly __typename?: "registrant_Invitation_mutation_response";
-        readonly affected_rows: number;
-    } | null;
-    readonly insert_registrant_GroupRegistrant?: {
-        readonly __typename?: "registrant_GroupRegistrant_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly insert_registrant_Registrant?:
+        | { readonly __typename?: "registrant_Registrant_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
+    readonly insert_registrant_Invitation?:
+        | { readonly __typename?: "registrant_Invitation_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
+    readonly insert_registrant_GroupRegistrant?:
+        | { readonly __typename?: "registrant_GroupRegistrant_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type ManageGroups_GroupFragment = {
@@ -44049,19 +44678,25 @@ export type CreateDeleteGroupsMutationVariables = Exact<{
 
 export type CreateDeleteGroupsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_registrant_Group?: {
-        readonly __typename?: "registrant_Group_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "registrant_Group"; readonly id: any }>;
-    } | null;
-    readonly insert_registrant_Group?: {
-        readonly __typename?: "registrant_Group_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "registrant_Group";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly name: string;
-        }>;
-    } | null;
+    readonly delete_registrant_Group?:
+        | {
+              readonly __typename?: "registrant_Group_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "registrant_Group"; readonly id: any }>;
+          }
+        | null
+        | undefined;
+    readonly insert_registrant_Group?:
+        | {
+              readonly __typename?: "registrant_Group_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "registrant_Group";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly name: string;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateGroupMutationVariables = Exact<{
@@ -44071,31 +44706,36 @@ export type UpdateGroupMutationVariables = Exact<{
 
 export type UpdateGroupMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_registrant_Group?: {
-        readonly __typename?: "registrant_Group_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "registrant_Group";
-            readonly id: any;
-            readonly name: string;
-            readonly conferenceId: any;
-        }>;
-    } | null;
+    readonly update_registrant_Group?:
+        | {
+              readonly __typename?: "registrant_Group_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "registrant_Group";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly conferenceId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageProgramPeople_RegistrantFragment = {
     readonly __typename?: "registrant_Registrant";
     readonly id: any;
     readonly displayName: string;
-    readonly invitation?: {
-        readonly __typename?: "registrant_Invitation";
-        readonly id: any;
-        readonly invitedEmailAddress: string;
-    } | null;
-    readonly profile?: {
-        readonly __typename?: "registrant_Profile";
-        readonly registrantId: any;
-        readonly affiliation?: string | null;
-    } | null;
+    readonly invitation?:
+        | { readonly __typename?: "registrant_Invitation"; readonly id: any; readonly invitedEmailAddress: string }
+        | null
+        | undefined;
+    readonly profile?:
+        | {
+              readonly __typename?: "registrant_Profile";
+              readonly registrantId: any;
+              readonly affiliation?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageProgramPeople_ProgramPersonWithAccessTokenFragment = {
@@ -44103,10 +44743,10 @@ export type ManageProgramPeople_ProgramPersonWithAccessTokenFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly name: string;
-    readonly affiliation?: string | null;
-    readonly email?: string | null;
-    readonly originatingDataId?: any | null;
-    readonly registrantId?: any | null;
+    readonly affiliation?: string | null | undefined;
+    readonly email?: string | null | undefined;
+    readonly originatingDataId?: any | null | undefined;
+    readonly registrantId?: any | null | undefined;
     readonly accessToken: string;
 };
 
@@ -44121,10 +44761,10 @@ export type ManageProgramPeople_SelectAllPeopleQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
-        readonly originatingDataId?: any | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly email?: string | null | undefined;
+        readonly originatingDataId?: any | null | undefined;
+        readonly registrantId?: any | null | undefined;
         readonly accessToken: string;
     }>;
 };
@@ -44139,16 +44779,18 @@ export type ManageProgramPeople_SelectAllRegistrantsQuery = {
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
         readonly displayName: string;
-        readonly invitation?: {
-            readonly __typename?: "registrant_Invitation";
-            readonly id: any;
-            readonly invitedEmailAddress: string;
-        } | null;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly affiliation?: string | null;
-        } | null;
+        readonly invitation?:
+            | { readonly __typename?: "registrant_Invitation"; readonly id: any; readonly invitedEmailAddress: string }
+            | null
+            | undefined;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly affiliation?: string | null | undefined;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -44158,17 +44800,20 @@ export type ManageProgramPeople_InsertProgramPersonMutationVariables = Exact<{
 
 export type ManageProgramPeople_InsertProgramPersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_collection_ProgramPerson_one?: {
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
-        readonly originatingDataId?: any | null;
-        readonly registrantId?: any | null;
-        readonly accessToken: string;
-    } | null;
+    readonly insert_collection_ProgramPerson_one?:
+        | {
+              readonly __typename?: "collection_ProgramPerson";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly name: string;
+              readonly affiliation?: string | null | undefined;
+              readonly email?: string | null | undefined;
+              readonly originatingDataId?: any | null | undefined;
+              readonly registrantId?: any | null | undefined;
+              readonly accessToken: string;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageProgramPeople_DeleteProgramPersonsMutationVariables = Exact<{
@@ -44177,10 +44822,13 @@ export type ManageProgramPeople_DeleteProgramPersonsMutationVariables = Exact<{
 
 export type ManageProgramPeople_DeleteProgramPersonsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_collection_ProgramPerson?: {
-        readonly __typename?: "collection_ProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "collection_ProgramPerson"; readonly id: any }>;
-    } | null;
+    readonly delete_collection_ProgramPerson?:
+        | {
+              readonly __typename?: "collection_ProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "collection_ProgramPerson"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageProgramPeople_UpdateProgramPersonMutationVariables = Exact<{
@@ -44193,20 +44841,23 @@ export type ManageProgramPeople_UpdateProgramPersonMutationVariables = Exact<{
 
 export type ManageProgramPeople_UpdateProgramPersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_collection_ProgramPerson?: {
-        readonly __typename?: "collection_ProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly originatingDataId?: any | null;
-            readonly registrantId?: any | null;
-            readonly accessToken: string;
-        }>;
-    } | null;
+    readonly update_collection_ProgramPerson?:
+        | {
+              readonly __typename?: "collection_ProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "collection_ProgramPerson";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly name: string;
+                  readonly affiliation?: string | null | undefined;
+                  readonly email?: string | null | undefined;
+                  readonly originatingDataId?: any | null | undefined;
+                  readonly registrantId?: any | null | undefined;
+                  readonly accessToken: string;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type RoomParticipantWithRegistrantInfoFragment = {
@@ -44229,13 +44880,13 @@ export type RoomWithParticipantInfoFragment = {
     readonly conferenceId: any;
     readonly name: string;
     readonly currentModeName: Room_Mode_Enum;
-    readonly capacity?: number | null;
+    readonly capacity?: number | null | undefined;
     readonly priority: number;
-    readonly itemId?: any | null;
+    readonly itemId?: any | null | undefined;
     readonly managementModeName: Room_ManagementMode_Enum;
-    readonly isProgramRoom?: boolean | null;
-    readonly originatingDataId?: any | null;
-    readonly chatId?: any | null;
+    readonly isProgramRoom?: boolean | null | undefined;
+    readonly originatingDataId?: any | null | undefined;
+    readonly chatId?: any | null | undefined;
     readonly participants: ReadonlyArray<{
         readonly __typename?: "room_Participant";
         readonly id: any;
@@ -44248,21 +44899,27 @@ export type RoomWithParticipantInfoFragment = {
             readonly displayName: string;
         };
     }>;
-    readonly originatingData?: {
-        readonly __typename?: "conference_OriginatingData";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly sourceId: string;
-        readonly data?: any | null;
-    } | null;
-    readonly chat?: {
-        readonly __typename?: "chat_Chat";
-        readonly id: any;
-        readonly enableMandatoryPin: boolean;
-        readonly enableMandatorySubscribe: boolean;
-        readonly enableAutoPin: boolean;
-        readonly enableAutoSubscribe: boolean;
-    } | null;
+    readonly originatingData?:
+        | {
+              readonly __typename?: "conference_OriginatingData";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly sourceId: string;
+              readonly data?: any | null | undefined;
+          }
+        | null
+        | undefined;
+    readonly chat?:
+        | {
+              readonly __typename?: "chat_Chat";
+              readonly id: any;
+              readonly enableMandatoryPin: boolean;
+              readonly enableMandatorySubscribe: boolean;
+              readonly enableAutoPin: boolean;
+              readonly enableAutoSubscribe: boolean;
+          }
+        | null
+        | undefined;
 };
 
 export type SelectAllRoomsWithParticipantsQueryVariables = Exact<{
@@ -44278,13 +44935,13 @@ export type SelectAllRoomsWithParticipantsQuery = {
         readonly conferenceId: any;
         readonly name: string;
         readonly currentModeName: Room_Mode_Enum;
-        readonly capacity?: number | null;
+        readonly capacity?: number | null | undefined;
         readonly priority: number;
-        readonly itemId?: any | null;
+        readonly itemId?: any | null | undefined;
         readonly managementModeName: Room_ManagementMode_Enum;
-        readonly isProgramRoom?: boolean | null;
-        readonly originatingDataId?: any | null;
-        readonly chatId?: any | null;
+        readonly isProgramRoom?: boolean | null | undefined;
+        readonly originatingDataId?: any | null | undefined;
+        readonly chatId?: any | null | undefined;
         readonly participants: ReadonlyArray<{
             readonly __typename?: "room_Participant";
             readonly id: any;
@@ -44297,21 +44954,27 @@ export type SelectAllRoomsWithParticipantsQuery = {
                 readonly displayName: string;
             };
         }>;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-            readonly enableMandatorySubscribe: boolean;
-            readonly enableAutoPin: boolean;
-            readonly enableAutoSubscribe: boolean;
-        } | null;
+        readonly originatingData?:
+            | {
+                  readonly __typename?: "conference_OriginatingData";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly sourceId: string;
+                  readonly data?: any | null | undefined;
+              }
+            | null
+            | undefined;
+        readonly chat?:
+            | {
+                  readonly __typename?: "chat_Chat";
+                  readonly id: any;
+                  readonly enableMandatoryPin: boolean;
+                  readonly enableMandatorySubscribe: boolean;
+                  readonly enableAutoPin: boolean;
+                  readonly enableAutoSubscribe: boolean;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -44394,48 +45057,57 @@ export type CreateRoomMutationVariables = Exact<{
 
 export type CreateRoomMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_room_Room_one?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly created_at: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
-        readonly capacity?: number | null;
-        readonly priority: number;
-        readonly itemId?: any | null;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly isProgramRoom?: boolean | null;
-        readonly originatingDataId?: any | null;
-        readonly chatId?: any | null;
-        readonly participants: ReadonlyArray<{
-            readonly __typename?: "room_Participant";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly registrantId: any;
-            readonly roomId: any;
-            readonly registrant: {
-                readonly __typename?: "registrant_Registrant";
-                readonly id: any;
-                readonly displayName: string;
-            };
-        }>;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-            readonly enableMandatorySubscribe: boolean;
-            readonly enableAutoPin: boolean;
-            readonly enableAutoSubscribe: boolean;
-        } | null;
-    } | null;
+    readonly insert_room_Room_one?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly created_at: any;
+              readonly conferenceId: any;
+              readonly name: string;
+              readonly currentModeName: Room_Mode_Enum;
+              readonly capacity?: number | null | undefined;
+              readonly priority: number;
+              readonly itemId?: any | null | undefined;
+              readonly managementModeName: Room_ManagementMode_Enum;
+              readonly isProgramRoom?: boolean | null | undefined;
+              readonly originatingDataId?: any | null | undefined;
+              readonly chatId?: any | null | undefined;
+              readonly participants: ReadonlyArray<{
+                  readonly __typename?: "room_Participant";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly registrantId: any;
+                  readonly roomId: any;
+                  readonly registrant: {
+                      readonly __typename?: "registrant_Registrant";
+                      readonly id: any;
+                      readonly displayName: string;
+                  };
+              }>;
+              readonly originatingData?:
+                  | {
+                        readonly __typename?: "conference_OriginatingData";
+                        readonly id: any;
+                        readonly conferenceId: any;
+                        readonly sourceId: string;
+                        readonly data?: any | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly chat?:
+                  | {
+                        readonly __typename?: "chat_Chat";
+                        readonly id: any;
+                        readonly enableMandatoryPin: boolean;
+                        readonly enableMandatorySubscribe: boolean;
+                        readonly enableAutoPin: boolean;
+                        readonly enableAutoSubscribe: boolean;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateRoomsWithParticipantsMutationVariables = Exact<{
@@ -44454,59 +45126,71 @@ export type UpdateRoomsWithParticipantsMutationVariables = Exact<{
 
 export type UpdateRoomsWithParticipantsMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_room_Room_by_pk?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly created_at: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
-        readonly capacity?: number | null;
-        readonly priority: number;
-        readonly itemId?: any | null;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly isProgramRoom?: boolean | null;
-        readonly originatingDataId?: any | null;
-        readonly chatId?: any | null;
-        readonly participants: ReadonlyArray<{
-            readonly __typename?: "room_Participant";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly registrantId: any;
-            readonly roomId: any;
-            readonly registrant: {
-                readonly __typename?: "registrant_Registrant";
-                readonly id: any;
-                readonly displayName: string;
-            };
-        }>;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-            readonly enableMandatorySubscribe: boolean;
-            readonly enableAutoPin: boolean;
-            readonly enableAutoSubscribe: boolean;
-        } | null;
-    } | null;
-    readonly update_chat_Chat?: {
-        readonly __typename?: "chat_Chat_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-            readonly enableAutoPin: boolean;
-            readonly enableMandatorySubscribe: boolean;
-            readonly enableAutoSubscribe: boolean;
-        }>;
-    } | null;
+    readonly update_room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly created_at: any;
+              readonly conferenceId: any;
+              readonly name: string;
+              readonly currentModeName: Room_Mode_Enum;
+              readonly capacity?: number | null | undefined;
+              readonly priority: number;
+              readonly itemId?: any | null | undefined;
+              readonly managementModeName: Room_ManagementMode_Enum;
+              readonly isProgramRoom?: boolean | null | undefined;
+              readonly originatingDataId?: any | null | undefined;
+              readonly chatId?: any | null | undefined;
+              readonly participants: ReadonlyArray<{
+                  readonly __typename?: "room_Participant";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly registrantId: any;
+                  readonly roomId: any;
+                  readonly registrant: {
+                      readonly __typename?: "registrant_Registrant";
+                      readonly id: any;
+                      readonly displayName: string;
+                  };
+              }>;
+              readonly originatingData?:
+                  | {
+                        readonly __typename?: "conference_OriginatingData";
+                        readonly id: any;
+                        readonly conferenceId: any;
+                        readonly sourceId: string;
+                        readonly data?: any | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly chat?:
+                  | {
+                        readonly __typename?: "chat_Chat";
+                        readonly id: any;
+                        readonly enableMandatoryPin: boolean;
+                        readonly enableMandatorySubscribe: boolean;
+                        readonly enableAutoPin: boolean;
+                        readonly enableAutoSubscribe: boolean;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
+    readonly update_chat_Chat?:
+        | {
+              readonly __typename?: "chat_Chat_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "chat_Chat";
+                  readonly id: any;
+                  readonly enableMandatoryPin: boolean;
+                  readonly enableAutoPin: boolean;
+                  readonly enableMandatorySubscribe: boolean;
+                  readonly enableAutoSubscribe: boolean;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertRoomPeopleMutationVariables = Exact<{
@@ -44515,20 +45199,23 @@ export type InsertRoomPeopleMutationVariables = Exact<{
 
 export type InsertRoomPeopleMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_room_RoomMembership?: {
-        readonly __typename?: "room_RoomMembership_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "room_RoomMembership";
-            readonly id: any;
-            readonly roomId: any;
-            readonly personRoleName: Room_PersonRole_Enum;
-            readonly registrant: {
-                readonly __typename?: "registrant_Registrant";
-                readonly id: any;
-                readonly displayName: string;
-            };
-        }>;
-    } | null;
+    readonly insert_room_RoomMembership?:
+        | {
+              readonly __typename?: "room_RoomMembership_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "room_RoomMembership";
+                  readonly id: any;
+                  readonly roomId: any;
+                  readonly personRoleName: Room_PersonRole_Enum;
+                  readonly registrant: {
+                      readonly __typename?: "registrant_Registrant";
+                      readonly id: any;
+                      readonly displayName: string;
+                  };
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteRoomPersonMutationVariables = Exact<{
@@ -44537,10 +45224,13 @@ export type DeleteRoomPersonMutationVariables = Exact<{
 
 export type DeleteRoomPersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_room_RoomMembership?: {
-        readonly __typename?: "room_RoomMembership_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "room_RoomMembership"; readonly id: any }>;
-    } | null;
+    readonly delete_room_RoomMembership?:
+        | {
+              readonly __typename?: "room_RoomMembership_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "room_RoomMembership"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type GetIsExternalRtmpBroadcastEnabledQueryVariables = Exact<{
@@ -44549,12 +45239,15 @@ export type GetIsExternalRtmpBroadcastEnabledQueryVariables = Exact<{
 
 export type GetIsExternalRtmpBroadcastEnabledQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Configuration_by_pk?: {
-        readonly __typename?: "conference_Configuration";
-        readonly conferenceId: any;
-        readonly key: Conference_ConfigurationKey_Enum;
-        readonly value: any;
-    } | null;
+    readonly conference_Configuration_by_pk?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
 };
 
 export type ConferenceTechSupportAddressQueryVariables = Exact<{
@@ -44563,12 +45256,15 @@ export type ConferenceTechSupportAddressQueryVariables = Exact<{
 
 export type ConferenceTechSupportAddressQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Configuration_by_pk?: {
-        readonly __typename?: "conference_Configuration";
-        readonly conferenceId: any;
-        readonly key: Conference_ConfigurationKey_Enum;
-        readonly value: any;
-    } | null;
+    readonly conference_Configuration_by_pk?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
 };
 
 export type InvitationPartsFragment = {
@@ -44577,10 +45273,10 @@ export type InvitationPartsFragment = {
     readonly id: any;
     readonly inviteCode: any;
     readonly invitedEmailAddress: string;
-    readonly linkToUserId?: string | null;
+    readonly linkToUserId?: string | null | undefined;
     readonly createdAt: any;
     readonly updatedAt: any;
-    readonly hash?: string | null;
+    readonly hash?: string | null | undefined;
 };
 
 export type RegistrantPartsFragment = {
@@ -44588,22 +45284,25 @@ export type RegistrantPartsFragment = {
     readonly conferenceId: any;
     readonly id: any;
     readonly conferenceRole: Registrant_RegistrantRole_Enum;
-    readonly userId?: string | null;
+    readonly userId?: string | null | undefined;
     readonly updatedAt: any;
     readonly createdAt: any;
     readonly displayName: string;
-    readonly invitationStatus?: any | null;
-    readonly invitation?: {
-        readonly __typename?: "registrant_Invitation";
-        readonly registrantId: any;
-        readonly id: any;
-        readonly inviteCode: any;
-        readonly invitedEmailAddress: string;
-        readonly linkToUserId?: string | null;
-        readonly createdAt: any;
-        readonly updatedAt: any;
-        readonly hash?: string | null;
-    } | null;
+    readonly invitationStatus?: any | null | undefined;
+    readonly invitation?:
+        | {
+              readonly __typename?: "registrant_Invitation";
+              readonly registrantId: any;
+              readonly id: any;
+              readonly inviteCode: any;
+              readonly invitedEmailAddress: string;
+              readonly linkToUserId?: string | null | undefined;
+              readonly createdAt: any;
+              readonly updatedAt: any;
+              readonly hash?: string | null | undefined;
+          }
+        | null
+        | undefined;
     readonly groupRegistrants: ReadonlyArray<{
         readonly __typename?: "registrant_GroupRegistrant";
         readonly registrantId: any;
@@ -44615,18 +45314,18 @@ export type RegistrantPartsFragment = {
 export type ManageRegistrants_ProfileFragment = {
     readonly __typename?: "registrant_Profile";
     readonly registrantId: any;
-    readonly badges?: any | null;
-    readonly affiliation?: string | null;
-    readonly country?: string | null;
-    readonly timezoneUTCOffset?: number | null;
-    readonly bio?: string | null;
-    readonly website?: string | null;
-    readonly github?: string | null;
-    readonly twitter?: string | null;
-    readonly affiliationURL?: string | null;
-    readonly pronouns?: any | null;
-    readonly photoURL_50x50?: string | null;
-    readonly photoURL_350x350?: string | null;
+    readonly badges?: any | null | undefined;
+    readonly affiliation?: string | null | undefined;
+    readonly country?: string | null | undefined;
+    readonly timezoneUTCOffset?: number | null | undefined;
+    readonly bio?: string | null | undefined;
+    readonly website?: string | null | undefined;
+    readonly github?: string | null | undefined;
+    readonly twitter?: string | null | undefined;
+    readonly affiliationURL?: string | null | undefined;
+    readonly pronouns?: any | null | undefined;
+    readonly photoURL_50x50?: string | null | undefined;
+    readonly photoURL_350x350?: string | null | undefined;
     readonly hasBeenEdited: boolean;
 };
 
@@ -44641,22 +45340,25 @@ export type SelectAllRegistrantsQuery = {
         readonly conferenceId: any;
         readonly id: any;
         readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly userId?: string | null;
+        readonly userId?: string | null | undefined;
         readonly updatedAt: any;
         readonly createdAt: any;
         readonly displayName: string;
-        readonly invitationStatus?: any | null;
-        readonly invitation?: {
-            readonly __typename?: "registrant_Invitation";
-            readonly registrantId: any;
-            readonly id: any;
-            readonly inviteCode: any;
-            readonly invitedEmailAddress: string;
-            readonly linkToUserId?: string | null;
-            readonly createdAt: any;
-            readonly updatedAt: any;
-            readonly hash?: string | null;
-        } | null;
+        readonly invitationStatus?: any | null | undefined;
+        readonly invitation?:
+            | {
+                  readonly __typename?: "registrant_Invitation";
+                  readonly registrantId: any;
+                  readonly id: any;
+                  readonly inviteCode: any;
+                  readonly invitedEmailAddress: string;
+                  readonly linkToUserId?: string | null | undefined;
+                  readonly createdAt: any;
+                  readonly updatedAt: any;
+                  readonly hash?: string | null | undefined;
+              }
+            | null
+            | undefined;
         readonly groupRegistrants: ReadonlyArray<{
             readonly __typename?: "registrant_GroupRegistrant";
             readonly registrantId: any;
@@ -44675,18 +45377,18 @@ export type ManageRegistrants_SelectProfilesQuery = {
     readonly registrant_Profile: ReadonlyArray<{
         readonly __typename?: "registrant_Profile";
         readonly registrantId: any;
-        readonly badges?: any | null;
-        readonly affiliation?: string | null;
-        readonly country?: string | null;
-        readonly timezoneUTCOffset?: number | null;
-        readonly bio?: string | null;
-        readonly website?: string | null;
-        readonly github?: string | null;
-        readonly twitter?: string | null;
-        readonly affiliationURL?: string | null;
-        readonly pronouns?: any | null;
-        readonly photoURL_50x50?: string | null;
-        readonly photoURL_350x350?: string | null;
+        readonly badges?: any | null | undefined;
+        readonly affiliation?: string | null | undefined;
+        readonly country?: string | null | undefined;
+        readonly timezoneUTCOffset?: number | null | undefined;
+        readonly bio?: string | null | undefined;
+        readonly website?: string | null | undefined;
+        readonly github?: string | null | undefined;
+        readonly twitter?: string | null | undefined;
+        readonly affiliationURL?: string | null | undefined;
+        readonly pronouns?: any | null | undefined;
+        readonly photoURL_50x50?: string | null | undefined;
+        readonly photoURL_350x350?: string | null | undefined;
         readonly hasBeenEdited: boolean;
     }>;
 };
@@ -44698,45 +45400,54 @@ export type InsertRegistrantMutationVariables = Exact<{
 
 export type InsertRegistrantMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_registrant_Registrant_one?: {
-        readonly __typename?: "registrant_Registrant";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly userId?: string | null;
-        readonly updatedAt: any;
-        readonly createdAt: any;
-        readonly displayName: string;
-        readonly invitationStatus?: any | null;
-        readonly invitation?: {
-            readonly __typename?: "registrant_Invitation";
-            readonly registrantId: any;
-            readonly id: any;
-            readonly inviteCode: any;
-            readonly invitedEmailAddress: string;
-            readonly linkToUserId?: string | null;
-            readonly createdAt: any;
-            readonly updatedAt: any;
-            readonly hash?: string | null;
-        } | null;
-        readonly groupRegistrants: ReadonlyArray<{
-            readonly __typename?: "registrant_GroupRegistrant";
-            readonly registrantId: any;
-            readonly id: any;
-            readonly groupId: any;
-        }>;
-    } | null;
-    readonly insert_registrant_Invitation_one?: {
-        readonly __typename?: "registrant_Invitation";
-        readonly registrantId: any;
-        readonly id: any;
-        readonly inviteCode: any;
-        readonly invitedEmailAddress: string;
-        readonly linkToUserId?: string | null;
-        readonly createdAt: any;
-        readonly updatedAt: any;
-        readonly hash?: string | null;
-    } | null;
+    readonly insert_registrant_Registrant_one?:
+        | {
+              readonly __typename?: "registrant_Registrant";
+              readonly conferenceId: any;
+              readonly id: any;
+              readonly conferenceRole: Registrant_RegistrantRole_Enum;
+              readonly userId?: string | null | undefined;
+              readonly updatedAt: any;
+              readonly createdAt: any;
+              readonly displayName: string;
+              readonly invitationStatus?: any | null | undefined;
+              readonly invitation?:
+                  | {
+                        readonly __typename?: "registrant_Invitation";
+                        readonly registrantId: any;
+                        readonly id: any;
+                        readonly inviteCode: any;
+                        readonly invitedEmailAddress: string;
+                        readonly linkToUserId?: string | null | undefined;
+                        readonly createdAt: any;
+                        readonly updatedAt: any;
+                        readonly hash?: string | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly groupRegistrants: ReadonlyArray<{
+                  readonly __typename?: "registrant_GroupRegistrant";
+                  readonly registrantId: any;
+                  readonly id: any;
+                  readonly groupId: any;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly insert_registrant_Invitation_one?:
+        | {
+              readonly __typename?: "registrant_Invitation";
+              readonly registrantId: any;
+              readonly id: any;
+              readonly inviteCode: any;
+              readonly invitedEmailAddress: string;
+              readonly linkToUserId?: string | null | undefined;
+              readonly createdAt: any;
+              readonly updatedAt: any;
+              readonly hash?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertRegistrantWithoutInviteMutationVariables = Exact<{
@@ -44745,34 +45456,40 @@ export type InsertRegistrantWithoutInviteMutationVariables = Exact<{
 
 export type InsertRegistrantWithoutInviteMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_registrant_Registrant_one?: {
-        readonly __typename?: "registrant_Registrant";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly userId?: string | null;
-        readonly updatedAt: any;
-        readonly createdAt: any;
-        readonly displayName: string;
-        readonly invitationStatus?: any | null;
-        readonly invitation?: {
-            readonly __typename?: "registrant_Invitation";
-            readonly registrantId: any;
-            readonly id: any;
-            readonly inviteCode: any;
-            readonly invitedEmailAddress: string;
-            readonly linkToUserId?: string | null;
-            readonly createdAt: any;
-            readonly updatedAt: any;
-            readonly hash?: string | null;
-        } | null;
-        readonly groupRegistrants: ReadonlyArray<{
-            readonly __typename?: "registrant_GroupRegistrant";
-            readonly registrantId: any;
-            readonly id: any;
-            readonly groupId: any;
-        }>;
-    } | null;
+    readonly insert_registrant_Registrant_one?:
+        | {
+              readonly __typename?: "registrant_Registrant";
+              readonly conferenceId: any;
+              readonly id: any;
+              readonly conferenceRole: Registrant_RegistrantRole_Enum;
+              readonly userId?: string | null | undefined;
+              readonly updatedAt: any;
+              readonly createdAt: any;
+              readonly displayName: string;
+              readonly invitationStatus?: any | null | undefined;
+              readonly invitation?:
+                  | {
+                        readonly __typename?: "registrant_Invitation";
+                        readonly registrantId: any;
+                        readonly id: any;
+                        readonly inviteCode: any;
+                        readonly invitedEmailAddress: string;
+                        readonly linkToUserId?: string | null | undefined;
+                        readonly createdAt: any;
+                        readonly updatedAt: any;
+                        readonly hash?: string | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly groupRegistrants: ReadonlyArray<{
+                  readonly __typename?: "registrant_GroupRegistrant";
+                  readonly registrantId: any;
+                  readonly id: any;
+                  readonly groupId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteRegistrantsMutationVariables = Exact<{
@@ -44781,10 +45498,13 @@ export type DeleteRegistrantsMutationVariables = Exact<{
 
 export type DeleteRegistrantsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_registrant_Registrant?: {
-        readonly __typename?: "registrant_Registrant_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "registrant_Registrant"; readonly id: any }>;
-    } | null;
+    readonly delete_registrant_Registrant?:
+        | {
+              readonly __typename?: "registrant_Registrant_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "registrant_Registrant"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateRegistrantMutationVariables = Exact<{
@@ -44796,47 +45516,62 @@ export type UpdateRegistrantMutationVariables = Exact<{
 
 export type UpdateRegistrantMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_registrant_Registrant_by_pk?: {
-        readonly __typename?: "registrant_Registrant";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly userId?: string | null;
-        readonly updatedAt: any;
-        readonly createdAt: any;
-        readonly displayName: string;
-        readonly invitationStatus?: any | null;
-        readonly invitation?: {
-            readonly __typename?: "registrant_Invitation";
-            readonly registrantId: any;
-            readonly id: any;
-            readonly inviteCode: any;
-            readonly invitedEmailAddress: string;
-            readonly linkToUserId?: string | null;
-            readonly createdAt: any;
-            readonly updatedAt: any;
-            readonly hash?: string | null;
-        } | null;
-        readonly groupRegistrants: ReadonlyArray<{
-            readonly __typename?: "registrant_GroupRegistrant";
-            readonly registrantId: any;
-            readonly id: any;
-            readonly groupId: any;
-        }>;
-    } | null;
-    readonly insert_registrant_GroupRegistrant?: {
-        readonly __typename?: "registrant_GroupRegistrant_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "registrant_GroupRegistrant";
-            readonly id: any;
-            readonly registrantId: any;
-            readonly groupId: any;
-        }>;
-    } | null;
-    readonly delete_registrant_GroupRegistrant?: {
-        readonly __typename?: "registrant_GroupRegistrant_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "registrant_GroupRegistrant"; readonly id: any }>;
-    } | null;
+    readonly update_registrant_Registrant_by_pk?:
+        | {
+              readonly __typename?: "registrant_Registrant";
+              readonly conferenceId: any;
+              readonly id: any;
+              readonly conferenceRole: Registrant_RegistrantRole_Enum;
+              readonly userId?: string | null | undefined;
+              readonly updatedAt: any;
+              readonly createdAt: any;
+              readonly displayName: string;
+              readonly invitationStatus?: any | null | undefined;
+              readonly invitation?:
+                  | {
+                        readonly __typename?: "registrant_Invitation";
+                        readonly registrantId: any;
+                        readonly id: any;
+                        readonly inviteCode: any;
+                        readonly invitedEmailAddress: string;
+                        readonly linkToUserId?: string | null | undefined;
+                        readonly createdAt: any;
+                        readonly updatedAt: any;
+                        readonly hash?: string | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              readonly groupRegistrants: ReadonlyArray<{
+                  readonly __typename?: "registrant_GroupRegistrant";
+                  readonly registrantId: any;
+                  readonly id: any;
+                  readonly groupId: any;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly insert_registrant_GroupRegistrant?:
+        | {
+              readonly __typename?: "registrant_GroupRegistrant_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "registrant_GroupRegistrant";
+                  readonly id: any;
+                  readonly registrantId: any;
+                  readonly groupId: any;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly delete_registrant_GroupRegistrant?:
+        | {
+              readonly __typename?: "registrant_GroupRegistrant_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "registrant_GroupRegistrant";
+                  readonly id: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertInvitationEmailJobsMutationVariables = Exact<{
@@ -44847,10 +45582,10 @@ export type InsertInvitationEmailJobsMutationVariables = Exact<{
 
 export type InsertInvitationEmailJobsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_job_queues_InvitationEmailJob?: {
-        readonly __typename?: "job_queues_InvitationEmailJob_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly insert_job_queues_InvitationEmailJob?:
+        | { readonly __typename?: "job_queues_InvitationEmailJob_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type ManagePeople_InsertCustomEmailJobMutationVariables = Exact<{
@@ -44862,10 +45597,10 @@ export type ManagePeople_InsertCustomEmailJobMutationVariables = Exact<{
 
 export type ManagePeople_InsertCustomEmailJobMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_job_queues_CustomEmailJob?: {
-        readonly __typename?: "job_queues_CustomEmailJob_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly insert_job_queues_CustomEmailJob?:
+        | { readonly __typename?: "job_queues_CustomEmailJob_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type GetRoomRtmpOutputQueryVariables = Exact<{
@@ -44874,43 +45609,55 @@ export type GetRoomRtmpOutputQueryVariables = Exact<{
 
 export type GetRoomRtmpOutputQuery = {
     readonly __typename?: "query_root";
-    readonly room_Room_by_pk?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly rtmpOutput?: {
-            readonly __typename?: "video_RoomRtmpOutput";
-            readonly id: any;
-            readonly created_at: any;
-            readonly updated_at: any;
-            readonly url: string;
-            readonly streamKey: string;
-            readonly roomId: any;
-        } | null;
-        readonly channelStack?: {
-            readonly __typename?: "video_ChannelStack";
-            readonly id: any;
-            readonly roomId?: any | null;
-            readonly rtmpOutputUri?: string | null;
-            readonly rtmpOutputStreamKey?: string | null;
-            readonly updateJobs: ReadonlyArray<{
-                readonly __typename?: "job_queues_ChannelStackUpdateJob";
-                readonly id: any;
-                readonly created_at: any;
-                readonly updated_at: any;
-                readonly jobStatusName: Job_Queues_JobStatus_Enum;
-                readonly message?: string | null;
-                readonly channelStackId?: any | null;
-            }>;
-            readonly mediaLiveChannelStatus?: {
-                readonly __typename?: "video_MediaLiveChannelStatus";
-                readonly id: any;
-                readonly createdAt: any;
-                readonly updatedAt: any;
-                readonly state: string;
-                readonly channelStackId: any;
-            } | null;
-        } | null;
-    } | null;
+    readonly room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly rtmpOutput?:
+                  | {
+                        readonly __typename?: "video_RoomRtmpOutput";
+                        readonly id: any;
+                        readonly created_at: any;
+                        readonly updated_at: any;
+                        readonly url: string;
+                        readonly streamKey: string;
+                        readonly roomId: any;
+                    }
+                  | null
+                  | undefined;
+              readonly channelStack?:
+                  | {
+                        readonly __typename?: "video_ChannelStack";
+                        readonly id: any;
+                        readonly roomId?: any | null | undefined;
+                        readonly rtmpOutputUri?: string | null | undefined;
+                        readonly rtmpOutputStreamKey?: string | null | undefined;
+                        readonly updateJobs: ReadonlyArray<{
+                            readonly __typename?: "job_queues_ChannelStackUpdateJob";
+                            readonly id: any;
+                            readonly created_at: any;
+                            readonly updated_at: any;
+                            readonly jobStatusName: Job_Queues_JobStatus_Enum;
+                            readonly message?: string | null | undefined;
+                            readonly channelStackId?: any | null | undefined;
+                        }>;
+                        readonly mediaLiveChannelStatus?:
+                            | {
+                                  readonly __typename?: "video_MediaLiveChannelStatus";
+                                  readonly id: any;
+                                  readonly createdAt: any;
+                                  readonly updatedAt: any;
+                                  readonly state: string;
+                                  readonly channelStackId: any;
+                              }
+                            | null
+                            | undefined;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertRoomRtmpOutputMutationVariables = Exact<{
@@ -44921,15 +45668,18 @@ export type InsertRoomRtmpOutputMutationVariables = Exact<{
 
 export type InsertRoomRtmpOutputMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_video_RoomRtmpOutput_one?: {
-        readonly __typename?: "video_RoomRtmpOutput";
-        readonly id: any;
-        readonly roomId: any;
-        readonly created_at: any;
-        readonly updated_at: any;
-        readonly url: string;
-        readonly streamKey: string;
-    } | null;
+    readonly insert_video_RoomRtmpOutput_one?:
+        | {
+              readonly __typename?: "video_RoomRtmpOutput";
+              readonly id: any;
+              readonly roomId: any;
+              readonly created_at: any;
+              readonly updated_at: any;
+              readonly url: string;
+              readonly streamKey: string;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateRoomRtmpOutputMutationVariables = Exact<{
@@ -44940,15 +45690,18 @@ export type UpdateRoomRtmpOutputMutationVariables = Exact<{
 
 export type UpdateRoomRtmpOutputMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_video_RoomRtmpOutput_by_pk?: {
-        readonly __typename?: "video_RoomRtmpOutput";
-        readonly id: any;
-        readonly roomId: any;
-        readonly created_at: any;
-        readonly updated_at: any;
-        readonly url: string;
-        readonly streamKey: string;
-    } | null;
+    readonly update_video_RoomRtmpOutput_by_pk?:
+        | {
+              readonly __typename?: "video_RoomRtmpOutput";
+              readonly id: any;
+              readonly roomId: any;
+              readonly created_at: any;
+              readonly updated_at: any;
+              readonly url: string;
+              readonly streamKey: string;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteRoomRtmpOutputMutationVariables = Exact<{
@@ -44957,10 +45710,10 @@ export type DeleteRoomRtmpOutputMutationVariables = Exact<{
 
 export type DeleteRoomRtmpOutputMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_video_RoomRtmpOutput_by_pk?: {
-        readonly __typename?: "video_RoomRtmpOutput";
-        readonly id: any;
-    } | null;
+    readonly delete_video_RoomRtmpOutput_by_pk?:
+        | { readonly __typename?: "video_RoomRtmpOutput"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type AddEventPeople_ItemPersonFragment = {
@@ -44975,25 +45728,27 @@ export type AddEventPeople_ProgramPersonFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
     readonly name: string;
-    readonly affiliation?: string | null;
-    readonly email?: string | null;
-    readonly registrantId?: any | null;
+    readonly affiliation?: string | null | undefined;
+    readonly email?: string | null | undefined;
+    readonly registrantId?: any | null | undefined;
 };
 
 export type AddEventPeople_RegistrantFragment = {
     readonly __typename?: "registrant_Registrant";
     readonly id: any;
     readonly displayName: string;
-    readonly profile?: {
-        readonly __typename?: "registrant_Profile";
-        readonly registrantId: any;
-        readonly affiliation?: string | null;
-    } | null;
-    readonly invitation?: {
-        readonly __typename?: "registrant_Invitation";
-        readonly id: any;
-        readonly invitedEmailAddress: string;
-    } | null;
+    readonly profile?:
+        | {
+              readonly __typename?: "registrant_Profile";
+              readonly registrantId: any;
+              readonly affiliation?: string | null | undefined;
+          }
+        | null
+        | undefined;
+    readonly invitation?:
+        | { readonly __typename?: "registrant_Invitation"; readonly id: any; readonly invitedEmailAddress: string }
+        | null
+        | undefined;
 };
 
 export type AddEventPeople_GroupFragment = {
@@ -45045,9 +45800,9 @@ export type AddEventPeople_SelectProgramPeopleQuery = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly email?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
     }>;
 };
 
@@ -45061,16 +45816,18 @@ export type AddEventPeople_SelectRegistrantsQuery = {
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
         readonly displayName: string;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly affiliation?: string | null;
-        } | null;
-        readonly invitation?: {
-            readonly __typename?: "registrant_Invitation";
-            readonly id: any;
-            readonly invitedEmailAddress: string;
-        } | null;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly affiliation?: string | null | undefined;
+              }
+            | null
+            | undefined;
+        readonly invitation?:
+            | { readonly __typename?: "registrant_Invitation"; readonly id: any; readonly invitedEmailAddress: string }
+            | null
+            | undefined;
     }>;
 };
 
@@ -45084,9 +45841,9 @@ export type AddEventPeople_SelectProgramPeople_ByRegistrantQuery = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly email?: string | null | undefined;
+        readonly registrantId?: any | null | undefined;
     }>;
 };
 
@@ -45113,16 +45870,18 @@ export type AddEventPeople_SelectRegistrants_ByGroupQuery = {
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
         readonly displayName: string;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly affiliation?: string | null;
-        } | null;
-        readonly invitation?: {
-            readonly __typename?: "registrant_Invitation";
-            readonly id: any;
-            readonly invitedEmailAddress: string;
-        } | null;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly affiliation?: string | null | undefined;
+              }
+            | null
+            | undefined;
+        readonly invitation?:
+            | { readonly __typename?: "registrant_Invitation"; readonly id: any; readonly invitedEmailAddress: string }
+            | null
+            | undefined;
     }>;
 };
 
@@ -45132,17 +45891,20 @@ export type AddEventPeople_InsertProgramPeopleMutationVariables = Exact<{
 
 export type AddEventPeople_InsertProgramPeopleMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_collection_ProgramPerson?: {
-        readonly __typename?: "collection_ProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly registrantId?: any | null;
-        }>;
-    } | null;
+    readonly insert_collection_ProgramPerson?:
+        | {
+              readonly __typename?: "collection_ProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "collection_ProgramPerson";
+                  readonly id: any;
+                  readonly name: string;
+                  readonly affiliation?: string | null | undefined;
+                  readonly email?: string | null | undefined;
+                  readonly registrantId?: any | null | undefined;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type AddEventPeople_InsertEventPeopleMutationVariables = Exact<{
@@ -45151,23 +45913,26 @@ export type AddEventPeople_InsertEventPeopleMutationVariables = Exact<{
 
 export type AddEventPeople_InsertEventPeopleMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_schedule_EventProgramPerson?: {
-        readonly __typename?: "schedule_EventProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "schedule_EventProgramPerson";
-            readonly id: any;
-            readonly eventId: any;
-            readonly roleName: Schedule_EventProgramPersonRole_Enum;
-            readonly personId: any;
-        }>;
-    } | null;
+    readonly insert_schedule_EventProgramPerson?:
+        | {
+              readonly __typename?: "schedule_EventProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "schedule_EventProgramPerson";
+                  readonly id: any;
+                  readonly eventId: any;
+                  readonly roleName: Schedule_EventProgramPersonRole_Enum;
+                  readonly personId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ContinuationsEditor_ContinuationFragment = {
     readonly __typename?: "schedule_Continuation";
     readonly id: any;
-    readonly fromEvent?: any | null;
-    readonly fromShuffleQueue?: any | null;
+    readonly fromEvent?: any | null | undefined;
+    readonly fromShuffleQueue?: any | null | undefined;
     readonly to: any;
     readonly defaultFor: string;
     readonly isActiveChoice: boolean;
@@ -45185,8 +45950,8 @@ export type ContinuationsEditor_SelectContinuationsQuery = {
     readonly schedule_Continuation: ReadonlyArray<{
         readonly __typename?: "schedule_Continuation";
         readonly id: any;
-        readonly fromEvent?: any | null;
-        readonly fromShuffleQueue?: any | null;
+        readonly fromEvent?: any | null | undefined;
+        readonly fromShuffleQueue?: any | null | undefined;
         readonly to: any;
         readonly defaultFor: string;
         readonly isActiveChoice: boolean;
@@ -45202,18 +45967,21 @@ export type ContinuationsEditor_InsertMutationVariables = Exact<{
 
 export type ContinuationsEditor_InsertMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_schedule_Continuation_one?: {
-        readonly __typename?: "schedule_Continuation";
-        readonly id: any;
-        readonly fromEvent?: any | null;
-        readonly fromShuffleQueue?: any | null;
-        readonly to: any;
-        readonly defaultFor: string;
-        readonly isActiveChoice: boolean;
-        readonly priority: number;
-        readonly colour: string;
-        readonly description: string;
-    } | null;
+    readonly insert_schedule_Continuation_one?:
+        | {
+              readonly __typename?: "schedule_Continuation";
+              readonly id: any;
+              readonly fromEvent?: any | null | undefined;
+              readonly fromShuffleQueue?: any | null | undefined;
+              readonly to: any;
+              readonly defaultFor: string;
+              readonly isActiveChoice: boolean;
+              readonly priority: number;
+              readonly colour: string;
+              readonly description: string;
+          }
+        | null
+        | undefined;
 };
 
 export type ContinuationsEditor_UpdateMutationVariables = Exact<{
@@ -45223,18 +45991,21 @@ export type ContinuationsEditor_UpdateMutationVariables = Exact<{
 
 export type ContinuationsEditor_UpdateMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_schedule_Continuation_by_pk?: {
-        readonly __typename?: "schedule_Continuation";
-        readonly id: any;
-        readonly fromEvent?: any | null;
-        readonly fromShuffleQueue?: any | null;
-        readonly to: any;
-        readonly defaultFor: string;
-        readonly isActiveChoice: boolean;
-        readonly priority: number;
-        readonly colour: string;
-        readonly description: string;
-    } | null;
+    readonly update_schedule_Continuation_by_pk?:
+        | {
+              readonly __typename?: "schedule_Continuation";
+              readonly id: any;
+              readonly fromEvent?: any | null | undefined;
+              readonly fromShuffleQueue?: any | null | undefined;
+              readonly to: any;
+              readonly defaultFor: string;
+              readonly isActiveChoice: boolean;
+              readonly priority: number;
+              readonly colour: string;
+              readonly description: string;
+          }
+        | null
+        | undefined;
 };
 
 export type ContinuationsEditor_UpdateManyMutationVariables = Exact<{
@@ -45244,21 +46015,24 @@ export type ContinuationsEditor_UpdateManyMutationVariables = Exact<{
 
 export type ContinuationsEditor_UpdateManyMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_schedule_Continuation?: {
-        readonly __typename?: "schedule_Continuation_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "schedule_Continuation";
-            readonly id: any;
-            readonly fromEvent?: any | null;
-            readonly fromShuffleQueue?: any | null;
-            readonly to: any;
-            readonly defaultFor: string;
-            readonly isActiveChoice: boolean;
-            readonly priority: number;
-            readonly colour: string;
-            readonly description: string;
-        }>;
-    } | null;
+    readonly update_schedule_Continuation?:
+        | {
+              readonly __typename?: "schedule_Continuation_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "schedule_Continuation";
+                  readonly id: any;
+                  readonly fromEvent?: any | null | undefined;
+                  readonly fromShuffleQueue?: any | null | undefined;
+                  readonly to: any;
+                  readonly defaultFor: string;
+                  readonly isActiveChoice: boolean;
+                  readonly priority: number;
+                  readonly colour: string;
+                  readonly description: string;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ContinuationsEditor_DeleteMutationVariables = Exact<{
@@ -45267,10 +46041,13 @@ export type ContinuationsEditor_DeleteMutationVariables = Exact<{
 
 export type ContinuationsEditor_DeleteMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_schedule_Continuation?: {
-        readonly __typename?: "schedule_Continuation_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_Continuation"; readonly id: any }>;
-    } | null;
+    readonly delete_schedule_Continuation?:
+        | {
+              readonly __typename?: "schedule_Continuation_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_Continuation"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type CreateContinuationModal_RoomsQueryVariables = Exact<{
@@ -45299,22 +46076,23 @@ export type CreateContinuationModal_EventsQuery = {
         readonly conferenceId: any;
         readonly name: string;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
-        readonly exhibition?: {
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly name: string;
-        } | null;
-        readonly shufflePeriod?: {
-            readonly __typename?: "room_ShufflePeriod";
-            readonly id: any;
-            readonly name: string;
-        } | null;
+        readonly itemId?: any | null | undefined;
+        readonly exhibitionId?: any | null | undefined;
+        readonly shufflePeriodId?: any | null | undefined;
+        readonly item?:
+            | { readonly __typename?: "content_Item"; readonly id: any; readonly title: string }
+            | null
+            | undefined;
+        readonly exhibition?:
+            | { readonly __typename?: "collection_Exhibition"; readonly id: any; readonly name: string }
+            | null
+            | undefined;
+        readonly shufflePeriod?:
+            | { readonly __typename?: "room_ShufflePeriod"; readonly id: any; readonly name: string }
+            | null
+            | undefined;
     }>;
 };
 
@@ -45394,11 +46172,14 @@ export type SelectEventStreamTextEventIdQueryVariables = Exact<{
 
 export type SelectEventStreamTextEventIdQuery = {
     readonly __typename?: "query_root";
-    readonly schedule_Event_by_pk?: {
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly streamTextEventId?: string | null;
-    } | null;
+    readonly schedule_Event_by_pk?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly id: any;
+              readonly streamTextEventId?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateEventStreamTextEventIdMutationVariables = Exact<{
@@ -45408,11 +46189,14 @@ export type UpdateEventStreamTextEventIdMutationVariables = Exact<{
 
 export type UpdateEventStreamTextEventIdMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_schedule_Event_by_pk?: {
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly streamTextEventId?: string | null;
-    } | null;
+    readonly update_schedule_Event_by_pk?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly id: any;
+              readonly streamTextEventId?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertEventProgramPersonMutationVariables = Exact<{
@@ -45421,13 +46205,16 @@ export type InsertEventProgramPersonMutationVariables = Exact<{
 
 export type InsertEventProgramPersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_schedule_EventProgramPerson_one?: {
-        readonly __typename?: "schedule_EventProgramPerson";
-        readonly id: any;
-        readonly eventId: any;
-        readonly roleName: Schedule_EventProgramPersonRole_Enum;
-        readonly personId: any;
-    } | null;
+    readonly insert_schedule_EventProgramPerson_one?:
+        | {
+              readonly __typename?: "schedule_EventProgramPerson";
+              readonly id: any;
+              readonly eventId: any;
+              readonly roleName: Schedule_EventProgramPersonRole_Enum;
+              readonly personId: any;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteEventProgramPersonsMutationVariables = Exact<{
@@ -45436,10 +46223,16 @@ export type DeleteEventProgramPersonsMutationVariables = Exact<{
 
 export type DeleteEventProgramPersonsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_schedule_EventProgramPerson?: {
-        readonly __typename?: "schedule_EventProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_EventProgramPerson"; readonly id: any }>;
-    } | null;
+    readonly delete_schedule_EventProgramPerson?:
+        | {
+              readonly __typename?: "schedule_EventProgramPerson_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "schedule_EventProgramPerson";
+                  readonly id: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateEventProgramPersonMutationVariables = Exact<{
@@ -45449,13 +46242,16 @@ export type UpdateEventProgramPersonMutationVariables = Exact<{
 
 export type UpdateEventProgramPersonMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_schedule_EventProgramPerson_by_pk?: {
-        readonly __typename?: "schedule_EventProgramPerson";
-        readonly id: any;
-        readonly eventId: any;
-        readonly roleName: Schedule_EventProgramPersonRole_Enum;
-        readonly personId: any;
-    } | null;
+    readonly update_schedule_EventProgramPerson_by_pk?:
+        | {
+              readonly __typename?: "schedule_EventProgramPerson";
+              readonly id: any;
+              readonly eventId: any;
+              readonly roleName: Schedule_EventProgramPersonRole_Enum;
+              readonly personId: any;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageSchedule_ShufflePeriodsQueryVariables = Exact<{
@@ -45500,33 +46296,36 @@ export type InsertEventInfoMutationVariables = Exact<{
 
 export type InsertEventInfoMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_schedule_Event_one?: {
-        readonly __typename?: "schedule_Event";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly durationSeconds: number;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly roomId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly enableRecording: boolean;
-        readonly eventPeople: ReadonlyArray<{
-            readonly __typename?: "schedule_EventProgramPerson";
-            readonly id: any;
-            readonly eventId: any;
-            readonly roleName: Schedule_EventProgramPersonRole_Enum;
-            readonly personId: any;
-        }>;
-    } | null;
-    readonly insert_schedule_Continuation_one?: {
-        readonly __typename?: "schedule_Continuation";
-        readonly id: any;
-    } | null;
+    readonly insert_schedule_Event_one?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly conferenceId: any;
+              readonly id: any;
+              readonly durationSeconds: number;
+              readonly intendedRoomModeName: Room_Mode_Enum;
+              readonly name: string;
+              readonly originatingDataId?: any | null | undefined;
+              readonly roomId: any;
+              readonly startTime: any;
+              readonly endTime?: any | null | undefined;
+              readonly itemId?: any | null | undefined;
+              readonly exhibitionId?: any | null | undefined;
+              readonly shufflePeriodId?: any | null | undefined;
+              readonly enableRecording: boolean;
+              readonly eventPeople: ReadonlyArray<{
+                  readonly __typename?: "schedule_EventProgramPerson";
+                  readonly id: any;
+                  readonly eventId: any;
+                  readonly roleName: Schedule_EventProgramPersonRole_Enum;
+                  readonly personId: any;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly insert_schedule_Continuation_one?:
+        | { readonly __typename?: "schedule_Continuation"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type UpdateEventInfoMutationVariables = Exact<{
@@ -45545,29 +46344,32 @@ export type UpdateEventInfoMutationVariables = Exact<{
 
 export type UpdateEventInfoMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_schedule_Event_by_pk?: {
-        readonly __typename?: "schedule_Event";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly durationSeconds: number;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly roomId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly enableRecording: boolean;
-        readonly eventPeople: ReadonlyArray<{
-            readonly __typename?: "schedule_EventProgramPerson";
-            readonly id: any;
-            readonly eventId: any;
-            readonly roleName: Schedule_EventProgramPersonRole_Enum;
-            readonly personId: any;
-        }>;
-    } | null;
+    readonly update_schedule_Event_by_pk?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly conferenceId: any;
+              readonly id: any;
+              readonly durationSeconds: number;
+              readonly intendedRoomModeName: Room_Mode_Enum;
+              readonly name: string;
+              readonly originatingDataId?: any | null | undefined;
+              readonly roomId: any;
+              readonly startTime: any;
+              readonly endTime?: any | null | undefined;
+              readonly itemId?: any | null | undefined;
+              readonly exhibitionId?: any | null | undefined;
+              readonly shufflePeriodId?: any | null | undefined;
+              readonly enableRecording: boolean;
+              readonly eventPeople: ReadonlyArray<{
+                  readonly __typename?: "schedule_EventProgramPerson";
+                  readonly id: any;
+                  readonly eventId: any;
+                  readonly roleName: Schedule_EventProgramPersonRole_Enum;
+                  readonly personId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteEventInfosMutationVariables = Exact<{
@@ -45576,31 +46378,37 @@ export type DeleteEventInfosMutationVariables = Exact<{
 
 export type DeleteEventInfosMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_schedule_Event?: {
-        readonly __typename?: "schedule_Event_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-    } | null;
+    readonly delete_schedule_Event?:
+        | {
+              readonly __typename?: "schedule_Event_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type RoomInfoFragment = {
     readonly __typename?: "room_Room";
-    readonly capacity?: number | null;
+    readonly capacity?: number | null | undefined;
     readonly conferenceId: any;
     readonly currentModeName: Room_Mode_Enum;
     readonly id: any;
     readonly name: string;
     readonly priority: number;
-    readonly originatingDataId?: any | null;
-    readonly itemId?: any | null;
+    readonly originatingDataId?: any | null | undefined;
+    readonly itemId?: any | null | undefined;
     readonly managementModeName: Room_ManagementMode_Enum;
-    readonly isProgramRoom?: boolean | null;
-    readonly originatingData?: {
-        readonly __typename?: "conference_OriginatingData";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly sourceId: string;
-        readonly data?: any | null;
-    } | null;
+    readonly isProgramRoom?: boolean | null | undefined;
+    readonly originatingData?:
+        | {
+              readonly __typename?: "conference_OriginatingData";
+              readonly id: any;
+              readonly conferenceId: any;
+              readonly sourceId: string;
+              readonly data?: any | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type EventInfoFragment = {
@@ -45610,13 +46418,13 @@ export type EventInfoFragment = {
     readonly durationSeconds: number;
     readonly intendedRoomModeName: Room_Mode_Enum;
     readonly name: string;
-    readonly originatingDataId?: any | null;
+    readonly originatingDataId?: any | null | undefined;
     readonly roomId: any;
     readonly startTime: any;
-    readonly endTime?: any | null;
-    readonly itemId?: any | null;
-    readonly exhibitionId?: any | null;
-    readonly shufflePeriodId?: any | null;
+    readonly endTime?: any | null | undefined;
+    readonly itemId?: any | null | undefined;
+    readonly exhibitionId?: any | null | undefined;
+    readonly shufflePeriodId?: any | null | undefined;
     readonly enableRecording: boolean;
     readonly eventPeople: ReadonlyArray<{
         readonly __typename?: "schedule_EventProgramPerson";
@@ -45643,23 +46451,26 @@ export type SelectWholeScheduleQuery = {
     readonly __typename?: "query_root";
     readonly room_Room: ReadonlyArray<{
         readonly __typename?: "room_Room";
-        readonly capacity?: number | null;
+        readonly capacity?: number | null | undefined;
         readonly conferenceId: any;
         readonly currentModeName: Room_Mode_Enum;
         readonly id: any;
         readonly name: string;
         readonly priority: number;
-        readonly originatingDataId?: any | null;
-        readonly itemId?: any | null;
+        readonly originatingDataId?: any | null | undefined;
+        readonly itemId?: any | null | undefined;
         readonly managementModeName: Room_ManagementMode_Enum;
-        readonly isProgramRoom?: boolean | null;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
+        readonly isProgramRoom?: boolean | null | undefined;
+        readonly originatingData?:
+            | {
+                  readonly __typename?: "conference_OriginatingData";
+                  readonly id: any;
+                  readonly conferenceId: any;
+                  readonly sourceId: string;
+                  readonly data?: any | null | undefined;
+              }
+            | null
+            | undefined;
     }>;
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
@@ -45668,13 +46479,13 @@ export type SelectWholeScheduleQuery = {
         readonly durationSeconds: number;
         readonly intendedRoomModeName: Room_Mode_Enum;
         readonly name: string;
-        readonly originatingDataId?: any | null;
+        readonly originatingDataId?: any | null | undefined;
         readonly roomId: any;
         readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
+        readonly endTime?: any | null | undefined;
+        readonly itemId?: any | null | undefined;
+        readonly exhibitionId?: any | null | undefined;
+        readonly shufflePeriodId?: any | null | undefined;
         readonly enableRecording: boolean;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
@@ -45689,7 +46500,7 @@ export type SelectWholeScheduleQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly sourceId: string;
-        readonly data?: any | null;
+        readonly data?: any | null | undefined;
     }>;
     readonly collection_Tag: ReadonlyArray<{
         readonly __typename?: "collection_Tag";
@@ -45697,7 +46508,7 @@ export type SelectWholeScheduleQuery = {
         readonly conferenceId: any;
         readonly colour: string;
         readonly name: string;
-        readonly originatingDataId?: any | null;
+        readonly originatingDataId?: any | null | undefined;
         readonly priority: number;
     }>;
     readonly collection_Exhibition: ReadonlyArray<{
@@ -45715,8 +46526,8 @@ export type SelectWholeScheduleQuery = {
         readonly conferenceId: any;
         readonly typeName: Content_ItemType_Enum;
         readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly originatingDataId?: any | null;
+        readonly shortTitle?: string | null | undefined;
+        readonly originatingDataId?: any | null | undefined;
         readonly elements: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly conferenceId: any;
@@ -45725,10 +46536,10 @@ export type SelectWholeScheduleQuery = {
             readonly data: any;
             readonly id: any;
             readonly isHidden: boolean;
-            readonly layoutData?: any | null;
+            readonly layoutData?: any | null | undefined;
             readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly uploadsRemaining?: number | null;
+            readonly originatingDataId?: any | null | undefined;
+            readonly uploadsRemaining?: number | null | undefined;
         }>;
         readonly itemTags: ReadonlyArray<{
             readonly __typename?: "content_ItemTag";
@@ -45741,28 +46552,31 @@ export type SelectWholeScheduleQuery = {
             readonly id: any;
             readonly itemId: any;
             readonly exhibitionId: any;
-            readonly priority?: number | null;
-            readonly layout?: any | null;
+            readonly priority?: number | null | undefined;
+            readonly layout?: any | null | undefined;
         }>;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
             readonly itemId: any;
             readonly personId: any;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
             readonly roleName: string;
         }>;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+        readonly room?:
+            | { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any }
+            | null
+            | undefined;
     }>;
     readonly collection_ProgramPerson: ReadonlyArray<{
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
-        readonly originatingDataId?: any | null;
-        readonly registrantId?: any | null;
+        readonly affiliation?: string | null | undefined;
+        readonly email?: string | null | undefined;
+        readonly originatingDataId?: any | null | undefined;
+        readonly registrantId?: any | null | undefined;
     }>;
 };
 
@@ -45772,29 +46586,35 @@ export type InsertRoomsMutationVariables = Exact<{
 
 export type InsertRoomsMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_room_Room?: {
-        readonly __typename?: "room_Room_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "room_Room";
-            readonly capacity?: number | null;
-            readonly conferenceId: any;
-            readonly currentModeName: Room_Mode_Enum;
-            readonly id: any;
-            readonly name: string;
-            readonly priority: number;
-            readonly originatingDataId?: any | null;
-            readonly itemId?: any | null;
-            readonly managementModeName: Room_ManagementMode_Enum;
-            readonly isProgramRoom?: boolean | null;
-            readonly originatingData?: {
-                readonly __typename?: "conference_OriginatingData";
-                readonly id: any;
-                readonly conferenceId: any;
-                readonly sourceId: string;
-                readonly data?: any | null;
-            } | null;
-        }>;
-    } | null;
+    readonly insert_room_Room?:
+        | {
+              readonly __typename?: "room_Room_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "room_Room";
+                  readonly capacity?: number | null | undefined;
+                  readonly conferenceId: any;
+                  readonly currentModeName: Room_Mode_Enum;
+                  readonly id: any;
+                  readonly name: string;
+                  readonly priority: number;
+                  readonly originatingDataId?: any | null | undefined;
+                  readonly itemId?: any | null | undefined;
+                  readonly managementModeName: Room_ManagementMode_Enum;
+                  readonly isProgramRoom?: boolean | null | undefined;
+                  readonly originatingData?:
+                      | {
+                            readonly __typename?: "conference_OriginatingData";
+                            readonly id: any;
+                            readonly conferenceId: any;
+                            readonly sourceId: string;
+                            readonly data?: any | null | undefined;
+                        }
+                      | null
+                      | undefined;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteRoomsMutationVariables = Exact<{
@@ -45803,10 +46623,13 @@ export type DeleteRoomsMutationVariables = Exact<{
 
 export type DeleteRoomsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_room_Room?: {
-        readonly __typename?: "room_Room_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "room_Room"; readonly id: any }>;
-    } | null;
+    readonly delete_room_Room?:
+        | {
+              readonly __typename?: "room_Room_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "room_Room"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateRoomMutationVariables = Exact<{
@@ -45819,26 +46642,32 @@ export type UpdateRoomMutationVariables = Exact<{
 
 export type UpdateRoomMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_room_Room_by_pk?: {
-        readonly __typename?: "room_Room";
-        readonly capacity?: number | null;
-        readonly conferenceId: any;
-        readonly currentModeName: Room_Mode_Enum;
-        readonly id: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly originatingDataId?: any | null;
-        readonly itemId?: any | null;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly isProgramRoom?: boolean | null;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
-    } | null;
+    readonly update_room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly capacity?: number | null | undefined;
+              readonly conferenceId: any;
+              readonly currentModeName: Room_Mode_Enum;
+              readonly id: any;
+              readonly name: string;
+              readonly priority: number;
+              readonly originatingDataId?: any | null | undefined;
+              readonly itemId?: any | null | undefined;
+              readonly managementModeName: Room_ManagementMode_Enum;
+              readonly isProgramRoom?: boolean | null | undefined;
+              readonly originatingData?:
+                  | {
+                        readonly __typename?: "conference_OriginatingData";
+                        readonly id: any;
+                        readonly conferenceId: any;
+                        readonly sourceId: string;
+                        readonly data?: any | null | undefined;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteEventsMutationVariables = Exact<{
@@ -45847,10 +46676,13 @@ export type DeleteEventsMutationVariables = Exact<{
 
 export type DeleteEventsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_schedule_Event?: {
-        readonly __typename?: "schedule_Event_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-    } | null;
+    readonly delete_schedule_Event?:
+        | {
+              readonly __typename?: "schedule_Event_mutation_response";
+              readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertEventMutationVariables = Exact<{
@@ -45861,33 +46693,36 @@ export type InsertEventMutationVariables = Exact<{
 
 export type InsertEventMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_schedule_Event_one?: {
-        readonly __typename?: "schedule_Event";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly durationSeconds: number;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly roomId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly enableRecording: boolean;
-        readonly eventPeople: ReadonlyArray<{
-            readonly __typename?: "schedule_EventProgramPerson";
-            readonly id: any;
-            readonly eventId: any;
-            readonly roleName: Schedule_EventProgramPersonRole_Enum;
-            readonly personId: any;
-        }>;
-    } | null;
-    readonly insert_schedule_Continuation_one?: {
-        readonly __typename?: "schedule_Continuation";
-        readonly id: any;
-    } | null;
+    readonly insert_schedule_Event_one?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly conferenceId: any;
+              readonly id: any;
+              readonly durationSeconds: number;
+              readonly intendedRoomModeName: Room_Mode_Enum;
+              readonly name: string;
+              readonly originatingDataId?: any | null | undefined;
+              readonly roomId: any;
+              readonly startTime: any;
+              readonly endTime?: any | null | undefined;
+              readonly itemId?: any | null | undefined;
+              readonly exhibitionId?: any | null | undefined;
+              readonly shufflePeriodId?: any | null | undefined;
+              readonly enableRecording: boolean;
+              readonly eventPeople: ReadonlyArray<{
+                  readonly __typename?: "schedule_EventProgramPerson";
+                  readonly id: any;
+                  readonly eventId: any;
+                  readonly roleName: Schedule_EventProgramPersonRole_Enum;
+                  readonly personId: any;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly insert_schedule_Continuation_one?:
+        | { readonly __typename?: "schedule_Continuation"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type UpdateEventMutationVariables = Exact<{
@@ -45904,29 +46739,32 @@ export type UpdateEventMutationVariables = Exact<{
 
 export type UpdateEventMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_schedule_Event_by_pk?: {
-        readonly __typename?: "schedule_Event";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly durationSeconds: number;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly roomId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly enableRecording: boolean;
-        readonly eventPeople: ReadonlyArray<{
-            readonly __typename?: "schedule_EventProgramPerson";
-            readonly id: any;
-            readonly eventId: any;
-            readonly roleName: Schedule_EventProgramPersonRole_Enum;
-            readonly personId: any;
-        }>;
-    } | null;
+    readonly update_schedule_Event_by_pk?:
+        | {
+              readonly __typename?: "schedule_Event";
+              readonly conferenceId: any;
+              readonly id: any;
+              readonly durationSeconds: number;
+              readonly intendedRoomModeName: Room_Mode_Enum;
+              readonly name: string;
+              readonly originatingDataId?: any | null | undefined;
+              readonly roomId: any;
+              readonly startTime: any;
+              readonly endTime?: any | null | undefined;
+              readonly itemId?: any | null | undefined;
+              readonly exhibitionId?: any | null | undefined;
+              readonly shufflePeriodId?: any | null | undefined;
+              readonly enableRecording: boolean;
+              readonly eventPeople: ReadonlyArray<{
+                  readonly __typename?: "schedule_EventProgramPerson";
+                  readonly id: any;
+                  readonly eventId: any;
+                  readonly roleName: Schedule_EventProgramPersonRole_Enum;
+                  readonly personId: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateShufflePeriodMutationVariables = Exact<{
@@ -45936,22 +46774,25 @@ export type UpdateShufflePeriodMutationVariables = Exact<{
 
 export type UpdateShufflePeriodMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_room_ShufflePeriod_by_pk?: {
-        readonly __typename?: "room_ShufflePeriod";
-        readonly id: any;
-        readonly created_at: any;
-        readonly updated_at: any;
-        readonly conferenceId: any;
-        readonly startAt: any;
-        readonly endAt: any;
-        readonly roomDurationMinutes: number;
-        readonly targetRegistrantsPerRoom: number;
-        readonly maxRegistrantsPerRoom: number;
-        readonly waitRoomMaxDurationSeconds: number;
-        readonly name: string;
-        readonly organiserId: any;
-        readonly algorithm: Room_ShuffleAlgorithm_Enum;
-    } | null;
+    readonly update_room_ShufflePeriod_by_pk?:
+        | {
+              readonly __typename?: "room_ShufflePeriod";
+              readonly id: any;
+              readonly created_at: any;
+              readonly updated_at: any;
+              readonly conferenceId: any;
+              readonly startAt: any;
+              readonly endAt: any;
+              readonly roomDurationMinutes: number;
+              readonly targetRegistrantsPerRoom: number;
+              readonly maxRegistrantsPerRoom: number;
+              readonly waitRoomMaxDurationSeconds: number;
+              readonly name: string;
+              readonly organiserId: any;
+              readonly algorithm: Room_ShuffleAlgorithm_Enum;
+          }
+        | null
+        | undefined;
 };
 
 export type InsertShufflePeriodMutationVariables = Exact<{
@@ -45960,22 +46801,25 @@ export type InsertShufflePeriodMutationVariables = Exact<{
 
 export type InsertShufflePeriodMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_room_ShufflePeriod_one?: {
-        readonly __typename?: "room_ShufflePeriod";
-        readonly id: any;
-        readonly created_at: any;
-        readonly updated_at: any;
-        readonly conferenceId: any;
-        readonly startAt: any;
-        readonly endAt: any;
-        readonly roomDurationMinutes: number;
-        readonly targetRegistrantsPerRoom: number;
-        readonly maxRegistrantsPerRoom: number;
-        readonly waitRoomMaxDurationSeconds: number;
-        readonly name: string;
-        readonly organiserId: any;
-        readonly algorithm: Room_ShuffleAlgorithm_Enum;
-    } | null;
+    readonly insert_room_ShufflePeriod_one?:
+        | {
+              readonly __typename?: "room_ShufflePeriod";
+              readonly id: any;
+              readonly created_at: any;
+              readonly updated_at: any;
+              readonly conferenceId: any;
+              readonly startAt: any;
+              readonly endAt: any;
+              readonly roomDurationMinutes: number;
+              readonly targetRegistrantsPerRoom: number;
+              readonly maxRegistrantsPerRoom: number;
+              readonly waitRoomMaxDurationSeconds: number;
+              readonly name: string;
+              readonly organiserId: any;
+              readonly algorithm: Room_ShuffleAlgorithm_Enum;
+          }
+        | null
+        | undefined;
 };
 
 export type ManageShufflePeriods_ShufflePeriodFragment = {
@@ -45995,24 +46839,24 @@ export type ManageShufflePeriods_ShufflePeriodFragment = {
     readonly algorithm: Room_ShuffleAlgorithm_Enum;
     readonly completedEntries: {
         readonly __typename?: "room_ShuffleQueueEntry_aggregate";
-        readonly aggregate?: {
-            readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields";
-            readonly count: number;
-        } | null;
+        readonly aggregate?:
+            | { readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields"; readonly count: number }
+            | null
+            | undefined;
     };
     readonly ongoingEntries: {
         readonly __typename?: "room_ShuffleQueueEntry_aggregate";
-        readonly aggregate?: {
-            readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields";
-            readonly count: number;
-        } | null;
+        readonly aggregate?:
+            | { readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields"; readonly count: number }
+            | null
+            | undefined;
     };
     readonly waitingEntries: {
         readonly __typename?: "room_ShuffleQueueEntry_aggregate";
-        readonly aggregate?: {
-            readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields";
-            readonly count: number;
-        } | null;
+        readonly aggregate?:
+            | { readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields"; readonly count: number }
+            | null
+            | undefined;
     };
 };
 
@@ -46039,24 +46883,24 @@ export type ManageShufflePeriods_SelectAllQuery = {
         readonly algorithm: Room_ShuffleAlgorithm_Enum;
         readonly completedEntries: {
             readonly __typename?: "room_ShuffleQueueEntry_aggregate";
-            readonly aggregate?: {
-                readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields";
-                readonly count: number;
-            } | null;
+            readonly aggregate?:
+                | { readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields"; readonly count: number }
+                | null
+                | undefined;
         };
         readonly ongoingEntries: {
             readonly __typename?: "room_ShuffleQueueEntry_aggregate";
-            readonly aggregate?: {
-                readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields";
-                readonly count: number;
-            } | null;
+            readonly aggregate?:
+                | { readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields"; readonly count: number }
+                | null
+                | undefined;
         };
         readonly waitingEntries: {
             readonly __typename?: "room_ShuffleQueueEntry_aggregate";
-            readonly aggregate?: {
-                readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields";
-                readonly count: number;
-            } | null;
+            readonly aggregate?:
+                | { readonly __typename?: "room_ShuffleQueueEntry_aggregate_fields"; readonly count: number }
+                | null
+                | undefined;
         };
     }>;
 };
@@ -46067,7 +46911,10 @@ export type DeleteShufflePeriodMutationVariables = Exact<{
 
 export type DeleteShufflePeriodMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_room_ShufflePeriod_by_pk?: { readonly __typename?: "room_ShufflePeriod"; readonly id: any } | null;
+    readonly delete_room_ShufflePeriod_by_pk?:
+        | { readonly __typename?: "room_ShufflePeriod"; readonly id: any }
+        | null
+        | undefined;
 };
 
 export type UpsertConferenceThemeMutationVariables = Exact<{
@@ -46077,12 +46924,15 @@ export type UpsertConferenceThemeMutationVariables = Exact<{
 
 export type UpsertConferenceThemeMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_conference_Configuration_one?: {
-        readonly __typename?: "conference_Configuration";
-        readonly conferenceId: any;
-        readonly key: Conference_ConfigurationKey_Enum;
-        readonly value: any;
-    } | null;
+    readonly insert_conference_Configuration_one?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
 };
 
 export type ConferenceTakenQueryVariables = Exact<{
@@ -46112,18 +46962,21 @@ export type CreateConferenceMutationVariables = Exact<{
 
 export type CreateConferenceMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_conference_Conference?: {
-        readonly __typename?: "conference_Conference_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "conference_Conference";
-            readonly id: any;
-            readonly slug: string;
-        }>;
-    } | null;
-    readonly update_conference_DemoCode?: {
-        readonly __typename?: "conference_DemoCode_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly insert_conference_Conference?:
+        | {
+              readonly __typename?: "conference_Conference_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "conference_Conference";
+                  readonly id: any;
+                  readonly slug: string;
+              }>;
+          }
+        | null
+        | undefined;
+    readonly update_conference_DemoCode?:
+        | { readonly __typename?: "conference_DemoCode_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type CreateNewConferenceMetaStructureMutationVariables = Exact<{
@@ -46138,14 +46991,14 @@ export type CreateNewConferenceMetaStructureMutationVariables = Exact<{
 
 export type CreateNewConferenceMetaStructureMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_registrant_Registrant?: {
-        readonly __typename?: "registrant_Registrant_mutation_response";
-        readonly affected_rows: number;
-    } | null;
-    readonly insert_content_Item?: {
-        readonly __typename?: "content_Item_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly insert_registrant_Registrant?:
+        | { readonly __typename?: "registrant_Registrant_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
+    readonly insert_content_Item?:
+        | { readonly __typename?: "content_Item_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type RegistrantsByIdQueryVariables = Exact<{
@@ -46158,27 +47011,30 @@ export type RegistrantsByIdQuery = {
     readonly registrant_Registrant: ReadonlyArray<{
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
-        readonly userId?: string | null;
+        readonly userId?: string | null | undefined;
         readonly conferenceId: any;
         readonly displayName: string;
         readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly badges?: any | null;
-            readonly affiliation?: string | null;
-            readonly affiliationURL?: string | null;
-            readonly country?: string | null;
-            readonly timezoneUTCOffset?: number | null;
-            readonly bio?: string | null;
-            readonly website?: string | null;
-            readonly github?: string | null;
-            readonly twitter?: string | null;
-            readonly pronouns?: any | null;
-            readonly photoURL_50x50?: string | null;
-            readonly photoURL_350x350?: string | null;
-            readonly hasBeenEdited: boolean;
-        } | null;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly badges?: any | null | undefined;
+                  readonly affiliation?: string | null | undefined;
+                  readonly affiliationURL?: string | null | undefined;
+                  readonly country?: string | null | undefined;
+                  readonly timezoneUTCOffset?: number | null | undefined;
+                  readonly bio?: string | null | undefined;
+                  readonly website?: string | null | undefined;
+                  readonly github?: string | null | undefined;
+                  readonly twitter?: string | null | undefined;
+                  readonly pronouns?: any | null | undefined;
+                  readonly photoURL_50x50?: string | null | undefined;
+                  readonly photoURL_350x350?: string | null | undefined;
+                  readonly hasBeenEdited: boolean;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -46192,27 +47048,30 @@ export type RegistrantsByUserIdQuery = {
     readonly registrant_Registrant: ReadonlyArray<{
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
-        readonly userId?: string | null;
+        readonly userId?: string | null | undefined;
         readonly conferenceId: any;
         readonly displayName: string;
         readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly badges?: any | null;
-            readonly affiliation?: string | null;
-            readonly affiliationURL?: string | null;
-            readonly country?: string | null;
-            readonly timezoneUTCOffset?: number | null;
-            readonly bio?: string | null;
-            readonly website?: string | null;
-            readonly github?: string | null;
-            readonly twitter?: string | null;
-            readonly pronouns?: any | null;
-            readonly photoURL_50x50?: string | null;
-            readonly photoURL_350x350?: string | null;
-            readonly hasBeenEdited: boolean;
-        } | null;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly badges?: any | null | undefined;
+                  readonly affiliation?: string | null | undefined;
+                  readonly affiliationURL?: string | null | undefined;
+                  readonly country?: string | null | undefined;
+                  readonly timezoneUTCOffset?: number | null | undefined;
+                  readonly bio?: string | null | undefined;
+                  readonly website?: string | null | undefined;
+                  readonly github?: string | null | undefined;
+                  readonly twitter?: string | null | undefined;
+                  readonly pronouns?: any | null | undefined;
+                  readonly photoURL_50x50?: string | null | undefined;
+                  readonly photoURL_350x350?: string | null | undefined;
+                  readonly hasBeenEdited: boolean;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -46223,111 +47082,117 @@ export type ConferenceById_WithUserQueryVariables = Exact<{
 
 export type ConferenceById_WithUserQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Conference_by_pk?: {
-        readonly __typename?: "conference_Conference";
-        readonly id: any;
-        readonly name: string;
-        readonly shortName: string;
-        readonly slug: string;
-        readonly announcementsChatId?: any | null;
-        readonly supportAddress: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly registrationURL: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly scheduleViewVersion: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly scheduleEventBox_HideExhibitionPeople: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly sponsorsLabel: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly disableAllTimesForThisItem: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly disableNearbyEvents: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly themeComponentColors: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly visibleExhibitionsLabel: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly hiddenExhibitionsLabel: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly forceSponsorsMenuLink: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly registrants: ReadonlyArray<{
-            readonly __typename?: "registrant_Registrant";
-            readonly id: any;
-            readonly userId?: string | null;
-            readonly conferenceId: any;
-            readonly displayName: string;
-            readonly conferenceRole: Registrant_RegistrantRole_Enum;
-            readonly profile?: {
-                readonly __typename?: "registrant_Profile";
-                readonly registrantId: any;
-                readonly badges?: any | null;
-                readonly affiliation?: string | null;
-                readonly affiliationURL?: string | null;
-                readonly country?: string | null;
-                readonly timezoneUTCOffset?: number | null;
-                readonly bio?: string | null;
-                readonly website?: string | null;
-                readonly github?: string | null;
-                readonly twitter?: string | null;
-                readonly pronouns?: any | null;
-                readonly photoURL_50x50?: string | null;
-                readonly photoURL_350x350?: string | null;
-                readonly hasBeenEdited: boolean;
-            } | null;
-        }>;
-        readonly myBackstagesNotice: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-    } | null;
+    readonly conference_Conference_by_pk?:
+        | {
+              readonly __typename?: "conference_Conference";
+              readonly id: any;
+              readonly name: string;
+              readonly shortName: string;
+              readonly slug: string;
+              readonly announcementsChatId?: any | null | undefined;
+              readonly supportAddress: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly registrationURL: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly scheduleViewVersion: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly scheduleEventBox_HideExhibitionPeople: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly sponsorsLabel: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly disableAllTimesForThisItem: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly disableNearbyEvents: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly themeComponentColors: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly visibleExhibitionsLabel: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly hiddenExhibitionsLabel: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly forceSponsorsMenuLink: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly registrants: ReadonlyArray<{
+                  readonly __typename?: "registrant_Registrant";
+                  readonly id: any;
+                  readonly userId?: string | null | undefined;
+                  readonly conferenceId: any;
+                  readonly displayName: string;
+                  readonly conferenceRole: Registrant_RegistrantRole_Enum;
+                  readonly profile?:
+                      | {
+                            readonly __typename?: "registrant_Profile";
+                            readonly registrantId: any;
+                            readonly badges?: any | null | undefined;
+                            readonly affiliation?: string | null | undefined;
+                            readonly affiliationURL?: string | null | undefined;
+                            readonly country?: string | null | undefined;
+                            readonly timezoneUTCOffset?: number | null | undefined;
+                            readonly bio?: string | null | undefined;
+                            readonly website?: string | null | undefined;
+                            readonly github?: string | null | undefined;
+                            readonly twitter?: string | null | undefined;
+                            readonly pronouns?: any | null | undefined;
+                            readonly photoURL_50x50?: string | null | undefined;
+                            readonly photoURL_350x350?: string | null | undefined;
+                            readonly hasBeenEdited: boolean;
+                        }
+                      | null
+                      | undefined;
+              }>;
+              readonly myBackstagesNotice: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type ConferenceById_WithoutUserQueryVariables = Exact<{
@@ -46336,108 +47201,114 @@ export type ConferenceById_WithoutUserQueryVariables = Exact<{
 
 export type ConferenceById_WithoutUserQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Conference_by_pk?: {
-        readonly __typename?: "conference_Conference";
-        readonly id: any;
-        readonly name: string;
-        readonly shortName: string;
-        readonly slug: string;
-        readonly supportAddress: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly registrationURL: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly scheduleViewVersion: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly scheduleEventBox_HideExhibitionPeople: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly sponsorsLabel: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly disableAllTimesForThisItem: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly disableNearbyEvents: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly themeComponentColors: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly visibleExhibitionsLabel: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly hiddenExhibitionsLabel: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-        readonly forceSponsorsMenuLink: ReadonlyArray<{
-            readonly __typename?: "conference_Configuration";
-            readonly conferenceId: any;
-            readonly key: Conference_ConfigurationKey_Enum;
-            readonly value: any;
-        }>;
-    } | null;
+    readonly conference_Conference_by_pk?:
+        | {
+              readonly __typename?: "conference_Conference";
+              readonly id: any;
+              readonly name: string;
+              readonly shortName: string;
+              readonly slug: string;
+              readonly supportAddress: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly registrationURL: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly scheduleViewVersion: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly scheduleEventBox_HideExhibitionPeople: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly sponsorsLabel: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly disableAllTimesForThisItem: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly disableNearbyEvents: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly themeComponentColors: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly visibleExhibitionsLabel: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly hiddenExhibitionsLabel: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+              readonly forceSponsorsMenuLink: ReadonlyArray<{
+                  readonly __typename?: "conference_Configuration";
+                  readonly conferenceId: any;
+                  readonly key: Conference_ConfigurationKey_Enum;
+                  readonly value: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type AuthdConferenceInfoFragment = {
     readonly __typename?: "conference_Conference";
-    readonly announcementsChatId?: any | null;
+    readonly announcementsChatId?: any | null | undefined;
     readonly registrants: ReadonlyArray<{
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
-        readonly userId?: string | null;
+        readonly userId?: string | null | undefined;
         readonly conferenceId: any;
         readonly displayName: string;
         readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly badges?: any | null;
-            readonly affiliation?: string | null;
-            readonly affiliationURL?: string | null;
-            readonly country?: string | null;
-            readonly timezoneUTCOffset?: number | null;
-            readonly bio?: string | null;
-            readonly website?: string | null;
-            readonly github?: string | null;
-            readonly twitter?: string | null;
-            readonly pronouns?: any | null;
-            readonly photoURL_50x50?: string | null;
-            readonly photoURL_350x350?: string | null;
-            readonly hasBeenEdited: boolean;
-        } | null;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly badges?: any | null | undefined;
+                  readonly affiliation?: string | null | undefined;
+                  readonly affiliationURL?: string | null | undefined;
+                  readonly country?: string | null | undefined;
+                  readonly timezoneUTCOffset?: number | null | undefined;
+                  readonly bio?: string | null | undefined;
+                  readonly website?: string | null | undefined;
+                  readonly github?: string | null | undefined;
+                  readonly twitter?: string | null | undefined;
+                  readonly pronouns?: any | null | undefined;
+                  readonly photoURL_50x50?: string | null | undefined;
+                  readonly photoURL_350x350?: string | null | undefined;
+                  readonly hasBeenEdited: boolean;
+              }
+            | null
+            | undefined;
     }>;
     readonly myBackstagesNotice: ReadonlyArray<{
         readonly __typename?: "conference_Configuration";
@@ -46524,45 +47395,48 @@ export type PublicConferenceInfoFragment = {
 export type ProfileDataFragment = {
     readonly __typename?: "registrant_Profile";
     readonly registrantId: any;
-    readonly badges?: any | null;
-    readonly affiliation?: string | null;
-    readonly affiliationURL?: string | null;
-    readonly country?: string | null;
-    readonly timezoneUTCOffset?: number | null;
-    readonly bio?: string | null;
-    readonly website?: string | null;
-    readonly github?: string | null;
-    readonly twitter?: string | null;
-    readonly pronouns?: any | null;
-    readonly photoURL_50x50?: string | null;
-    readonly photoURL_350x350?: string | null;
+    readonly badges?: any | null | undefined;
+    readonly affiliation?: string | null | undefined;
+    readonly affiliationURL?: string | null | undefined;
+    readonly country?: string | null | undefined;
+    readonly timezoneUTCOffset?: number | null | undefined;
+    readonly bio?: string | null | undefined;
+    readonly website?: string | null | undefined;
+    readonly github?: string | null | undefined;
+    readonly twitter?: string | null | undefined;
+    readonly pronouns?: any | null | undefined;
+    readonly photoURL_50x50?: string | null | undefined;
+    readonly photoURL_350x350?: string | null | undefined;
     readonly hasBeenEdited: boolean;
 };
 
 export type RegistrantDataFragment = {
     readonly __typename?: "registrant_Registrant";
     readonly id: any;
-    readonly userId?: string | null;
+    readonly userId?: string | null | undefined;
     readonly conferenceId: any;
     readonly displayName: string;
     readonly conferenceRole: Registrant_RegistrantRole_Enum;
-    readonly profile?: {
-        readonly __typename?: "registrant_Profile";
-        readonly registrantId: any;
-        readonly badges?: any | null;
-        readonly affiliation?: string | null;
-        readonly affiliationURL?: string | null;
-        readonly country?: string | null;
-        readonly timezoneUTCOffset?: number | null;
-        readonly bio?: string | null;
-        readonly website?: string | null;
-        readonly github?: string | null;
-        readonly twitter?: string | null;
-        readonly pronouns?: any | null;
-        readonly photoURL_50x50?: string | null;
-        readonly photoURL_350x350?: string | null;
-        readonly hasBeenEdited: boolean;
-    } | null;
+    readonly profile?:
+        | {
+              readonly __typename?: "registrant_Profile";
+              readonly registrantId: any;
+              readonly badges?: any | null | undefined;
+              readonly affiliation?: string | null | undefined;
+              readonly affiliationURL?: string | null | undefined;
+              readonly country?: string | null | undefined;
+              readonly timezoneUTCOffset?: number | null | undefined;
+              readonly bio?: string | null | undefined;
+              readonly website?: string | null | undefined;
+              readonly github?: string | null | undefined;
+              readonly twitter?: string | null | undefined;
+              readonly pronouns?: any | null | undefined;
+              readonly photoURL_50x50?: string | null | undefined;
+              readonly photoURL_350x350?: string | null | undefined;
+              readonly hasBeenEdited: boolean;
+          }
+        | null
+        | undefined;
 };
 
 export type GetForceUserRefreshConfigQueryVariables = Exact<{
@@ -46571,12 +47445,15 @@ export type GetForceUserRefreshConfigQueryVariables = Exact<{
 
 export type GetForceUserRefreshConfigQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Configuration_by_pk?: {
-        readonly __typename?: "conference_Configuration";
-        readonly conferenceId: any;
-        readonly key: Conference_ConfigurationKey_Enum;
-        readonly value: any;
-    } | null;
+    readonly conference_Configuration_by_pk?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
 };
 
 export type GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables = Exact<{
@@ -46586,11 +47463,14 @@ export type GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables = Exact<{
 
 export type GoogleOAuth_SubmitGoogleOAuthCodeMutation = {
     readonly __typename?: "mutation_root";
-    readonly submitGoogleOAuthCode?: {
-        readonly __typename?: "SubmitGoogleOAuthCodeOutput";
-        readonly message?: string | null;
-        readonly success: boolean;
-    } | null;
+    readonly submitGoogleOAuthCode?:
+        | {
+              readonly __typename?: "SubmitGoogleOAuthCodeOutput";
+              readonly message?: string | null | undefined;
+              readonly success: boolean;
+          }
+        | null
+        | undefined;
 };
 
 export type SelectInvitationForAcceptQueryVariables = Exact<{
@@ -46612,11 +47492,14 @@ export type Invitation_ConfirmCurrentMutationVariables = Exact<{
 
 export type Invitation_ConfirmCurrentMutation = {
     readonly __typename?: "mutation_root";
-    readonly invitationConfirmCurrent?: {
-        readonly __typename?: "ConfirmInvitationOutput";
-        readonly confSlug?: string | null;
-        readonly ok: string;
-    } | null;
+    readonly invitationConfirmCurrent?:
+        | {
+              readonly __typename?: "ConfirmInvitationOutput";
+              readonly confSlug?: string | null | undefined;
+              readonly ok: string;
+          }
+        | null
+        | undefined;
 };
 
 export type GetEventsInNextHourQueryVariables = Exact<{
@@ -46632,7 +47515,7 @@ export type GetEventsInNextHourQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly roomId: any;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
     }>;
@@ -46643,7 +47526,7 @@ export type MinimalEventInfoFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly roomId: any;
     readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
 };
@@ -46656,7 +47539,10 @@ export type CountSwagBagsQuery = {
     readonly __typename?: "query_root";
     readonly content_Item_aggregate: {
         readonly __typename?: "content_Item_aggregate";
-        readonly aggregate?: { readonly __typename?: "content_Item_aggregate_fields"; readonly count: number } | null;
+        readonly aggregate?:
+            | { readonly __typename?: "content_Item_aggregate_fields"; readonly count: number }
+            | null
+            | undefined;
     };
 };
 
@@ -46667,12 +47553,15 @@ export type CreateDmMutationVariables = Exact<{
 
 export type CreateDmMutation = {
     readonly __typename?: "mutation_root";
-    readonly createRoomDm?: {
-        readonly __typename?: "CreateRoomDmOutput";
-        readonly message?: string | null;
-        readonly roomId?: any | null;
-        readonly chatId?: any | null;
-    } | null;
+    readonly createRoomDm?:
+        | {
+              readonly __typename?: "CreateRoomDmOutput";
+              readonly message?: string | null | undefined;
+              readonly roomId?: any | null | undefined;
+              readonly chatId?: any | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type GetItemChatIdQueryVariables = Exact<{
@@ -46685,7 +47574,7 @@ export type GetItemChatIdQuery = {
         readonly __typename?: "content_Item";
         readonly id: any;
         readonly title: string;
-        readonly chatId?: any | null;
+        readonly chatId?: any | null | undefined;
     }>;
 };
 
@@ -46709,12 +47598,15 @@ export type GetRoomChatIdQueryVariables = Exact<{
 
 export type GetRoomChatIdQuery = {
     readonly __typename?: "query_root";
-    readonly room_Room_by_pk?: {
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly chatId?: any | null;
-        readonly name: string;
-    } | null;
+    readonly room_Room_by_pk?:
+        | {
+              readonly __typename?: "room_Room";
+              readonly id: any;
+              readonly chatId?: any | null | undefined;
+              readonly name: string;
+          }
+        | null
+        | undefined;
 };
 
 export type GetVapidPublicKeyQueryVariables = Exact<{ [key: string]: never }>;
@@ -46730,10 +47622,10 @@ export type UpsertPushNotificationSubscriptionMutationVariables = Exact<{
 
 export type UpsertPushNotificationSubscriptionMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_PushNotificationSubscription_one?: {
-        readonly __typename?: "PushNotificationSubscription";
-        readonly endpoint: string;
-    } | null;
+    readonly insert_PushNotificationSubscription_one?:
+        | { readonly __typename?: "PushNotificationSubscription"; readonly endpoint: string }
+        | null
+        | undefined;
 };
 
 export type DeletePushNotificationSubscriptionMutationVariables = Exact<{
@@ -46742,10 +47634,10 @@ export type DeletePushNotificationSubscriptionMutationVariables = Exact<{
 
 export type DeletePushNotificationSubscriptionMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_PushNotificationSubscription?: {
-        readonly __typename?: "PushNotificationSubscription_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly delete_PushNotificationSubscription?:
+        | { readonly __typename?: "PushNotificationSubscription_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
 };
 
 export type GetRoomMembersQueryVariables = Exact<{
@@ -46799,7 +47691,7 @@ export type SearchedItemPersonFragment = {
     readonly id: any;
     readonly itemId: any;
     readonly personId: any;
-    readonly priority?: number | null;
+    readonly priority?: number | null | undefined;
     readonly roleName: string;
     readonly person: {
         readonly __typename?: "collection_ProgramPerson";
@@ -46819,7 +47711,7 @@ export type SearchedItemFragment = {
         readonly id: any;
         readonly itemId: any;
         readonly personId: any;
-        readonly priority?: number | null;
+        readonly priority?: number | null | undefined;
         readonly roleName: string;
         readonly person: {
             readonly __typename?: "collection_ProgramPerson";
@@ -46835,11 +47727,11 @@ export type SearchedEventFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly name: string;
-    readonly itemId?: any | null;
+    readonly itemId?: any | null | undefined;
     readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly endTime?: any | null | undefined;
     readonly roomId: any;
-    readonly roomName?: string | null;
+    readonly roomName?: string | null | undefined;
 };
 
 export type SearchedPerson_ReducedFragment = {
@@ -46854,16 +47746,22 @@ export type SearchedPersonFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly name: string;
-    readonly affiliation?: string | null;
-    readonly registrant?: {
-        readonly __typename?: "registrant_Registrant";
-        readonly id: any;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly photoURL_50x50?: string | null;
-        } | null;
-    } | null;
+    readonly affiliation?: string | null | undefined;
+    readonly registrant?:
+        | {
+              readonly __typename?: "registrant_Registrant";
+              readonly id: any;
+              readonly profile?:
+                  | {
+                        readonly __typename?: "registrant_Profile";
+                        readonly registrantId: any;
+                        readonly photoURL_50x50?: string | null | undefined;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type SearchAllQueryVariables = Exact<{
@@ -46885,7 +47783,7 @@ export type SearchAllQuery = {
             readonly id: any;
             readonly itemId: any;
             readonly personId: any;
-            readonly priority?: number | null;
+            readonly priority?: number | null | undefined;
             readonly roleName: string;
             readonly person: {
                 readonly __typename?: "collection_ProgramPerson";
@@ -46900,27 +47798,33 @@ export type SearchAllQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly itemId?: any | null;
+        readonly itemId?: any | null | undefined;
         readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly endTime?: any | null | undefined;
         readonly roomId: any;
-        readonly roomName?: string | null;
+        readonly roomName?: string | null | undefined;
     }>;
     readonly collection_searchProgramPerson: ReadonlyArray<{
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrant?: {
-            readonly __typename?: "registrant_Registrant";
-            readonly id: any;
-            readonly profile?: {
-                readonly __typename?: "registrant_Profile";
-                readonly registrantId: any;
-                readonly photoURL_50x50?: string | null;
-            } | null;
-        } | null;
+        readonly affiliation?: string | null | undefined;
+        readonly registrant?:
+            | {
+                  readonly __typename?: "registrant_Registrant";
+                  readonly id: any;
+                  readonly profile?:
+                      | {
+                            readonly __typename?: "registrant_Profile";
+                            readonly registrantId: any;
+                            readonly photoURL_50x50?: string | null | undefined;
+                        }
+                      | null
+                      | undefined;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -46943,13 +47847,16 @@ export type ShufflePeriodDataFragment = {
         readonly updated_at: any;
         readonly isExpired: boolean;
         readonly shufflePeriodId: any;
-        readonly shuffleRoom?: {
-            readonly __typename?: "room_ShuffleRoom";
-            readonly id: any;
-            readonly startedAt: any;
-            readonly isEnded: boolean;
-            readonly roomId: any;
-        } | null;
+        readonly shuffleRoom?:
+            | {
+                  readonly __typename?: "room_ShuffleRoom";
+                  readonly id: any;
+                  readonly startedAt: any;
+                  readonly isEnded: boolean;
+                  readonly roomId: any;
+              }
+            | null
+            | undefined;
     }>;
 };
 
@@ -46961,13 +47868,16 @@ export type PrefetchShuffleQueueEntryDataFragment = {
     readonly updated_at: any;
     readonly isExpired: boolean;
     readonly shufflePeriodId: any;
-    readonly shuffleRoom?: {
-        readonly __typename?: "room_ShuffleRoom";
-        readonly id: any;
-        readonly startedAt: any;
-        readonly isEnded: boolean;
-        readonly roomId: any;
-    } | null;
+    readonly shuffleRoom?:
+        | {
+              readonly __typename?: "room_ShuffleRoom";
+              readonly id: any;
+              readonly startedAt: any;
+              readonly isEnded: boolean;
+              readonly roomId: any;
+          }
+        | null
+        | undefined;
 };
 
 export type SubdShuffleQueueEntryDataFragment = {
@@ -46975,7 +47885,10 @@ export type SubdShuffleQueueEntryDataFragment = {
     readonly id: any;
     readonly isExpired: boolean;
     readonly shufflePeriodId: any;
-    readonly shuffleRoom?: { readonly __typename?: "room_ShuffleRoom"; readonly id: any; readonly roomId: any } | null;
+    readonly shuffleRoom?:
+        | { readonly __typename?: "room_ShuffleRoom"; readonly id: any; readonly roomId: any }
+        | null
+        | undefined;
 };
 
 export type MyShuffleQueueEntryQueryVariables = Exact<{
@@ -46984,17 +47897,19 @@ export type MyShuffleQueueEntryQueryVariables = Exact<{
 
 export type MyShuffleQueueEntryQuery = {
     readonly __typename?: "query_root";
-    readonly room_ShuffleQueueEntry_by_pk?: {
-        readonly __typename?: "room_ShuffleQueueEntry";
-        readonly id: any;
-        readonly isExpired: boolean;
-        readonly shufflePeriodId: any;
-        readonly shuffleRoom?: {
-            readonly __typename?: "room_ShuffleRoom";
-            readonly id: any;
-            readonly roomId: any;
-        } | null;
-    } | null;
+    readonly room_ShuffleQueueEntry_by_pk?:
+        | {
+              readonly __typename?: "room_ShuffleQueueEntry";
+              readonly id: any;
+              readonly isExpired: boolean;
+              readonly shufflePeriodId: any;
+              readonly shuffleRoom?:
+                  | { readonly __typename?: "room_ShuffleRoom"; readonly id: any; readonly roomId: any }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type ShufflePeriodsQueryVariables = Exact<{
@@ -47023,13 +47938,16 @@ export type ShufflePeriodsQuery = {
             readonly updated_at: any;
             readonly isExpired: boolean;
             readonly shufflePeriodId: any;
-            readonly shuffleRoom?: {
-                readonly __typename?: "room_ShuffleRoom";
-                readonly id: any;
-                readonly startedAt: any;
-                readonly isEnded: boolean;
-                readonly roomId: any;
-            } | null;
+            readonly shuffleRoom?:
+                | {
+                      readonly __typename?: "room_ShuffleRoom";
+                      readonly id: any;
+                      readonly startedAt: any;
+                      readonly isEnded: boolean;
+                      readonly roomId: any;
+                  }
+                | null
+                | undefined;
         }>;
     }>;
 };
@@ -47041,22 +47959,28 @@ export type JoinShuffleQueueMutationVariables = Exact<{
 
 export type JoinShuffleQueueMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_room_ShuffleQueueEntry_one?: {
-        readonly __typename?: "room_ShuffleQueueEntry";
-        readonly id: any;
-        readonly registrantId: any;
-        readonly created_at: any;
-        readonly updated_at: any;
-        readonly isExpired: boolean;
-        readonly shufflePeriodId: any;
-        readonly shuffleRoom?: {
-            readonly __typename?: "room_ShuffleRoom";
-            readonly id: any;
-            readonly startedAt: any;
-            readonly isEnded: boolean;
-            readonly roomId: any;
-        } | null;
-    } | null;
+    readonly insert_room_ShuffleQueueEntry_one?:
+        | {
+              readonly __typename?: "room_ShuffleQueueEntry";
+              readonly id: any;
+              readonly registrantId: any;
+              readonly created_at: any;
+              readonly updated_at: any;
+              readonly isExpired: boolean;
+              readonly shufflePeriodId: any;
+              readonly shuffleRoom?:
+                  | {
+                        readonly __typename?: "room_ShuffleRoom";
+                        readonly id: any;
+                        readonly startedAt: any;
+                        readonly isEnded: boolean;
+                        readonly roomId: any;
+                    }
+                  | null
+                  | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type GetShuffleRoomsParticipantsCountQueryVariables = Exact<{
@@ -47067,10 +47991,10 @@ export type GetShuffleRoomsParticipantsCountQuery = {
     readonly __typename?: "query_root";
     readonly room_Participant_aggregate: {
         readonly __typename?: "room_Participant_aggregate";
-        readonly aggregate?: {
-            readonly __typename?: "room_Participant_aggregate_fields";
-            readonly count: number;
-        } | null;
+        readonly aggregate?:
+            | { readonly __typename?: "room_Participant_aggregate_fields"; readonly count: number }
+            | null
+            | undefined;
     };
 };
 
@@ -47082,11 +48006,10 @@ export type UpdateSubtitlesMutationVariables = Exact<{
 
 export type UpdateSubtitlesMutation = {
     readonly __typename?: "mutation_root";
-    readonly updateSubtitles?: {
-        readonly __typename?: "SubmitUpdatedSubtitlesOutput";
-        readonly message: string;
-        readonly success: boolean;
-    } | null;
+    readonly updateSubtitles?:
+        | { readonly __typename?: "SubmitUpdatedSubtitlesOutput"; readonly message: string; readonly success: boolean }
+        | null
+        | undefined;
 };
 
 export type GetElementQueryVariables = Exact<{
@@ -47102,7 +48025,7 @@ export type GetElementQuery = {
         readonly data: any;
         readonly name: string;
         readonly id: any;
-        readonly uploadsRemaining?: number | null;
+        readonly uploadsRemaining?: number | null | undefined;
         readonly itemId: any;
         readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
     }>;
@@ -47121,22 +48044,24 @@ export type SubmitUploadableElementMutationVariables = Exact<{
 
 export type SubmitUploadableElementMutation = {
     readonly __typename?: "mutation_root";
-    readonly submitUploadableElement?: {
-        readonly __typename?: "SubmitUploadableElementOutput";
-        readonly message: string;
-        readonly success: boolean;
-    } | null;
+    readonly submitUploadableElement?:
+        | { readonly __typename?: "SubmitUploadableElementOutput"; readonly message: string; readonly success: boolean }
+        | null
+        | undefined;
 };
 
 export type GetUploadAgreementQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetUploadAgreementQuery = {
     readonly __typename?: "query_root";
-    readonly getUploadAgreement?: {
-        readonly __typename?: "GetUploadAgreementOutput";
-        readonly agreementText?: string | null;
-        readonly agreementUrl?: string | null;
-    } | null;
+    readonly getUploadAgreement?:
+        | {
+              readonly __typename?: "GetUploadAgreementOutput";
+              readonly agreementText?: string | null | undefined;
+              readonly agreementUrl?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type ItemByPersonAccessTokenQueryVariables = Exact<{
@@ -47161,8 +48086,8 @@ export type ItemByPersonAccessTokenQuery = {
             readonly typeName: Content_ElementType_Enum;
             readonly name: string;
             readonly data: any;
-            readonly uploadsRemaining?: number | null;
-            readonly layoutData?: any | null;
+            readonly uploadsRemaining?: number | null | undefined;
+            readonly layoutData?: any | null | undefined;
             readonly itemId: any;
         }>;
     }>;
@@ -47192,11 +48117,14 @@ export type InitialiseSuperUserMutationVariables = Exact<{ [key: string]: never 
 
 export type InitialiseSuperUserMutation = {
     readonly __typename?: "mutation_root";
-    readonly initialiseSuperUser?: {
-        readonly __typename?: "InitialiseSuperUserOutput";
-        readonly success: boolean;
-        readonly error?: string | null;
-    } | null;
+    readonly initialiseSuperUser?:
+        | {
+              readonly __typename?: "InitialiseSuperUserOutput";
+              readonly success: boolean;
+              readonly error?: string | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type SuperUserStateQueryVariables = Exact<{ [key: string]: never }>;
@@ -47205,8 +48133,8 @@ export type SuperUserStateQuery = {
     readonly __typename?: "query_root";
     readonly system_SuperUserState: ReadonlyArray<{
         readonly __typename?: "system_SuperUserState";
-        readonly isInitialised?: boolean | null;
-        readonly canBeDirectlyInitialised?: boolean | null;
+        readonly isInitialised?: boolean | null | undefined;
+        readonly canBeDirectlyInitialised?: boolean | null | undefined;
     }>;
 };
 
@@ -47217,7 +48145,7 @@ export type SuPermissionGrantFragment = {
     readonly updated_at: any;
     readonly grantedPermissionName: System_SuperUserPermission_Enum;
     readonly userId: string;
-    readonly targetPermissionName?: System_SuperUserPermission_Enum | null;
+    readonly targetPermissionName?: System_SuperUserPermission_Enum | null | undefined;
 };
 
 export type UserSuPermissionsQueryVariables = Exact<{
@@ -47233,7 +48161,7 @@ export type UserSuPermissionsQuery = {
         readonly updated_at: any;
         readonly grantedPermissionName: System_SuperUserPermission_Enum;
         readonly userId: string;
-        readonly targetPermissionName?: System_SuperUserPermission_Enum | null;
+        readonly targetPermissionName?: System_SuperUserPermission_Enum | null | undefined;
     }>;
 };
 
@@ -47248,7 +48176,7 @@ export type SelectSuPermissionsQuery = {
         readonly updated_at: any;
         readonly grantedPermissionName: System_SuperUserPermission_Enum;
         readonly userId: string;
-        readonly targetPermissionName?: System_SuperUserPermission_Enum | null;
+        readonly targetPermissionName?: System_SuperUserPermission_Enum | null | undefined;
     }>;
 };
 
@@ -47256,7 +48184,11 @@ export type SuPermissionGrants_AllUsersQueryVariables = Exact<{ [key: string]: n
 
 export type SuPermissionGrants_AllUsersQuery = {
     readonly __typename?: "query_root";
-    readonly User: ReadonlyArray<{ readonly __typename?: "User"; readonly id: string; readonly email?: string | null }>;
+    readonly User: ReadonlyArray<{
+        readonly __typename?: "User";
+        readonly id: string;
+        readonly email?: string | null | undefined;
+    }>;
 };
 
 export type InsertSuPermissionGrantMutationVariables = Exact<{
@@ -47265,15 +48197,18 @@ export type InsertSuPermissionGrantMutationVariables = Exact<{
 
 export type InsertSuPermissionGrantMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_system_SuperUserPermissionGrant_one?: {
-        readonly __typename?: "system_SuperUserPermissionGrant";
-        readonly id: any;
-        readonly created_at: any;
-        readonly updated_at: any;
-        readonly grantedPermissionName: System_SuperUserPermission_Enum;
-        readonly userId: string;
-        readonly targetPermissionName?: System_SuperUserPermission_Enum | null;
-    } | null;
+    readonly insert_system_SuperUserPermissionGrant_one?:
+        | {
+              readonly __typename?: "system_SuperUserPermissionGrant";
+              readonly id: any;
+              readonly created_at: any;
+              readonly updated_at: any;
+              readonly grantedPermissionName: System_SuperUserPermission_Enum;
+              readonly userId: string;
+              readonly targetPermissionName?: System_SuperUserPermission_Enum | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteSuPermissionGrantsMutationVariables = Exact<{
@@ -47282,13 +48217,16 @@ export type DeleteSuPermissionGrantsMutationVariables = Exact<{
 
 export type DeleteSuPermissionGrantsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_system_SuperUserPermissionGrant?: {
-        readonly __typename?: "system_SuperUserPermissionGrant_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "system_SuperUserPermissionGrant";
-            readonly id: any;
-        }>;
-    } | null;
+    readonly delete_system_SuperUserPermissionGrant?:
+        | {
+              readonly __typename?: "system_SuperUserPermissionGrant_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "system_SuperUserPermissionGrant";
+                  readonly id: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type InitialiseRoleForUserMutationVariables = Exact<{
@@ -47302,14 +48240,17 @@ export type InitialiseRoleForUserMutationVariables = Exact<{
 
 export type InitialiseRoleForUserMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_system_SuperUserPermissionGrant?: {
-        readonly __typename?: "system_SuperUserPermissionGrant_mutation_response";
-        readonly affected_rows: number;
-    } | null;
-    readonly insert_system_ConfigurationPermissionGrant?: {
-        readonly __typename?: "system_ConfigurationPermissionGrant_mutation_response";
-        readonly affected_rows: number;
-    } | null;
+    readonly insert_system_SuperUserPermissionGrant?:
+        | { readonly __typename?: "system_SuperUserPermissionGrant_mutation_response"; readonly affected_rows: number }
+        | null
+        | undefined;
+    readonly insert_system_ConfigurationPermissionGrant?:
+        | {
+              readonly __typename?: "system_ConfigurationPermissionGrant_mutation_response";
+              readonly affected_rows: number;
+          }
+        | null
+        | undefined;
 };
 
 export type SysConfigPermissionGrantFragment = {
@@ -47343,15 +48284,18 @@ export type InsertSysConfigPermissionGrantMutationVariables = Exact<{
 
 export type InsertSysConfigPermissionGrantMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_system_ConfigurationPermissionGrant_one?: {
-        readonly __typename?: "system_ConfigurationPermissionGrant";
-        readonly id: any;
-        readonly created_at: any;
-        readonly updated_at: any;
-        readonly permissionName: System_SuperUserPermission_Enum;
-        readonly userId: string;
-        readonly configurationKey: System_ConfigurationKey_Enum;
-    } | null;
+    readonly insert_system_ConfigurationPermissionGrant_one?:
+        | {
+              readonly __typename?: "system_ConfigurationPermissionGrant";
+              readonly id: any;
+              readonly created_at: any;
+              readonly updated_at: any;
+              readonly permissionName: System_SuperUserPermission_Enum;
+              readonly userId: string;
+              readonly configurationKey: System_ConfigurationKey_Enum;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteSysConfigPermissionGrantsMutationVariables = Exact<{
@@ -47360,13 +48304,16 @@ export type DeleteSysConfigPermissionGrantsMutationVariables = Exact<{
 
 export type DeleteSysConfigPermissionGrantsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_system_ConfigurationPermissionGrant?: {
-        readonly __typename?: "system_ConfigurationPermissionGrant_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "system_ConfigurationPermissionGrant";
-            readonly id: any;
-        }>;
-    } | null;
+    readonly delete_system_ConfigurationPermissionGrant?:
+        | {
+              readonly __typename?: "system_ConfigurationPermissionGrant_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "system_ConfigurationPermissionGrant";
+                  readonly id: any;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type UserSysConfigPermissionsQueryVariables = Exact<{
@@ -47413,13 +48360,16 @@ export type InsertSystemConfigurationMutationVariables = Exact<{
 
 export type InsertSystemConfigurationMutation = {
     readonly __typename?: "mutation_root";
-    readonly insert_system_Configuration_one?: {
-        readonly __typename?: "system_Configuration";
-        readonly key: System_ConfigurationKey_Enum;
-        readonly value: any;
-        readonly updated_at: any;
-        readonly created_at: any;
-    } | null;
+    readonly insert_system_Configuration_one?:
+        | {
+              readonly __typename?: "system_Configuration";
+              readonly key: System_ConfigurationKey_Enum;
+              readonly value: any;
+              readonly updated_at: any;
+              readonly created_at: any;
+          }
+        | null
+        | undefined;
 };
 
 export type UpdateSystemConfigurationMutationVariables = Exact<{
@@ -47429,13 +48379,16 @@ export type UpdateSystemConfigurationMutationVariables = Exact<{
 
 export type UpdateSystemConfigurationMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_system_Configuration_by_pk?: {
-        readonly __typename?: "system_Configuration";
-        readonly key: System_ConfigurationKey_Enum;
-        readonly value: any;
-        readonly updated_at: any;
-        readonly created_at: any;
-    } | null;
+    readonly update_system_Configuration_by_pk?:
+        | {
+              readonly __typename?: "system_Configuration";
+              readonly key: System_ConfigurationKey_Enum;
+              readonly value: any;
+              readonly updated_at: any;
+              readonly created_at: any;
+          }
+        | null
+        | undefined;
 };
 
 export type DeleteSystemConfigurationsMutationVariables = Exact<{
@@ -47444,29 +48397,35 @@ export type DeleteSystemConfigurationsMutationVariables = Exact<{
 
 export type DeleteSystemConfigurationsMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_system_Configuration?: {
-        readonly __typename?: "system_Configuration_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "system_Configuration";
-            readonly key: System_ConfigurationKey_Enum;
-        }>;
-    } | null;
+    readonly delete_system_Configuration?:
+        | {
+              readonly __typename?: "system_Configuration_mutation_response";
+              readonly returning: ReadonlyArray<{
+                  readonly __typename?: "system_Configuration";
+                  readonly key: System_ConfigurationKey_Enum;
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type RegistrantFieldsFragment = {
     readonly __typename?: "registrant_Registrant";
     readonly id: any;
-    readonly userId?: string | null;
+    readonly userId?: string | null | undefined;
     readonly conferenceId: any;
     readonly displayName: string;
     readonly createdAt: any;
     readonly updatedAt: any;
     readonly conferenceRole: Registrant_RegistrantRole_Enum;
-    readonly profile?: {
-        readonly __typename?: "registrant_Profile";
-        readonly registrantId: any;
-        readonly photoURL_50x50?: string | null;
-    } | null;
+    readonly profile?:
+        | {
+              readonly __typename?: "registrant_Profile";
+              readonly registrantId: any;
+              readonly photoURL_50x50?: string | null | undefined;
+          }
+        | null
+        | undefined;
     readonly conference: {
         readonly __typename?: "conference_Conference";
         readonly id: any;
@@ -47479,23 +48438,26 @@ export type RegistrantFieldsFragment = {
 export type UserInfoFragment = {
     readonly __typename?: "User";
     readonly id: string;
-    readonly email?: string | null;
-    readonly acceptedTermsAt?: any | null;
-    readonly acceptedPrivacyPolicyAt?: any | null;
+    readonly email?: string | null | undefined;
+    readonly acceptedTermsAt?: any | null | undefined;
+    readonly acceptedPrivacyPolicyAt?: any | null | undefined;
     readonly registrants: ReadonlyArray<{
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
-        readonly userId?: string | null;
+        readonly userId?: string | null | undefined;
         readonly conferenceId: any;
         readonly displayName: string;
         readonly createdAt: any;
         readonly updatedAt: any;
         readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly photoURL_50x50?: string | null;
-        } | null;
+        readonly profile?:
+            | {
+                  readonly __typename?: "registrant_Profile";
+                  readonly registrantId: any;
+                  readonly photoURL_50x50?: string | null | undefined;
+              }
+            | null
+            | undefined;
         readonly conference: {
             readonly __typename?: "conference_Conference";
             readonly id: any;
@@ -47512,83 +48474,110 @@ export type SelectCurrentUserQueryVariables = Exact<{
 
 export type SelectCurrentUserQuery = {
     readonly __typename?: "query_root";
-    readonly User_by_pk?: {
-        readonly __typename?: "User";
-        readonly id: string;
-        readonly email?: string | null;
-        readonly acceptedTermsAt?: any | null;
-        readonly acceptedPrivacyPolicyAt?: any | null;
-        readonly registrants: ReadonlyArray<{
-            readonly __typename?: "registrant_Registrant";
-            readonly id: any;
-            readonly userId?: string | null;
-            readonly conferenceId: any;
-            readonly displayName: string;
-            readonly createdAt: any;
-            readonly updatedAt: any;
-            readonly conferenceRole: Registrant_RegistrantRole_Enum;
-            readonly profile?: {
-                readonly __typename?: "registrant_Profile";
-                readonly registrantId: any;
-                readonly photoURL_50x50?: string | null;
-            } | null;
-            readonly conference: {
-                readonly __typename?: "conference_Conference";
-                readonly id: any;
-                readonly name: string;
-                readonly shortName: string;
-                readonly slug: string;
-            };
-        }>;
-    } | null;
+    readonly User_by_pk?:
+        | {
+              readonly __typename?: "User";
+              readonly id: string;
+              readonly email?: string | null | undefined;
+              readonly acceptedTermsAt?: any | null | undefined;
+              readonly acceptedPrivacyPolicyAt?: any | null | undefined;
+              readonly registrants: ReadonlyArray<{
+                  readonly __typename?: "registrant_Registrant";
+                  readonly id: any;
+                  readonly userId?: string | null | undefined;
+                  readonly conferenceId: any;
+                  readonly displayName: string;
+                  readonly createdAt: any;
+                  readonly updatedAt: any;
+                  readonly conferenceRole: Registrant_RegistrantRole_Enum;
+                  readonly profile?:
+                      | {
+                            readonly __typename?: "registrant_Profile";
+                            readonly registrantId: any;
+                            readonly photoURL_50x50?: string | null | undefined;
+                        }
+                      | null
+                      | undefined;
+                  readonly conference: {
+                      readonly __typename?: "conference_Conference";
+                      readonly id: any;
+                      readonly name: string;
+                      readonly shortName: string;
+                      readonly slug: string;
+                  };
+              }>;
+          }
+        | null
+        | undefined;
 };
 
 export type TermsConfigsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type TermsConfigsQuery = {
     readonly __typename?: "query_root";
-    readonly hostOrganisationName?: {
-        readonly __typename?: "system_Configuration";
-        readonly key: System_ConfigurationKey_Enum;
-        readonly value: any;
-        readonly updated_at: any;
-    } | null;
-    readonly termsTimestamp?: {
-        readonly __typename?: "system_Configuration";
-        readonly key: System_ConfigurationKey_Enum;
-        readonly value: any;
-        readonly updated_at: any;
-    } | null;
-    readonly termsURL?: {
-        readonly __typename?: "system_Configuration";
-        readonly key: System_ConfigurationKey_Enum;
-        readonly value: any;
-        readonly updated_at: any;
-    } | null;
-    readonly ppTimestamp?: {
-        readonly __typename?: "system_Configuration";
-        readonly key: System_ConfigurationKey_Enum;
-        readonly value: any;
-        readonly updated_at: any;
-    } | null;
-    readonly ppURL?: {
-        readonly __typename?: "system_Configuration";
-        readonly key: System_ConfigurationKey_Enum;
-        readonly value: any;
-        readonly updated_at: any;
-    } | null;
-    readonly cookiesTimestamp?: {
-        readonly __typename?: "system_Configuration";
-        readonly key: System_ConfigurationKey_Enum;
-        readonly value: any;
-        readonly updated_at: any;
-    } | null;
-    readonly cookiesURL?: {
-        readonly __typename?: "system_Configuration";
-        readonly key: System_ConfigurationKey_Enum;
-        readonly value: any;
-        readonly updated_at: any;
-    } | null;
+    readonly hostOrganisationName?:
+        | {
+              readonly __typename?: "system_Configuration";
+              readonly key: System_ConfigurationKey_Enum;
+              readonly value: any;
+              readonly updated_at: any;
+          }
+        | null
+        | undefined;
+    readonly termsTimestamp?:
+        | {
+              readonly __typename?: "system_Configuration";
+              readonly key: System_ConfigurationKey_Enum;
+              readonly value: any;
+              readonly updated_at: any;
+          }
+        | null
+        | undefined;
+    readonly termsURL?:
+        | {
+              readonly __typename?: "system_Configuration";
+              readonly key: System_ConfigurationKey_Enum;
+              readonly value: any;
+              readonly updated_at: any;
+          }
+        | null
+        | undefined;
+    readonly ppTimestamp?:
+        | {
+              readonly __typename?: "system_Configuration";
+              readonly key: System_ConfigurationKey_Enum;
+              readonly value: any;
+              readonly updated_at: any;
+          }
+        | null
+        | undefined;
+    readonly ppURL?:
+        | {
+              readonly __typename?: "system_Configuration";
+              readonly key: System_ConfigurationKey_Enum;
+              readonly value: any;
+              readonly updated_at: any;
+          }
+        | null
+        | undefined;
+    readonly cookiesTimestamp?:
+        | {
+              readonly __typename?: "system_Configuration";
+              readonly key: System_ConfigurationKey_Enum;
+              readonly value: any;
+              readonly updated_at: any;
+          }
+        | null
+        | undefined;
+    readonly cookiesURL?:
+        | {
+              readonly __typename?: "system_Configuration";
+              readonly key: System_ConfigurationKey_Enum;
+              readonly value: any;
+              readonly updated_at: any;
+          }
+        | null
+        | undefined;
 };
 
 export type AgreeToTermsMutationVariables = Exact<{
@@ -47598,12 +48587,15 @@ export type AgreeToTermsMutationVariables = Exact<{
 
 export type AgreeToTermsMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_User_by_pk?: {
-        readonly __typename?: "User";
-        readonly id: string;
-        readonly acceptedTermsAt?: any | null;
-        readonly acceptedPrivacyPolicyAt?: any | null;
-    } | null;
+    readonly update_User_by_pk?:
+        | {
+              readonly __typename?: "User";
+              readonly id: string;
+              readonly acceptedTermsAt?: any | null | undefined;
+              readonly acceptedPrivacyPolicyAt?: any | null | undefined;
+          }
+        | null
+        | undefined;
 };
 
 export type VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryVariables = Exact<{
@@ -47612,12 +48604,15 @@ export type VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryVar
 
 export type VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Configuration_by_pk?: {
-        readonly __typename?: "conference_Configuration";
-        readonly conferenceId: any;
-        readonly key: Conference_ConfigurationKey_Enum;
-        readonly value: any;
-    } | null;
+    readonly conference_Configuration_by_pk?:
+        | {
+              readonly __typename?: "conference_Configuration";
+              readonly conferenceId: any;
+              readonly key: Conference_ConfigurationKey_Enum;
+              readonly value: any;
+          }
+        | null
+        | undefined;
 };
 
 export const ChatState_SubdMessageFragmentDoc = gql`
@@ -49694,7 +50689,7 @@ export const GetSlugForUrlDocument = gql`
     }
 `;
 
-export function useGetSlugForUrlQuery(options: Omit<Urql.UseQueryArgs<GetSlugForUrlQueryVariables>, "query">) {
+export function useGetSlugForUrlQuery(options: Omit<Urql.UseQueryArgs<GetSlugForUrlQueryVariables>, "query"> = {}) {
     return useQuery<GetSlugForUrlQuery>({ query: GetSlugForUrlDocument, ...options });
 }
 export const InitialChatStateDocument = gql`
@@ -49710,7 +50705,9 @@ export const InitialChatStateDocument = gql`
     ${InitialChatState_ChatFragmentDoc}
 `;
 
-export function useInitialChatStateQuery(options: Omit<Urql.UseQueryArgs<InitialChatStateQueryVariables>, "query">) {
+export function useInitialChatStateQuery(
+    options: Omit<Urql.UseQueryArgs<InitialChatStateQueryVariables>, "query"> = {}
+) {
     return useQuery<InitialChatStateQuery>({ query: InitialChatStateDocument, ...options });
 }
 export const SelectInitialChatStateDocument = gql`
@@ -49723,7 +50720,7 @@ export const SelectInitialChatStateDocument = gql`
 `;
 
 export function useSelectInitialChatStateQuery(
-    options: Omit<Urql.UseQueryArgs<SelectInitialChatStateQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectInitialChatStateQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectInitialChatStateQuery>({ query: SelectInitialChatStateDocument, ...options });
 }
@@ -49737,7 +50734,7 @@ export const SelectInitialChatStatesDocument = gql`
 `;
 
 export function useSelectInitialChatStatesQuery(
-    options: Omit<Urql.UseQueryArgs<SelectInitialChatStatesQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectInitialChatStatesQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectInitialChatStatesQuery>({ query: SelectInitialChatStatesDocument, ...options });
 }
@@ -49813,7 +50810,7 @@ export const SelectMessagesPageDocument = gql`
 `;
 
 export function useSelectMessagesPageQuery(
-    options: Omit<Urql.UseQueryArgs<SelectMessagesPageQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectMessagesPageQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectMessagesPageQuery>({ query: SelectMessagesPageDocument, ...options });
 }
@@ -49845,7 +50842,7 @@ export const GetChatPathDocument = gql`
     }
 `;
 
-export function useGetChatPathQuery(options: Omit<Urql.UseQueryArgs<GetChatPathQueryVariables>, "query">) {
+export function useGetChatPathQuery(options: Omit<Urql.UseQueryArgs<GetChatPathQueryVariables>, "query"> = {}) {
     return useQuery<GetChatPathQuery>({ query: GetChatPathDocument, ...options });
 }
 export const ConferenceLandingPageItemDocument = gql`
@@ -49858,7 +50855,7 @@ export const ConferenceLandingPageItemDocument = gql`
 `;
 
 export function useConferenceLandingPageItemQuery(
-    options: Omit<Urql.UseQueryArgs<ConferenceLandingPageItemQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ConferenceLandingPageItemQueryVariables>, "query"> = {}
 ) {
     return useQuery<ConferenceLandingPageItemQuery>({ query: ConferenceLandingPageItemDocument, ...options });
 }
@@ -49872,7 +50869,7 @@ export const ItemElements_GetItemDocument = gql`
 `;
 
 export function useItemElements_GetItemQuery(
-    options: Omit<Urql.UseQueryArgs<ItemElements_GetItemQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ItemElements_GetItemQueryVariables>, "query"> = {}
 ) {
     return useQuery<ItemElements_GetItemQuery>({ query: ItemElements_GetItemDocument, ...options });
 }
@@ -49885,7 +50882,7 @@ export const ContentOfTagDocument = gql`
     ${ItemList_ItemTagDataFragmentDoc}
 `;
 
-export function useContentOfTagQuery(options: Omit<Urql.UseQueryArgs<ContentOfTagQueryVariables>, "query">) {
+export function useContentOfTagQuery(options: Omit<Urql.UseQueryArgs<ContentOfTagQueryVariables>, "query"> = {}) {
     return useQuery<ContentOfTagQuery>({ query: ContentOfTagDocument, ...options });
 }
 export const TagsDocument = gql`
@@ -49897,7 +50894,7 @@ export const TagsDocument = gql`
     ${ItemList_TagInfoFragmentDoc}
 `;
 
-export function useTagsQuery(options: Omit<Urql.UseQueryArgs<TagsQueryVariables>, "query">) {
+export function useTagsQuery(options: Omit<Urql.UseQueryArgs<TagsQueryVariables>, "query"> = {}) {
     return useQuery<TagsQuery>({ query: TagsDocument, ...options });
 }
 export const GetItemDocument = gql`
@@ -49921,7 +50918,7 @@ export const GetItemDocument = gql`
     ${ItemEventFragmentDoc}
 `;
 
-export function useGetItemQuery(options: Omit<Urql.UseQueryArgs<GetItemQueryVariables>, "query">) {
+export function useGetItemQuery(options: Omit<Urql.UseQueryArgs<GetItemQueryVariables>, "query"> = {}) {
     return useQuery<GetItemQuery>({ query: GetItemDocument, ...options });
 }
 export const ContinuationChoices_ContinuationsDocument = gql`
@@ -49955,7 +50952,7 @@ export const ContinuationChoices_ContinuationsDocument = gql`
 `;
 
 export function useContinuationChoices_ContinuationsQuery(
-    options: Omit<Urql.UseQueryArgs<ContinuationChoices_ContinuationsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ContinuationChoices_ContinuationsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ContinuationChoices_ContinuationsQuery>({
         query: ContinuationChoices_ContinuationsDocument,
@@ -49979,7 +50976,7 @@ export const ContinuationChoices_RoomsDocument = gql`
 `;
 
 export function useContinuationChoices_RoomsQuery(
-    options: Omit<Urql.UseQueryArgs<ContinuationChoices_RoomsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ContinuationChoices_RoomsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ContinuationChoices_RoomsQuery>({ query: ContinuationChoices_RoomsDocument, ...options });
 }
@@ -49996,7 +50993,9 @@ export const SelectExhibitionDocument = gql`
     ${ItemEventFragmentDoc}
 `;
 
-export function useSelectExhibitionQuery(options: Omit<Urql.UseQueryArgs<SelectExhibitionQueryVariables>, "query">) {
+export function useSelectExhibitionQuery(
+    options: Omit<Urql.UseQueryArgs<SelectExhibitionQueryVariables>, "query"> = {}
+) {
     return useQuery<SelectExhibitionQuery>({ query: SelectExhibitionDocument, ...options });
 }
 export const SelectAllExhibitionsDocument = gql`
@@ -50009,7 +51008,7 @@ export const SelectAllExhibitionsDocument = gql`
 `;
 
 export function useSelectAllExhibitionsQuery(
-    options: Omit<Urql.UseQueryArgs<SelectAllExhibitionsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectAllExhibitionsQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectAllExhibitionsQuery>({ query: SelectAllExhibitionsDocument, ...options });
 }
@@ -50022,7 +51021,7 @@ export const RegistrantByIdDocument = gql`
     ${RegistrantDataFragmentDoc}
 `;
 
-export function useRegistrantByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantByIdQueryVariables>, "query">) {
+export function useRegistrantByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantByIdQueryVariables>, "query"> = {}) {
     return useQuery<RegistrantByIdQuery>({ query: RegistrantByIdDocument, ...options });
 }
 export const RegistrantInvitedEmailAddressDocument = gql`
@@ -50036,7 +51035,7 @@ export const RegistrantInvitedEmailAddressDocument = gql`
 `;
 
 export function useRegistrantInvitedEmailAddressQuery(
-    options: Omit<Urql.UseQueryArgs<RegistrantInvitedEmailAddressQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<RegistrantInvitedEmailAddressQueryVariables>, "query"> = {}
 ) {
     return useQuery<RegistrantInvitedEmailAddressQuery>({
         query: RegistrantInvitedEmailAddressDocument,
@@ -50100,7 +51099,7 @@ export const RegistrantEventsWithBackstagesDocument = gql`
 `;
 
 export function useRegistrantEventsWithBackstagesQuery(
-    options: Omit<Urql.UseQueryArgs<RegistrantEventsWithBackstagesQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<RegistrantEventsWithBackstagesQueryVariables>, "query"> = {}
 ) {
     return useQuery<RegistrantEventsWithBackstagesQuery>({
         query: RegistrantEventsWithBackstagesDocument,
@@ -50116,7 +51115,9 @@ export const ProfilePage_ItemsDocument = gql`
     ${SearchPanel_ItemFragmentDoc}
 `;
 
-export function useProfilePage_ItemsQuery(options: Omit<Urql.UseQueryArgs<ProfilePage_ItemsQueryVariables>, "query">) {
+export function useProfilePage_ItemsQuery(
+    options: Omit<Urql.UseQueryArgs<ProfilePage_ItemsQueryVariables>, "query"> = {}
+) {
     return useQuery<ProfilePage_ItemsQuery>({ query: ProfilePage_ItemsDocument, ...options });
 }
 export const MyRecordingsDocument = gql`
@@ -50141,7 +51142,7 @@ export const MyRecordingsDocument = gql`
     }
 `;
 
-export function useMyRecordingsQuery(options: Omit<Urql.UseQueryArgs<MyRecordingsQueryVariables>, "query">) {
+export function useMyRecordingsQuery(options: Omit<Urql.UseQueryArgs<MyRecordingsQueryVariables>, "query"> = {}) {
     return useQuery<MyRecordingsQuery>({ query: MyRecordingsDocument, ...options });
 }
 export const SelectRegistrantsDocument = gql`
@@ -50153,7 +51154,9 @@ export const SelectRegistrantsDocument = gql`
     ${RegistrantDataFragmentDoc}
 `;
 
-export function useSelectRegistrantsQuery(options: Omit<Urql.UseQueryArgs<SelectRegistrantsQueryVariables>, "query">) {
+export function useSelectRegistrantsQuery(
+    options: Omit<Urql.UseQueryArgs<SelectRegistrantsQueryVariables>, "query"> = {}
+) {
     return useQuery<SelectRegistrantsQuery>({ query: SelectRegistrantsDocument, ...options });
 }
 export const SearchRegistrantsDocument = gql`
@@ -50179,7 +51182,9 @@ export const SearchRegistrantsDocument = gql`
     ${RegistrantDataFragmentDoc}
 `;
 
-export function useSearchRegistrantsQuery(options: Omit<Urql.UseQueryArgs<SearchRegistrantsQueryVariables>, "query">) {
+export function useSearchRegistrantsQuery(
+    options: Omit<Urql.UseQueryArgs<SearchRegistrantsQueryVariables>, "query"> = {}
+) {
     return useQuery<SearchRegistrantsQuery>({ query: SearchRegistrantsDocument, ...options });
 }
 export const Registrant_RegistrantCreateRoomDocument = gql`
@@ -50217,7 +51222,7 @@ export const Room_GetEventsDocument = gql`
     ${Room_EventSummaryFragmentDoc}
 `;
 
-export function useRoom_GetEventsQuery(options: Omit<Urql.UseQueryArgs<Room_GetEventsQueryVariables>, "query">) {
+export function useRoom_GetEventsQuery(options: Omit<Urql.UseQueryArgs<Room_GetEventsQueryVariables>, "query"> = {}) {
     return useQuery<Room_GetEventsQuery>({ query: Room_GetEventsDocument, ...options });
 }
 export const Room_GetDefaultVideoRoomBackendDocument = gql`
@@ -50229,7 +51234,7 @@ export const Room_GetDefaultVideoRoomBackendDocument = gql`
 `;
 
 export function useRoom_GetDefaultVideoRoomBackendQuery(
-    options?: Omit<Urql.UseQueryArgs<Room_GetDefaultVideoRoomBackendQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<Room_GetDefaultVideoRoomBackendQueryVariables>, "query"> = {}
 ) {
     return useQuery<Room_GetDefaultVideoRoomBackendQuery>({
         query: Room_GetDefaultVideoRoomBackendDocument,
@@ -50261,7 +51266,7 @@ export const RoomPage_GetRoomDetailsDocument = gql`
 `;
 
 export function useRoomPage_GetRoomDetailsQuery(
-    options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomDetailsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomDetailsQueryVariables>, "query"> = {}
 ) {
     return useQuery<RoomPage_GetRoomDetailsQuery>({ query: RoomPage_GetRoomDetailsDocument, ...options });
 }
@@ -50278,7 +51283,9 @@ export const RoomPage_IsAdminDocument = gql`
     }
 `;
 
-export function useRoomPage_IsAdminQuery(options: Omit<Urql.UseQueryArgs<RoomPage_IsAdminQueryVariables>, "query">) {
+export function useRoomPage_IsAdminQuery(
+    options: Omit<Urql.UseQueryArgs<RoomPage_IsAdminQueryVariables>, "query"> = {}
+) {
     return useQuery<RoomPage_IsAdminQuery>({ query: RoomPage_IsAdminDocument, ...options });
 }
 export const RoomPage_GetRoomChannelStackDocument = gql`
@@ -50291,7 +51298,7 @@ export const RoomPage_GetRoomChannelStackDocument = gql`
 `;
 
 export function useRoomPage_GetRoomChannelStackQuery(
-    options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomChannelStackQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomChannelStackQueryVariables>, "query"> = {}
 ) {
     return useQuery<RoomPage_GetRoomChannelStackQuery>({
         query: RoomPage_GetRoomChannelStackDocument,
@@ -50312,7 +51319,7 @@ export const GetEventVonageDetailsDocument = gql`
 `;
 
 export function useGetEventVonageDetailsQuery(
-    options: Omit<Urql.UseQueryArgs<GetEventVonageDetailsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetEventVonageDetailsQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetEventVonageDetailsQuery>({ query: GetEventVonageDetailsDocument, ...options });
 }
@@ -50326,7 +51333,7 @@ export const RoomSponsorContent_GetElementsDocument = gql`
 `;
 
 export function useRoomSponsorContent_GetElementsQuery(
-    options: Omit<Urql.UseQueryArgs<RoomSponsorContent_GetElementsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<RoomSponsorContent_GetElementsQueryVariables>, "query"> = {}
 ) {
     return useQuery<RoomSponsorContent_GetElementsQuery>({
         query: RoomSponsorContent_GetElementsDocument,
@@ -50392,7 +51399,7 @@ export const ImmediateSwitch_GetElementsDocument = gql`
 `;
 
 export function useImmediateSwitch_GetElementsQuery(
-    options: Omit<Urql.UseQueryArgs<ImmediateSwitch_GetElementsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ImmediateSwitch_GetElementsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ImmediateSwitch_GetElementsQuery>({ query: ImmediateSwitch_GetElementsDocument, ...options });
 }
@@ -50425,7 +51432,7 @@ export const LiveIndicator_GetLatestDocument = gql`
 `;
 
 export function useLiveIndicator_GetLatestQuery(
-    options: Omit<Urql.UseQueryArgs<LiveIndicator_GetLatestQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<LiveIndicator_GetLatestQueryVariables>, "query"> = {}
 ) {
     return useQuery<LiveIndicator_GetLatestQuery>({ query: LiveIndicator_GetLatestDocument, ...options });
 }
@@ -50439,7 +51446,7 @@ export const LiveIndicator_GetElementDocument = gql`
 `;
 
 export function useLiveIndicator_GetElementQuery(
-    options: Omit<Urql.UseQueryArgs<LiveIndicator_GetElementQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<LiveIndicator_GetElementQueryVariables>, "query"> = {}
 ) {
     return useQuery<LiveIndicator_GetElementQuery>({ query: LiveIndicator_GetElementDocument, ...options });
 }
@@ -50454,7 +51461,7 @@ export const EnableBackstageStreamPreviewDocument = gql`
 `;
 
 export function useEnableBackstageStreamPreviewQuery(
-    options: Omit<Urql.UseQueryArgs<EnableBackstageStreamPreviewQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<EnableBackstageStreamPreviewQueryVariables>, "query"> = {}
 ) {
     return useQuery<EnableBackstageStreamPreviewQuery>({
         query: EnableBackstageStreamPreviewDocument,
@@ -50470,7 +51477,7 @@ export const GetEventDetailsDocument = gql`
     ${RoomEventDetailsFragmentDoc}
 `;
 
-export function useGetEventDetailsQuery(options: Omit<Urql.UseQueryArgs<GetEventDetailsQueryVariables>, "query">) {
+export function useGetEventDetailsQuery(options: Omit<Urql.UseQueryArgs<GetEventDetailsQueryVariables>, "query"> = {}) {
     return useQuery<GetEventDetailsQuery>({ query: GetEventDetailsDocument, ...options });
 }
 export const TranscribeGeneratePresignedUrlDocument = gql`
@@ -50482,7 +51489,7 @@ export const TranscribeGeneratePresignedUrlDocument = gql`
 `;
 
 export function useTranscribeGeneratePresignedUrlQuery(
-    options: Omit<Urql.UseQueryArgs<TranscribeGeneratePresignedUrlQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<TranscribeGeneratePresignedUrlQueryVariables>, "query"> = {}
 ) {
     return useQuery<TranscribeGeneratePresignedUrlQuery>({
         query: TranscribeGeneratePresignedUrlDocument,
@@ -50504,7 +51511,7 @@ export const VideoPlayer_GetElementDocument = gql`
 `;
 
 export function useVideoPlayer_GetElementQuery(
-    options: Omit<Urql.UseQueryArgs<VideoPlayer_GetElementQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<VideoPlayer_GetElementQueryVariables>, "query"> = {}
 ) {
     return useQuery<VideoPlayer_GetElementQuery>({ query: VideoPlayer_GetElementDocument, ...options });
 }
@@ -50560,7 +51567,7 @@ export const GetRoomVonageSessionIdDocument = gql`
 `;
 
 export function useGetRoomVonageSessionIdQuery(
-    options: Omit<Urql.UseQueryArgs<GetRoomVonageSessionIdQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetRoomVonageSessionIdQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetRoomVonageSessionIdQuery>({ query: GetRoomVonageSessionIdDocument, ...options });
 }
@@ -50604,7 +51611,7 @@ export const GetEventVideosDocument = gql`
     }
 `;
 
-export function useGetEventVideosQuery(options: Omit<Urql.UseQueryArgs<GetEventVideosQueryVariables>, "query">) {
+export function useGetEventVideosQuery(options: Omit<Urql.UseQueryArgs<GetEventVideosQueryVariables>, "query"> = {}) {
     return useQuery<GetEventVideosQuery>({ query: GetEventVideosDocument, ...options });
 }
 export const GetRoomVideosDocument = gql`
@@ -50623,7 +51630,7 @@ export const GetRoomVideosDocument = gql`
     }
 `;
 
-export function useGetRoomVideosQuery(options: Omit<Urql.UseQueryArgs<GetRoomVideosQueryVariables>, "query">) {
+export function useGetRoomVideosQuery(options: Omit<Urql.UseQueryArgs<GetRoomVideosQueryVariables>, "query"> = {}) {
     return useQuery<GetRoomVideosQuery>({ query: GetRoomVideosDocument, ...options });
 }
 export const VonageVideoPlaybackContext_InsertCommandDocument = gql`
@@ -50656,7 +51663,7 @@ export const VonageVideoPlaybackContext_GetLatestCommandDocument = gql`
 `;
 
 export function useVonageVideoPlaybackContext_GetLatestCommandQuery(
-    options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetLatestCommandQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetLatestCommandQueryVariables>, "query"> = {}
 ) {
     return useQuery<VonageVideoPlaybackContext_GetLatestCommandQuery>({
         query: VonageVideoPlaybackContext_GetLatestCommandDocument,
@@ -50674,7 +51681,7 @@ export const VonageVideoPlaybackContext_GetElementDocument = gql`
 `;
 
 export function useVonageVideoPlaybackContext_GetElementQuery(
-    options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetElementQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<VonageVideoPlaybackContext_GetElementQueryVariables>, "query"> = {}
 ) {
     return useQuery<VonageVideoPlaybackContext_GetElementQuery>({
         query: VonageVideoPlaybackContext_GetElementDocument,
@@ -50697,7 +51704,7 @@ export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
 `;
 
 export function useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery(
-    options: Omit<Urql.UseQueryArgs<VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>, "query"> = {}
 ) {
     return useQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery>({
         query: VonageLayoutProvider_GetLatestVonageSessionLayoutDocument,
@@ -50800,7 +51807,7 @@ export const GetAllRoomsDocument = gql`
     ${RoomListRoomDetailsFragmentDoc}
 `;
 
-export function useGetAllRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllRoomsQueryVariables>, "query">) {
+export function useGetAllRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllRoomsQueryVariables>, "query"> = {}) {
     return useQuery<GetAllRoomsQuery>({ query: GetAllRoomsDocument, ...options });
 }
 export const GetAllTodaysRoomsDocument = gql`
@@ -50832,7 +51839,9 @@ export const GetAllTodaysRoomsDocument = gql`
     ${RoomListRoomDetailsFragmentDoc}
 `;
 
-export function useGetAllTodaysRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllTodaysRoomsQueryVariables>, "query">) {
+export function useGetAllTodaysRoomsQuery(
+    options: Omit<Urql.UseQueryArgs<GetAllTodaysRoomsQueryVariables>, "query"> = {}
+) {
     return useQuery<GetAllTodaysRoomsQuery>({ query: GetAllTodaysRoomsDocument, ...options });
 }
 export const GetSocialRoomsDocument = gql`
@@ -50851,7 +51860,7 @@ export const GetSocialRoomsDocument = gql`
     ${SocialRoomFragmentDoc}
 `;
 
-export function useGetSocialRoomsQuery(options: Omit<Urql.UseQueryArgs<GetSocialRoomsQueryVariables>, "query">) {
+export function useGetSocialRoomsQuery(options: Omit<Urql.UseQueryArgs<GetSocialRoomsQueryVariables>, "query"> = {}) {
     return useQuery<GetSocialRoomsQuery>({ query: GetSocialRoomsDocument, ...options });
 }
 export const RoomTile_GetRoomDocument = gql`
@@ -50863,7 +51872,9 @@ export const RoomTile_GetRoomDocument = gql`
     ${RoomTile_RoomFragmentDoc}
 `;
 
-export function useRoomTile_GetRoomQuery(options: Omit<Urql.UseQueryArgs<RoomTile_GetRoomQueryVariables>, "query">) {
+export function useRoomTile_GetRoomQuery(
+    options: Omit<Urql.UseQueryArgs<RoomTile_GetRoomQueryVariables>, "query"> = {}
+) {
     return useQuery<RoomTile_GetRoomQuery>({ query: RoomTile_GetRoomDocument, ...options });
 }
 export const GetSponsorBoothsDocument = gql`
@@ -50879,7 +51890,9 @@ export const GetSponsorBoothsDocument = gql`
     ${SponsorBoothsList_TierFragmentDoc}
 `;
 
-export function useGetSponsorBoothsQuery(options: Omit<Urql.UseQueryArgs<GetSponsorBoothsQueryVariables>, "query">) {
+export function useGetSponsorBoothsQuery(
+    options: Omit<Urql.UseQueryArgs<GetSponsorBoothsQueryVariables>, "query"> = {}
+) {
     return useQuery<GetSponsorBoothsQuery>({ query: GetSponsorBoothsDocument, ...options });
 }
 export const Schedule_HappeningSoonDocument = gql`
@@ -50914,7 +51927,7 @@ export const Schedule_HappeningSoonDocument = gql`
 `;
 
 export function useSchedule_HappeningSoonQuery(
-    options: Omit<Urql.UseQueryArgs<Schedule_HappeningSoonQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<Schedule_HappeningSoonQueryVariables>, "query"> = {}
 ) {
     return useQuery<Schedule_HappeningSoonQuery>({ query: Schedule_HappeningSoonDocument, ...options });
 }
@@ -50928,7 +51941,7 @@ export const StarEventButton_GetStarsDocument = gql`
 `;
 
 export function useStarEventButton_GetStarsQuery(
-    options: Omit<Urql.UseQueryArgs<StarEventButton_GetStarsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<StarEventButton_GetStarsQueryVariables>, "query"> = {}
 ) {
     return useQuery<StarEventButton_GetStarsQuery>({ query: StarEventButton_GetStarsDocument, ...options });
 }
@@ -50973,7 +51986,7 @@ export const Schedule_SelectItemDocument = gql`
 `;
 
 export function useSchedule_SelectItemQuery(
-    options: Omit<Urql.UseQueryArgs<Schedule_SelectItemQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<Schedule_SelectItemQueryVariables>, "query"> = {}
 ) {
     return useQuery<Schedule_SelectItemQuery>({ query: Schedule_SelectItemDocument, ...options });
 }
@@ -51005,7 +52018,7 @@ export const Schedule_SelectSummariesDocument = gql`
 `;
 
 export function useSchedule_SelectSummariesQuery(
-    options: Omit<Urql.UseQueryArgs<Schedule_SelectSummariesQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<Schedule_SelectSummariesQueryVariables>, "query"> = {}
 ) {
     return useQuery<Schedule_SelectSummariesQuery>({ query: Schedule_SelectSummariesDocument, ...options });
 }
@@ -51022,7 +52035,7 @@ export const StarredEvents_SelectEventIdsDocument = gql`
 `;
 
 export function useStarredEvents_SelectEventIdsQuery(
-    options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventIdsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventIdsQueryVariables>, "query"> = {}
 ) {
     return useQuery<StarredEvents_SelectEventIdsQuery>({
         query: StarredEvents_SelectEventIdsDocument,
@@ -51053,7 +52066,7 @@ export const ScheduleV2_DayLightweightEventsDocument = gql`
 `;
 
 export function useScheduleV2_DayLightweightEventsQuery(
-    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ScheduleV2_DayLightweightEventsQuery>({
         query: ScheduleV2_DayLightweightEventsDocument,
@@ -51070,7 +52083,7 @@ export const ScheduleV2_DayEventsDocument = gql`
 `;
 
 export function useScheduleV2_DayEventsQuery(
-    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ScheduleV2_DayEventsQuery>({ query: ScheduleV2_DayEventsDocument, ...options });
 }
@@ -51083,7 +52096,9 @@ export const ScheduleV2_RoomsDocument = gql`
     ${ScheduleV2_RoomFragmentDoc}
 `;
 
-export function useScheduleV2_RoomsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_RoomsQueryVariables>, "query">) {
+export function useScheduleV2_RoomsQuery(
+    options: Omit<Urql.UseQueryArgs<ScheduleV2_RoomsQueryVariables>, "query"> = {}
+) {
     return useQuery<ScheduleV2_RoomsQuery>({ query: ScheduleV2_RoomsDocument, ...options });
 }
 export const ScheduleV2_TagsDocument = gql`
@@ -51095,7 +52110,7 @@ export const ScheduleV2_TagsDocument = gql`
     ${ScheduleV2_TagFragmentDoc}
 `;
 
-export function useScheduleV2_TagsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_TagsQueryVariables>, "query">) {
+export function useScheduleV2_TagsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_TagsQueryVariables>, "query"> = {}) {
     return useQuery<ScheduleV2_TagsQuery>({ query: ScheduleV2_TagsDocument, ...options });
 }
 export const ScheduleV2_AllEvents_ParamsDocument = gql`
@@ -51122,7 +52137,7 @@ export const ScheduleV2_AllEvents_ParamsDocument = gql`
 `;
 
 export function useScheduleV2_AllEvents_ParamsQuery(
-    options: Omit<Urql.UseQueryArgs<ScheduleV2_AllEvents_ParamsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ScheduleV2_AllEvents_ParamsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ScheduleV2_AllEvents_ParamsQuery>({ query: ScheduleV2_AllEvents_ParamsDocument, ...options });
 }
@@ -51135,7 +52150,9 @@ export const SearchPanel_ItemsDocument = gql`
     ${SearchPanel_ItemFragmentDoc}
 `;
 
-export function useSearchPanel_ItemsQuery(options: Omit<Urql.UseQueryArgs<SearchPanel_ItemsQueryVariables>, "query">) {
+export function useSearchPanel_ItemsQuery(
+    options: Omit<Urql.UseQueryArgs<SearchPanel_ItemsQueryVariables>, "query"> = {}
+) {
     return useQuery<SearchPanel_ItemsQuery>({ query: SearchPanel_ItemsDocument, ...options });
 }
 export const SearchPanel_EventsDocument = gql`
@@ -51151,7 +52168,7 @@ export const SearchPanel_EventsDocument = gql`
 `;
 
 export function useSearchPanel_EventsQuery(
-    options: Omit<Urql.UseQueryArgs<SearchPanel_EventsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SearchPanel_EventsQueryVariables>, "query"> = {}
 ) {
     return useQuery<SearchPanel_EventsQuery>({ query: SearchPanel_EventsDocument, ...options });
 }
@@ -51165,7 +52182,7 @@ export const SearchPanel_PeopleDocument = gql`
 `;
 
 export function useSearchPanel_PeopleQuery(
-    options: Omit<Urql.UseQueryArgs<SearchPanel_PeopleQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SearchPanel_PeopleQueryVariables>, "query"> = {}
 ) {
     return useQuery<SearchPanel_PeopleQuery>({ query: SearchPanel_PeopleDocument, ...options });
 }
@@ -51178,7 +52195,7 @@ export const SelectSwagBagsDocument = gql`
     ${SwagBagFragmentDoc}
 `;
 
-export function useSelectSwagBagsQuery(options: Omit<Urql.UseQueryArgs<SelectSwagBagsQueryVariables>, "query">) {
+export function useSelectSwagBagsQuery(options: Omit<Urql.UseQueryArgs<SelectSwagBagsQueryVariables>, "query"> = {}) {
     return useQuery<SelectSwagBagsQuery>({ query: SelectSwagBagsDocument, ...options });
 }
 export const ConferenceBySlugDocument = gql`
@@ -51190,7 +52207,9 @@ export const ConferenceBySlugDocument = gql`
     }
 `;
 
-export function useConferenceBySlugQuery(options: Omit<Urql.UseQueryArgs<ConferenceBySlugQueryVariables>, "query">) {
+export function useConferenceBySlugQuery(
+    options: Omit<Urql.UseQueryArgs<ConferenceBySlugQueryVariables>, "query"> = {}
+) {
     return useQuery<ConferenceBySlugQuery>({ query: ConferenceBySlugDocument, ...options });
 }
 export const ConferenceStatsDocument = gql`
@@ -51260,7 +52279,7 @@ export const ConferenceStatsDocument = gql`
     }
 `;
 
-export function useConferenceStatsQuery(options: Omit<Urql.UseQueryArgs<ConferenceStatsQueryVariables>, "query">) {
+export function useConferenceStatsQuery(options: Omit<Urql.UseQueryArgs<ConferenceStatsQueryVariables>, "query"> = {}) {
     return useQuery<ConferenceStatsQuery>({ query: ConferenceStatsDocument, ...options });
 }
 export const GetChannelStacksDocument = gql`
@@ -51279,7 +52298,9 @@ export const GetChannelStacksDocument = gql`
     }
 `;
 
-export function useGetChannelStacksQuery(options: Omit<Urql.UseQueryArgs<GetChannelStacksQueryVariables>, "query">) {
+export function useGetChannelStacksQuery(
+    options: Omit<Urql.UseQueryArgs<GetChannelStacksQueryVariables>, "query"> = {}
+) {
     return useQuery<GetChannelStacksQuery>({ query: GetChannelStacksDocument, ...options });
 }
 export const ConferenceConfiguration_GetConferenceConfigurationsDocument = gql`
@@ -51292,7 +52313,7 @@ export const ConferenceConfiguration_GetConferenceConfigurationsDocument = gql`
 `;
 
 export function useConferenceConfiguration_GetConferenceConfigurationsQuery(
-    options: Omit<Urql.UseQueryArgs<ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery>({
         query: ConferenceConfiguration_GetConferenceConfigurationsDocument,
@@ -51318,7 +52339,7 @@ export const EventVonageControls_GetEventsDocument = gql`
 `;
 
 export function useEventVonageControls_GetEventsQuery(
-    options: Omit<Urql.UseQueryArgs<EventVonageControls_GetEventsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<EventVonageControls_GetEventsQueryVariables>, "query"> = {}
 ) {
     return useQuery<EventVonageControls_GetEventsQuery>({
         query: EventVonageControls_GetEventsDocument,
@@ -51369,7 +52390,7 @@ export const MonitorLivestreamsDocument = gql`
 `;
 
 export function useMonitorLivestreamsQuery(
-    options: Omit<Urql.UseQueryArgs<MonitorLivestreamsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<MonitorLivestreamsQueryVariables>, "query"> = {}
 ) {
     return useQuery<MonitorLivestreamsQuery>({ query: MonitorLivestreamsDocument, ...options });
 }
@@ -51410,7 +52431,7 @@ export const GetConferencePrepareJobsDocument = gql`
 `;
 
 export function useGetConferencePrepareJobsQuery(
-    options: Omit<Urql.UseQueryArgs<GetConferencePrepareJobsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetConferencePrepareJobsQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetConferencePrepareJobsQuery>({ query: GetConferencePrepareJobsDocument, ...options });
 }
@@ -51424,7 +52445,7 @@ export const ManageModeration_SelectFlagsDocument = gql`
 `;
 
 export function useManageModeration_SelectFlagsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageModeration_SelectFlagsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageModeration_SelectFlagsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageModeration_SelectFlagsQuery>({
         query: ManageModeration_SelectFlagsDocument,
@@ -51795,7 +52816,9 @@ export const PreshowChecklistDocument = gql`
     }
 `;
 
-export function usePreshowChecklistQuery(options: Omit<Urql.UseQueryArgs<PreshowChecklistQueryVariables>, "query">) {
+export function usePreshowChecklistQuery(
+    options: Omit<Urql.UseQueryArgs<PreshowChecklistQueryVariables>, "query"> = {}
+) {
     return useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
 }
 export const UpdateConferenceDocument = gql`
@@ -51828,7 +52851,7 @@ export const MultiSettingUpdater_GetConfigurationsDocument = gql`
 `;
 
 export function useMultiSettingUpdater_GetConfigurationsQuery(
-    options: Omit<Urql.UseQueryArgs<MultiSettingUpdater_GetConfigurationsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<MultiSettingUpdater_GetConfigurationsQueryVariables>, "query"> = {}
 ) {
     return useQuery<MultiSettingUpdater_GetConfigurationsQuery>({
         query: MultiSettingUpdater_GetConfigurationsDocument,
@@ -51866,7 +52889,7 @@ export const SettingUpdater_GetConfigurationDocument = gql`
 `;
 
 export function useSettingUpdater_GetConfigurationQuery(
-    options: Omit<Urql.UseQueryArgs<SettingUpdater_GetConfigurationQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SettingUpdater_GetConfigurationQueryVariables>, "query"> = {}
 ) {
     return useQuery<SettingUpdater_GetConfigurationQuery>({
         query: SettingUpdater_GetConfigurationDocument,
@@ -51920,7 +52943,7 @@ export const ManageContent_SelectAllItemsDocument = gql`
 `;
 
 export function useManageContent_SelectAllItemsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllItemsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllItemsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageContent_SelectAllItemsQuery>({
         query: ManageContent_SelectAllItemsDocument,
@@ -51937,7 +52960,7 @@ export const ManageContent_SelectItemsForExportDocument = gql`
 `;
 
 export function useManageContent_SelectItemsForExportQuery(
-    options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemsForExportQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemsForExportQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageContent_SelectItemsForExportQuery>({
         query: ManageContent_SelectItemsForExportDocument,
@@ -51958,7 +52981,7 @@ export const ManageContent_SelectItemDocument = gql`
 `;
 
 export function useManageContent_SelectItemQuery(
-    options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageContent_SelectItemQuery>({ query: ManageContent_SelectItemDocument, ...options });
 }
@@ -51972,7 +52995,7 @@ export const ManageContent_SelectItemPeopleDocument = gql`
 `;
 
 export function useManageContent_SelectItemPeopleQuery(
-    options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemPeopleQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemPeopleQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageContent_SelectItemPeopleQuery>({
         query: ManageContent_SelectItemPeopleDocument,
@@ -52056,7 +53079,7 @@ export const ManageContent_SelectAllTagsDocument = gql`
 `;
 
 export function useManageContent_SelectAllTagsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllTagsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllTagsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageContent_SelectAllTagsQuery>({ query: ManageContent_SelectAllTagsDocument, ...options });
 }
@@ -52070,7 +53093,7 @@ export const ManageContent_SelectAllExhibitionsDocument = gql`
 `;
 
 export function useManageContent_SelectAllExhibitionsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllExhibitionsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllExhibitionsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageContent_SelectAllExhibitionsQuery>({
         query: ManageContent_SelectAllExhibitionsDocument,
@@ -52102,7 +53125,9 @@ export const SelectAllContentDocument = gql`
     ${ExhibitionInfoFragmentDoc}
 `;
 
-export function useSelectAllContentQuery(options: Omit<Urql.UseQueryArgs<SelectAllContentQueryVariables>, "query">) {
+export function useSelectAllContentQuery(
+    options: Omit<Urql.UseQueryArgs<SelectAllContentQueryVariables>, "query"> = {}
+) {
     return useQuery<SelectAllContentQuery>({ query: SelectAllContentDocument, ...options });
 }
 export const InsertDeleteItemsDocument = gql`
@@ -52508,7 +53533,7 @@ export const CombineVideosModal_GetCombineVideosJobDocument = gql`
 `;
 
 export function useCombineVideosModal_GetCombineVideosJobQuery(
-    options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetCombineVideosJobQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetCombineVideosJobQueryVariables>, "query"> = {}
 ) {
     return useQuery<CombineVideosModal_GetCombineVideosJobQuery>({
         query: CombineVideosModal_GetCombineVideosJobDocument,
@@ -52532,7 +53557,7 @@ export const CombineVideosModal_GetElementsDocument = gql`
 `;
 
 export function useCombineVideosModal_GetElementsQuery(
-    options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetElementsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetElementsQueryVariables>, "query"> = {}
 ) {
     return useQuery<CombineVideosModal_GetElementsQuery>({
         query: CombineVideosModal_GetElementsDocument,
@@ -52548,7 +53573,7 @@ export const SEoUm_InfosDocument = gql`
     ${SelectElements_ItemFragmentDoc}
 `;
 
-export function useSEoUm_InfosQuery(options: Omit<Urql.UseQueryArgs<SEoUm_InfosQueryVariables>, "query">) {
+export function useSEoUm_InfosQuery(options: Omit<Urql.UseQueryArgs<SEoUm_InfosQueryVariables>, "query"> = {}) {
     return useQuery<SEoUm_InfosQuery>({ query: SEoUm_InfosDocument, ...options });
 }
 export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
@@ -52563,7 +53588,7 @@ export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
 `;
 
 export function useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery(
-    options: Omit<Urql.UseQueryArgs<UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>, "query"> = {}
 ) {
     return useQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery>({
         query: UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument,
@@ -52656,7 +53681,7 @@ export const ManageContent_SelectItemExhibitionsDocument = gql`
 `;
 
 export function useManageContent_SelectItemExhibitionsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemExhibitionsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemExhibitionsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageContent_SelectItemExhibitionsQuery>({
         query: ManageContent_SelectItemExhibitionsDocument,
@@ -52788,7 +53813,7 @@ export const ManageContent_SelectProgramPeopleDocument = gql`
 `;
 
 export function useManageContent_SelectProgramPeopleQuery(
-    options: Omit<Urql.UseQueryArgs<ManageContent_SelectProgramPeopleQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageContent_SelectProgramPeopleQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageContent_SelectProgramPeopleQuery>({
         query: ManageContent_SelectProgramPeopleDocument,
@@ -52920,7 +53945,7 @@ export const SubmissionRequestsModalDataDocument = gql`
 `;
 
 export function useSubmissionRequestsModalDataQuery(
-    options: Omit<Urql.UseQueryArgs<SubmissionRequestsModalDataQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SubmissionRequestsModalDataQueryVariables>, "query"> = {}
 ) {
     return useQuery<SubmissionRequestsModalDataQuery>({ query: SubmissionRequestsModalDataDocument, ...options });
 }
@@ -52934,7 +53959,7 @@ export const SubmissionsReviewModalDataDocument = gql`
 `;
 
 export function useSubmissionsReviewModalDataQuery(
-    options: Omit<Urql.UseQueryArgs<SubmissionsReviewModalDataQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SubmissionsReviewModalDataQueryVariables>, "query"> = {}
 ) {
     return useQuery<SubmissionsReviewModalDataQuery>({ query: SubmissionsReviewModalDataDocument, ...options });
 }
@@ -52948,7 +53973,7 @@ export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
 `;
 
 export function useConfigureEmailTemplates_GetConferenceConfigurationsQuery(
-    options: Omit<Urql.UseQueryArgs<ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery>({
         query: ConfigureEmailTemplates_GetConferenceConfigurationsDocument,
@@ -52997,7 +54022,7 @@ export const DownloadVideos_GetAllVideosDocument = gql`
 `;
 
 export function useDownloadVideos_GetAllVideosQuery(
-    options: Omit<Urql.UseQueryArgs<DownloadVideos_GetAllVideosQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<DownloadVideos_GetAllVideosQueryVariables>, "query"> = {}
 ) {
     return useQuery<DownloadVideos_GetAllVideosQuery>({ query: DownloadVideos_GetAllVideosDocument, ...options });
 }
@@ -53012,7 +54037,7 @@ export const ChooseElementByTagModal_GetTagsDocument = gql`
 `;
 
 export function useChooseElementByTagModal_GetTagsQuery(
-    options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetTagsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetTagsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ChooseElementByTagModal_GetTagsQuery>({
         query: ChooseElementByTagModal_GetTagsDocument,
@@ -53042,7 +54067,7 @@ export const ChooseElementByTagModal_GetVideoElementsDocument = gql`
 `;
 
 export function useChooseElementByTagModal_GetVideoElementsQuery(
-    options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetVideoElementsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetVideoElementsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ChooseElementByTagModal_GetVideoElementsQuery>({
         query: ChooseElementByTagModal_GetVideoElementsDocument,
@@ -53060,7 +54085,7 @@ export const ChooseElementModal_GetItemsDocument = gql`
 `;
 
 export function useChooseElementModal_GetItemsQuery(
-    options: Omit<Urql.UseQueryArgs<ChooseElementModal_GetItemsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ChooseElementModal_GetItemsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ChooseElementModal_GetItemsQuery>({ query: ChooseElementModal_GetItemsDocument, ...options });
 }
@@ -53079,7 +54104,7 @@ export const ChooseElementModal_GetVideoElementsDocument = gql`
 `;
 
 export function useChooseElementModal_GetVideoElementsQuery(
-    options?: Omit<Urql.UseQueryArgs<ChooseElementModal_GetVideoElementsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ChooseElementModal_GetVideoElementsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ChooseElementModal_GetVideoElementsQuery>({
         query: ChooseElementModal_GetVideoElementsDocument,
@@ -53109,7 +54134,7 @@ export const ManageExport_GetRegistrantGoogleAccountsDocument = gql`
 `;
 
 export function useManageExport_GetRegistrantGoogleAccountsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageExport_GetRegistrantGoogleAccountsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageExport_GetRegistrantGoogleAccountsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageExport_GetRegistrantGoogleAccountsQuery>({
         query: ManageExport_GetRegistrantGoogleAccountsDocument,
@@ -53142,7 +54167,7 @@ export const UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument = gql`
 `;
 
 export function useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery(
-    options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>, "query"> = {}
 ) {
     return useQuery<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery>({
         query: UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument,
@@ -53182,7 +54207,7 @@ export const UploadYouTubeVideos_GetElementsDocument = gql`
 `;
 
 export function useUploadYouTubeVideos_GetElementsQuery(
-    options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetElementsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetElementsQueryVariables>, "query"> = {}
 ) {
     return useQuery<UploadYouTubeVideos_GetElementsQuery>({
         query: UploadYouTubeVideos_GetElementsDocument,
@@ -53253,7 +54278,7 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
 `;
 
 export function useUploadYouTubeVideos_GetTemplateDataQuery(
-    options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetTemplateDataQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetTemplateDataQueryVariables>, "query"> = {}
 ) {
     return useQuery<UploadYouTubeVideos_GetTemplateDataQuery>({
         query: UploadYouTubeVideos_GetTemplateDataDocument,
@@ -53289,7 +54314,7 @@ export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
 `;
 
 export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery(
-    options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>, "query"> = {}
 ) {
     return useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>({
         query: UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument,
@@ -53326,7 +54351,7 @@ export const SelectAllGroupsDocument = gql`
     ${ManageGroups_GroupFragmentDoc}
 `;
 
-export function useSelectAllGroupsQuery(options: Omit<Urql.UseQueryArgs<SelectAllGroupsQueryVariables>, "query">) {
+export function useSelectAllGroupsQuery(options: Omit<Urql.UseQueryArgs<SelectAllGroupsQueryVariables>, "query"> = {}) {
     return useQuery<SelectAllGroupsQuery>({ query: SelectAllGroupsDocument, ...options });
 }
 export const CreateDeleteGroupsDocument = gql`
@@ -53376,7 +54401,7 @@ export const ManageProgramPeople_SelectAllPeopleDocument = gql`
 `;
 
 export function useManageProgramPeople_SelectAllPeopleQuery(
-    options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllPeopleQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllPeopleQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageProgramPeople_SelectAllPeopleQuery>({
         query: ManageProgramPeople_SelectAllPeopleDocument,
@@ -53393,7 +54418,7 @@ export const ManageProgramPeople_SelectAllRegistrantsDocument = gql`
 `;
 
 export function useManageProgramPeople_SelectAllRegistrantsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllRegistrantsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllRegistrantsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageProgramPeople_SelectAllRegistrantsQuery>({
         query: ManageProgramPeople_SelectAllRegistrantsDocument,
@@ -53467,7 +54492,7 @@ export const SelectAllRoomsWithParticipantsDocument = gql`
 `;
 
 export function useSelectAllRoomsWithParticipantsQuery(
-    options: Omit<Urql.UseQueryArgs<SelectAllRoomsWithParticipantsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectAllRoomsWithParticipantsQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectAllRoomsWithParticipantsQuery>({
         query: SelectAllRoomsWithParticipantsDocument,
@@ -53485,7 +54510,7 @@ export const ManageRooms_SelectGroupsDocument = gql`
 `;
 
 export function useManageRooms_SelectGroupsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageRooms_SelectGroupsQuery>({ query: ManageRooms_SelectGroupsDocument, ...options });
 }
@@ -53500,7 +54525,7 @@ export const ManageRooms_SelectItemsDocument = gql`
 `;
 
 export function useManageRooms_SelectItemsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageRooms_SelectItemsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageRooms_SelectItemsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageRooms_SelectItemsQuery>({ query: ManageRooms_SelectItemsDocument, ...options });
 }
@@ -53515,7 +54540,7 @@ export const ManageRooms_SelectGroupRegistrantsDocument = gql`
 `;
 
 export function useManageRooms_SelectGroupRegistrantsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupRegistrantsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupRegistrantsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageRooms_SelectGroupRegistrantsQuery>({
         query: ManageRooms_SelectGroupRegistrantsDocument,
@@ -53532,7 +54557,7 @@ export const ManageRooms_SelectRoomPeopleDocument = gql`
 `;
 
 export function useManageRooms_SelectRoomPeopleQuery(
-    options: Omit<Urql.UseQueryArgs<ManageRooms_SelectRoomPeopleQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageRooms_SelectRoomPeopleQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageRooms_SelectRoomPeopleQuery>({
         query: ManageRooms_SelectRoomPeopleDocument,
@@ -53644,7 +54669,7 @@ export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
 `;
 
 export function useGetIsExternalRtmpBroadcastEnabledQuery(
-    options: Omit<Urql.UseQueryArgs<GetIsExternalRtmpBroadcastEnabledQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetIsExternalRtmpBroadcastEnabledQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetIsExternalRtmpBroadcastEnabledQuery>({
         query: GetIsExternalRtmpBroadcastEnabledDocument,
@@ -53662,7 +54687,7 @@ export const ConferenceTechSupportAddressDocument = gql`
 `;
 
 export function useConferenceTechSupportAddressQuery(
-    options: Omit<Urql.UseQueryArgs<ConferenceTechSupportAddressQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ConferenceTechSupportAddressQueryVariables>, "query"> = {}
 ) {
     return useQuery<ConferenceTechSupportAddressQuery>({
         query: ConferenceTechSupportAddressDocument,
@@ -53679,7 +54704,7 @@ export const SelectAllRegistrantsDocument = gql`
 `;
 
 export function useSelectAllRegistrantsQuery(
-    options: Omit<Urql.UseQueryArgs<SelectAllRegistrantsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectAllRegistrantsQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectAllRegistrantsQuery>({ query: SelectAllRegistrantsDocument, ...options });
 }
@@ -53693,7 +54718,7 @@ export const ManageRegistrants_SelectProfilesDocument = gql`
 `;
 
 export function useManageRegistrants_SelectProfilesQuery(
-    options: Omit<Urql.UseQueryArgs<ManageRegistrants_SelectProfilesQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageRegistrants_SelectProfilesQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageRegistrants_SelectProfilesQuery>({
         query: ManageRegistrants_SelectProfilesDocument,
@@ -53858,7 +54883,9 @@ export const GetRoomRtmpOutputDocument = gql`
     }
 `;
 
-export function useGetRoomRtmpOutputQuery(options: Omit<Urql.UseQueryArgs<GetRoomRtmpOutputQueryVariables>, "query">) {
+export function useGetRoomRtmpOutputQuery(
+    options: Omit<Urql.UseQueryArgs<GetRoomRtmpOutputQueryVariables>, "query"> = {}
+) {
     return useQuery<GetRoomRtmpOutputQuery>({ query: GetRoomRtmpOutputDocument, ...options });
 }
 export const InsertRoomRtmpOutputDocument = gql`
@@ -53931,7 +54958,7 @@ export const AddEventPeople_SelectItemPeopleDocument = gql`
 `;
 
 export function useAddEventPeople_SelectItemPeopleQuery(
-    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectItemPeopleQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectItemPeopleQueryVariables>, "query"> = {}
 ) {
     return useQuery<AddEventPeople_SelectItemPeopleQuery>({
         query: AddEventPeople_SelectItemPeopleDocument,
@@ -53948,7 +54975,7 @@ export const AddEventPeople_SelectProgramPeopleDocument = gql`
 `;
 
 export function useAddEventPeople_SelectProgramPeopleQuery(
-    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeopleQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeopleQueryVariables>, "query"> = {}
 ) {
     return useQuery<AddEventPeople_SelectProgramPeopleQuery>({
         query: AddEventPeople_SelectProgramPeopleDocument,
@@ -53965,7 +54992,7 @@ export const AddEventPeople_SelectRegistrantsDocument = gql`
 `;
 
 export function useAddEventPeople_SelectRegistrantsQuery(
-    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrantsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrantsQueryVariables>, "query"> = {}
 ) {
     return useQuery<AddEventPeople_SelectRegistrantsQuery>({
         query: AddEventPeople_SelectRegistrantsDocument,
@@ -53982,7 +55009,7 @@ export const AddEventPeople_SelectProgramPeople_ByRegistrantDocument = gql`
 `;
 
 export function useAddEventPeople_SelectProgramPeople_ByRegistrantQuery(
-    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>, "query"> = {}
 ) {
     return useQuery<AddEventPeople_SelectProgramPeople_ByRegistrantQuery>({
         query: AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
@@ -53999,7 +55026,7 @@ export const AddEventPeople_SelectGroupsDocument = gql`
 `;
 
 export function useAddEventPeople_SelectGroupsQuery(
-    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectGroupsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectGroupsQueryVariables>, "query"> = {}
 ) {
     return useQuery<AddEventPeople_SelectGroupsQuery>({ query: AddEventPeople_SelectGroupsDocument, ...options });
 }
@@ -54013,7 +55040,7 @@ export const AddEventPeople_SelectRegistrants_ByGroupDocument = gql`
 `;
 
 export function useAddEventPeople_SelectRegistrants_ByGroupQuery(
-    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrants_ByGroupQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrants_ByGroupQueryVariables>, "query"> = {}
 ) {
     return useQuery<AddEventPeople_SelectRegistrants_ByGroupQuery>({
         query: AddEventPeople_SelectRegistrants_ByGroupDocument,
@@ -54069,7 +55096,7 @@ export const ContinuationsEditor_SelectContinuationsDocument = gql`
 `;
 
 export function useContinuationsEditor_SelectContinuationsQuery(
-    options: Omit<Urql.UseQueryArgs<ContinuationsEditor_SelectContinuationsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ContinuationsEditor_SelectContinuationsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ContinuationsEditor_SelectContinuationsQuery>({
         query: ContinuationsEditor_SelectContinuationsDocument,
@@ -54146,7 +55173,7 @@ export const CreateContinuationModal_RoomsDocument = gql`
 `;
 
 export function useCreateContinuationModal_RoomsQuery(
-    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_RoomsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_RoomsQueryVariables>, "query"> = {}
 ) {
     return useQuery<CreateContinuationModal_RoomsQuery>({
         query: CreateContinuationModal_RoomsDocument,
@@ -54182,7 +55209,7 @@ export const CreateContinuationModal_EventsDocument = gql`
 `;
 
 export function useCreateContinuationModal_EventsQuery(
-    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_EventsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_EventsQueryVariables>, "query"> = {}
 ) {
     return useQuery<CreateContinuationModal_EventsQuery>({
         query: CreateContinuationModal_EventsDocument,
@@ -54200,7 +55227,7 @@ export const CreateContinuationModal_ItemsDocument = gql`
 `;
 
 export function useCreateContinuationModal_ItemsQuery(
-    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ItemsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ItemsQueryVariables>, "query"> = {}
 ) {
     return useQuery<CreateContinuationModal_ItemsQuery>({
         query: CreateContinuationModal_ItemsDocument,
@@ -54218,7 +55245,7 @@ export const CreateContinuationModal_ExhibitionsDocument = gql`
 `;
 
 export function useCreateContinuationModal_ExhibitionsQuery(
-    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ExhibitionsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ExhibitionsQueryVariables>, "query"> = {}
 ) {
     return useQuery<CreateContinuationModal_ExhibitionsQuery>({
         query: CreateContinuationModal_ExhibitionsDocument,
@@ -54236,7 +55263,7 @@ export const CreateContinuationModal_ShufflePeriodsDocument = gql`
 `;
 
 export function useCreateContinuationModal_ShufflePeriodsQuery(
-    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ShufflePeriodsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ShufflePeriodsQueryVariables>, "query"> = {}
 ) {
     return useQuery<CreateContinuationModal_ShufflePeriodsQuery>({
         query: CreateContinuationModal_ShufflePeriodsDocument,
@@ -54254,7 +55281,7 @@ export const CreateContinuationModal_TagsDocument = gql`
 `;
 
 export function useCreateContinuationModal_TagsQuery(
-    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_TagsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_TagsQueryVariables>, "query"> = {}
 ) {
     return useQuery<CreateContinuationModal_TagsQuery>({
         query: CreateContinuationModal_TagsDocument,
@@ -54272,7 +55299,7 @@ export const CreateContinuationModal_ProfileDocument = gql`
 `;
 
 export function useCreateContinuationModal_ProfileQuery(
-    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ProfileQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ProfileQueryVariables>, "query"> = {}
 ) {
     return useQuery<CreateContinuationModal_ProfileQuery>({
         query: CreateContinuationModal_ProfileDocument,
@@ -54289,7 +55316,7 @@ export const SelectEventStreamTextEventIdDocument = gql`
 `;
 
 export function useSelectEventStreamTextEventIdQuery(
-    options: Omit<Urql.UseQueryArgs<SelectEventStreamTextEventIdQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectEventStreamTextEventIdQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectEventStreamTextEventIdQuery>({
         query: SelectEventStreamTextEventIdDocument,
@@ -54366,7 +55393,7 @@ export const ManageSchedule_ShufflePeriodsDocument = gql`
 `;
 
 export function useManageSchedule_ShufflePeriodsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageSchedule_ShufflePeriodsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_ShufflePeriodsQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageSchedule_ShufflePeriodsQuery>({
         query: ManageSchedule_ShufflePeriodsDocument,
@@ -54515,7 +55542,7 @@ export const SelectWholeScheduleDocument = gql`
 `;
 
 export function useSelectWholeScheduleQuery(
-    options: Omit<Urql.UseQueryArgs<SelectWholeScheduleQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectWholeScheduleQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectWholeScheduleQuery>({ query: SelectWholeScheduleDocument, ...options });
 }
@@ -54699,7 +55726,7 @@ export const ManageShufflePeriods_SelectAllDocument = gql`
 `;
 
 export function useManageShufflePeriods_SelectAllQuery(
-    options: Omit<Urql.UseQueryArgs<ManageShufflePeriods_SelectAllQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ManageShufflePeriods_SelectAllQueryVariables>, "query"> = {}
 ) {
     return useQuery<ManageShufflePeriods_SelectAllQuery>({
         query: ManageShufflePeriods_SelectAllDocument,
@@ -54750,7 +55777,7 @@ export const ConferenceTakenDocument = gql`
     }
 `;
 
-export function useConferenceTakenQuery(options: Omit<Urql.UseQueryArgs<ConferenceTakenQueryVariables>, "query">) {
+export function useConferenceTakenQuery(options: Omit<Urql.UseQueryArgs<ConferenceTakenQueryVariables>, "query"> = {}) {
     return useQuery<ConferenceTakenQuery>({ query: ConferenceTakenDocument, ...options });
 }
 export const CreateConferenceDocument = gql`
@@ -54861,7 +55888,7 @@ export const RegistrantsByIdDocument = gql`
     ${RegistrantDataFragmentDoc}
 `;
 
-export function useRegistrantsByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantsByIdQueryVariables>, "query">) {
+export function useRegistrantsByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantsByIdQueryVariables>, "query"> = {}) {
     return useQuery<RegistrantsByIdQuery>({ query: RegistrantsByIdDocument, ...options });
 }
 export const RegistrantsByUserIdDocument = gql`
@@ -54874,7 +55901,7 @@ export const RegistrantsByUserIdDocument = gql`
 `;
 
 export function useRegistrantsByUserIdQuery(
-    options: Omit<Urql.UseQueryArgs<RegistrantsByUserIdQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<RegistrantsByUserIdQueryVariables>, "query"> = {}
 ) {
     return useQuery<RegistrantsByUserIdQuery>({ query: RegistrantsByUserIdDocument, ...options });
 }
@@ -54890,7 +55917,7 @@ export const ConferenceById_WithUserDocument = gql`
 `;
 
 export function useConferenceById_WithUserQuery(
-    options: Omit<Urql.UseQueryArgs<ConferenceById_WithUserQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ConferenceById_WithUserQueryVariables>, "query"> = {}
 ) {
     return useQuery<ConferenceById_WithUserQuery>({ query: ConferenceById_WithUserDocument, ...options });
 }
@@ -54904,7 +55931,7 @@ export const ConferenceById_WithoutUserDocument = gql`
 `;
 
 export function useConferenceById_WithoutUserQuery(
-    options: Omit<Urql.UseQueryArgs<ConferenceById_WithoutUserQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ConferenceById_WithoutUserQueryVariables>, "query"> = {}
 ) {
     return useQuery<ConferenceById_WithoutUserQuery>({ query: ConferenceById_WithoutUserDocument, ...options });
 }
@@ -54919,7 +55946,7 @@ export const GetForceUserRefreshConfigDocument = gql`
 `;
 
 export function useGetForceUserRefreshConfigQuery(
-    options: Omit<Urql.UseQueryArgs<GetForceUserRefreshConfigQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetForceUserRefreshConfigQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetForceUserRefreshConfigQuery>({ query: GetForceUserRefreshConfigDocument, ...options });
 }
@@ -54948,7 +55975,7 @@ export const SelectInvitationForAcceptDocument = gql`
 `;
 
 export function useSelectInvitationForAcceptQuery(
-    options: Omit<Urql.UseQueryArgs<SelectInvitationForAcceptQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectInvitationForAcceptQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectInvitationForAcceptQuery>({ query: SelectInvitationForAcceptDocument, ...options });
 }
@@ -54978,7 +56005,7 @@ export const GetEventsInNextHourDocument = gql`
 `;
 
 export function useGetEventsInNextHourQuery(
-    options: Omit<Urql.UseQueryArgs<GetEventsInNextHourQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetEventsInNextHourQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetEventsInNextHourQuery>({ query: GetEventsInNextHourDocument, ...options });
 }
@@ -54992,7 +56019,7 @@ export const CountSwagBagsDocument = gql`
     }
 `;
 
-export function useCountSwagBagsQuery(options: Omit<Urql.UseQueryArgs<CountSwagBagsQueryVariables>, "query">) {
+export function useCountSwagBagsQuery(options: Omit<Urql.UseQueryArgs<CountSwagBagsQueryVariables>, "query"> = {}) {
     return useQuery<CountSwagBagsQuery>({ query: CountSwagBagsDocument, ...options });
 }
 export const CreateDmDocument = gql`
@@ -55025,7 +56052,7 @@ export const GetItemChatIdDocument = gql`
     }
 `;
 
-export function useGetItemChatIdQuery(options: Omit<Urql.UseQueryArgs<GetItemChatIdQueryVariables>, "query">) {
+export function useGetItemChatIdQuery(options: Omit<Urql.UseQueryArgs<GetItemChatIdQueryVariables>, "query"> = {}) {
     return useQuery<GetItemChatIdQuery>({ query: GetItemChatIdDocument, ...options });
 }
 export const GetConferenceLandingPageItemIdDocument = gql`
@@ -55039,7 +56066,7 @@ export const GetConferenceLandingPageItemIdDocument = gql`
 `;
 
 export function useGetConferenceLandingPageItemIdQuery(
-    options: Omit<Urql.UseQueryArgs<GetConferenceLandingPageItemIdQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetConferenceLandingPageItemIdQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetConferenceLandingPageItemIdQuery>({
         query: GetConferenceLandingPageItemIdDocument,
@@ -55056,7 +56083,7 @@ export const GetRoomChatIdDocument = gql`
     }
 `;
 
-export function useGetRoomChatIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomChatIdQueryVariables>, "query">) {
+export function useGetRoomChatIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomChatIdQueryVariables>, "query"> = {}) {
     return useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
 }
 export const GetVapidPublicKeyDocument = gql`
@@ -55067,7 +56094,9 @@ export const GetVapidPublicKeyDocument = gql`
     }
 `;
 
-export function useGetVapidPublicKeyQuery(options?: Omit<Urql.UseQueryArgs<GetVapidPublicKeyQueryVariables>, "query">) {
+export function useGetVapidPublicKeyQuery(
+    options: Omit<Urql.UseQueryArgs<GetVapidPublicKeyQueryVariables>, "query"> = {}
+) {
     return useQuery<GetVapidPublicKeyQuery>({ query: GetVapidPublicKeyDocument, ...options });
 }
 export const UpsertPushNotificationSubscriptionDocument = gql`
@@ -55110,7 +56139,7 @@ export const GetRoomMembersDocument = gql`
     ${RoomMemberFragmentDoc}
 `;
 
-export function useGetRoomMembersQuery(options: Omit<Urql.UseQueryArgs<GetRoomMembersQueryVariables>, "query">) {
+export function useGetRoomMembersQuery(options: Omit<Urql.UseQueryArgs<GetRoomMembersQueryVariables>, "query"> = {}) {
     return useQuery<GetRoomMembersQuery>({ query: GetRoomMembersDocument, ...options });
 }
 export const GetAllRoomParticipantsDocument = gql`
@@ -55123,7 +56152,7 @@ export const GetAllRoomParticipantsDocument = gql`
 `;
 
 export function useGetAllRoomParticipantsQuery(
-    options: Omit<Urql.UseQueryArgs<GetAllRoomParticipantsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetAllRoomParticipantsQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetAllRoomParticipantsQuery>({ query: GetAllRoomParticipantsDocument, ...options });
 }
@@ -55149,7 +56178,7 @@ export const SearchAllDocument = gql`
     ${SearchedPersonFragmentDoc}
 `;
 
-export function useSearchAllQuery(options: Omit<Urql.UseQueryArgs<SearchAllQueryVariables>, "query">) {
+export function useSearchAllQuery(options: Omit<Urql.UseQueryArgs<SearchAllQueryVariables>, "query"> = {}) {
     return useQuery<SearchAllQuery>({ query: SearchAllDocument, ...options });
 }
 export const MyShuffleQueueEntryDocument = gql`
@@ -55162,7 +56191,7 @@ export const MyShuffleQueueEntryDocument = gql`
 `;
 
 export function useMyShuffleQueueEntryQuery(
-    options: Omit<Urql.UseQueryArgs<MyShuffleQueueEntryQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<MyShuffleQueueEntryQueryVariables>, "query"> = {}
 ) {
     return useQuery<MyShuffleQueueEntryQuery>({ query: MyShuffleQueueEntryDocument, ...options });
 }
@@ -55175,7 +56204,7 @@ export const ShufflePeriodsDocument = gql`
     ${ShufflePeriodDataFragmentDoc}
 `;
 
-export function useShufflePeriodsQuery(options: Omit<Urql.UseQueryArgs<ShufflePeriodsQueryVariables>, "query">) {
+export function useShufflePeriodsQuery(options: Omit<Urql.UseQueryArgs<ShufflePeriodsQueryVariables>, "query"> = {}) {
     return useQuery<ShufflePeriodsQuery>({ query: ShufflePeriodsDocument, ...options });
 }
 export const JoinShuffleQueueDocument = gql`
@@ -55203,7 +56232,7 @@ export const GetShuffleRoomsParticipantsCountDocument = gql`
 `;
 
 export function useGetShuffleRoomsParticipantsCountQuery(
-    options: Omit<Urql.UseQueryArgs<GetShuffleRoomsParticipantsCountQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetShuffleRoomsParticipantsCountQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetShuffleRoomsParticipantsCountQuery>({
         query: GetShuffleRoomsParticipantsCountDocument,
@@ -55243,7 +56272,7 @@ export const GetElementDocument = gql`
     }
 `;
 
-export function useGetElementQuery(options: Omit<Urql.UseQueryArgs<GetElementQueryVariables>, "query">) {
+export function useGetElementQuery(options: Omit<Urql.UseQueryArgs<GetElementQueryVariables>, "query"> = {}) {
     return useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
 }
 export const SubmitUploadableElementDocument = gql`
@@ -55270,7 +56299,7 @@ export const GetUploadAgreementDocument = gql`
 `;
 
 export function useGetUploadAgreementQuery(
-    options?: Omit<Urql.UseQueryArgs<GetUploadAgreementQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<GetUploadAgreementQueryVariables>, "query"> = {}
 ) {
     return useQuery<GetUploadAgreementQuery>({ query: GetUploadAgreementDocument, ...options });
 }
@@ -55297,7 +56326,7 @@ export const ItemByPersonAccessTokenDocument = gql`
 `;
 
 export function useItemByPersonAccessTokenQuery(
-    options: Omit<Urql.UseQueryArgs<ItemByPersonAccessTokenQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ItemByPersonAccessTokenQueryVariables>, "query"> = {}
 ) {
     return useQuery<ItemByPersonAccessTokenQuery>({ query: ItemByPersonAccessTokenDocument, ...options });
 }
@@ -55320,7 +56349,7 @@ export const ItemsByPersonAccessTokenDocument = gql`
 `;
 
 export function useItemsByPersonAccessTokenQuery(
-    options: Omit<Urql.UseQueryArgs<ItemsByPersonAccessTokenQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<ItemsByPersonAccessTokenQueryVariables>, "query"> = {}
 ) {
     return useQuery<ItemsByPersonAccessTokenQuery>({ query: ItemsByPersonAccessTokenDocument, ...options });
 }
@@ -55347,7 +56376,7 @@ export const SuperUserStateDocument = gql`
     }
 `;
 
-export function useSuperUserStateQuery(options?: Omit<Urql.UseQueryArgs<SuperUserStateQueryVariables>, "query">) {
+export function useSuperUserStateQuery(options: Omit<Urql.UseQueryArgs<SuperUserStateQueryVariables>, "query"> = {}) {
     return useQuery<SuperUserStateQuery>({ query: SuperUserStateDocument, ...options });
 }
 export const UserSuPermissionsDocument = gql`
@@ -55359,7 +56388,9 @@ export const UserSuPermissionsDocument = gql`
     ${SuPermissionGrantFragmentDoc}
 `;
 
-export function useUserSuPermissionsQuery(options: Omit<Urql.UseQueryArgs<UserSuPermissionsQueryVariables>, "query">) {
+export function useUserSuPermissionsQuery(
+    options: Omit<Urql.UseQueryArgs<UserSuPermissionsQueryVariables>, "query"> = {}
+) {
     return useQuery<UserSuPermissionsQuery>({ query: UserSuPermissionsDocument, ...options });
 }
 export const SelectSuPermissionsDocument = gql`
@@ -55372,7 +56403,7 @@ export const SelectSuPermissionsDocument = gql`
 `;
 
 export function useSelectSuPermissionsQuery(
-    options?: Omit<Urql.UseQueryArgs<SelectSuPermissionsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectSuPermissionsQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectSuPermissionsQuery>({ query: SelectSuPermissionsDocument, ...options });
 }
@@ -55386,7 +56417,7 @@ export const SuPermissionGrants_AllUsersDocument = gql`
 `;
 
 export function useSuPermissionGrants_AllUsersQuery(
-    options?: Omit<Urql.UseQueryArgs<SuPermissionGrants_AllUsersQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SuPermissionGrants_AllUsersQueryVariables>, "query"> = {}
 ) {
     return useQuery<SuPermissionGrants_AllUsersQuery>({ query: SuPermissionGrants_AllUsersDocument, ...options });
 }
@@ -55460,7 +56491,7 @@ export const SelectSysConfigPermissionsDocument = gql`
 `;
 
 export function useSelectSysConfigPermissionsQuery(
-    options?: Omit<Urql.UseQueryArgs<SelectSysConfigPermissionsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<SelectSysConfigPermissionsQueryVariables>, "query"> = {}
 ) {
     return useQuery<SelectSysConfigPermissionsQuery>({ query: SelectSysConfigPermissionsDocument, ...options });
 }
@@ -55503,7 +56534,7 @@ export const UserSysConfigPermissionsDocument = gql`
 `;
 
 export function useUserSysConfigPermissionsQuery(
-    options: Omit<Urql.UseQueryArgs<UserSysConfigPermissionsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<UserSysConfigPermissionsQueryVariables>, "query"> = {}
 ) {
     return useQuery<UserSysConfigPermissionsQuery>({ query: UserSysConfigPermissionsDocument, ...options });
 }
@@ -55517,7 +56548,7 @@ export const AllSystemConfigurationsDocument = gql`
 `;
 
 export function useAllSystemConfigurationsQuery(
-    options?: Omit<Urql.UseQueryArgs<AllSystemConfigurationsQueryVariables>, "query">
+    options: Omit<Urql.UseQueryArgs<AllSystemConfigurationsQueryVariables>, "query"> = {}
 ) {
     return useQuery<AllSystemConfigurationsQuery>({ query: AllSystemConfigurationsDocument, ...options });
 }
@@ -55573,7 +56604,9 @@ export const SelectCurrentUserDocument = gql`
     ${UserInfoFragmentDoc}
 `;
 
-export function useSelectCurrentUserQuery(options: Omit<Urql.UseQueryArgs<SelectCurrentUserQueryVariables>, "query">) {
+export function useSelectCurrentUserQuery(
+    options: Omit<Urql.UseQueryArgs<SelectCurrentUserQueryVariables>, "query"> = {}
+) {
     return useQuery<SelectCurrentUserQuery>({ query: SelectCurrentUserDocument, ...options });
 }
 export const TermsConfigsDocument = gql`
@@ -55616,7 +56649,7 @@ export const TermsConfigsDocument = gql`
     }
 `;
 
-export function useTermsConfigsQuery(options?: Omit<Urql.UseQueryArgs<TermsConfigsQueryVariables>, "query">) {
+export function useTermsConfigsQuery(options: Omit<Urql.UseQueryArgs<TermsConfigsQueryVariables>, "query"> = {}) {
     return useQuery<TermsConfigsQuery>({ query: TermsConfigsDocument, ...options });
 }
 export const AgreeToTermsDocument = gql`
@@ -55646,7 +56679,7 @@ export function useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQ
     options: Omit<
         Urql.UseQueryArgs<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryVariables>,
         "query"
-    >
+    > = {}
 ) {
     return useQuery<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery>({
         query: VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocument,
@@ -63746,6 +64779,11 @@ export type GraphCacheResolvers = {
             WithTypename<Conference_Conference>,
             Conference_ConferenceItems_AggregateArgs,
             WithTypename<Content_Item_Aggregate> | string
+        >;
+        logoS3Data?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Conference_ConferenceLogoS3DataArgs,
+            Scalars["jsonb"] | string
         >;
         name?: GraphCacheResolver<
             WithTypename<Conference_Conference>,

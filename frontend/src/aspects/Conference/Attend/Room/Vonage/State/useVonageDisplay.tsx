@@ -4,27 +4,16 @@ import { useVonageRoom } from "./VonageRoomProvider";
 
 export const enum DisplayType {
     Auto = "AUTO",
-    Gallery = "GALLERY",
+    Browse = "BROWSE",
     BroadcastLayout = "BROADCAST_LAYOUT",
-}
-
-export function formatDisplayType(displayType: DisplayType): string {
-    switch (displayType) {
-        case DisplayType.Auto:
-            return "auto";
-        case DisplayType.BroadcastLayout:
-            return "TV";
-        case DisplayType.Gallery:
-            return "gallery";
-    }
 }
 
 export interface Auto {
     type: DisplayType.Auto;
 }
 
-export interface Gallery {
-    type: DisplayType.Gallery;
+export interface Browse {
+    type: DisplayType.Browse;
 }
 
 export interface BroadcastLayout {
@@ -32,15 +21,15 @@ export interface BroadcastLayout {
 }
 
 export type VonageDisplay = {
-    chosenDisplay: Auto | Gallery | BroadcastLayout;
-    actualDisplay: Gallery | BroadcastLayout;
-    setChosenDisplay: React.Dispatch<React.SetStateAction<Auto | Gallery | BroadcastLayout>>;
+    chosenDisplay: Auto | Browse | BroadcastLayout;
+    actualDisplay: Browse | BroadcastLayout;
+    setChosenDisplay: React.Dispatch<React.SetStateAction<Auto | Browse | BroadcastLayout>>;
 };
 
 export function useVonageDisplay(): VonageDisplay {
     const { settings } = useVonageRoom();
     const { isRecordingActive, connected } = useContext(VonageComputedStateContext);
-    const [chosenDisplay, setChosenDisplay] = useState<Auto | Gallery | BroadcastLayout>({ type: DisplayType.Auto });
+    const [chosenDisplay, setChosenDisplay] = useState<Auto | Browse | BroadcastLayout>({ type: DisplayType.Auto });
 
     useEffect(() => {
         if (!connected) {
@@ -48,12 +37,12 @@ export function useVonageDisplay(): VonageDisplay {
         }
     }, [connected]);
 
-    const actualDisplay = useMemo<Gallery | BroadcastLayout>(
+    const actualDisplay = useMemo<Browse | BroadcastLayout>(
         () =>
             chosenDisplay.type === DisplayType.Auto
                 ? settings.isBackstageRoom || isRecordingActive
                     ? { type: DisplayType.BroadcastLayout }
-                    : { type: DisplayType.Gallery }
+                    : { type: DisplayType.Browse }
                 : chosenDisplay,
         [chosenDisplay, isRecordingActive, settings.isBackstageRoom]
     );

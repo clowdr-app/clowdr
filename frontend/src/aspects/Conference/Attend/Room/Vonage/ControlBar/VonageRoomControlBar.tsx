@@ -546,9 +546,9 @@ export function VonageRoomControlBar({
                         isLimited={settings.isBackstageRoom ? "Showing broadcast preview" : false}
                         onClick={() =>
                             layout?.display?.setChosenDisplay(
-                                layout?.display?.chosenDisplay?.type === DisplayType.Gallery
+                                layout?.display?.chosenDisplay?.type === DisplayType.Browse
                                     ? { type: DisplayType.Auto }
-                                    : { type: DisplayType.Gallery }
+                                    : { type: DisplayType.Browse }
                             )
                         }
                         isEnabled={!joining}

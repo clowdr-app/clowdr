@@ -18,7 +18,7 @@ import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
 import { StateType } from "./State/VonageGlobalState";
 import { useVonageLayout } from "./State/VonageLayoutProvider";
 import { useVonageRoom } from "./State/VonageRoomProvider";
-import { Gallery } from "./VideoGrid/Gallery";
+import { Browse } from "./VideoGrid/Browse";
 import Layout from "./VideoGrid/Layout";
 
 export function InCall(): JSX.Element {
@@ -332,8 +332,8 @@ export function InCall(): JSX.Element {
 
     const displayEl = useMemo(() => {
         switch (display.actualDisplay.type) {
-            case DisplayType.Gallery:
-                return <Gallery streamActivities={streamActivities} viewports={viewports} />;
+            case DisplayType.Browse:
+                return <Browse streamActivities={streamActivities} viewports={viewports} />;
             case DisplayType.BroadcastLayout:
                 return <Layout viewports={viewports} allowedToControlLayout={settings.canControlRecording} />;
         }

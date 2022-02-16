@@ -54,10 +54,24 @@ export function GalleryPage({
     }, [streamActivities, viewports]);
     usePolling(computeEnabledStreamIds, 1500);
 
-    const [columns, rows] = useMemo(
-        () => [Math.min(viewports.length, maxColumns), Math.max(1, Math.ceil(viewports.length / maxColumns))],
-        [maxColumns, viewports.length]
-    );
+    // const [columns, rows] = useMemo(
+    //     () => [Math.min(viewports.length, maxColumns), Math.max(1, Math.ceil(viewports.length / maxColumns))],
+    //     [maxColumns, viewports.length]
+    // );
+
+    const [columns, rows] = useMemo(() => {
+        let cols = 1;
+        let rows = 1;
+        while (cols * rows < viewports.length) {
+            if (maxWidth / (cols + 1) >= maxHeight / (rows + 1) && cols < maxColumns) {
+                cols++;
+            } else {
+                rows++;
+            }
+        }
+        return [cols, rows];
+    }, [maxColumns, maxHeight, maxWidth, viewports.length]);
+
     const viewportEdgeLength = Math.min(maxWidth / columns, maxHeight / rows);
 
     return viewports.length ? (

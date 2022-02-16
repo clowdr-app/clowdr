@@ -1,7 +1,7 @@
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { Box, Center, Flex, IconButton } from "@chakra-ui/react";
 import useSize from "@react-hook/size";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { Viewport } from "../../Components/LayoutTypes";
 import { GalleryPage } from "./GalleryPage";
 
@@ -36,9 +36,15 @@ export function Gallery({
     const [currentPage, setCurrentPage] = useState<number>(0);
 
     const pageViewports = useMemo(
-        () => viewports.slice(currentPage * maxPerPage, Math.max((currentPage + 1) * maxPerPage, viewports.length)),
+        () => viewports.slice(currentPage * maxPerPage, Math.min((currentPage + 1) * maxPerPage, viewports.length)),
         [currentPage, maxPerPage, viewports]
     );
+
+    useEffect(() => {
+        if (currentPage >= pages) {
+            setCurrentPage(pages - 1);
+        }
+    }, [currentPage, pages]);
 
     return (
         <Box position="relative" w="100%" h="100%" overflow="hidden">

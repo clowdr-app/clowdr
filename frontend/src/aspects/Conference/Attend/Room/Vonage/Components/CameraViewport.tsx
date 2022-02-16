@@ -20,16 +20,7 @@ interface VideoStatus {
     error?: "codec-not-supported" | "quality" | "exceeds-max-streams";
 }
 
-export function CameraViewport({
-    registrantId,
-    stream,
-    connection,
-    isTalkingRef,
-    enableVideo = true,
-    resolution = "normal",
-    framerate: inputFramerate,
-    children,
-}: {
+export interface CameraViewportProps {
     registrantId?: string;
     connection?: OT.Connection;
     stream?: OT.Stream;
@@ -41,7 +32,18 @@ export function CameraViewport({
         talking: boolean;
     } | null>;
     children?: JSX.Element;
-}): JSX.Element {
+}
+
+export function CameraViewport({
+    registrantId,
+    stream,
+    connection,
+    isTalkingRef,
+    enableVideo = true,
+    resolution = "normal",
+    framerate: inputFramerate,
+    children,
+}: CameraViewportProps): JSX.Element {
     const fullScreen = useFullScreenHandle();
 
     const smallDimensions = useMemo<OT.Dimensions>(() => ({ width: 160, height: 120 }), []);

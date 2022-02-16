@@ -61,7 +61,7 @@ export function GalleryPage({
     const viewportEdgeLength = Math.min(maxWidth / columns, maxHeight / rows);
 
     return viewports.length ? (
-        <SimpleGrid columns={columns}>
+        <SimpleGrid columns={columns} width="fit-content">
             {viewports.map((viewport) => (
                 <GridItem
                     key={viewport.streamId ?? viewport.connectionId}

@@ -97,11 +97,12 @@ function UrqlProviderInner({
                                     : operation.context.fetchOptions || {};
 
                             const headers: Record<string, string> = {
-                                "x-auth-role": authCtxRef.current.conferenceId
-                                    ? "attendee"
-                                    : fetchOptions?.headers?.["x-auth-magic-token"]
-                                    ? "unauthenticated"
-                                    : "user",
+                                "x-auth-role":
+                                    authCtxRef.current.conferenceId && authCtxRef.current.conferenceId !== "NONE"
+                                        ? "attendee"
+                                        : fetchOptions?.headers?.["x-auth-magic-token"]
+                                        ? "unauthenticated"
+                                        : "user",
                             };
                             if (!fetchOptions?.headers?.NoConferenceId) {
                                 if (authCtxRef.current.conferenceId) {

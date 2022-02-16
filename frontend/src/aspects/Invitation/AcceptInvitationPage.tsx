@@ -15,7 +15,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
-import { AuthHeader } from "@midspace/shared-types/auth";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useEffect, useMemo } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { gql } from "urql";
@@ -57,9 +57,14 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
     const [{ fetching: loading, error, data }, confirmCurrentMutation] = useInvitation_ConfirmCurrentMutation();
 
     useEffect(() => {
-        confirmCurrentMutation({
-            inviteCode,
-        });
+        confirmCurrentMutation(
+            {
+                inviteCode,
+            },
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.User,
+            })
+        );
     }, [confirmCurrentMutation, inviteCode]);
 
     const history = useHistory();

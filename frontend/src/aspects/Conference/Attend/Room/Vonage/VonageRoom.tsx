@@ -41,7 +41,7 @@ import { AutoplayContext, AutoplayProvider } from "./VideoPlayback/AutoplayConte
 import VideoChatVideoPlayer from "./VideoPlayback/VideoChatVideoPlayer";
 import { VonageVideoPlaybackProvider } from "./VideoPlayback/VonageVideoPlaybackContext";
 import { VonageComputedStateContext, VonageComputedStateProvider } from "./VonageComputedStateContext";
-import { StateType } from "./VonageGlobalState";
+import { StateType, VonageGlobalState } from "./VonageGlobalState";
 import type { AvailableStream, VonageLayout } from "./VonageLayoutProvider";
 import { useVonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
@@ -258,19 +258,25 @@ function VonageRoomInner({
     const userId = useUserId();
     const registrant = useCurrentRegistrant();
 
-    const onPartialTranscript = useCallback<(transcript: string) => void>(
-        (transcript) => {
-            vonage.sendTranscript(registrant.id, registrant.displayName, true, transcript);
-        },
-        [registrant.displayName, registrant.id, vonage]
-    );
+    // const onPartialTranscript = useCallback<(transcript: string) => void>(
+    //     (transcript) => {
+    //         vonage.sendTranscript(registrant.id, registrant.displayName, true, transcript);
+    //     },
+    //     [registrant.displayName, registrant.id, vonage]
+    // );
     const onCompleteTranscript = useCallback<(transcript: string) => void>(
         (transcript) => {
-            vonage.sendTranscript(registrant.id, registrant.displayName, false, transcript);
+            const data = VonageGlobalState.createTranscriptData(
+                registrant.id,
+                registrant.displayName,
+                false,
+                transcript
+            );
+            vonage.sendTranscript(data);
         },
         [registrant.displayName, registrant.id, vonage]
     );
-    useAWSTranscription(camera, onPartialTranscript, onCompleteTranscript);
+    useAWSTranscription(camera, undefined, onCompleteTranscript);
 
     useEffect(() => {
         if (connected) {

@@ -1000,16 +1000,25 @@ export class VonageGlobalState extends EventEmitter<Events> {
         }
     }
 
-    public async sendTranscript(registrantId: string, registrantName: string, isPartial: boolean, transcript: string) {
+    public static createTranscriptData(
+        registrantId: string,
+        registrantName: string,
+        isPartial: boolean,
+        transcript: string
+    ): TranscriptData {
+        return {
+            registrant: { id: registrantId, name: registrantName },
+            isPartial,
+            transcript,
+        };
+    }
+
+    public async sendTranscript(data: TranscriptData) {
         if (this.state.type === StateType.Connected) {
             this.state.session.signal(
                 {
                     type: "transcript",
-                    data: JSON.stringify({
-                        registrant: { id: registrantId, name: registrantName },
-                        isPartial,
-                        transcript,
-                    }),
+                    data: JSON.stringify(data),
                 },
                 (err) => {
                     if (err) {

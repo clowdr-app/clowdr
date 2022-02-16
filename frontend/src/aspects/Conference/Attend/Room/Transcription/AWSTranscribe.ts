@@ -1,7 +1,7 @@
 import type { EventStreamMarshaller, Message as AWSEventStreamMessage } from "@aws-sdk/eventstream-marshaller";
 import * as marshaller from "@aws-sdk/eventstream-marshaller";
 import * as util_utf8_node from "@aws-sdk/util-utf8-node";
-import { useConst } from "@chakra-ui/react";
+import { useConst, useToast } from "@chakra-ui/react";
 import { datadogLogs } from "@datadog/browser-logs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
@@ -90,6 +90,8 @@ export function useAWSTranscription(
     onPartialTranscript?: (transcript: string) => void,
     onCompleteTranscript?: (transcript: string) => void
 ) {
+    const toast = useToast();
+
     const audioContext = useConst(getAudioContext());
     const processorNode = useMemo(() => audioContext?.createScriptProcessor(4096, 1, 1), [audioContext]);
     useEffect(() => {
@@ -129,33 +131,61 @@ export function useAWSTranscription(
                     setPreSignedUrl(response.data?.transcribeGeneratePresignedUrl?.url ?? null);
                 } catch (e: any) {
                     console.error("Error fetching pre-signed url for subtitling", { error: e });
+                    toast({
+                        status: "error",
+                        position: "bottom",
+                        isClosable: true,
+                        title: "Error initializing closed-captioning",
+                        description: "Unable to fetch AWS Transcribe url for this video-call.",
+                    });
                 } finally {
                     loadingRef.current = false;
                 }
             })();
         }
-    }, [camera, gqlClient]);
+    }, [camera, gqlClient, toast]);
 
     const eventStreamMarshaller = useMemo(
         () => new marshaller.EventStreamMarshaller(util_utf8_node.toUtf8, util_utf8_node.fromUtf8),
         []
     );
     const [socket, setSocket] = useState<WebSocket | null>(null);
+    const onPartialTranscriptRef = useRef<typeof onPartialTranscript>(onPartialTranscript);
     useEffect(() => {
-        if (!audioContext || !processorNode) {
-            return;
-        }
+        onPartialTranscriptRef.current = onPartialTranscript;
+    }, [onPartialTranscript]);
+    const onCompleteTranscriptRef = useRef<typeof onCompleteTranscript>(onCompleteTranscript);
+    useEffect(() => {
+        onCompleteTranscriptRef.current = onCompleteTranscript;
+    }, [onCompleteTranscript]);
 
-        if (socket) {
-            if (socket.readyState === socket.OPEN) {
-                // Send an empty frame so that Transcribe initiates a closure of the WebSocket after submitting all transcripts
-                const emptyMessage = getAudioEventMessage(new Uint8Array([]));
-                const emptyBuffer = eventStreamMarshaller.marshall(emptyMessage);
-                socket.send(emptyBuffer);
+    const [intendedActive, setIntendedActive] = useState<boolean>(false);
+    useEffect(() => {
+        const audioTrack = camera?.getAudioSource();
+        setIntendedActive(Boolean(audioTrack));
+    }, [camera]);
+
+    useEffect(() => {
+        if (intendedActive && !socket) {
+            if (!preSignedUrl) {
+                return;
             }
-        }
 
-        if (camera && preSignedUrl) {
+            if (!audioContext || !processorNode) {
+                const audioTrack = camera?.getAudioSource();
+                if (camera && audioTrack) {
+                    toast({
+                        status: "error",
+                        position: "bottom",
+                        isClosable: true,
+                        title: "Error initializing closed-captioning",
+                        description:
+                            "Your browser does not support web audio contexts. Please use the latest version of Chrome or FireFox to enable generating closed-captions for your microphone.",
+                    });
+                }
+                return;
+            }
+
             const url = preSignedUrl;
             const newSocket = new WebSocket(url);
             newSocket.binaryType = "arraybuffer";
@@ -190,7 +220,11 @@ export function useAWSTranscription(
                 const messageWrapper = eventStreamMarshaller.unmarshall(new Uint8Array(message.data));
                 const messageBody = JSON.parse(String.fromCharCode(...messageWrapper.body));
                 if (messageWrapper.headers[":message-type"].value === "event") {
-                    handleEventStreamMessage(messageBody, onPartialTranscript, onCompleteTranscript);
+                    handleEventStreamMessage(
+                        messageBody,
+                        onPartialTranscriptRef.current,
+                        onCompleteTranscriptRef.current
+                    );
                 } else {
                     datadogLogs.logger.error("Transcribe error from AWS", { awsReason: messageBody.Message });
                     stopTranscribing(newSocket);
@@ -205,11 +239,16 @@ export function useAWSTranscription(
                 stopTranscribing();
                 if (closeEvent.code != 1000) {
                     datadogLogs.logger.error("Transcribe error on close", { webSocketReason: closeEvent.reason });
+                    toast({
+                        status: "error",
+                        position: "bottom",
+                        isClosable: true,
+                        title: "Error occurred in closed-captioning systems",
+                        description:
+                            "Unknown reason for AWS Transcribe failure. Closed captioining may not be functioning for your microphone.",
+                    });
                 }
             };
-        } else {
-            setSocket(null);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [eventStreamMarshaller, camera, preSignedUrl, processorNode, audioContext?.sampleRate]);
+    }, [audioContext, camera, eventStreamMarshaller, intendedActive, preSignedUrl, processorNode, socket, toast]);
 }

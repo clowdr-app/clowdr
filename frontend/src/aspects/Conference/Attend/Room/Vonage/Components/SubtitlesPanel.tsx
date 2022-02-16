@@ -8,26 +8,16 @@ export default function SubtitlesPanel({
 }: {
     onTranscriptRef?: MutableRefObject<((data: TranscriptData) => void) | undefined>;
 }): JSX.Element {
-    const transcripts = useRef(
-        new Map<string, { name: string; transcript: string; createdAt: number; updatedAt: number }>()
-    );
+    const transcripts = useRef<{ name: string; transcript: string; createdAt: number }[]>([]);
 
     useEffect(() => {
         if (onTranscriptRef) {
             onTranscriptRef.current = (data) => {
-                const existing = transcripts.current.get(data.registrant.id);
-                if (existing) {
-                    existing.updatedAt = Date.now();
-                    existing.transcript = data.transcript;
-                    existing.name = data.registrant.name;
-                } else {
-                    transcripts.current.set(data.registrant.id, {
-                        createdAt: Date.now(),
-                        updatedAt: Date.now(),
-                        name: data.registrant.name,
-                        transcript: data.transcript,
-                    });
-                }
+                transcripts.current.push({
+                    createdAt: Date.now(),
+                    name: data.registrant.name,
+                    transcript: data.transcript,
+                });
             };
         }
     }, [onTranscriptRef]);
@@ -36,22 +26,19 @@ export default function SubtitlesPanel({
     useEffect(() => {
         const tId = setInterval(() => {
             const now = Date.now();
-            for (const [id, transcript] of transcripts.current) {
-                if (now - transcript.updatedAt > 15000) {
-                    transcripts.current.delete(id);
-                }
-            }
+            transcripts.current = transcripts.current.filter((transcript) => now - transcript.createdAt < 15000);
 
-            const transcriptsArr = [...transcripts.current.entries()];
-            transcriptsArr.sort(([_x, x], [_y, y]) => x.createdAt - y.createdAt);
-            const result = transcriptsArr.flatMap(([key, transcript]) => [
-                <GridItem color="gray.200" key={key + "-name"}>
-                    {transcript.name}
-                </GridItem>,
-                <GridItem color="white" key={key + "-transcript"}>
-                    {transcript.transcript}
-                </GridItem>,
-            ]);
+            const result = transcripts.current.flatMap((transcript, idx) => {
+                const key = `t${idx}`;
+                return [
+                    <GridItem color="gray.200" key={key + "-name"}>
+                        {transcript.name}
+                    </GridItem>,
+                    <GridItem color="white" key={key + "-transcript"}>
+                        {transcript.transcript}
+                    </GridItem>,
+                ];
+            });
             setRenderedTranscripts(result);
         }, 500);
         return () => {

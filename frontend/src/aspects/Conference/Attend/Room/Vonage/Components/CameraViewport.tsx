@@ -120,7 +120,7 @@ export function CameraViewport({
         }
 
         if (!fullScreen.node.current) {
-            console.error("No element to inject stream into", stream.streamId);
+            // console.error("No element to inject stream into", stream.streamId);
             return;
         }
 

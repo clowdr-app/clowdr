@@ -30,18 +30,14 @@ export default function QueryWrapper<TData, TVariables, TInnerData>({
 
     return (
         <>
-            {queryResult.fetching || queryResult.stale ? (
-                noSpinner ? (
-                    <></>
-                ) : (
+            {queryResult.fetching || (queryResult.stale && !innerData) ? (
+                noSpinner ? undefined : (
                     <Spinner />
                 )
             ) : queryResult && "error" in queryResult && queryResult.error ? (
                 <Text>An error occurred loading in data - please see further information in notifications.</Text>
             ) : undefined}
-            {(queryResult.fetching && !innerData) || queryResult.stale ? (
-                <></>
-            ) : !innerData ? (
+            {queryResult.fetching || (queryResult.stale && !innerData) ? undefined : !innerData ? (
                 childrenNoData ? (
                     childrenNoData()
                 ) : (

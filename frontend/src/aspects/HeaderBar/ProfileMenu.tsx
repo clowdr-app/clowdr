@@ -132,6 +132,15 @@ export default function ProfileMenu(): JSX.Element {
                         <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
                         Recordings
                     </MenuItem>
+                    <MenuItem
+                        as={ReactLink}
+                        to={`${conferencePath}/profile/backstages`}
+                        p={3}
+                        isDisabled={navState.disabled}
+                    >
+                        <FAIcon iconStyle="s" icon="podcast" mr={2} aria-hidden={true} w="1.2em" />
+                        Backstages
+                    </MenuItem>
                     <MenuItem as={ReactLink} to="/" p={3} isDisabled={navState.disabled}>
                         <FAIcon iconStyle="s" icon="ticket-alt" mr={2} aria-hidden={true} w="1.2em" />
                         Conferences

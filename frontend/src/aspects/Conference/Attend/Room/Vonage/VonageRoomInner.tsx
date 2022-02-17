@@ -7,6 +7,7 @@ import { RecordingAlert } from "./Components/RecordingAlert";
 import { InCall } from "./InCall";
 import { PreJoin } from "./PreJoin";
 import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
+import { VonageGlobalState } from "./State/VonageGlobalState";
 import { useVonageRoom, VonageRoomStateActionType } from "./State/VonageRoomProvider";
 
 export function VonageRoomInner({
@@ -26,19 +27,25 @@ export function VonageRoomInner({
 
     const registrant = useCurrentRegistrant();
 
-    const onPartialTranscript = useCallback<(transcript: string) => void>(
-        (transcript) => {
-            vonage.sendTranscript(registrant.id, registrant.displayName, true, transcript);
-        },
-        [registrant.displayName, registrant.id, vonage]
-    );
+    // const onPartialTranscript = useCallback<(transcript: string) => void>(
+    //     (transcript) => {
+    //         vonage.sendTranscript(registrant.id, registrant.displayName, true, transcript);
+    //     },
+    //     [registrant.displayName, registrant.id, vonage]
+    // );
     const onCompleteTranscript = useCallback<(transcript: string) => void>(
         (transcript) => {
-            vonage.sendTranscript(registrant.id, registrant.displayName, false, transcript);
+            const data = VonageGlobalState.createTranscriptData(
+                registrant.id,
+                registrant.displayName,
+                false,
+                transcript
+            );
+            vonage.sendTranscript(data);
         },
         [registrant.displayName, registrant.id, vonage]
     );
-    useAWSTranscription(camera, onPartialTranscript, onCompleteTranscript);
+    useAWSTranscription(camera, undefined, onCompleteTranscript);
 
     const uiEl = useMemo(
         () =>

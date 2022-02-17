@@ -212,6 +212,13 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: attendee
+- name: updateConferenceLogo
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/conference/logo/update'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: updateProfilePhoto
   definition:
     kind: synchronous
@@ -305,4 +312,5 @@ custom_types:
   - name: ToggleVonageRecordingStateOutput
   - name: InitialiseSuperUserOutput
   - name: TranscribeGeneratePresignedUrlOutput
+  - name: UpdateConferenceLogoResponse
   scalars: []

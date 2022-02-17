@@ -78,6 +78,11 @@ export type ProfilePhotoURLResponse = {
     url: string;
 };
 
+export type UpdateConferenceLogoResponse = {
+    ok: boolean
+    url?: Maybe<string>
+}
+
 export type UpdateProfilePhotoResponse = {
     ok: boolean;
     photoURL_350x350?: Maybe<string>;
@@ -178,6 +183,7 @@ export type Mutation = {
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     submitElement?: Maybe<SubmitElementOutput>;
     submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
+    updateConferenceLogo?: Maybe<UpdateConferenceLogoResponse>;
     updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
 };
@@ -249,6 +255,11 @@ export type submitGoogleOAuthCodeArgs = {
     code: string;
     state: string;
 };
+
+export type updateConferenceLogoArgs = {
+    conferenceId: uuid
+    url?: Maybe<string>
+}
 
 export type updateProfilePhotoArgs = {
     registrantId: uuid;

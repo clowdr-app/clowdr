@@ -1158,6 +1158,11 @@ type TranscribeGeneratePresignedUrlOutput {
     url: String!
 }
 
+type UpdateConferenceLogoResponse {
+    ok: Boolean!
+    url: String
+}
+
 type UpdateProfilePhotoResponse {
     ok: Boolean!
     photoURL_50x50: String
@@ -22891,6 +22896,7 @@ type mutation_root {
     submitGoogleOAuthCode(code: String!, state: String!): SubmitGoogleOAuthCodeOutput
     submitUploadableElement(data: jsonb!, elementId: uuid!, magicToken: String!): SubmitUploadableElementOutput
     toggleVonageRecordingState(recordingActive: Boolean!, vonageSessionId: String!): ToggleVonageRecordingStateOutput
+    updateConferenceLogo(conferenceId: uuid!, url: String): UpdateConferenceLogoResponse
     updateProfilePhoto(registrantId: uuid!, s3URL: String): UpdateProfilePhotoResponse
     updateSubtitles(elementId: String!, magicToken: String!, subtitleText: String!): SubmitUpdatedSubtitlesOutput
     """

@@ -938,6 +938,12 @@ export type TranscribeGeneratePresignedUrlOutput = {
     url: Scalars["String"];
 };
 
+export type UpdateConferenceLogoResponse = {
+    __typename?: "UpdateConferenceLogoResponse";
+    ok: Scalars["Boolean"];
+    url?: Maybe<Scalars["String"]>;
+};
+
 export type UpdateProfilePhotoResponse = {
     __typename?: "UpdateProfilePhotoResponse";
     ok: Scalars["Boolean"];
@@ -14588,6 +14594,7 @@ export type Mutation_Root = {
     submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
     submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
     toggleVonageRecordingState?: Maybe<ToggleVonageRecordingStateOutput>;
+    updateConferenceLogo?: Maybe<UpdateConferenceLogoResponse>;
     updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
     /** update data of the table: "Email" */
@@ -17192,6 +17199,12 @@ export type Mutation_RootSubmitUploadableElementArgs = {
 export type Mutation_RootToggleVonageRecordingStateArgs = {
     recordingActive: Scalars["Boolean"];
     vonageSessionId: Scalars["String"];
+};
+
+/** mutation root */
+export type Mutation_RootUpdateConferenceLogoArgs = {
+    conferenceId: Scalars["uuid"];
+    url?: InputMaybe<Scalars["String"]>;
 };
 
 /** mutation root */
@@ -37102,10 +37115,10 @@ export type CombineVideosJob_FailJobMutationVariables = Exact<{
 
 export type CombineVideosJob_FailJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_CombineVideosJob?:
-        | { __typename?: "job_queues_CombineVideosJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_CombineVideosJob?: {
+        __typename?: "job_queues_CombineVideosJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type CombineVideosJob_StartJobMutationVariables = Exact<{
@@ -37115,10 +37128,10 @@ export type CombineVideosJob_StartJobMutationVariables = Exact<{
 
 export type CombineVideosJob_StartJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_CombineVideosJob?:
-        | { __typename?: "job_queues_CombineVideosJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_CombineVideosJob?: {
+        __typename?: "job_queues_CombineVideosJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type CombineVideosJob_CompleteJobMutationVariables = Exact<{
@@ -37127,10 +37140,10 @@ export type CombineVideosJob_CompleteJobMutationVariables = Exact<{
 
 export type CombineVideosJob_CompleteJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_CombineVideosJob?:
-        | { __typename?: "job_queues_CombineVideosJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_CombineVideosJob?: {
+        __typename?: "job_queues_CombineVideosJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type MediaConvert_GetCombineVideosJobQueryVariables = Exact<{
@@ -37140,14 +37153,13 @@ export type MediaConvert_GetCombineVideosJobQueryVariables = Exact<{
 
 export type MediaConvert_GetCombineVideosJobQuery = {
     __typename?: "query_root";
-    job_queues_CombineVideosJob_by_pk?:
-        | { __typename?: "job_queues_CombineVideosJob"; id: any; conferenceId: any; outputName: string }
-        | null
-        | undefined;
-    content_Item_by_pk?:
-        | { __typename?: "content_Item"; id: any; subconferenceId?: any | null | undefined }
-        | null
-        | undefined;
+    job_queues_CombineVideosJob_by_pk?: {
+        __typename?: "job_queues_CombineVideosJob";
+        id: any;
+        conferenceId: any;
+        outputName: string;
+    } | null;
+    content_Item_by_pk?: { __typename?: "content_Item"; id: any; subconferenceId?: any | null } | null;
 };
 
 export type CombineVideosJob_CreateElementMutationVariables = Exact<{
@@ -37160,7 +37172,7 @@ export type CombineVideosJob_CreateElementMutationVariables = Exact<{
 
 export type CombineVideosJob_CreateElementMutation = {
     __typename?: "mutation_root";
-    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null | undefined;
+    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type CheckForFrontendHostsQueryVariables = Exact<{
@@ -37185,14 +37197,14 @@ export type ElementAddNewVersionMutationVariables = Exact<{
 
 export type ElementAddNewVersionMutation = {
     __typename?: "mutation_root";
-    update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null | undefined;
+    update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type ElementUpdateNotification_ElementDetailsFragment = {
     __typename?: "content_Element";
     id: any;
     name: string;
-    source?: any | null | undefined;
+    source?: any | null;
     conference: {
         __typename?: "conference_Conference";
         id: any;
@@ -37214,7 +37226,7 @@ export type ElementUpdateNotification_ElementDetailsFragment = {
                 __typename?: "collection_ProgramPerson";
                 id: any;
                 name: string;
-                email?: string | null | undefined;
+                email?: string | null;
                 accessToken: string;
             };
         }>;
@@ -37227,41 +37239,38 @@ export type GetElementDetailsQueryVariables = Exact<{
 
 export type GetElementDetailsQuery = {
     __typename?: "query_root";
-    content_Element_by_pk?:
-        | {
-              __typename?: "content_Element";
-              id: any;
-              name: string;
-              source?: any | null | undefined;
-              conference: {
-                  __typename?: "conference_Conference";
-                  id: any;
-                  name: string;
-                  shortName: string;
-                  recordingNotificationsEnabled: Array<{ __typename?: "conference_Configuration"; value: any }>;
-                  submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
-                  emailTemplateSubtitlesGenerated: Array<{ __typename?: "conference_Configuration"; value: any }>;
-              };
-              item: {
-                  __typename?: "content_Item";
-                  id: any;
-                  title: string;
-                  itemPeople: Array<{
-                      __typename?: "content_ItemProgramPerson";
-                      id: any;
-                      roleName: string;
-                      person: {
-                          __typename?: "collection_ProgramPerson";
-                          id: any;
-                          name: string;
-                          email?: string | null | undefined;
-                          accessToken: string;
-                      };
-                  }>;
-              };
-          }
-        | null
-        | undefined;
+    content_Element_by_pk?: {
+        __typename?: "content_Element";
+        id: any;
+        name: string;
+        source?: any | null;
+        conference: {
+            __typename?: "conference_Conference";
+            id: any;
+            name: string;
+            shortName: string;
+            recordingNotificationsEnabled: Array<{ __typename?: "conference_Configuration"; value: any }>;
+            submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
+            emailTemplateSubtitlesGenerated: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        };
+        item: {
+            __typename?: "content_Item";
+            id: any;
+            title: string;
+            itemPeople: Array<{
+                __typename?: "content_ItemProgramPerson";
+                id: any;
+                roleName: string;
+                person: {
+                    __typename?: "collection_ProgramPerson";
+                    id: any;
+                    name: string;
+                    email?: string | null;
+                    accessToken: string;
+                };
+            }>;
+        };
+    } | null;
 };
 
 export type GetUploadAgreementQueryVariables = Exact<{
@@ -37295,18 +37304,15 @@ export type CustomEmail_SelectRegistrantsQuery = {
         __typename?: "registrant_Registrant";
         displayName: string;
         id: any;
-        invitation?: { __typename?: "registrant_Invitation"; invitedEmailAddress: string; id: any } | null | undefined;
-        user?: { __typename?: "User"; id: string; email?: string | null | undefined } | null | undefined;
+        invitation?: { __typename?: "registrant_Invitation"; invitedEmailAddress: string; id: any } | null;
+        user?: { __typename?: "User"; id: string; email?: string | null } | null;
     }>;
-    conference_Conference_by_pk?:
-        | {
-              __typename?: "conference_Conference";
-              shortName: string;
-              techSupportAddress: Array<{ __typename?: "conference_Configuration"; value: any }>;
-          }
-        | null
-        | undefined;
-    platformAddress?: { __typename?: "system_Configuration"; value: any } | null | undefined;
+    conference_Conference_by_pk?: {
+        __typename?: "conference_Conference";
+        shortName: string;
+        techSupportAddress: Array<{ __typename?: "conference_Configuration"; value: any }>;
+    } | null;
+    platformAddress?: { __typename?: "system_Configuration"; value: any } | null;
 };
 
 export type SelectUnprocessedCustomEmailJobsQueryVariables = Exact<{ [key: string]: never }>;
@@ -37329,14 +37335,11 @@ export type CompleteCustomEmailJobsMutationVariables = Exact<{
 
 export type CompleteCustomEmailJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_CustomEmailJob?:
-        | {
-              __typename?: "job_queues_CustomEmailJob_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "job_queues_CustomEmailJob"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_job_queues_CustomEmailJob?: {
+        __typename?: "job_queues_CustomEmailJob_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "job_queues_CustomEmailJob"; id: any }>;
+    } | null;
 };
 
 export type ConferenceEmailConfigurationQueryVariables = Exact<{
@@ -37348,23 +37351,19 @@ export type ConferenceEmailConfigurationQuery = {
     __typename?: "query_root";
     support: Array<{ __typename?: "conference_Configuration"; key: Conference_ConfigurationKey_Enum; value: any }>;
     techSupport: Array<{ __typename?: "conference_Configuration"; key: Conference_ConfigurationKey_Enum; value: any }>;
-    hostOrganisationName?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
-    stopEmails?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    hostOrganisationName?: {
+        __typename?: "system_Configuration";
+        key: System_ConfigurationKey_Enum;
+        value: any;
+    } | null;
+    stopEmails?: { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any } | null;
     frontendHost: Array<{ __typename?: "conference_Configuration"; key: Conference_ConfigurationKey_Enum; value: any }>;
-    defaultFrontendHost?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
-    allowEmailsToDomains?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    defaultFrontendHost?: { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any } | null;
+    allowEmailsToDomains?: {
+        __typename?: "system_Configuration";
+        key: System_ConfigurationKey_Enum;
+        value: any;
+    } | null;
     conference_Conference?: Array<{ __typename?: "conference_Conference"; shortName: string }>;
 };
 
@@ -37374,7 +37373,7 @@ export type InsertEmailsMutationVariables = Exact<{
 
 export type InsertEmailsMutation = {
     __typename?: "mutation_root";
-    insert_Email?: { __typename?: "Email_mutation_response"; affected_rows: number } | null | undefined;
+    insert_Email?: { __typename?: "Email_mutation_response"; affected_rows: number } | null;
 };
 
 export type SelectUnsentEmailIdsQueryVariables = Exact<{ [key: string]: never }>;
@@ -37388,22 +37387,19 @@ export type MarkAndSelectUnsentEmailsMutationVariables = Exact<{
 
 export type MarkAndSelectUnsentEmailsMutation = {
     __typename?: "mutation_root";
-    update_Email?:
-        | {
-              __typename?: "Email_mutation_response";
-              returning: Array<{
-                  __typename?: "Email";
-                  recipientName?: string | null | undefined;
-                  emailAddress: string;
-                  htmlContents: string;
-                  plainTextContents: string;
-                  id: any;
-                  subject: string;
-                  retriesCount: number;
-              }>;
-          }
-        | null
-        | undefined;
+    update_Email?: {
+        __typename?: "Email_mutation_response";
+        returning: Array<{
+            __typename?: "Email";
+            recipientName?: string | null;
+            emailAddress: string;
+            htmlContents: string;
+            plainTextContents: string;
+            id: any;
+            subject: string;
+            retriesCount: number;
+        }>;
+    } | null;
 };
 
 export type UnmarkUnsentEmailsMutationVariables = Exact<{
@@ -37412,18 +37408,18 @@ export type UnmarkUnsentEmailsMutationVariables = Exact<{
 
 export type UnmarkUnsentEmailsMutation = {
     __typename?: "mutation_root";
-    update_Email?: { __typename?: "Email_mutation_response"; affected_rows: number } | null | undefined;
+    update_Email?: { __typename?: "Email_mutation_response"; affected_rows: number } | null;
 };
 
 export type GetSendGridConfigQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetSendGridConfigQuery = {
     __typename?: "query_root";
-    apiKey?: { __typename?: "system_Configuration"; value: any } | null | undefined;
-    senderEmail?: { __typename?: "system_Configuration"; value: any } | null | undefined;
-    senderName?: { __typename?: "system_Configuration"; value: any } | null | undefined;
-    replyTo?: { __typename?: "system_Configuration"; value: any } | null | undefined;
-    webhookPublicKey?: { __typename?: "system_Configuration"; value: any } | null | undefined;
+    apiKey?: { __typename?: "system_Configuration"; value: any } | null;
+    senderEmail?: { __typename?: "system_Configuration"; value: any } | null;
+    senderName?: { __typename?: "system_Configuration"; value: any } | null;
+    replyTo?: { __typename?: "system_Configuration"; value: any } | null;
+    webhookPublicKey?: { __typename?: "system_Configuration"; value: any } | null;
 };
 
 export type UpdateEmailStatusMutationVariables = Exact<{
@@ -37434,7 +37430,7 @@ export type UpdateEmailStatusMutationVariables = Exact<{
 
 export type UpdateEmailStatusMutation = {
     __typename?: "mutation_root";
-    update_Email_by_pk?: { __typename?: "Email"; id: any } | null | undefined;
+    update_Email_by_pk?: { __typename?: "Email"; id: any } | null;
 };
 
 export type GetEventChatInfoQueryVariables = Exact<{
@@ -37443,20 +37439,14 @@ export type GetEventChatInfoQueryVariables = Exact<{
 
 export type GetEventChatInfoQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              startTime: any;
-              durationSeconds: number;
-              room: { __typename?: "room_Room"; id: any; name: string; chatId?: any | null | undefined };
-              item?:
-                  | { __typename?: "content_Item"; id: any; title: string; chatId?: any | null | undefined }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        startTime: any;
+        durationSeconds: number;
+        room: { __typename?: "room_Room"; id: any; name: string; chatId?: any | null };
+        item?: { __typename?: "content_Item"; id: any; title: string; chatId?: any | null } | null;
+    } | null;
 };
 
 export type StartChatDuplicationMutationVariables = Exact<{
@@ -37466,8 +37456,8 @@ export type StartChatDuplicationMutationVariables = Exact<{
 
 export type StartChatDuplicationMutation = {
     __typename?: "mutation_root";
-    update_chat1?: { __typename?: "chat_Chat"; id: any } | null | undefined;
-    update_chat2?: { __typename?: "chat_Chat"; id: any } | null | undefined;
+    update_chat1?: { __typename?: "chat_Chat"; id: any } | null;
+    update_chat2?: { __typename?: "chat_Chat"; id: any } | null;
 };
 
 export type EndChatDuplicationMutationVariables = Exact<{
@@ -37477,8 +37467,8 @@ export type EndChatDuplicationMutationVariables = Exact<{
 
 export type EndChatDuplicationMutation = {
     __typename?: "mutation_root";
-    update_chat1?: { __typename?: "chat_Chat"; id: any } | null | undefined;
-    update_chat2?: { __typename?: "chat_Chat"; id: any } | null | undefined;
+    update_chat1?: { __typename?: "chat_Chat"; id: any } | null;
+    update_chat2?: { __typename?: "chat_Chat"; id: any } | null;
 };
 
 export type NotifyRealtimeEventEndedMutationVariables = Exact<{
@@ -37496,30 +37486,21 @@ export type GetEventTimingsQueryVariables = Exact<{
 
 export type GetEventTimingsQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              name: string;
-              timingsUpdatedAt: any;
-              startTime: any;
-              endTime?: any | null | undefined;
-              conferenceId: any;
-              intendedRoomModeName: Room_Mode_Enum;
-              roomId: any;
-              enableRecording: boolean;
-              eventVonageSession?:
-                  | { __typename?: "video_EventVonageSession"; id: any; sessionId: string }
-                  | null
-                  | undefined;
-              item?:
-                  | { __typename?: "content_Item"; id: any; title: string; chatId?: any | null | undefined }
-                  | null
-                  | undefined;
-              continuations: Array<{ __typename?: "schedule_Continuation"; id: any; to: any }>;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        name: string;
+        timingsUpdatedAt: any;
+        startTime: any;
+        endTime?: any | null;
+        conferenceId: any;
+        intendedRoomModeName: Room_Mode_Enum;
+        roomId: any;
+        enableRecording: boolean;
+        eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
+        item?: { __typename?: "content_Item"; id: any; title: string; chatId?: any | null } | null;
+        continuations: Array<{ __typename?: "schedule_Continuation"; id: any; to: any }>;
+    } | null;
 };
 
 export type Event_GetEventVonageSessionQueryVariables = Exact<{
@@ -37528,17 +37509,11 @@ export type Event_GetEventVonageSessionQueryVariables = Exact<{
 
 export type Event_GetEventVonageSessionQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              eventVonageSession?:
-                  | { __typename?: "video_EventVonageSession"; id: any; sessionId: string }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
+    } | null;
 };
 
 export type GoogleOAuth_ConferenceConfig_FrontendHostQueryVariables = Exact<{
@@ -37547,20 +37522,14 @@ export type GoogleOAuth_ConferenceConfig_FrontendHostQueryVariables = Exact<{
 
 export type GoogleOAuth_ConferenceConfig_FrontendHostQuery = {
     __typename?: "query_root";
-    registrant?:
-        | {
-              __typename?: "registrant_Registrant";
-              conference: {
-                  __typename?: "conference_Conference";
-                  frontendHost: Array<{ __typename?: "conference_Configuration"; value: any }>;
-              };
-          }
-        | null
-        | undefined;
-    defaultFrontendHost?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    registrant?: {
+        __typename?: "registrant_Registrant";
+        conference: {
+            __typename?: "conference_Conference";
+            frontendHost: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        };
+    } | null;
+    defaultFrontendHost?: { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any } | null;
 };
 
 export type Google_CreateRegistrantGoogleAccountMutationVariables = Exact<{
@@ -37572,7 +37541,7 @@ export type Google_CreateRegistrantGoogleAccountMutationVariables = Exact<{
 
 export type Google_CreateRegistrantGoogleAccountMutation = {
     __typename?: "mutation_root";
-    insert_registrant_GoogleAccount_one?: { __typename?: "registrant_GoogleAccount"; id: any } | null | undefined;
+    insert_registrant_GoogleAccount_one?: { __typename?: "registrant_GoogleAccount"; id: any } | null;
 };
 
 export type CreateYouTubeUploadMutationVariables = Exact<{
@@ -37588,7 +37557,7 @@ export type CreateYouTubeUploadMutationVariables = Exact<{
 
 export type CreateYouTubeUploadMutation = {
     __typename?: "mutation_root";
-    insert_video_YouTubeUpload_one?: { __typename?: "video_YouTubeUpload"; id: any } | null | undefined;
+    insert_video_YouTubeUpload_one?: { __typename?: "video_YouTubeUpload"; id: any } | null;
 };
 
 export type SelectNewUploadYouTubeVideoJobsQueryVariables = Exact<{ [key: string]: never }>;
@@ -37604,49 +37573,46 @@ export type MarkAndSelectNewUploadYouTubeVideoJobsMutationVariables = Exact<{
 
 export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob?:
-        | {
-              __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
-              returning: Array<{
-                  __typename?: "job_queues_UploadYouTubeVideoJob";
-                  id: any;
-                  conferenceId: any;
-                  subconferenceId?: any | null | undefined;
-                  jobStatusName: Job_Queues_JobStatus_Enum;
-                  retriesCount: number;
-                  videoTitle: string;
-                  videoDescription: string;
-                  videoPrivacyStatus: string;
-                  playlistId?: string | null | undefined;
-                  registrantGoogleAccount: {
-                      __typename?: "registrant_GoogleAccount";
-                      id: any;
-                      tokenData: any;
-                      googleAccountEmail: string;
-                  };
-                  element: {
-                      __typename?: "content_Element";
-                      data: any;
-                      id: any;
-                      item: { __typename?: "content_Item"; id: any; title: string };
-                  };
-              }>;
-          }
-        | null
-        | undefined;
+    update_job_queues_UploadYouTubeVideoJob?: {
+        __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
+        returning: Array<{
+            __typename?: "job_queues_UploadYouTubeVideoJob";
+            id: any;
+            conferenceId: any;
+            subconferenceId?: any | null;
+            jobStatusName: Job_Queues_JobStatus_Enum;
+            retriesCount: number;
+            videoTitle: string;
+            videoDescription: string;
+            videoPrivacyStatus: string;
+            playlistId?: string | null;
+            registrantGoogleAccount: {
+                __typename?: "registrant_GoogleAccount";
+                id: any;
+                tokenData: any;
+                googleAccountEmail: string;
+            };
+            element: {
+                __typename?: "content_Element";
+                data: any;
+                id: any;
+                item: { __typename?: "content_Item"; id: any; title: string };
+            };
+        }>;
+    } | null;
 };
 
 export type UploadYouTubeVideoJobDataFragment = {
     __typename?: "job_queues_UploadYouTubeVideoJob";
     id: any;
     conferenceId: any;
-    subconferenceId?: any | null | undefined;
+    subconferenceId?: any | null;
     jobStatusName: Job_Queues_JobStatus_Enum;
     retriesCount: number;
     videoTitle: string;
     videoDescription: string;
     videoPrivacyStatus: string;
-    playlistId?: string | null | undefined;
+    playlistId?: string | null;
     registrantGoogleAccount: {
         __typename?: "registrant_GoogleAccount";
         id: any;
@@ -37667,14 +37633,11 @@ export type UnmarkUploadYouTubeVideoJobsMutationVariables = Exact<{
 
 export type UnmarkUploadYouTubeVideoJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob?:
-        | {
-              __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "job_queues_UploadYouTubeVideoJob"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_job_queues_UploadYouTubeVideoJob?: {
+        __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "job_queues_UploadYouTubeVideoJob"; id: any }>;
+    } | null;
 };
 
 export type FailUploadYouTubeVideoJobMutationVariables = Exact<{
@@ -37684,10 +37647,7 @@ export type FailUploadYouTubeVideoJobMutationVariables = Exact<{
 
 export type FailUploadYouTubeVideoJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob_by_pk?:
-        | { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_UploadYouTubeVideoJob_by_pk?: { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any } | null;
 };
 
 export type CompleteUploadYouTubeVideoJobMutationVariables = Exact<{
@@ -37696,32 +37656,29 @@ export type CompleteUploadYouTubeVideoJobMutationVariables = Exact<{
 
 export type CompleteUploadYouTubeVideoJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob_by_pk?:
-        | { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_UploadYouTubeVideoJob_by_pk?: { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any } | null;
 };
 
 export type InvitationPartsFragment = {
     __typename?: "registrant_Invitation";
     registrantId: any;
-    confirmationCode?: any | null | undefined;
+    confirmationCode?: any | null;
     id: any;
     inviteCode: any;
     invitedEmailAddress: string;
-    linkToUserId?: string | null | undefined;
+    linkToUserId?: string | null;
     updatedAt: any;
     createdAt: any;
     registrant: {
         __typename?: "registrant_Registrant";
         displayName: string;
-        userId?: string | null | undefined;
+        userId?: string | null;
         conference: { __typename?: "conference_Conference"; name: string; slug: string };
     };
-    user?: { __typename?: "User"; email?: string | null | undefined } | null | undefined;
+    user?: { __typename?: "User"; email?: string | null } | null;
 };
 
-export type InvitedUserPartsFragment = { __typename?: "User"; id: string; email?: string | null | undefined };
+export type InvitedUserPartsFragment = { __typename?: "User"; id: string; email?: string | null };
 
 export type SelectInvitationAndUserQueryVariables = Exact<{
     inviteCode: Scalars["uuid"];
@@ -37733,22 +37690,22 @@ export type SelectInvitationAndUserQuery = {
     registrant_Invitation: Array<{
         __typename?: "registrant_Invitation";
         registrantId: any;
-        confirmationCode?: any | null | undefined;
+        confirmationCode?: any | null;
         id: any;
         inviteCode: any;
         invitedEmailAddress: string;
-        linkToUserId?: string | null | undefined;
+        linkToUserId?: string | null;
         updatedAt: any;
         createdAt: any;
         registrant: {
             __typename?: "registrant_Registrant";
             displayName: string;
-            userId?: string | null | undefined;
+            userId?: string | null;
             conference: { __typename?: "conference_Conference"; name: string; slug: string };
         };
-        user?: { __typename?: "User"; email?: string | null | undefined } | null | undefined;
+        user?: { __typename?: "User"; email?: string | null } | null;
     }>;
-    User_by_pk?: { __typename?: "User"; id: string; email?: string | null | undefined } | null | undefined;
+    User_by_pk?: { __typename?: "User"; id: string; email?: string | null } | null;
 };
 
 export type UpdateInvitationMutationVariables = Exact<{
@@ -37760,10 +37717,10 @@ export type UpdateInvitationMutationVariables = Exact<{
 
 export type UpdateInvitationMutation = {
     __typename?: "mutation_root";
-    update_registrant_Invitation?:
-        | { __typename?: "registrant_Invitation_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_registrant_Invitation?: {
+        __typename?: "registrant_Invitation_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type SetRegistrantUserIdMutationVariables = Exact<{
@@ -37773,28 +37730,25 @@ export type SetRegistrantUserIdMutationVariables = Exact<{
 
 export type SetRegistrantUserIdMutation = {
     __typename?: "mutation_root";
-    update_registrant_Registrant?:
-        | { __typename?: "registrant_Registrant_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_registrant_Registrant?: {
+        __typename?: "registrant_Registrant_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type RegistrantWithInvitePartsFragment = {
     __typename?: "registrant_Registrant";
     id: any;
     displayName: string;
-    userId?: string | null | undefined;
+    userId?: string | null;
     conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string; slug: string };
-    invitation?:
-        | {
-              __typename?: "registrant_Invitation";
-              id: any;
-              inviteCode: any;
-              invitedEmailAddress: string;
-              emails: Array<{ __typename?: "Email"; reason: string }>;
-          }
-        | null
-        | undefined;
+    invitation?: {
+        __typename?: "registrant_Invitation";
+        id: any;
+        inviteCode: any;
+        invitedEmailAddress: string;
+        emails: Array<{ __typename?: "Email"; reason: string }>;
+    } | null;
 };
 
 export type SelectRegistrantsWithInvitationQueryVariables = Exact<{
@@ -37807,18 +37761,15 @@ export type SelectRegistrantsWithInvitationQuery = {
         __typename?: "registrant_Registrant";
         id: any;
         displayName: string;
-        userId?: string | null | undefined;
+        userId?: string | null;
         conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string; slug: string };
-        invitation?:
-            | {
-                  __typename?: "registrant_Invitation";
-                  id: any;
-                  inviteCode: any;
-                  invitedEmailAddress: string;
-                  emails: Array<{ __typename?: "Email"; reason: string }>;
-              }
-            | null
-            | undefined;
+        invitation?: {
+            __typename?: "registrant_Invitation";
+            id: any;
+            inviteCode: any;
+            invitedEmailAddress: string;
+            emails: Array<{ __typename?: "Email"; reason: string }>;
+        } | null;
     }>;
 };
 
@@ -37840,10 +37791,10 @@ export type CompleteInvitationEmailJobsMutationVariables = Exact<{
 
 export type CompleteInvitationEmailJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_InvitationEmailJob?:
-        | { __typename?: "job_queues_InvitationEmailJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_InvitationEmailJob?: {
+        __typename?: "job_queues_InvitationEmailJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type GetAutomaticInvitationsConfigurationQueryVariables = Exact<{
@@ -37852,8 +37803,8 @@ export type GetAutomaticInvitationsConfigurationQueryVariables = Exact<{
 
 export type GetAutomaticInvitationsConfigurationQuery = {
     __typename?: "query_root";
-    initialStart?: { __typename?: "conference_Configuration"; value: any } | null | undefined;
-    initialEnd?: { __typename?: "conference_Configuration"; value: any } | null | undefined;
+    initialStart?: { __typename?: "conference_Configuration"; value: any } | null;
+    initialEnd?: { __typename?: "conference_Configuration"; value: any } | null;
 };
 
 export type GetAutomaticInvitationsRepeatConfigurationsQueryVariables = Exact<{ [key: string]: never }>;
@@ -37879,10 +37830,7 @@ export type InsertInvitationEmailJobMutationVariables = Exact<{
 
 export type InsertInvitationEmailJobMutation = {
     __typename?: "mutation_root";
-    insert_job_queues_InvitationEmailJob_one?:
-        | { __typename?: "job_queues_InvitationEmailJob"; id: any }
-        | null
-        | undefined;
+    insert_job_queues_InvitationEmailJob_one?: { __typename?: "job_queues_InvitationEmailJob"; id: any } | null;
 };
 
 export type GetAutomaticInvitations_ToBeRepeatedQueryVariables = Exact<{
@@ -37891,11 +37839,7 @@ export type GetAutomaticInvitations_ToBeRepeatedQueryVariables = Exact<{
 
 export type GetAutomaticInvitations_ToBeRepeatedQuery = {
     __typename?: "query_root";
-    registrant_Registrant: Array<{
-        __typename?: "registrant_Registrant";
-        id: any;
-        invitationStatus?: any | null | undefined;
-    }>;
+    registrant_Registrant: Array<{ __typename?: "registrant_Registrant"; id: any; invitationStatus?: any | null }>;
 };
 
 export type OtherConferencePrepareJobsQueryVariables = Exact<{
@@ -37926,7 +37870,7 @@ export type CreateVideoRenderJobMutationVariables = Exact<{
 
 export type CreateVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    insert_video_VideoRenderJob_one?: { __typename?: "video_VideoRenderJob"; id: any } | null | undefined;
+    insert_video_VideoRenderJob_one?: { __typename?: "video_VideoRenderJob"; id: any } | null;
 };
 
 export type GetEventsWithoutVonageSessionQueryVariables = Exact<{
@@ -37944,23 +37888,17 @@ export type Recording_GetEventQueryVariables = Exact<{
 
 export type Recording_GetEventQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              startTime: any;
-              endTime?: any | null | undefined;
-              room: {
-                  __typename?: "room_Room";
-                  id: any;
-                  channelStack?:
-                      | { __typename?: "video_ChannelStack"; id: any; mediaPackageChannelId: string }
-                      | null
-                      | undefined;
-              };
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        startTime: any;
+        endTime?: any | null;
+        room: {
+            __typename?: "room_Room";
+            id: any;
+            channelStack?: { __typename?: "video_ChannelStack"; id: any; mediaPackageChannelId: string } | null;
+        };
+    } | null;
 };
 
 export type StartMediaPackageHarvestJobMutationVariables = Exact<{
@@ -37970,10 +37908,10 @@ export type StartMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type StartMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_MediaPackageHarvestJob_by_pk?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_MediaPackageHarvestJob_by_pk?: {
+        __typename?: "job_queues_MediaPackageHarvestJob";
+        id: any;
+    } | null;
 };
 
 export type CreateMediaPackageHarvestJobMutationVariables = Exact<{
@@ -37983,10 +37921,7 @@ export type CreateMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type CreateMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    insert_job_queues_MediaPackageHarvestJob_one?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob"; id: any }
-        | null
-        | undefined;
+    insert_job_queues_MediaPackageHarvestJob_one?: { __typename?: "job_queues_MediaPackageHarvestJob"; id: any } | null;
 };
 
 export type Recording_GetMediaPackageHarvestJobQueryVariables = Exact<{
@@ -38005,10 +37940,7 @@ export type Recording_GetMediaPackageHarvestJobQuery = {
             name: string;
             startTime: any;
             durationSeconds: number;
-            item?:
-                | { __typename?: "content_Item"; id: any; title: string; subconferenceId?: any | null | undefined }
-                | null
-                | undefined;
+            item?: { __typename?: "content_Item"; id: any; title: string; subconferenceId?: any | null } | null;
         };
     }>;
 };
@@ -38026,11 +37958,11 @@ export type Recording_CompleteMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type Recording_CompleteMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_MediaPackageHarvestJob_by_pk?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob"; id: any }
-        | null
-        | undefined;
-    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null | undefined;
+    update_job_queues_MediaPackageHarvestJob_by_pk?: {
+        __typename?: "job_queues_MediaPackageHarvestJob";
+        id: any;
+    } | null;
+    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type Recording_IgnoreMediaPackageHarvestJobMutationVariables = Exact<{
@@ -38040,10 +37972,10 @@ export type Recording_IgnoreMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type Recording_IgnoreMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_MediaPackageHarvestJob_by_pk?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_MediaPackageHarvestJob_by_pk?: {
+        __typename?: "job_queues_MediaPackageHarvestJob";
+        id: any;
+    } | null;
 };
 
 export type FailMediaPackageHarvestJobMutationVariables = Exact<{
@@ -38053,10 +37985,10 @@ export type FailMediaPackageHarvestJobMutationVariables = Exact<{
 
 export type FailMediaPackageHarvestJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_MediaPackageHarvestJob?:
-        | { __typename?: "job_queues_MediaPackageHarvestJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_MediaPackageHarvestJob?: {
+        __typename?: "job_queues_MediaPackageHarvestJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQueryVariables = Exact<{
@@ -38065,16 +37997,13 @@ export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQueryVariables = E
 
 export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQuery = {
     __typename?: "query_root";
-    registrant_GoogleAccount_by_pk?:
-        | {
-              __typename?: "registrant_GoogleAccount";
-              registrantId: any;
-              id: any;
-              tokenData: any;
-              youTubeData?: any | null | undefined;
-          }
-        | null
-        | undefined;
+    registrant_GoogleAccount_by_pk?: {
+        __typename?: "registrant_GoogleAccount";
+        registrantId: any;
+        id: any;
+        tokenData: any;
+        youTubeData?: any | null;
+    } | null;
 };
 
 export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutationVariables = Exact<{
@@ -38084,7 +38013,7 @@ export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutationVariabl
 
 export type RegistrantGoogleAccount_UpdateRegistrantGoogleAccountMutation = {
     __typename?: "mutation_root";
-    update_registrant_GoogleAccount_by_pk?: { __typename?: "registrant_GoogleAccount"; id: any } | null | undefined;
+    update_registrant_GoogleAccount_by_pk?: { __typename?: "registrant_GoogleAccount"; id: any } | null;
 };
 
 export type SetRoomVonageSessionIdMutationVariables = Exact<{
@@ -38094,7 +38023,7 @@ export type SetRoomVonageSessionIdMutationVariables = Exact<{
 
 export type SetRoomVonageSessionIdMutation = {
     __typename?: "mutation_root";
-    update_room_Room_by_pk?: { __typename?: "room_Room"; id: any } | null | undefined;
+    update_room_Room_by_pk?: { __typename?: "room_Room"; id: any } | null;
 };
 
 export type GetRegistrantsForRoomAndUserQueryVariables = Exact<{
@@ -38115,7 +38044,7 @@ export type AddRegistrantToRoomMembershipsMutationVariables = Exact<{
 
 export type AddRegistrantToRoomMembershipsMutation = {
     __typename?: "mutation_root";
-    insert_room_RoomMembership_one?: { __typename?: "room_RoomMembership"; id: any } | null | undefined;
+    insert_room_RoomMembership_one?: { __typename?: "room_RoomMembership"; id: any } | null;
 };
 
 export type CreateDmRoom_GetRegistrantsQueryVariables = Exact<{
@@ -38138,7 +38067,7 @@ export type CreateDmRoom_GetExistingRoomsQuery = {
     room_Room: Array<{
         __typename?: "room_Room";
         id: any;
-        chatId?: any | null | undefined;
+        chatId?: any | null;
         roomMemberships: Array<{ __typename?: "room_RoomMembership"; registrantId: any; id: any }>;
     }>;
 };
@@ -38152,7 +38081,7 @@ export type CreateDmRoomMutationVariables = Exact<{
 
 export type CreateDmRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_Room_one?: { __typename?: "room_Room"; id: any; chatId?: any | null | undefined } | null | undefined;
+    insert_room_Room_one?: { __typename?: "room_Room"; id: any; chatId?: any | null } | null;
 };
 
 export type UnallocatedShuffleQueueEntryFragment = {
@@ -38178,7 +38107,7 @@ export type ActiveShuffleRoomFragment = {
 export type ActiveShufflePeriodFragment = {
     __typename?: "room_ShufflePeriod";
     conferenceId: any;
-    subconferenceId?: any | null | undefined;
+    subconferenceId?: any | null;
     endAt: any;
     id: any;
     maxRegistrantsPerRoom: number;
@@ -38207,7 +38136,7 @@ export type ActiveShufflePeriodFragment = {
             participants: Array<{ __typename?: "room_Participant"; id: any; registrantId: any }>;
         };
     }>;
-    events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null | undefined }>;
+    events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null }>;
 };
 
 export type SelectShufflePeriodQueryVariables = Exact<{
@@ -38217,57 +38146,10 @@ export type SelectShufflePeriodQueryVariables = Exact<{
 
 export type SelectShufflePeriodQuery = {
     __typename?: "query_root";
-    room_ShufflePeriod_by_pk?:
-        | {
-              __typename?: "room_ShufflePeriod";
-              conferenceId: any;
-              subconferenceId?: any | null | undefined;
-              endAt: any;
-              id: any;
-              maxRegistrantsPerRoom: number;
-              name: string;
-              organiserId: any;
-              roomDurationMinutes: number;
-              startAt: any;
-              targetRegistrantsPerRoom: number;
-              waitRoomMaxDurationSeconds: number;
-              algorithm: Room_ShuffleAlgorithm_Enum;
-              unallocatedQueueEntries: Array<{
-                  __typename?: "room_ShuffleQueueEntry";
-                  registrantId: any;
-                  id: any;
-                  created_at: any;
-              }>;
-              activeRooms: Array<{
-                  __typename?: "room_ShuffleRoom";
-                  id: any;
-                  startedAt: any;
-                  durationMinutes: number;
-                  room: {
-                      __typename?: "room_Room";
-                      id: any;
-                      people: Array<{ __typename?: "room_RoomMembership"; id: any; registrantId: any }>;
-                      participants: Array<{ __typename?: "room_Participant"; id: any; registrantId: any }>;
-                  };
-              }>;
-              events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null | undefined }>;
-          }
-        | null
-        | undefined;
-};
-
-export type SelectActiveShufflePeriodsQueryVariables = Exact<{
-    from: Scalars["timestamptz"];
-    until: Scalars["timestamptz"];
-    now: Scalars["timestamptz"];
-}>;
-
-export type SelectActiveShufflePeriodsQuery = {
-    __typename?: "query_root";
-    room_ShufflePeriod: Array<{
+    room_ShufflePeriod_by_pk?: {
         __typename?: "room_ShufflePeriod";
         conferenceId: any;
-        subconferenceId?: any | null | undefined;
+        subconferenceId?: any | null;
         endAt: any;
         id: any;
         maxRegistrantsPerRoom: number;
@@ -38296,7 +38178,51 @@ export type SelectActiveShufflePeriodsQuery = {
                 participants: Array<{ __typename?: "room_Participant"; id: any; registrantId: any }>;
             };
         }>;
-        events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null | undefined }>;
+        events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null }>;
+    } | null;
+};
+
+export type SelectActiveShufflePeriodsQueryVariables = Exact<{
+    from: Scalars["timestamptz"];
+    until: Scalars["timestamptz"];
+    now: Scalars["timestamptz"];
+}>;
+
+export type SelectActiveShufflePeriodsQuery = {
+    __typename?: "query_root";
+    room_ShufflePeriod: Array<{
+        __typename?: "room_ShufflePeriod";
+        conferenceId: any;
+        subconferenceId?: any | null;
+        endAt: any;
+        id: any;
+        maxRegistrantsPerRoom: number;
+        name: string;
+        organiserId: any;
+        roomDurationMinutes: number;
+        startAt: any;
+        targetRegistrantsPerRoom: number;
+        waitRoomMaxDurationSeconds: number;
+        algorithm: Room_ShuffleAlgorithm_Enum;
+        unallocatedQueueEntries: Array<{
+            __typename?: "room_ShuffleQueueEntry";
+            registrantId: any;
+            id: any;
+            created_at: any;
+        }>;
+        activeRooms: Array<{
+            __typename?: "room_ShuffleRoom";
+            id: any;
+            startedAt: any;
+            durationMinutes: number;
+            room: {
+                __typename?: "room_Room";
+                id: any;
+                people: Array<{ __typename?: "room_RoomMembership"; id: any; registrantId: any }>;
+                participants: Array<{ __typename?: "room_Participant"; id: any; registrantId: any }>;
+            };
+        }>;
+        events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null }>;
     }>;
 };
 
@@ -38308,18 +38234,12 @@ export type AddPeopleToExistingShuffleRoomMutationVariables = Exact<{
 
 export type AddPeopleToExistingShuffleRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_RoomMembership?:
-        | { __typename?: "room_RoomMembership_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
-    update_room_ShuffleQueueEntry?:
-        | {
-              __typename?: "room_ShuffleQueueEntry_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "room_ShuffleQueueEntry"; id: any }>;
-          }
-        | null
-        | undefined;
+    insert_room_RoomMembership?: { __typename?: "room_RoomMembership_mutation_response"; affected_rows: number } | null;
+    update_room_ShuffleQueueEntry?: {
+        __typename?: "room_ShuffleQueueEntry_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "room_ShuffleQueueEntry"; id: any }>;
+    } | null;
 };
 
 export type ExpireShuffleQueueEntriesMutationVariables = Exact<{
@@ -38328,14 +38248,11 @@ export type ExpireShuffleQueueEntriesMutationVariables = Exact<{
 
 export type ExpireShuffleQueueEntriesMutation = {
     __typename?: "mutation_root";
-    update_room_ShuffleQueueEntry?:
-        | {
-              __typename?: "room_ShuffleQueueEntry_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "room_ShuffleQueueEntry"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_room_ShuffleQueueEntry?: {
+        __typename?: "room_ShuffleQueueEntry_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "room_ShuffleQueueEntry"; id: any }>;
+    } | null;
 };
 
 export type InsertShuffleRoomMutationVariables = Exact<{
@@ -38348,7 +38265,7 @@ export type InsertShuffleRoomMutationVariables = Exact<{
 
 export type InsertShuffleRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_ShuffleRoom_one?: { __typename?: "room_ShuffleRoom"; id: any } | null | undefined;
+    insert_room_ShuffleRoom_one?: { __typename?: "room_ShuffleRoom"; id: any } | null;
 };
 
 export type InsertManagedRoomMutationVariables = Exact<{
@@ -38360,7 +38277,7 @@ export type InsertManagedRoomMutationVariables = Exact<{
 
 export type InsertManagedRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_Room_one?: { __typename?: "room_Room"; id: any } | null | undefined;
+    insert_room_Room_one?: { __typename?: "room_Room"; id: any } | null;
 };
 
 export type SetAutoPinOnManagedRoomMutationVariables = Exact<{
@@ -38369,7 +38286,7 @@ export type SetAutoPinOnManagedRoomMutationVariables = Exact<{
 
 export type SetAutoPinOnManagedRoomMutation = {
     __typename?: "mutation_root";
-    update_chat_Chat?: { __typename?: "chat_Chat_mutation_response"; affected_rows: number } | null | undefined;
+    update_chat_Chat?: { __typename?: "chat_Chat_mutation_response"; affected_rows: number } | null;
 };
 
 export type SetShuffleRoomsEndedMutationVariables = Exact<{
@@ -38378,14 +38295,11 @@ export type SetShuffleRoomsEndedMutationVariables = Exact<{
 
 export type SetShuffleRoomsEndedMutation = {
     __typename?: "mutation_root";
-    update_room_ShuffleRoom?:
-        | {
-              __typename?: "room_ShuffleRoom_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "room_ShuffleRoom"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_room_ShuffleRoom?: {
+        __typename?: "room_ShuffleRoom_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "room_ShuffleRoom"; id: any }>;
+    } | null;
 };
 
 export type SuperUserStateQueryVariables = Exact<{ [key: string]: never }>;
@@ -38394,8 +38308,8 @@ export type SuperUserStateQuery = {
     __typename?: "query_root";
     system_SuperUserState: Array<{
         __typename?: "system_SuperUserState";
-        isInitialised?: boolean | null | undefined;
-        canBeDirectlyInitialised?: boolean | null | undefined;
+        isInitialised?: boolean | null;
+        canBeDirectlyInitialised?: boolean | null;
     }>;
     User: Array<{ __typename?: "User"; id: string }>;
 };
@@ -38406,10 +38320,10 @@ export type InitialiseSuperUserStateMutationVariables = Exact<{
 
 export type InitialiseSuperUserStateMutation = {
     __typename?: "mutation_root";
-    insert_system_SuperUserPermissionGrant?:
-        | { __typename?: "system_SuperUserPermissionGrant_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    insert_system_SuperUserPermissionGrant?: {
+        __typename?: "system_SuperUserPermissionGrant_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type UploadableElementQueryVariables = Exact<{
@@ -38423,7 +38337,7 @@ export type UploadableElementQuery = {
         id: any;
         typeName: Content_ElementType_Enum;
         name: string;
-        uploadsRemaining?: number | null | undefined;
+        uploadsRemaining?: number | null;
         isHidden: boolean;
         data: any;
         item: { __typename?: "content_Item"; id: any; title: string };
@@ -38446,7 +38360,7 @@ export type UploadableElementFieldsFragment = {
     id: any;
     typeName: Content_ElementType_Enum;
     name: string;
-    uploadsRemaining?: number | null | undefined;
+    uploadsRemaining?: number | null;
     isHidden: boolean;
     data: any;
     item: { __typename?: "content_Item"; id: any; title: string };
@@ -38458,34 +38372,26 @@ export type GetUploadersQueryVariables = Exact<{
 
 export type GetUploadersQuery = {
     __typename?: "query_root";
-    content_Element_by_pk?:
-        | {
-              __typename?: "content_Element";
-              id: any;
-              conferenceId: any;
-              typeName: Content_ElementType_Enum;
-              conference: {
-                  __typename?: "conference_Conference";
-                  submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
-              };
-              item: {
-                  __typename?: "content_Item";
-                  id: any;
-                  itemPeople: Array<{
-                      __typename?: "content_ItemProgramPerson";
-                      id: any;
-                      roleName: string;
-                      person: {
-                          __typename?: "collection_ProgramPerson";
-                          id: any;
-                          name: string;
-                          email?: string | null | undefined;
-                      };
-                  }>;
-              };
-          }
-        | null
-        | undefined;
+    content_Element_by_pk?: {
+        __typename?: "content_Element";
+        id: any;
+        conferenceId: any;
+        typeName: Content_ElementType_Enum;
+        conference: {
+            __typename?: "conference_Conference";
+            submissionNotificationRoles: Array<{ __typename?: "conference_Configuration"; value: any }>;
+        };
+        item: {
+            __typename?: "content_Item";
+            id: any;
+            itemPeople: Array<{
+                __typename?: "content_ItemProgramPerson";
+                id: any;
+                roleName: string;
+                person: { __typename?: "collection_ProgramPerson"; id: any; name: string; email?: string | null };
+            }>;
+        };
+    } | null;
 };
 
 export type SetUploadableElementUploadsRemainingMutationVariables = Exact<{
@@ -38495,7 +38401,7 @@ export type SetUploadableElementUploadsRemainingMutationVariables = Exact<{
 
 export type SetUploadableElementUploadsRemainingMutation = {
     __typename?: "mutation_root";
-    update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null | undefined;
+    update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type InsertSubmissionRequestEmailsMutationVariables = Exact<{
@@ -38504,10 +38410,10 @@ export type InsertSubmissionRequestEmailsMutationVariables = Exact<{
 
 export type InsertSubmissionRequestEmailsMutation = {
     __typename?: "mutation_root";
-    update_collection_ProgramPerson?:
-        | { __typename?: "collection_ProgramPerson_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_collection_ProgramPerson?: {
+        __typename?: "collection_ProgramPerson_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type SelectUnprocessedSubmissionRequestEmailJobsQueryVariables = Exact<{ [key: string]: never }>;
@@ -38517,12 +38423,12 @@ export type SelectUnprocessedSubmissionRequestEmailJobsQuery = {
     job_queues_SubmissionRequestEmailJob: Array<{
         __typename?: "job_queues_SubmissionRequestEmailJob";
         id: any;
-        emailTemplate?: any | null | undefined;
+        emailTemplate?: any | null;
         person: {
             __typename?: "collection_ProgramPerson";
             id: any;
             name: string;
-            email?: string | null | undefined;
+            email?: string | null;
             accessToken: string;
             conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string };
         };
@@ -38535,10 +38441,10 @@ export type CompleteSubmissionRequestEmailJobsMutationVariables = Exact<{
 
 export type CompleteSubmissionRequestEmailJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_SubmissionRequestEmailJob?:
-        | { __typename?: "job_queues_SubmissionRequestEmailJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_SubmissionRequestEmailJob?: {
+        __typename?: "job_queues_SubmissionRequestEmailJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type GetElementIdForVideoRenderJobQueryVariables = Exact<{
@@ -38547,7 +38453,7 @@ export type GetElementIdForVideoRenderJobQueryVariables = Exact<{
 
 export type GetElementIdForVideoRenderJobQuery = {
     __typename?: "query_root";
-    video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; elementId: any; id: any } | null | undefined;
+    video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; elementId: any; id: any } | null;
 };
 
 export type SelectNewVideoRenderJobsQueryVariables = Exact<{ [key: string]: never }>;
@@ -38563,19 +38469,16 @@ export type MarkAndSelectNewVideoRenderJobsMutationVariables = Exact<{
 
 export type MarkAndSelectNewVideoRenderJobsMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob?:
-        | {
-              __typename?: "video_VideoRenderJob_mutation_response";
-              returning: Array<{
-                  __typename?: "video_VideoRenderJob";
-                  id: any;
-                  jobStatusName: Job_Queues_JobStatus_Enum;
-                  data: any;
-                  retriesCount: number;
-              }>;
-          }
-        | null
-        | undefined;
+    update_video_VideoRenderJob?: {
+        __typename?: "video_VideoRenderJob_mutation_response";
+        returning: Array<{
+            __typename?: "video_VideoRenderJob";
+            id: any;
+            jobStatusName: Job_Queues_JobStatus_Enum;
+            data: any;
+            retriesCount: number;
+        }>;
+    } | null;
 };
 
 export type VideoRenderJobDataFragment = {
@@ -38592,14 +38495,11 @@ export type UnmarkVideoRenderJobsMutationVariables = Exact<{
 
 export type UnmarkVideoRenderJobsMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob?:
-        | {
-              __typename?: "video_VideoRenderJob_mutation_response";
-              affected_rows: number;
-              returning: Array<{ __typename?: "video_VideoRenderJob"; id: any }>;
-          }
-        | null
-        | undefined;
+    update_video_VideoRenderJob?: {
+        __typename?: "video_VideoRenderJob_mutation_response";
+        affected_rows: number;
+        returning: Array<{ __typename?: "video_VideoRenderJob"; id: any }>;
+    } | null;
 };
 
 export type OngoingBroadcastableVideoRoomEventsQueryVariables = Exact<{
@@ -38628,31 +38528,22 @@ export type GetEventForArchiveQueryVariables = Exact<{
 
 export type GetEventForArchiveQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              name: string;
-              startTime: any;
-              conferenceId: any;
-              subconferenceId?: any | null | undefined;
-              item?:
-                  | {
-                        __typename?: "content_Item";
-                        id: any;
-                        elements_aggregate: {
-                            __typename?: "content_Element_aggregate";
-                            aggregate?:
-                                | { __typename?: "content_Element_aggregate_fields"; count: number }
-                                | null
-                                | undefined;
-                        };
-                    }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        name: string;
+        startTime: any;
+        conferenceId: any;
+        subconferenceId?: any | null;
+        item?: {
+            __typename?: "content_Item";
+            id: any;
+            elements_aggregate: {
+                __typename?: "content_Element_aggregate";
+                aggregate?: { __typename?: "content_Element_aggregate_fields"; count: number } | null;
+            };
+        } | null;
+    } | null;
 };
 
 export type InsertVonageArchiveElementMutationVariables = Exact<{
@@ -38661,7 +38552,7 @@ export type InsertVonageArchiveElementMutationVariables = Exact<{
 
 export type InsertVonageArchiveElementMutation = {
     __typename?: "mutation_root";
-    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null | undefined;
+    insert_content_Element_one?: { __typename?: "content_Element"; id: any } | null;
 };
 
 export type CheckForVonageRoomRecordingQueryVariables = Exact<{
@@ -38693,7 +38584,7 @@ export type SaveVonageRoomRecordingMutationVariables = Exact<{
 
 export type SaveVonageRoomRecordingMutation = {
     __typename?: "mutation_root";
-    update_video_VonageRoomRecording_by_pk?: { __typename?: "video_VonageRoomRecording"; id: any } | null | undefined;
+    update_video_VonageRoomRecording_by_pk?: { __typename?: "video_VonageRoomRecording"; id: any } | null;
 };
 
 export type Vonage_GetEventDetailsQueryVariables = Exact<{
@@ -38703,36 +38594,27 @@ export type Vonage_GetEventDetailsQueryVariables = Exact<{
 
 export type Vonage_GetEventDetailsQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              conferenceId: any;
-              id: any;
-              intendedRoomModeName: Room_Mode_Enum;
-              enableRecording: boolean;
-              eventVonageSession?:
-                  | { __typename?: "video_EventVonageSession"; id: any; sessionId: string }
-                  | null
-                  | undefined;
-              room: { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null | undefined };
-              eventPeople: Array<{
-                  __typename?: "schedule_EventProgramPerson";
-                  id: any;
-                  roleName: Schedule_EventProgramPersonRole_Enum;
-              }>;
-          }
-        | null
-        | undefined;
-    registrant_Registrant_by_pk?:
-        | {
-              __typename?: "registrant_Registrant";
-              id: any;
-              displayName: string;
-              conferenceId: any;
-              conferenceRole: Registrant_RegistrantRole_Enum;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        conferenceId: any;
+        id: any;
+        intendedRoomModeName: Room_Mode_Enum;
+        enableRecording: boolean;
+        eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
+        room: { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null };
+        eventPeople: Array<{
+            __typename?: "schedule_EventProgramPerson";
+            id: any;
+            roleName: Schedule_EventProgramPersonRole_Enum;
+        }>;
+    } | null;
+    registrant_Registrant_by_pk?: {
+        __typename?: "registrant_Registrant";
+        id: any;
+        displayName: string;
+        conferenceId: any;
+        conferenceRole: Registrant_RegistrantRole_Enum;
+    } | null;
 };
 
 export type VonageJoinRoom_GetInfoQueryVariables = Exact<{
@@ -38742,26 +38624,15 @@ export type VonageJoinRoom_GetInfoQueryVariables = Exact<{
 
 export type VonageJoinRoom_GetInfoQuery = {
     __typename?: "query_root";
-    room_Room_by_pk?:
-        | {
-              __typename?: "room_Room";
-              id: any;
-              item?:
-                  | {
-                        __typename?: "content_Item";
-                        id: any;
-                        itemPeople: Array<{
-                            __typename?: "content_ItemProgramPerson";
-                            id: any;
-                            roleName: string;
-                            personId: any;
-                        }>;
-                    }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    room_Room_by_pk?: {
+        __typename?: "room_Room";
+        id: any;
+        item?: {
+            __typename?: "content_Item";
+            id: any;
+            itemPeople: Array<{ __typename?: "content_ItemProgramPerson"; id: any; roleName: string; personId: any }>;
+        } | null;
+    } | null;
 };
 
 export type AddVonageRoomRecordingToUserListMutationVariables = Exact<{
@@ -38771,10 +38642,10 @@ export type AddVonageRoomRecordingToUserListMutationVariables = Exact<{
 
 export type AddVonageRoomRecordingToUserListMutation = {
     __typename?: "mutation_root";
-    insert_registrant_SavedVonageRoomRecording_one?:
-        | { __typename?: "registrant_SavedVonageRoomRecording"; id: any }
-        | null
-        | undefined;
+    insert_registrant_SavedVonageRoomRecording_one?: {
+        __typename?: "registrant_SavedVonageRoomRecording";
+        id: any;
+    } | null;
 };
 
 export type FindRoomByVonageSessionIdQueryVariables = Exact<{
@@ -38808,25 +38679,22 @@ export type VonageSession_RemoveInvalidStreamsMutationVariables = Exact<{
 
 export type VonageSession_RemoveInvalidStreamsMutation = {
     __typename?: "mutation_root";
-    update_video_VonageParticipantStream?:
-        | { __typename?: "video_VonageParticipantStream_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_video_VonageParticipantStream?: {
+        __typename?: "video_VonageParticipantStream_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type FetchPresenceSummaryQueryVariables = Exact<{ [key: string]: never }>;
 
 export type FetchPresenceSummaryQuery = {
     __typename?: "query_root";
-    presence_Summary?:
-        | {
-              __typename?: "PresenceSummaryOutput";
-              total_unique_tabs: number;
-              total_unique_user_ids: number;
-              pages?: any | null | undefined;
-          }
-        | null
-        | undefined;
+    presence_Summary?: {
+        __typename?: "PresenceSummaryOutput";
+        total_unique_tabs: number;
+        total_unique_user_ids: number;
+        pages?: any | null;
+    } | null;
 };
 
 export type InsertAppStatsMutationVariables = Exact<{
@@ -38835,7 +38703,7 @@ export type InsertAppStatsMutationVariables = Exact<{
 
 export type InsertAppStatsMutation = {
     __typename?: "mutation_root";
-    insert_analytics_AppStats_one?: { __typename?: "analytics_AppStats"; id: number } | null | undefined;
+    insert_analytics_AppStats_one?: { __typename?: "analytics_AppStats"; id: number } | null;
 };
 
 export type GetRegistrantQueryVariables = Exact<{
@@ -38924,16 +38792,13 @@ export type Authorisation_GetRegistrantQueryVariables = Exact<{
 
 export type Authorisation_GetRegistrantQuery = {
     __typename?: "query_root";
-    registrant_Registrant_by_pk?:
-        | {
-              __typename?: "registrant_Registrant";
-              id: any;
-              displayName: string;
-              conferenceId: any;
-              conferenceRole: Registrant_RegistrantRole_Enum;
-          }
-        | null
-        | undefined;
+    registrant_Registrant_by_pk?: {
+        __typename?: "registrant_Registrant";
+        id: any;
+        displayName: string;
+        conferenceId: any;
+        conferenceRole: Registrant_RegistrantRole_Enum;
+    } | null;
 };
 
 export type GetConfigurationValueQueryVariables = Exact<{
@@ -38943,10 +38808,11 @@ export type GetConfigurationValueQueryVariables = Exact<{
 
 export type GetConfigurationValueQuery = {
     __typename?: "query_root";
-    conference_Configuration_by_pk?:
-        | { __typename?: "conference_Configuration"; key: Conference_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    conference_Configuration_by_pk?: {
+        __typename?: "conference_Configuration";
+        key: Conference_ConfigurationKey_Enum;
+        value: any;
+    } | null;
 };
 
 export type Configuration_RecordingEmailNotificationsEnabledFragment = {
@@ -38971,7 +38837,7 @@ export type FailConferencePrepareJobMutationVariables = Exact<{
 
 export type FailConferencePrepareJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_PrepareJob_by_pk?: { __typename?: "job_queues_PrepareJob"; id: any } | null | undefined;
+    update_job_queues_PrepareJob_by_pk?: { __typename?: "job_queues_PrepareJob"; id: any } | null;
 };
 
 export type CompleteConferencePrepareJobMutationVariables = Exact<{
@@ -38980,7 +38846,7 @@ export type CompleteConferencePrepareJobMutationVariables = Exact<{
 
 export type CompleteConferencePrepareJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_PrepareJob_by_pk?: { __typename?: "job_queues_PrepareJob"; id: any } | null | undefined;
+    update_job_queues_PrepareJob_by_pk?: { __typename?: "job_queues_PrepareJob"; id: any } | null;
 };
 
 export type GetElementByIdQueryVariables = Exact<{
@@ -38989,20 +38855,19 @@ export type GetElementByIdQueryVariables = Exact<{
 
 export type GetElementByIdQuery = {
     __typename?: "query_root";
-    content_Element_by_pk?:
-        | { __typename?: "content_Element"; id: any; data: any; typeName: Content_ElementType_Enum }
-        | null
-        | undefined;
+    content_Element_by_pk?: {
+        __typename?: "content_Element";
+        id: any;
+        data: any;
+        typeName: Content_ElementType_Enum;
+    } | null;
 };
 
 export type GetEmailTemplatesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetEmailTemplatesQuery = {
     __typename?: "query_root";
-    emailTemplates?:
-        | { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any }
-        | null
-        | undefined;
+    emailTemplates?: { __typename?: "system_Configuration"; key: System_ConfigurationKey_Enum; value: any } | null;
 };
 
 export type GetEventVonageSessionQueryVariables = Exact<{
@@ -39022,7 +38887,7 @@ export type SetEventVonageSessionIdMutationVariables = Exact<{
 
 export type SetEventVonageSessionIdMutation = {
     __typename?: "mutation_root";
-    insert_video_EventVonageSession_one?: { __typename?: "video_EventVonageSession"; id: any } | null | undefined;
+    insert_video_EventVonageSession_one?: { __typename?: "video_EventVonageSession"; id: any } | null;
 };
 
 export type CreateItemRoom_GetItemQueryVariables = Exact<{
@@ -39031,18 +38896,15 @@ export type CreateItemRoom_GetItemQueryVariables = Exact<{
 
 export type CreateItemRoom_GetItemQuery = {
     __typename?: "query_root";
-    content_Item_by_pk?:
-        | {
-              __typename?: "content_Item";
-              id: any;
-              chatId?: any | null | undefined;
-              conferenceId: any;
-              subconferenceId?: any | null | undefined;
-              title: string;
-              room?: { __typename?: "room_Room"; id: any } | null | undefined;
-          }
-        | null
-        | undefined;
+    content_Item_by_pk?: {
+        __typename?: "content_Item";
+        id: any;
+        chatId?: any | null;
+        conferenceId: any;
+        subconferenceId?: any | null;
+        title: string;
+        room?: { __typename?: "room_Room"; id: any } | null;
+    } | null;
 };
 
 export type Item_CreateRoomMutationVariables = Exact<{
@@ -39055,7 +38917,7 @@ export type Item_CreateRoomMutationVariables = Exact<{
 
 export type Item_CreateRoomMutation = {
     __typename?: "mutation_root";
-    insert_room_Room_one?: { __typename?: "room_Room"; id: any } | null | undefined;
+    insert_room_Room_one?: { __typename?: "room_Room"; id: any } | null;
 };
 
 export type GetRoomConferenceIdQueryVariables = Exact<{
@@ -39064,10 +38926,7 @@ export type GetRoomConferenceIdQueryVariables = Exact<{
 
 export type GetRoomConferenceIdQuery = {
     __typename?: "query_root";
-    room_Room_by_pk?:
-        | { __typename?: "room_Room"; id: any; conferenceId: any; subconferenceId?: any | null | undefined }
-        | null
-        | undefined;
+    room_Room_by_pk?: { __typename?: "room_Room"; id: any; conferenceId: any; subconferenceId?: any | null } | null;
 };
 
 export type GetRoomThatRegistrantCanJoinQueryVariables = Exact<{
@@ -39081,7 +38940,7 @@ export type GetRoomThatRegistrantCanJoinQuery = {
     room_Room: Array<{
         __typename?: "room_Room";
         id: any;
-        publicVonageSessionId?: string | null | undefined;
+        publicVonageSessionId?: string | null;
         conference: {
             __typename?: "conference_Conference";
             registrants: Array<{ __typename?: "registrant_Registrant"; id: any }>;
@@ -39098,7 +38957,7 @@ export type CreateRoomChimeMeetingMutationVariables = Exact<{
 
 export type CreateRoomChimeMeetingMutation = {
     __typename?: "mutation_root";
-    insert_room_ChimeMeeting_one?: { __typename?: "room_ChimeMeeting"; id: any } | null | undefined;
+    insert_room_ChimeMeeting_one?: { __typename?: "room_ChimeMeeting"; id: any } | null;
 };
 
 export type GetRoomChimeMeetingQueryVariables = Exact<{
@@ -39116,10 +38975,7 @@ export type GetRoomVonageMeetingQueryVariables = Exact<{
 
 export type GetRoomVonageMeetingQuery = {
     __typename?: "query_root";
-    room_Room_by_pk?:
-        | { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null | undefined }
-        | null
-        | undefined;
+    room_Room_by_pk?: { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null } | null;
 };
 
 export type GetRoomBySessionIdQueryVariables = Exact<{
@@ -39146,7 +39002,7 @@ export type DeleteRoomChimeMeetingMutationVariables = Exact<{
 
 export type DeleteRoomChimeMeetingMutation = {
     __typename?: "mutation_root";
-    delete_room_ChimeMeeting_by_pk?: { __typename?: "room_ChimeMeeting"; id: any } | null | undefined;
+    delete_room_ChimeMeeting_by_pk?: { __typename?: "room_ChimeMeeting"; id: any } | null;
 };
 
 export type DeleteRoomChimeMeetingForRoomMutationVariables = Exact<{
@@ -39156,10 +39012,7 @@ export type DeleteRoomChimeMeetingForRoomMutationVariables = Exact<{
 
 export type DeleteRoomChimeMeetingForRoomMutation = {
     __typename?: "mutation_root";
-    delete_room_ChimeMeeting?:
-        | { __typename?: "room_ChimeMeeting_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    delete_room_ChimeMeeting?: { __typename?: "room_ChimeMeeting_mutation_response"; affected_rows: number } | null;
 };
 
 export type CreateRoomParticipantMutationVariables = Exact<{
@@ -39172,7 +39025,7 @@ export type CreateRoomParticipantMutationVariables = Exact<{
 
 export type CreateRoomParticipantMutation = {
     __typename?: "mutation_root";
-    insert_room_Participant_one?: { __typename?: "room_Participant"; id: any } | null | undefined;
+    insert_room_Participant_one?: { __typename?: "room_Participant"; id: any } | null;
 };
 
 export type RemoveRoomParticipantMutationVariables = Exact<{
@@ -39183,10 +39036,7 @@ export type RemoveRoomParticipantMutationVariables = Exact<{
 
 export type RemoveRoomParticipantMutation = {
     __typename?: "mutation_root";
-    delete_room_Participant?:
-        | { __typename?: "room_Participant_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    delete_room_Participant?: { __typename?: "room_Participant_mutation_response"; affected_rows: number } | null;
 };
 
 export type CountRoomParticipantsQueryVariables = Exact<{
@@ -39197,7 +39047,7 @@ export type CountRoomParticipantsQuery = {
     __typename?: "query_root";
     room_Participant_aggregate: {
         __typename?: "room_Participant_aggregate";
-        aggregate?: { __typename?: "room_Participant_aggregate_fields"; count: number } | null | undefined;
+        aggregate?: { __typename?: "room_Participant_aggregate_fields"; count: number } | null;
     };
 };
 
@@ -39207,7 +39057,7 @@ export type InsertVonageSessionLayoutMutationVariables = Exact<{
 
 export type InsertVonageSessionLayoutMutation = {
     __typename?: "mutation_root";
-    insert_video_VonageSessionLayout_one?: { __typename?: "video_VonageSessionLayout"; id: any } | null | undefined;
+    insert_video_VonageSessionLayout_one?: { __typename?: "video_VonageSessionLayout"; id: any } | null;
 };
 
 export type GetRoomParticipantDetailsQueryVariables = Exact<{
@@ -39220,14 +39070,14 @@ export type GetRoomParticipantDetailsQuery = {
     room_Participant: Array<{
         __typename?: "room_Participant";
         id: any;
-        vonageConnectionId?: string | null | undefined;
-        chimeRegistrantId?: string | null | undefined;
+        vonageConnectionId?: string | null;
+        chimeRegistrantId?: string | null;
         room: {
             __typename?: "room_Room";
             id: any;
             conferenceId: any;
-            publicVonageSessionId?: string | null | undefined;
-            chimeMeeting?: { __typename?: "room_ChimeMeeting"; id: any; chimeMeetingId: string } | null | undefined;
+            publicVonageSessionId?: string | null;
+            chimeMeeting?: { __typename?: "room_ChimeMeeting"; id: any; chimeMeetingId: string } | null;
         };
     }>;
 };
@@ -39235,14 +39085,14 @@ export type GetRoomParticipantDetailsQuery = {
 export type RoomParticipantFragment = {
     __typename?: "room_Participant";
     id: any;
-    vonageConnectionId?: string | null | undefined;
-    chimeRegistrantId?: string | null | undefined;
+    vonageConnectionId?: string | null;
+    chimeRegistrantId?: string | null;
     room: {
         __typename?: "room_Room";
         id: any;
         conferenceId: any;
-        publicVonageSessionId?: string | null | undefined;
-        chimeMeeting?: { __typename?: "room_ChimeMeeting"; id: any; chimeMeetingId: string } | null | undefined;
+        publicVonageSessionId?: string | null;
+        chimeMeeting?: { __typename?: "room_ChimeMeeting"; id: any; chimeMeetingId: string } | null;
     };
 };
 
@@ -39252,10 +39102,7 @@ export type DeleteRoomParticipantsCreatedBeforeMutationVariables = Exact<{
 
 export type DeleteRoomParticipantsCreatedBeforeMutation = {
     __typename?: "mutation_root";
-    delete_room_Participant?:
-        | { __typename?: "room_Participant_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    delete_room_Participant?: { __typename?: "room_Participant_mutation_response"; affected_rows: number } | null;
 };
 
 export type CreateTranscriptionJobMutationVariables = Exact<{
@@ -39268,7 +39115,7 @@ export type CreateTranscriptionJobMutationVariables = Exact<{
 
 export type CreateTranscriptionJobMutation = {
     __typename?: "mutation_root";
-    insert_video_TranscriptionJob_one?: { __typename?: "video_TranscriptionJob"; id: any } | null | undefined;
+    insert_video_TranscriptionJob_one?: { __typename?: "video_TranscriptionJob"; id: any } | null;
 };
 
 export type GetTranscriptionJobQueryVariables = Exact<{
@@ -39294,10 +39141,7 @@ export type CompleteVideoRenderJobMutationVariables = Exact<{
 
 export type CompleteVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob_by_pk?:
-        | { __typename?: "video_VideoRenderJob"; id: any; elementId: any }
-        | null
-        | undefined;
+    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any; elementId: any } | null;
 };
 
 export type FailVideoRenderJobMutationVariables = Exact<{
@@ -39307,10 +39151,11 @@ export type FailVideoRenderJobMutationVariables = Exact<{
 
 export type FailVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob_by_pk?:
-        | { __typename?: "video_VideoRenderJob"; id: any; conferencePrepareJobId: any }
-        | null
-        | undefined;
+    update_video_VideoRenderJob_by_pk?: {
+        __typename?: "video_VideoRenderJob";
+        id: any;
+        conferencePrepareJobId: any;
+    } | null;
 };
 
 export type ExpireVideoRenderJobMutationVariables = Exact<{
@@ -39320,7 +39165,7 @@ export type ExpireVideoRenderJobMutationVariables = Exact<{
 
 export type ExpireVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any } | null | undefined;
+    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any } | null;
 };
 
 export type UpdateVideoRenderJobMutationVariables = Exact<{
@@ -39330,7 +39175,7 @@ export type UpdateVideoRenderJobMutationVariables = Exact<{
 
 export type UpdateVideoRenderJobMutation = {
     __typename?: "mutation_root";
-    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any } | null | undefined;
+    update_video_VideoRenderJob_by_pk?: { __typename?: "video_VideoRenderJob"; id: any } | null;
 };
 
 export type CountUnfinishedVideoRenderJobsQueryVariables = Exact<{
@@ -39341,7 +39186,7 @@ export type CountUnfinishedVideoRenderJobsQuery = {
     __typename?: "query_root";
     video_VideoRenderJob_aggregate: {
         __typename?: "video_VideoRenderJob_aggregate";
-        aggregate?: { __typename?: "video_VideoRenderJob_aggregate_fields"; count: number } | null | undefined;
+        aggregate?: { __typename?: "video_VideoRenderJob_aggregate_fields"; count: number } | null;
     };
 };
 
@@ -39351,20 +39196,17 @@ export type GetBroadcastVideoRenderJobDetailsQueryVariables = Exact<{
 
 export type GetBroadcastVideoRenderJobDetailsQuery = {
     __typename?: "query_root";
-    video_VideoRenderJob_by_pk?:
-        | {
-              __typename?: "video_VideoRenderJob";
-              id: any;
-              elementId: any;
-              jobStatusName: Job_Queues_JobStatus_Enum;
-              conferencePrepareJob: {
-                  __typename?: "job_queues_PrepareJob";
-                  id: any;
-                  jobStatusName: Job_Queues_JobStatus_Enum;
-              };
-          }
-        | null
-        | undefined;
+    video_VideoRenderJob_by_pk?: {
+        __typename?: "video_VideoRenderJob";
+        id: any;
+        elementId: any;
+        jobStatusName: Job_Queues_JobStatus_Enum;
+        conferencePrepareJob: {
+            __typename?: "job_queues_PrepareJob";
+            id: any;
+            jobStatusName: Job_Queues_JobStatus_Enum;
+        };
+    } | null;
 };
 
 export type OngoingArchivableVideoRoomEventsWithRoomInfoQueryVariables = Exact<{
@@ -39384,35 +39226,26 @@ export type GetEventBroadcastDetailsQueryVariables = Exact<{
 
 export type GetEventBroadcastDetailsQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              room: {
-                  __typename?: "room_Room";
-                  id: any;
-                  channelStack?:
-                      | {
-                            __typename?: "video_ChannelStack";
-                            rtmpAInputUri: string;
-                            rtmpBInputUri?: string | null | undefined;
-                            id: any;
-                        }
-                      | null
-                      | undefined;
-              };
-              eventVonageSession?:
-                  | {
-                        __typename?: "video_EventVonageSession";
-                        sessionId: string;
-                        id: any;
-                        rtmpInputName: Video_RtmpInput_Enum;
-                    }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        room: {
+            __typename?: "room_Room";
+            id: any;
+            channelStack?: {
+                __typename?: "video_ChannelStack";
+                rtmpAInputUri: string;
+                rtmpBInputUri?: string | null;
+                id: any;
+            } | null;
+        };
+        eventVonageSession?: {
+            __typename?: "video_EventVonageSession";
+            sessionId: string;
+            id: any;
+            rtmpInputName: Video_RtmpInput_Enum;
+        } | null;
+    } | null;
 };
 
 export type GetRoomArchiveDetailsQueryVariables = Exact<{
@@ -39421,10 +39254,7 @@ export type GetRoomArchiveDetailsQueryVariables = Exact<{
 
 export type GetRoomArchiveDetailsQuery = {
     __typename?: "query_root";
-    room_Room_by_pk?:
-        | { __typename?: "room_Room"; publicVonageSessionId?: string | null | undefined; id: any }
-        | null
-        | undefined;
+    room_Room_by_pk?: { __typename?: "room_Room"; publicVonageSessionId?: string | null; id: any } | null;
 };
 
 export type CreateVonageRoomRecordingMutationVariables = Exact<{
@@ -39433,7 +39263,7 @@ export type CreateVonageRoomRecordingMutationVariables = Exact<{
 
 export type CreateVonageRoomRecordingMutation = {
     __typename?: "mutation_root";
-    insert_video_VonageRoomRecording_one?: { __typename?: "video_VonageRoomRecording"; id: any } | null | undefined;
+    insert_video_VonageRoomRecording_one?: { __typename?: "video_VonageRoomRecording"; id: any } | null;
 };
 
 export type DisableEventRecordingFlagMutationVariables = Exact<{
@@ -39442,7 +39272,7 @@ export type DisableEventRecordingFlagMutationVariables = Exact<{
 
 export type DisableEventRecordingFlagMutation = {
     __typename?: "mutation_root";
-    update_schedule_Event_by_pk?: { __typename?: "schedule_Event"; id: any } | null | undefined;
+    update_schedule_Event_by_pk?: { __typename?: "schedule_Event"; id: any } | null;
 };
 
 export type GetEventByVonageSessionIdQueryVariables = Exact<{
@@ -39465,10 +39295,7 @@ export type CreateVonageParticipantStreamMutationVariables = Exact<{
 
 export type CreateVonageParticipantStreamMutation = {
     __typename?: "mutation_root";
-    insert_video_VonageParticipantStream_one?:
-        | { __typename?: "video_VonageParticipantStream"; id: any }
-        | null
-        | undefined;
+    insert_video_VonageParticipantStream_one?: { __typename?: "video_VonageParticipantStream"; id: any } | null;
 };
 
 export type RemoveVonageParticipantStreamMutationVariables = Exact<{
@@ -39482,10 +39309,10 @@ export type RemoveVonageParticipantStreamMutationVariables = Exact<{
 
 export type RemoveVonageParticipantStreamMutation = {
     __typename?: "mutation_root";
-    update_video_VonageParticipantStream?:
-        | { __typename?: "video_VonageParticipantStream_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_video_VonageParticipantStream?: {
+        __typename?: "video_VonageParticipantStream_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type GetVonageSessionLayoutQueryVariables = Exact<{
@@ -39494,11 +39321,7 @@ export type GetVonageSessionLayoutQueryVariables = Exact<{
 
 export type GetVonageSessionLayoutQuery = {
     __typename?: "query_root";
-    video_VonageSessionLayout: Array<{
-        __typename?: "video_VonageSessionLayout";
-        id: any;
-        layoutData?: any | null | undefined;
-    }>;
+    video_VonageSessionLayout: Array<{ __typename?: "video_VonageSessionLayout"; id: any; layoutData?: any | null }>;
 };
 
 export type UpdateProfilePhotoMutationVariables = Exact<{
@@ -39513,10 +39336,7 @@ export type UpdateProfilePhotoMutationVariables = Exact<{
 
 export type UpdateProfilePhotoMutation = {
     __typename?: "mutation_root";
-    update_registrant_Profile?:
-        | { __typename?: "registrant_Profile_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_registrant_Profile?: { __typename?: "registrant_Profile_mutation_response"; affected_rows: number } | null;
 };
 
 export const Configuration_RecordingEmailNotificationsEnabledFragmentDoc = {

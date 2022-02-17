@@ -938,6 +938,12 @@ export type TranscribeGeneratePresignedUrlOutput = {
     url: Scalars["String"];
 };
 
+export type UpdateConferenceLogoResponse = {
+    __typename?: "UpdateConferenceLogoResponse";
+    ok: Scalars["Boolean"];
+    url?: Maybe<Scalars["String"]>;
+};
+
 export type UpdateProfilePhotoResponse = {
     __typename?: "UpdateProfilePhotoResponse";
     ok: Scalars["Boolean"];
@@ -14588,6 +14594,7 @@ export type Mutation_Root = {
     submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
     submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
     toggleVonageRecordingState?: Maybe<ToggleVonageRecordingStateOutput>;
+    updateConferenceLogo?: Maybe<UpdateConferenceLogoResponse>;
     updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
     /** update data of the table: "Email" */
@@ -17192,6 +17199,12 @@ export type Mutation_RootSubmitUploadableElementArgs = {
 export type Mutation_RootToggleVonageRecordingStateArgs = {
     recordingActive: Scalars["Boolean"];
     vonageSessionId: Scalars["String"];
+};
+
+/** mutation root */
+export type Mutation_RootUpdateConferenceLogoArgs = {
+    conferenceId: Scalars["uuid"];
+    url?: InputMaybe<Scalars["String"]>;
 };
 
 /** mutation root */
@@ -37045,8 +37058,8 @@ export enum Video_YouTubeUpload_Update_Column {
 }
 
 export type GetRoomsNeedingChannelStackQueryVariables = Exact<{
-    now?: Maybe<Scalars["timestamptz"]>;
-    future?: Maybe<Scalars["timestamptz"]>;
+    now?: InputMaybe<Scalars["timestamptz"]>;
+    future?: InputMaybe<Scalars["timestamptz"]>;
 }>;
 
 export type GetRoomsNeedingChannelStackQuery = {
@@ -37056,22 +37069,19 @@ export type GetRoomsNeedingChannelStackQuery = {
         id: any;
         conferenceId: any;
         name: string;
-        rtmpOutput?:
-            | { __typename?: "video_RoomRtmpOutput"; id: any; url: string; streamKey: string }
-            | null
-            | undefined;
+        rtmpOutput?: { __typename?: "video_RoomRtmpOutput"; id: any; url: string; streamKey: string } | null;
     }>;
 };
 
 export type GetObsoleteChannelStacksQueryVariables = Exact<{
-    past?: Maybe<Scalars["timestamptz"]>;
+    past?: InputMaybe<Scalars["timestamptz"]>;
 }>;
 
 export type GetObsoleteChannelStacksQuery = {
     __typename?: "query_root";
     video_ChannelStack: Array<{
         __typename?: "video_ChannelStack";
-        cloudFormationStackArn?: string | null | undefined;
+        cloudFormationStackArn?: string | null;
         mediaLiveChannelId: string;
         channelStackId: any;
     }>;
@@ -37084,22 +37094,16 @@ export type GetChannelStacksThatMightNeedUpdateQuery = {
     video_ChannelStack: Array<{
         __typename?: "video_ChannelStack";
         id: any;
-        cloudFormationStackArn?: string | null | undefined;
+        cloudFormationStackArn?: string | null;
         mediaLiveChannelId: string;
-        rtmpOutputUri?: string | null | undefined;
-        rtmpOutputStreamKey?: string | null | undefined;
-        rtmpOutputDestinationId?: string | null | undefined;
-        room?:
-            | {
-                  __typename?: "room_Room";
-                  id: any;
-                  rtmpOutput?:
-                      | { __typename?: "video_RoomRtmpOutput"; id: any; url: string; streamKey: string }
-                      | null
-                      | undefined;
-              }
-            | null
-            | undefined;
+        rtmpOutputUri?: string | null;
+        rtmpOutputStreamKey?: string | null;
+        rtmpOutputDestinationId?: string | null;
+        room?: {
+            __typename?: "room_Room";
+            id: any;
+            rtmpOutput?: { __typename?: "video_RoomRtmpOutput"; id: any; url: string; streamKey: string } | null;
+        } | null;
     }>;
 };
 
@@ -37109,10 +37113,10 @@ export type ChannelStatus_UpdatedMediaLiveChannelStatusesMutationVariables = Exa
 
 export type ChannelStatus_UpdatedMediaLiveChannelStatusesMutation = {
     __typename?: "mutation_root";
-    insert_video_MediaLiveChannelStatus?:
-        | { __typename?: "video_MediaLiveChannelStatus_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    insert_video_MediaLiveChannelStatus?: {
+        __typename?: "video_MediaLiveChannelStatus_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type CreateChannelStackCreateJobMutationVariables = Exact<{
@@ -37123,10 +37127,7 @@ export type CreateChannelStackCreateJobMutationVariables = Exact<{
 
 export type CreateChannelStackCreateJobMutation = {
     __typename?: "mutation_root";
-    insert_job_queues_ChannelStackCreateJob_one?:
-        | { __typename?: "job_queues_ChannelStackCreateJob"; id: any }
-        | null
-        | undefined;
+    insert_job_queues_ChannelStackCreateJob_one?: { __typename?: "job_queues_ChannelStackCreateJob"; id: any } | null;
 };
 
 export type GetChannelStackCreateJobQueryVariables = Exact<{
@@ -37135,10 +37136,11 @@ export type GetChannelStackCreateJobQueryVariables = Exact<{
 
 export type GetChannelStackCreateJobQuery = {
     __typename?: "query_root";
-    job_queues_ChannelStackCreateJob_by_pk?:
-        | { __typename?: "job_queues_ChannelStackCreateJob"; id: any; jobStatusName: Job_Queues_JobStatus_Enum }
-        | null
-        | undefined;
+    job_queues_ChannelStackCreateJob_by_pk?: {
+        __typename?: "job_queues_ChannelStackCreateJob";
+        id: any;
+        jobStatusName: Job_Queues_JobStatus_Enum;
+    } | null;
 };
 
 export type FailChannelStackCreateJobMutationVariables = Exact<{
@@ -37148,10 +37150,7 @@ export type FailChannelStackCreateJobMutationVariables = Exact<{
 
 export type FailChannelStackCreateJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_ChannelStackCreateJob_by_pk?:
-        | { __typename?: "job_queues_ChannelStackCreateJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_ChannelStackCreateJob_by_pk?: { __typename?: "job_queues_ChannelStackCreateJob"; id: any } | null;
 };
 
 export type CompleteChannelStackCreateJobMutationVariables = Exact<{
@@ -37160,10 +37159,7 @@ export type CompleteChannelStackCreateJobMutationVariables = Exact<{
 
 export type CompleteChannelStackCreateJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_ChannelStackCreateJob_by_pk?:
-        | { __typename?: "job_queues_ChannelStackCreateJob"; id: any }
-        | null
-        | undefined;
+    update_job_queues_ChannelStackCreateJob_by_pk?: { __typename?: "job_queues_ChannelStackCreateJob"; id: any } | null;
 };
 
 export type FindChannelStackCreateJobByLogicalResourceIdQueryVariables = Exact<{
@@ -37222,15 +37218,15 @@ export type ChannelStackSync_GetStuckChannelStackDeleteJobsQuery = {
 export type ChannelStack_CompleteChannelStackDeleteJobMutationVariables = Exact<{
     cloudFormationStackArn: Scalars["String"];
     status: Job_Queues_JobStatus_Enum;
-    message?: Maybe<Scalars["String"]>;
+    message?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type ChannelStack_CompleteChannelStackDeleteJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_ChannelStackDeleteJob?:
-        | { __typename?: "job_queues_ChannelStackDeleteJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_ChannelStackDeleteJob?: {
+        __typename?: "job_queues_ChannelStackDeleteJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type ChannelStackSync_GetChannelStackUpdateJobsQueryVariables = Exact<{ [key: string]: never }>;
@@ -37240,14 +37236,14 @@ export type ChannelStackSync_GetChannelStackUpdateJobsQuery = {
     job_queues_ChannelStackUpdateJob: Array<{
         __typename?: "job_queues_ChannelStackUpdateJob";
         id: any;
-        channelStackId?: any | null | undefined;
+        channelStackId?: any | null;
         mediaLiveChannelId: string;
         cloudFormationStackArn: string;
-        oldRtmpOutputUri?: string | null | undefined;
-        oldRtmpOutputStreamKey?: string | null | undefined;
-        oldRtmpOutputDestinationId?: string | null | undefined;
-        newRtmpOutputUri?: string | null | undefined;
-        newRtmpOutputStreamKey?: string | null | undefined;
+        oldRtmpOutputUri?: string | null;
+        oldRtmpOutputStreamKey?: string | null;
+        oldRtmpOutputDestinationId?: string | null;
+        newRtmpOutputUri?: string | null;
+        newRtmpOutputStreamKey?: string | null;
     }>;
 };
 
@@ -37260,7 +37256,7 @@ export type ChannelStackSync_GetStuckChannelStackUpdateJobsQuery = {
     job_queues_ChannelStackUpdateJob: Array<{
         __typename?: "job_queues_ChannelStackUpdateJob";
         id: any;
-        channelStackId?: any | null | undefined;
+        channelStackId?: any | null;
         mediaLiveChannelId: string;
         cloudFormationStackArn: string;
     }>;
@@ -37268,45 +37264,42 @@ export type ChannelStackSync_GetStuckChannelStackUpdateJobsQuery = {
 
 export type ChannelStack_UpdateChannelStackMutationVariables = Exact<{
     mediaLiveChannelId: Scalars["String"];
-    rtmpOutputUri?: Maybe<Scalars["String"]>;
-    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
-    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type ChannelStack_UpdateChannelStackMutation = {
     __typename?: "mutation_root";
-    update_video_ChannelStack?:
-        | { __typename?: "video_ChannelStack_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_video_ChannelStack?: { __typename?: "video_ChannelStack_mutation_response"; affected_rows: number } | null;
 };
 
 export type ChannelStack_SetChannelStackUpdateJobStatusMutationVariables = Exact<{
     cloudFormationStackArn: Scalars["String"];
     status: Job_Queues_JobStatus_Enum;
-    message?: Maybe<Scalars["String"]>;
+    message?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type ChannelStack_SetChannelStackUpdateJobStatusMutation = {
     __typename?: "mutation_root";
-    update_job_queues_ChannelStackUpdateJob?:
-        | { __typename?: "job_queues_ChannelStackUpdateJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_ChannelStackUpdateJob?: {
+        __typename?: "job_queues_ChannelStackUpdateJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutationVariables = Exact<{
     mediaLiveChannelId: Scalars["String"];
     status: Job_Queues_JobStatus_Enum;
-    message?: Maybe<Scalars["String"]>;
+    message?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutation = {
     __typename?: "mutation_root";
-    update_job_queues_ChannelStackUpdateJob?:
-        | { __typename?: "job_queues_ChannelStackUpdateJob_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_job_queues_ChannelStackUpdateJob?: {
+        __typename?: "job_queues_ChannelStackUpdateJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type GetChannelStackByRoomQueryVariables = Exact<{
@@ -37315,26 +37308,20 @@ export type GetChannelStackByRoomQueryVariables = Exact<{
 
 export type GetChannelStackByRoomQuery = {
     __typename?: "query_root";
-    room_Room_by_pk?:
-        | {
-              __typename?: "room_Room";
-              id: any;
-              conferenceId: any;
-              channelStack?:
-                  | {
-                        __typename?: "video_ChannelStack";
-                        id: any;
-                        mediaLiveChannelId: string;
-                        mp4InputAttachmentName: string;
-                        rtmpAInputAttachmentName: string;
-                        rtmpBInputAttachmentName?: string | null | undefined;
-                        loopingMp4InputAttachmentName: string;
-                    }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    room_Room_by_pk?: {
+        __typename?: "room_Room";
+        id: any;
+        conferenceId: any;
+        channelStack?: {
+            __typename?: "video_ChannelStack";
+            id: any;
+            mediaLiveChannelId: string;
+            mp4InputAttachmentName: string;
+            rtmpAInputAttachmentName: string;
+            rtmpBInputAttachmentName?: string | null;
+            loopingMp4InputAttachmentName: string;
+        } | null;
+    } | null;
 };
 
 export type CreateChannelStackMutationVariables = Exact<{
@@ -37353,9 +37340,9 @@ export type CreateChannelStackMutationVariables = Exact<{
     loopingMp4InputAttachmentName: Scalars["String"];
     rtmpAInputAttachmentName: Scalars["String"];
     rtmpBInputAttachmentName: Scalars["String"];
-    rtmpOutputUri?: Maybe<Scalars["String"]>;
-    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
-    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     conferenceId: Scalars["uuid"];
     channelStackCreateJobId: Scalars["uuid"];
     roomId: Scalars["uuid"];
@@ -37363,7 +37350,7 @@ export type CreateChannelStackMutationVariables = Exact<{
 
 export type CreateChannelStackMutation = {
     __typename?: "mutation_root";
-    insert_video_ChannelStack_one?: { __typename?: "video_ChannelStack"; id: any } | null | undefined;
+    insert_video_ChannelStack_one?: { __typename?: "video_ChannelStack"; id: any } | null;
 };
 
 export type ChannelStack_DeleteMutationVariables = Exact<{
@@ -37372,10 +37359,11 @@ export type ChannelStack_DeleteMutationVariables = Exact<{
 
 export type ChannelStack_DeleteMutation = {
     __typename?: "mutation_root";
-    delete_video_ChannelStack_by_pk?:
-        | { __typename?: "video_ChannelStack"; id: any; cloudFormationStackArn?: string | null | undefined }
-        | null
-        | undefined;
+    delete_video_ChannelStack_by_pk?: {
+        __typename?: "video_ChannelStack";
+        id: any;
+        cloudFormationStackArn?: string | null;
+    } | null;
 };
 
 export type FindChannelStacksByStackArnQueryVariables = Exact<{
@@ -37393,7 +37381,7 @@ export type ChannelStack_DetachMutationVariables = Exact<{
 
 export type ChannelStack_DetachMutation = {
     __typename?: "mutation_root";
-    update_video_ChannelStack_by_pk?: { __typename?: "video_ChannelStack"; id: any } | null | undefined;
+    update_video_ChannelStack_by_pk?: { __typename?: "video_ChannelStack"; id: any } | null;
 };
 
 export type ChannelStack_UpdateJob_GetChannelStackQueryVariables = Exact<{
@@ -37402,47 +37390,35 @@ export type ChannelStack_UpdateJob_GetChannelStackQueryVariables = Exact<{
 
 export type ChannelStack_UpdateJob_GetChannelStackQuery = {
     __typename?: "query_root";
-    video_ChannelStack_by_pk?:
-        | {
-              __typename?: "video_ChannelStack";
-              id: any;
-              cloudFormationStackArn?: string | null | undefined;
-              rtmpOutputUri?: string | null | undefined;
-              rtmpOutputStreamKey?: string | null | undefined;
-              rtmpOutputDestinationId?: string | null | undefined;
-              room?:
-                  | {
-                        __typename?: "room_Room";
-                        id: any;
-                        rtmpOutput?:
-                            | { __typename?: "video_RoomRtmpOutput"; id: any; url: string; streamKey: string }
-                            | null
-                            | undefined;
-                    }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    video_ChannelStack_by_pk?: {
+        __typename?: "video_ChannelStack";
+        id: any;
+        cloudFormationStackArn?: string | null;
+        rtmpOutputUri?: string | null;
+        rtmpOutputStreamKey?: string | null;
+        rtmpOutputDestinationId?: string | null;
+        room?: {
+            __typename?: "room_Room";
+            id: any;
+            rtmpOutput?: { __typename?: "video_RoomRtmpOutput"; id: any; url: string; streamKey: string } | null;
+        } | null;
+    } | null;
 };
 
 export type ChannelStack_CreateChannelStackUpdateJobMutationVariables = Exact<{
     channelStackId: Scalars["uuid"];
     cloudFormationStackArn: Scalars["String"];
     mediaLiveChannelId: Scalars["String"];
-    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
-    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
-    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
-    newRtmpOutputUri?: Maybe<Scalars["String"]>;
-    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
+    newRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type ChannelStack_CreateChannelStackUpdateJobMutation = {
     __typename?: "mutation_root";
-    insert_job_queues_ChannelStackUpdateJob_one?:
-        | { __typename?: "job_queues_ChannelStackUpdateJob"; id: any }
-        | null
-        | undefined;
+    insert_job_queues_ChannelStackUpdateJob_one?: { __typename?: "job_queues_ChannelStackUpdateJob"; id: any } | null;
 };
 
 export type ChannelStack_GetChannelStackCloudFormationStackArnQueryVariables = Exact<{
@@ -37451,10 +37427,11 @@ export type ChannelStack_GetChannelStackCloudFormationStackArnQueryVariables = E
 
 export type ChannelStack_GetChannelStackCloudFormationStackArnQuery = {
     __typename?: "query_root";
-    video_ChannelStack_by_pk?:
-        | { __typename?: "video_ChannelStack"; id: any; cloudFormationStackArn?: string | null | undefined }
-        | null
-        | undefined;
+    video_ChannelStack_by_pk?: {
+        __typename?: "video_ChannelStack";
+        id: any;
+        cloudFormationStackArn?: string | null;
+    } | null;
 };
 
 export type ChannelStack_CreateChannelStackDeleteJobMutationVariables = Exact<{
@@ -37464,10 +37441,7 @@ export type ChannelStack_CreateChannelStackDeleteJobMutationVariables = Exact<{
 
 export type ChannelStack_CreateChannelStackDeleteJobMutation = {
     __typename?: "mutation_root";
-    insert_job_queues_ChannelStackDeleteJob_one?:
-        | { __typename?: "job_queues_ChannelStackDeleteJob"; id: any }
-        | null
-        | undefined;
+    insert_job_queues_ChannelStackDeleteJob_one?: { __typename?: "job_queues_ChannelStackDeleteJob"; id: any } | null;
 };
 
 export type ChannelStack_GetChannelStacksQueryVariables = Exact<{ [key: string]: never }>;
@@ -37478,7 +37452,7 @@ export type ChannelStack_GetChannelStacksQuery = {
         __typename?: "video_ChannelStack";
         conferenceId: any;
         mediaLiveChannelId: string;
-        roomId?: any | null | undefined;
+        roomId?: any | null;
         channelStackId: any;
     }>;
 };
@@ -37495,16 +37469,13 @@ export type ChannelStack_GetFirstSyncableEventQuery = {
         __typename?: "video_ChannelStack";
         id: any;
         conferenceId: any;
-        room?:
-            | {
-                  __typename?: "room_Room";
-                  id: any;
-                  immediateEvent: Array<{ __typename?: "schedule_Event"; id: any }>;
-                  delayedImmediateEvent: Array<{ __typename?: "schedule_Event"; id: any }>;
-                  fixedEvent: Array<{ __typename?: "schedule_Event"; id: any }>;
-              }
-            | null
-            | undefined;
+        room?: {
+            __typename?: "room_Room";
+            id: any;
+            immediateEvent: Array<{ __typename?: "schedule_Event"; id: any }>;
+            delayedImmediateEvent: Array<{ __typename?: "schedule_Event"; id: any }>;
+            fixedEvent: Array<{ __typename?: "schedule_Event"; id: any }>;
+        } | null;
     }>;
 };
 
@@ -37515,15 +37486,12 @@ export type ConferenceConfiguration_GetConfigurationValueQueryVariables = Exact<
 
 export type ConferenceConfiguration_GetConfigurationValueQuery = {
     __typename?: "query_root";
-    conference_Configuration_by_pk?:
-        | {
-              __typename?: "conference_Configuration";
-              conferenceId: any;
-              key: Conference_ConfigurationKey_Enum;
-              value: any;
-          }
-        | null
-        | undefined;
+    conference_Configuration_by_pk?: {
+        __typename?: "conference_Configuration";
+        conferenceId: any;
+        key: Conference_ConfigurationKey_Enum;
+        value: any;
+    } | null;
 };
 
 export type ContentElement_GetElementQueryVariables = Exact<{
@@ -37532,10 +37500,7 @@ export type ContentElement_GetElementQueryVariables = Exact<{
 
 export type ContentElement_GetElementQuery = {
     __typename?: "query_root";
-    content_Element_by_pk?:
-        | { __typename?: "content_Element"; id: any; data: any; conferenceId: any }
-        | null
-        | undefined;
+    content_Element_by_pk?: { __typename?: "content_Element"; id: any; data: any; conferenceId: any } | null;
 };
 
 export type ImmediateSwitch_CompleteMutationVariables = Exact<{
@@ -37545,7 +37510,7 @@ export type ImmediateSwitch_CompleteMutationVariables = Exact<{
 
 export type ImmediateSwitch_CompleteMutation = {
     __typename?: "mutation_root";
-    update_video_ImmediateSwitch_by_pk?: { __typename?: "video_ImmediateSwitch"; id: any } | null | undefined;
+    update_video_ImmediateSwitch_by_pk?: { __typename?: "video_ImmediateSwitch"; id: any } | null;
 };
 
 export type ImmediateSwitch_FailMutationVariables = Exact<{
@@ -37555,7 +37520,7 @@ export type ImmediateSwitch_FailMutationVariables = Exact<{
 
 export type ImmediateSwitch_FailMutation = {
     __typename?: "mutation_root";
-    update_video_ImmediateSwitch_by_pk?: { __typename?: "video_ImmediateSwitch"; id: any } | null | undefined;
+    update_video_ImmediateSwitch_by_pk?: { __typename?: "video_ImmediateSwitch"; id: any } | null;
 };
 
 export type ScheduleService_GetRoomsWithBroadcastEventsQueryVariables = Exact<{
@@ -37573,28 +37538,23 @@ export type LocalSchedule_GetEventScheduleQueryVariables = Exact<{
 
 export type LocalSchedule_GetEventScheduleQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              endTime?: any | null | undefined;
-              startTime: any;
-              intendedRoomModeName: Room_Mode_Enum;
-              item?:
-                  | {
-                        __typename?: "content_Item";
-                        id: any;
-                        elements: Array<{ __typename?: "content_Element"; id: any; data: any }>;
-                    }
-                  | null
-                  | undefined;
-              eventVonageSession?:
-                  | { __typename?: "video_EventVonageSession"; id: any; rtmpInputName: Video_RtmpInput_Enum }
-                  | null
-                  | undefined;
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        endTime?: any | null;
+        startTime: any;
+        intendedRoomModeName: Room_Mode_Enum;
+        item?: {
+            __typename?: "content_Item";
+            id: any;
+            elements: Array<{ __typename?: "content_Element"; id: any; data: any }>;
+        } | null;
+        eventVonageSession?: {
+            __typename?: "video_EventVonageSession";
+            id: any;
+            rtmpInputName: Video_RtmpInput_Enum;
+        } | null;
+    } | null;
 };
 
 export type LocalSchedule_GetScheduleQueryVariables = Exact<{
@@ -37608,42 +37568,38 @@ export type LocalSchedule_GetScheduleQuery = {
     schedule_Event: Array<{
         __typename?: "schedule_Event";
         id: any;
-        endTime?: any | null | undefined;
+        endTime?: any | null;
         startTime: any;
         intendedRoomModeName: Room_Mode_Enum;
-        item?:
-            | {
-                  __typename?: "content_Item";
-                  id: any;
-                  elements: Array<{ __typename?: "content_Element"; id: any; data: any }>;
-              }
-            | null
-            | undefined;
-        eventVonageSession?:
-            | { __typename?: "video_EventVonageSession"; id: any; rtmpInputName: Video_RtmpInput_Enum }
-            | null
-            | undefined;
+        item?: {
+            __typename?: "content_Item";
+            id: any;
+            elements: Array<{ __typename?: "content_Element"; id: any; data: any }>;
+        } | null;
+        eventVonageSession?: {
+            __typename?: "video_EventVonageSession";
+            id: any;
+            rtmpInputName: Video_RtmpInput_Enum;
+        } | null;
     }>;
 };
 
 export type LocalSchedule_EventDetailsFragment = {
     __typename?: "schedule_Event";
     id: any;
-    endTime?: any | null | undefined;
+    endTime?: any | null;
     startTime: any;
     intendedRoomModeName: Room_Mode_Enum;
-    item?:
-        | {
-              __typename?: "content_Item";
-              id: any;
-              elements: Array<{ __typename?: "content_Element"; id: any; data: any }>;
-          }
-        | null
-        | undefined;
-    eventVonageSession?:
-        | { __typename?: "video_EventVonageSession"; id: any; rtmpInputName: Video_RtmpInput_Enum }
-        | null
-        | undefined;
+    item?: {
+        __typename?: "content_Item";
+        id: any;
+        elements: Array<{ __typename?: "content_Element"; id: any; data: any }>;
+    } | null;
+    eventVonageSession?: {
+        __typename?: "video_EventVonageSession";
+        id: any;
+        rtmpInputName: Video_RtmpInput_Enum;
+    } | null;
 };
 
 export type ScheduleService_UpdateRtmpInputsMutationVariables = Exact<{
@@ -37655,19 +37611,19 @@ export type ScheduleService_UpdateRtmpInputsMutationVariables = Exact<{
 
 export type ScheduleService_UpdateRtmpInputsMutation = {
     __typename?: "mutation_root";
-    update_EvenEventVonageSessions?:
-        | { __typename?: "video_EventVonageSession_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
-    update_OddEventVonageSessions?:
-        | { __typename?: "video_EventVonageSession_mutation_response"; affected_rows: number }
-        | null
-        | undefined;
+    update_EvenEventVonageSessions?: {
+        __typename?: "video_EventVonageSession_mutation_response";
+        affected_rows: number;
+    } | null;
+    update_OddEventVonageSessions?: {
+        __typename?: "video_EventVonageSession_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type LocalSchedule_GetRoomsWithEventsStartingQueryVariables = Exact<{
-    from?: Maybe<Scalars["timestamptz"]>;
-    to?: Maybe<Scalars["timestamptz"]>;
+    from?: InputMaybe<Scalars["timestamptz"]>;
+    to?: InputMaybe<Scalars["timestamptz"]>;
 }>;
 
 export type LocalSchedule_GetRoomsWithEventsStartingQuery = {
@@ -37676,13 +37632,13 @@ export type LocalSchedule_GetRoomsWithEventsStartingQuery = {
         __typename?: "room_Room";
         id: any;
         conferenceId: any;
-        channelStack?: { __typename?: "video_ChannelStack"; id: any; mediaLiveChannelId: string } | null | undefined;
+        channelStack?: { __typename?: "video_ChannelStack"; id: any; mediaLiveChannelId: string } | null;
     }>;
 };
 
 export type LocalSchedule_GetRoomsWithoutEventsQueryVariables = Exact<{
-    from?: Maybe<Scalars["timestamptz"]>;
-    to?: Maybe<Scalars["timestamptz"]>;
+    from?: InputMaybe<Scalars["timestamptz"]>;
+    to?: InputMaybe<Scalars["timestamptz"]>;
 }>;
 
 export type LocalSchedule_GetRoomsWithoutEventsQuery = {
@@ -37691,7 +37647,7 @@ export type LocalSchedule_GetRoomsWithoutEventsQuery = {
         __typename?: "room_Room";
         id: any;
         conferenceId: any;
-        channelStack?: { __typename?: "video_ChannelStack"; id: any; mediaLiveChannelId: string } | null | undefined;
+        channelStack?: { __typename?: "video_ChannelStack"; id: any; mediaLiveChannelId: string } | null;
     }>;
 };
 
@@ -37701,63 +37657,48 @@ export type LocalSchedule_GetEventQueryVariables = Exact<{
 
 export type LocalSchedule_GetEventQuery = {
     __typename?: "query_root";
-    schedule_Event_by_pk?:
-        | {
-              __typename?: "schedule_Event";
-              id: any;
-              conferenceId: any;
-              endTime?: any | null | undefined;
-              startTime: any;
-              eventVonageSession?:
-                  | { __typename?: "video_EventVonageSession"; rtmpInputName: Video_RtmpInput_Enum }
-                  | null
-                  | undefined;
-              room: {
-                  __typename?: "room_Room";
-                  id: any;
-                  channelStack?:
-                      | {
-                            __typename?: "video_ChannelStack";
-                            id: any;
-                            mediaLiveChannelId: string;
-                            rtmpAInputAttachmentName: string;
-                            rtmpBInputAttachmentName?: string | null | undefined;
-                            mp4InputAttachmentName: string;
-                            loopingMp4InputAttachmentName: string;
-                        }
-                      | null
-                      | undefined;
-              };
-          }
-        | null
-        | undefined;
+    schedule_Event_by_pk?: {
+        __typename?: "schedule_Event";
+        id: any;
+        conferenceId: any;
+        endTime?: any | null;
+        startTime: any;
+        eventVonageSession?: { __typename?: "video_EventVonageSession"; rtmpInputName: Video_RtmpInput_Enum } | null;
+        room: {
+            __typename?: "room_Room";
+            id: any;
+            channelStack?: {
+                __typename?: "video_ChannelStack";
+                id: any;
+                mediaLiveChannelId: string;
+                rtmpAInputAttachmentName: string;
+                rtmpBInputAttachmentName?: string | null;
+                mp4InputAttachmentName: string;
+                loopingMp4InputAttachmentName: string;
+            } | null;
+        };
+    } | null;
 };
 
 export type LocalSchedule_EventFragment = {
     __typename?: "schedule_Event";
     id: any;
     conferenceId: any;
-    endTime?: any | null | undefined;
+    endTime?: any | null;
     startTime: any;
-    eventVonageSession?:
-        | { __typename?: "video_EventVonageSession"; rtmpInputName: Video_RtmpInput_Enum }
-        | null
-        | undefined;
+    eventVonageSession?: { __typename?: "video_EventVonageSession"; rtmpInputName: Video_RtmpInput_Enum } | null;
     room: {
         __typename?: "room_Room";
         id: any;
-        channelStack?:
-            | {
-                  __typename?: "video_ChannelStack";
-                  id: any;
-                  mediaLiveChannelId: string;
-                  rtmpAInputAttachmentName: string;
-                  rtmpBInputAttachmentName?: string | null | undefined;
-                  mp4InputAttachmentName: string;
-                  loopingMp4InputAttachmentName: string;
-              }
-            | null
-            | undefined;
+        channelStack?: {
+            __typename?: "video_ChannelStack";
+            id: any;
+            mediaLiveChannelId: string;
+            rtmpAInputAttachmentName: string;
+            rtmpBInputAttachmentName?: string | null;
+            mp4InputAttachmentName: string;
+            loopingMp4InputAttachmentName: string;
+        } | null;
     };
 };
 
@@ -37776,7 +37717,7 @@ export type VonageService_CreateEventVonageSessionMutationVariables = Exact<{
 
 export type VonageService_CreateEventVonageSessionMutation = {
     __typename?: "mutation_root";
-    insert_video_EventVonageSession_one?: { __typename?: "video_EventVonageSession"; id: any } | null | undefined;
+    insert_video_EventVonageSession_one?: { __typename?: "video_EventVonageSession"; id: any } | null;
 };
 
 export const LocalSchedule_EventDetailsFragmentDoc = {

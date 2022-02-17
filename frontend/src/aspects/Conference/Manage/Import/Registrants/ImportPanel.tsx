@@ -117,9 +117,11 @@ export default function ImportPanel({
         return Object.values(inputData).reduce((acc, input) => {
             for (const row of input) {
                 const email = row.email.trim().toLowerCase();
-                const group = groupsData?.registrant_Group.find(
-                    (g) => g.name.trim().toLowerCase() === row.group.trim().toLowerCase()
-                );
+                const group = row.group?.length
+                    ? groupsData?.registrant_Group.find(
+                          (g) => g.name.trim().toLowerCase() === row.group?.trim().toLowerCase()
+                      )
+                    : undefined;
 
                 const existingFinal = acc.find((x) => x.email === email);
                 if (existingFinal) {
@@ -135,11 +137,13 @@ export default function ImportPanel({
                         ) {
                             existingFinal.groups.push(group);
                         }
-                    } else {
+                    } else if (row.group?.length) {
                         if (!existingFinal.missingGroups) {
                             existingFinal.missingGroups = [row.group.trim()];
                         } else if (
-                            !existingFinal.missingGroups.some((x) => x.toLowerCase() === row.group.trim().toLowerCase())
+                            !existingFinal.missingGroups.some(
+                                (x) => x.toLowerCase() === row.group?.trim().toLowerCase()
+                            )
                         ) {
                             existingFinal.missingGroups.push(row.group.trim());
                         }
@@ -158,7 +162,7 @@ export default function ImportPanel({
                                 email,
                                 name: existingOriginal.displayName,
                                 groups: group ? [group] : [],
-                                missingGroups: !group ? [row.group.trim()] : undefined,
+                                missingGroups: !group && row.group ? [row.group.trim()] : undefined,
                             });
                         }
                     } else {
@@ -169,7 +173,7 @@ export default function ImportPanel({
                             email,
                             name,
                             groups: group ? [group] : [],
-                            missingGroups: !group ? [row.group.trim()] : undefined,
+                            missingGroups: !group && row.group ? [row.group.trim()] : undefined,
                         });
                     }
                 }

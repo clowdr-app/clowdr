@@ -20,12 +20,13 @@ export function Gallery({
 }): JSX.Element {
     const containerRef = React.useRef<HTMLDivElement>(null);
     const [containerWidth, containerHeight] = useSize(containerRef);
+    const minPreferredEdgeLength = 100 * (window.devicePixelRatio ?? 1);
 
     const [maxColumns, maxRows] = useMemo(() => {
-        const minEdgeLength = Math.min(200, containerWidth, containerHeight);
+        const minEdgeLength = Math.min(minPreferredEdgeLength, containerWidth, containerHeight);
 
         return [Math.floor(containerWidth / minEdgeLength), Math.floor(containerHeight / minEdgeLength)];
-    }, [containerHeight, containerWidth]);
+    }, [containerHeight, containerWidth, minPreferredEdgeLength]);
 
     const maxPerPage = maxColumns * maxRows;
     const pages = Math.ceil(viewports.length / maxPerPage);
@@ -45,7 +46,7 @@ export function Gallery({
 
     return (
         <Box position="relative" w="100%" h="100%" overflow="hidden">
-            <Center ref={containerRef} h="100%" w="100%">
+            <Center ref={containerRef} h="100%" w="100%" isolation="isolate">
                 <GalleryPage
                     maxColumns={maxColumns}
                     viewports={pageViewports}
@@ -63,20 +64,27 @@ export function Gallery({
                 flexDirection="row"
                 justifyContent="space-between"
                 alignItems="center"
+                pointerEvents="none"
             >
                 <IconButton
                     aria-label="Go back a page"
                     icon={<ArrowBackIcon />}
                     isDisabled={currentPage <= 0}
-                    size="sm"
+                    size="xs"
+                    colorScheme="RoomControlBarButton"
+                    opacity={0.8}
                     onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                    pointerEvents="auto"
                 />
                 <IconButton
                     aria-label="Go forward a page"
                     icon={<ArrowForwardIcon />}
                     isDisabled={currentPage >= pages - 1}
-                    size="sm"
+                    size="xs"
+                    colorScheme="RoomControlBarButton"
+                    opacity={0.8}
                     onClick={() => setCurrentPage((p) => Math.min(pages - 1, p + 1))}
+                    pointerEvents="auto"
                 />
             </Flex>
         </Box>

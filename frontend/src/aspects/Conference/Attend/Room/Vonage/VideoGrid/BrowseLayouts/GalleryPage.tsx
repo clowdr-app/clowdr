@@ -54,11 +54,6 @@ export function GalleryPage({
     }, [streamActivities, viewports]);
     usePolling(computeEnabledStreamIds, 1500);
 
-    // const [columns, rows] = useMemo(
-    //     () => [Math.min(viewports.length, maxColumns), Math.max(1, Math.ceil(viewports.length / maxColumns))],
-    //     [maxColumns, viewports.length]
-    // );
-
     const [columns, rows] = useMemo(() => {
         let cols = 1;
         let rows = 1;

@@ -20,7 +20,7 @@ export function Browse({
     const screenFeeds = useMemo(() => viewports.filter((x) => x.type === "screen"), [viewports]);
 
     return screenFeeds.length ? (
-        <Focus viewports={cameraFeeds} focusViewports={screenFeeds} />
+        <Focus viewports={cameraFeeds} focusViewports={screenFeeds} streamActivities={streamActivities} />
     ) : (
         <Gallery viewports={cameraFeeds} streamActivities={streamActivities} />
     );

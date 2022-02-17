@@ -25,6 +25,7 @@ import {
     Tr,
     useColorModeValue,
     useDisclosure,
+    VStack,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
 import { gql } from "@urql/core";
@@ -394,15 +395,15 @@ export default function MyBackstagesPage(): JSX.Element {
     const registrant = useCurrentRegistrant();
 
     return (
-        <>
+        <VStack alignItems="flex-start" spacing={4} p={[2, 2, 4]}>
             {title}
-            <Heading as="h1" id="page-heading">
+            <Heading as="h1" id="page-heading" textAlign="left">
                 My Backstages
             </Heading>
-            <Heading as="h2" fontSize="lg" fontStyle="italic">
+            <Heading as="h2" fontSize="lg" fontStyle="italic" textAlign="left">
                 ({registrant.displayName})
             </Heading>
             <MyBackstages />
-        </>
+        </VStack>
     );
 }

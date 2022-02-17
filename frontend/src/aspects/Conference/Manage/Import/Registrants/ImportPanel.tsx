@@ -104,7 +104,7 @@ export default function ImportPanel({
     useEffect(() => {
         if (importData?.insert_registrant_Registrant) {
             toast({
-                title: `Imported ${importData.insert_registrant_Registrant.affected_rows / 2} registrants`,
+                title: `Imported ${importData.insert_registrant_Registrant.affected_rows} registrants. Added registrants to groups.`,
                 status: "success",
                 duration: 3000,
                 position: "bottom",
@@ -201,13 +201,16 @@ export default function ImportPanel({
         () => Object.values(inputData).reduce((acc, rows) => acc + rows.length, 0),
         [inputData]
     );
-    const totalOutputLength = useMemo(() => finalData?.reduce((acc, x) => acc + x.groups.length, 0) ?? 0, [finalData]);
+    const totalOutputLength = useMemo(
+        () => finalData?.reduce((acc, x) => acc + 1 + x.groups.length, 0) ?? 0,
+        [finalData]
+    );
     const newRegistrantsCount = useMemo(
         () => finalData?.reduce((acc, x) => acc + (x.isNew ? 1 : 0), 0) ?? 0,
         [finalData]
     );
     const existingRegistrantsCount = useMemo(
-        () => finalData?.reduce((acc, x) => acc + (!x.isNew ? 1 : 0), 0) ?? 0,
+        () => finalData?.reduce((acc, x) => acc + (!x.isNew && x.groups.length > 0 ? 1 : 0), 0) ?? 0,
         [finalData]
     );
 

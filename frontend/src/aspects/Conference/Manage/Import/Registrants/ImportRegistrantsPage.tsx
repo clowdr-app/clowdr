@@ -22,16 +22,26 @@ const presetJSONata_UnknownQuery = `
 `;
 
 const presetJSONata_XML = `
+[$[$trim(Name) != ""].{
+    "name": $exists(name) ? $trim(name) : $trim(Name),
+    "email": $exists(email) ? $trim(email) : $trim(Email),
+    "group": $exists(group) and $trim(group) != "" ? $trim(group) : $exists(Group) and $trim(Group) != "" ? $trim(Group) : undefined
+}]
 `;
 
 const presetJSONata_JSON = `
+[$[$trim(Name) != ""].{
+    "name": $exists(name) ? $trim(name) : $trim(Name),
+    "email": $exists(email) ? $trim(email) : $trim(Email),
+    "group": $exists(group) and $trim(group) != "" ? $trim(group) : $exists(Group) and $trim(Group) != "" ? $trim(Group) : undefined
+}]
 `;
 
 const presetJSONata_CSV = `
 [$[$trim(Name) != ""].{
     "name": $exists(name) ? $trim(name) : $trim(Name),
     "email": $exists(email) ? $trim(email) : $trim(Email),
-    "group": $exists(group) and $trim(group) != "" ? $trim(group) : $exists(Group) and $trim(Group) != "" ? $trim(Group) : "Registrants"
+    "group": $exists(group) and $trim(group) != "" ? $trim(group) : $exists(Group) and $trim(Group) != "" ? $trim(Group) : undefined
 }]
 `;
 

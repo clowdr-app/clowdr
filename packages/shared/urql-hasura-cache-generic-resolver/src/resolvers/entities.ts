@@ -194,6 +194,10 @@ export function queryRootResolvers(
                 return target[prop];
             }
 
+            if (prop.includes("_aggregate")) {
+                return undefined;
+            }
+
             const tableSchema = getTableSchema(prop, schema, augSchema);
             if (tableSchema) {
                 return entityResolver(schema, augSchema);

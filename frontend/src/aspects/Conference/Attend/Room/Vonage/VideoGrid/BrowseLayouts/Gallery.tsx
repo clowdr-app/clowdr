@@ -22,10 +22,7 @@ export function Gallery({
     const [containerWidth, containerHeight] = useSize(containerRef);
 
     const [maxColumns, maxRows] = useMemo(() => {
-        const minEdgeLength = 200;
-        if (containerWidth < minEdgeLength || containerHeight < minEdgeLength) {
-            return [1, 1];
-        }
+        const minEdgeLength = Math.min(200, containerWidth, containerHeight);
 
         return [Math.floor(containerWidth / minEdgeLength), Math.floor(containerHeight / minEdgeLength)];
     }, [containerHeight, containerWidth]);

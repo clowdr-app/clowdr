@@ -5,7 +5,7 @@ import { GalleryPage } from "./GalleryPage";
 import { makeViewports } from "./Utils.stories";
 
 export default {
-    title: "GalleryPage",
+    title: "Video Chat/Gallery/Gallery Page",
     component: GalleryPage,
     args: {
         numberViewports: 3,
@@ -29,8 +29,8 @@ const Template: ComponentStory<
     );
 };
 
-export const Basic = Template.bind({});
-Basic.args = {
+export const SimpleGalleryPage = Template.bind({});
+SimpleGalleryPage.args = {
     maxColumns: 5,
     maxHeight: 500,
     maxWidth: 500,

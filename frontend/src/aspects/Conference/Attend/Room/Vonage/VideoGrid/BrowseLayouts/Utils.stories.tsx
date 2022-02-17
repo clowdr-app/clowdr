@@ -1,4 +1,4 @@
-import { Center, Text } from "@chakra-ui/react";
+import { Center, Text, useColorModeValue } from "@chakra-ui/react";
 import type { Stream } from "@opentok/client";
 import * as R from "ramda";
 import React from "react";
@@ -46,9 +46,12 @@ export function makeViewport(seed: number): [viewport: Viewport, inPortal: JSX.E
 }
 
 export function DummyCameraViewport(props: CameraViewportProps) {
+    const text = useColorModeValue("gray.900", "gray.50");
+    const background = useColorModeValue("gray.50", "gray.900");
+
     return (
-        <Center bgColor="#eee" border="1px solid black" h="100%" w="100%">
-            <Text>Viewport {props.stream?.streamId ?? "viewport"}</Text>
+        <Center bgColor={background} borderWidth={1} borderStyle="solid" borderColor={text} h="100%" w="100%">
+            <Text color={text}>Viewport {props.stream?.streamId ?? "viewport"}</Text>
         </Center>
     );
 }

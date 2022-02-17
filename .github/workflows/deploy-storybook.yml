@@ -5,7 +5,7 @@ on:
       - next/subconferences
 
 jobs:
-  cache-and-install:
+  deploy-storybook:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,11 +29,14 @@ jobs:
           run_install: |
             - args: [--filter=@midspace/frontend...]
 
+      - name: Build dependencies
+        run: pnpm build --filter @midspace/frontend^...
+
       - name: Build Storybook
         run: pnpm build-storybook
         working-directory: ./frontend
 
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

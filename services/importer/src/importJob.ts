@@ -9,7 +9,7 @@ import type { ImportJob } from "./types/job";
 
 export const router = express.Router();
 
-router.post("/inserted", json(), async (req: Request, res: Response) => {
+router.post("/inserted", json({ limit: "5mb" }), async (req: Request, res: Response) => {
     try {
         assertType<EventPayload<ImportJob>>(req.body);
         const payload: EventPayload<ImportJob> = req.body;

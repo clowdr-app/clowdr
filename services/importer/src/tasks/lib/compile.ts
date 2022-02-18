@@ -296,7 +296,7 @@ export function generateSessionEntities(
         );
     }
 
-    if (options.eventImportMode === "session") {
+    if (options.eventImportMode === "session" && presentationsWithTimes.length > 0) {
         // Append presentation timing as text element on session content
         result.push({
             __outputs: [],
@@ -319,7 +319,7 @@ export function generateSessionEntities(
 ` +
                             presentationsWithTimes.reduce(
                                 (acc, x) => `${acc}
-${((x.event.start.getTime() - sessionStart.getTime()) / 1000 / 60).toFixed(0)} minutes: ${
+At ${((x.event.start.getTime() - sessionStart.getTime()) / 1000 / 60).toFixed(0)} minutes: ${
                                     x.content.title ?? "<No title>"
                                 } (${x.event.duration} minutes)`,
                                 ""

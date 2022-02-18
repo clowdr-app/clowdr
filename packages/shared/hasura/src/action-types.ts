@@ -4,15 +4,6 @@ export type jsonb = any;
 
 export type uuid = string;
 
-export type SampleInput = {
-    username: string;
-    password: string;
-};
-
-export type EchoInput = {
-    message: string;
-};
-
 export type SubmitElementInput = {
     elementData: jsonb;
 };
@@ -30,18 +21,6 @@ export type SubmitUpdatedSubtitlesInput = {
     elementId: string;
     subtitleText: string;
     accessToken: string;
-};
-
-export type SampleOutput = {
-    accessToken: string;
-};
-
-export type EchoOutput = {
-    message: string;
-};
-
-export type ProtectedEchoOutput = {
-    message: string;
 };
 
 export type SubmitElementOutput = {
@@ -168,13 +147,17 @@ export type JoinRoomChimeSessionOutput = {
     message?: Maybe<string>;
 };
 
+export type VAPIDPublicKeyOutput = {
+    key: string
+}
+
 export type Query = {
-    echo?: Maybe<EchoOutput>;
-    getSlug?: Maybe<GetSlugOutput>;
-    getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
-    presence_Summary?: Maybe<PresenceSummaryOutput>;
-    protectedEcho?: Maybe<ProtectedEchoOutput>;
-};
+    getSlug: GetSlugOutput
+    getUploadAgreement?: Maybe<GetUploadAgreementOutput>
+    presence_Summary?: Maybe<PresenceSummaryOutput>
+    transcribeGeneratePresignedUrl: TranscribeGeneratePresignedUrlOutput
+    vapidPublicKey: VAPIDPublicKeyOutput
+}
 
 export type Mutation = {
     createContentGroupRoom?: Maybe<CreateContentGroupRoomOutput>;
@@ -199,21 +182,9 @@ export type Mutation = {
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
 };
 
-export type echoArgs = {
-    message: string;
-};
-
-export type getElementArgs = {
-    magicToken: string;
-};
-
 export type getUploadAgreementArgs = Record<string, never>;
 
 export type presence_SummaryArgs = Record<string, never>;
-
-export type protectedEchoArgs = {
-    message: string;
-};
 
 export type createContentGroupRoomArgs = {
     itemId: uuid;
@@ -240,18 +211,6 @@ export type getGoogleOAuthUrlArgs = {
 
 export type invitationConfirmCurrentArgs = {
     inviteCode: uuid;
-};
-
-export type invitationConfirmSendInitialEmailArgs = {
-    inviteInput: InvitationConfirmationEmailInput;
-};
-
-export type invitationConfirmSendRepeatEmailArgs = {
-    inviteInput: InvitationConfirmationEmailInput;
-};
-
-export type invitationConfirmWithCodeArgs = {
-    inviteInput: ConfirmInvitationInput;
 };
 
 export type joinEventVonageSessionArgs = {
@@ -317,12 +276,6 @@ export type TranscribeGeneratePresignedUrlArgs = {
 
 export type TranscribeGeneratePresignedUrlOutput = {
     url: string;
-};
-
-export type getProgramPersonAccessTokenArgs = {
-    elementId: uuid;
-    uploaderEmail: string;
-    elementAccessToken: string;
 };
 
 export type MatchingPersonOutput = {

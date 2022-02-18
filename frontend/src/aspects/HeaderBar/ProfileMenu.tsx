@@ -1,5 +1,6 @@
 import {
     Button,
+    chakra,
     Circle,
     HStack,
     Image,
@@ -54,7 +55,7 @@ export default function ProfileMenu(): JSX.Element {
         "MainMenuHeaderBar.profilePlaceholderTextColor-dark"
     );
 
-    const { toggleColorMode } = useColorMode();
+    const { toggleColorMode, colorMode } = useColorMode();
 
     const narrowView = useIsNarrowView();
     const navState = useNavigationState();
@@ -156,8 +157,10 @@ export default function ProfileMenu(): JSX.Element {
                             p={3}
                             overflow="hidden"
                         >
-                            <FAIcon iconStyle="s" icon="moon" mr={2} />
-                            Dark mode
+                            <FAIcon iconStyle="s" icon={colorMode === "dark" ? "sun" : "moon"} mr={2} />
+                            <chakra.span verticalAlign="middle">
+                                {colorMode === "dark" ? "Light mode" : "Dark mode"}
+                            </chakra.span>
                         </MenuItem>
                         <LogoutButton asMenuItem />
                     </HStack>

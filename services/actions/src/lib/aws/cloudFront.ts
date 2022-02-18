@@ -1,3 +1,5 @@
+import assert from "node:assert";
+import crypto from "node:crypto";
 import { CloudFront, shortId } from "./awsClient";
 import type { OriginEndpoint } from "./mediaPackage";
 
@@ -106,4 +108,34 @@ export async function createDistribution(roomId: string, originEndpoint: OriginE
         id: distribution.Distribution.Id,
         domain: distribution.Distribution.DomainName,
     };
+}
+
+function btoa(str: string) {
+    return Buffer.from(str, "binary").toString("base64");
+}
+
+export function generateSignedImageURL(
+    cloudFrontDistributionName: string,
+    secret: string,
+    bucketName: string,
+    objectName: string,
+    width: number,
+    height: number
+): string {
+    const imageRequest = JSON.stringify({
+        bucket: bucketName,
+        key: objectName,
+        edits: {
+            resize: {
+                width,
+                height,
+                fit: "cover",
+            },
+        },
+    });
+
+    const path = `/${btoa(imageRequest)}`;
+    assert(secret);
+    const signature = crypto.createHmac("sha256", secret).update(path).digest("hex");
+    return `https://${cloudFrontDistributionName}.cloudfront.net${path}?signature=${signature}`;
 }

@@ -50,15 +50,7 @@ gql`
     }
 `;
 
-export function VonageRoomControlBar({
-    onCancelJoinRoom,
-    roomId,
-    eventId,
-}: {
-    onCancelJoinRoom?: () => void;
-    roomId?: string;
-    eventId?: string;
-}): JSX.Element {
+export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: () => void }): JSX.Element {
     const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
     const {
@@ -379,15 +371,15 @@ export function VonageRoomControlBar({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.RoomId]: roomId,
+                [AuthHeader.RoomId]: settings.roomId,
             }),
-        [roomId]
+        [settings.roomId]
     );
     const [roomChatIdResponse] = useGetRoomChatIdQuery({
         variables: {
-            roomId,
+            roomId: settings.roomId,
         },
-        pause: !roomId,
+        pause: !settings.roomId,
         context,
     });
     const chatId = roomChatIdResponse.data?.room_Room_by_pk?.chatId;
@@ -535,13 +527,17 @@ export function VonageRoomControlBar({
                     <ControlBarButton
                         label={{
                             active: "Browse all participants",
-                            inactive: "Show preview of the recording",
+                            inactive: isRecordingActive ? "Show preview of the recording" : "Show presenter layout",
                         }}
                         icon={{
                             active: { style: "s", icon: "chalkboard-teacher" },
                             inactive: { style: "s", icon: "chalkboard-teacher" },
                         }}
-                        isVisible={settings.isBackstageRoom || isRecordingActive}
+                        isVisible={
+                            settings.isBackstageRoom ||
+                            isRecordingActive ||
+                            (Boolean(settings.eventId) && !settings.eventIsFuture)
+                        }
                         isActive={layout?.display?.actualDisplay?.type === DisplayType.BroadcastLayout}
                         isLimited={settings.isBackstageRoom ? "Showing broadcast preview" : false}
                         onClick={() =>
@@ -556,7 +552,11 @@ export function VonageRoomControlBar({
                     <ControlBarButton
                         label={{
                             active: "Cancel",
-                            inactive: settings.isBackstageRoom ? "Change broadcast layout" : "Change recording layout",
+                            inactive: settings.isBackstageRoom
+                                ? "Change broadcast layout"
+                                : isRecordingActive
+                                ? "Change recording layout"
+                                : "Change event layout",
                         }}
                         icon="th-large"
                         isVisible={
@@ -572,7 +572,7 @@ export function VonageRoomControlBar({
                 {vonage.state.type === StateType.Connected &&
                 settings.canControlRecording &&
                 !settings.isBackstageRoom ? (
-                    <PlayVideoMenuButton roomId={roomId} eventId={eventId} />
+                    <PlayVideoMenuButton roomId={settings.roomId} eventId={settings.eventId} />
                 ) : undefined}
                 {vonage.state.type === StateType.Connected && chat ? (
                     <Popover placement="top">

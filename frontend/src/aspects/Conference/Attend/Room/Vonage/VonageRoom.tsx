@@ -198,11 +198,7 @@ export function VonageRoom({
                                 vonageSessionId={vonageSessionId}
                                 canControlPlayback={canControlRecording}
                             >
-                                <VonageRoomInner
-                                    stop={!roomCouldBeInUse || disable}
-                                    roomId={roomId ?? undefined}
-                                    eventId={eventId ?? undefined}
-                                />
+                                <VonageRoomInner stop={!roomCouldBeInUse || disable} />
                             </VonageVideoPlaybackProvider>
                         </AutoplayProvider>
                     </VonageLayoutProvider>

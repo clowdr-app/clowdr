@@ -10,15 +10,7 @@ import { backgroundImage } from "./resources";
 import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
 import { useVonageRoom } from "./State/VonageRoomProvider";
 
-export function PreJoin({
-    cameraPreviewRef,
-    roomId,
-    eventId,
-}: {
-    cameraPreviewRef: React.RefObject<HTMLVideoElement>;
-    roomId?: string;
-    eventId?: string;
-}): JSX.Element {
+export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLVideoElement> }): JSX.Element {
     const { state } = useVonageRoom();
     const { cancelJoin } = useContext(VonageComputedStateContext);
     const toast = useToast();
@@ -126,7 +118,7 @@ export function PreJoin({
                     )}
                 </HStack>
             </Box>
-            <VonageRoomControlBar onCancelJoinRoom={cancelJoin} roomId={roomId} eventId={eventId} />
+            <VonageRoomControlBar onCancelJoinRoom={cancelJoin} />
         </HStack>
     );
 }

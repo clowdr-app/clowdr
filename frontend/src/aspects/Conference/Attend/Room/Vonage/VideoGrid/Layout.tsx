@@ -1,9 +1,11 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Center, VStack } from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Text, VStack } from "@chakra-ui/react";
 import useSize from "@react-hook/size";
 import React, { useContext, useMemo } from "react";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import type { Viewport } from "../Components/LayoutTypes";
 import { VisualLayoutType } from "../Components/LayoutTypes";
 import useVisualLayout from "../Components/useVisualLayout";
+import { DisplayType } from "../State/useVonageDisplay";
 import { VonageComputedStateContext } from "../State/VonageComputedStateContext";
 import { useVonageLayout } from "../State/VonageLayoutProvider";
 import { useVonageRoom } from "../State/VonageRoomProvider";
@@ -23,10 +25,10 @@ export default function Layout({
     allowedToControlLayout: boolean;
 }): JSX.Element {
     const { settings } = useVonageRoom();
-    const { isRecordingActive } = useContext(VonageComputedStateContext);
+    const { isRecordingActive, connections } = useContext(VonageComputedStateContext);
     const isRecordingMode = settings.isBackstageRoom || isRecordingActive;
 
-    const { layout } = useVonageLayout();
+    const { layout, display } = useVonageLayout();
     const visualLayout = useVisualLayout(layout.layout.layout, viewports);
 
     const layoutPanelRef = React.useRef(null);
@@ -47,7 +49,7 @@ export default function Layout({
                     justifyContent="center"
                     textAlign="center"
                     p={8}
-                    maxW="40ch"
+                    maxW="50ch"
                     colorScheme="RoomNoVideoAlert"
                 >
                     <AlertIcon boxSize="8" />
@@ -55,14 +57,32 @@ export default function Layout({
                         Nobody has their video turned on right now
                     </AlertTitle>
                     <AlertDescription mr={2}>
-                        {settings.isBackstageRoom
-                            ? "Nothing will be visible during your event broadcast until someone turns on their camera or shares their screen."
-                            : "No video tiles will appear in the recording until someone turns on their camera or shares their screen."}
+                        <Text>
+                            {settings.isBackstageRoom
+                                ? "Nothing will be visible during your event broadcast until someone turns on their camera or shares their screen."
+                                : isRecordingActive
+                                ? "No video tiles will appear in the recording until someone turns on their camera or shares their screen."
+                                : "No video tiles will appear here until someone turns on their camera or shares their screen."}
+                        </Text>
+                        <Text mt={2}>{`${Math.max(connections.length - 1, 0)} other ${
+                            connections.length - 1 === 1 ? "person is" : "people are"
+                        } connected to this video chat.`}</Text>
+                        {connections.length > 1 ? (
+                            <Button
+                                onClick={() => display.setChosenDisplay({ type: DisplayType.Browse })}
+                                mt={4}
+                                colorScheme="RoomControlBarButton"
+                                size="xs"
+                                leftIcon={<FAIcon icon="chalkboard-teacher" iconStyle="s" />}
+                            >
+                                Browse all participants
+                            </Button>
+                        ) : undefined}
                     </AlertDescription>
                 </Alert>
             </Center>
         ),
-        [settings.isBackstageRoom]
+        [connections.length, display, isRecordingActive, settings.isBackstageRoom]
     );
 
     const layoutEl = useMemo(() => {

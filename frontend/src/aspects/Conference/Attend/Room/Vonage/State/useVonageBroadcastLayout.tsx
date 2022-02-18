@@ -7,11 +7,13 @@ import {
 } from "@midspace/shared-types/vonage";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
+    Registrant_RegistrantRole_Enum,
     useInsertVonageSessionLayoutMutation,
     useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery,
 } from "../../../../../../generated/graphql";
 import { makeContext } from "../../../../../GQL/make-context";
 import { useConference } from "../../../../useConference";
+import useCurrentRegistrant from "../../../../useCurrentRegistrant";
 import { VonageComputedStateContext } from "./VonageComputedStateContext";
 
 export interface AvailableStream {
@@ -95,9 +97,16 @@ export function useVonageBroadcastLayout(
 
     const [availableStreams, setAvailableStreams] = useState<AvailableStream[]>([]);
 
+    const registrant = useCurrentRegistrant();
+
     const saveContext = useMemo(() => {
         if (!roomOrEventId) {
             return undefined;
+        }
+        if (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) {
+            return makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            });
         }
         switch (roomOrEventId.type) {
             case "room":

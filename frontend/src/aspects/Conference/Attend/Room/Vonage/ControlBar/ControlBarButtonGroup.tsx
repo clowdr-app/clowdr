@@ -39,7 +39,7 @@ export function ControlBarButtonGroup({
                     onClick={onToggle}
                 />
             </PopoverTrigger>
-            <PopoverContent onClick={onClose} w="calc(2.5rem + 6px)">
+            <PopoverContent onClick={onClose} p={0} w="min-content">
                 <PopoverArrow />
                 <PopoverBody>
                     <VStack>{children}</VStack>

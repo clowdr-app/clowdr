@@ -342,8 +342,8 @@ export function InCall(): JSX.Element {
     return (
         <>
             {connected ? (
-                <VStack h={mainPaneHeight} width="100%" zIndex={1} alignItems="stretch" spacing={0}>
-                    <Box flexGrow={1} flexShrink={1} minH={0}>
+                <VStack h={mainPaneHeight} width="100%" zIndex={1} alignItems="stretch" spacing={0} overflow="hidden">
+                    <Box flexGrow={1} flexShrink={1} minH={0} overflow="hidden">
                         {displayEl}
                     </Box>
                     <VonageRoomControlBar />

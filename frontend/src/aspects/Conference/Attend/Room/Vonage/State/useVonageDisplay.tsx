@@ -40,11 +40,11 @@ export function useVonageDisplay(): VonageDisplay {
     const actualDisplay = useMemo<Browse | BroadcastLayout>(
         () =>
             chosenDisplay.type === DisplayType.Auto
-                ? settings.isBackstageRoom || isRecordingActive
+                ? settings.isBackstageRoom || isRecordingActive || (settings.eventId && !settings.eventIsFuture)
                     ? { type: DisplayType.BroadcastLayout }
                     : { type: DisplayType.Browse }
                 : chosenDisplay,
-        [chosenDisplay, isRecordingActive, settings.isBackstageRoom]
+        [chosenDisplay, isRecordingActive, settings.isBackstageRoom, settings.eventId, settings.eventIsFuture]
     );
 
     return useMemo(

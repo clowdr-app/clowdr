@@ -10,16 +10,7 @@ import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
 import { VonageGlobalState } from "./State/VonageGlobalState";
 import { useVonageRoom, VonageRoomStateActionType } from "./State/VonageRoomProvider";
 
-export function VonageRoomInner({
-    stop,
-    roomId,
-    eventId,
-}: {
-    stop: boolean;
-    cancelJoin?: () => void;
-    roomId?: string;
-    eventId?: string;
-}): JSX.Element {
+export function VonageRoomInner({ stop }: { stop: boolean; cancelJoin?: () => void }): JSX.Element {
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
     const { state, dispatch } = useVonageRoom();
@@ -47,11 +38,7 @@ export function VonageRoomInner({
     );
     useAWSTranscription(camera, undefined, onCompleteTranscript);
 
-    const uiEl = useMemo(
-        () =>
-            connected ? <InCall /> : <PreJoin cameraPreviewRef={cameraPreviewRef} roomId={roomId} eventId={eventId} />,
-        [connected, roomId, eventId]
-    );
+    const uiEl = useMemo(() => (connected ? <InCall /> : <PreJoin cameraPreviewRef={cameraPreviewRef} />), [connected]);
 
     // Camera / microphone enable/disable control
     useEffect(() => {

@@ -1,10 +1,10 @@
 import type { Resolver } from "@urql/exchange-graphcache";
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import { GraphQLError } from "graphql";
-import _ from "lodash";
 import { satisfiesConditions } from "../conditionals";
 import { getTableSchema } from "../schema";
 import type { AugmentedIntrospectionData, InnerResolverConfig } from "../types";
+import { argumentsAreEqual } from "./arguments";
 
 const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospectionData) => Resolver = (
     schema,
@@ -41,7 +41,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
                 });
 
                 if (key) {
-                    if (fieldInfo.fieldName === info.fieldName && _.isEqual(fieldInfo.arguments, args)) {
+                    if (fieldInfo.fieldName === info.fieldName && argumentsAreEqual(fieldInfo.arguments, args)) {
                         exactQueryExistsInCache = true;
                         return cache.resolve(info.parentKey, fieldInfo.fieldKey) ? key : null;
                     } else {
@@ -75,7 +75,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
             for (const fieldInfo of fieldInfos) {
                 const key = cache.resolve(info.parentKey, fieldInfo.fieldKey) as string | string[] | null;
 
-                if (fieldInfo.fieldName === info.fieldName && _.isEqual(fieldInfo.arguments, args)) {
+                if (fieldInfo.fieldName === info.fieldName && argumentsAreEqual(fieldInfo.arguments, args)) {
                     exactQueryExistsInCache = true;
                     if (key) {
                         if (key instanceof Array) {
@@ -125,7 +125,7 @@ const entityResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospect
                     }
                 }
 
-                if (fieldInfo.fieldName === info.fieldName && _.isEqual(fieldInfo.arguments, args)) {
+                if (fieldInfo.fieldName === info.fieldName && argumentsAreEqual(fieldInfo.arguments, args)) {
                     exactQueryExistsInCache = true;
                 }
             }

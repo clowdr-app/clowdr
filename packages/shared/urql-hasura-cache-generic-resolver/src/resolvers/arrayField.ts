@@ -1,10 +1,10 @@
 import type { Entity, Resolver } from "@urql/exchange-graphcache";
 import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import { GraphQLError } from "graphql";
-import _ from "lodash";
 import { satisfiesConditions } from "../conditionals";
 import { getObjectTypeName, getTableFieldsSchema } from "../schema";
 import type { AugmentedIntrospectionData } from "../types";
+import { argumentsAreEqual } from "./arguments";
 import { resolveRelation } from "./relation";
 
 export const arrayFieldResolver: (schema: IntrospectionData, augSchema: AugmentedIntrospectionData) => Resolver = (
@@ -91,7 +91,8 @@ export const arrayFieldResolver: (schema: IntrospectionData, augSchema: Augmente
         }
 
         const results = resolveRelation(fieldAugSchema.type, cache, info.parentKey, fieldEntityTypeName, args.where);
-        info.partial = info.partial && !matchingFields.some((x) => _.isEqual(x.arguments, args));
+        info.partial =
+            info.partial || (results === null && !matchingFields.some((x) => argumentsAreEqual(x.arguments, args)));
         // console.info(`Resolved relational results for ${info.parentKey}.${info.fieldName}`, { parent, results });
 
         // console.info(`Array field resolver for ${info.parentTypeName}.${info.fieldName}`, {

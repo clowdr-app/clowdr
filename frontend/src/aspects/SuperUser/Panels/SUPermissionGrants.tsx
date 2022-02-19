@@ -1029,7 +1029,7 @@ export default function SUPermissionGrants(): JSX.Element {
     const data = useMemo(
         () =>
             (allPermissionsResponse.data?.system_SuperUserPermissionGrant && [
-                ...allPermissionsResponse.data?.system_SuperUserPermissionGrant,
+                ...allPermissionsResponse.data.system_SuperUserPermissionGrant,
             ]) ??
             null,
         [allPermissionsResponse.data?.system_SuperUserPermissionGrant]

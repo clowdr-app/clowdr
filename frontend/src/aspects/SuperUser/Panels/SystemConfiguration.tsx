@@ -355,7 +355,7 @@ export default function SystemConfiguration(): JSX.Element {
     const data = useMemo(
         () =>
             (allConfigurationsResponse.data?.system_Configuration && [
-                ...allConfigurationsResponse.data?.system_Configuration,
+                ...allConfigurationsResponse.data.system_Configuration,
             ]) ??
             null,
         [allConfigurationsResponse.data?.system_Configuration]

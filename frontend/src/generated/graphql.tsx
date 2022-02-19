@@ -48321,57 +48321,12 @@ export type DeleteSystemConfigurationsMutation = {
     } | null;
 };
 
-export type RegistrantFieldsFragment = {
-    readonly __typename?: "registrant_Registrant";
-    readonly id: any;
-    readonly userId?: string | null;
-    readonly conferenceId: any;
-    readonly displayName: string;
-    readonly createdAt: any;
-    readonly updatedAt: any;
-    readonly conferenceRole: Registrant_RegistrantRole_Enum;
-    readonly profile?: {
-        readonly __typename?: "registrant_Profile";
-        readonly registrantId: any;
-        readonly photoURL_50x50?: string | null;
-    } | null;
-    readonly conference: {
-        readonly __typename?: "conference_Conference";
-        readonly id: any;
-        readonly name: string;
-        readonly shortName: string;
-        readonly slug: string;
-    };
-};
-
 export type UserInfoFragment = {
     readonly __typename?: "User";
     readonly id: string;
     readonly email?: string | null;
     readonly acceptedTermsAt?: any | null;
     readonly acceptedPrivacyPolicyAt?: any | null;
-    readonly registrants: ReadonlyArray<{
-        readonly __typename?: "registrant_Registrant";
-        readonly id: any;
-        readonly userId?: string | null;
-        readonly conferenceId: any;
-        readonly displayName: string;
-        readonly createdAt: any;
-        readonly updatedAt: any;
-        readonly conferenceRole: Registrant_RegistrantRole_Enum;
-        readonly profile?: {
-            readonly __typename?: "registrant_Profile";
-            readonly registrantId: any;
-            readonly photoURL_50x50?: string | null;
-        } | null;
-        readonly conference: {
-            readonly __typename?: "conference_Conference";
-            readonly id: any;
-            readonly name: string;
-            readonly shortName: string;
-            readonly slug: string;
-        };
-    }>;
 };
 
 export type SelectCurrentUserQueryVariables = Exact<{
@@ -48386,28 +48341,6 @@ export type SelectCurrentUserQuery = {
         readonly email?: string | null;
         readonly acceptedTermsAt?: any | null;
         readonly acceptedPrivacyPolicyAt?: any | null;
-        readonly registrants: ReadonlyArray<{
-            readonly __typename?: "registrant_Registrant";
-            readonly id: any;
-            readonly userId?: string | null;
-            readonly conferenceId: any;
-            readonly displayName: string;
-            readonly createdAt: any;
-            readonly updatedAt: any;
-            readonly conferenceRole: Registrant_RegistrantRole_Enum;
-            readonly profile?: {
-                readonly __typename?: "registrant_Profile";
-                readonly registrantId: any;
-                readonly photoURL_50x50?: string | null;
-            } | null;
-            readonly conference: {
-                readonly __typename?: "conference_Conference";
-                readonly id: any;
-                readonly name: string;
-                readonly shortName: string;
-                readonly slug: string;
-            };
-        }>;
     } | null;
 };
 
@@ -48471,6 +48404,89 @@ export type AgreeToTermsMutation = {
         readonly id: string;
         readonly acceptedTermsAt?: any | null;
         readonly acceptedPrivacyPolicyAt?: any | null;
+    } | null;
+};
+
+export type RegistrantFieldsFragment = {
+    readonly __typename?: "registrant_Registrant";
+    readonly id: any;
+    readonly userId?: string | null;
+    readonly conferenceId: any;
+    readonly displayName: string;
+    readonly createdAt: any;
+    readonly updatedAt: any;
+    readonly conferenceRole: Registrant_RegistrantRole_Enum;
+    readonly profile?: {
+        readonly __typename?: "registrant_Profile";
+        readonly registrantId: any;
+        readonly photoURL_50x50?: string | null;
+    } | null;
+    readonly conference: {
+        readonly __typename?: "conference_Conference";
+        readonly id: any;
+        readonly name: string;
+        readonly shortName: string;
+        readonly slug: string;
+    };
+};
+
+export type SelectCurrentUserRegistrationsQueryVariables = Exact<{
+    userId: Scalars["String"];
+}>;
+
+export type SelectCurrentUserRegistrationsQuery = {
+    readonly __typename?: "query_root";
+    readonly registrant_Registrant: ReadonlyArray<{
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+        readonly userId?: string | null;
+        readonly conferenceId: any;
+        readonly displayName: string;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceRole: Registrant_RegistrantRole_Enum;
+        readonly profile?: {
+            readonly __typename?: "registrant_Profile";
+            readonly registrantId: any;
+            readonly photoURL_50x50?: string | null;
+        } | null;
+        readonly conference: {
+            readonly __typename?: "conference_Conference";
+            readonly id: any;
+            readonly name: string;
+            readonly shortName: string;
+            readonly slug: string;
+        };
+    }>;
+};
+
+export type SelectRegistrationQueryVariables = Exact<{
+    registrantId: Scalars["uuid"];
+}>;
+
+export type SelectRegistrationQuery = {
+    readonly __typename?: "query_root";
+    readonly registrant_Registrant_by_pk?: {
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+        readonly userId?: string | null;
+        readonly conferenceId: any;
+        readonly displayName: string;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceRole: Registrant_RegistrantRole_Enum;
+        readonly profile?: {
+            readonly __typename?: "registrant_Profile";
+            readonly registrantId: any;
+            readonly photoURL_50x50?: string | null;
+        } | null;
+        readonly conference: {
+            readonly __typename?: "conference_Conference";
+            readonly id: any;
+            readonly name: string;
+            readonly shortName: string;
+            readonly slug: string;
+        };
     } | null;
 };
 
@@ -50528,6 +50544,14 @@ export const SystemConfigurationFragmentDoc = gql`
         created_at
     }
 `;
+export const UserInfoFragmentDoc = gql`
+    fragment UserInfo on User {
+        id
+        email
+        acceptedTermsAt
+        acceptedPrivacyPolicyAt
+    }
+`;
 export const RegistrantFieldsFragmentDoc = gql`
     fragment RegistrantFields on registrant_Registrant {
         id
@@ -50548,18 +50572,6 @@ export const RegistrantFieldsFragmentDoc = gql`
         }
         conferenceRole
     }
-`;
-export const UserInfoFragmentDoc = gql`
-    fragment UserInfo on User {
-        id
-        email
-        acceptedTermsAt
-        acceptedPrivacyPolicyAt
-        registrants {
-            ...RegistrantFields
-        }
-    }
-    ${RegistrantFieldsFragmentDoc}
 `;
 export const GetSlugForUrlDocument = gql`
     query GetSlugForUrl($url: String!) {
@@ -56533,6 +56545,37 @@ export const AgreeToTermsDocument = gql`
 
 export function useAgreeToTermsMutation() {
     return Urql.useMutation<AgreeToTermsMutation, AgreeToTermsMutationVariables>(AgreeToTermsDocument);
+}
+export const SelectCurrentUserRegistrationsDocument = gql`
+    query SelectCurrentUserRegistrations($userId: String!) {
+        registrant_Registrant(where: { userId: { _eq: $userId } }) {
+            ...RegistrantFields
+        }
+    }
+    ${RegistrantFieldsFragmentDoc}
+`;
+
+export function useSelectCurrentUserRegistrationsQuery(
+    options: Omit<Urql.UseQueryArgs<SelectCurrentUserRegistrationsQueryVariables>, "query">
+) {
+    return useQuery<SelectCurrentUserRegistrationsQuery>({
+        query: SelectCurrentUserRegistrationsDocument,
+        ...options,
+    });
+}
+export const SelectRegistrationDocument = gql`
+    query SelectRegistration($registrantId: uuid!) {
+        registrant_Registrant_by_pk(id: $registrantId) {
+            ...RegistrantFields
+        }
+    }
+    ${RegistrantFieldsFragmentDoc}
+`;
+
+export function useSelectRegistrationQuery(
+    options: Omit<Urql.UseQueryArgs<SelectRegistrationQueryVariables>, "query">
+) {
+    return useQuery<SelectRegistrationQuery>({ query: SelectRegistrationDocument, ...options });
 }
 export const VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocument = gql`
     query VonageRoomStateProvider_GetVonageMaxSimultaneousScreenShares($conferenceId: uuid!) {

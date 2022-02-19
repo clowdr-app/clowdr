@@ -408,7 +408,7 @@ export default function SysConfigPermissionGrants(): JSX.Element {
     const data = useMemo(
         () =>
             (allPermissionsResponse.data?.system_ConfigurationPermissionGrant && [
-                ...allPermissionsResponse.data?.system_ConfigurationPermissionGrant,
+                ...allPermissionsResponse.data.system_ConfigurationPermissionGrant,
             ]) ??
             null,
         [allPermissionsResponse.data?.system_ConfigurationPermissionGrant]

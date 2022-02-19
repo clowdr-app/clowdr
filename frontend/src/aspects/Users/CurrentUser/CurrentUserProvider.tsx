@@ -29,34 +29,11 @@ import type { UserInfo } from "./useMaybeCurrentUser";
 import { CurrentUserContext, defaultCurrentUserContext } from "./useMaybeCurrentUser";
 
 gql`
-    fragment RegistrantFields on registrant_Registrant {
-        id
-        userId
-        conferenceId
-        displayName
-        createdAt
-        updatedAt
-        profile {
-            registrantId
-            photoURL_50x50
-        }
-        conference {
-            id
-            name
-            shortName
-            slug
-        }
-        conferenceRole
-    }
-
     fragment UserInfo on User {
         id
         email
         acceptedTermsAt
         acceptedPrivacyPolicyAt
-        registrants {
-            ...RegistrantFields
-        }
     }
 
     query SelectCurrentUser($userId: String!) {

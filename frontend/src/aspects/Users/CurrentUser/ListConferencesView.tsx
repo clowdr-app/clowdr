@@ -6,11 +6,13 @@ import type { RegistrantFieldsFragment } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { useTitle } from "../../Hooks/useTitle";
 import useCurrentUser from "./useCurrentUser";
+import useCurrentUserRegistrants from "./useCurrentUserRegistrants";
 
 export default function ListConferencesView(): JSX.Element {
     const title = useTitle("My Conferences");
 
     const { user } = useCurrentUser();
+    const registrants = useCurrentUserRegistrants();
     const boxBg = useColorModeValue("gray.200", "gray.700");
 
     const renderConferenceList = (
@@ -91,7 +93,7 @@ export default function ListConferencesView(): JSX.Element {
                 </Text>
                 {renderConferenceList(
                     LinkIcon,
-                    user.registrants,
+                    registrants,
                     <LinkButton to="/join" colorScheme="pink" marginRight={0} mt={5}>
                         Use invite code
                     </LinkButton>,

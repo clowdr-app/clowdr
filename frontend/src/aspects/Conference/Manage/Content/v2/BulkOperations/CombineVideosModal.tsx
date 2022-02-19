@@ -28,8 +28,8 @@ import {
     useCombineVideosModal_GetElementsQuery,
 } from "../../../../../../generated/graphql";
 import { makeContext } from "../../../../../GQL/make-context";
-import useCurrentUser from "../../../../../Users/CurrentUser/useCurrentUser";
 import { useConference } from "../../../../useConference";
+import useCurrentRegistrant from "../../../../useCurrentRegistrant";
 
 export function CombineVideosModal({
     isOpen,
@@ -190,7 +190,7 @@ function ModalInner({
         [elementsResponse.data, alreadyBeingCombined]
     );
 
-    const user = useCurrentUser().user;
+    const registrant = useCurrentRegistrant();
     const toast = useToast();
 
     const [, mutate] = useCombineVideosModal_CreateCombineVideosJobMutation();
@@ -209,7 +209,7 @@ function ModalInner({
                     const result = await mutate(
                         {
                             conferenceId: conference.id,
-                            createdByRegistrantId: user.registrants[0].id,
+                            createdByRegistrantId: registrant.id,
                             outputName: "Combined video",
                             data,
                         },
@@ -236,7 +236,7 @@ function ModalInner({
             }
             onClose();
         }
-    }, [returnedElementsByItem, onClose, mutate, conference.id, user.registrants, toast]);
+    }, [returnedElementsByItem, onClose, mutate, conference.id, registrant.id, toast]);
 
     return (
         <>

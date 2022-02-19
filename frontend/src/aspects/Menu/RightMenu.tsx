@@ -7,7 +7,13 @@ import useIsNarrowView from "../Hooks/useIsNarrowView";
 import { useRestorableState } from "../Hooks/useRestorableState";
 import RightSidebarSections from "./RightSidebar/RightSidebarSections";
 
-export default function RightMenu({ isOpen }: { isOpen: boolean }): JSX.Element {
+export default function RightMenu({
+    isOpen,
+    setIsOpen,
+}: {
+    isOpen: boolean;
+    setIsOpen: (value: boolean) => void;
+}): JSX.Element {
     const maybeRegistrant = useMaybeCurrentRegistrant();
 
     const rightSections = useMemo(
@@ -15,6 +21,7 @@ export default function RightMenu({ isOpen }: { isOpen: boolean }): JSX.Element 
             maybeRegistrant ? (
                 <RightSidebarSections
                     isVisible={isOpen}
+                    setIsVisible={setIsOpen}
                     onClose={() => {
                         /* Nothing */
                     }}

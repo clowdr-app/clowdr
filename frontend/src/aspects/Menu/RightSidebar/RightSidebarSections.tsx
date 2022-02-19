@@ -14,9 +14,11 @@ import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebarCurre
 function RightSidebarSections_Inner({
     externalSetPageChatAvailable,
     isVisible,
+    setIsVisible,
 }: {
     externalSetPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
+    setIsVisible: (value: boolean) => void;
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const roomMatch = useRouteMatch<{ roomId: string }>(`${conferencePath}/room/:roomId`);
@@ -56,8 +58,9 @@ function RightSidebarSections_Inner({
         (chatId: string) => {
             setCurrentTab(RightSidebarTabs.Chats);
             openChatCb.current?.(chatId);
+            setIsVisible(true);
         },
-        [setCurrentTab]
+        [setCurrentTab, setIsVisible]
     );
     const closeChatCb = useRef<(() => void) | null>(null);
 
@@ -174,10 +177,12 @@ function RightSidebarSections_Inner({
 export default function RightSidebarSections({
     externalSetPageChatAvailable,
     isVisible,
+    setIsVisible,
 }: {
     onClose: () => void;
     externalSetPageChatAvailable?: (isAvailable: boolean) => void;
     isVisible: boolean;
+    setIsVisible: (value: boolean) => void;
 }): JSX.Element {
     const registrant = useMaybeCurrentRegistrant();
     if (registrant) {
@@ -185,6 +190,7 @@ export default function RightSidebarSections({
             <RightSidebarSections_Inner
                 externalSetPageChatAvailable={externalSetPageChatAvailable}
                 isVisible={isVisible}
+                setIsVisible={setIsVisible}
             />
         );
     }

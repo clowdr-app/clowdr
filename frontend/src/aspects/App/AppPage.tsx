@@ -121,7 +121,7 @@ export default function AppPage(): JSX.Element {
                         {center}
                     </VStack>
                 </Box>
-                {user.user ? <RightMenu isOpen={rightMenuOpen} /> : undefined}
+                {user.user ? <RightMenu isOpen={rightMenuOpen} setIsOpen={setRightMenuOpen} /> : undefined}
             </Flex>
         </Flex>
     );

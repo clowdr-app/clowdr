@@ -39437,6 +39437,41 @@ export type ProfilePage_ItemsQuery = {
     }>;
 };
 
+export type ProfilePage_ItemFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly title: string;
+    readonly conferenceId: any;
+    readonly itemPeople: ReadonlyArray<{
+        readonly __typename?: "content_ItemProgramPerson";
+        readonly id: any;
+        readonly itemId: any;
+        readonly roleName: string;
+        readonly priority?: number | null;
+        readonly person: {
+            readonly __typename?: "collection_ProgramPerson";
+            readonly id: any;
+            readonly name: string;
+            readonly affiliation?: string | null;
+            readonly registrantId?: any | null;
+            readonly conferenceId: any;
+        };
+    }>;
+    readonly itemTags: ReadonlyArray<{
+        readonly __typename?: "content_ItemTag";
+        readonly id: any;
+        readonly itemId: any;
+        readonly tag: {
+            readonly __typename?: "collection_Tag";
+            readonly id: any;
+            readonly name: string;
+            readonly colour: string;
+            readonly priority: number;
+            readonly conferenceId: any;
+        };
+    }>;
+};
+
 export type MyRecordingsQueryVariables = Exact<{
     registrantId: Scalars["uuid"];
 }>;
@@ -41448,312 +41483,6 @@ export type ScheduleV2_AllEvents_ParamsQuery = {
         readonly id: any;
         readonly endTime?: any | null;
         readonly conferenceId: any;
-    }>;
-};
-
-export type SearchPanel_ItemFragment = {
-    readonly __typename?: "content_Item";
-    readonly id: any;
-    readonly title: string;
-    readonly conferenceId: any;
-    readonly itemPeople: ReadonlyArray<{
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly roleName: string;
-        readonly priority?: number | null;
-        readonly person: {
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
-            readonly conferenceId: any;
-        };
-    }>;
-    readonly itemTags: ReadonlyArray<{
-        readonly __typename?: "content_ItemTag";
-        readonly id: any;
-        readonly itemId: any;
-        readonly tag: {
-            readonly __typename?: "collection_Tag";
-            readonly id: any;
-            readonly name: string;
-            readonly colour: string;
-            readonly priority: number;
-            readonly conferenceId: any;
-        };
-    }>;
-};
-
-export type SearchPanel_ItemsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    search: Scalars["String"];
-}>;
-
-export type SearchPanel_ItemsQuery = {
-    readonly __typename?: "query_root";
-    readonly content_searchItems: ReadonlyArray<{
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly conferenceId: any;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly roleName: string;
-            readonly priority?: number | null;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tag: {
-                readonly __typename?: "collection_Tag";
-                readonly id: any;
-                readonly name: string;
-                readonly colour: string;
-                readonly priority: number;
-                readonly conferenceId: any;
-            };
-        }>;
-    }>;
-};
-
-export type SearchPanel_EventFragment = {
-    readonly __typename?: "schedule_Event";
-    readonly id: any;
-    readonly startTime: any;
-    readonly endTime?: any | null;
-    readonly conferenceId: any;
-    readonly exhibitionId?: any | null;
-    readonly intendedRoomModeName: Room_Mode_Enum;
-    readonly itemId?: any | null;
-    readonly name: string;
-    readonly roomId: any;
-    readonly exhibition?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly name: string;
-        readonly items: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-            readonly item: {
-                readonly __typename?: "content_Item";
-                readonly id: any;
-                readonly title: string;
-                readonly conferenceId: any;
-                readonly itemPeople: ReadonlyArray<{
-                    readonly __typename?: "content_ItemProgramPerson";
-                    readonly id: any;
-                    readonly itemId: any;
-                    readonly roleName: string;
-                    readonly priority?: number | null;
-                    readonly person: {
-                        readonly __typename?: "collection_ProgramPerson";
-                        readonly id: any;
-                        readonly name: string;
-                        readonly affiliation?: string | null;
-                        readonly registrantId?: any | null;
-                        readonly conferenceId: any;
-                    };
-                }>;
-                readonly itemTags: ReadonlyArray<{
-                    readonly __typename?: "content_ItemTag";
-                    readonly id: any;
-                    readonly itemId: any;
-                    readonly tag: {
-                        readonly __typename?: "collection_Tag";
-                        readonly id: any;
-                        readonly name: string;
-                        readonly colour: string;
-                        readonly priority: number;
-                        readonly conferenceId: any;
-                    };
-                }>;
-            };
-        }>;
-    } | null;
-    readonly item?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly conferenceId: any;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly roleName: string;
-            readonly priority?: number | null;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tag: {
-                readonly __typename?: "collection_Tag";
-                readonly id: any;
-                readonly name: string;
-                readonly colour: string;
-                readonly priority: number;
-                readonly conferenceId: any;
-            };
-        }>;
-    } | null;
-    readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-};
-
-export type SearchPanel_EventsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    search: Scalars["String"];
-}>;
-
-export type SearchPanel_EventsQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_searchEvents: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly conferenceId: any;
-        readonly exhibitionId?: any | null;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly itemId?: any | null;
-        readonly name: string;
-        readonly roomId: any;
-        readonly exhibition?: {
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly name: string;
-            readonly items: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly itemId: any;
-                readonly exhibitionId: any;
-                readonly item: {
-                    readonly __typename?: "content_Item";
-                    readonly id: any;
-                    readonly title: string;
-                    readonly conferenceId: any;
-                    readonly itemPeople: ReadonlyArray<{
-                        readonly __typename?: "content_ItemProgramPerson";
-                        readonly id: any;
-                        readonly itemId: any;
-                        readonly roleName: string;
-                        readonly priority?: number | null;
-                        readonly person: {
-                            readonly __typename?: "collection_ProgramPerson";
-                            readonly id: any;
-                            readonly name: string;
-                            readonly affiliation?: string | null;
-                            readonly registrantId?: any | null;
-                            readonly conferenceId: any;
-                        };
-                    }>;
-                    readonly itemTags: ReadonlyArray<{
-                        readonly __typename?: "content_ItemTag";
-                        readonly id: any;
-                        readonly itemId: any;
-                        readonly tag: {
-                            readonly __typename?: "collection_Tag";
-                            readonly id: any;
-                            readonly name: string;
-                            readonly colour: string;
-                            readonly priority: number;
-                            readonly conferenceId: any;
-                        };
-                    }>;
-                };
-            }>;
-        } | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly conferenceId: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly itemId: any;
-                readonly roleName: string;
-                readonly priority?: number | null;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
-                    readonly conferenceId: any;
-                };
-            }>;
-            readonly itemTags: ReadonlyArray<{
-                readonly __typename?: "content_ItemTag";
-                readonly id: any;
-                readonly itemId: any;
-                readonly tag: {
-                    readonly __typename?: "collection_Tag";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly colour: string;
-                    readonly priority: number;
-                    readonly conferenceId: any;
-                };
-            }>;
-        } | null;
-        readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-    }>;
-};
-
-export type SearchPanel_PersonFragment = {
-    readonly __typename?: "collection_ProgramPerson";
-    readonly id: any;
-    readonly name: string;
-    readonly affiliation?: string | null;
-    readonly registrantId?: any | null;
-    readonly itemPeople: ReadonlyArray<{
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
-    }>;
-};
-
-export type SearchPanel_PeopleQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    search: Scalars["String"];
-}>;
-
-export type SearchPanel_PeopleQuery = {
-    readonly __typename?: "query_root";
-    readonly collection_searchProgramPerson: ReadonlyArray<{
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
-        }>;
     }>;
 };
 
@@ -48830,6 +48559,21 @@ export const MyBackstages_EventFragmentDoc = gql`
         startTime
     }
 `;
+export const ProfilePage_ItemFragmentDoc = gql`
+    fragment ProfilePage_Item on content_Item {
+        id
+        title
+        conferenceId
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
+            ...ProgramPersonData
+        }
+        itemTags {
+            ...ItemTagData
+        }
+    }
+    ${ProgramPersonDataFragmentDoc}
+    ${ItemTagDataFragmentDoc}
+`;
 export const PrefetchShuffleQueueEntryDataFragmentDoc = gql`
     fragment PrefetchShuffleQueueEntryData on room_ShuffleQueueEntry {
         id
@@ -49352,69 +49096,6 @@ export const ScheduleV2_TagFragmentDoc = gql`
         colour
         priority
         conferenceId
-    }
-`;
-export const SearchPanel_ItemFragmentDoc = gql`
-    fragment SearchPanel_Item on content_Item {
-        id
-        title
-        conferenceId
-        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-            ...ProgramPersonData
-        }
-        itemTags {
-            ...ItemTagData
-        }
-    }
-    ${ProgramPersonDataFragmentDoc}
-    ${ItemTagDataFragmentDoc}
-`;
-export const SearchPanel_EventFragmentDoc = gql`
-    fragment SearchPanel_Event on schedule_Event {
-        id
-        startTime
-        endTime
-        conferenceId
-        exhibitionId
-        exhibition {
-            id
-            name
-            items {
-                id
-                itemId
-                exhibitionId
-                item {
-                    ...SearchPanel_Item
-                }
-            }
-        }
-        intendedRoomModeName
-        itemId
-        item {
-            ...SearchPanel_Item
-        }
-        name
-        roomId
-        room {
-            id
-            name
-        }
-    }
-    ${SearchPanel_ItemFragmentDoc}
-`;
-export const SearchPanel_PersonFragmentDoc = gql`
-    fragment SearchPanel_Person on collection_ProgramPerson {
-        id
-        name
-        affiliation
-        registrantId
-        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-            id
-            item {
-                id
-                title
-            }
-        }
     }
 `;
 export const SwagBagFragmentDoc = gql`
@@ -50937,10 +50618,10 @@ export function useRegistrantEventsWithBackstagesQuery(
 export const ProfilePage_ItemsDocument = gql`
     query ProfilePage_Items($registrantId: uuid!) {
         content_Item(where: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
-            ...SearchPanel_Item
+            ...ProfilePage_Item
         }
     }
-    ${SearchPanel_ItemFragmentDoc}
+    ${ProfilePage_ItemFragmentDoc}
 `;
 
 export function useProfilePage_ItemsQuery(options: Omit<Urql.UseQueryArgs<ProfilePage_ItemsQueryVariables>, "query">) {
@@ -51952,49 +51633,6 @@ export function useScheduleV2_AllEvents_ParamsQuery(
     options: Omit<Urql.UseQueryArgs<ScheduleV2_AllEvents_ParamsQueryVariables>, "query">
 ) {
     return useQuery<ScheduleV2_AllEvents_ParamsQuery>({ query: ScheduleV2_AllEvents_ParamsDocument, ...options });
-}
-export const SearchPanel_ItemsDocument = gql`
-    query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
-        content_searchItems(args: { conferenceId: $conferenceId, search: $search }) {
-            ...SearchPanel_Item
-        }
-    }
-    ${SearchPanel_ItemFragmentDoc}
-`;
-
-export function useSearchPanel_ItemsQuery(options: Omit<Urql.UseQueryArgs<SearchPanel_ItemsQueryVariables>, "query">) {
-    return useQuery<SearchPanel_ItemsQuery>({ query: SearchPanel_ItemsDocument, ...options });
-}
-export const SearchPanel_EventsDocument = gql`
-    query SearchPanel_Events($conferenceId: uuid!, $search: String!) {
-        schedule_searchEvents(
-            args: { conferenceId: $conferenceId, search: $search }
-            order_by: [{ startTime: asc }, { endTime: asc }, { room: { name: asc } }]
-        ) {
-            ...SearchPanel_Event
-        }
-    }
-    ${SearchPanel_EventFragmentDoc}
-`;
-
-export function useSearchPanel_EventsQuery(
-    options: Omit<Urql.UseQueryArgs<SearchPanel_EventsQueryVariables>, "query">
-) {
-    return useQuery<SearchPanel_EventsQuery>({ query: SearchPanel_EventsDocument, ...options });
-}
-export const SearchPanel_PeopleDocument = gql`
-    query SearchPanel_People($conferenceId: uuid!, $search: String!) {
-        collection_searchProgramPerson(args: { search: $search, conferenceid: $conferenceId }) {
-            ...SearchPanel_Person
-        }
-    }
-    ${SearchPanel_PersonFragmentDoc}
-`;
-
-export function useSearchPanel_PeopleQuery(
-    options: Omit<Urql.UseQueryArgs<SearchPanel_PeopleQueryVariables>, "query">
-) {
-    return useQuery<SearchPanel_PeopleQuery>({ query: SearchPanel_PeopleDocument, ...options });
 }
 export const SelectSwagBagsDocument = gql`
     query SelectSwagBags($conferenceId: uuid!) {

@@ -39,7 +39,19 @@ import RegistrantItems from "./RegistrantItems";
 gql`
     query ProfilePage_Items($registrantId: uuid!) {
         content_Item(where: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
-            ...SearchPanel_Item
+            ...ProfilePage_Item
+        }
+    }
+
+    fragment ProfilePage_Item on content_Item {
+        id
+        title
+        conferenceId
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
+            ...ProgramPersonData
+        }
+        itemTags {
+            ...ItemTagData
         }
     }
 `;

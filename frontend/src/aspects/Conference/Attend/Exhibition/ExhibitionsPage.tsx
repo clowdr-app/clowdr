@@ -236,8 +236,6 @@ export default function ExhibitionsPage(): JSX.Element {
                         templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
                         gap={[2, 2, 4]}
                         w="100%"
-                        h="auto"
-                        overflow="hidden"
                         px={[2, 2, 4]}
                     >
                         {sortedExhibitions.map((exhibition) => (

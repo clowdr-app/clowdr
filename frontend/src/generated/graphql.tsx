@@ -38278,12 +38278,6 @@ export type ConferenceLandingPageItemQuery = {
         readonly conferenceId: any;
         readonly title: string;
         readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-        } | null;
         readonly elements: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly id: any;
@@ -38294,47 +38288,6 @@ export type ConferenceLandingPageItemQuery = {
             readonly typeName: Content_ElementType_Enum;
             readonly isHidden: boolean;
             readonly hasBeenSubmitted?: boolean | null;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly roleName: string;
-            readonly priority?: number | null;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tag: {
-                readonly __typename?: "collection_Tag";
-                readonly id: any;
-                readonly name: string;
-                readonly colour: string;
-                readonly priority: number;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibition: {
-                readonly __typename?: "collection_Exhibition";
-                readonly id: any;
-                readonly name: string;
-                readonly priority: number;
-                readonly colour: string;
-                readonly conferenceId: any;
-            };
         }>;
     }>;
 };
@@ -38373,23 +38326,6 @@ export type ItemElements_GetItemQuery = {
         readonly conferenceId: any;
         readonly title: string;
         readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-        } | null;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly itemId: any;
-            readonly data: any;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly typeName: Content_ElementType_Enum;
-            readonly isHidden: boolean;
-            readonly hasBeenSubmitted?: boolean | null;
-        }>;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
@@ -38431,6 +38367,17 @@ export type ItemElements_GetItemQuery = {
                 readonly conferenceId: any;
             };
         }>;
+        readonly elements: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly itemId: any;
+            readonly data: any;
+            readonly layoutData?: any | null;
+            readonly name: string;
+            readonly typeName: Content_ElementType_Enum;
+            readonly isHidden: boolean;
+            readonly hasBeenSubmitted?: boolean | null;
+        }>;
     } | null;
 };
 
@@ -38446,18 +38393,12 @@ export type ElementDataFragment = {
     readonly hasBeenSubmitted?: boolean | null;
 };
 
-export type ItemElements_ItemDataFragment = {
+export type ItemElements_JustElementDataFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly conferenceId: any;
     readonly title: string;
     readonly typeName: Content_ItemType_Enum;
-    readonly chatId?: any | null;
-    readonly chat?: {
-        readonly __typename?: "chat_Chat";
-        readonly id: any;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-    } | null;
     readonly elements: ReadonlyArray<{
         readonly __typename?: "content_Element";
         readonly id: any;
@@ -38469,6 +38410,14 @@ export type ItemElements_ItemDataFragment = {
         readonly isHidden: boolean;
         readonly hasBeenSubmitted?: boolean | null;
     }>;
+};
+
+export type ItemElements_ItemDataFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly title: string;
+    readonly typeName: Content_ItemType_Enum;
     readonly itemPeople: ReadonlyArray<{
         readonly __typename?: "content_ItemProgramPerson";
         readonly id: any;
@@ -38509,6 +38458,17 @@ export type ItemElements_ItemDataFragment = {
             readonly colour: string;
             readonly conferenceId: any;
         };
+    }>;
+    readonly elements: ReadonlyArray<{
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly itemId: any;
+        readonly data: any;
+        readonly layoutData?: any | null;
+        readonly name: string;
+        readonly typeName: Content_ElementType_Enum;
+        readonly isHidden: boolean;
+        readonly hasBeenSubmitted?: boolean | null;
     }>;
 };
 
@@ -38669,27 +38629,10 @@ export type GetItemQuery = {
         readonly conferenceId: any;
         readonly title: string;
         readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
         readonly descriptionOfExhibitions: ReadonlyArray<{
             readonly __typename?: "collection_Exhibition";
             readonly id: any;
             readonly descriptiveItemId?: any | null;
-        }>;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-        } | null;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly itemId: any;
-            readonly data: any;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly typeName: Content_ElementType_Enum;
-            readonly isHidden: boolean;
-            readonly hasBeenSubmitted?: boolean | null;
         }>;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
@@ -38733,6 +38676,17 @@ export type GetItemQuery = {
             };
         }>;
         readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+        readonly elements: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly itemId: any;
+            readonly data: any;
+            readonly layoutData?: any | null;
+            readonly name: string;
+            readonly typeName: Content_ElementType_Enum;
+            readonly isHidden: boolean;
+            readonly hasBeenSubmitted?: boolean | null;
+        }>;
     } | null;
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
@@ -38903,23 +38857,6 @@ export type ExhibitionWithContentFragment = {
         readonly conferenceId: any;
         readonly title: string;
         readonly typeName: Content_ItemType_Enum;
-        readonly chatId?: any | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-        } | null;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly itemId: any;
-            readonly data: any;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly typeName: Content_ElementType_Enum;
-            readonly isHidden: boolean;
-            readonly hasBeenSubmitted?: boolean | null;
-        }>;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
@@ -38962,6 +38899,17 @@ export type ExhibitionWithContentFragment = {
             };
         }>;
         readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+        readonly elements: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly itemId: any;
+            readonly data: any;
+            readonly layoutData?: any | null;
+            readonly name: string;
+            readonly typeName: Content_ElementType_Enum;
+            readonly isHidden: boolean;
+            readonly hasBeenSubmitted?: boolean | null;
+        }>;
     } | null;
     readonly items: ReadonlyArray<{
         readonly __typename?: "content_ItemExhibition";
@@ -39050,23 +38998,6 @@ export type SelectExhibitionQuery = {
             readonly conferenceId: any;
             readonly title: string;
             readonly typeName: Content_ItemType_Enum;
-            readonly chatId?: any | null;
-            readonly chat?: {
-                readonly __typename?: "chat_Chat";
-                readonly id: any;
-                readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string } | null;
-            } | null;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly itemId: any;
-                readonly data: any;
-                readonly layoutData?: any | null;
-                readonly name: string;
-                readonly typeName: Content_ElementType_Enum;
-                readonly isHidden: boolean;
-                readonly hasBeenSubmitted?: boolean | null;
-            }>;
             readonly itemPeople: ReadonlyArray<{
                 readonly __typename?: "content_ItemProgramPerson";
                 readonly id: any;
@@ -39109,6 +39040,17 @@ export type SelectExhibitionQuery = {
                 };
             }>;
             readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+            readonly elements: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly itemId: any;
+                readonly data: any;
+                readonly layoutData?: any | null;
+                readonly name: string;
+                readonly typeName: Content_ElementType_Enum;
+                readonly isHidden: boolean;
+                readonly hasBeenSubmitted?: boolean | null;
+            }>;
         } | null;
         readonly items: ReadonlyArray<{
             readonly __typename?: "content_ItemExhibition";
@@ -48681,6 +48623,39 @@ export const ElementDataFragmentDoc = gql`
         hasBeenSubmitted
     }
 `;
+export const ItemElements_JustElementDataFragmentDoc = gql`
+    fragment ItemElements_JustElementData on content_Item {
+        id
+        conferenceId
+        title
+        typeName
+        elements(
+            where: {
+                isHidden: { _eq: false }
+                _or: [
+                    {
+                        typeName: {
+                            _in: [
+                                ACTIVE_SOCIAL_ROOMS
+                                CONTENT_GROUP_LIST
+                                DIVIDER
+                                EXPLORE_PROGRAM_BUTTON
+                                EXPLORE_SCHEDULE_BUTTON
+                                LIVE_PROGRAM_ROOMS
+                                SPONSOR_BOOTHS
+                                WHOLE_SCHEDULE
+                            ]
+                        }
+                    }
+                    { hasBeenSubmitted: { _eq: true } }
+                ]
+            }
+        ) {
+            ...ElementData
+        }
+    }
+    ${ElementDataFragmentDoc}
+`;
 export const ItemTagDataFragmentDoc = gql`
     fragment ItemTagData on content_ItemTag {
         id
@@ -48709,42 +48684,7 @@ export const ItemExhibitionDataFragmentDoc = gql`
 `;
 export const ItemElements_ItemDataFragmentDoc = gql`
     fragment ItemElements_ItemData on content_Item {
-        id
-        conferenceId
-        title
-        typeName
-        chatId
-        chat {
-            id
-            room {
-                id
-                name
-            }
-        }
-        elements(
-            where: {
-                isHidden: { _eq: false }
-                _or: [
-                    {
-                        typeName: {
-                            _in: [
-                                ACTIVE_SOCIAL_ROOMS
-                                CONTENT_GROUP_LIST
-                                DIVIDER
-                                EXPLORE_PROGRAM_BUTTON
-                                EXPLORE_SCHEDULE_BUTTON
-                                LIVE_PROGRAM_ROOMS
-                                SPONSOR_BOOTHS
-                                WHOLE_SCHEDULE
-                            ]
-                        }
-                    }
-                    { hasBeenSubmitted: { _eq: true } }
-                ]
-            }
-        ) {
-            ...ElementData
-        }
+        ...ItemElements_JustElementData
         itemPeople(where: { roleName: { _neq: "REVIEWER" } }, order_by: { priority: asc }) {
             ...ProgramPersonData
         }
@@ -48755,7 +48695,7 @@ export const ItemElements_ItemDataFragmentDoc = gql`
             ...ItemExhibitionData
         }
     }
-    ${ElementDataFragmentDoc}
+    ${ItemElements_JustElementDataFragmentDoc}
     ${ProgramPersonDataFragmentDoc}
     ${ItemTagDataFragmentDoc}
     ${ItemExhibitionDataFragmentDoc}
@@ -50738,10 +50678,10 @@ export function useGetChatPathQuery(options: Omit<Urql.UseQueryArgs<GetChatPathQ
 export const ConferenceLandingPageItemDocument = gql`
     query ConferenceLandingPageItem($conferenceId: uuid!) {
         content_Item(where: { _and: [{ conferenceId: { _eq: $conferenceId } }, { typeName: { _eq: LANDING_PAGE } }] }) {
-            ...ItemElements_ItemData
+            ...ItemElements_JustElementData
         }
     }
-    ${ItemElements_ItemDataFragmentDoc}
+    ${ItemElements_JustElementDataFragmentDoc}
 `;
 
 export function useConferenceLandingPageItemQuery(

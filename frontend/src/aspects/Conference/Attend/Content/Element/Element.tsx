@@ -13,8 +13,6 @@ import ActiveSocialRooms from "../../Rooms/V2/ActiveSocialRooms";
 import LiveProgramRooms from "../../Rooms/V2/LiveProgramRooms";
 import SponsorBooths from "../../Rooms/V2/SponsorBooths";
 import { ProgramModalTab, useScheduleModal } from "../../Schedule/ProgramModal";
-import Schedule from "../../Schedule/v1/Schedule";
-import ItemList from "../ItemList";
 import { VideoElement } from "./VideoElement";
 
 export function Element({ element }: { element: ElementDataFragment }): JSX.Element {
@@ -42,10 +40,6 @@ function ElementInner({
         const latestVersion = R.last(blob);
 
         switch (type) {
-            case Content_ElementType_Enum.ContentGroupList:
-                return <ItemList pt="3ex" />;
-            case Content_ElementType_Enum.WholeSchedule:
-                return <Schedule />;
             case Content_ElementType_Enum.LiveProgramRooms:
                 return <LiveProgramRooms />;
             case Content_ElementType_Enum.ActiveSocialRooms:
@@ -54,6 +48,7 @@ function ElementInner({
                 return <Divider />;
             case Content_ElementType_Enum.SponsorBooths:
                 return <SponsorBooths />;
+            case Content_ElementType_Enum.ContentGroupList:
             case Content_ElementType_Enum.ExploreProgramButton:
                 return (
                     <Button
@@ -64,6 +59,7 @@ function ElementInner({
                         Browse content
                     </Button>
                 );
+            case Content_ElementType_Enum.WholeSchedule:
             case Content_ElementType_Enum.ExploreScheduleButton:
                 return (
                     <Button

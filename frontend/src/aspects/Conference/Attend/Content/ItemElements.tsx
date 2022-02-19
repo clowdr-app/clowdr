@@ -35,19 +35,11 @@ gql`
         hasBeenSubmitted
     }
 
-    fragment ItemElements_ItemData on content_Item {
+    fragment ItemElements_JustElementData on content_Item {
         id
         conferenceId
         title
         typeName
-        chatId
-        chat {
-            id
-            room {
-                id
-                name
-            }
-        }
         elements(
             where: {
                 isHidden: { _eq: false }
@@ -74,6 +66,10 @@ gql`
         ) {
             ...ElementData
         }
+    }
+
+    fragment ItemElements_ItemData on content_Item {
+        ...ItemElements_JustElementData
         itemPeople(where: { roleName: { _neq: "REVIEWER" } }, order_by: { priority: asc }) {
             ...ProgramPersonData
         }

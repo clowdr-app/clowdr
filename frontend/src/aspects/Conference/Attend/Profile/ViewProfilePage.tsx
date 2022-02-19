@@ -6,6 +6,7 @@ import {
     Center,
     chakra,
     Divider,
+    Flex,
     Heading,
     HStack,
     Image,
@@ -31,6 +32,7 @@ import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser"
 import { useConference } from "../../useConference";
 import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import CreateDMButton from "../Registrant/CreateDMButton";
 import RegistrantExtraInfo from "./RegistrantExtraInfo";
 import RegistrantItems from "./RegistrantItems";
 
@@ -108,9 +110,19 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                         spacing={4}
                         flex="1 1 50%"
                     >
-                        <Heading as="h1" id="page-heading">
-                            {registrant.displayName}
-                        </Heading>
+                        <Flex w="100%">
+                            <Heading
+                                as="h1"
+                                id="page-heading"
+                                mr="auto"
+                                textAlign="left"
+                                whiteSpace="normal"
+                                wordBreak="break-word"
+                            >
+                                {registrant.displayName}
+                            </Heading>
+                            <CreateDMButton ml={4} registrantId={registrant.id} />
+                        </Flex>
                         {registrant.profile.pronouns ? (
                             <Box>
                                 <PronounList pronouns={registrant.profile.pronouns} />

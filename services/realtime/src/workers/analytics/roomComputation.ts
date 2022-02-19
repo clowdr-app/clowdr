@@ -104,7 +104,7 @@ async function onRoomBatchUpdate(conferenceId: string, backdateDistance?: number
                                 roomHashes.map(async (roomHash) => {
                                     try {
                                         const stat = statSet.pages[`PresenceList:${roomHash.hash}`];
-                                        if (typeof stat === "number") {
+                                        if (typeof stat === "number" && stat > 0) {
                                             await gqlClient
                                                 ?.mutation(Analytics_InsertRoomPresenceDocument, {
                                                     roomId: roomHash.id,

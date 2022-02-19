@@ -46,10 +46,7 @@ async function onContentItemBatchUpdate(itemId: string) {
         )
         .toPromise();
 
-    if (
-        response?.data?.analytics_ContentItemStats_aggregate.aggregate?.sum !== undefined &&
-        response?.data?.analytics_ContentItemStats_aggregate.aggregate?.sum !== null
-    ) {
+    if (response?.data?.analytics_ContentItemStats_aggregate.aggregate?.sum) {
         await gqlClient
             ?.mutation(Analytics_InsertItemTotalViewStatDocument, {
                 itemId,

@@ -3,6 +3,8 @@ import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import React, { useMemo } from "react";
 import type { ElementDataFragment } from "../../../../../generated/graphql";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
+import useIsNarrowView from "../../../../Hooks/useIsNarrowView";
+import useIsVeryNarrowView from "../../../../Hooks/useIsVeryNarrowView";
 import { Element } from "../Element/Element";
 
 export const contentSortOrder = [
@@ -44,6 +46,11 @@ export default function ElementsGridLayout({
     elements: readonly ElementDataFragment[];
     textJustification?: "flex-start" | "center";
 }): JSX.Element {
+    const isNarrowView = useIsNarrowView();
+    const isVeryNarrowView = useIsVeryNarrowView();
+
+    const columns = isVeryNarrowView ? 1 : isNarrowView ? 4 : 12;
+    const divisor = 12 / columns;
     const els = useMemo(() => {
         return [...elements]
             .filter((element) => {
@@ -104,24 +111,19 @@ export default function ElementsGridLayout({
                         minW={0}
                         overflowX="auto"
                         key={element.id}
-                        colSpan={
-                            !layoutBlob
-                                ? [12]
-                                : layoutBlob.size
-                                ? [layoutBlob.size.columns]
-                                : layoutBlob.wide
-                                ? [12]
-                                : [12, 12, 6]
-                        }
-                        rowSpan={
-                            !layoutBlob
-                                ? [12]
-                                : layoutBlob.size
-                                ? [layoutBlob.size.rows]
-                                : layoutBlob.wide
-                                ? [12]
-                                : [12, 12, 6]
-                        }
+                        colSpan={Math.max(
+                            1,
+                            Math.round(
+                                !layoutBlob
+                                    ? columns
+                                    : layoutBlob.size
+                                    ? layoutBlob.size.columns / divisor
+                                    : layoutBlob.wide
+                                    ? columns
+                                    : columns / 2
+                            )
+                        )}
+                        rowSpan={!layoutBlob ? 1 : layoutBlob.size ? layoutBlob.size.rows : 1}
                         p={4}
                         display="flex"
                         justifyContent={
@@ -135,10 +137,10 @@ export default function ElementsGridLayout({
                     </GridItem>
                 );
             });
-    }, [elements, textJustification]);
+    }, [columns, divisor, elements, textJustification]);
 
     return (
-        <Grid gridTemplateColumns="repeat(12, 1fr)" ml={0} mr={3} w="100%">
+        <Grid gridTemplateColumns={`repeat(${columns}, 1fr)`} ml={0} mr={3} w="100%">
             {els}
         </Grid>
     );

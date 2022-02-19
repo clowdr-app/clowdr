@@ -102,9 +102,6 @@ gql`
         abstractElements: elements(where: { typeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {
             ...Schedule_Element
         }
-        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-            ...Schedule_ItemPerson
-        }
     }
 
     query Schedule_SelectItem($id: uuid!) {

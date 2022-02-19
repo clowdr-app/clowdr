@@ -38408,11 +38408,12 @@ export type LocalSchedule_GetRoomsWithoutEventsQueryVariables = Exact<{
 
 export type LocalSchedule_GetRoomsWithoutEventsQuery = {
     __typename?: "query_root";
-    room_Room: Array<{
-        __typename?: "room_Room";
+    video_ChannelStack: Array<{
+        __typename?: "video_ChannelStack";
         id: any;
         conferenceId: any;
-        channelStack?: { __typename?: "video_ChannelStack"; id: any; mediaLiveChannelId: string } | null;
+        roomId?: any | null;
+        mediaLiveChannelId: string;
     }>;
 };
 
@@ -42648,7 +42649,7 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                 selections: [
                     {
                         kind: "Field",
-                        name: { kind: "Name", value: "room_Room" },
+                        name: { kind: "Name", value: "video_ChannelStack" },
                         arguments: [
                             {
                                 kind: "Argument",
@@ -42656,6 +42657,20 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                 value: {
                                     kind: "ObjectValue",
                                     fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "roomId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_is_null" },
+                                                        value: { kind: "BooleanValue", value: false },
+                                                    },
+                                                ],
+                                            },
+                                        },
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "_or" },
@@ -42667,247 +42682,180 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                                         fields: [
                                                             {
                                                                 kind: "ObjectField",
-                                                                name: { kind: "Name", value: "_and" },
+                                                                name: { kind: "Name", value: "room" },
                                                                 value: {
-                                                                    kind: "ListValue",
-                                                                    values: [
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
                                                                         {
-                                                                            kind: "ObjectValue",
-                                                                            fields: [
-                                                                                {
-                                                                                    kind: "ObjectField",
-                                                                                    name: {
-                                                                                        kind: "Name",
-                                                                                        value: "_not",
-                                                                                    },
-                                                                                    value: {
-                                                                                        kind: "ObjectValue",
-                                                                                        fields: [
-                                                                                            {
-                                                                                                kind: "ObjectField",
-                                                                                                name: {
-                                                                                                    kind: "Name",
-                                                                                                    value: "events",
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_not" },
+                                                                            value: {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "events",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "ObjectValue",
+                                                                                            fields: [
+                                                                                                {
+                                                                                                    kind: "ObjectField",
+                                                                                                    name: {
+                                                                                                        kind: "Name",
+                                                                                                        value: "intendedRoomModeName",
+                                                                                                    },
+                                                                                                    value: {
+                                                                                                        kind: "ObjectValue",
+                                                                                                        fields: [
+                                                                                                            {
+                                                                                                                kind: "ObjectField",
+                                                                                                                name: {
+                                                                                                                    kind: "Name",
+                                                                                                                    value: "_in",
+                                                                                                                },
+                                                                                                                value: {
+                                                                                                                    kind: "ListValue",
+                                                                                                                    values: [
+                                                                                                                        {
+                                                                                                                            kind: "EnumValue",
+                                                                                                                            value: "PRERECORDED",
+                                                                                                                        },
+                                                                                                                        {
+                                                                                                                            kind: "EnumValue",
+                                                                                                                            value: "Q_AND_A",
+                                                                                                                        },
+                                                                                                                        {
+                                                                                                                            kind: "EnumValue",
+                                                                                                                            value: "PRESENTATION",
+                                                                                                                        },
+                                                                                                                    ],
+                                                                                                                },
+                                                                                                            },
+                                                                                                        ],
+                                                                                                    },
                                                                                                 },
-                                                                                                value: {
-                                                                                                    kind: "ObjectValue",
-                                                                                                    fields: [
-                                                                                                        {
-                                                                                                            kind: "ObjectField",
-                                                                                                            name: {
-                                                                                                                kind: "Name",
-                                                                                                                value: "startTime",
-                                                                                                            },
-                                                                                                            value: {
+                                                                                                {
+                                                                                                    kind: "ObjectField",
+                                                                                                    name: {
+                                                                                                        kind: "Name",
+                                                                                                        value: "_or",
+                                                                                                    },
+                                                                                                    value: {
+                                                                                                        kind: "ListValue",
+                                                                                                        values: [
+                                                                                                            {
                                                                                                                 kind: "ObjectValue",
                                                                                                                 fields: [
                                                                                                                     {
                                                                                                                         kind: "ObjectField",
                                                                                                                         name: {
                                                                                                                             kind: "Name",
-                                                                                                                            value: "_gte",
+                                                                                                                            value: "startTime",
                                                                                                                         },
                                                                                                                         value: {
-                                                                                                                            kind: "Variable",
-                                                                                                                            name: {
-                                                                                                                                kind: "Name",
-                                                                                                                                value: "from",
-                                                                                                                            },
-                                                                                                                        },
-                                                                                                                    },
-                                                                                                                    {
-                                                                                                                        kind: "ObjectField",
-                                                                                                                        name: {
-                                                                                                                            kind: "Name",
-                                                                                                                            value: "_lte",
-                                                                                                                        },
-                                                                                                                        value: {
-                                                                                                                            kind: "Variable",
-                                                                                                                            name: {
-                                                                                                                                kind: "Name",
-                                                                                                                                value: "to",
-                                                                                                                            },
-                                                                                                                        },
-                                                                                                                    },
-                                                                                                                ],
-                                                                                                            },
-                                                                                                        },
-                                                                                                        {
-                                                                                                            kind: "ObjectField",
-                                                                                                            name: {
-                                                                                                                kind: "Name",
-                                                                                                                value: "intendedRoomModeName",
-                                                                                                            },
-                                                                                                            value: {
-                                                                                                                kind: "ObjectValue",
-                                                                                                                fields: [
-                                                                                                                    {
-                                                                                                                        kind: "ObjectField",
-                                                                                                                        name: {
-                                                                                                                            kind: "Name",
-                                                                                                                            value: "_in",
-                                                                                                                        },
-                                                                                                                        value: {
-                                                                                                                            kind: "ListValue",
-                                                                                                                            values: [
+                                                                                                                            kind: "ObjectValue",
+                                                                                                                            fields: [
                                                                                                                                 {
-                                                                                                                                    kind: "EnumValue",
-                                                                                                                                    value: "PRERECORDED",
+                                                                                                                                    kind: "ObjectField",
+                                                                                                                                    name: {
+                                                                                                                                        kind: "Name",
+                                                                                                                                        value: "_gte",
+                                                                                                                                    },
+                                                                                                                                    value: {
+                                                                                                                                        kind: "Variable",
+                                                                                                                                        name: {
+                                                                                                                                            kind: "Name",
+                                                                                                                                            value: "from",
+                                                                                                                                        },
+                                                                                                                                    },
                                                                                                                                 },
                                                                                                                                 {
-                                                                                                                                    kind: "EnumValue",
-                                                                                                                                    value: "Q_AND_A",
-                                                                                                                                },
-                                                                                                                                {
-                                                                                                                                    kind: "EnumValue",
-                                                                                                                                    value: "PRESENTATION",
+                                                                                                                                    kind: "ObjectField",
+                                                                                                                                    name: {
+                                                                                                                                        kind: "Name",
+                                                                                                                                        value: "_lte",
+                                                                                                                                    },
+                                                                                                                                    value: {
+                                                                                                                                        kind: "Variable",
+                                                                                                                                        name: {
+                                                                                                                                            kind: "Name",
+                                                                                                                                            value: "to",
+                                                                                                                                        },
+                                                                                                                                    },
                                                                                                                                 },
                                                                                                                             ],
                                                                                                                         },
                                                                                                                     },
                                                                                                                 ],
                                                                                                             },
-                                                                                                        },
-                                                                                                    ],
-                                                                                                },
-                                                                                            },
-                                                                                        ],
-                                                                                    },
-                                                                                },
-                                                                            ],
-                                                                        },
-                                                                        {
-                                                                            kind: "ObjectValue",
-                                                                            fields: [
-                                                                                {
-                                                                                    kind: "ObjectField",
-                                                                                    name: {
-                                                                                        kind: "Name",
-                                                                                        value: "_not",
-                                                                                    },
-                                                                                    value: {
-                                                                                        kind: "ObjectValue",
-                                                                                        fields: [
-                                                                                            {
-                                                                                                kind: "ObjectField",
-                                                                                                name: {
-                                                                                                    kind: "Name",
-                                                                                                    value: "events",
-                                                                                                },
-                                                                                                value: {
-                                                                                                    kind: "ObjectValue",
-                                                                                                    fields: [
-                                                                                                        {
-                                                                                                            kind: "ObjectField",
-                                                                                                            name: {
-                                                                                                                kind: "Name",
-                                                                                                                value: "startTime",
-                                                                                                            },
-                                                                                                            value: {
+                                                                                                            {
                                                                                                                 kind: "ObjectValue",
                                                                                                                 fields: [
                                                                                                                     {
                                                                                                                         kind: "ObjectField",
                                                                                                                         name: {
                                                                                                                             kind: "Name",
-                                                                                                                            value: "_lte",
+                                                                                                                            value: "startTime",
                                                                                                                         },
                                                                                                                         value: {
-                                                                                                                            kind: "Variable",
-                                                                                                                            name: {
-                                                                                                                                kind: "Name",
-                                                                                                                                value: "from",
-                                                                                                                            },
+                                                                                                                            kind: "ObjectValue",
+                                                                                                                            fields: [
+                                                                                                                                {
+                                                                                                                                    kind: "ObjectField",
+                                                                                                                                    name: {
+                                                                                                                                        kind: "Name",
+                                                                                                                                        value: "_lte",
+                                                                                                                                    },
+                                                                                                                                    value: {
+                                                                                                                                        kind: "Variable",
+                                                                                                                                        name: {
+                                                                                                                                            kind: "Name",
+                                                                                                                                            value: "from",
+                                                                                                                                        },
+                                                                                                                                    },
+                                                                                                                                },
+                                                                                                                            ],
                                                                                                                         },
                                                                                                                     },
-                                                                                                                ],
-                                                                                                            },
-                                                                                                        },
-                                                                                                        {
-                                                                                                            kind: "ObjectField",
-                                                                                                            name: {
-                                                                                                                kind: "Name",
-                                                                                                                value: "endTime",
-                                                                                                            },
-                                                                                                            value: {
-                                                                                                                kind: "ObjectValue",
-                                                                                                                fields: [
                                                                                                                     {
                                                                                                                         kind: "ObjectField",
                                                                                                                         name: {
                                                                                                                             kind: "Name",
-                                                                                                                            value: "_gte",
+                                                                                                                            value: "endTime",
                                                                                                                         },
                                                                                                                         value: {
-                                                                                                                            kind: "Variable",
-                                                                                                                            name: {
-                                                                                                                                kind: "Name",
-                                                                                                                                value: "from",
-                                                                                                                            },
-                                                                                                                        },
-                                                                                                                    },
-                                                                                                                ],
-                                                                                                            },
-                                                                                                        },
-                                                                                                        {
-                                                                                                            kind: "ObjectField",
-                                                                                                            name: {
-                                                                                                                kind: "Name",
-                                                                                                                value: "intendedRoomModeName",
-                                                                                                            },
-                                                                                                            value: {
-                                                                                                                kind: "ObjectValue",
-                                                                                                                fields: [
-                                                                                                                    {
-                                                                                                                        kind: "ObjectField",
-                                                                                                                        name: {
-                                                                                                                            kind: "Name",
-                                                                                                                            value: "_in",
-                                                                                                                        },
-                                                                                                                        value: {
-                                                                                                                            kind: "ListValue",
-                                                                                                                            values: [
+                                                                                                                            kind: "ObjectValue",
+                                                                                                                            fields: [
                                                                                                                                 {
-                                                                                                                                    kind: "EnumValue",
-                                                                                                                                    value: "PRERECORDED",
-                                                                                                                                },
-                                                                                                                                {
-                                                                                                                                    kind: "EnumValue",
-                                                                                                                                    value: "Q_AND_A",
-                                                                                                                                },
-                                                                                                                                {
-                                                                                                                                    kind: "EnumValue",
-                                                                                                                                    value: "PRESENTATION",
+                                                                                                                                    kind: "ObjectField",
+                                                                                                                                    name: {
+                                                                                                                                        kind: "Name",
+                                                                                                                                        value: "_gte",
+                                                                                                                                    },
+                                                                                                                                    value: {
+                                                                                                                                        kind: "Variable",
+                                                                                                                                        name: {
+                                                                                                                                            kind: "Name",
+                                                                                                                                            value: "from",
+                                                                                                                                        },
+                                                                                                                                    },
                                                                                                                                 },
                                                                                                                             ],
                                                                                                                         },
                                                                                                                     },
                                                                                                                 ],
                                                                                                             },
-                                                                                                        },
-                                                                                                    ],
+                                                                                                        ],
+                                                                                                    },
                                                                                                 },
-                                                                                            },
-                                                                                        ],
+                                                                                            ],
+                                                                                        },
                                                                                     },
-                                                                                },
-                                                                            ],
-                                                                        },
-                                                                        {
-                                                                            kind: "ObjectValue",
-                                                                            fields: [
-                                                                                {
-                                                                                    kind: "ObjectField",
-                                                                                    name: {
-                                                                                        kind: "Name",
-                                                                                        value: "channelStack",
-                                                                                    },
-                                                                                    value: {
-                                                                                        kind: "ObjectValue",
-                                                                                        fields: [],
-                                                                                    },
-                                                                                },
-                                                                            ],
+                                                                                ],
+                                                                            },
                                                                         },
                                                                     ],
                                                                 },
@@ -42919,7 +42867,7 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                                         fields: [
                                                             {
                                                                 kind: "ObjectField",
-                                                                name: { kind: "Name", value: "channelStack" },
+                                                                name: { kind: "Name", value: "channelStackUpdateJobs" },
                                                                 value: {
                                                                     kind: "ObjectValue",
                                                                     fields: [
@@ -42927,7 +42875,7 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                                                             kind: "ObjectField",
                                                                             name: {
                                                                                 kind: "Name",
-                                                                                value: "channelStackUpdateJobs",
+                                                                                value: "jobStatusName",
                                                                             },
                                                                             value: {
                                                                                 kind: "ObjectValue",
@@ -42936,30 +42884,18 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                                                                         kind: "ObjectField",
                                                                                         name: {
                                                                                             kind: "Name",
-                                                                                            value: "jobStatusName",
+                                                                                            value: "_in",
                                                                                         },
                                                                                         value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
+                                                                                            kind: "ListValue",
+                                                                                            values: [
                                                                                                 {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_in",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "ListValue",
-                                                                                                        values: [
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "NEW",
-                                                                                                            },
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "IN_PROGRESS",
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
+                                                                                                    kind: "EnumValue",
+                                                                                                    value: "NEW",
+                                                                                                },
+                                                                                                {
+                                                                                                    kind: "EnumValue",
+                                                                                                    value: "IN_PROGRESS",
                                                                                                 },
                                                                                             ],
                                                                                         },
@@ -42984,17 +42920,8 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "channelStack" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            { kind: "Field", name: { kind: "Name", value: "mediaLiveChannelId" } },
-                                        ],
-                                    },
-                                },
+                                { kind: "Field", name: { kind: "Name", value: "roomId" } },
+                                { kind: "Field", name: { kind: "Name", value: "mediaLiveChannelId" } },
                             ],
                         },
                     },

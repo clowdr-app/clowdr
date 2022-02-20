@@ -179,7 +179,10 @@ export class ImmediateSwitchService {
                         ScheduleActionSettings: {
                             InputSwitchSettings: {
                                 InputAttachmentNameReference:
-                                    eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
+                                    eventRtmpInputName === Video_RtmpInput_Enum.RtmpRoom &&
+                                    channelStack.rtmpRoomInputAttachmentName
+                                        ? channelStack.rtmpRoomInputAttachmentName
+                                        : eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
                                         ? channelStack.rtmpBInputAttachmentName
                                         : channelStack.rtmpAInputAttachmentName,
                             },
@@ -200,7 +203,9 @@ export class ImmediateSwitchService {
                         ScheduleActionSettings: {
                             InputSwitchSettings: {
                                 InputAttachmentNameReference:
-                                    eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
+                                    switchData.data.source === "rtmpRoom" && channelStack.rtmpRoomInputAttachmentName
+                                        ? channelStack.rtmpRoomInputAttachmentName
+                                        : eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
                                         ? channelStack.rtmpBInputAttachmentName
                                         : channelStack.rtmpAInputAttachmentName,
                             },

@@ -354,6 +354,7 @@ export class LocalScheduleService {
                   rtmpBInputAttachmentName:
                       event.room.channelStack.rtmpBInputAttachmentName ??
                       event.room.channelStack.rtmpAInputAttachmentName,
+                  rtmpRoomInputAttachmentName: event.room.channelStack.rtmpRoomInputAttachmentName ?? null,
               }
             : null;
 
@@ -390,6 +391,7 @@ export class LocalScheduleService {
                         mediaLiveChannelId
                         rtmpAInputAttachmentName
                         rtmpBInputAttachmentName
+                        rtmpRoomInputAttachmentName
                         mp4InputAttachmentName
                         loopingMp4InputAttachmentName
                     }
@@ -433,6 +435,7 @@ export interface ChannelStack {
     mediaLiveChannelId: string;
     rtmpAInputAttachmentName: string;
     rtmpBInputAttachmentName: string;
+    rtmpRoomInputAttachmentName: string | null;
     mp4InputAttachmentName: string;
     loopingMp4InputAttachmentName: string;
 }

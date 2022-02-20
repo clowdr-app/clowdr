@@ -47,6 +47,8 @@ export class ChannelStackDataService {
                         rtmpAInputAttachmentName
                         rtmpBInputAttachmentName
                         loopingMp4InputAttachmentName
+                        rtmpRoomInputId
+                        rtmpRoomInputAttachmentName
                     }
                 }
             }
@@ -75,6 +77,14 @@ export class ChannelStackDataService {
             loopingMp4InputAttachmentName:
                 channelResult.data.room_Room_by_pk.channelStack.loopingMp4InputAttachmentName,
             fillerVideoKey,
+            rtmpRoomInput:
+                channelResult.data.room_Room_by_pk.channelStack.rtmpRoomInputId &&
+                channelResult.data.room_Room_by_pk.channelStack.rtmpRoomInputAttachmentName
+                    ? {
+                          inputId: channelResult.data.room_Room_by_pk.channelStack.rtmpRoomInputId,
+                          attachmentName: channelResult.data.room_Room_by_pk.channelStack.rtmpRoomInputAttachmentName,
+                      }
+                    : null,
         };
     }
 
@@ -96,12 +106,14 @@ export class ChannelStackDataService {
                 $rtmpAInputUri: String!
                 $rtmpBInputId: String!
                 $rtmpBInputUri: String!
+                $rtmpRoomInputId: String
                 $endpointUri: String!
                 $cloudFrontDomain: String!
                 $mp4InputAttachmentName: String!
                 $loopingMp4InputAttachmentName: String!
                 $rtmpAInputAttachmentName: String!
                 $rtmpBInputAttachmentName: String!
+                $rtmpRoomInputAttachmentName: String
                 $rtmpOutputUri: String
                 $rtmpOutputStreamKey: String
                 $rtmpOutputDestinationId: String
@@ -132,6 +144,8 @@ export class ChannelStackDataService {
                         rtmpOutputStreamKey: $rtmpOutputStreamKey
                         rtmpOutputDestinationId: $rtmpOutputDestinationId
                         roomId: $roomId
+                        rtmpRoomInputId: $rtmpRoomInputId
+                        rtmpRoomInputAttachmentName: $rtmpRoomInputAttachmentName
                     }
                 ) {
                     id
@@ -163,6 +177,8 @@ export class ChannelStackDataService {
                 rtmpOutputStreamKey: stackDescription.rtmpOutputStreamKey,
                 rtmpOutputDestinationId: stackDescription.rtmpOutputDestinationId,
                 roomId,
+                rtmpRoomInputId: stackDescription.rtmpRoomInputId,
+                rtmpRoomInputAttachmentName: stackDescription.rtmpRoomInputAttachmentName,
             },
         });
 
@@ -257,8 +273,15 @@ export class ChannelStackDataService {
                     rtmpOutputUri
                     rtmpOutputStreamKey
                     rtmpOutputDestinationId
+                    rtmpRoomInputId
+                    rtmpRoomInputAttachmentName
                     room {
                         id
+                        rtmpInput {
+                            id
+                            inputId
+                            inputName
+                        }
                         rtmpOutput {
                             id
                             url
@@ -277,6 +300,10 @@ export class ChannelStackDataService {
                 $oldRtmpOutputDestinationId: String
                 $newRtmpOutputUri: String
                 $newRtmpOutputStreamKey: String
+                $oldRtmpRoomInputId: String
+                $oldRtmpRoomInputAttachmentName: String
+                $newRtmpRoomInputId: String
+                $newRtmpRoomInputAttachmentName: String
             ) {
                 insert_job_queues_ChannelStackUpdateJob_one(
                     object: {
@@ -289,6 +316,10 @@ export class ChannelStackDataService {
                         oldRtmpOutputDestinationId: $oldRtmpOutputDestinationId
                         newRtmpOutputUri: $newRtmpOutputUri
                         newRtmpOutputStreamKey: $newRtmpOutputStreamKey
+                        oldRtmpRoomInputId: $oldRtmpRoomInputId
+                        oldRtmpRoomInputAttachmentName: $oldRtmpRoomInputAttachmentName
+                        newRtmpRoomInputId: $newRtmpRoomInputId
+                        newRtmpRoomInputAttachmentName: $newRtmpRoomInputAttachmentName
                     }
                 ) {
                     id
@@ -320,6 +351,9 @@ export class ChannelStackDataService {
             { channelStackId, cloudFormationStackArn: result.data.video_ChannelStack_by_pk.cloudFormationStackArn },
             "Creating channel stack update job"
         );
+        const hasNewRtmpRoomInput =
+            result.data.video_ChannelStack_by_pk.room?.rtmpInput?.inputId &&
+            result.data.video_ChannelStack_by_pk.room?.rtmpInput?.inputName;
         await this.graphQlService.apolloClient.mutate({
             mutation: ChannelStack_CreateChannelStackUpdateJobDocument,
             variables: {
@@ -331,6 +365,15 @@ export class ChannelStackDataService {
                 oldRtmpOutputDestinationId: result.data.video_ChannelStack_by_pk.rtmpOutputDestinationId,
                 newRtmpOutputUri: result.data.video_ChannelStack_by_pk.room?.rtmpOutput?.url ?? null,
                 newRtmpOutputStreamKey: result.data.video_ChannelStack_by_pk.room?.rtmpOutput?.streamKey ?? null,
+                oldRtmpRoomInputId: result.data.video_ChannelStack_by_pk.rtmpRoomInputId ?? null,
+                oldRtmpRoomInputAttachmentName:
+                    result.data.video_ChannelStack_by_pk.rtmpRoomInputAttachmentName ?? null,
+                newRtmpRoomInputId: hasNewRtmpRoomInput
+                    ? result.data.video_ChannelStack_by_pk.room?.rtmpInput?.inputId ?? null
+                    : null,
+                newRtmpRoomInputAttachmentName: hasNewRtmpRoomInput
+                    ? result.data.video_ChannelStack_by_pk.room?.rtmpInput?.inputName ?? null
+                    : null,
             },
         });
     }

@@ -1,0 +1,7 @@
+table:
+  name: RoomRtmpInput
+  schema: video
+object_relationships:
+- name: room
+  using:
+    foreign_key_constraint_on: roomId

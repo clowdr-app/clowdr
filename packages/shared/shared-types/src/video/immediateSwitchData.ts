@@ -1,5 +1,14 @@
 import { Type } from "class-transformer";
-import { Equals, IsNotEmpty, IsNotEmptyObject, IsString, IsUUID, ValidateNested } from "class-validator";
+import {
+    Equals,
+    IsEnum,
+    IsNotEmpty,
+    IsNotEmptyObject,
+    IsOptional,
+    IsString,
+    IsUUID,
+    ValidateNested,
+} from "class-validator";
 
 export class BaseImmediateSwitchData {
     @IsNotEmpty()
@@ -22,6 +31,9 @@ export class VideoImmediateSwitchData extends BaseImmediateSwitchData {
 export class RtmpPushImmediateSwitchData extends BaseImmediateSwitchData {
     @IsNotEmpty()
     kind: "rtmp_push";
+    @IsOptional()
+    @IsEnum(["rtmpEvent", "rtmpRoom"])
+    source?: "rtmpEvent" | "rtmpRoom";
 }
 
 export class ImmediateSwitchData {

@@ -26,6 +26,14 @@ export class ChannelStackUpdateJobService {
             id: string;
             mediaLiveChannelId: string;
             cloudFormationStackArn: string;
+            oldRtmpRoomInput: {
+                inputId: string;
+                attachmentName: string;
+            } | null;
+            newRtmpRoomInput: {
+                inputId: string;
+                attachmentName: string;
+            } | null;
             newRtmpOutputUri: string | null;
             newRtmpOutputStreamKey: string | null;
         }[]
@@ -42,6 +50,10 @@ export class ChannelStackUpdateJobService {
                     oldRtmpOutputDestinationId
                     newRtmpOutputUri
                     newRtmpOutputStreamKey
+                    oldRtmpRoomInputId
+                    oldRtmpRoomInputAttachmentName
+                    newRtmpRoomInputId
+                    newRtmpRoomInputAttachmentName
                 }
             }
         `;
@@ -54,6 +66,20 @@ export class ChannelStackUpdateJobService {
             cloudFormationStackArn: x.cloudFormationStackArn,
             id: x.id,
             mediaLiveChannelId: x.mediaLiveChannelId,
+            oldRtmpRoomInput:
+                x.oldRtmpRoomInputId && x.oldRtmpRoomInputAttachmentName
+                    ? {
+                          inputId: x.oldRtmpRoomInputId,
+                          attachmentName: x.oldRtmpRoomInputAttachmentName,
+                      }
+                    : null,
+            newRtmpRoomInput:
+                x.newRtmpRoomInputId && x.newRtmpRoomInputAttachmentName
+                    ? {
+                          inputId: x.newRtmpRoomInputId,
+                          attachmentName: x.newRtmpRoomInputAttachmentName,
+                      }
+                    : null,
             newRtmpOutputStreamKey: x.newRtmpOutputStreamKey ?? null,
             newRtmpOutputUri: x.newRtmpOutputUri ?? null,
         }));

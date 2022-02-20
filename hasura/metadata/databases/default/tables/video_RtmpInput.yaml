@@ -41,6 +41,12 @@ select_permissions:
   role: submitter
 - permission:
     columns:
+    - name
+    - description
+    filter: {}
+  role: superuser
+- permission:
+    columns:
     - description
     - name
     filter: {}

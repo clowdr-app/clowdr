@@ -1,8 +1,7 @@
 import { App } from "@aws-cdk/core";
 import type { DescribeStacksCommandOutput } from "@aws-sdk/client-cloudformation";
 import { StackStatus } from "@aws-sdk/client-cloudformation";
-import type { DescribeChannelResponse } from "@aws-sdk/client-medialive";
-import { ChannelState } from "@aws-sdk/client-medialive";
+import { ChannelState, DescribeChannelResponse } from "@aws-sdk/client-medialive";
 import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
@@ -151,6 +150,8 @@ export class ChannelStackService {
         const rtmpOutputUri = findOutput("RtmpOutputUri");
         const rtmpOutputStreamKey = findOutput("RtmpOutputStreamKey");
         const rtmpOutputDestinationId = findOutput("RtmpOutputDestinationId");
+        const rtmpRoomInputId = findOutput("RtmpRoomInputId");
+        const rtmpRoomInputAttachmentName = findOutput("RtmpRoomInputAttachmentName");
 
         return {
             rtmpAInputUri,
@@ -171,12 +172,15 @@ export class ChannelStackService {
             rtmpOutputUri,
             rtmpOutputStreamKey,
             rtmpOutputDestinationId,
+            rtmpRoomInputId,
+            rtmpRoomInputAttachmentName,
         };
     }
 
     public async createNewChannelStack(
         roomId: string,
         roomName: string,
+        roomRtmpInput: { attachmentName: string; inputId: string } | null,
         conferenceId: string,
         stackLogicalResourceId: string,
         rtmpOutputUrl: string | undefined,
@@ -208,6 +212,7 @@ export class ChannelStackService {
             conferenceId,
             rtmpOutputUrl,
             rtmpOutputStreamKey,
+            roomRtmpInput,
             tags: {
                 roomId,
                 roomName,
@@ -253,6 +258,14 @@ export class ChannelStackService {
     async updateChannelStack(
         cloudFormationStackArn: string,
         mediaLiveChannelId: string,
+        oldRtmpRoomInput: {
+            inputId: string;
+            attachmentName: string;
+        } | null,
+        newRtmpRoomInput: {
+            inputId: string;
+            attachmentName: string;
+        } | null,
         newRtmpOutputUri: string | null,
         newRtmpOutputStreamKey: string | null
     ): Promise<boolean> {
@@ -363,13 +376,48 @@ export class ChannelStackService {
                 if (!channelDescription.Destinations) {
                     throw new Error("Channel description does not include destinations");
                 }
+                if (!channelDescription.InputAttachments) {
+                    throw new Error("Channel description does not include input attachments!");
+                }
 
-                const hasExternalRTMP = channelDescription.EncoderSettings.OutputGroups.some((desc) =>
+                const hasExistingExternalRTMPInput =
+                    oldRtmpRoomInput &&
+                    Boolean(
+                        channelDescription.InputAttachments?.some((desc) => desc.InputId === oldRtmpRoomInput.inputId)
+                    );
+                const requiresExternalRTMPInput =
+                    newRtmpRoomInput &&
+                    !channelDescription.InputAttachments?.some((desc) => desc.InputId === newRtmpRoomInput.inputId);
+                if (hasExistingExternalRTMPInput !== requiresExternalRTMPInput) {
+                    channelDescription.InputAttachments = oldRtmpRoomInput
+                        ? channelDescription.InputAttachments.filter(
+                              (desc) => desc.InputId === oldRtmpRoomInput.inputId
+                          )
+                        : channelDescription.InputAttachments;
+                    const inputWithCaptionSelectors = channelDescription.InputAttachments.find(
+                        (x) => !!x.InputSettings?.CaptionSelectors
+                    );
+                    const captionSelectors = inputWithCaptionSelectors?.InputSettings?.CaptionSelectors;
+                    if (!captionSelectors) {
+                        throw new Error("Unable to find an existing input with caption selectors to re-use!");
+                    }
+                    if (newRtmpRoomInput) {
+                        channelDescription.InputAttachments.push({
+                            InputId: newRtmpRoomInput.inputId,
+                            InputAttachmentName: newRtmpRoomInput.attachmentName,
+                            InputSettings: {
+                                CaptionSelectors: captionSelectors,
+                            },
+                        });
+                    }
+                }
+
+                const hasExternalRTMPOutput = channelDescription.EncoderSettings.OutputGroups.some((desc) =>
                     desc.Name?.endsWith("-ExternalRTMP")
                 );
 
                 let rtmpOutputDestinationId: string | null = null;
-                if (!hasExternalRTMP) {
+                if (!hasExternalRTMPOutput) {
                     if (newRtmpOutputUri && newRtmpOutputStreamKey) {
                         const video1080p30HQDescription = ChannelStack.createVideoDescription_1080p30HQ(shortId());
                         channelDescription.EncoderSettings.VideoDescriptions.push(
@@ -405,7 +453,7 @@ export class ChannelStackService {
                 const existingRtmpOutputDestinationId = channelDescription.Destinations.find((x) =>
                     x.Id?.endsWith("-ExternalRTMP")
                 )?.Id;
-                if (hasExternalRTMP) {
+                if (hasExternalRTMPOutput) {
                     if (newRtmpOutputUri && newRtmpOutputStreamKey) {
                         channelDescription.Destinations.forEach((destination) => {
                             if (destination.Id === existingRtmpOutputDestinationId) {
@@ -436,6 +484,7 @@ export class ChannelStackService {
 
                 await this.mediaLiveService.updateChannel(
                     mediaLiveChannelId,
+                    channelDescription.InputAttachments,
                     channelDescription.EncoderSettings,
                     channelDescription.Destinations
                 );
@@ -531,6 +580,8 @@ export class ChannelStackService {
                 const inProgress = await this.updateChannelStack(
                     job.cloudFormationStackArn,
                     job.mediaLiveChannelId,
+                    job.oldRtmpRoomInput,
+                    job.newRtmpRoomInput,
                     job.newRtmpOutputUri,
                     job.newRtmpOutputStreamKey
                 );

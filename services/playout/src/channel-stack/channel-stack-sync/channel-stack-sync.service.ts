@@ -64,6 +64,10 @@ export class ChannelStackSyncService {
         {
             roomId: string;
             roomName: string;
+            roomRtmpInput: {
+                attachmentName: string;
+                inputId: string;
+            } | null;
             conferenceId: string;
             rtmpOutputUrl: string | undefined;
             rtmpOutputStreamKey: string | undefined;
@@ -94,6 +98,11 @@ export class ChannelStackSyncService {
                     id
                     conferenceId
                     name
+                    rtmpInput {
+                        id
+                        inputName
+                        inputId
+                    }
                     rtmpOutput {
                         id
                         url
@@ -115,6 +124,12 @@ export class ChannelStackSyncService {
             conferenceId: room.conferenceId,
             roomId: room.id,
             roomName: room.name,
+            roomRtmpInput: room.rtmpInput?.inputId
+                ? {
+                      attachmentName: room.rtmpInput.inputName,
+                      inputId: room.rtmpInput.inputId,
+                  }
+                : null,
             rtmpOutputUrl: room.rtmpOutput?.url,
             rtmpOutputStreamKey: room.rtmpOutput?.streamKey,
         }));
@@ -190,6 +205,7 @@ export class ChannelStackSyncService {
                 .createNewChannelStack(
                     roomNeedingChannelStack.roomId,
                     roomNeedingChannelStack.roomName,
+                    roomNeedingChannelStack.roomRtmpInput,
                     roomNeedingChannelStack.conferenceId,
                     stackLogicalResourceId,
                     roomNeedingChannelStack.rtmpOutputUrl,
@@ -273,11 +289,18 @@ export class ChannelStackSyncService {
                     id
                     cloudFormationStackArn
                     mediaLiveChannelId
+                    rtmpRoomInputId
+                    rtmpRoomInputAttachmentName
                     rtmpOutputUri
                     rtmpOutputStreamKey
                     rtmpOutputDestinationId
                     room {
                         id
+                        rtmpInput {
+                            id
+                            inputName
+                            inputId
+                        }
                         rtmpOutput {
                             id
                             url
@@ -296,7 +319,9 @@ export class ChannelStackSyncService {
             .filter(
                 (stack) =>
                     stack.room &&
-                    (stack.rtmpOutputUri != stack.room.rtmpOutput?.url ||
+                    (stack.rtmpRoomInputId != stack.room.rtmpInput?.inputId ||
+                        stack.rtmpRoomInputAttachmentName != stack.room.rtmpInput?.inputName ||
+                        stack.rtmpOutputUri != stack.room.rtmpOutput?.url ||
                         stack.rtmpOutputStreamKey != stack.room.rtmpOutput?.streamKey)
             )
             .map((stack) => ({

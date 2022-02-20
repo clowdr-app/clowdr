@@ -55,12 +55,14 @@ export interface ChannelStackDescription {
     rtmpAInputId: string;
     rtmpBInputUri: string;
     rtmpBInputId: string;
+    rtmpRoomInputId: string | null;
     mp4InputId: string;
     loopingMp4InputId: string;
     mp4InputAttachmentName: string;
     loopingMp4InputAttachmentName: string;
     rtmpAInputAttachmentName: string;
     rtmpBInputAttachmentName: string;
+    rtmpRoomInputAttachmentName: string | null;
     mediaLiveChannelId: string;
     mediaPackageChannelId: string;
     cloudFrontDistributionId: string;
@@ -75,6 +77,7 @@ export interface ChannelStackProps extends cdk.StackProps {
     inputSecurityGroupId: string;
     roomId: string;
     roomName: string;
+    roomRtmpInput: { attachmentName: string; inputId: string } | null;
     conferenceId: string;
     rtmpOutputUrl: string | undefined;
     rtmpOutputStreamKey: string | undefined;
@@ -228,6 +231,16 @@ export class ChannelStack extends cdk.Stack {
             value: mediaLiveChannel.mediaPackageOutputGroupName,
         });
 
+        if (props.roomRtmpInput) {
+            new cdk.CfnOutput(this, "RtmpRoomInputId", {
+                value: props.roomRtmpInput.inputId,
+            });
+
+            new cdk.CfnOutput(this, "RtmpRoomInputAttachmentName", {
+                value: props.roomRtmpInput.attachmentName,
+            });
+        }
+
         if (mediaLiveChannel.rtmpOutput) {
             new cdk.CfnOutput(this, "RtmpOutputUri", {
                 value: mediaLiveChannel.rtmpOutput.rtmpOutputUrl,
@@ -279,6 +292,18 @@ export class ChannelStack extends cdk.Stack {
             rtmpBInputId,
             captionSelector
         );
+        let roomRtmpInputAttachment:
+            | (medialive.CfnChannel.InputAttachmentProperty & {
+                  inputAttachmentName: string;
+              })
+            | null = null;
+        if (props.roomRtmpInput) {
+            roomRtmpInputAttachment = ChannelStack.createInputAttachment_RTMP_Room(
+                props.roomRtmpInput.attachmentName,
+                props.roomRtmpInput.inputId,
+                captionSelector
+            );
+        }
         const mp4InputAttachment = ChannelStack.createInputAttachment_MP4(
             `${generateId()}-mp4`,
             mp4InputId,
@@ -350,6 +375,7 @@ export class ChannelStack extends cdk.Stack {
                 rtmpBInputAttachment,
                 mp4InputAttachment,
                 loopingMp4InputAttachment,
+                ...(roomRtmpInputAttachment ? [roomRtmpInputAttachment] : []),
             ],
             roleArn: props.mediaLiveServiceRoleArn,
             encoderSettings: ChannelStack.createEncoderSettings(
@@ -596,6 +622,32 @@ export class ChannelStack extends cdk.Stack {
         return {
             inputAttachmentName,
             inputId: rtmpBInputId,
+            inputSettings: {
+                captionSelectors: [
+                    {
+                        name: captionSelector.name,
+                        languageCode: "eng",
+                        selectorSettings: {
+                            embeddedSourceSettings: {
+                                convert608To708: EmbeddedConvert608To708.UPCONVERT,
+                                source608ChannelNumber: 1,
+                                scte20Detection: EmbeddedScte20Detection.OFF,
+                            },
+                        },
+                    },
+                ],
+            },
+        };
+    }
+
+    private static createInputAttachment_RTMP_Room(
+        inputAttachmentName: string,
+        rtmpRoomInputId: string,
+        captionSelector: medialive.CfnChannel.CaptionSelectorProperty & { name: string }
+    ): medialive.CfnChannel.InputAttachmentProperty & { inputAttachmentName: string } {
+        return {
+            inputAttachmentName,
+            inputId: rtmpRoomInputId,
             inputSettings: {
                 captionSelectors: [
                     {

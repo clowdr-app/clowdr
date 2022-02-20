@@ -3,6 +3,7 @@ import type {
     ChannelSummary,
     DescribeChannelResponse,
     EncoderSettings,
+    InputAttachment,
     OutputDestination,
     ScheduleAction,
 } from "@aws-sdk/client-medialive";
@@ -120,13 +121,15 @@ export class MediaLiveService {
 
     public async updateChannel(
         channelId: string,
+        inputAttachments: InputAttachment[],
         encoderSettings: EncoderSettings,
         destinations: OutputDestination[]
     ): Promise<void> {
         const command = new UpdateChannelCommand({
             ChannelId: channelId,
-            Destinations: destinations,
+            InputAttachments: inputAttachments,
             EncoderSettings: encoderSettings,
+            Destinations: destinations,
         });
         await this._mediaLive.send(command);
     }

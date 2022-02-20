@@ -8465,6 +8465,10 @@ enum collection_ProgramPerson_constraint {
     """
     unique or primary key constraint
     """
+    ProgramPerson_conferenceId_name_key
+    """
+    unique or primary key constraint
+    """
     ProgramPerson_pkey
     """
     unique or primary key constraint
@@ -30700,6 +30704,64 @@ type query_root {
     """
     registrant_SubconferenceMembership_by_pk(id: uuid!): registrant_SubconferenceMembership
     """
+    execute function "registrant.searchRegistrants" which returns "registrant.Registrant"
+    """
+    registrant_searchRegistrants(
+        """
+        input parameters for function "registrant.searchRegistrants"
+        """
+        args: registrant_searchRegistrants_args!
+        """
+        distinct select on columns
+        """
+        distinct_on: [registrant_Registrant_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [registrant_Registrant_order_by!]
+        """
+        filter the rows returned
+        """
+        where: registrant_Registrant_bool_exp
+    ): [registrant_Registrant!]!
+    """
+    execute function "registrant.searchRegistrants" and query aggregates on result of table type "registrant.Registrant"
+    """
+    registrant_searchRegistrants_aggregate(
+        """
+        input parameters for function "registrant.searchRegistrants"
+        """
+        args: registrant_searchRegistrants_args!
+        """
+        distinct select on columns
+        """
+        distinct_on: [registrant_Registrant_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [registrant_Registrant_order_by!]
+        """
+        filter the rows returned
+        """
+        where: registrant_Registrant_bool_exp
+    ): registrant_Registrant_aggregate!
+    """
     fetch data from the table: "room.Backend"
     """
     room_Backend(
@@ -36198,6 +36260,11 @@ enum registrant_SubconferenceMembership_update_column {
     column name
     """
     updated_at
+}
+
+input registrant_searchRegistrants_args {
+    conferenceid: uuid
+    search: String
 }
 
 """
@@ -47949,6 +48016,64 @@ type subscription_root {
     fetch data from the table: "registrant.SubconferenceMembership" using primary key columns
     """
     registrant_SubconferenceMembership_by_pk(id: uuid!): registrant_SubconferenceMembership
+    """
+    execute function "registrant.searchRegistrants" which returns "registrant.Registrant"
+    """
+    registrant_searchRegistrants(
+        """
+        input parameters for function "registrant.searchRegistrants"
+        """
+        args: registrant_searchRegistrants_args!
+        """
+        distinct select on columns
+        """
+        distinct_on: [registrant_Registrant_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [registrant_Registrant_order_by!]
+        """
+        filter the rows returned
+        """
+        where: registrant_Registrant_bool_exp
+    ): [registrant_Registrant!]!
+    """
+    execute function "registrant.searchRegistrants" and query aggregates on result of table type "registrant.Registrant"
+    """
+    registrant_searchRegistrants_aggregate(
+        """
+        input parameters for function "registrant.searchRegistrants"
+        """
+        args: registrant_searchRegistrants_args!
+        """
+        distinct select on columns
+        """
+        distinct_on: [registrant_Registrant_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [registrant_Registrant_order_by!]
+        """
+        filter the rows returned
+        """
+        where: registrant_Registrant_bool_exp
+    ): registrant_Registrant_aggregate!
     """
     fetch data from the table: "room.Backend"
     """

@@ -6,6 +6,7 @@ import { gql, useClient } from "urql";
 import type { SearchAllQuery, SearchAllQueryVariables } from "../../generated/graphql";
 import { SearchAllDocument } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
+import CreateDMButton from "../Conference/Attend/Registrant/CreateDMButton";
 import { useConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
 
@@ -64,6 +65,16 @@ gql`
         }
     }
 
+    fragment SearchedRegistrant on registrant_Registrant {
+        id
+        displayName
+        profile {
+            registrantId
+            affiliation
+            photoURL_50x50
+        }
+    }
+
     query SearchAll($conferenceId: uuid!, $search: String!, $limit: Int!, $offset: Int!) {
         content_searchItems(args: { conferenceId: $conferenceId, search: $search }, limit: $limit, offset: $offset) {
             ...SearchedItem
@@ -79,6 +90,13 @@ gql`
         ) {
             ...SearchedPerson
         }
+        registrant_searchRegistrants(
+            args: { conferenceid: $conferenceId, search: $search }
+            limit: $limit
+            offset: $offset
+        ) {
+            ...SearchedRegistrant
+        }
     }
 `;
 
@@ -88,6 +106,7 @@ export default function SearchResults({
     offset = 0,
     setNumberOfResults,
     isActive,
+    setIsActive,
     setIsSearching,
 }: {
     search: string;
@@ -95,6 +114,7 @@ export default function SearchResults({
     offset?: number;
     setNumberOfResults: (count: number | null) => void;
     isActive: boolean;
+    setIsActive?: (value: boolean | ((old: boolean) => boolean)) => void;
     setIsSearching: (value: boolean) => void;
 }): JSX.Element {
     const [search, setSearch] = useState<string>(externalSearchTerm);
@@ -276,6 +296,12 @@ export default function SearchResults({
                                             </Text>
                                         ) : undefined}
                                     </VStack>
+                                    {person.registrant ? (
+                                        <CreateDMButton
+                                            registrantId={person.registrant?.id}
+                                            onCreate={() => setIsActive?.(false)}
+                                        />
+                                    ) : undefined}
                                 </HStack>
                             </LinkButton>
                         </ListItem>
@@ -283,6 +309,55 @@ export default function SearchResults({
                     </Fragment>
                 </ListItem>
             ))}
+            {data?.registrant_searchRegistrants
+                .filter((x) => !data?.collection_searchProgramPerson.some((y) => x.id === y.registrant?.id))
+                .map((registrant) => (
+                    <ListItem key={registrant.id}>
+                        <Fragment key={registrant.id}>
+                            <ListItem p="3px">
+                                <LinkButton
+                                    to={`${conferencePath}/profile/view/${registrant.id}`}
+                                    px={2}
+                                    py={2}
+                                    h="auto"
+                                    maxH="auto"
+                                    minH={0}
+                                    fontWeight="normal"
+                                    w="100%"
+                                    variant="ghost"
+                                    linkProps={{ w: "100%" }}
+                                >
+                                    <HStack alignItems="flex-start" spacing={3} w="100%">
+                                        {registrant?.profile?.photoURL_50x50 ? (
+                                            <Image
+                                                title="Profile photo"
+                                                src={registrant.profile.photoURL_50x50}
+                                                w="50px"
+                                                h="50px"
+                                                borderRadius="2xl"
+                                            />
+                                        ) : undefined}
+                                        <VStack alignItems="flex-start" spacing={1} w="100%" pt={1}>
+                                            <Text fontSize="lg" whiteSpace="normal">
+                                                {registrant.displayName}
+                                            </Text>
+                                            {registrant.profile?.affiliation?.length ? (
+                                                <Text fontSize="sm" whiteSpace="normal">
+                                                    {registrant.profile.affiliation}
+                                                </Text>
+                                            ) : undefined}
+                                        </VStack>
+                                        <CreateDMButton
+                                            registrantId={registrant.id}
+                                            onCreate={() => setIsActive?.(false)}
+                                        />
+                                    </HStack>
+                                </LinkButton>
+                            </ListItem>
+                            <Divider />
+                        </Fragment>
+                    </ListItem>
+                ))}
         </List>
     );
 }

@@ -19,37 +19,43 @@ export default function CreateDMButton({
     const conference = useConference();
     const [{ fetching: creatingDM }, createDmMutation] = useCreateDmMutation();
     const toast = useToast();
-    const createDM = useCallback(async () => {
-        if (mChatState?.openChatInSidebar) {
-            try {
-                const result = await createDmMutation({
-                    registrantIds: [registrantId],
-                    conferenceId: conference.id,
-                });
-                if (result.error || !result.data?.createRoomDm) {
-                    console.error("Failed to create DM", result.error);
-                    throw new Error("Failed to create DM");
-                } else {
-                    if (result.data.createRoomDm.message !== "DM already exists") {
-                        toast({
-                            title: result.data.createRoomDm.message ?? "Created new DM",
-                            status: "success",
-                        });
+    const createDM = useCallback(
+        async (ev: React.MouseEvent<HTMLButtonElement>) => {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            if (mChatState?.openChatInSidebar) {
+                try {
+                    const result = await createDmMutation({
+                        registrantIds: [registrantId],
+                        conferenceId: conference.id,
+                    });
+                    if (result.error || !result.data?.createRoomDm) {
+                        console.error("Failed to create DM", result.error);
+                        throw new Error("Failed to create DM");
+                    } else {
+                        if (result.data.createRoomDm.message !== "DM already exists") {
+                            toast({
+                                title: result.data.createRoomDm.message ?? "Created new DM",
+                                status: "success",
+                            });
+                        }
+
+                        mChatState.openChatInSidebar(result.data.createRoomDm.chatId);
+
+                        onCreate?.();
                     }
-
-                    mChatState.openChatInSidebar(result.data.createRoomDm.chatId);
-
-                    onCreate?.();
+                } catch (e) {
+                    toast({
+                        title: "Could not create DM",
+                        status: "error",
+                    });
+                    console.error("Could not create DM", e);
                 }
-            } catch (e) {
-                toast({
-                    title: "Could not create DM",
-                    status: "error",
-                });
-                console.error("Could not create DM", e);
             }
-        }
-    }, [registrantId, mChatState, createDmMutation, conference.id, onCreate, toast]);
+        },
+        [registrantId, mChatState, createDmMutation, conference.id, onCreate, toast]
+    );
 
     return (
         <Button

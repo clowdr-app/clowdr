@@ -178,6 +178,7 @@ export default function SearchPopover({
                         search={searchTerm}
                         setNumberOfResults={setNumResults}
                         isActive={isActive}
+                        setIsActive={setIsActive}
                         setIsSearching={setIsSearching}
                     />
                 </PopoverBody>

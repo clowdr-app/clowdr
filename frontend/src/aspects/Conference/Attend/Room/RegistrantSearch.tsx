@@ -41,7 +41,7 @@ export function RegistrantSearch({
                 })
                 .toPromise();
             return (
-                result.data?.registrant_Registrant
+                result.data?.registrant_searchRegistrants
                     .filter((item) => !!item.userId)
                     .map((item) => ({
                         value: item.id,

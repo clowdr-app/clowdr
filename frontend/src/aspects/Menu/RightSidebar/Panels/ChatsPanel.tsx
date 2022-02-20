@@ -1,10 +1,9 @@
 import { AtSignIcon, ChatIcon, LockIcon } from "@chakra-ui/icons";
-import { Button, Divider, List, ListIcon, ListItem, Spinner, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
+import { Button, Divider, List, ListIcon, ListItem, Spinner, Text, Tooltip } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
-import { useCreateDmMutation } from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
 import { Chat } from "../../../Chat/Chat";
 import { ChatState } from "../../../Chat/ChatGlobalState";
@@ -12,7 +11,6 @@ import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
 import usePinnedChats from "../../../Chat/Hooks/usePinnedChats";
 import { useConference } from "../../../Conference/useConference";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import { PeopleSearch } from "./PeopleSearch";
 
 gql`
     mutation CreateDm($registrantIds: [uuid]!, $conferenceId: uuid!) {
@@ -61,8 +59,6 @@ export function ChatsPanel({
 }): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
-    const toast = useToast();
-    const [createDMMutationResponse, createDmMutation] = useCreateDmMutation();
 
     const announcementsChatId: string | undefined = useMemo(
         () => ("announcementsChatId" in conference ? conference.announcementsChatId : undefined),
@@ -192,53 +188,6 @@ export function ChatsPanel({
         return undefined;
     }, [announcementsChatId, pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
-    const peopleSearch = useMemo(
-        () => (
-            // TODO: Push createDM through the global chats state class?
-            <PeopleSearch
-                createDM={async (registrantId) => {
-                    if (!createDMMutationResponse.fetching) {
-                        try {
-                            const result = await createDmMutation({
-                                registrantIds: [registrantId],
-                                conferenceId: conference.id,
-                            });
-                            if (
-                                result.error ||
-                                !result.data?.createRoomDm?.roomId ||
-                                !result.data?.createRoomDm?.chatId
-                            ) {
-                                console.error("Failed to create DM", result.error);
-                                throw new Error("Failed to create DM");
-                            } else {
-                                setCurrentChatId(result.data.createRoomDm.chatId);
-
-                                if (result.data.createRoomDm.chatId === pageChatId) {
-                                    switchToPageChat();
-                                }
-                            }
-                        } catch (e) {
-                            toast({
-                                title: "Could not create DM",
-                                status: "error",
-                            });
-                            console.error("Could not create DM", e);
-                        }
-                    }
-                }}
-            />
-        ),
-        [
-            conference.id,
-            createDMMutationResponse.fetching,
-            createDmMutation,
-            pageChatId,
-            setCurrentChatId,
-            switchToPageChat,
-            toast,
-        ]
-    );
-
     const chat_IsVisible = React.useRef<boolean>(false);
     useEffect(() => {
         const _isVisible = isVisible && !!currentChatId && currentChatId !== pageChatId && !!currentChat;
@@ -330,22 +279,12 @@ export function ChatsPanel({
                         <Divider />
                     </>
                 ) : undefined}
-                {peopleSearch}
             </>
         ),
-        [dmPinnedChats, mandatoryPinnedChats, nonDMPinnedChats, peopleSearch, pinnedChats]
+        [dmPinnedChats, mandatoryPinnedChats, nonDMPinnedChats, pinnedChats]
     );
 
-    if (createDMMutationResponse.fetching) {
-        return (
-            <VStack alignItems="center">
-                <Text>Setting up chat...</Text>
-                <div>
-                    <Spinner />
-                </div>
-            </VStack>
-        );
-    } else if (chatEl) {
+    if (chatEl) {
         return chatEl;
     } else {
         return chatLists;

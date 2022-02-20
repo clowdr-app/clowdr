@@ -6316,6 +6316,8 @@ export enum Collection_ProgramPerson_Constraint {
     /** unique or primary key constraint */
     ProgramPersonConferenceIdNameAffiliationKey = "ProgramPerson_conferenceId_name_affiliation_key",
     /** unique or primary key constraint */
+    ProgramPersonConferenceIdNameKey = "ProgramPerson_conferenceId_name_key",
+    /** unique or primary key constraint */
     ProgramPersonPkey = "ProgramPerson_pkey",
     /** unique or primary key constraint */
     CollectionProgramPersonAccessToken = "collection_ProgramPerson_accessToken",

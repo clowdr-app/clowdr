@@ -6324,6 +6324,8 @@ export enum Collection_ProgramPerson_Constraint {
     /** unique or primary key constraint */
     ProgramPersonConferenceIdNameAffiliationKey = "ProgramPerson_conferenceId_name_affiliation_key",
     /** unique or primary key constraint */
+    ProgramPersonConferenceIdNameKey = "ProgramPerson_conferenceId_name_key",
+    /** unique or primary key constraint */
     ProgramPersonPkey = "ProgramPerson_pkey",
     /** unique or primary key constraint */
     CollectionProgramPersonAccessToken = "collection_ProgramPerson_accessToken",
@@ -19745,6 +19747,10 @@ export type Query_Root = {
     registrant_SubconferenceMembership_aggregate: Registrant_SubconferenceMembership_Aggregate;
     /** fetch data from the table: "registrant.SubconferenceMembership" using primary key columns */
     registrant_SubconferenceMembership_by_pk?: Maybe<Registrant_SubconferenceMembership>;
+    /** execute function "registrant.searchRegistrants" which returns "registrant.Registrant" */
+    registrant_searchRegistrants: Array<Registrant_Registrant>;
+    /** execute function "registrant.searchRegistrants" and query aggregates on result of table type "registrant.Registrant" */
+    registrant_searchRegistrants_aggregate: Registrant_Registrant_Aggregate;
     /** fetch data from the table: "room.Backend" */
     room_Backend: Array<Room_Backend>;
     /** fetch aggregated fields from the table: "room.Backend" */
@@ -21289,6 +21295,24 @@ export type Query_RootRegistrant_SubconferenceMembership_AggregateArgs = {
 
 export type Query_RootRegistrant_SubconferenceMembership_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootRegistrant_SearchRegistrantsArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<Array<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+};
+
+export type Query_RootRegistrant_SearchRegistrants_AggregateArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<Array<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
 };
 
 export type Query_RootRoom_BackendArgs = {
@@ -24453,6 +24477,11 @@ export enum Registrant_SubconferenceMembership_Update_Column {
     /** column name */
     UpdatedAt = "updated_at",
 }
+
+export type Registrant_SearchRegistrants_Args = {
+    conferenceid?: InputMaybe<Scalars["uuid"]>;
+    search?: InputMaybe<Scalars["String"]>;
+};
 
 /** columns and relationships of "room.Backend" */
 export type Room_Backend = {
@@ -30872,6 +30901,10 @@ export type Subscription_Root = {
     registrant_SubconferenceMembership_aggregate: Registrant_SubconferenceMembership_Aggregate;
     /** fetch data from the table: "registrant.SubconferenceMembership" using primary key columns */
     registrant_SubconferenceMembership_by_pk?: Maybe<Registrant_SubconferenceMembership>;
+    /** execute function "registrant.searchRegistrants" which returns "registrant.Registrant" */
+    registrant_searchRegistrants: Array<Registrant_Registrant>;
+    /** execute function "registrant.searchRegistrants" and query aggregates on result of table type "registrant.Registrant" */
+    registrant_searchRegistrants_aggregate: Registrant_Registrant_Aggregate;
     /** fetch data from the table: "room.Backend" */
     room_Backend: Array<Room_Backend>;
     /** fetch aggregated fields from the table: "room.Backend" */
@@ -32410,6 +32443,24 @@ export type Subscription_RootRegistrant_SubconferenceMembership_AggregateArgs = 
 
 export type Subscription_RootRegistrant_SubconferenceMembership_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Subscription_RootRegistrant_SearchRegistrantsArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<Array<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+};
+
+export type Subscription_RootRegistrant_SearchRegistrants_AggregateArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<Array<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
 };
 
 export type Subscription_RootRoom_BackendArgs = {

@@ -28,21 +28,7 @@ gql`
     }
 
     query SearchRegistrants($conferenceId: uuid!, $search: String!) {
-        registrant_Registrant(
-            where: {
-                _and: [
-                    { conferenceId: { _eq: $conferenceId } }
-                    {
-                        _or: [
-                            { displayName: { _ilike: $search } }
-                            { profile: { affiliation: { _ilike: $search } } }
-                            { badges: { name: { _ilike: $search } } }
-                        ]
-                    }
-                ]
-            }
-            order_by: { displayName: asc }
-        ) {
+        registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
             ...RegistrantData
         }
     }
@@ -113,7 +99,9 @@ export function AllRegistrantsList(): JSX.Element {
                         return undefined;
                     }
 
-                    return dataSearch.registrant_Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
+                    return dataSearch.registrant_searchRegistrants.filter(
+                        (x) => !!x.profile && !!x.userId
+                    ) as Registrant[];
                 };
 
                 setLoadedCount(30);

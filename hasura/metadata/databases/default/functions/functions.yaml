@@ -1,3 +1,4 @@
 - "!include collection_searchProgramPerson.yaml"
 - "!include content_searchItems.yaml"
+- "!include registrant_searchRegistrants.yaml"
 - "!include schedule_searchEvents.yaml"

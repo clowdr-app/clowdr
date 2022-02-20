@@ -6327,6 +6327,8 @@ export enum Collection_ProgramPerson_Constraint {
     /** unique or primary key constraint */
     ProgramPersonConferenceIdNameAffiliationKey = "ProgramPerson_conferenceId_name_affiliation_key",
     /** unique or primary key constraint */
+    ProgramPersonConferenceIdNameKey = "ProgramPerson_conferenceId_name_key",
+    /** unique or primary key constraint */
     ProgramPersonPkey = "ProgramPerson_pkey",
     /** unique or primary key constraint */
     CollectionProgramPersonAccessToken = "collection_ProgramPerson_accessToken",
@@ -19748,6 +19750,10 @@ export type Query_Root = {
     readonly registrant_SubconferenceMembership_aggregate: Registrant_SubconferenceMembership_Aggregate;
     /** fetch data from the table: "registrant.SubconferenceMembership" using primary key columns */
     readonly registrant_SubconferenceMembership_by_pk?: Maybe<Registrant_SubconferenceMembership>;
+    /** execute function "registrant.searchRegistrants" which returns "registrant.Registrant" */
+    readonly registrant_searchRegistrants: ReadonlyArray<Registrant_Registrant>;
+    /** execute function "registrant.searchRegistrants" and query aggregates on result of table type "registrant.Registrant" */
+    readonly registrant_searchRegistrants_aggregate: Registrant_Registrant_Aggregate;
     /** fetch data from the table: "room.Backend" */
     readonly room_Backend: ReadonlyArray<Room_Backend>;
     /** fetch aggregated fields from the table: "room.Backend" */
@@ -21292,6 +21298,24 @@ export type Query_RootRegistrant_SubconferenceMembership_AggregateArgs = {
 
 export type Query_RootRegistrant_SubconferenceMembership_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootRegistrant_SearchRegistrantsArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<ReadonlyArray<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+};
+
+export type Query_RootRegistrant_SearchRegistrants_AggregateArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<ReadonlyArray<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
 };
 
 export type Query_RootRoom_BackendArgs = {
@@ -24456,6 +24480,11 @@ export enum Registrant_SubconferenceMembership_Update_Column {
     /** column name */
     UpdatedAt = "updated_at",
 }
+
+export type Registrant_SearchRegistrants_Args = {
+    readonly conferenceid?: InputMaybe<Scalars["uuid"]>;
+    readonly search?: InputMaybe<Scalars["String"]>;
+};
 
 /** columns and relationships of "room.Backend" */
 export type Room_Backend = {
@@ -30873,6 +30902,10 @@ export type Subscription_Root = {
     readonly registrant_SubconferenceMembership_aggregate: Registrant_SubconferenceMembership_Aggregate;
     /** fetch data from the table: "registrant.SubconferenceMembership" using primary key columns */
     readonly registrant_SubconferenceMembership_by_pk?: Maybe<Registrant_SubconferenceMembership>;
+    /** execute function "registrant.searchRegistrants" which returns "registrant.Registrant" */
+    readonly registrant_searchRegistrants: ReadonlyArray<Registrant_Registrant>;
+    /** execute function "registrant.searchRegistrants" and query aggregates on result of table type "registrant.Registrant" */
+    readonly registrant_searchRegistrants_aggregate: Registrant_Registrant_Aggregate;
     /** fetch data from the table: "room.Backend" */
     readonly room_Backend: ReadonlyArray<Room_Backend>;
     /** fetch aggregated fields from the table: "room.Backend" */
@@ -32411,6 +32444,24 @@ export type Subscription_RootRegistrant_SubconferenceMembership_AggregateArgs = 
 
 export type Subscription_RootRegistrant_SubconferenceMembership_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Subscription_RootRegistrant_SearchRegistrantsArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<ReadonlyArray<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+};
+
+export type Subscription_RootRegistrant_SearchRegistrants_AggregateArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<ReadonlyArray<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
 };
 
 export type Subscription_RootRoom_BackendArgs = {
@@ -39533,7 +39584,7 @@ export type SearchRegistrantsQueryVariables = Exact<{
 
 export type SearchRegistrantsQuery = {
     readonly __typename?: "query_root";
-    readonly registrant_Registrant: ReadonlyArray<{
+    readonly registrant_searchRegistrants: ReadonlyArray<{
         readonly __typename?: "registrant_Registrant";
         readonly id: any;
         readonly userId?: string | null;
@@ -47405,6 +47456,18 @@ export type SearchedPersonFragment = {
     } | null;
 };
 
+export type SearchedRegistrantFragment = {
+    readonly __typename?: "registrant_Registrant";
+    readonly id: any;
+    readonly displayName: string;
+    readonly profile?: {
+        readonly __typename?: "registrant_Profile";
+        readonly registrantId: any;
+        readonly affiliation?: string | null;
+        readonly photoURL_50x50?: string | null;
+    } | null;
+};
+
 export type SearchAllQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
     search: Scalars["String"];
@@ -47459,6 +47522,17 @@ export type SearchAllQuery = {
                 readonly registrantId: any;
                 readonly photoURL_50x50?: string | null;
             } | null;
+        } | null;
+    }>;
+    readonly registrant_searchRegistrants: ReadonlyArray<{
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+        readonly displayName: string;
+        readonly profile?: {
+            readonly __typename?: "registrant_Profile";
+            readonly registrantId: any;
+            readonly affiliation?: string | null;
+            readonly photoURL_50x50?: string | null;
         } | null;
     }>;
 };
@@ -50126,6 +50200,17 @@ export const SearchedPersonFragmentDoc = gql`
         }
     }
 `;
+export const SearchedRegistrantFragmentDoc = gql`
+    fragment SearchedRegistrant on registrant_Registrant {
+        id
+        displayName
+        profile {
+            registrantId
+            affiliation
+            photoURL_50x50
+        }
+    }
+`;
 export const SubdShuffleQueueEntryDataFragmentDoc = gql`
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
         id
@@ -50666,21 +50751,7 @@ export function useSelectRegistrantsQuery(options: Omit<Urql.UseQueryArgs<Select
 }
 export const SearchRegistrantsDocument = gql`
     query SearchRegistrants($conferenceId: uuid!, $search: String!) {
-        registrant_Registrant(
-            where: {
-                _and: [
-                    { conferenceId: { _eq: $conferenceId } }
-                    {
-                        _or: [
-                            { displayName: { _ilike: $search } }
-                            { profile: { affiliation: { _ilike: $search } } }
-                            { badges: { name: { _ilike: $search } } }
-                        ]
-                    }
-                ]
-            }
-            order_by: { displayName: asc }
-        ) {
+        registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
             ...RegistrantData
         }
     }
@@ -55635,10 +55706,18 @@ export const SearchAllDocument = gql`
         ) {
             ...SearchedPerson
         }
+        registrant_searchRegistrants(
+            args: { conferenceid: $conferenceId, search: $search }
+            limit: $limit
+            offset: $offset
+        ) {
+            ...SearchedRegistrant
+        }
     }
     ${SearchedItemFragmentDoc}
     ${SearchedEventFragmentDoc}
     ${SearchedPersonFragmentDoc}
+    ${SearchedRegistrantFragmentDoc}
 `;
 
 export function useSearchAllQuery(options: Omit<Urql.UseQueryArgs<SearchAllQueryVariables>, "query">) {
@@ -58665,6 +58744,16 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootRegistrant_SubconferenceMembership_By_PkArgs,
             WithTypename<Registrant_SubconferenceMembership> | string
+        >;
+        registrant_searchRegistrants?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootRegistrant_SearchRegistrantsArgs,
+            Array<WithTypename<Registrant_Registrant> | string>
+        >;
+        registrant_searchRegistrants_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootRegistrant_SearchRegistrants_AggregateArgs,
+            WithTypename<Registrant_Registrant_Aggregate> | string
         >;
         room_Backend?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -84761,6 +84850,14 @@ export type GraphCacheUpdaters = {
         registrant_SubconferenceMembership_by_pk?: GraphCacheUpdateResolver<
             { registrant_SubconferenceMembership_by_pk: Maybe<WithTypename<Registrant_SubconferenceMembership>> },
             Subscription_RootRegistrant_SubconferenceMembership_By_PkArgs
+        >;
+        registrant_searchRegistrants?: GraphCacheUpdateResolver<
+            { registrant_searchRegistrants: Array<WithTypename<Registrant_Registrant>> },
+            Subscription_RootRegistrant_SearchRegistrantsArgs
+        >;
+        registrant_searchRegistrants_aggregate?: GraphCacheUpdateResolver<
+            { registrant_searchRegistrants_aggregate: WithTypename<Registrant_Registrant_Aggregate> },
+            Subscription_RootRegistrant_SearchRegistrants_AggregateArgs
         >;
         room_Backend?: GraphCacheUpdateResolver<
             { room_Backend: Array<WithTypename<Room_Backend>> },

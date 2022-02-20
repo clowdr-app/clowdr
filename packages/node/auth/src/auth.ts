@@ -151,6 +151,7 @@ export async function computeAuthHeaders(
             [AuthSessionVariables.Role]: HasuraRoleName.Unauthenticated,
             [AuthSessionVariables.ConferenceIds]: formatArrayForHasuraHeader([]),
             [AuthSessionVariables.SubconferenceIds]: formatArrayForHasuraHeader([]),
+            [AuthSessionVariables.InviteCode]: "",
         };
 
         if (unverifiedParams.conferenceId) {
@@ -163,7 +164,9 @@ export async function computeAuthHeaders(
 
         return result;
     } else if (verifiedParams.userId?.length) {
-        const result: Partial<Record<AuthSessionVariables, string>> = {};
+        const result: Partial<Record<AuthSessionVariables, string>> = {
+            [AuthSessionVariables.InviteCode]: "",
+        };
         const allowedRoles: HasuraRoleName[] = [];
         let requestedRole = (unverifiedParams.role ?? HasuraRoleName.User) as HasuraRoleName;
 

@@ -6182,9 +6182,6 @@ export type Collection_ProgramPerson = {
     itemPeople_aggregate: Content_ItemProgramPerson_Aggregate;
     name: Scalars["String"];
     /** An object relationship */
-    originatingData?: Maybe<Conference_OriginatingData>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    /** An object relationship */
     registrant?: Maybe<Registrant_Registrant>;
     registrantId?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -6304,8 +6301,6 @@ export type Collection_ProgramPerson_Bool_Exp = {
     id?: InputMaybe<Uuid_Comparison_Exp>;
     itemPeople?: InputMaybe<Content_ItemProgramPerson_Bool_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: InputMaybe<Uuid_Comparison_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -6317,6 +6312,8 @@ export type Collection_ProgramPerson_Bool_Exp = {
 export enum Collection_ProgramPerson_Constraint {
     /** unique or primary key constraint */
     ProgramPersonConferenceIdNameAffiliationKey = "ProgramPerson_conferenceId_name_affiliation_key",
+    /** unique or primary key constraint */
+    ProgramPersonConferenceIdNameKey = "ProgramPerson_conferenceId_name_key",
     /** unique or primary key constraint */
     ProgramPersonPkey = "ProgramPerson_pkey",
     /** unique or primary key constraint */
@@ -6339,8 +6336,6 @@ export type Collection_ProgramPerson_Insert_Input = {
     id?: InputMaybe<Scalars["uuid"]>;
     itemPeople?: InputMaybe<Content_ItemProgramPerson_Arr_Rel_Insert_Input>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
@@ -6357,7 +6352,6 @@ export type Collection_ProgramPerson_Max_Fields = {
     email?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
@@ -6371,7 +6365,6 @@ export type Collection_ProgramPerson_Max_Order_By = {
     email?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     registrantId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     submissionRequestsSentCount?: InputMaybe<Order_By>;
@@ -6386,7 +6379,6 @@ export type Collection_ProgramPerson_Min_Fields = {
     email?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
@@ -6400,7 +6392,6 @@ export type Collection_ProgramPerson_Min_Order_By = {
     email?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     registrantId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     submissionRequestsSentCount?: InputMaybe<Order_By>;
@@ -6440,8 +6431,6 @@ export type Collection_ProgramPerson_Order_By = {
     id?: InputMaybe<Order_By>;
     itemPeople_aggregate?: InputMaybe<Content_ItemProgramPerson_Aggregate_Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     registrantId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
@@ -6469,8 +6458,6 @@ export enum Collection_ProgramPerson_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     RegistrantId = "registrantId",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -6488,7 +6475,6 @@ export type Collection_ProgramPerson_Set_Input = {
     email?: InputMaybe<Scalars["String"]>;
     id?: InputMaybe<Scalars["uuid"]>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     submissionRequestsSentCount?: InputMaybe<Scalars["Int"]>;
@@ -6554,8 +6540,6 @@ export enum Collection_ProgramPerson_Update_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     RegistrantId = "registrantId",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -6612,9 +6596,6 @@ export type Collection_Tag = {
     /** An aggregate relationship */
     itemTags_aggregate: Content_ItemTag_Aggregate;
     name: Scalars["String"];
-    /** An object relationship */
-    originatingData?: Maybe<Conference_OriginatingData>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     priority: Scalars["Int"];
     subconferenceId?: Maybe<Scalars["uuid"]>;
     updatedAt: Scalars["timestamptz"];
@@ -6713,8 +6694,6 @@ export type Collection_Tag_Bool_Exp = {
     id?: InputMaybe<Uuid_Comparison_Exp>;
     itemTags?: InputMaybe<Content_ItemTag_Bool_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     priority?: InputMaybe<Int_Comparison_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -6741,8 +6720,6 @@ export type Collection_Tag_Insert_Input = {
     id?: InputMaybe<Scalars["uuid"]>;
     itemTags?: InputMaybe<Content_ItemTag_Arr_Rel_Insert_Input>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     priority?: InputMaybe<Scalars["Int"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -6757,7 +6734,6 @@ export type Collection_Tag_Max_Fields = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     priority?: Maybe<Scalars["Int"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -6770,7 +6746,6 @@ export type Collection_Tag_Max_Order_By = {
     createdAt?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     priority?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
@@ -6784,7 +6759,6 @@ export type Collection_Tag_Min_Fields = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     priority?: Maybe<Scalars["Int"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -6797,7 +6771,6 @@ export type Collection_Tag_Min_Order_By = {
     createdAt?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     priority?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
@@ -6835,8 +6808,6 @@ export type Collection_Tag_Order_By = {
     id?: InputMaybe<Order_By>;
     itemTags_aggregate?: InputMaybe<Content_ItemTag_Aggregate_Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     priority?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
@@ -6861,8 +6832,6 @@ export enum Collection_Tag_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     Priority = "priority",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -6879,7 +6848,6 @@ export type Collection_Tag_Set_Input = {
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     id?: InputMaybe<Scalars["uuid"]>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     priority?: InputMaybe<Scalars["Int"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -6942,8 +6910,6 @@ export enum Collection_Tag_Update_Column {
     Id = "id",
     /** column name */
     Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     Priority = "priority",
     /** column name */
@@ -7023,16 +6989,13 @@ export type Conference_Conference = {
     exhibitions: Array<Collection_Exhibition>;
     /** An aggregate relationship */
     exhibitions_aggregate: Collection_Exhibition_Aggregate;
+    globalInviteCode?: Maybe<Scalars["uuid"]>;
     id: Scalars["uuid"];
     /** An array relationship */
     items: Array<Content_Item>;
     /** An aggregate relationship */
     items_aggregate: Content_Item_Aggregate;
     name: Scalars["String"];
-    /** An array relationship */
-    originatingDatas: Array<Conference_OriginatingData>;
-    /** An aggregate relationship */
-    originatingDatas_aggregate: Conference_OriginatingData_Aggregate;
     /** An array relationship */
     programPeople: Array<Collection_ProgramPerson>;
     /** An aggregate relationship */
@@ -7154,24 +7117,6 @@ export type Conference_ConferenceItems_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Content_Item_Order_By>>;
     where?: InputMaybe<Content_Item_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.Conference" */
-export type Conference_ConferenceOriginatingDatasArgs = {
-    distinct_on?: InputMaybe<Array<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.Conference" */
-export type Conference_ConferenceOriginatingDatas_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7353,10 +7298,10 @@ export type Conference_Conference_Bool_Exp = {
     demoCodeId?: InputMaybe<Uuid_Comparison_Exp>;
     events?: InputMaybe<Schedule_Event_Bool_Exp>;
     exhibitions?: InputMaybe<Collection_Exhibition_Bool_Exp>;
+    globalInviteCode?: InputMaybe<Uuid_Comparison_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
     items?: InputMaybe<Content_Item_Bool_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
-    originatingDatas?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
     registrants?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     rooms?: InputMaybe<Room_Room_Bool_Exp>;
@@ -7373,6 +7318,8 @@ export type Conference_Conference_Bool_Exp = {
 export enum Conference_Conference_Constraint {
     /** unique or primary key constraint */
     ConferenceDemoCodeIdKey = "Conference_demoCodeId_key",
+    /** unique or primary key constraint */
+    ConferenceGlobalInviteCodeKey = "Conference_globalInviteCode_key",
     /** unique or primary key constraint */
     ConferenceNameKey = "Conference_name_key",
     /** unique or primary key constraint */
@@ -7398,10 +7345,10 @@ export type Conference_Conference_Insert_Input = {
     demoCodeId?: InputMaybe<Scalars["uuid"]>;
     events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     exhibitions?: InputMaybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
+    globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
     items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingDatas?: InputMaybe<Conference_OriginatingData_Arr_Rel_Insert_Input>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
     registrants?: InputMaybe<Registrant_Registrant_Arr_Rel_Insert_Input>;
     rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
@@ -7422,6 +7369,7 @@ export type Conference_Conference_Max_Fields = {
     createdBy?: Maybe<Scalars["String"]>;
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     demoCodeId?: Maybe<Scalars["uuid"]>;
+    globalInviteCode?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     shortName?: Maybe<Scalars["String"]>;
@@ -7436,6 +7384,7 @@ export type Conference_Conference_Max_Order_By = {
     createdBy?: InputMaybe<Order_By>;
     defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     demoCodeId?: InputMaybe<Order_By>;
+    globalInviteCode?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     shortName?: InputMaybe<Order_By>;
@@ -7451,6 +7400,7 @@ export type Conference_Conference_Min_Fields = {
     createdBy?: Maybe<Scalars["String"]>;
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     demoCodeId?: Maybe<Scalars["uuid"]>;
+    globalInviteCode?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     shortName?: Maybe<Scalars["String"]>;
@@ -7465,6 +7415,7 @@ export type Conference_Conference_Min_Order_By = {
     createdBy?: InputMaybe<Order_By>;
     defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     demoCodeId?: InputMaybe<Order_By>;
+    globalInviteCode?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     shortName?: InputMaybe<Order_By>;
@@ -7510,10 +7461,10 @@ export type Conference_Conference_Order_By = {
     demoCodeId?: InputMaybe<Order_By>;
     events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     exhibitions_aggregate?: InputMaybe<Collection_Exhibition_Aggregate_Order_By>;
+    globalInviteCode?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDatas_aggregate?: InputMaybe<Conference_OriginatingData_Aggregate_Order_By>;
     programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     registrants_aggregate?: InputMaybe<Registrant_Registrant_Aggregate_Order_By>;
     rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
@@ -7546,6 +7497,8 @@ export enum Conference_Conference_Select_Column {
     /** column name */
     DemoCodeId = "demoCodeId",
     /** column name */
+    GlobalInviteCode = "globalInviteCode",
+    /** column name */
     Id = "id",
     /** column name */
     Name = "name",
@@ -7565,6 +7518,7 @@ export type Conference_Conference_Set_Input = {
     createdBy?: InputMaybe<Scalars["String"]>;
     defaultProgramVisibilityLevel?: InputMaybe<Scalars["String"]>;
     demoCodeId?: InputMaybe<Scalars["uuid"]>;
+    globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
     name?: InputMaybe<Scalars["String"]>;
     shortName?: InputMaybe<Scalars["String"]>;
@@ -7586,6 +7540,8 @@ export enum Conference_Conference_Update_Column {
     DefaultProgramVisibilityLevel = "defaultProgramVisibilityLevel",
     /** column name */
     DemoCodeId = "demoCodeId",
+    /** column name */
+    GlobalInviteCode = "globalInviteCode",
     /** column name */
     Id = "id",
     /** column name */
@@ -8183,399 +8139,6 @@ export enum Conference_DemoCode_Update_Column {
     UsedById = "usedById",
 }
 
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingData = {
-    __typename?: "conference_OriginatingData";
-    /** An object relationship */
-    conference: Conference_Conference;
-    conferenceId: Scalars["uuid"];
-    createdAt: Scalars["timestamptz"];
-    data?: Maybe<Scalars["jsonb"]>;
-    /** An array relationship */
-    elements: Array<Content_Element>;
-    /** An aggregate relationship */
-    elements_aggregate: Content_Element_Aggregate;
-    /** An array relationship */
-    events: Array<Schedule_Event>;
-    /** An aggregate relationship */
-    events_aggregate: Schedule_Event_Aggregate;
-    id: Scalars["uuid"];
-    /** An array relationship */
-    items: Array<Content_Item>;
-    /** An aggregate relationship */
-    items_aggregate: Content_Item_Aggregate;
-    /** An array relationship */
-    programPeople: Array<Collection_ProgramPerson>;
-    /** An aggregate relationship */
-    programPeople_aggregate: Collection_ProgramPerson_Aggregate;
-    /** An array relationship */
-    rooms: Array<Room_Room>;
-    /** An aggregate relationship */
-    rooms_aggregate: Room_Room_Aggregate;
-    sourceId: Scalars["String"];
-    subconferenceId?: Maybe<Scalars["uuid"]>;
-    /** An array relationship */
-    tags: Array<Collection_Tag>;
-    /** An aggregate relationship */
-    tags_aggregate: Collection_Tag_Aggregate;
-    updatedAt: Scalars["timestamptz"];
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataDataArgs = {
-    path?: InputMaybe<Scalars["String"]>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataElementsArgs = {
-    distinct_on?: InputMaybe<Array<Content_Element_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Content_Element_Order_By>>;
-    where?: InputMaybe<Content_Element_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataElements_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Content_Element_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Content_Element_Order_By>>;
-    where?: InputMaybe<Content_Element_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataEventsArgs = {
-    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataEvents_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataItemsArgs = {
-    distinct_on?: InputMaybe<Array<Content_Item_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Content_Item_Order_By>>;
-    where?: InputMaybe<Content_Item_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataItems_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Content_Item_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Content_Item_Order_By>>;
-    where?: InputMaybe<Content_Item_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataProgramPeopleArgs = {
-    distinct_on?: InputMaybe<Array<Collection_ProgramPerson_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Collection_ProgramPerson_Order_By>>;
-    where?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataProgramPeople_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Collection_ProgramPerson_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Collection_ProgramPerson_Order_By>>;
-    where?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataRoomsArgs = {
-    distinct_on?: InputMaybe<Array<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataRooms_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataTagsArgs = {
-    distinct_on?: InputMaybe<Array<Collection_Tag_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Collection_Tag_Order_By>>;
-    where?: InputMaybe<Collection_Tag_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataTags_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Collection_Tag_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Collection_Tag_Order_By>>;
-    where?: InputMaybe<Collection_Tag_Bool_Exp>;
-};
-
-/** aggregated selection of "conference.OriginatingData" */
-export type Conference_OriginatingData_Aggregate = {
-    __typename?: "conference_OriginatingData_aggregate";
-    aggregate?: Maybe<Conference_OriginatingData_Aggregate_Fields>;
-    nodes: Array<Conference_OriginatingData>;
-};
-
-/** aggregate fields of "conference.OriginatingData" */
-export type Conference_OriginatingData_Aggregate_Fields = {
-    __typename?: "conference_OriginatingData_aggregate_fields";
-    count: Scalars["Int"];
-    max?: Maybe<Conference_OriginatingData_Max_Fields>;
-    min?: Maybe<Conference_OriginatingData_Min_Fields>;
-};
-
-/** aggregate fields of "conference.OriginatingData" */
-export type Conference_OriginatingData_Aggregate_FieldsCountArgs = {
-    columns?: InputMaybe<Array<Conference_OriginatingData_Select_Column>>;
-    distinct?: InputMaybe<Scalars["Boolean"]>;
-};
-
-/** order by aggregate values of table "conference.OriginatingData" */
-export type Conference_OriginatingData_Aggregate_Order_By = {
-    count?: InputMaybe<Order_By>;
-    max?: InputMaybe<Conference_OriginatingData_Max_Order_By>;
-    min?: InputMaybe<Conference_OriginatingData_Min_Order_By>;
-};
-
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Conference_OriginatingData_Append_Input = {
-    data?: InputMaybe<Scalars["jsonb"]>;
-};
-
-/** input type for inserting array relation for remote table "conference.OriginatingData" */
-export type Conference_OriginatingData_Arr_Rel_Insert_Input = {
-    data: Array<Conference_OriginatingData_Insert_Input>;
-    /** on conflict condition */
-    on_conflict?: InputMaybe<Conference_OriginatingData_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "conference.OriginatingData". All fields are combined with a logical 'AND'. */
-export type Conference_OriginatingData_Bool_Exp = {
-    _and?: InputMaybe<Array<Conference_OriginatingData_Bool_Exp>>;
-    _not?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    _or?: InputMaybe<Array<Conference_OriginatingData_Bool_Exp>>;
-    conference?: InputMaybe<Conference_Conference_Bool_Exp>;
-    conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-    data?: InputMaybe<Jsonb_Comparison_Exp>;
-    elements?: InputMaybe<Content_Element_Bool_Exp>;
-    events?: InputMaybe<Schedule_Event_Bool_Exp>;
-    id?: InputMaybe<Uuid_Comparison_Exp>;
-    items?: InputMaybe<Content_Item_Bool_Exp>;
-    programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-    rooms?: InputMaybe<Room_Room_Bool_Exp>;
-    sourceId?: InputMaybe<String_Comparison_Exp>;
-    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    tags?: InputMaybe<Collection_Tag_Bool_Exp>;
-    updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "conference.OriginatingData" */
-export enum Conference_OriginatingData_Constraint {
-    /** unique or primary key constraint */
-    OriginatingDataPkey = "OriginatingData_pkey",
-    /** unique or primary key constraint */
-    OriginatingDataSourceIdConferenceIdKey = "OriginatingData_sourceId_conferenceId_key",
-}
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Conference_OriginatingData_Delete_At_Path_Input = {
-    data?: InputMaybe<Array<Scalars["String"]>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Conference_OriginatingData_Delete_Elem_Input = {
-    data?: InputMaybe<Scalars["Int"]>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Conference_OriginatingData_Delete_Key_Input = {
-    data?: InputMaybe<Scalars["String"]>;
-};
-
-/** input type for inserting data into table "conference.OriginatingData" */
-export type Conference_OriginatingData_Insert_Input = {
-    conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
-    conferenceId?: InputMaybe<Scalars["uuid"]>;
-    createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    data?: InputMaybe<Scalars["jsonb"]>;
-    elements?: InputMaybe<Content_Element_Arr_Rel_Insert_Input>;
-    events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
-    id?: InputMaybe<Scalars["uuid"]>;
-    items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
-    programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
-    rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
-    sourceId?: InputMaybe<Scalars["String"]>;
-    subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    tags?: InputMaybe<Collection_Tag_Arr_Rel_Insert_Input>;
-    updatedAt?: InputMaybe<Scalars["timestamptz"]>;
-};
-
-/** aggregate max on columns */
-export type Conference_OriginatingData_Max_Fields = {
-    __typename?: "conference_OriginatingData_max_fields";
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    sourceId?: Maybe<Scalars["String"]>;
-    subconferenceId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** order by max() on columns of table "conference.OriginatingData" */
-export type Conference_OriginatingData_Max_Order_By = {
-    conferenceId?: InputMaybe<Order_By>;
-    createdAt?: InputMaybe<Order_By>;
-    id?: InputMaybe<Order_By>;
-    sourceId?: InputMaybe<Order_By>;
-    subconferenceId?: InputMaybe<Order_By>;
-    updatedAt?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Conference_OriginatingData_Min_Fields = {
-    __typename?: "conference_OriginatingData_min_fields";
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    sourceId?: Maybe<Scalars["String"]>;
-    subconferenceId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** order by min() on columns of table "conference.OriginatingData" */
-export type Conference_OriginatingData_Min_Order_By = {
-    conferenceId?: InputMaybe<Order_By>;
-    createdAt?: InputMaybe<Order_By>;
-    id?: InputMaybe<Order_By>;
-    sourceId?: InputMaybe<Order_By>;
-    subconferenceId?: InputMaybe<Order_By>;
-    updatedAt?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "conference.OriginatingData" */
-export type Conference_OriginatingData_Mutation_Response = {
-    __typename?: "conference_OriginatingData_mutation_response";
-    /** number of rows affected by the mutation */
-    affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    returning: Array<Conference_OriginatingData>;
-};
-
-/** input type for inserting object relation for remote table "conference.OriginatingData" */
-export type Conference_OriginatingData_Obj_Rel_Insert_Input = {
-    data: Conference_OriginatingData_Insert_Input;
-    /** on conflict condition */
-    on_conflict?: InputMaybe<Conference_OriginatingData_On_Conflict>;
-};
-
-/** on conflict condition type for table "conference.OriginatingData" */
-export type Conference_OriginatingData_On_Conflict = {
-    constraint: Conference_OriginatingData_Constraint;
-    update_columns?: Array<Conference_OriginatingData_Update_Column>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "conference.OriginatingData". */
-export type Conference_OriginatingData_Order_By = {
-    conference?: InputMaybe<Conference_Conference_Order_By>;
-    conferenceId?: InputMaybe<Order_By>;
-    createdAt?: InputMaybe<Order_By>;
-    data?: InputMaybe<Order_By>;
-    elements_aggregate?: InputMaybe<Content_Element_Aggregate_Order_By>;
-    events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
-    id?: InputMaybe<Order_By>;
-    items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
-    programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
-    rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
-    sourceId?: InputMaybe<Order_By>;
-    subconferenceId?: InputMaybe<Order_By>;
-    tags_aggregate?: InputMaybe<Collection_Tag_Aggregate_Order_By>;
-    updatedAt?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: conference_OriginatingData */
-export type Conference_OriginatingData_Pk_Columns_Input = {
-    id: Scalars["uuid"];
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Conference_OriginatingData_Prepend_Input = {
-    data?: InputMaybe<Scalars["jsonb"]>;
-};
-
-/** select columns of table "conference.OriginatingData" */
-export enum Conference_OriginatingData_Select_Column {
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Data = "data",
-    /** column name */
-    Id = "id",
-    /** column name */
-    SourceId = "sourceId",
-    /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-}
-
-/** input type for updating data in table "conference.OriginatingData" */
-export type Conference_OriginatingData_Set_Input = {
-    conferenceId?: InputMaybe<Scalars["uuid"]>;
-    createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    data?: InputMaybe<Scalars["jsonb"]>;
-    id?: InputMaybe<Scalars["uuid"]>;
-    sourceId?: InputMaybe<Scalars["String"]>;
-    subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    updatedAt?: InputMaybe<Scalars["timestamptz"]>;
-};
-
-/** update columns of table "conference.OriginatingData" */
-export enum Conference_OriginatingData_Update_Column {
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Data = "data",
-    /** column name */
-    Id = "id",
-    /** column name */
-    SourceId = "sourceId",
-    /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-}
-
 /** columns and relationships of "conference.Subconference" */
 export type Conference_Subconference = {
     __typename?: "conference_Subconference";
@@ -8989,9 +8552,6 @@ export type Content_Element = {
     itemTitle?: Maybe<Scalars["String"]>;
     layoutData?: Maybe<Scalars["jsonb"]>;
     name: Scalars["String"];
-    /** An object relationship */
-    originatingData?: Maybe<Conference_OriginatingData>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     source?: Maybe<Scalars["jsonb"]>;
     /** An array relationship */
     stats: Array<Analytics_ContentElementStats>;
@@ -9344,8 +8904,6 @@ export type Content_Element_Bool_Exp = {
     itemTitle?: InputMaybe<String_Comparison_Exp>;
     layoutData?: InputMaybe<Jsonb_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     source?: InputMaybe<Jsonb_Comparison_Exp>;
     stats?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -9402,8 +8960,6 @@ export type Content_Element_Insert_Input = {
     itemId?: InputMaybe<Scalars["uuid"]>;
     layoutData?: InputMaybe<Scalars["jsonb"]>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     source?: InputMaybe<Scalars["jsonb"]>;
     stats?: InputMaybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
@@ -9424,7 +8980,6 @@ export type Content_Element_Max_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     uploadsRemaining?: Maybe<Scalars["Int"]>;
@@ -9437,7 +8992,6 @@ export type Content_Element_Max_Order_By = {
     id?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     uploadsRemaining?: InputMaybe<Order_By>;
@@ -9451,7 +9005,6 @@ export type Content_Element_Min_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     uploadsRemaining?: Maybe<Scalars["Int"]>;
@@ -9464,7 +9017,6 @@ export type Content_Element_Min_Order_By = {
     id?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     uploadsRemaining?: InputMaybe<Order_By>;
@@ -9507,8 +9059,6 @@ export type Content_Element_Order_By = {
     itemTitle?: InputMaybe<Order_By>;
     layoutData?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     source?: InputMaybe<Order_By>;
     stats_aggregate?: InputMaybe<Analytics_ContentElementStats_Aggregate_Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
@@ -9552,8 +9102,6 @@ export enum Content_Element_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     Source = "source",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -9577,7 +9125,6 @@ export type Content_Element_Set_Input = {
     itemId?: InputMaybe<Scalars["uuid"]>;
     layoutData?: InputMaybe<Scalars["jsonb"]>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     source?: InputMaybe<Scalars["jsonb"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     typeName?: InputMaybe<Content_ElementType_Enum>;
@@ -9648,8 +9195,6 @@ export enum Content_Element_Update_Column {
     LayoutData = "layoutData",
     /** column name */
     Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     Source = "source",
     /** column name */
@@ -9734,9 +9279,6 @@ export type Content_Item = {
     itemTags: Array<Content_ItemTag>;
     /** An aggregate relationship */
     itemTags_aggregate: Content_ItemTag_Aggregate;
-    /** An object relationship */
-    originatingData?: Maybe<Conference_OriginatingData>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     room?: Maybe<Room_Room>;
     shortTitle?: Maybe<Scalars["String"]>;
@@ -10904,8 +10446,6 @@ export type Content_Item_Bool_Exp = {
     itemExhibitions?: InputMaybe<Content_ItemExhibition_Bool_Exp>;
     itemPeople?: InputMaybe<Content_ItemProgramPerson_Bool_Exp>;
     itemTags?: InputMaybe<Content_ItemTag_Bool_Exp>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     shortTitle?: InputMaybe<String_Comparison_Exp>;
     sponsorshipTierMemberships?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
@@ -10941,8 +10481,6 @@ export type Content_Item_Insert_Input = {
     itemExhibitions?: InputMaybe<Content_ItemExhibition_Arr_Rel_Insert_Input>;
     itemPeople?: InputMaybe<Content_ItemProgramPerson_Arr_Rel_Insert_Input>;
     itemTags?: InputMaybe<Content_ItemTag_Arr_Rel_Insert_Input>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     shortTitle?: InputMaybe<Scalars["String"]>;
     sponsorshipTierMemberships?: InputMaybe<Sponsor_TierMember_Arr_Rel_Insert_Input>;
@@ -10963,7 +10501,6 @@ export type Content_Item_Max_Fields = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     shortTitle?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     title?: Maybe<Scalars["String"]>;
@@ -10976,7 +10513,6 @@ export type Content_Item_Max_Order_By = {
     conferenceId?: InputMaybe<Order_By>;
     createdAt?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     shortTitle?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     title?: InputMaybe<Order_By>;
@@ -10990,7 +10526,6 @@ export type Content_Item_Min_Fields = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     shortTitle?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     title?: Maybe<Scalars["String"]>;
@@ -11003,7 +10538,6 @@ export type Content_Item_Min_Order_By = {
     conferenceId?: InputMaybe<Order_By>;
     createdAt?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     shortTitle?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     title?: InputMaybe<Order_By>;
@@ -11048,8 +10582,6 @@ export type Content_Item_Order_By = {
     itemExhibitions_aggregate?: InputMaybe<Content_ItemExhibition_Aggregate_Order_By>;
     itemPeople_aggregate?: InputMaybe<Content_ItemProgramPerson_Aggregate_Order_By>;
     itemTags_aggregate?: InputMaybe<Content_ItemTag_Aggregate_Order_By>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     shortTitle?: InputMaybe<Order_By>;
     sponsorshipTierMemberships_aggregate?: InputMaybe<Sponsor_TierMember_Aggregate_Order_By>;
@@ -11079,8 +10611,6 @@ export enum Content_Item_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     ShortTitle = "shortTitle",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -11100,7 +10630,6 @@ export type Content_Item_Set_Input = {
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     id?: InputMaybe<Scalars["uuid"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     shortTitle?: InputMaybe<Scalars["String"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     title?: InputMaybe<Scalars["String"]>;
@@ -11119,8 +10648,6 @@ export enum Content_Item_Update_Column {
     CreatedAt = "createdAt",
     /** column name */
     Id = "id",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     ShortTitle = "shortTitle",
     /** column name */
@@ -14478,10 +14005,6 @@ export type Mutation_Root = {
     delete_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** delete single row from the table: "conference.DemoCode" */
     delete_conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
-    /** delete data from the table: "conference.OriginatingData" */
-    delete_conference_OriginatingData?: Maybe<Conference_OriginatingData_Mutation_Response>;
-    /** delete single row from the table: "conference.OriginatingData" */
-    delete_conference_OriginatingData_by_pk?: Maybe<Conference_OriginatingData>;
     /** delete data from the table: "conference.Subconference" */
     delete_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** delete single row from the table: "conference.Subconference" */
@@ -14876,10 +14399,6 @@ export type Mutation_Root = {
     insert_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** insert a single row into the table: "conference.DemoCode" */
     insert_conference_DemoCode_one?: Maybe<Conference_DemoCode>;
-    /** insert data into the table: "conference.OriginatingData" */
-    insert_conference_OriginatingData?: Maybe<Conference_OriginatingData_Mutation_Response>;
-    /** insert a single row into the table: "conference.OriginatingData" */
-    insert_conference_OriginatingData_one?: Maybe<Conference_OriginatingData>;
     /** insert data into the table: "conference.Subconference" */
     insert_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** insert a single row into the table: "conference.Subconference" */
@@ -15285,10 +14804,6 @@ export type Mutation_Root = {
     update_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** update single row of the table: "conference.DemoCode" */
     update_conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
-    /** update data of the table: "conference.OriginatingData" */
-    update_conference_OriginatingData?: Maybe<Conference_OriginatingData_Mutation_Response>;
-    /** update single row of the table: "conference.OriginatingData" */
-    update_conference_OriginatingData_by_pk?: Maybe<Conference_OriginatingData>;
     /** update data of the table: "conference.Subconference" */
     update_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** update single row of the table: "conference.Subconference" */
@@ -15858,16 +15373,6 @@ export type Mutation_RootDelete_Conference_DemoCodeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Conference_DemoCode_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Conference_OriginatingDataArgs = {
-    where: Conference_OriginatingData_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Conference_OriginatingData_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -16909,18 +16414,6 @@ export type Mutation_RootInsert_Conference_DemoCodeArgs = {
 export type Mutation_RootInsert_Conference_DemoCode_OneArgs = {
     object: Conference_DemoCode_Insert_Input;
     on_conflict?: InputMaybe<Conference_DemoCode_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Conference_OriginatingDataArgs = {
-    objects: Array<Conference_OriginatingData_Insert_Input>;
-    on_conflict?: InputMaybe<Conference_OriginatingData_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Conference_OriginatingData_OneArgs = {
-    object: Conference_OriginatingData_Insert_Input;
-    on_conflict?: InputMaybe<Conference_OriginatingData_On_Conflict>;
 };
 
 /** mutation root */
@@ -18237,28 +17730,6 @@ export type Mutation_RootUpdate_Conference_DemoCode_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootUpdate_Conference_OriginatingDataArgs = {
-    _append?: InputMaybe<Conference_OriginatingData_Append_Input>;
-    _delete_at_path?: InputMaybe<Conference_OriginatingData_Delete_At_Path_Input>;
-    _delete_elem?: InputMaybe<Conference_OriginatingData_Delete_Elem_Input>;
-    _delete_key?: InputMaybe<Conference_OriginatingData_Delete_Key_Input>;
-    _prepend?: InputMaybe<Conference_OriginatingData_Prepend_Input>;
-    _set?: InputMaybe<Conference_OriginatingData_Set_Input>;
-    where: Conference_OriginatingData_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Conference_OriginatingData_By_PkArgs = {
-    _append?: InputMaybe<Conference_OriginatingData_Append_Input>;
-    _delete_at_path?: InputMaybe<Conference_OriginatingData_Delete_At_Path_Input>;
-    _delete_elem?: InputMaybe<Conference_OriginatingData_Delete_Elem_Input>;
-    _delete_key?: InputMaybe<Conference_OriginatingData_Delete_Key_Input>;
-    _prepend?: InputMaybe<Conference_OriginatingData_Prepend_Input>;
-    _set?: InputMaybe<Conference_OriginatingData_Set_Input>;
-    pk_columns: Conference_OriginatingData_Pk_Columns_Input;
-};
-
-/** mutation root */
 export type Mutation_RootUpdate_Conference_SubconferenceArgs = {
     _set?: InputMaybe<Conference_Subconference_Set_Input>;
     where: Conference_Subconference_Bool_Exp;
@@ -19530,12 +19001,6 @@ export type Query_Root = {
     conference_DemoCode_aggregate: Conference_DemoCode_Aggregate;
     /** fetch data from the table: "conference.DemoCode" using primary key columns */
     conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
-    /** fetch data from the table: "conference.OriginatingData" */
-    conference_OriginatingData: Array<Conference_OriginatingData>;
-    /** fetch aggregated fields from the table: "conference.OriginatingData" */
-    conference_OriginatingData_aggregate: Conference_OriginatingData_Aggregate;
-    /** fetch data from the table: "conference.OriginatingData" using primary key columns */
-    conference_OriginatingData_by_pk?: Maybe<Conference_OriginatingData>;
     /** fetch data from the table: "conference.Subconference" */
     conference_Subconference: Array<Conference_Subconference>;
     /** fetch aggregated fields from the table: "conference.Subconference" */
@@ -19739,6 +19204,10 @@ export type Query_Root = {
     registrant_SubconferenceMembership_aggregate: Registrant_SubconferenceMembership_Aggregate;
     /** fetch data from the table: "registrant.SubconferenceMembership" using primary key columns */
     registrant_SubconferenceMembership_by_pk?: Maybe<Registrant_SubconferenceMembership>;
+    /** execute function "registrant.searchRegistrants" which returns "registrant.Registrant" */
+    registrant_searchRegistrants: Array<Registrant_Registrant>;
+    /** execute function "registrant.searchRegistrants" and query aggregates on result of table type "registrant.Registrant" */
+    registrant_searchRegistrants_aggregate: Registrant_Registrant_Aggregate;
     /** fetch data from the table: "room.Backend" */
     room_Backend: Array<Room_Backend>;
     /** fetch aggregated fields from the table: "room.Backend" */
@@ -20587,26 +20056,6 @@ export type Query_RootConference_DemoCode_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
-export type Query_RootConference_OriginatingDataArgs = {
-    distinct_on?: InputMaybe<Array<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-export type Query_RootConference_OriginatingData_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-export type Query_RootConference_OriginatingData_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
 export type Query_RootConference_SubconferenceArgs = {
     distinct_on?: InputMaybe<Array<Conference_Subconference_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -21283,6 +20732,24 @@ export type Query_RootRegistrant_SubconferenceMembership_AggregateArgs = {
 
 export type Query_RootRegistrant_SubconferenceMembership_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootRegistrant_SearchRegistrantsArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<Array<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+};
+
+export type Query_RootRegistrant_SearchRegistrants_AggregateArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<Array<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
 };
 
 export type Query_RootRoom_BackendArgs = {
@@ -24448,6 +23915,11 @@ export enum Registrant_SubconferenceMembership_Update_Column {
     UpdatedAt = "updated_at",
 }
 
+export type Registrant_SearchRegistrants_Args = {
+    conferenceid?: InputMaybe<Scalars["uuid"]>;
+    search?: InputMaybe<Scalars["String"]>;
+};
+
 /** columns and relationships of "room.Backend" */
 export type Room_Backend = {
     __typename?: "room_Backend";
@@ -25718,9 +25190,6 @@ export type Room_Room = {
     managementMode: Room_ManagementMode;
     managementModeName: Room_ManagementMode_Enum;
     name: Scalars["String"];
-    /** An object relationship */
-    originatingData?: Maybe<Conference_OriginatingData>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     /** An array relationship */
     participants: Array<Room_Participant>;
     /** An aggregate relationship */
@@ -26372,8 +25841,6 @@ export type Room_Room_Bool_Exp = {
     managementMode?: InputMaybe<Room_ManagementMode_Bool_Exp>;
     managementModeName?: InputMaybe<Room_ManagementMode_Enum_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     participants?: InputMaybe<Room_Participant_Bool_Exp>;
     presenceCounts?: InputMaybe<Analytics_RoomPresence_Bool_Exp>;
     priority?: InputMaybe<Int_Comparison_Exp>;
@@ -26428,8 +25895,6 @@ export type Room_Room_Insert_Input = {
     managementMode?: InputMaybe<Room_ManagementMode_Obj_Rel_Insert_Input>;
     managementModeName?: InputMaybe<Room_ManagementMode_Enum>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     participants?: InputMaybe<Room_Participant_Arr_Rel_Insert_Input>;
     presenceCounts?: InputMaybe<Analytics_RoomPresence_Arr_Rel_Insert_Input>;
     priority?: InputMaybe<Scalars["Int"]>;
@@ -26456,7 +25921,6 @@ export type Room_Room_Max_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     priority?: Maybe<Scalars["Int"]>;
     publicVonageSessionId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -26473,7 +25937,6 @@ export type Room_Room_Max_Order_By = {
     id?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     priority?: InputMaybe<Order_By>;
     publicVonageSessionId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
@@ -26491,7 +25954,6 @@ export type Room_Room_Min_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     priority?: Maybe<Scalars["Int"]>;
     publicVonageSessionId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -26508,7 +25970,6 @@ export type Room_Room_Min_Order_By = {
     id?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     priority?: InputMaybe<Order_By>;
     publicVonageSessionId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
@@ -26562,8 +26023,6 @@ export type Room_Room_Order_By = {
     managementMode?: InputMaybe<Room_ManagementMode_Order_By>;
     managementModeName?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     participants_aggregate?: InputMaybe<Room_Participant_Aggregate_Order_By>;
     presenceCounts_aggregate?: InputMaybe<Analytics_RoomPresence_Aggregate_Order_By>;
     priority?: InputMaybe<Order_By>;
@@ -26609,8 +26068,6 @@ export enum Room_Room_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     Priority = "priority",
     /** column name */
     PublicVonageSessionId = "publicVonageSessionId",
@@ -26633,7 +26090,6 @@ export type Room_Room_Set_Input = {
     itemId?: InputMaybe<Scalars["uuid"]>;
     managementModeName?: InputMaybe<Room_ManagementMode_Enum>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     priority?: InputMaybe<Scalars["Int"]>;
     publicVonageSessionId?: InputMaybe<Scalars["String"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
@@ -26716,8 +26172,6 @@ export enum Room_Room_Update_Column {
     ManagementModeName = "managementModeName",
     /** column name */
     Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     Priority = "priority",
     /** column name */
@@ -28605,9 +28059,6 @@ export type Schedule_Event = {
     itemId?: Maybe<Scalars["uuid"]>;
     name: Scalars["String"];
     /** An object relationship */
-    originatingData?: Maybe<Conference_OriginatingData>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    /** An object relationship */
     room: Room_Room;
     roomId: Scalars["uuid"];
     /** An object relationship */
@@ -29109,8 +28560,6 @@ export type Schedule_Event_Bool_Exp = {
     item?: InputMaybe<Content_Item_Bool_Exp>;
     itemId?: InputMaybe<Uuid_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     roomId?: InputMaybe<Uuid_Comparison_Exp>;
     roomMode?: InputMaybe<Room_Mode_Bool_Exp>;
@@ -29154,8 +28603,6 @@ export type Schedule_Event_Insert_Input = {
     item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
     itemId?: InputMaybe<Scalars["uuid"]>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: InputMaybe<Scalars["uuid"]>;
     roomMode?: InputMaybe<Room_Mode_Obj_Rel_Insert_Input>;
@@ -29180,7 +28627,6 @@ export type Schedule_Event_Max_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     roomId?: Maybe<Scalars["uuid"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
     startTime?: Maybe<Scalars["timestamptz"]>;
@@ -29200,7 +28646,6 @@ export type Schedule_Event_Max_Order_By = {
     id?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     roomId?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
     startTime?: InputMaybe<Order_By>;
@@ -29221,7 +28666,6 @@ export type Schedule_Event_Min_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     roomId?: Maybe<Scalars["uuid"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
     startTime?: Maybe<Scalars["timestamptz"]>;
@@ -29241,7 +28685,6 @@ export type Schedule_Event_Min_Order_By = {
     id?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     roomId?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
     startTime?: InputMaybe<Order_By>;
@@ -29292,8 +28735,6 @@ export type Schedule_Event_Order_By = {
     item?: InputMaybe<Content_Item_Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     roomId?: InputMaybe<Order_By>;
     roomMode?: InputMaybe<Room_Mode_Order_By>;
@@ -29336,8 +28777,6 @@ export enum Schedule_Event_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     RoomId = "roomId",
     /** column name */
     ShufflePeriodId = "shufflePeriodId",
@@ -29367,7 +28806,6 @@ export type Schedule_Event_Set_Input = {
     intendedRoomModeName?: InputMaybe<Room_Mode_Enum>;
     itemId?: InputMaybe<Scalars["uuid"]>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     roomId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
     startTime?: InputMaybe<Scalars["timestamptz"]>;
@@ -29444,8 +28882,6 @@ export enum Schedule_Event_Update_Column {
     ItemId = "itemId",
     /** column name */
     Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     RoomId = "roomId",
     /** column name */
@@ -30658,12 +30094,6 @@ export type Subscription_Root = {
     conference_DemoCode_aggregate: Conference_DemoCode_Aggregate;
     /** fetch data from the table: "conference.DemoCode" using primary key columns */
     conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
-    /** fetch data from the table: "conference.OriginatingData" */
-    conference_OriginatingData: Array<Conference_OriginatingData>;
-    /** fetch aggregated fields from the table: "conference.OriginatingData" */
-    conference_OriginatingData_aggregate: Conference_OriginatingData_Aggregate;
-    /** fetch data from the table: "conference.OriginatingData" using primary key columns */
-    conference_OriginatingData_by_pk?: Maybe<Conference_OriginatingData>;
     /** fetch data from the table: "conference.Subconference" */
     conference_Subconference: Array<Conference_Subconference>;
     /** fetch aggregated fields from the table: "conference.Subconference" */
@@ -30864,6 +30294,10 @@ export type Subscription_Root = {
     registrant_SubconferenceMembership_aggregate: Registrant_SubconferenceMembership_Aggregate;
     /** fetch data from the table: "registrant.SubconferenceMembership" using primary key columns */
     registrant_SubconferenceMembership_by_pk?: Maybe<Registrant_SubconferenceMembership>;
+    /** execute function "registrant.searchRegistrants" which returns "registrant.Registrant" */
+    registrant_searchRegistrants: Array<Registrant_Registrant>;
+    /** execute function "registrant.searchRegistrants" and query aggregates on result of table type "registrant.Registrant" */
+    registrant_searchRegistrants_aggregate: Registrant_Registrant_Aggregate;
     /** fetch data from the table: "room.Backend" */
     room_Backend: Array<Room_Backend>;
     /** fetch aggregated fields from the table: "room.Backend" */
@@ -31710,26 +31144,6 @@ export type Subscription_RootConference_DemoCode_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
-export type Subscription_RootConference_OriginatingDataArgs = {
-    distinct_on?: InputMaybe<Array<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-export type Subscription_RootConference_OriginatingData_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-export type Subscription_RootConference_OriginatingData_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
 export type Subscription_RootConference_SubconferenceArgs = {
     distinct_on?: InputMaybe<Array<Conference_Subconference_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -32402,6 +31816,24 @@ export type Subscription_RootRegistrant_SubconferenceMembership_AggregateArgs = 
 
 export type Subscription_RootRegistrant_SubconferenceMembership_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Subscription_RootRegistrant_SearchRegistrantsArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<Array<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+};
+
+export type Subscription_RootRegistrant_SearchRegistrants_AggregateArgs = {
+    args: Registrant_SearchRegistrants_Args;
+    distinct_on?: InputMaybe<Array<Registrant_Registrant_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_Registrant_Order_By>>;
+    where?: InputMaybe<Registrant_Registrant_Bool_Exp>;
 };
 
 export type Subscription_RootRoom_BackendArgs = {

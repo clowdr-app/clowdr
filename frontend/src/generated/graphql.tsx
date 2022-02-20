@@ -6998,6 +6998,7 @@ export type Conference_Conference = {
     readonly exhibitions: ReadonlyArray<Collection_Exhibition>;
     /** An aggregate relationship */
     readonly exhibitions_aggregate: Collection_Exhibition_Aggregate;
+    readonly globalInviteCode?: Maybe<Scalars["uuid"]>;
     readonly id: Scalars["uuid"];
     /** An array relationship */
     readonly items: ReadonlyArray<Content_Item>;
@@ -7306,6 +7307,7 @@ export type Conference_Conference_Bool_Exp = {
     readonly demoCodeId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly exhibitions?: InputMaybe<Collection_Exhibition_Bool_Exp>;
+    readonly globalInviteCode?: InputMaybe<Uuid_Comparison_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly items?: InputMaybe<Content_Item_Bool_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
@@ -7325,6 +7327,8 @@ export type Conference_Conference_Bool_Exp = {
 export enum Conference_Conference_Constraint {
     /** unique or primary key constraint */
     ConferenceDemoCodeIdKey = "Conference_demoCodeId_key",
+    /** unique or primary key constraint */
+    ConferenceGlobalInviteCodeKey = "Conference_globalInviteCode_key",
     /** unique or primary key constraint */
     ConferenceNameKey = "Conference_name_key",
     /** unique or primary key constraint */
@@ -7350,6 +7354,7 @@ export type Conference_Conference_Insert_Input = {
     readonly demoCodeId?: InputMaybe<Scalars["uuid"]>;
     readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     readonly exhibitions?: InputMaybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
+    readonly globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
     readonly name?: InputMaybe<Scalars["String"]>;
@@ -7373,6 +7378,7 @@ export type Conference_Conference_Max_Fields = {
     readonly createdBy?: Maybe<Scalars["String"]>;
     readonly defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     readonly demoCodeId?: Maybe<Scalars["uuid"]>;
+    readonly globalInviteCode?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly shortName?: Maybe<Scalars["String"]>;
@@ -7387,6 +7393,7 @@ export type Conference_Conference_Max_Order_By = {
     readonly createdBy?: InputMaybe<Order_By>;
     readonly defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     readonly demoCodeId?: InputMaybe<Order_By>;
+    readonly globalInviteCode?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly shortName?: InputMaybe<Order_By>;
@@ -7402,6 +7409,7 @@ export type Conference_Conference_Min_Fields = {
     readonly createdBy?: Maybe<Scalars["String"]>;
     readonly defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     readonly demoCodeId?: Maybe<Scalars["uuid"]>;
+    readonly globalInviteCode?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly shortName?: Maybe<Scalars["String"]>;
@@ -7416,6 +7424,7 @@ export type Conference_Conference_Min_Order_By = {
     readonly createdBy?: InputMaybe<Order_By>;
     readonly defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     readonly demoCodeId?: InputMaybe<Order_By>;
+    readonly globalInviteCode?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly shortName?: InputMaybe<Order_By>;
@@ -7461,6 +7470,7 @@ export type Conference_Conference_Order_By = {
     readonly demoCodeId?: InputMaybe<Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     readonly exhibitions_aggregate?: InputMaybe<Collection_Exhibition_Aggregate_Order_By>;
+    readonly globalInviteCode?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
     readonly name?: InputMaybe<Order_By>;
@@ -7496,6 +7506,8 @@ export enum Conference_Conference_Select_Column {
     /** column name */
     DemoCodeId = "demoCodeId",
     /** column name */
+    GlobalInviteCode = "globalInviteCode",
+    /** column name */
     Id = "id",
     /** column name */
     Name = "name",
@@ -7515,6 +7527,7 @@ export type Conference_Conference_Set_Input = {
     readonly createdBy?: InputMaybe<Scalars["String"]>;
     readonly defaultProgramVisibilityLevel?: InputMaybe<Scalars["String"]>;
     readonly demoCodeId?: InputMaybe<Scalars["uuid"]>;
+    readonly globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly shortName?: InputMaybe<Scalars["String"]>;
@@ -7536,6 +7549,8 @@ export enum Conference_Conference_Update_Column {
     DefaultProgramVisibilityLevel = "defaultProgramVisibilityLevel",
     /** column name */
     DemoCodeId = "demoCodeId",
+    /** column name */
+    GlobalInviteCode = "globalInviteCode",
     /** column name */
     Id = "id",
     /** column name */
@@ -41663,6 +41678,33 @@ export type PreshowChecklistQuery = {
     }>;
 };
 
+export type GetConferenceGlobalInviteCodeQueryVariables = Exact<{
+    id: Scalars["uuid"];
+}>;
+
+export type GetConferenceGlobalInviteCodeQuery = {
+    readonly __typename?: "query_root";
+    readonly conference_Conference_by_pk?: {
+        readonly __typename?: "conference_Conference";
+        readonly id: any;
+        readonly globalInviteCode?: any | null;
+    } | null;
+};
+
+export type UpdateConferenceGlobalInviteCodeMutationVariables = Exact<{
+    id: Scalars["uuid"];
+    globalInviteCode?: InputMaybe<Scalars["uuid"]>;
+}>;
+
+export type UpdateConferenceGlobalInviteCodeMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_conference_Conference_by_pk?: {
+        readonly __typename?: "conference_Conference";
+        readonly id: any;
+        readonly globalInviteCode?: any | null;
+    } | null;
+};
+
 export type UpdateConferenceMutationVariables = Exact<{
     id: Scalars["uuid"];
     name?: InputMaybe<Scalars["String"]>;
@@ -41672,15 +41714,12 @@ export type UpdateConferenceMutationVariables = Exact<{
 
 export type UpdateConferenceMutation = {
     readonly __typename?: "mutation_root";
-    readonly update_conference_Conference?: {
-        readonly __typename?: "conference_Conference_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "conference_Conference";
-            readonly id: any;
-            readonly name: string;
-            readonly shortName: string;
-            readonly slug: string;
-        }>;
+    readonly update_conference_Conference_by_pk?: {
+        readonly __typename?: "conference_Conference";
+        readonly id: any;
+        readonly name: string;
+        readonly shortName: string;
+        readonly slug: string;
     } | null;
 };
 
@@ -50843,18 +50882,48 @@ export const PreshowChecklistDocument = gql`
 export function usePreshowChecklistQuery(options: Omit<Urql.UseQueryArgs<PreshowChecklistQueryVariables>, "query">) {
     return useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
 }
+export const GetConferenceGlobalInviteCodeDocument = gql`
+    query GetConferenceGlobalInviteCode($id: uuid!) {
+        conference_Conference_by_pk(id: $id) {
+            id
+            globalInviteCode
+        }
+    }
+`;
+
+export function useGetConferenceGlobalInviteCodeQuery(
+    options: Omit<Urql.UseQueryArgs<GetConferenceGlobalInviteCodeQueryVariables>, "query">
+) {
+    return useQuery<GetConferenceGlobalInviteCodeQuery>({
+        query: GetConferenceGlobalInviteCodeDocument,
+        ...options,
+    });
+}
+export const UpdateConferenceGlobalInviteCodeDocument = gql`
+    mutation UpdateConferenceGlobalInviteCode($id: uuid!, $globalInviteCode: uuid = null) {
+        update_conference_Conference_by_pk(pk_columns: { id: $id }, _set: { globalInviteCode: $globalInviteCode }) {
+            id
+            globalInviteCode
+        }
+    }
+`;
+
+export function useUpdateConferenceGlobalInviteCodeMutation() {
+    return Urql.useMutation<
+        UpdateConferenceGlobalInviteCodeMutation,
+        UpdateConferenceGlobalInviteCodeMutationVariables
+    >(UpdateConferenceGlobalInviteCodeDocument);
+}
 export const UpdateConferenceDocument = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
-        update_conference_Conference(
-            where: { id: { _eq: $id } }
+        update_conference_Conference_by_pk(
+            pk_columns: { id: $id }
             _set: { name: $name, shortName: $shortName, slug: $slug }
         ) {
-            returning {
-                id
-                name
-                shortName
-                slug
-            }
+            id
+            name
+            shortName
+            slug
         }
     }
 `;
@@ -62362,6 +62431,11 @@ export type GraphCacheResolvers = {
             Conference_ConferenceExhibitions_AggregateArgs,
             WithTypename<Collection_Exhibition_Aggregate> | string
         >;
+        globalInviteCode?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         id?: GraphCacheResolver<WithTypename<Conference_Conference>, Record<string, never>, Scalars["uuid"] | string>;
         items?: GraphCacheResolver<
             WithTypename<Conference_Conference>,
@@ -62519,6 +62593,11 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
+        globalInviteCode?: GraphCacheResolver<
+            WithTypename<Conference_Conference_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         id?: GraphCacheResolver<
             WithTypename<Conference_Conference_Max_Fields>,
             Record<string, never>,
@@ -62567,6 +62646,11 @@ export type GraphCacheResolvers = {
             Scalars["String"] | string
         >;
         demoCodeId?: GraphCacheResolver<
+            WithTypename<Conference_Conference_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        globalInviteCode?: GraphCacheResolver<
             WithTypename<Conference_Conference_Min_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string

@@ -16,12 +16,14 @@ import {
     GetAutomaticInvitationsRepeatConfigurationsDocument,
     GetAutomaticInvitations_ToBeRepeatedDocument,
     InsertInvitationEmailJobDocument,
+    InsertRegistrantFromGlobalInviteDocument,
     SelectInvitationAndUserDocument,
     SelectRegistrantsWithInvitationDocument,
     SelectUnprocessedInvitationEmailJobsDocument,
     SetRegistrantUserIdDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { animals } from "../lib/animals";
 import { logger } from "../lib/logger";
 import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
@@ -58,8 +60,22 @@ gql`
             ...InvitationParts
         }
 
+        conference_Conference(where: { globalInviteCode: { _eq: $inviteCode } }) {
+            id
+            slug
+            registrants(where: { userId: { _eq: $userId } }) {
+                id
+            }
+        }
+
         User_by_pk(id: $userId) {
             ...InvitedUserParts
+        }
+    }
+
+    mutation InsertRegistrantFromGlobalInvite($registrant: registrant_Registrant_insert_input!) {
+        insert_registrant_Registrant_one(object: $registrant) {
+            id
         }
     }
 
@@ -229,8 +245,9 @@ async function getInvitationAndUser(
     inviteCode: string,
     userId: string
 ): Promise<{
-    invitation: InvitationPartsFragment;
+    invitation: InvitationPartsFragment | undefined;
     user: InvitedUserPartsFragment;
+    globalInvite: { conferenceId: string; conferenceSlug: string; userAlreadyRegistered: boolean } | false;
 }> {
     const invitationQ = await apolloClient.query({
         query: SelectInvitationAndUserDocument,
@@ -239,17 +256,25 @@ async function getInvitationAndUser(
             userId,
         },
     });
-    if (!invitationQ.data.registrant_Invitation[0]) {
+    if (!invitationQ.data.registrant_Invitation[0] && !invitationQ.data.conference_Conference[0]) {
         throw new Error("Invitation not found");
     }
     if (!invitationQ.data.User_by_pk) {
         throw new Error("User not found");
     }
     const invitation = invitationQ.data.registrant_Invitation[0];
+    const conference = invitationQ.data.conference_Conference[0];
     const user = invitationQ.data.User_by_pk;
     return {
         invitation,
         user,
+        globalInvite: conference
+            ? {
+                  conferenceId: conference.id,
+                  conferenceSlug: conference.slug,
+                  userAlreadyRegistered: conference.registrants.length > 0,
+              }
+            : false,
     };
 }
 
@@ -257,34 +282,60 @@ async function confirmUser(
     logger: P.Logger,
     inviteCode: string,
     userId: string,
-    validate: (invitation: InvitationPartsFragment, user: InvitedUserPartsFragment) => Promise<true | string>
+    validate: (
+        invitation: InvitationPartsFragment | undefined,
+        user: InvitedUserPartsFragment,
+        isGlobalInviteCode: boolean
+    ) => Promise<true | string>
 ): Promise<ConfirmInvitationOutput> {
     try {
-        const { invitation, user } = await getInvitationAndUser(inviteCode, userId);
+        const { invitation, user, globalInvite } = await getInvitationAndUser(inviteCode, userId);
 
-        let ok = await validate(invitation, user);
+        let ok = await validate(invitation, user, Boolean(globalInvite));
 
         if (ok === true) {
-            try {
-                await apolloClient.mutate({
-                    mutation: SetRegistrantUserIdDocument,
-                    variables: {
-                        registrantId: invitation.registrantId,
-                        userId,
-                    },
-                });
-            } catch (e: any) {
-                ok = e.message || e.toString();
-                logger.error(
-                    { userId: user.id, invitationId: invitation.id, err: e },
-                    "Failed to link user to invitation"
-                );
+            if (invitation && !globalInvite) {
+                if (!invitation.registrant.userId) {
+                    try {
+                        await apolloClient.mutate({
+                            mutation: SetRegistrantUserIdDocument,
+                            variables: {
+                                registrantId: invitation.registrantId,
+                                userId,
+                            },
+                        });
+                    } catch (e: any) {
+                        ok = e.message || e.toString();
+                        logger.error(
+                            { userId: user.id, invitationId: invitation.id, err: e },
+                            "Failed to link user to invitation"
+                        );
+                    }
+                }
+            } else if (globalInvite) {
+                const randomAnimal = animals[Math.round(Math.random() * (animals.length - 1))];
+                try {
+                    await apolloClient.mutate({
+                        mutation: InsertRegistrantFromGlobalInviteDocument,
+                        variables: {
+                            registrant: {
+                                conferenceId: globalInvite.conferenceId,
+                                displayName: `Anonymous ${randomAnimal}`,
+                                userId: user.id,
+                            },
+                        },
+                    });
+                } catch (e: any) {
+                    ok = e.message || e.toString();
+                    logger.error({ userId: user.id, err: e }, "Failed to create registrant to accept invite");
+                }
             }
         }
 
         return {
             ok: ok === true ? "true" : ok,
-            confSlug: invitation.registrant.conference.slug,
+            confSlug:
+                invitation?.registrant.conference.slug ?? (globalInvite ? globalInvite.conferenceSlug : undefined),
         };
     } catch (e: any) {
         return {
@@ -299,15 +350,20 @@ export async function invitationConfirmCurrentHandler(
     args: invitationConfirmCurrentArgs,
     userId: string
 ): Promise<ConfirmInvitationOutput> {
-    return confirmUser(logger, args.inviteCode, userId, async (invitation, user): Promise<true | string> => {
-        return !invitation.invitedEmailAddress
-            ? "No invited email address"
-            : !user.email
-            ? "User does not have an email address"
-            : invitation.registrant.userId
-            ? `Invitation already used${invitation.registrant.userId === user.id ? " (same user)" : ""}`
-            : true;
-    });
+    return confirmUser(
+        logger,
+        args.inviteCode,
+        userId,
+        async (invitation, user, isGlobalInviteCode): Promise<true | string> => {
+            return !invitation?.invitedEmailAddress && !isGlobalInviteCode
+                ? "No invitation"
+                : !user.email && !isGlobalInviteCode
+                ? "User email address invalid"
+                : !isGlobalInviteCode && invitation?.registrant.userId !== user.id
+                ? "Invitation already used"
+                : true;
+        }
+    );
 }
 
 gql`
@@ -380,7 +436,8 @@ export async function handleInvitationInsert_AutomaticSend(payload: EventPayload
             typeof initialStartMs === "number" &&
             typeof initialEndMs === "number" &&
             initialStartMs <= now &&
-            now < initialEndMs
+            now < initialEndMs &&
+            !payload.event.data.new.registrantId
         ) {
             await apolloClient.mutate({
                 mutation: InsertInvitationEmailJobDocument,

@@ -23,7 +23,7 @@ const entityUpdater: (schema: IntrospectionData, augSchema: AugmentedIntrospecti
             rawOperation === "insert" || rawOperation === "update" || rawOperation === "delete"
                 ? rawOperation
                 : undefined;
-        if (!operation) {
+        if (!operation || operation === "update") {
             return;
         }
 

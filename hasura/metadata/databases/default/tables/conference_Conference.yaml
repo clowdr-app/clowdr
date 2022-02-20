@@ -153,6 +153,7 @@ select_permissions:
     - created_at
     - defaultProgramVisibilityLevel
     - demoCodeId
+    - globalInviteCode
     - id
     - name
     - shortName
@@ -193,8 +194,14 @@ select_permissions:
     - slug
     - updated_at
     filter:
-      conferenceVisibilityLevel:
-        _eq: PUBLIC
+      _or:
+      - conferenceVisibilityLevel:
+          _eq: PUBLIC
+      - _and:
+        - globalInviteCode:
+            _is_null: false
+        - globalInviteCode:
+            _eq: X-Hasura-Invite-Code
   role: unauthenticated
 - permission:
     columns:
@@ -214,6 +221,7 @@ update_permissions:
     columns:
     - conferenceVisibilityLevel
     - defaultProgramVisibilityLevel
+    - globalInviteCode
     - name
     - shortName
     - slug

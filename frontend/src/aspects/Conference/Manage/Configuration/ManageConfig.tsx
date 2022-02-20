@@ -4,23 +4,34 @@ import {
     AlertIcon,
     AlertTitle,
     Button,
+    Code,
     Divider,
+    Grid,
     GridItem,
     Heading,
     InputLeftAddon,
     InputRightAddon,
     SimpleGrid,
+    Spinner,
     Text,
     Tooltip,
+    useClipboard,
     useToast,
     VStack,
 } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
-import { Conference_ConfigurationKey_Enum, useUpdateConferenceMutation } from "../../../../generated/graphql";
+import { v4 as uuidv4 } from "uuid";
+import {
+    Conference_ConfigurationKey_Enum,
+    useGetConferenceGlobalInviteCodeQuery,
+    useUpdateConferenceGlobalInviteCodeMutation,
+    useUpdateConferenceMutation,
+} from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
+import { makeContext } from "../../../GQL/make-context";
 import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import { roleOptions } from "../Content/v2/Submissions/SubmissionRequestsModal";
@@ -34,17 +45,29 @@ import TextAreaSetting from "./TextAreaSetting";
 import TextSetting from "./TextSetting";
 
 gql`
+    query GetConferenceGlobalInviteCode($id: uuid!) {
+        conference_Conference_by_pk(id: $id) {
+            id
+            globalInviteCode
+        }
+    }
+
+    mutation UpdateConferenceGlobalInviteCode($id: uuid!, $globalInviteCode: uuid = null) {
+        update_conference_Conference_by_pk(pk_columns: { id: $id }, _set: { globalInviteCode: $globalInviteCode }) {
+            id
+            globalInviteCode
+        }
+    }
+
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
-        update_conference_Conference(
-            where: { id: { _eq: $id } }
+        update_conference_Conference_by_pk(
+            pk_columns: { id: $id }
             _set: { name: $name, shortName: $shortName, slug: $slug }
         ) {
-            returning {
-                id
-                name
-                shortName
-                slug
-            }
+            id
+            name
+            shortName
+            slug
         }
     }
 `;
@@ -78,9 +101,9 @@ export default function ManageConfig(): JSX.Element {
             try {
                 const variables = {
                     id: conference.id,
-                    name: name,
-                    shortName: shortName,
-                    slug: slug,
+                    name,
+                    shortName,
+                    slug,
                 };
                 const result = await updateConferenceMutation(variables, {
                     fetchOptions: {
@@ -158,6 +181,26 @@ export default function ManageConfig(): JSX.Element {
     const [newURLSlug, setNewURLSlug] = useState<string | null>(null);
     const resetURLSlug = useRef<() => void>(null);
 
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [globalInviteCodeResponse] = useGetConferenceGlobalInviteCodeQuery({
+        variables: {
+            id: conference.id,
+        },
+        context,
+    });
+    const [updateGlobalInviteResponse, updateGlobalInvite] = useUpdateConferenceGlobalInviteCodeMutation();
+    const loadingGlobalInviteCode =
+        globalInviteCodeResponse.fetching || !globalInviteCodeResponse.data?.conference_Conference_by_pk;
+    const globalInviteCode = globalInviteCodeResponse.data?.conference_Conference_by_pk?.globalInviteCode;
+    const { onCopy: onCopyGlobalInvite, hasCopied: hasCopiedGlobalInvite } = useClipboard(
+        `${window.location.origin}/invitation/accept/${globalInviteCode ?? ""}`
+    );
     return (
         <DashboardPage title="Settings">
             {title}
@@ -299,6 +342,74 @@ export default function ManageConfig(): JSX.Element {
                                 />
                             )}
                         </SettingUpdater>
+                    </Setting>
+                    <Setting
+                        title="Universal invitation"
+                        description="An invitation link you can share with anyone to invite them to your conference. Anyone with the link can join!"
+                    >
+                        {loadingGlobalInviteCode ? (
+                            <Spinner />
+                        ) : globalInviteCode ? (
+                            <Grid templateColumns="repeat(2, auto)" gap={2}>
+                                <GridItem fontWeight="bold">Invitation code</GridItem>
+                                <GridItem>
+                                    <Code>{globalInviteCode}</Code>
+                                </GridItem>
+                                <GridItem fontWeight="bold">Invitation link</GridItem>
+                                <GridItem>
+                                    <Code>
+                                        {window.location.origin}/invitation/accept/{globalInviteCode}
+                                    </Code>
+                                </GridItem>
+                                <GridItem colSpan={2} textAlign="right">
+                                    <Button
+                                        size="sm"
+                                        mr={4}
+                                        onClick={onCopyGlobalInvite}
+                                        colorScheme="PrimaryActionButton"
+                                    >
+                                        <FAIcon
+                                            iconStyle="s"
+                                            icon={hasCopiedGlobalInvite ? "check-circle" : "clipboard"}
+                                            mr={2}
+                                        />
+                                        Copy invitation link
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        isLoading={updateGlobalInviteResponse.fetching}
+                                        colorScheme="DestructiveActionButton"
+                                        onClick={() => {
+                                            updateGlobalInvite(
+                                                {
+                                                    id: conference.id,
+                                                    globalInviteCode: null,
+                                                },
+                                                context
+                                            );
+                                        }}
+                                    >
+                                        Remove universal invitation
+                                    </Button>
+                                </GridItem>
+                            </Grid>
+                        ) : (
+                            <Button
+                                isLoading={updateGlobalInviteResponse.fetching}
+                                colorScheme="ConfirmButton"
+                                onClick={() => {
+                                    updateGlobalInvite(
+                                        {
+                                            id: conference.id,
+                                            globalInviteCode: uuidv4(),
+                                        },
+                                        context
+                                    );
+                                }}
+                            >
+                                Generate universal invitation
+                            </Button>
+                        )}
                     </Setting>
                 </Section>
                 <Section

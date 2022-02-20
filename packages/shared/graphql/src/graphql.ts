@@ -6995,6 +6995,7 @@ export type Conference_Conference = {
     exhibitions: Array<Collection_Exhibition>;
     /** An aggregate relationship */
     exhibitions_aggregate: Collection_Exhibition_Aggregate;
+    globalInviteCode?: Maybe<Scalars["uuid"]>;
     id: Scalars["uuid"];
     /** An array relationship */
     items: Array<Content_Item>;
@@ -7303,6 +7304,7 @@ export type Conference_Conference_Bool_Exp = {
     demoCodeId?: InputMaybe<Uuid_Comparison_Exp>;
     events?: InputMaybe<Schedule_Event_Bool_Exp>;
     exhibitions?: InputMaybe<Collection_Exhibition_Bool_Exp>;
+    globalInviteCode?: InputMaybe<Uuid_Comparison_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
     items?: InputMaybe<Content_Item_Bool_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
@@ -7322,6 +7324,8 @@ export type Conference_Conference_Bool_Exp = {
 export enum Conference_Conference_Constraint {
     /** unique or primary key constraint */
     ConferenceDemoCodeIdKey = "Conference_demoCodeId_key",
+    /** unique or primary key constraint */
+    ConferenceGlobalInviteCodeKey = "Conference_globalInviteCode_key",
     /** unique or primary key constraint */
     ConferenceNameKey = "Conference_name_key",
     /** unique or primary key constraint */
@@ -7347,6 +7351,7 @@ export type Conference_Conference_Insert_Input = {
     demoCodeId?: InputMaybe<Scalars["uuid"]>;
     events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     exhibitions?: InputMaybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
+    globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
     items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
     name?: InputMaybe<Scalars["String"]>;
@@ -7370,6 +7375,7 @@ export type Conference_Conference_Max_Fields = {
     createdBy?: Maybe<Scalars["String"]>;
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     demoCodeId?: Maybe<Scalars["uuid"]>;
+    globalInviteCode?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     shortName?: Maybe<Scalars["String"]>;
@@ -7384,6 +7390,7 @@ export type Conference_Conference_Max_Order_By = {
     createdBy?: InputMaybe<Order_By>;
     defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     demoCodeId?: InputMaybe<Order_By>;
+    globalInviteCode?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     shortName?: InputMaybe<Order_By>;
@@ -7399,6 +7406,7 @@ export type Conference_Conference_Min_Fields = {
     createdBy?: Maybe<Scalars["String"]>;
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     demoCodeId?: Maybe<Scalars["uuid"]>;
+    globalInviteCode?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     shortName?: Maybe<Scalars["String"]>;
@@ -7413,6 +7421,7 @@ export type Conference_Conference_Min_Order_By = {
     createdBy?: InputMaybe<Order_By>;
     defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     demoCodeId?: InputMaybe<Order_By>;
+    globalInviteCode?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     shortName?: InputMaybe<Order_By>;
@@ -7458,6 +7467,7 @@ export type Conference_Conference_Order_By = {
     demoCodeId?: InputMaybe<Order_By>;
     events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     exhibitions_aggregate?: InputMaybe<Collection_Exhibition_Aggregate_Order_By>;
+    globalInviteCode?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
     name?: InputMaybe<Order_By>;
@@ -7493,6 +7503,8 @@ export enum Conference_Conference_Select_Column {
     /** column name */
     DemoCodeId = "demoCodeId",
     /** column name */
+    GlobalInviteCode = "globalInviteCode",
+    /** column name */
     Id = "id",
     /** column name */
     Name = "name",
@@ -7512,6 +7524,7 @@ export type Conference_Conference_Set_Input = {
     createdBy?: InputMaybe<Scalars["String"]>;
     defaultProgramVisibilityLevel?: InputMaybe<Scalars["String"]>;
     demoCodeId?: InputMaybe<Scalars["uuid"]>;
+    globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
     name?: InputMaybe<Scalars["String"]>;
     shortName?: InputMaybe<Scalars["String"]>;
@@ -7533,6 +7546,8 @@ export enum Conference_Conference_Update_Column {
     DefaultProgramVisibilityLevel = "defaultProgramVisibilityLevel",
     /** column name */
     DemoCodeId = "demoCodeId",
+    /** column name */
+    GlobalInviteCode = "globalInviteCode",
     /** column name */
     Id = "id",
     /** column name */

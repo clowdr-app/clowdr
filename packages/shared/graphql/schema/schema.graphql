@@ -9551,6 +9551,7 @@ type conference_Conference {
         """
         where: collection_Exhibition_bool_exp
     ): collection_Exhibition_aggregate!
+    globalInviteCode: uuid
     id: uuid!
     """
     An array relationship
@@ -10015,6 +10016,7 @@ input conference_Conference_bool_exp {
     demoCodeId: uuid_comparison_exp
     events: schedule_Event_bool_exp
     exhibitions: collection_Exhibition_bool_exp
+    globalInviteCode: uuid_comparison_exp
     id: uuid_comparison_exp
     items: content_Item_bool_exp
     name: String_comparison_exp
@@ -10038,6 +10040,10 @@ enum conference_Conference_constraint {
     unique or primary key constraint
     """
     Conference_demoCodeId_key
+    """
+    unique or primary key constraint
+    """
+    Conference_globalInviteCode_key
     """
     unique or primary key constraint
     """
@@ -10073,6 +10079,7 @@ input conference_Conference_insert_input {
     demoCodeId: uuid
     events: schedule_Event_arr_rel_insert_input
     exhibitions: collection_Exhibition_arr_rel_insert_input
+    globalInviteCode: uuid
     id: uuid
     items: content_Item_arr_rel_insert_input
     name: String
@@ -10097,6 +10104,7 @@ type conference_Conference_max_fields {
     createdBy: String
     defaultProgramVisibilityLevel: String
     demoCodeId: uuid
+    globalInviteCode: uuid
     id: uuid
     name: String
     shortName: String
@@ -10113,6 +10121,7 @@ input conference_Conference_max_order_by {
     createdBy: order_by
     defaultProgramVisibilityLevel: order_by
     demoCodeId: order_by
+    globalInviteCode: order_by
     id: order_by
     name: order_by
     shortName: order_by
@@ -10129,6 +10138,7 @@ type conference_Conference_min_fields {
     createdBy: String
     defaultProgramVisibilityLevel: String
     demoCodeId: uuid
+    globalInviteCode: uuid
     id: uuid
     name: String
     shortName: String
@@ -10145,6 +10155,7 @@ input conference_Conference_min_order_by {
     createdBy: order_by
     defaultProgramVisibilityLevel: order_by
     demoCodeId: order_by
+    globalInviteCode: order_by
     id: order_by
     name: order_by
     shortName: order_by
@@ -10203,6 +10214,7 @@ input conference_Conference_order_by {
     demoCodeId: order_by
     events_aggregate: schedule_Event_aggregate_order_by
     exhibitions_aggregate: collection_Exhibition_aggregate_order_by
+    globalInviteCode: order_by
     id: order_by
     items_aggregate: content_Item_aggregate_order_by
     name: order_by
@@ -10256,6 +10268,10 @@ enum conference_Conference_select_column {
     """
     column name
     """
+    globalInviteCode
+    """
+    column name
+    """
     id
     """
     column name
@@ -10285,6 +10301,7 @@ input conference_Conference_set_input {
     createdBy: String
     defaultProgramVisibilityLevel: String
     demoCodeId: uuid
+    globalInviteCode: uuid
     id: uuid
     name: String
     shortName: String
@@ -10320,6 +10337,10 @@ enum conference_Conference_update_column {
     column name
     """
     demoCodeId
+    """
+    column name
+    """
+    globalInviteCode
     """
     column name
     """

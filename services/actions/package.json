@@ -82,6 +82,7 @@
         "pino-http": "^6.6.0",
         "query-string": "^7.0.1",
         "ramda": "^0.28.0",
+        "rimraf": "^3.0.2",
         "slugify": "^1.6.2",
         "sns-validator": "^0.3.4",
         "subtitle": "^4.1.1",

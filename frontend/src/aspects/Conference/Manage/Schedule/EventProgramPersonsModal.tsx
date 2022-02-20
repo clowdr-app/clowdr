@@ -71,6 +71,32 @@ interface Props {
 }
 
 gql`
+    fragment EventInfo on schedule_Event {
+        conferenceId
+        id
+        durationSeconds
+        eventPeople {
+            ...EventProgramPersonInfo
+        }
+        id
+        intendedRoomModeName
+        name
+        roomId
+        startTime
+        endTime
+        itemId
+        exhibitionId
+        shufflePeriodId
+        enableRecording
+    }
+
+    fragment EventProgramPersonInfo on schedule_EventProgramPerson {
+        id
+        eventId
+        roleName
+        personId
+    }
+
     mutation InsertEventProgramPerson($newEventProgramPerson: schedule_EventProgramPerson_insert_input!) {
         insert_schedule_EventProgramPerson_one(
             object: $newEventProgramPerson

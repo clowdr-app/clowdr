@@ -17,7 +17,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
-import type { IntermediaryRegistrantData } from "@midspace/shared-types/import/intermediary";
+import type { IntermediaryRegistrantData } from "@midspace/shared-types/import/registrant";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { gql } from "urql";

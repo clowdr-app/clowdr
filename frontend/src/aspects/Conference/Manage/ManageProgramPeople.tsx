@@ -79,7 +79,6 @@ gql`
         name
         affiliation
         email
-        originatingDataId
         registrantId
         accessToken
     }
@@ -724,7 +723,6 @@ export default function ManageProgramPeople(): JSX.Element {
                                 "Conference Id": person.conferenceId,
                                 "Person Id": person.id,
                                 "Registrant Id": person.registrantId ?? "",
-                                "Externally Sourced Data Id": person.originatingDataId,
                                 Name: person.name,
                                 Affiliation: person.affiliation ?? "",
                                 Email: person.email ?? "",
@@ -735,7 +733,6 @@ export default function ManageProgramPeople(): JSX.Element {
                                     "Conference Id",
                                     "Person Id",
                                     "Registrant Id",
-                                    "Externally Sourced Data Id",
                                     "Name",
                                     "Affiliation",
                                     "Email",

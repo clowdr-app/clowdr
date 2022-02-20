@@ -13,9 +13,6 @@ object_relationships:
 - name: conference
   using:
     foreign_key_constraint_on: conferenceId
-- name: originatingData
-  using:
-    foreign_key_constraint_on: originatingDataId
 - name: room
   using:
     manual_configuration:
@@ -119,7 +116,6 @@ insert_permissions:
     - chatId
     - conferenceId
     - id
-    - originatingDataId
     - shortTitle
     - subconferenceId
     - title
@@ -146,7 +142,6 @@ insert_permissions:
     - chatId
     - conferenceId
     - id
-    - originatingDataId
     - shortTitle
     - subconferenceId
     - title
@@ -161,7 +156,6 @@ select_permissions:
     - conferenceId
     - created_at
     - id
-    - originatingDataId
     - shortTitle
     - subconferenceId
     - title
@@ -200,7 +194,6 @@ select_permissions:
     - chatId
     - conferenceId
     - id
-    - originatingDataId
     - subconferenceId
     computed_fields:
     - hasUnsubmittedElements
@@ -222,7 +215,6 @@ select_permissions:
     - chatId
     - conferenceId
     - id
-    - originatingDataId
     - subconferenceId
     computed_fields:
     - hasUnsubmittedElements
@@ -252,7 +244,6 @@ select_permissions:
     - chatId
     - conferenceId
     - id
-    - originatingDataId
     - subconferenceId
     computed_fields:
     - hasUnsubmittedElements
@@ -268,7 +259,6 @@ select_permissions:
     - conferenceId
     - created_at
     - id
-    - originatingDataId
     - shortTitle
     - subconferenceId
     - title
@@ -301,7 +291,6 @@ update_permissions:
     check: null
     columns:
     - chatId
-    - originatingDataId
     - shortTitle
     - subconferenceId
     - title
@@ -317,7 +306,6 @@ update_permissions:
 - permission:
     check: null
     columns:
-    - originatingDataId
     - shortTitle
     - subconferenceId
     - title

@@ -60,13 +60,6 @@ array_relationships:
       table:
         name: Item
         schema: content
-- name: originatingDatas
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: OriginatingData
-        schema: conference
 - name: programPeople
   using:
     foreign_key_constraint_on:

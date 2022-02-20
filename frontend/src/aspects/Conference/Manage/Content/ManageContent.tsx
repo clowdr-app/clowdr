@@ -105,13 +105,6 @@ gql`
         }
     }
 
-    fragment ManageContent_OriginatingData on conference_OriginatingData {
-        id
-        conferenceId
-        sourceId
-        data
-    }
-
     fragment ManageContent_Room on room_Room {
         id
         name
@@ -157,10 +150,6 @@ gql`
             ...ManageContent_Room
         }
         chatId
-        originatingDataId
-        originatingData {
-            ...ManageContent_OriginatingData
-        }
     }
 
     fragment ManageContent_ItemForExport on content_Item {
@@ -169,7 +158,6 @@ gql`
         title
         shortTitle
         typeName
-        originatingDataId
         itemTags {
             id
             tagId
@@ -888,7 +876,6 @@ export default function ManageContentV2(): JSX.Element {
                                     const result: any = {
                                         "Conference Id": item.conferenceId,
                                         "Content Id": item.id,
-                                        "Externally Sourced Data Id": item.originatingDataId,
 
                                         Title: item.title,
                                         "Short Title": item.shortTitle ?? "",

@@ -91,7 +91,6 @@ export interface EventData extends BaseData {
     startTime: string;
     conferenceId: string;
     itemId: string | null;
-    originatingDataId: string | null;
     roomId: string;
 }
 

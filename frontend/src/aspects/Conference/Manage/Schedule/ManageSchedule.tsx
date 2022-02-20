@@ -95,6 +95,126 @@ import EditStreamTextIntegration from "./EditStreamTextIntegration";
 import { EventProgramPersonsModal, requiresEventPeople } from "./EventProgramPersonsModal";
 
 gql`
+    fragment RoomInfo on room_Room {
+        capacity
+        conferenceId
+        currentModeName
+        id
+        name
+        priority
+        itemId
+        managementModeName
+        isProgramRoom
+    }
+
+    fragment ElementInfo on content_Element {
+        conferenceId
+        itemId
+        typeName
+        data
+        id
+        isHidden
+        layoutData
+        name
+        uploadsRemaining
+    }
+
+    fragment ProgramPersonInfo on collection_ProgramPerson {
+        id
+        conferenceId
+        name
+        affiliation
+        email
+        registrantId
+    }
+
+    fragment ItemTagInfo on content_ItemTag {
+        id
+        tagId
+        itemId
+    }
+
+    fragment ItemExhibitionInfo on content_ItemExhibition {
+        id
+        itemId
+        exhibitionId
+        priority
+        layout
+    }
+
+    fragment ItemPersonInfo on content_ItemProgramPerson {
+        id
+        itemId
+        personId
+        priority
+        roleName
+    }
+
+    fragment ItemFullNestedInfo on content_Item {
+        id
+        conferenceId
+        typeName
+        title
+        shortTitle
+        elements {
+            ...ElementInfo
+        }
+        itemTags {
+            ...ItemTagInfo
+        }
+        itemExhibitions {
+            ...ItemExhibitionInfo
+        }
+        itemPeople {
+            ...ItemPersonInfo
+        }
+        room {
+            id
+            created_at
+        }
+    }
+
+    fragment TagInfo on collection_Tag {
+        id
+        conferenceId
+        colour
+        name
+        priority
+    }
+
+    fragment ExhibitionInfo on collection_Exhibition {
+        id
+        conferenceId
+        colour
+        name
+        priority
+        isHidden
+    }
+
+    query SelectWholeSchedule($conferenceId: uuid!) {
+        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
+            ...RoomInfo
+        }
+        schedule_Event(
+            where: { conferenceId: { _eq: $conferenceId } }
+            order_by: [{ startTime: asc }, { endTime: asc }]
+        ) {
+            ...EventInfo
+        }
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...TagInfo
+        }
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ExhibitionInfo
+        }
+        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ItemFullNestedInfo
+        }
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ProgramPersonInfo
+        }
+    }
+
     query ManageSchedule_ShufflePeriods($conferenceId: uuid!, $now: timestamptz!) {
         room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, endAt: { _gt: $now } }) {
             ...ShufflePeriodInfo
@@ -113,7 +233,6 @@ gql`
         $roomId: uuid!
         $conferenceId: uuid!
         $intendedRoomModeName: room_Mode_enum!
-        $originatingDataId: uuid = null
         $name: String!
         $startTime: timestamptz!
         $durationSeconds: Int!
@@ -129,7 +248,6 @@ gql`
                 roomId: $roomId
                 conferenceId: $conferenceId
                 intendedRoomModeName: $intendedRoomModeName
-                originatingDataId: $originatingDataId
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
@@ -160,7 +278,6 @@ gql`
         $eventId: uuid!
         $roomId: uuid!
         $intendedRoomModeName: room_Mode_enum!
-        $originatingDataId: uuid = null
         $name: String!
         $startTime: timestamptz!
         $durationSeconds: Int!
@@ -174,7 +291,6 @@ gql`
             _set: {
                 roomId: $roomId
                 intendedRoomModeName: $intendedRoomModeName
-                originatingDataId: $originatingDataId
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
@@ -1166,7 +1282,6 @@ function EditableScheduleTable(): JSX.Element {
                           itemId: null,
                           exhibitionId: null,
                           shufflePeriodId: null,
-                          originatingDataId: null,
                           enableRecording: true,
                       }),
                       makeWhole: (d) => d as EventInfoFragment,
@@ -1273,7 +1388,6 @@ function EditableScheduleTable(): JSX.Element {
                             dataToExport.map((event) => ({
                                 "Conference Id": event.conferenceId,
                                 "Event Id": event.id,
-                                "Externally Sourced Data Id": event.originatingDataId,
 
                                 Start: new Date(event.startTime).toISOString(),
                                 End: event.endTime
@@ -1355,7 +1469,6 @@ function EditableScheduleTable(): JSX.Element {
                                 columns: [
                                     "Conference Id",
                                     "Event Id",
-                                    "Externally Sourced Data Id",
                                     "Start",
                                     "End",
                                     "Duration (seconds)",

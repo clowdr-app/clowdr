@@ -36,7 +36,6 @@ export interface ElementData extends BaseData {
     name: string;
     conferenceId: string;
     itemId: string;
-    originatingDataId: string | null;
 }
 
 export interface EmailData extends BaseData {
@@ -91,7 +90,6 @@ export interface EventData extends BaseData {
     startTime: string;
     conferenceId: string;
     itemId: string | null;
-    originatingDataId: string | null;
     roomId: string;
     timings_updated_at: string;
 }
@@ -100,7 +98,6 @@ export interface RoomData extends BaseData {
     conferenceId: string;
     name: string;
     currentModeName: Room_Mode_Enum;
-    originatingDataId: string | null;
     capacity: number | null;
     publicVonageSessionId: string | null;
     priority: number;

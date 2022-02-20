@@ -121,10 +121,6 @@ gql`
         participants {
             ...RoomParticipantWithRegistrantInfo
         }
-        originatingDataId
-        originatingData {
-            ...OriginatingDataInfo
-        }
         chatId
         chat {
             id
@@ -238,6 +234,14 @@ gql`
         ) {
             returning {
                 ...RoomPersonInfo
+            }
+        }
+    }
+
+    mutation DeleteRooms($deleteRoomIds: [uuid!]!) {
+        delete_room_Room(where: { id: { _in: $deleteRoomIds } }) {
+            returning {
+                id
             }
         }
     }
@@ -472,52 +476,6 @@ function RoomSecondaryEditor({
                                             )}
                                         </AccordionPanel>
                                     </AccordionItem>
-
-                                    {room.originatingData ? (
-                                        <AccordionItem>
-                                            <AccordionButton>
-                                                <Box flex="1" textAlign="left">
-                                                    Section 2 title
-                                                </Box>
-                                                <AccordionIcon />
-                                            </AccordionButton>
-                                            <AccordionPanel pt={4} pb={4}>
-                                                <>
-                                                    <Text>
-                                                        The following shows the raw data received when this room was
-                                                        imported.
-                                                    </Text>
-                                                    <Text
-                                                        as="pre"
-                                                        w="100%"
-                                                        overflowWrap="break-word"
-                                                        whiteSpace="pre-wrap"
-                                                        mt={2}
-                                                    >
-                                                        <Code w="100%" p={2}>
-                                                            Source Ids:{" "}
-                                                            {JSON.stringify(
-                                                                room.originatingData.sourceId.split("¬"),
-                                                                null,
-                                                                2
-                                                            )}
-                                                        </Code>
-                                                    </Text>
-                                                    <Text
-                                                        as="pre"
-                                                        w="100%"
-                                                        overflowWrap="break-word"
-                                                        whiteSpace="pre-wrap"
-                                                        mt={2}
-                                                    >
-                                                        <Code w="100%" p={2}>
-                                                            {JSON.stringify(room.originatingData.data, null, 2)}
-                                                        </Code>
-                                                    </Text>
-                                                </>
-                                            </AccordionPanel>
-                                        </AccordionItem>
-                                    ) : undefined}
 
                                     {sortedMembers && room.managementModeName !== Room_ManagementMode_Enum.Public ? (
                                         <AccordionItem>
@@ -1278,7 +1236,6 @@ function EditableRoomsCRUDTable() {
                                 Priority: room.priority,
                                 Privacy: room.managementModeName,
 
-                                "Externally Sourced Data Id": room.originatingData?.sourceId ?? "",
                                 "Associated Content Id": room.itemId ?? "",
 
                                 "Created At": room.created_at,
@@ -1311,7 +1268,6 @@ function EditableRoomsCRUDTable() {
                                     "Is program room?",
                                     "Priority",
                                     "Privacy",
-                                    "Externally Sourced Data Id",
                                     "Associated Content Id",
                                     "Associated Event Id",
                                     "Created At",

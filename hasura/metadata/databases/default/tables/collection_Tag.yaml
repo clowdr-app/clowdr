@@ -10,9 +10,6 @@ object_relationships:
 - name: conference
   using:
     foreign_key_constraint_on: conferenceId
-- name: originatingData
-  using:
-    foreign_key_constraint_on: originatingDataId
 array_relationships:
 - name: itemTags
   using:
@@ -36,7 +33,6 @@ insert_permissions:
     - conferenceId
     - id
     - name
-    - originatingDataId
     - priority
     - subconferenceId
     - visibilityLevel
@@ -57,7 +53,6 @@ insert_permissions:
     - conferenceId
     - id
     - name
-    - originatingDataId
     - priority
     - subconferenceId
     - visibilityLevel
@@ -102,7 +97,6 @@ select_permissions:
     - updated_at
     - conferenceId
     - id
-    - originatingDataId
     - subconferenceId
     filter:
       _or:
@@ -122,7 +116,6 @@ select_permissions:
     - updated_at
     - conferenceId
     - id
-    - originatingDataId
     - subconferenceId
     filter:
       _or:
@@ -166,7 +159,6 @@ update_permissions:
     columns:
     - colour
     - name
-    - originatingDataId
     - priority
     - subconferenceId
     - visibilityLevel
@@ -183,7 +175,6 @@ update_permissions:
     columns:
     - colour
     - name
-    - originatingDataId
     - priority
     - subconferenceId
     - visibilityLevel

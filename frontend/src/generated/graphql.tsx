@@ -6191,9 +6191,6 @@ export type Collection_ProgramPerson = {
     readonly itemPeople_aggregate: Content_ItemProgramPerson_Aggregate;
     readonly name: Scalars["String"];
     /** An object relationship */
-    readonly originatingData?: Maybe<Conference_OriginatingData>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
-    /** An object relationship */
     readonly registrant?: Maybe<Registrant_Registrant>;
     readonly registrantId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -6313,8 +6310,6 @@ export type Collection_ProgramPerson_Bool_Exp = {
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly itemPeople?: InputMaybe<Content_ItemProgramPerson_Bool_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    readonly originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     readonly registrantId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -6350,8 +6345,6 @@ export type Collection_ProgramPerson_Insert_Input = {
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly itemPeople?: InputMaybe<Content_ItemProgramPerson_Arr_Rel_Insert_Input>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     readonly registrantId?: InputMaybe<Scalars["uuid"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
@@ -6368,7 +6361,6 @@ export type Collection_ProgramPerson_Max_Fields = {
     readonly email?: Maybe<Scalars["String"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly registrantId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
@@ -6382,7 +6374,6 @@ export type Collection_ProgramPerson_Max_Order_By = {
     readonly email?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly registrantId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly submissionRequestsSentCount?: InputMaybe<Order_By>;
@@ -6397,7 +6388,6 @@ export type Collection_ProgramPerson_Min_Fields = {
     readonly email?: Maybe<Scalars["String"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly registrantId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
@@ -6411,7 +6401,6 @@ export type Collection_ProgramPerson_Min_Order_By = {
     readonly email?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly registrantId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly submissionRequestsSentCount?: InputMaybe<Order_By>;
@@ -6451,8 +6440,6 @@ export type Collection_ProgramPerson_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly itemPeople_aggregate?: InputMaybe<Content_ItemProgramPerson_Aggregate_Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     readonly registrantId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
@@ -6480,8 +6467,6 @@ export enum Collection_ProgramPerson_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     RegistrantId = "registrantId",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -6499,7 +6484,6 @@ export type Collection_ProgramPerson_Set_Input = {
     readonly email?: InputMaybe<Scalars["String"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly registrantId?: InputMaybe<Scalars["uuid"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly submissionRequestsSentCount?: InputMaybe<Scalars["Int"]>;
@@ -6565,8 +6549,6 @@ export enum Collection_ProgramPerson_Update_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     RegistrantId = "registrantId",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -6623,9 +6605,6 @@ export type Collection_Tag = {
     /** An aggregate relationship */
     readonly itemTags_aggregate: Content_ItemTag_Aggregate;
     readonly name: Scalars["String"];
-    /** An object relationship */
-    readonly originatingData?: Maybe<Conference_OriginatingData>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly priority: Scalars["Int"];
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updatedAt: Scalars["timestamptz"];
@@ -6724,8 +6703,6 @@ export type Collection_Tag_Bool_Exp = {
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly itemTags?: InputMaybe<Content_ItemTag_Bool_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    readonly originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly priority?: InputMaybe<Int_Comparison_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -6752,8 +6729,6 @@ export type Collection_Tag_Insert_Input = {
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly itemTags?: InputMaybe<Content_ItemTag_Arr_Rel_Insert_Input>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly priority?: InputMaybe<Scalars["Int"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -6768,7 +6743,6 @@ export type Collection_Tag_Max_Fields = {
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly priority?: Maybe<Scalars["Int"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -6781,7 +6755,6 @@ export type Collection_Tag_Max_Order_By = {
     readonly createdAt?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly priority?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
@@ -6795,7 +6768,6 @@ export type Collection_Tag_Min_Fields = {
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly priority?: Maybe<Scalars["Int"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -6808,7 +6780,6 @@ export type Collection_Tag_Min_Order_By = {
     readonly createdAt?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly priority?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
@@ -6846,8 +6817,6 @@ export type Collection_Tag_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly itemTags_aggregate?: InputMaybe<Content_ItemTag_Aggregate_Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly priority?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
@@ -6872,8 +6841,6 @@ export enum Collection_Tag_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     Priority = "priority",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -6890,7 +6857,6 @@ export type Collection_Tag_Set_Input = {
     readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly priority?: InputMaybe<Scalars["Int"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -6953,8 +6919,6 @@ export enum Collection_Tag_Update_Column {
     Id = "id",
     /** column name */
     Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     Priority = "priority",
     /** column name */
@@ -7040,10 +7004,6 @@ export type Conference_Conference = {
     /** An aggregate relationship */
     readonly items_aggregate: Content_Item_Aggregate;
     readonly name: Scalars["String"];
-    /** An array relationship */
-    readonly originatingDatas: ReadonlyArray<Conference_OriginatingData>;
-    /** An aggregate relationship */
-    readonly originatingDatas_aggregate: Conference_OriginatingData_Aggregate;
     /** An array relationship */
     readonly programPeople: ReadonlyArray<Collection_ProgramPerson>;
     /** An aggregate relationship */
@@ -7165,24 +7125,6 @@ export type Conference_ConferenceItems_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Content_Item_Order_By>>;
     where?: InputMaybe<Content_Item_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.Conference" */
-export type Conference_ConferenceOriginatingDatasArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.Conference" */
-export type Conference_ConferenceOriginatingDatas_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7367,7 +7309,6 @@ export type Conference_Conference_Bool_Exp = {
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly items?: InputMaybe<Content_Item_Bool_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
-    readonly originatingDatas?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
     readonly registrants?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     readonly rooms?: InputMaybe<Room_Room_Bool_Exp>;
@@ -7412,7 +7353,6 @@ export type Conference_Conference_Insert_Input = {
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingDatas?: InputMaybe<Conference_OriginatingData_Arr_Rel_Insert_Input>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
     readonly registrants?: InputMaybe<Registrant_Registrant_Arr_Rel_Insert_Input>;
     readonly rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
@@ -7524,7 +7464,6 @@ export type Conference_Conference_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDatas_aggregate?: InputMaybe<Conference_OriginatingData_Aggregate_Order_By>;
     readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     readonly registrants_aggregate?: InputMaybe<Registrant_Registrant_Aggregate_Order_By>;
     readonly rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
@@ -8194,399 +8133,6 @@ export enum Conference_DemoCode_Update_Column {
     UsedById = "usedById",
 }
 
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingData = {
-    readonly __typename?: "conference_OriginatingData";
-    /** An object relationship */
-    readonly conference: Conference_Conference;
-    readonly conferenceId: Scalars["uuid"];
-    readonly createdAt: Scalars["timestamptz"];
-    readonly data?: Maybe<Scalars["jsonb"]>;
-    /** An array relationship */
-    readonly elements: ReadonlyArray<Content_Element>;
-    /** An aggregate relationship */
-    readonly elements_aggregate: Content_Element_Aggregate;
-    /** An array relationship */
-    readonly events: ReadonlyArray<Schedule_Event>;
-    /** An aggregate relationship */
-    readonly events_aggregate: Schedule_Event_Aggregate;
-    readonly id: Scalars["uuid"];
-    /** An array relationship */
-    readonly items: ReadonlyArray<Content_Item>;
-    /** An aggregate relationship */
-    readonly items_aggregate: Content_Item_Aggregate;
-    /** An array relationship */
-    readonly programPeople: ReadonlyArray<Collection_ProgramPerson>;
-    /** An aggregate relationship */
-    readonly programPeople_aggregate: Collection_ProgramPerson_Aggregate;
-    /** An array relationship */
-    readonly rooms: ReadonlyArray<Room_Room>;
-    /** An aggregate relationship */
-    readonly rooms_aggregate: Room_Room_Aggregate;
-    readonly sourceId: Scalars["String"];
-    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    /** An array relationship */
-    readonly tags: ReadonlyArray<Collection_Tag>;
-    /** An aggregate relationship */
-    readonly tags_aggregate: Collection_Tag_Aggregate;
-    readonly updatedAt: Scalars["timestamptz"];
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataDataArgs = {
-    path?: InputMaybe<Scalars["String"]>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataElementsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Content_Element_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Content_Element_Order_By>>;
-    where?: InputMaybe<Content_Element_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataElements_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Content_Element_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Content_Element_Order_By>>;
-    where?: InputMaybe<Content_Element_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataEventsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataEvents_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataItemsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Content_Item_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Content_Item_Order_By>>;
-    where?: InputMaybe<Content_Item_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataItems_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Content_Item_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Content_Item_Order_By>>;
-    where?: InputMaybe<Content_Item_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataProgramPeopleArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Collection_ProgramPerson_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Collection_ProgramPerson_Order_By>>;
-    where?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataProgramPeople_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Collection_ProgramPerson_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Collection_ProgramPerson_Order_By>>;
-    where?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataRoomsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataRooms_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataTagsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Collection_Tag_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Collection_Tag_Order_By>>;
-    where?: InputMaybe<Collection_Tag_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataTags_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Collection_Tag_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Collection_Tag_Order_By>>;
-    where?: InputMaybe<Collection_Tag_Bool_Exp>;
-};
-
-/** aggregated selection of "conference.OriginatingData" */
-export type Conference_OriginatingData_Aggregate = {
-    readonly __typename?: "conference_OriginatingData_aggregate";
-    readonly aggregate?: Maybe<Conference_OriginatingData_Aggregate_Fields>;
-    readonly nodes: ReadonlyArray<Conference_OriginatingData>;
-};
-
-/** aggregate fields of "conference.OriginatingData" */
-export type Conference_OriginatingData_Aggregate_Fields = {
-    readonly __typename?: "conference_OriginatingData_aggregate_fields";
-    readonly count: Scalars["Int"];
-    readonly max?: Maybe<Conference_OriginatingData_Max_Fields>;
-    readonly min?: Maybe<Conference_OriginatingData_Min_Fields>;
-};
-
-/** aggregate fields of "conference.OriginatingData" */
-export type Conference_OriginatingData_Aggregate_FieldsCountArgs = {
-    columns?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Select_Column>>;
-    distinct?: InputMaybe<Scalars["Boolean"]>;
-};
-
-/** order by aggregate values of table "conference.OriginatingData" */
-export type Conference_OriginatingData_Aggregate_Order_By = {
-    readonly count?: InputMaybe<Order_By>;
-    readonly max?: InputMaybe<Conference_OriginatingData_Max_Order_By>;
-    readonly min?: InputMaybe<Conference_OriginatingData_Min_Order_By>;
-};
-
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Conference_OriginatingData_Append_Input = {
-    readonly data?: InputMaybe<Scalars["jsonb"]>;
-};
-
-/** input type for inserting array relation for remote table "conference.OriginatingData" */
-export type Conference_OriginatingData_Arr_Rel_Insert_Input = {
-    readonly data: ReadonlyArray<Conference_OriginatingData_Insert_Input>;
-    /** on conflict condition */
-    readonly on_conflict?: InputMaybe<Conference_OriginatingData_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "conference.OriginatingData". All fields are combined with a logical 'AND'. */
-export type Conference_OriginatingData_Bool_Exp = {
-    readonly _and?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Bool_Exp>>;
-    readonly _not?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    readonly _or?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Bool_Exp>>;
-    readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
-    readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-    readonly data?: InputMaybe<Jsonb_Comparison_Exp>;
-    readonly elements?: InputMaybe<Content_Element_Bool_Exp>;
-    readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
-    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly items?: InputMaybe<Content_Item_Bool_Exp>;
-    readonly programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-    readonly rooms?: InputMaybe<Room_Room_Bool_Exp>;
-    readonly sourceId?: InputMaybe<String_Comparison_Exp>;
-    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly tags?: InputMaybe<Collection_Tag_Bool_Exp>;
-    readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "conference.OriginatingData" */
-export enum Conference_OriginatingData_Constraint {
-    /** unique or primary key constraint */
-    OriginatingDataPkey = "OriginatingData_pkey",
-    /** unique or primary key constraint */
-    OriginatingDataSourceIdConferenceIdKey = "OriginatingData_sourceId_conferenceId_key",
-}
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Conference_OriginatingData_Delete_At_Path_Input = {
-    readonly data?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Conference_OriginatingData_Delete_Elem_Input = {
-    readonly data?: InputMaybe<Scalars["Int"]>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Conference_OriginatingData_Delete_Key_Input = {
-    readonly data?: InputMaybe<Scalars["String"]>;
-};
-
-/** input type for inserting data into table "conference.OriginatingData" */
-export type Conference_OriginatingData_Insert_Input = {
-    readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
-    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly data?: InputMaybe<Scalars["jsonb"]>;
-    readonly elements?: InputMaybe<Content_Element_Arr_Rel_Insert_Input>;
-    readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
-    readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
-    readonly programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
-    readonly rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
-    readonly sourceId?: InputMaybe<Scalars["String"]>;
-    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly tags?: InputMaybe<Collection_Tag_Arr_Rel_Insert_Input>;
-    readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
-};
-
-/** aggregate max on columns */
-export type Conference_OriginatingData_Max_Fields = {
-    readonly __typename?: "conference_OriginatingData_max_fields";
-    readonly conferenceId?: Maybe<Scalars["uuid"]>;
-    readonly createdAt?: Maybe<Scalars["timestamptz"]>;
-    readonly id?: Maybe<Scalars["uuid"]>;
-    readonly sourceId?: Maybe<Scalars["String"]>;
-    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** order by max() on columns of table "conference.OriginatingData" */
-export type Conference_OriginatingData_Max_Order_By = {
-    readonly conferenceId?: InputMaybe<Order_By>;
-    readonly createdAt?: InputMaybe<Order_By>;
-    readonly id?: InputMaybe<Order_By>;
-    readonly sourceId?: InputMaybe<Order_By>;
-    readonly subconferenceId?: InputMaybe<Order_By>;
-    readonly updatedAt?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Conference_OriginatingData_Min_Fields = {
-    readonly __typename?: "conference_OriginatingData_min_fields";
-    readonly conferenceId?: Maybe<Scalars["uuid"]>;
-    readonly createdAt?: Maybe<Scalars["timestamptz"]>;
-    readonly id?: Maybe<Scalars["uuid"]>;
-    readonly sourceId?: Maybe<Scalars["String"]>;
-    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** order by min() on columns of table "conference.OriginatingData" */
-export type Conference_OriginatingData_Min_Order_By = {
-    readonly conferenceId?: InputMaybe<Order_By>;
-    readonly createdAt?: InputMaybe<Order_By>;
-    readonly id?: InputMaybe<Order_By>;
-    readonly sourceId?: InputMaybe<Order_By>;
-    readonly subconferenceId?: InputMaybe<Order_By>;
-    readonly updatedAt?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "conference.OriginatingData" */
-export type Conference_OriginatingData_Mutation_Response = {
-    readonly __typename?: "conference_OriginatingData_mutation_response";
-    /** number of rows affected by the mutation */
-    readonly affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    readonly returning: ReadonlyArray<Conference_OriginatingData>;
-};
-
-/** input type for inserting object relation for remote table "conference.OriginatingData" */
-export type Conference_OriginatingData_Obj_Rel_Insert_Input = {
-    readonly data: Conference_OriginatingData_Insert_Input;
-    /** on conflict condition */
-    readonly on_conflict?: InputMaybe<Conference_OriginatingData_On_Conflict>;
-};
-
-/** on conflict condition type for table "conference.OriginatingData" */
-export type Conference_OriginatingData_On_Conflict = {
-    readonly constraint: Conference_OriginatingData_Constraint;
-    readonly update_columns?: ReadonlyArray<Conference_OriginatingData_Update_Column>;
-    readonly where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "conference.OriginatingData". */
-export type Conference_OriginatingData_Order_By = {
-    readonly conference?: InputMaybe<Conference_Conference_Order_By>;
-    readonly conferenceId?: InputMaybe<Order_By>;
-    readonly createdAt?: InputMaybe<Order_By>;
-    readonly data?: InputMaybe<Order_By>;
-    readonly elements_aggregate?: InputMaybe<Content_Element_Aggregate_Order_By>;
-    readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
-    readonly id?: InputMaybe<Order_By>;
-    readonly items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
-    readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
-    readonly rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
-    readonly sourceId?: InputMaybe<Order_By>;
-    readonly subconferenceId?: InputMaybe<Order_By>;
-    readonly tags_aggregate?: InputMaybe<Collection_Tag_Aggregate_Order_By>;
-    readonly updatedAt?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: conference_OriginatingData */
-export type Conference_OriginatingData_Pk_Columns_Input = {
-    readonly id: Scalars["uuid"];
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Conference_OriginatingData_Prepend_Input = {
-    readonly data?: InputMaybe<Scalars["jsonb"]>;
-};
-
-/** select columns of table "conference.OriginatingData" */
-export enum Conference_OriginatingData_Select_Column {
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Data = "data",
-    /** column name */
-    Id = "id",
-    /** column name */
-    SourceId = "sourceId",
-    /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-}
-
-/** input type for updating data in table "conference.OriginatingData" */
-export type Conference_OriginatingData_Set_Input = {
-    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly data?: InputMaybe<Scalars["jsonb"]>;
-    readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly sourceId?: InputMaybe<Scalars["String"]>;
-    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
-};
-
-/** update columns of table "conference.OriginatingData" */
-export enum Conference_OriginatingData_Update_Column {
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Data = "data",
-    /** column name */
-    Id = "id",
-    /** column name */
-    SourceId = "sourceId",
-    /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-}
-
 /** columns and relationships of "conference.Subconference" */
 export type Conference_Subconference = {
     readonly __typename?: "conference_Subconference";
@@ -9000,9 +8546,6 @@ export type Content_Element = {
     readonly itemTitle?: Maybe<Scalars["String"]>;
     readonly layoutData?: Maybe<Scalars["jsonb"]>;
     readonly name: Scalars["String"];
-    /** An object relationship */
-    readonly originatingData?: Maybe<Conference_OriginatingData>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly source?: Maybe<Scalars["jsonb"]>;
     /** An array relationship */
     readonly stats: ReadonlyArray<Analytics_ContentElementStats>;
@@ -9355,8 +8898,6 @@ export type Content_Element_Bool_Exp = {
     readonly itemTitle?: InputMaybe<String_Comparison_Exp>;
     readonly layoutData?: InputMaybe<Jsonb_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    readonly originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly source?: InputMaybe<Jsonb_Comparison_Exp>;
     readonly stats?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -9413,8 +8954,6 @@ export type Content_Element_Insert_Input = {
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
     readonly layoutData?: InputMaybe<Scalars["jsonb"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly source?: InputMaybe<Scalars["jsonb"]>;
     readonly stats?: InputMaybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
@@ -9435,7 +8974,6 @@ export type Content_Element_Max_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly uploadsRemaining?: Maybe<Scalars["Int"]>;
@@ -9448,7 +8986,6 @@ export type Content_Element_Max_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
     readonly uploadsRemaining?: InputMaybe<Order_By>;
@@ -9462,7 +8999,6 @@ export type Content_Element_Min_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly uploadsRemaining?: Maybe<Scalars["Int"]>;
@@ -9475,7 +9011,6 @@ export type Content_Element_Min_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
     readonly uploadsRemaining?: InputMaybe<Order_By>;
@@ -9518,8 +9053,6 @@ export type Content_Element_Order_By = {
     readonly itemTitle?: InputMaybe<Order_By>;
     readonly layoutData?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly source?: InputMaybe<Order_By>;
     readonly stats_aggregate?: InputMaybe<Analytics_ContentElementStats_Aggregate_Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
@@ -9563,8 +9096,6 @@ export enum Content_Element_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     Source = "source",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -9588,7 +9119,6 @@ export type Content_Element_Set_Input = {
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
     readonly layoutData?: InputMaybe<Scalars["jsonb"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly source?: InputMaybe<Scalars["jsonb"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly typeName?: InputMaybe<Content_ElementType_Enum>;
@@ -9659,8 +9189,6 @@ export enum Content_Element_Update_Column {
     LayoutData = "layoutData",
     /** column name */
     Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     Source = "source",
     /** column name */
@@ -9745,9 +9273,6 @@ export type Content_Item = {
     readonly itemTags: ReadonlyArray<Content_ItemTag>;
     /** An aggregate relationship */
     readonly itemTags_aggregate: Content_ItemTag_Aggregate;
-    /** An object relationship */
-    readonly originatingData?: Maybe<Conference_OriginatingData>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     readonly room?: Maybe<Room_Room>;
     readonly shortTitle?: Maybe<Scalars["String"]>;
@@ -10915,8 +10440,6 @@ export type Content_Item_Bool_Exp = {
     readonly itemExhibitions?: InputMaybe<Content_ItemExhibition_Bool_Exp>;
     readonly itemPeople?: InputMaybe<Content_ItemProgramPerson_Bool_Exp>;
     readonly itemTags?: InputMaybe<Content_ItemTag_Bool_Exp>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    readonly originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly shortTitle?: InputMaybe<String_Comparison_Exp>;
     readonly sponsorshipTierMemberships?: InputMaybe<Sponsor_TierMember_Bool_Exp>;
@@ -10952,8 +10475,6 @@ export type Content_Item_Insert_Input = {
     readonly itemExhibitions?: InputMaybe<Content_ItemExhibition_Arr_Rel_Insert_Input>;
     readonly itemPeople?: InputMaybe<Content_ItemProgramPerson_Arr_Rel_Insert_Input>;
     readonly itemTags?: InputMaybe<Content_ItemTag_Arr_Rel_Insert_Input>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly shortTitle?: InputMaybe<Scalars["String"]>;
     readonly sponsorshipTierMemberships?: InputMaybe<Sponsor_TierMember_Arr_Rel_Insert_Input>;
@@ -10974,7 +10495,6 @@ export type Content_Item_Max_Fields = {
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly shortTitle?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly title?: Maybe<Scalars["String"]>;
@@ -10987,7 +10507,6 @@ export type Content_Item_Max_Order_By = {
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly shortTitle?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly title?: InputMaybe<Order_By>;
@@ -11001,7 +10520,6 @@ export type Content_Item_Min_Fields = {
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly shortTitle?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly title?: Maybe<Scalars["String"]>;
@@ -11014,7 +10532,6 @@ export type Content_Item_Min_Order_By = {
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly shortTitle?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly title?: InputMaybe<Order_By>;
@@ -11059,8 +10576,6 @@ export type Content_Item_Order_By = {
     readonly itemExhibitions_aggregate?: InputMaybe<Content_ItemExhibition_Aggregate_Order_By>;
     readonly itemPeople_aggregate?: InputMaybe<Content_ItemProgramPerson_Aggregate_Order_By>;
     readonly itemTags_aggregate?: InputMaybe<Content_ItemTag_Aggregate_Order_By>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly shortTitle?: InputMaybe<Order_By>;
     readonly sponsorshipTierMemberships_aggregate?: InputMaybe<Sponsor_TierMember_Aggregate_Order_By>;
@@ -11090,8 +10605,6 @@ export enum Content_Item_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     ShortTitle = "shortTitle",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -11111,7 +10624,6 @@ export type Content_Item_Set_Input = {
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly shortTitle?: InputMaybe<Scalars["String"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly title?: InputMaybe<Scalars["String"]>;
@@ -11130,8 +10642,6 @@ export enum Content_Item_Update_Column {
     CreatedAt = "createdAt",
     /** column name */
     Id = "id",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     ShortTitle = "shortTitle",
     /** column name */
@@ -14489,10 +13999,6 @@ export type Mutation_Root = {
     readonly delete_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** delete single row from the table: "conference.DemoCode" */
     readonly delete_conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
-    /** delete data from the table: "conference.OriginatingData" */
-    readonly delete_conference_OriginatingData?: Maybe<Conference_OriginatingData_Mutation_Response>;
-    /** delete single row from the table: "conference.OriginatingData" */
-    readonly delete_conference_OriginatingData_by_pk?: Maybe<Conference_OriginatingData>;
     /** delete data from the table: "conference.Subconference" */
     readonly delete_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** delete single row from the table: "conference.Subconference" */
@@ -14887,10 +14393,6 @@ export type Mutation_Root = {
     readonly insert_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** insert a single row into the table: "conference.DemoCode" */
     readonly insert_conference_DemoCode_one?: Maybe<Conference_DemoCode>;
-    /** insert data into the table: "conference.OriginatingData" */
-    readonly insert_conference_OriginatingData?: Maybe<Conference_OriginatingData_Mutation_Response>;
-    /** insert a single row into the table: "conference.OriginatingData" */
-    readonly insert_conference_OriginatingData_one?: Maybe<Conference_OriginatingData>;
     /** insert data into the table: "conference.Subconference" */
     readonly insert_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** insert a single row into the table: "conference.Subconference" */
@@ -15296,10 +14798,6 @@ export type Mutation_Root = {
     readonly update_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** update single row of the table: "conference.DemoCode" */
     readonly update_conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
-    /** update data of the table: "conference.OriginatingData" */
-    readonly update_conference_OriginatingData?: Maybe<Conference_OriginatingData_Mutation_Response>;
-    /** update single row of the table: "conference.OriginatingData" */
-    readonly update_conference_OriginatingData_by_pk?: Maybe<Conference_OriginatingData>;
     /** update data of the table: "conference.Subconference" */
     readonly update_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** update single row of the table: "conference.Subconference" */
@@ -15869,16 +15367,6 @@ export type Mutation_RootDelete_Conference_DemoCodeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Conference_DemoCode_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Conference_OriginatingDataArgs = {
-    where: Conference_OriginatingData_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Conference_OriginatingData_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -16920,18 +16408,6 @@ export type Mutation_RootInsert_Conference_DemoCodeArgs = {
 export type Mutation_RootInsert_Conference_DemoCode_OneArgs = {
     object: Conference_DemoCode_Insert_Input;
     on_conflict?: InputMaybe<Conference_DemoCode_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Conference_OriginatingDataArgs = {
-    objects: ReadonlyArray<Conference_OriginatingData_Insert_Input>;
-    on_conflict?: InputMaybe<Conference_OriginatingData_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Conference_OriginatingData_OneArgs = {
-    object: Conference_OriginatingData_Insert_Input;
-    on_conflict?: InputMaybe<Conference_OriginatingData_On_Conflict>;
 };
 
 /** mutation root */
@@ -18248,28 +17724,6 @@ export type Mutation_RootUpdate_Conference_DemoCode_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootUpdate_Conference_OriginatingDataArgs = {
-    _append?: InputMaybe<Conference_OriginatingData_Append_Input>;
-    _delete_at_path?: InputMaybe<Conference_OriginatingData_Delete_At_Path_Input>;
-    _delete_elem?: InputMaybe<Conference_OriginatingData_Delete_Elem_Input>;
-    _delete_key?: InputMaybe<Conference_OriginatingData_Delete_Key_Input>;
-    _prepend?: InputMaybe<Conference_OriginatingData_Prepend_Input>;
-    _set?: InputMaybe<Conference_OriginatingData_Set_Input>;
-    where: Conference_OriginatingData_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Conference_OriginatingData_By_PkArgs = {
-    _append?: InputMaybe<Conference_OriginatingData_Append_Input>;
-    _delete_at_path?: InputMaybe<Conference_OriginatingData_Delete_At_Path_Input>;
-    _delete_elem?: InputMaybe<Conference_OriginatingData_Delete_Elem_Input>;
-    _delete_key?: InputMaybe<Conference_OriginatingData_Delete_Key_Input>;
-    _prepend?: InputMaybe<Conference_OriginatingData_Prepend_Input>;
-    _set?: InputMaybe<Conference_OriginatingData_Set_Input>;
-    pk_columns: Conference_OriginatingData_Pk_Columns_Input;
-};
-
-/** mutation root */
 export type Mutation_RootUpdate_Conference_SubconferenceArgs = {
     _set?: InputMaybe<Conference_Subconference_Set_Input>;
     where: Conference_Subconference_Bool_Exp;
@@ -19541,12 +18995,6 @@ export type Query_Root = {
     readonly conference_DemoCode_aggregate: Conference_DemoCode_Aggregate;
     /** fetch data from the table: "conference.DemoCode" using primary key columns */
     readonly conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
-    /** fetch data from the table: "conference.OriginatingData" */
-    readonly conference_OriginatingData: ReadonlyArray<Conference_OriginatingData>;
-    /** fetch aggregated fields from the table: "conference.OriginatingData" */
-    readonly conference_OriginatingData_aggregate: Conference_OriginatingData_Aggregate;
-    /** fetch data from the table: "conference.OriginatingData" using primary key columns */
-    readonly conference_OriginatingData_by_pk?: Maybe<Conference_OriginatingData>;
     /** fetch data from the table: "conference.Subconference" */
     readonly conference_Subconference: ReadonlyArray<Conference_Subconference>;
     /** fetch aggregated fields from the table: "conference.Subconference" */
@@ -20599,26 +20047,6 @@ export type Query_RootConference_DemoCode_AggregateArgs = {
 };
 
 export type Query_RootConference_DemoCode_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-export type Query_RootConference_OriginatingDataArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-export type Query_RootConference_OriginatingData_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-export type Query_RootConference_OriginatingData_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -25756,9 +25184,6 @@ export type Room_Room = {
     readonly managementMode: Room_ManagementMode;
     readonly managementModeName: Room_ManagementMode_Enum;
     readonly name: Scalars["String"];
-    /** An object relationship */
-    readonly originatingData?: Maybe<Conference_OriginatingData>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     /** An array relationship */
     readonly participants: ReadonlyArray<Room_Participant>;
     /** An aggregate relationship */
@@ -26410,8 +25835,6 @@ export type Room_Room_Bool_Exp = {
     readonly managementMode?: InputMaybe<Room_ManagementMode_Bool_Exp>;
     readonly managementModeName?: InputMaybe<Room_ManagementMode_Enum_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    readonly originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly participants?: InputMaybe<Room_Participant_Bool_Exp>;
     readonly presenceCounts?: InputMaybe<Analytics_RoomPresence_Bool_Exp>;
     readonly priority?: InputMaybe<Int_Comparison_Exp>;
@@ -26466,8 +25889,6 @@ export type Room_Room_Insert_Input = {
     readonly managementMode?: InputMaybe<Room_ManagementMode_Obj_Rel_Insert_Input>;
     readonly managementModeName?: InputMaybe<Room_ManagementMode_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly participants?: InputMaybe<Room_Participant_Arr_Rel_Insert_Input>;
     readonly presenceCounts?: InputMaybe<Analytics_RoomPresence_Arr_Rel_Insert_Input>;
     readonly priority?: InputMaybe<Scalars["Int"]>;
@@ -26494,7 +25915,6 @@ export type Room_Room_Max_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly priority?: Maybe<Scalars["Int"]>;
     readonly publicVonageSessionId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -26511,7 +25931,6 @@ export type Room_Room_Max_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly priority?: InputMaybe<Order_By>;
     readonly publicVonageSessionId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
@@ -26529,7 +25948,6 @@ export type Room_Room_Min_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly priority?: Maybe<Scalars["Int"]>;
     readonly publicVonageSessionId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
@@ -26546,7 +25964,6 @@ export type Room_Room_Min_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly priority?: InputMaybe<Order_By>;
     readonly publicVonageSessionId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
@@ -26600,8 +26017,6 @@ export type Room_Room_Order_By = {
     readonly managementMode?: InputMaybe<Room_ManagementMode_Order_By>;
     readonly managementModeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly participants_aggregate?: InputMaybe<Room_Participant_Aggregate_Order_By>;
     readonly presenceCounts_aggregate?: InputMaybe<Analytics_RoomPresence_Aggregate_Order_By>;
     readonly priority?: InputMaybe<Order_By>;
@@ -26647,8 +26062,6 @@ export enum Room_Room_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     Priority = "priority",
     /** column name */
     PublicVonageSessionId = "publicVonageSessionId",
@@ -26671,7 +26084,6 @@ export type Room_Room_Set_Input = {
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
     readonly managementModeName?: InputMaybe<Room_ManagementMode_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly priority?: InputMaybe<Scalars["Int"]>;
     readonly publicVonageSessionId?: InputMaybe<Scalars["String"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
@@ -26754,8 +26166,6 @@ export enum Room_Room_Update_Column {
     ManagementModeName = "managementModeName",
     /** column name */
     Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     Priority = "priority",
     /** column name */
@@ -28643,9 +28053,6 @@ export type Schedule_Event = {
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name: Scalars["String"];
     /** An object relationship */
-    readonly originatingData?: Maybe<Conference_OriginatingData>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
-    /** An object relationship */
     readonly room: Room_Room;
     readonly roomId: Scalars["uuid"];
     /** An object relationship */
@@ -29147,8 +28554,6 @@ export type Schedule_Event_Bool_Exp = {
     readonly item?: InputMaybe<Content_Item_Bool_Exp>;
     readonly itemId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-    readonly originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly roomMode?: InputMaybe<Room_Mode_Bool_Exp>;
@@ -29192,8 +28597,6 @@ export type Schedule_Event_Insert_Input = {
     readonly item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
     readonly roomMode?: InputMaybe<Room_Mode_Obj_Rel_Insert_Input>;
@@ -29218,7 +28621,6 @@ export type Schedule_Event_Max_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
     readonly startTime?: Maybe<Scalars["timestamptz"]>;
@@ -29238,7 +28640,6 @@ export type Schedule_Event_Max_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
     readonly startTime?: InputMaybe<Order_By>;
@@ -29259,7 +28660,6 @@ export type Schedule_Event_Min_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
-    readonly originatingDataId?: Maybe<Scalars["uuid"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
     readonly startTime?: Maybe<Scalars["timestamptz"]>;
@@ -29279,7 +28679,6 @@ export type Schedule_Event_Min_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
     readonly startTime?: InputMaybe<Order_By>;
@@ -29330,8 +28729,6 @@ export type Schedule_Event_Order_By = {
     readonly item?: InputMaybe<Content_Item_Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly originatingData?: InputMaybe<Conference_OriginatingData_Order_By>;
-    readonly originatingDataId?: InputMaybe<Order_By>;
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
     readonly roomMode?: InputMaybe<Room_Mode_Order_By>;
@@ -29374,8 +28771,6 @@ export enum Schedule_Event_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     RoomId = "roomId",
     /** column name */
     ShufflePeriodId = "shufflePeriodId",
@@ -29405,7 +28800,6 @@ export type Schedule_Event_Set_Input = {
     readonly intendedRoomModeName?: InputMaybe<Room_Mode_Enum>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly originatingDataId?: InputMaybe<Scalars["uuid"]>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
     readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
@@ -29482,8 +28876,6 @@ export enum Schedule_Event_Update_Column {
     ItemId = "itemId",
     /** column name */
     Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
     /** column name */
     RoomId = "roomId",
     /** column name */
@@ -30696,12 +30088,6 @@ export type Subscription_Root = {
     readonly conference_DemoCode_aggregate: Conference_DemoCode_Aggregate;
     /** fetch data from the table: "conference.DemoCode" using primary key columns */
     readonly conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
-    /** fetch data from the table: "conference.OriginatingData" */
-    readonly conference_OriginatingData: ReadonlyArray<Conference_OriginatingData>;
-    /** fetch aggregated fields from the table: "conference.OriginatingData" */
-    readonly conference_OriginatingData_aggregate: Conference_OriginatingData_Aggregate;
-    /** fetch data from the table: "conference.OriginatingData" using primary key columns */
-    readonly conference_OriginatingData_by_pk?: Maybe<Conference_OriginatingData>;
     /** fetch data from the table: "conference.Subconference" */
     readonly conference_Subconference: ReadonlyArray<Conference_Subconference>;
     /** fetch aggregated fields from the table: "conference.Subconference" */
@@ -31749,26 +31135,6 @@ export type Subscription_RootConference_DemoCode_AggregateArgs = {
 };
 
 export type Subscription_RootConference_DemoCode_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-export type Subscription_RootConference_OriginatingDataArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-export type Subscription_RootConference_OriginatingData_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Conference_OriginatingData_Order_By>>;
-    where?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
-};
-
-export type Subscription_RootConference_OriginatingData_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -42436,14 +41802,6 @@ export type ManageContent_ItemFragment = {
     }>;
 };
 
-export type ManageContent_OriginatingDataFragment = {
-    readonly __typename?: "conference_OriginatingData";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly sourceId: string;
-    readonly data?: any | null;
-};
-
 export type ManageContent_RoomFragment = {
     readonly __typename?: "room_Room";
     readonly id: any;
@@ -42497,19 +41855,11 @@ export type ManageContent_ItemSecondaryFragment = {
     readonly __typename?: "content_Item";
     readonly typeName: Content_ItemType_Enum;
     readonly chatId?: any | null;
-    readonly originatingDataId?: any | null;
     readonly room?: {
         readonly __typename?: "room_Room";
         readonly id: any;
         readonly name: string;
         readonly conferenceId: any;
-    } | null;
-    readonly originatingData?: {
-        readonly __typename?: "conference_OriginatingData";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly sourceId: string;
-        readonly data?: any | null;
     } | null;
 };
 
@@ -42520,7 +41870,6 @@ export type ManageContent_ItemForExportFragment = {
     readonly title: string;
     readonly shortTitle?: string | null;
     readonly typeName: Content_ItemType_Enum;
-    readonly originatingDataId?: any | null;
     readonly chatId?: any | null;
     readonly itemTags: ReadonlyArray<{
         readonly __typename?: "content_ItemTag";
@@ -42603,7 +41952,6 @@ export type ManageContent_SelectItemsForExportQuery = {
         readonly title: string;
         readonly shortTitle?: string | null;
         readonly typeName: Content_ItemType_Enum;
-        readonly originatingDataId?: any | null;
         readonly chatId?: any | null;
         readonly itemTags: ReadonlyArray<{
             readonly __typename?: "content_ItemTag";
@@ -42662,19 +42010,11 @@ export type ManageContent_SelectItemQuery = {
         readonly __typename?: "content_Item";
         readonly typeName: Content_ItemType_Enum;
         readonly chatId?: any | null;
-        readonly originatingDataId?: any | null;
         readonly room?: {
             readonly __typename?: "room_Room";
             readonly id: any;
             readonly name: string;
             readonly conferenceId: any;
-        } | null;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
         } | null;
     } | null;
     readonly content_Element: ReadonlyArray<{
@@ -42850,690 +42190,6 @@ export type ManageContent_SelectAllExhibitionsQuery = {
             readonly itemId: any;
         }>;
     }>;
-};
-
-export type ElementInfoFragment = {
-    readonly __typename?: "content_Element";
-    readonly conferenceId: any;
-    readonly itemId: any;
-    readonly typeName: Content_ElementType_Enum;
-    readonly data: any;
-    readonly id: any;
-    readonly isHidden: boolean;
-    readonly layoutData?: any | null;
-    readonly name: string;
-    readonly originatingDataId?: any | null;
-    readonly uploadsRemaining?: number | null;
-};
-
-export type OriginatingDataInfoFragment = {
-    readonly __typename?: "conference_OriginatingData";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly sourceId: string;
-    readonly data?: any | null;
-};
-
-export type ProgramPersonInfoFragment = {
-    readonly __typename?: "collection_ProgramPerson";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly name: string;
-    readonly affiliation?: string | null;
-    readonly email?: string | null;
-    readonly originatingDataId?: any | null;
-    readonly registrantId?: any | null;
-};
-
-export type ItemTagInfoFragment = {
-    readonly __typename?: "content_ItemTag";
-    readonly id: any;
-    readonly tagId: any;
-    readonly itemId: any;
-};
-
-export type ItemExhibitionInfoFragment = {
-    readonly __typename?: "content_ItemExhibition";
-    readonly id: any;
-    readonly itemId: any;
-    readonly exhibitionId: any;
-    readonly priority?: number | null;
-    readonly layout?: any | null;
-};
-
-export type ItemPersonInfoFragment = {
-    readonly __typename?: "content_ItemProgramPerson";
-    readonly id: any;
-    readonly itemId: any;
-    readonly personId: any;
-    readonly priority?: number | null;
-    readonly roleName: string;
-};
-
-export type ItemFullNestedInfoFragment = {
-    readonly __typename?: "content_Item";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly typeName: Content_ItemType_Enum;
-    readonly title: string;
-    readonly shortTitle?: string | null;
-    readonly originatingDataId?: any | null;
-    readonly elements: ReadonlyArray<{
-        readonly __typename?: "content_Element";
-        readonly conferenceId: any;
-        readonly itemId: any;
-        readonly typeName: Content_ElementType_Enum;
-        readonly data: any;
-        readonly id: any;
-        readonly isHidden: boolean;
-        readonly layoutData?: any | null;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly uploadsRemaining?: number | null;
-    }>;
-    readonly itemTags: ReadonlyArray<{
-        readonly __typename?: "content_ItemTag";
-        readonly id: any;
-        readonly tagId: any;
-        readonly itemId: any;
-    }>;
-    readonly itemExhibitions: ReadonlyArray<{
-        readonly __typename?: "content_ItemExhibition";
-        readonly id: any;
-        readonly itemId: any;
-        readonly exhibitionId: any;
-        readonly priority?: number | null;
-        readonly layout?: any | null;
-    }>;
-    readonly itemPeople: ReadonlyArray<{
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly personId: any;
-        readonly priority?: number | null;
-        readonly roleName: string;
-    }>;
-    readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
-};
-
-export type TagInfoFragment = {
-    readonly __typename?: "collection_Tag";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly colour: string;
-    readonly name: string;
-    readonly originatingDataId?: any | null;
-    readonly priority: number;
-};
-
-export type ExhibitionInfoFragment = {
-    readonly __typename?: "collection_Exhibition";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly colour: string;
-    readonly name: string;
-    readonly priority: number;
-    readonly isHidden: boolean;
-};
-
-export type SelectAllContentQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type SelectAllContentQuery = {
-    readonly __typename?: "query_root";
-    readonly content_Item: ReadonlyArray<{
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly typeName: Content_ItemType_Enum;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly originatingDataId?: any | null;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly conferenceId: any;
-            readonly itemId: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly data: any;
-            readonly id: any;
-            readonly isHidden: boolean;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly uploadsRemaining?: number | null;
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly tagId: any;
-            readonly itemId: any;
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-            readonly priority?: number | null;
-            readonly layout?: any | null;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-        }>;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
-    }>;
-    readonly collection_ProgramPerson: ReadonlyArray<{
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly affiliation?: string | null;
-        readonly email?: string | null;
-        readonly originatingDataId?: any | null;
-        readonly registrantId?: any | null;
-    }>;
-    readonly conference_OriginatingData: ReadonlyArray<{
-        readonly __typename?: "conference_OriginatingData";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly sourceId: string;
-        readonly data?: any | null;
-    }>;
-    readonly collection_Tag: ReadonlyArray<{
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly colour: string;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly priority: number;
-    }>;
-    readonly collection_Exhibition: ReadonlyArray<{
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly colour: string;
-        readonly name: string;
-        readonly priority: number;
-        readonly isHidden: boolean;
-    }>;
-};
-
-export type InsertDeleteItemsMutationVariables = Exact<{
-    newGroups: ReadonlyArray<Content_Item_Insert_Input> | Content_Item_Insert_Input;
-    deleteGroupIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type InsertDeleteItemsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_content_Item?: {
-        readonly __typename?: "content_Item_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly typeName: Content_ItemType_Enum;
-            readonly title: string;
-            readonly shortTitle?: string | null;
-            readonly originatingDataId?: any | null;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly conferenceId: any;
-                readonly itemId: any;
-                readonly typeName: Content_ElementType_Enum;
-                readonly data: any;
-                readonly id: any;
-                readonly isHidden: boolean;
-                readonly layoutData?: any | null;
-                readonly name: string;
-                readonly originatingDataId?: any | null;
-                readonly uploadsRemaining?: number | null;
-            }>;
-            readonly itemTags: ReadonlyArray<{
-                readonly __typename?: "content_ItemTag";
-                readonly id: any;
-                readonly tagId: any;
-                readonly itemId: any;
-            }>;
-            readonly itemExhibitions: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly itemId: any;
-                readonly exhibitionId: any;
-                readonly priority?: number | null;
-                readonly layout?: any | null;
-            }>;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly itemId: any;
-                readonly personId: any;
-                readonly priority?: number | null;
-                readonly roleName: string;
-            }>;
-            readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
-        }>;
-    } | null;
-    readonly delete_content_Item?: {
-        readonly __typename?: "content_Item_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_Item"; readonly id: any }>;
-    } | null;
-};
-
-export type InsertElementsMutationVariables = Exact<{
-    newElements: ReadonlyArray<Content_Element_Insert_Input> | Content_Element_Insert_Input;
-}>;
-
-export type InsertElementsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly conferenceId: any;
-            readonly itemId: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly data: any;
-            readonly id: any;
-            readonly isHidden: boolean;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly uploadsRemaining?: number | null;
-        }>;
-    } | null;
-};
-
-export type InsertOriginatingDatasMutationVariables = Exact<{
-    newDatas: ReadonlyArray<Conference_OriginatingData_Insert_Input> | Conference_OriginatingData_Insert_Input;
-}>;
-
-export type InsertOriginatingDatasMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_conference_OriginatingData?: {
-        readonly __typename?: "conference_OriginatingData_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        }>;
-    } | null;
-};
-
-export type DeleteOriginatingDatasMutationVariables = Exact<{
-    deleteDataIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type DeleteOriginatingDatasMutation = {
-    readonly __typename?: "mutation_root";
-    readonly delete_conference_OriginatingData?: {
-        readonly __typename?: "conference_OriginatingData_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "conference_OriginatingData"; readonly id: any }>;
-    } | null;
-};
-
-export type InsertTagsMutationVariables = Exact<{
-    newTags: ReadonlyArray<Collection_Tag_Insert_Input> | Collection_Tag_Insert_Input;
-}>;
-
-export type InsertTagsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_collection_Tag?: {
-        readonly __typename?: "collection_Tag_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_Tag";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly colour: string;
-            readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly priority: number;
-        }>;
-    } | null;
-};
-
-export type InsertExhibitionsMutationVariables = Exact<{
-    newExhibitions: ReadonlyArray<Collection_Exhibition_Insert_Input> | Collection_Exhibition_Insert_Input;
-}>;
-
-export type InsertExhibitionsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_collection_Exhibition?: {
-        readonly __typename?: "collection_Exhibition_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly colour: string;
-            readonly name: string;
-            readonly priority: number;
-            readonly isHidden: boolean;
-        }>;
-    } | null;
-};
-
-export type DeleteTagsMutationVariables = Exact<{
-    deleteTagIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type DeleteTagsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly delete_collection_Tag?: {
-        readonly __typename?: "collection_Tag_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Tag"; readonly id: any }>;
-    } | null;
-};
-
-export type DeleteExhibitionsMutationVariables = Exact<{
-    deleteExhibitionIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type DeleteExhibitionsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly delete_collection_Exhibition?: {
-        readonly __typename?: "collection_Exhibition_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "collection_Exhibition"; readonly id: any }>;
-    } | null;
-};
-
-export type InsertProgramPeopleMutationVariables = Exact<{
-    newPeople: ReadonlyArray<Collection_ProgramPerson_Insert_Input> | Collection_ProgramPerson_Insert_Input;
-}>;
-
-export type InsertProgramPeopleMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_collection_ProgramPerson?: {
-        readonly __typename?: "collection_ProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly originatingDataId?: any | null;
-            readonly registrantId?: any | null;
-        }>;
-    } | null;
-};
-
-export type DeleteProgramPeopleMutationVariables = Exact<{
-    deletePersonIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type DeleteProgramPeopleMutation = {
-    readonly __typename?: "mutation_root";
-    readonly delete_collection_ProgramPerson?: {
-        readonly __typename?: "collection_ProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "collection_ProgramPerson"; readonly id: any }>;
-    } | null;
-};
-
-export type UpdateItemMutationVariables = Exact<{
-    newItems: ReadonlyArray<Content_Element_Insert_Input> | Content_Element_Insert_Input;
-    newGroupTags: ReadonlyArray<Content_ItemTag_Insert_Input> | Content_ItemTag_Insert_Input;
-    newGroupExhibitions: ReadonlyArray<Content_ItemExhibition_Insert_Input> | Content_ItemExhibition_Insert_Input;
-    groupId: Scalars["uuid"];
-    typeName: Content_ItemType_Enum;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
-    shortTitle?: InputMaybe<Scalars["String"]>;
-    title: Scalars["String"];
-    deleteItemIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-    deleteGroupTagIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-    deleteGroupExhibitionIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-    newGroupPeople: ReadonlyArray<Content_ItemProgramPerson_Insert_Input> | Content_ItemProgramPerson_Insert_Input;
-    deleteGroupPeopleIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type UpdateItemMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly conferenceId: any;
-            readonly itemId: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly data: any;
-            readonly id: any;
-            readonly isHidden: boolean;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly uploadsRemaining?: number | null;
-        }>;
-    } | null;
-    readonly insert_content_ItemTag?: {
-        readonly __typename?: "content_ItemTag_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly tagId: any;
-            readonly itemId: any;
-        }>;
-    } | null;
-    readonly insert_content_ItemExhibition?: {
-        readonly __typename?: "content_ItemExhibition_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-            readonly priority?: number | null;
-            readonly layout?: any | null;
-        }>;
-    } | null;
-    readonly insert_content_ItemProgramPerson?: {
-        readonly __typename?: "content_ItemProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-        }>;
-    } | null;
-    readonly update_content_Item_by_pk?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly typeName: Content_ItemType_Enum;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly originatingDataId?: any | null;
-        readonly elements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly conferenceId: any;
-            readonly itemId: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly data: any;
-            readonly id: any;
-            readonly isHidden: boolean;
-            readonly layoutData?: any | null;
-            readonly name: string;
-            readonly originatingDataId?: any | null;
-            readonly uploadsRemaining?: number | null;
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly tagId: any;
-            readonly itemId: any;
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-            readonly priority?: number | null;
-            readonly layout?: any | null;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-        }>;
-        readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
-    } | null;
-    readonly delete_content_Element?: {
-        readonly __typename?: "content_Element_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_Element"; readonly id: any }>;
-    } | null;
-    readonly delete_content_ItemTag?: {
-        readonly __typename?: "content_ItemTag_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemTag"; readonly id: any }>;
-    } | null;
-    readonly delete_content_ItemExhibition?: {
-        readonly __typename?: "content_ItemExhibition_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemExhibition"; readonly id: any }>;
-    } | null;
-    readonly delete_content_ItemProgramPerson?: {
-        readonly __typename?: "content_ItemProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "content_ItemProgramPerson"; readonly id: any }>;
-    } | null;
-};
-
-export type UpdateElementMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    typeName: Content_ElementType_Enum;
-    layoutData?: InputMaybe<Scalars["jsonb"]>;
-    name: Scalars["String"];
-    data: Scalars["jsonb"];
-    isHidden: Scalars["Boolean"];
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
-    uploadsRemaining?: InputMaybe<Scalars["Int"]>;
-}>;
-
-export type UpdateElementMutation = {
-    readonly __typename?: "mutation_root";
-    readonly update_content_Element_by_pk?: {
-        readonly __typename?: "content_Element";
-        readonly conferenceId: any;
-        readonly itemId: any;
-        readonly typeName: Content_ElementType_Enum;
-        readonly data: any;
-        readonly id: any;
-        readonly isHidden: boolean;
-        readonly layoutData?: any | null;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly uploadsRemaining?: number | null;
-    } | null;
-};
-
-export type UpdateGroupPersonMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    roleName: Scalars["String"];
-    priority?: InputMaybe<Scalars["Int"]>;
-}>;
-
-export type UpdateGroupPersonMutation = {
-    readonly __typename?: "mutation_root";
-    readonly update_content_ItemProgramPerson_by_pk?: {
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly personId: any;
-        readonly priority?: number | null;
-        readonly roleName: string;
-    } | null;
-};
-
-export type UpdateGroupExhibitionMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    priority?: InputMaybe<Scalars["Int"]>;
-    layout?: InputMaybe<Scalars["jsonb"]>;
-}>;
-
-export type UpdateGroupExhibitionMutation = {
-    readonly __typename?: "mutation_root";
-    readonly update_content_ItemExhibition_by_pk?: {
-        readonly __typename?: "content_ItemExhibition";
-        readonly id: any;
-        readonly itemId: any;
-        readonly exhibitionId: any;
-        readonly priority?: number | null;
-        readonly layout?: any | null;
-    } | null;
-};
-
-export type UpdatePersonMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    name: Scalars["String"];
-    affiliation?: InputMaybe<Scalars["String"]>;
-    email?: InputMaybe<Scalars["String"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
-    registrantId?: InputMaybe<Scalars["uuid"]>;
-}>;
-
-export type UpdatePersonMutation = {
-    readonly __typename?: "mutation_root";
-    readonly update_collection_ProgramPerson?: {
-        readonly __typename?: "collection_ProgramPerson_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly email?: string | null;
-            readonly originatingDataId?: any | null;
-            readonly registrantId?: any | null;
-        }>;
-    } | null;
-};
-
-export type UpdateTagMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    name: Scalars["String"];
-    colour: Scalars["String"];
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
-    priority?: Scalars["Int"];
-}>;
-
-export type UpdateTagMutation = {
-    readonly __typename?: "mutation_root";
-    readonly update_collection_Tag_by_pk?: {
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly colour: string;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly priority: number;
-    } | null;
-};
-
-export type UpdateExhibitionMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    name: Scalars["String"];
-    colour: Scalars["String"];
-    priority: Scalars["Int"];
-    isHidden: Scalars["Boolean"];
-}>;
-
-export type UpdateExhibitionMutation = {
-    readonly __typename?: "mutation_root";
-    readonly update_collection_Exhibition_by_pk?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly colour: string;
-        readonly name: string;
-        readonly priority: number;
-        readonly isHidden: boolean;
-    } | null;
 };
 
 export type BulkEdit_AddElementsMutationVariables = Exact<{
@@ -44695,7 +43351,6 @@ export type ManageProgramPeople_ProgramPersonWithAccessTokenFragment = {
     readonly name: string;
     readonly affiliation?: string | null;
     readonly email?: string | null;
-    readonly originatingDataId?: any | null;
     readonly registrantId?: any | null;
     readonly accessToken: string;
 };
@@ -44713,7 +43368,6 @@ export type ManageProgramPeople_SelectAllPeopleQuery = {
         readonly name: string;
         readonly affiliation?: string | null;
         readonly email?: string | null;
-        readonly originatingDataId?: any | null;
         readonly registrantId?: any | null;
         readonly accessToken: string;
     }>;
@@ -44755,7 +43409,6 @@ export type ManageProgramPeople_InsertProgramPersonMutation = {
         readonly name: string;
         readonly affiliation?: string | null;
         readonly email?: string | null;
-        readonly originatingDataId?: any | null;
         readonly registrantId?: any | null;
         readonly accessToken: string;
     } | null;
@@ -44792,7 +43445,6 @@ export type ManageProgramPeople_UpdateProgramPersonMutation = {
             readonly name: string;
             readonly affiliation?: string | null;
             readonly email?: string | null;
-            readonly originatingDataId?: any | null;
             readonly registrantId?: any | null;
             readonly accessToken: string;
         }>;
@@ -44824,7 +43476,6 @@ export type RoomWithParticipantInfoFragment = {
     readonly itemId?: any | null;
     readonly managementModeName: Room_ManagementMode_Enum;
     readonly isProgramRoom?: boolean | null;
-    readonly originatingDataId?: any | null;
     readonly chatId?: any | null;
     readonly participants: ReadonlyArray<{
         readonly __typename?: "room_Participant";
@@ -44838,13 +43489,6 @@ export type RoomWithParticipantInfoFragment = {
             readonly displayName: string;
         };
     }>;
-    readonly originatingData?: {
-        readonly __typename?: "conference_OriginatingData";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly sourceId: string;
-        readonly data?: any | null;
-    } | null;
     readonly chat?: {
         readonly __typename?: "chat_Chat";
         readonly id: any;
@@ -44873,7 +43517,6 @@ export type SelectAllRoomsWithParticipantsQuery = {
         readonly itemId?: any | null;
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
-        readonly originatingDataId?: any | null;
         readonly chatId?: any | null;
         readonly participants: ReadonlyArray<{
             readonly __typename?: "room_Participant";
@@ -44887,13 +43530,6 @@ export type SelectAllRoomsWithParticipantsQuery = {
                 readonly displayName: string;
             };
         }>;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
         readonly chat?: {
             readonly __typename?: "chat_Chat";
             readonly id: any;
@@ -44996,7 +43632,6 @@ export type CreateRoomMutation = {
         readonly itemId?: any | null;
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
-        readonly originatingDataId?: any | null;
         readonly chatId?: any | null;
         readonly participants: ReadonlyArray<{
             readonly __typename?: "room_Participant";
@@ -45010,13 +43645,6 @@ export type CreateRoomMutation = {
                 readonly displayName: string;
             };
         }>;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
         readonly chat?: {
             readonly __typename?: "chat_Chat";
             readonly id: any;
@@ -45056,7 +43684,6 @@ export type UpdateRoomsWithParticipantsMutation = {
         readonly itemId?: any | null;
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
-        readonly originatingDataId?: any | null;
         readonly chatId?: any | null;
         readonly participants: ReadonlyArray<{
             readonly __typename?: "room_Participant";
@@ -45070,13 +43697,6 @@ export type UpdateRoomsWithParticipantsMutation = {
                 readonly displayName: string;
             };
         }>;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
         readonly chat?: {
             readonly __typename?: "chat_Chat";
             readonly id: any;
@@ -45118,6 +43738,18 @@ export type InsertRoomPeopleMutation = {
                 readonly displayName: string;
             };
         }>;
+    } | null;
+};
+
+export type DeleteRoomsMutationVariables = Exact<{
+    deleteRoomIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type DeleteRoomsMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_room_Room?: {
+        readonly __typename?: "room_Room_mutation_response";
+        readonly returning: ReadonlyArray<{ readonly __typename?: "room_Room"; readonly id: any }>;
     } | null;
 };
 
@@ -46005,6 +44637,37 @@ export type UpdateEventStreamTextEventIdMutation = {
     } | null;
 };
 
+export type EventInfoFragment = {
+    readonly __typename?: "schedule_Event";
+    readonly conferenceId: any;
+    readonly id: any;
+    readonly durationSeconds: number;
+    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly name: string;
+    readonly roomId: any;
+    readonly startTime: any;
+    readonly endTime?: any | null;
+    readonly itemId?: any | null;
+    readonly exhibitionId?: any | null;
+    readonly shufflePeriodId?: any | null;
+    readonly enableRecording: boolean;
+    readonly eventPeople: ReadonlyArray<{
+        readonly __typename?: "schedule_EventProgramPerson";
+        readonly id: any;
+        readonly eventId: any;
+        readonly roleName: Schedule_EventProgramPersonRole_Enum;
+        readonly personId: any;
+    }>;
+};
+
+export type EventProgramPersonInfoFragment = {
+    readonly __typename?: "schedule_EventProgramPerson";
+    readonly id: any;
+    readonly eventId: any;
+    readonly roleName: Schedule_EventProgramPersonRole_Enum;
+    readonly personId: any;
+};
+
 export type InsertEventProgramPersonMutationVariables = Exact<{
     newEventProgramPerson: Schedule_EventProgramPerson_Insert_Input;
 }>;
@@ -46048,130 +44711,6 @@ export type UpdateEventProgramPersonMutation = {
     } | null;
 };
 
-export type ManageSchedule_ShufflePeriodsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    now: Scalars["timestamptz"];
-}>;
-
-export type ManageSchedule_ShufflePeriodsQuery = {
-    readonly __typename?: "query_root";
-    readonly room_ShufflePeriod: ReadonlyArray<{
-        readonly __typename?: "room_ShufflePeriod";
-        readonly id: any;
-        readonly name: string;
-        readonly conferenceId: any;
-        readonly endAt: any;
-    }>;
-};
-
-export type ShufflePeriodInfoFragment = {
-    readonly __typename?: "room_ShufflePeriod";
-    readonly id: any;
-    readonly name: string;
-    readonly conferenceId: any;
-    readonly endAt: any;
-};
-
-export type InsertEventInfoMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    roomId: Scalars["uuid"];
-    conferenceId: Scalars["uuid"];
-    intendedRoomModeName: Room_Mode_Enum;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
-    name: Scalars["String"];
-    startTime: Scalars["timestamptz"];
-    durationSeconds: Scalars["Int"];
-    itemId?: InputMaybe<Scalars["uuid"]>;
-    exhibitionId?: InputMaybe<Scalars["uuid"]>;
-    shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    insertContinuation: Scalars["Boolean"];
-    enableRecording: Scalars["Boolean"];
-}>;
-
-export type InsertEventInfoMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_schedule_Event_one?: {
-        readonly __typename?: "schedule_Event";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly durationSeconds: number;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly roomId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly enableRecording: boolean;
-        readonly eventPeople: ReadonlyArray<{
-            readonly __typename?: "schedule_EventProgramPerson";
-            readonly id: any;
-            readonly eventId: any;
-            readonly roleName: Schedule_EventProgramPersonRole_Enum;
-            readonly personId: any;
-        }>;
-    } | null;
-    readonly insert_schedule_Continuation_one?: {
-        readonly __typename?: "schedule_Continuation";
-        readonly id: any;
-    } | null;
-};
-
-export type UpdateEventInfoMutationVariables = Exact<{
-    eventId: Scalars["uuid"];
-    roomId: Scalars["uuid"];
-    intendedRoomModeName: Room_Mode_Enum;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
-    name: Scalars["String"];
-    startTime: Scalars["timestamptz"];
-    durationSeconds: Scalars["Int"];
-    itemId?: InputMaybe<Scalars["uuid"]>;
-    exhibitionId?: InputMaybe<Scalars["uuid"]>;
-    shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    enableRecording: Scalars["Boolean"];
-}>;
-
-export type UpdateEventInfoMutation = {
-    readonly __typename?: "mutation_root";
-    readonly update_schedule_Event_by_pk?: {
-        readonly __typename?: "schedule_Event";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly durationSeconds: number;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly name: string;
-        readonly originatingDataId?: any | null;
-        readonly roomId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly enableRecording: boolean;
-        readonly eventPeople: ReadonlyArray<{
-            readonly __typename?: "schedule_EventProgramPerson";
-            readonly id: any;
-            readonly eventId: any;
-            readonly roleName: Schedule_EventProgramPersonRole_Enum;
-            readonly personId: any;
-        }>;
-    } | null;
-};
-
-export type DeleteEventInfosMutationVariables = Exact<{
-    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type DeleteEventInfosMutation = {
-    readonly __typename?: "mutation_root";
-    readonly delete_schedule_Event?: {
-        readonly __typename?: "schedule_Event_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-    } | null;
-};
-
 export type RoomInfoFragment = {
     readonly __typename?: "room_Room";
     readonly capacity?: number | null;
@@ -46180,49 +44719,120 @@ export type RoomInfoFragment = {
     readonly id: any;
     readonly name: string;
     readonly priority: number;
-    readonly originatingDataId?: any | null;
     readonly itemId?: any | null;
     readonly managementModeName: Room_ManagementMode_Enum;
     readonly isProgramRoom?: boolean | null;
-    readonly originatingData?: {
-        readonly __typename?: "conference_OriginatingData";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly sourceId: string;
-        readonly data?: any | null;
-    } | null;
 };
 
-export type EventInfoFragment = {
-    readonly __typename?: "schedule_Event";
+export type ElementInfoFragment = {
+    readonly __typename?: "content_Element";
     readonly conferenceId: any;
+    readonly itemId: any;
+    readonly typeName: Content_ElementType_Enum;
+    readonly data: any;
     readonly id: any;
-    readonly durationSeconds: number;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly isHidden: boolean;
+    readonly layoutData?: any | null;
     readonly name: string;
-    readonly originatingDataId?: any | null;
-    readonly roomId: any;
-    readonly startTime: any;
-    readonly endTime?: any | null;
-    readonly itemId?: any | null;
-    readonly exhibitionId?: any | null;
-    readonly shufflePeriodId?: any | null;
-    readonly enableRecording: boolean;
-    readonly eventPeople: ReadonlyArray<{
-        readonly __typename?: "schedule_EventProgramPerson";
-        readonly id: any;
-        readonly eventId: any;
-        readonly roleName: Schedule_EventProgramPersonRole_Enum;
-        readonly personId: any;
-    }>;
+    readonly uploadsRemaining?: number | null;
 };
 
-export type EventProgramPersonInfoFragment = {
-    readonly __typename?: "schedule_EventProgramPerson";
+export type ProgramPersonInfoFragment = {
+    readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
-    readonly eventId: any;
-    readonly roleName: Schedule_EventProgramPersonRole_Enum;
+    readonly conferenceId: any;
+    readonly name: string;
+    readonly affiliation?: string | null;
+    readonly email?: string | null;
+    readonly registrantId?: any | null;
+};
+
+export type ItemTagInfoFragment = {
+    readonly __typename?: "content_ItemTag";
+    readonly id: any;
+    readonly tagId: any;
+    readonly itemId: any;
+};
+
+export type ItemExhibitionInfoFragment = {
+    readonly __typename?: "content_ItemExhibition";
+    readonly id: any;
+    readonly itemId: any;
+    readonly exhibitionId: any;
+    readonly priority?: number | null;
+    readonly layout?: any | null;
+};
+
+export type ItemPersonInfoFragment = {
+    readonly __typename?: "content_ItemProgramPerson";
+    readonly id: any;
+    readonly itemId: any;
     readonly personId: any;
+    readonly priority?: number | null;
+    readonly roleName: string;
+};
+
+export type ItemFullNestedInfoFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly typeName: Content_ItemType_Enum;
+    readonly title: string;
+    readonly shortTitle?: string | null;
+    readonly elements: ReadonlyArray<{
+        readonly __typename?: "content_Element";
+        readonly conferenceId: any;
+        readonly itemId: any;
+        readonly typeName: Content_ElementType_Enum;
+        readonly data: any;
+        readonly id: any;
+        readonly isHidden: boolean;
+        readonly layoutData?: any | null;
+        readonly name: string;
+        readonly uploadsRemaining?: number | null;
+    }>;
+    readonly itemTags: ReadonlyArray<{
+        readonly __typename?: "content_ItemTag";
+        readonly id: any;
+        readonly tagId: any;
+        readonly itemId: any;
+    }>;
+    readonly itemExhibitions: ReadonlyArray<{
+        readonly __typename?: "content_ItemExhibition";
+        readonly id: any;
+        readonly itemId: any;
+        readonly exhibitionId: any;
+        readonly priority?: number | null;
+        readonly layout?: any | null;
+    }>;
+    readonly itemPeople: ReadonlyArray<{
+        readonly __typename?: "content_ItemProgramPerson";
+        readonly id: any;
+        readonly itemId: any;
+        readonly personId: any;
+        readonly priority?: number | null;
+        readonly roleName: string;
+    }>;
+    readonly room?: { readonly __typename?: "room_Room"; readonly id: any; readonly created_at: any } | null;
+};
+
+export type TagInfoFragment = {
+    readonly __typename?: "collection_Tag";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly colour: string;
+    readonly name: string;
+    readonly priority: number;
+};
+
+export type ExhibitionInfoFragment = {
+    readonly __typename?: "collection_Exhibition";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly colour: string;
+    readonly name: string;
+    readonly priority: number;
+    readonly isHidden: boolean;
 };
 
 export type SelectWholeScheduleQueryVariables = Exact<{
@@ -46239,17 +44849,9 @@ export type SelectWholeScheduleQuery = {
         readonly id: any;
         readonly name: string;
         readonly priority: number;
-        readonly originatingDataId?: any | null;
         readonly itemId?: any | null;
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
     }>;
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
@@ -46258,7 +44860,6 @@ export type SelectWholeScheduleQuery = {
         readonly durationSeconds: number;
         readonly intendedRoomModeName: Room_Mode_Enum;
         readonly name: string;
-        readonly originatingDataId?: any | null;
         readonly roomId: any;
         readonly startTime: any;
         readonly endTime?: any | null;
@@ -46274,20 +44875,12 @@ export type SelectWholeScheduleQuery = {
             readonly personId: any;
         }>;
     }>;
-    readonly conference_OriginatingData: ReadonlyArray<{
-        readonly __typename?: "conference_OriginatingData";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly sourceId: string;
-        readonly data?: any | null;
-    }>;
     readonly collection_Tag: ReadonlyArray<{
         readonly __typename?: "collection_Tag";
         readonly id: any;
         readonly conferenceId: any;
         readonly colour: string;
         readonly name: string;
-        readonly originatingDataId?: any | null;
         readonly priority: number;
     }>;
     readonly collection_Exhibition: ReadonlyArray<{
@@ -46306,7 +44899,6 @@ export type SelectWholeScheduleQuery = {
         readonly typeName: Content_ItemType_Enum;
         readonly title: string;
         readonly shortTitle?: string | null;
-        readonly originatingDataId?: any | null;
         readonly elements: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly conferenceId: any;
@@ -46317,7 +44909,6 @@ export type SelectWholeScheduleQuery = {
             readonly isHidden: boolean;
             readonly layoutData?: any | null;
             readonly name: string;
-            readonly originatingDataId?: any | null;
             readonly uploadsRemaining?: number | null;
         }>;
         readonly itemTags: ReadonlyArray<{
@@ -46351,105 +44942,50 @@ export type SelectWholeScheduleQuery = {
         readonly name: string;
         readonly affiliation?: string | null;
         readonly email?: string | null;
-        readonly originatingDataId?: any | null;
         readonly registrantId?: any | null;
     }>;
 };
 
-export type InsertRoomsMutationVariables = Exact<{
-    newRooms: ReadonlyArray<Room_Room_Insert_Input> | Room_Room_Insert_Input;
+export type ManageSchedule_ShufflePeriodsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    now: Scalars["timestamptz"];
 }>;
 
-export type InsertRoomsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_room_Room?: {
-        readonly __typename?: "room_Room_mutation_response";
-        readonly returning: ReadonlyArray<{
-            readonly __typename?: "room_Room";
-            readonly capacity?: number | null;
-            readonly conferenceId: any;
-            readonly currentModeName: Room_Mode_Enum;
-            readonly id: any;
-            readonly name: string;
-            readonly priority: number;
-            readonly originatingDataId?: any | null;
-            readonly itemId?: any | null;
-            readonly managementModeName: Room_ManagementMode_Enum;
-            readonly isProgramRoom?: boolean | null;
-            readonly originatingData?: {
-                readonly __typename?: "conference_OriginatingData";
-                readonly id: any;
-                readonly conferenceId: any;
-                readonly sourceId: string;
-                readonly data?: any | null;
-            } | null;
-        }>;
-    } | null;
-};
-
-export type DeleteRoomsMutationVariables = Exact<{
-    deleteRoomIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type DeleteRoomsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly delete_room_Room?: {
-        readonly __typename?: "room_Room_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "room_Room"; readonly id: any }>;
-    } | null;
-};
-
-export type UpdateRoomMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    name: Scalars["String"];
-    capacity?: InputMaybe<Scalars["Int"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
-    priority: Scalars["Int"];
-}>;
-
-export type UpdateRoomMutation = {
-    readonly __typename?: "mutation_root";
-    readonly update_room_Room_by_pk?: {
-        readonly __typename?: "room_Room";
-        readonly capacity?: number | null;
-        readonly conferenceId: any;
-        readonly currentModeName: Room_Mode_Enum;
+export type ManageSchedule_ShufflePeriodsQuery = {
+    readonly __typename?: "query_root";
+    readonly room_ShufflePeriod: ReadonlyArray<{
+        readonly __typename?: "room_ShufflePeriod";
         readonly id: any;
         readonly name: string;
-        readonly priority: number;
-        readonly originatingDataId?: any | null;
-        readonly itemId?: any | null;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly isProgramRoom?: boolean | null;
-        readonly originatingData?: {
-            readonly __typename?: "conference_OriginatingData";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly sourceId: string;
-            readonly data?: any | null;
-        } | null;
-    } | null;
+        readonly conferenceId: any;
+        readonly endAt: any;
+    }>;
 };
 
-export type DeleteEventsMutationVariables = Exact<{
-    deleteEventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type DeleteEventsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly delete_schedule_Event?: {
-        readonly __typename?: "schedule_Event_mutation_response";
-        readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-    } | null;
+export type ShufflePeriodInfoFragment = {
+    readonly __typename?: "room_ShufflePeriod";
+    readonly id: any;
+    readonly name: string;
+    readonly conferenceId: any;
+    readonly endAt: any;
 };
 
-export type InsertEventMutationVariables = Exact<{
-    newEvent: Schedule_Event_Insert_Input;
-    newEventId: Scalars["uuid"];
+export type InsertEventInfoMutationVariables = Exact<{
+    id: Scalars["uuid"];
+    roomId: Scalars["uuid"];
+    conferenceId: Scalars["uuid"];
+    intendedRoomModeName: Room_Mode_Enum;
+    name: Scalars["String"];
+    startTime: Scalars["timestamptz"];
+    durationSeconds: Scalars["Int"];
+    itemId?: InputMaybe<Scalars["uuid"]>;
+    exhibitionId?: InputMaybe<Scalars["uuid"]>;
+    shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
     insertContinuation: Scalars["Boolean"];
+    enableRecording: Scalars["Boolean"];
 }>;
 
-export type InsertEventMutation = {
+export type InsertEventInfoMutation = {
     readonly __typename?: "mutation_root";
     readonly insert_schedule_Event_one?: {
         readonly __typename?: "schedule_Event";
@@ -46458,7 +44994,6 @@ export type InsertEventMutation = {
         readonly durationSeconds: number;
         readonly intendedRoomModeName: Room_Mode_Enum;
         readonly name: string;
-        readonly originatingDataId?: any | null;
         readonly roomId: any;
         readonly startTime: any;
         readonly endTime?: any | null;
@@ -46480,19 +45015,20 @@ export type InsertEventMutation = {
     } | null;
 };
 
-export type UpdateEventMutationVariables = Exact<{
+export type UpdateEventInfoMutationVariables = Exact<{
     eventId: Scalars["uuid"];
     roomId: Scalars["uuid"];
     intendedRoomModeName: Room_Mode_Enum;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     name: Scalars["String"];
     startTime: Scalars["timestamptz"];
     durationSeconds: Scalars["Int"];
     itemId?: InputMaybe<Scalars["uuid"]>;
     exhibitionId?: InputMaybe<Scalars["uuid"]>;
+    shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
+    enableRecording: Scalars["Boolean"];
 }>;
 
-export type UpdateEventMutation = {
+export type UpdateEventInfoMutation = {
     readonly __typename?: "mutation_root";
     readonly update_schedule_Event_by_pk?: {
         readonly __typename?: "schedule_Event";
@@ -46501,7 +45037,6 @@ export type UpdateEventMutation = {
         readonly durationSeconds: number;
         readonly intendedRoomModeName: Room_Mode_Enum;
         readonly name: string;
-        readonly originatingDataId?: any | null;
         readonly roomId: any;
         readonly startTime: any;
         readonly endTime?: any | null;
@@ -46516,6 +45051,18 @@ export type UpdateEventMutation = {
             readonly roleName: Schedule_EventProgramPersonRole_Enum;
             readonly personId: any;
         }>;
+    } | null;
+};
+
+export type DeleteEventInfosMutationVariables = Exact<{
+    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type DeleteEventInfosMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_schedule_Event?: {
+        readonly __typename?: "schedule_Event_mutation_response";
+        readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
     } | null;
 };
 
@@ -49361,14 +47908,6 @@ export const ManageContent_RoomFragmentDoc = gql`
         conferenceId
     }
 `;
-export const ManageContent_OriginatingDataFragmentDoc = gql`
-    fragment ManageContent_OriginatingData on conference_OriginatingData {
-        id
-        conferenceId
-        sourceId
-        data
-    }
-`;
 export const ManageContent_ItemSecondaryFragmentDoc = gql`
     fragment ManageContent_ItemSecondary on content_Item {
         typeName
@@ -49376,13 +47915,8 @@ export const ManageContent_ItemSecondaryFragmentDoc = gql`
             ...ManageContent_Room
         }
         chatId
-        originatingDataId
-        originatingData {
-            ...ManageContent_OriginatingData
-        }
     }
     ${ManageContent_RoomFragmentDoc}
-    ${ManageContent_OriginatingDataFragmentDoc}
 `;
 export const ManageContent_ProgramPersonFragmentDoc = gql`
     fragment ManageContent_ProgramPerson on collection_ProgramPerson {
@@ -49428,7 +47962,6 @@ export const ManageContent_ItemForExportFragmentDoc = gql`
         title
         shortTitle
         typeName
-        originatingDataId
         itemTags {
             id
             tagId
@@ -49477,106 +48010,6 @@ export const ManageContent_ExhibitionFragmentDoc = gql`
             id
             itemId
         }
-    }
-`;
-export const ProgramPersonInfoFragmentDoc = gql`
-    fragment ProgramPersonInfo on collection_ProgramPerson {
-        id
-        conferenceId
-        name
-        affiliation
-        email
-        originatingDataId
-        registrantId
-    }
-`;
-export const ElementInfoFragmentDoc = gql`
-    fragment ElementInfo on content_Element {
-        conferenceId
-        itemId
-        typeName
-        data
-        id
-        isHidden
-        layoutData
-        name
-        originatingDataId
-        uploadsRemaining
-    }
-`;
-export const ItemTagInfoFragmentDoc = gql`
-    fragment ItemTagInfo on content_ItemTag {
-        id
-        tagId
-        itemId
-    }
-`;
-export const ItemExhibitionInfoFragmentDoc = gql`
-    fragment ItemExhibitionInfo on content_ItemExhibition {
-        id
-        itemId
-        exhibitionId
-        priority
-        layout
-    }
-`;
-export const ItemPersonInfoFragmentDoc = gql`
-    fragment ItemPersonInfo on content_ItemProgramPerson {
-        id
-        itemId
-        personId
-        priority
-        roleName
-    }
-`;
-export const ItemFullNestedInfoFragmentDoc = gql`
-    fragment ItemFullNestedInfo on content_Item {
-        id
-        conferenceId
-        typeName
-        title
-        shortTitle
-        elements {
-            ...ElementInfo
-        }
-        itemTags {
-            ...ItemTagInfo
-        }
-        itemExhibitions {
-            ...ItemExhibitionInfo
-        }
-        itemPeople {
-            ...ItemPersonInfo
-        }
-        originatingDataId
-        room {
-            id
-            created_at
-        }
-    }
-    ${ElementInfoFragmentDoc}
-    ${ItemTagInfoFragmentDoc}
-    ${ItemExhibitionInfoFragmentDoc}
-    ${ItemPersonInfoFragmentDoc}
-`;
-export const TagInfoFragmentDoc = gql`
-    fragment TagInfo on collection_Tag {
-        id
-        conferenceId
-        colour
-        name
-        originatingDataId
-        priority
-    }
-`;
-export const ExhibitionInfoFragmentDoc = gql`
-    fragment ExhibitionInfo on collection_Exhibition {
-        id
-        conferenceId
-        colour
-        name
-        priority
-        isHidden
     }
 `;
 export const SelectElements_ElementFragmentDoc = gql`
@@ -49741,7 +48174,6 @@ export const ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc = gql`
         name
         affiliation
         email
-        originatingDataId
         registrantId
         accessToken
     }
@@ -49756,14 +48188,6 @@ export const RoomParticipantWithRegistrantInfoFragmentDoc = gql`
             id
             displayName
         }
-    }
-`;
-export const OriginatingDataInfoFragmentDoc = gql`
-    fragment OriginatingDataInfo on conference_OriginatingData {
-        id
-        conferenceId
-        sourceId
-        data
     }
 `;
 export const RoomWithParticipantInfoFragmentDoc = gql`
@@ -49781,10 +48205,6 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
         participants {
             ...RoomParticipantWithRegistrantInfo
         }
-        originatingDataId
-        originatingData {
-            ...OriginatingDataInfo
-        }
         chatId
         chat {
             id
@@ -49795,7 +48215,6 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
         }
     }
     ${RoomParticipantWithRegistrantInfoFragmentDoc}
-    ${OriginatingDataInfoFragmentDoc}
 `;
 export const RoomPersonInfoFragmentDoc = gql`
     fragment RoomPersonInfo on room_RoomMembership {
@@ -49909,32 +48328,6 @@ export const ContinuationsEditor_ContinuationFragmentDoc = gql`
         description
     }
 `;
-export const ShufflePeriodInfoFragmentDoc = gql`
-    fragment ShufflePeriodInfo on room_ShufflePeriod {
-        id
-        name
-        conferenceId
-        endAt
-    }
-`;
-export const RoomInfoFragmentDoc = gql`
-    fragment RoomInfo on room_Room {
-        capacity
-        conferenceId
-        currentModeName
-        id
-        name
-        priority
-        originatingDataId
-        itemId
-        managementModeName
-        isProgramRoom
-        originatingData {
-            ...OriginatingDataInfo
-        }
-    }
-    ${OriginatingDataInfoFragmentDoc}
-`;
 export const EventProgramPersonInfoFragmentDoc = gql`
     fragment EventProgramPersonInfo on schedule_EventProgramPerson {
         id
@@ -49954,7 +48347,6 @@ export const EventInfoFragmentDoc = gql`
         id
         intendedRoomModeName
         name
-        originatingDataId
         roomId
         startTime
         endTime
@@ -49964,6 +48356,123 @@ export const EventInfoFragmentDoc = gql`
         enableRecording
     }
     ${EventProgramPersonInfoFragmentDoc}
+`;
+export const RoomInfoFragmentDoc = gql`
+    fragment RoomInfo on room_Room {
+        capacity
+        conferenceId
+        currentModeName
+        id
+        name
+        priority
+        itemId
+        managementModeName
+        isProgramRoom
+    }
+`;
+export const ProgramPersonInfoFragmentDoc = gql`
+    fragment ProgramPersonInfo on collection_ProgramPerson {
+        id
+        conferenceId
+        name
+        affiliation
+        email
+        registrantId
+    }
+`;
+export const ElementInfoFragmentDoc = gql`
+    fragment ElementInfo on content_Element {
+        conferenceId
+        itemId
+        typeName
+        data
+        id
+        isHidden
+        layoutData
+        name
+        uploadsRemaining
+    }
+`;
+export const ItemTagInfoFragmentDoc = gql`
+    fragment ItemTagInfo on content_ItemTag {
+        id
+        tagId
+        itemId
+    }
+`;
+export const ItemExhibitionInfoFragmentDoc = gql`
+    fragment ItemExhibitionInfo on content_ItemExhibition {
+        id
+        itemId
+        exhibitionId
+        priority
+        layout
+    }
+`;
+export const ItemPersonInfoFragmentDoc = gql`
+    fragment ItemPersonInfo on content_ItemProgramPerson {
+        id
+        itemId
+        personId
+        priority
+        roleName
+    }
+`;
+export const ItemFullNestedInfoFragmentDoc = gql`
+    fragment ItemFullNestedInfo on content_Item {
+        id
+        conferenceId
+        typeName
+        title
+        shortTitle
+        elements {
+            ...ElementInfo
+        }
+        itemTags {
+            ...ItemTagInfo
+        }
+        itemExhibitions {
+            ...ItemExhibitionInfo
+        }
+        itemPeople {
+            ...ItemPersonInfo
+        }
+        room {
+            id
+            created_at
+        }
+    }
+    ${ElementInfoFragmentDoc}
+    ${ItemTagInfoFragmentDoc}
+    ${ItemExhibitionInfoFragmentDoc}
+    ${ItemPersonInfoFragmentDoc}
+`;
+export const TagInfoFragmentDoc = gql`
+    fragment TagInfo on collection_Tag {
+        id
+        conferenceId
+        colour
+        name
+        priority
+    }
+`;
+export const ExhibitionInfoFragmentDoc = gql`
+    fragment ExhibitionInfo on collection_Exhibition {
+        id
+        conferenceId
+        colour
+        name
+        priority
+        isHidden
+    }
+`;
+export const ShufflePeriodInfoFragmentDoc = gql`
+    fragment ShufflePeriodInfo on room_ShufflePeriod {
+        id
+        name
+        conferenceId
+        endAt
+    }
 `;
 export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
@@ -52613,383 +51122,6 @@ export function useManageContent_SelectAllExhibitionsQuery(
         ...options,
     });
 }
-export const SelectAllContentDocument = gql`
-    query SelectAllContent($conferenceId: uuid!) {
-        content_Item(where: { conferenceId: { _eq: $conferenceId }, typeName: { _neq: SPONSOR } }) {
-            ...ItemFullNestedInfo
-        }
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ProgramPersonInfo
-        }
-        conference_OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...OriginatingDataInfo
-        }
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...TagInfo
-        }
-        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ExhibitionInfo
-        }
-    }
-    ${ItemFullNestedInfoFragmentDoc}
-    ${ProgramPersonInfoFragmentDoc}
-    ${OriginatingDataInfoFragmentDoc}
-    ${TagInfoFragmentDoc}
-    ${ExhibitionInfoFragmentDoc}
-`;
-
-export function useSelectAllContentQuery(options: Omit<Urql.UseQueryArgs<SelectAllContentQueryVariables>, "query">) {
-    return useQuery<SelectAllContentQuery>({ query: SelectAllContentDocument, ...options });
-}
-export const InsertDeleteItemsDocument = gql`
-    mutation InsertDeleteItems($newGroups: [content_Item_insert_input!]!, $deleteGroupIds: [uuid!]!) {
-        insert_content_Item(objects: $newGroups) {
-            returning {
-                ...ItemFullNestedInfo
-            }
-        }
-        delete_content_Item(where: { id: { _in: $deleteGroupIds } }) {
-            returning {
-                id
-            }
-        }
-    }
-    ${ItemFullNestedInfoFragmentDoc}
-`;
-
-export function useInsertDeleteItemsMutation() {
-    return Urql.useMutation<InsertDeleteItemsMutation, InsertDeleteItemsMutationVariables>(InsertDeleteItemsDocument);
-}
-export const InsertElementsDocument = gql`
-    mutation InsertElements($newElements: [content_Element_insert_input!]!) {
-        insert_content_Element(objects: $newElements) {
-            returning {
-                ...ElementInfo
-            }
-        }
-    }
-    ${ElementInfoFragmentDoc}
-`;
-
-export function useInsertElementsMutation() {
-    return Urql.useMutation<InsertElementsMutation, InsertElementsMutationVariables>(InsertElementsDocument);
-}
-export const InsertOriginatingDatasDocument = gql`
-    mutation InsertOriginatingDatas($newDatas: [conference_OriginatingData_insert_input!]!) {
-        insert_conference_OriginatingData(objects: $newDatas) {
-            returning {
-                ...OriginatingDataInfo
-            }
-        }
-    }
-    ${OriginatingDataInfoFragmentDoc}
-`;
-
-export function useInsertOriginatingDatasMutation() {
-    return Urql.useMutation<InsertOriginatingDatasMutation, InsertOriginatingDatasMutationVariables>(
-        InsertOriginatingDatasDocument
-    );
-}
-export const DeleteOriginatingDatasDocument = gql`
-    mutation DeleteOriginatingDatas($deleteDataIds: [uuid!]!) {
-        delete_conference_OriginatingData(where: { id: { _in: $deleteDataIds } }) {
-            returning {
-                id
-            }
-        }
-    }
-`;
-
-export function useDeleteOriginatingDatasMutation() {
-    return Urql.useMutation<DeleteOriginatingDatasMutation, DeleteOriginatingDatasMutationVariables>(
-        DeleteOriginatingDatasDocument
-    );
-}
-export const InsertTagsDocument = gql`
-    mutation InsertTags($newTags: [collection_Tag_insert_input!]!) {
-        insert_collection_Tag(objects: $newTags) {
-            returning {
-                ...TagInfo
-            }
-        }
-    }
-    ${TagInfoFragmentDoc}
-`;
-
-export function useInsertTagsMutation() {
-    return Urql.useMutation<InsertTagsMutation, InsertTagsMutationVariables>(InsertTagsDocument);
-}
-export const InsertExhibitionsDocument = gql`
-    mutation InsertExhibitions($newExhibitions: [collection_Exhibition_insert_input!]!) {
-        insert_collection_Exhibition(objects: $newExhibitions) {
-            returning {
-                ...ExhibitionInfo
-            }
-        }
-    }
-    ${ExhibitionInfoFragmentDoc}
-`;
-
-export function useInsertExhibitionsMutation() {
-    return Urql.useMutation<InsertExhibitionsMutation, InsertExhibitionsMutationVariables>(InsertExhibitionsDocument);
-}
-export const DeleteTagsDocument = gql`
-    mutation DeleteTags($deleteTagIds: [uuid!]!) {
-        delete_collection_Tag(where: { id: { _in: $deleteTagIds } }) {
-            returning {
-                id
-            }
-        }
-    }
-`;
-
-export function useDeleteTagsMutation() {
-    return Urql.useMutation<DeleteTagsMutation, DeleteTagsMutationVariables>(DeleteTagsDocument);
-}
-export const DeleteExhibitionsDocument = gql`
-    mutation DeleteExhibitions($deleteExhibitionIds: [uuid!]!) {
-        delete_collection_Exhibition(where: { id: { _in: $deleteExhibitionIds } }) {
-            returning {
-                id
-            }
-        }
-    }
-`;
-
-export function useDeleteExhibitionsMutation() {
-    return Urql.useMutation<DeleteExhibitionsMutation, DeleteExhibitionsMutationVariables>(DeleteExhibitionsDocument);
-}
-export const InsertProgramPeopleDocument = gql`
-    mutation InsertProgramPeople($newPeople: [collection_ProgramPerson_insert_input!]!) {
-        insert_collection_ProgramPerson(objects: $newPeople) {
-            returning {
-                ...ProgramPersonInfo
-            }
-        }
-    }
-    ${ProgramPersonInfoFragmentDoc}
-`;
-
-export function useInsertProgramPeopleMutation() {
-    return Urql.useMutation<InsertProgramPeopleMutation, InsertProgramPeopleMutationVariables>(
-        InsertProgramPeopleDocument
-    );
-}
-export const DeleteProgramPeopleDocument = gql`
-    mutation DeleteProgramPeople($deletePersonIds: [uuid!]!) {
-        delete_collection_ProgramPerson(where: { id: { _in: $deletePersonIds } }) {
-            returning {
-                id
-            }
-        }
-    }
-`;
-
-export function useDeleteProgramPeopleMutation() {
-    return Urql.useMutation<DeleteProgramPeopleMutation, DeleteProgramPeopleMutationVariables>(
-        DeleteProgramPeopleDocument
-    );
-}
-export const UpdateItemDocument = gql`
-    mutation UpdateItem(
-        $newItems: [content_Element_insert_input!]!
-        $newGroupTags: [content_ItemTag_insert_input!]!
-        $newGroupExhibitions: [content_ItemExhibition_insert_input!]!
-        $groupId: uuid!
-        $typeName: content_ItemType_enum!
-        $originatingDataId: uuid = null
-        $shortTitle: String = null
-        $title: String!
-        $deleteItemIds: [uuid!]!
-        $deleteGroupTagIds: [uuid!]!
-        $deleteGroupExhibitionIds: [uuid!]!
-        $newGroupPeople: [content_ItemProgramPerson_insert_input!]!
-        $deleteGroupPeopleIds: [uuid!]!
-    ) {
-        insert_content_Element(objects: $newItems) {
-            returning {
-                ...ElementInfo
-            }
-        }
-        insert_content_ItemTag(objects: $newGroupTags) {
-            returning {
-                ...ItemTagInfo
-            }
-        }
-        insert_content_ItemExhibition(objects: $newGroupExhibitions) {
-            returning {
-                ...ItemExhibitionInfo
-            }
-        }
-        insert_content_ItemProgramPerson(objects: $newGroupPeople) {
-            returning {
-                ...ItemPersonInfo
-            }
-        }
-        update_content_Item_by_pk(
-            pk_columns: { id: $groupId }
-            _set: { typeName: $typeName, originatingDataId: $originatingDataId, shortTitle: $shortTitle, title: $title }
-        ) {
-            ...ItemFullNestedInfo
-        }
-        delete_content_Element(where: { id: { _in: $deleteItemIds } }) {
-            returning {
-                id
-            }
-        }
-        delete_content_ItemTag(where: { itemId: { _eq: $groupId }, tagId: { _in: $deleteGroupTagIds } }) {
-            returning {
-                id
-            }
-        }
-        delete_content_ItemExhibition(where: { id: { _in: $deleteGroupExhibitionIds } }) {
-            returning {
-                id
-            }
-        }
-        delete_content_ItemProgramPerson(where: { id: { _in: $deleteGroupPeopleIds } }) {
-            returning {
-                id
-            }
-        }
-    }
-    ${ElementInfoFragmentDoc}
-    ${ItemTagInfoFragmentDoc}
-    ${ItemExhibitionInfoFragmentDoc}
-    ${ItemPersonInfoFragmentDoc}
-    ${ItemFullNestedInfoFragmentDoc}
-`;
-
-export function useUpdateItemMutation() {
-    return Urql.useMutation<UpdateItemMutation, UpdateItemMutationVariables>(UpdateItemDocument);
-}
-export const UpdateElementDocument = gql`
-    mutation UpdateElement(
-        $id: uuid!
-        $typeName: content_ElementType_enum!
-        $layoutData: jsonb = null
-        $name: String!
-        $data: jsonb!
-        $isHidden: Boolean!
-        $originatingDataId: uuid = null
-        $uploadsRemaining: Int = null
-    ) {
-        update_content_Element_by_pk(
-            pk_columns: { id: $id }
-            _set: {
-                typeName: $typeName
-                layoutData: $layoutData
-                name: $name
-                data: $data
-                isHidden: $isHidden
-                originatingDataId: $originatingDataId
-                uploadsRemaining: $uploadsRemaining
-            }
-        ) {
-            ...ElementInfo
-        }
-    }
-    ${ElementInfoFragmentDoc}
-`;
-
-export function useUpdateElementMutation() {
-    return Urql.useMutation<UpdateElementMutation, UpdateElementMutationVariables>(UpdateElementDocument);
-}
-export const UpdateGroupPersonDocument = gql`
-    mutation UpdateGroupPerson($id: uuid!, $roleName: String!, $priority: Int = null) {
-        update_content_ItemProgramPerson_by_pk(
-            pk_columns: { id: $id }
-            _set: { roleName: $roleName, priority: $priority }
-        ) {
-            ...ItemPersonInfo
-        }
-    }
-    ${ItemPersonInfoFragmentDoc}
-`;
-
-export function useUpdateGroupPersonMutation() {
-    return Urql.useMutation<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>(UpdateGroupPersonDocument);
-}
-export const UpdateGroupExhibitionDocument = gql`
-    mutation UpdateGroupExhibition($id: uuid!, $priority: Int = null, $layout: jsonb = null) {
-        update_content_ItemExhibition_by_pk(pk_columns: { id: $id }, _set: { layout: $layout, priority: $priority }) {
-            ...ItemExhibitionInfo
-        }
-    }
-    ${ItemExhibitionInfoFragmentDoc}
-`;
-
-export function useUpdateGroupExhibitionMutation() {
-    return Urql.useMutation<UpdateGroupExhibitionMutation, UpdateGroupExhibitionMutationVariables>(
-        UpdateGroupExhibitionDocument
-    );
-}
-export const UpdatePersonDocument = gql`
-    mutation UpdatePerson(
-        $id: uuid!
-        $name: String!
-        $affiliation: String = null
-        $email: String = null
-        $originatingDataId: uuid = null
-        $registrantId: uuid = null
-    ) {
-        update_collection_ProgramPerson(
-            where: { id: { _eq: $id } }
-            _set: {
-                name: $name
-                affiliation: $affiliation
-                email: $email
-                originatingDataId: $originatingDataId
-                registrantId: $registrantId
-            }
-        ) {
-            returning {
-                ...ProgramPersonInfo
-            }
-        }
-    }
-    ${ProgramPersonInfoFragmentDoc}
-`;
-
-export function useUpdatePersonMutation() {
-    return Urql.useMutation<UpdatePersonMutation, UpdatePersonMutationVariables>(UpdatePersonDocument);
-}
-export const UpdateTagDocument = gql`
-    mutation UpdateTag(
-        $id: uuid!
-        $name: String!
-        $colour: String!
-        $originatingDataId: uuid = null
-        $priority: Int! = 10
-    ) {
-        update_collection_Tag_by_pk(
-            pk_columns: { id: $id }
-            _set: { name: $name, colour: $colour, originatingDataId: $originatingDataId, priority: $priority }
-        ) {
-            ...TagInfo
-        }
-    }
-    ${TagInfoFragmentDoc}
-`;
-
-export function useUpdateTagMutation() {
-    return Urql.useMutation<UpdateTagMutation, UpdateTagMutationVariables>(UpdateTagDocument);
-}
-export const UpdateExhibitionDocument = gql`
-    mutation UpdateExhibition($id: uuid!, $name: String!, $colour: String!, $priority: Int!, $isHidden: Boolean!) {
-        update_collection_Exhibition_by_pk(
-            pk_columns: { id: $id }
-            _set: { name: $name, colour: $colour, priority: $priority, isHidden: $isHidden }
-        ) {
-            ...ExhibitionInfo
-        }
-    }
-    ${ExhibitionInfoFragmentDoc}
-`;
-
-export function useUpdateExhibitionMutation() {
-    return Urql.useMutation<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>(UpdateExhibitionDocument);
-}
 export const BulkEdit_AddElementsDocument = gql`
     mutation BulkEdit_AddElements($objects: [content_Element_insert_input!]!) {
         insert_content_Element(objects: $objects) {
@@ -54183,6 +52315,19 @@ export const InsertRoomPeopleDocument = gql`
 export function useInsertRoomPeopleMutation() {
     return Urql.useMutation<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>(InsertRoomPeopleDocument);
 }
+export const DeleteRoomsDocument = gql`
+    mutation DeleteRooms($deleteRoomIds: [uuid!]!) {
+        delete_room_Room(where: { id: { _in: $deleteRoomIds } }) {
+            returning {
+                id
+            }
+        }
+    }
+`;
+
+export function useDeleteRoomsMutation() {
+    return Urql.useMutation<DeleteRoomsMutation, DeleteRoomsMutationVariables>(DeleteRoomsDocument);
+}
 export const DeleteRoomPersonDocument = gql`
     mutation DeleteRoomPerson($id: uuid!) {
         delete_room_RoomMembership(where: { id: { _eq: $id } }) {
@@ -54919,6 +53064,43 @@ export function useUpdateEventProgramPersonMutation() {
         UpdateEventProgramPersonDocument
     );
 }
+export const SelectWholeScheduleDocument = gql`
+    query SelectWholeSchedule($conferenceId: uuid!) {
+        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
+            ...RoomInfo
+        }
+        schedule_Event(
+            where: { conferenceId: { _eq: $conferenceId } }
+            order_by: [{ startTime: asc }, { endTime: asc }]
+        ) {
+            ...EventInfo
+        }
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...TagInfo
+        }
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ExhibitionInfo
+        }
+        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ItemFullNestedInfo
+        }
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ProgramPersonInfo
+        }
+    }
+    ${RoomInfoFragmentDoc}
+    ${EventInfoFragmentDoc}
+    ${TagInfoFragmentDoc}
+    ${ExhibitionInfoFragmentDoc}
+    ${ItemFullNestedInfoFragmentDoc}
+    ${ProgramPersonInfoFragmentDoc}
+`;
+
+export function useSelectWholeScheduleQuery(
+    options: Omit<Urql.UseQueryArgs<SelectWholeScheduleQueryVariables>, "query">
+) {
+    return useQuery<SelectWholeScheduleQuery>({ query: SelectWholeScheduleDocument, ...options });
+}
 export const ManageSchedule_ShufflePeriodsDocument = gql`
     query ManageSchedule_ShufflePeriods($conferenceId: uuid!, $now: timestamptz!) {
         room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, endAt: { _gt: $now } }) {
@@ -54942,7 +53124,6 @@ export const InsertEventInfoDocument = gql`
         $roomId: uuid!
         $conferenceId: uuid!
         $intendedRoomModeName: room_Mode_enum!
-        $originatingDataId: uuid = null
         $name: String!
         $startTime: timestamptz!
         $durationSeconds: Int!
@@ -54958,7 +53139,6 @@ export const InsertEventInfoDocument = gql`
                 roomId: $roomId
                 conferenceId: $conferenceId
                 intendedRoomModeName: $intendedRoomModeName
-                originatingDataId: $originatingDataId
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
@@ -54995,7 +53175,6 @@ export const UpdateEventInfoDocument = gql`
         $eventId: uuid!
         $roomId: uuid!
         $intendedRoomModeName: room_Mode_enum!
-        $originatingDataId: uuid = null
         $name: String!
         $startTime: timestamptz!
         $durationSeconds: Int!
@@ -55009,7 +53188,6 @@ export const UpdateEventInfoDocument = gql`
             _set: {
                 roomId: $roomId
                 intendedRoomModeName: $intendedRoomModeName
-                originatingDataId: $originatingDataId
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
@@ -55040,167 +53218,6 @@ export const DeleteEventInfosDocument = gql`
 
 export function useDeleteEventInfosMutation() {
     return Urql.useMutation<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>(DeleteEventInfosDocument);
-}
-export const SelectWholeScheduleDocument = gql`
-    query SelectWholeSchedule($conferenceId: uuid!) {
-        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
-            ...RoomInfo
-        }
-        schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId } }
-            order_by: [{ startTime: asc }, { endTime: asc }]
-        ) {
-            ...EventInfo
-        }
-        conference_OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...OriginatingDataInfo
-        }
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...TagInfo
-        }
-        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ExhibitionInfo
-        }
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ItemFullNestedInfo
-        }
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ProgramPersonInfo
-        }
-    }
-    ${RoomInfoFragmentDoc}
-    ${EventInfoFragmentDoc}
-    ${OriginatingDataInfoFragmentDoc}
-    ${TagInfoFragmentDoc}
-    ${ExhibitionInfoFragmentDoc}
-    ${ItemFullNestedInfoFragmentDoc}
-    ${ProgramPersonInfoFragmentDoc}
-`;
-
-export function useSelectWholeScheduleQuery(
-    options: Omit<Urql.UseQueryArgs<SelectWholeScheduleQueryVariables>, "query">
-) {
-    return useQuery<SelectWholeScheduleQuery>({ query: SelectWholeScheduleDocument, ...options });
-}
-export const InsertRoomsDocument = gql`
-    mutation InsertRooms($newRooms: [room_Room_insert_input!]!) {
-        insert_room_Room(objects: $newRooms) {
-            returning {
-                ...RoomInfo
-            }
-        }
-    }
-    ${RoomInfoFragmentDoc}
-`;
-
-export function useInsertRoomsMutation() {
-    return Urql.useMutation<InsertRoomsMutation, InsertRoomsMutationVariables>(InsertRoomsDocument);
-}
-export const DeleteRoomsDocument = gql`
-    mutation DeleteRooms($deleteRoomIds: [uuid!]!) {
-        delete_room_Room(where: { id: { _in: $deleteRoomIds } }) {
-            returning {
-                id
-            }
-        }
-    }
-`;
-
-export function useDeleteRoomsMutation() {
-    return Urql.useMutation<DeleteRoomsMutation, DeleteRoomsMutationVariables>(DeleteRoomsDocument);
-}
-export const UpdateRoomDocument = gql`
-    mutation UpdateRoom(
-        $id: uuid!
-        $name: String!
-        $capacity: Int = null
-        $originatingDataId: uuid = null
-        $priority: Int!
-    ) {
-        update_room_Room_by_pk(
-            pk_columns: { id: $id }
-            _set: { name: $name, capacity: $capacity, originatingDataId: $originatingDataId, priority: $priority }
-        ) {
-            ...RoomInfo
-        }
-    }
-    ${RoomInfoFragmentDoc}
-`;
-
-export function useUpdateRoomMutation() {
-    return Urql.useMutation<UpdateRoomMutation, UpdateRoomMutationVariables>(UpdateRoomDocument);
-}
-export const DeleteEventsDocument = gql`
-    mutation DeleteEvents($deleteEventIds: [uuid!]!) {
-        delete_schedule_Event(where: { id: { _in: $deleteEventIds } }) {
-            returning {
-                id
-            }
-        }
-    }
-`;
-
-export function useDeleteEventsMutation() {
-    return Urql.useMutation<DeleteEventsMutation, DeleteEventsMutationVariables>(DeleteEventsDocument);
-}
-export const InsertEventDocument = gql`
-    mutation InsertEvent($newEvent: schedule_Event_insert_input!, $newEventId: uuid!, $insertContinuation: Boolean!) {
-        insert_schedule_Event_one(object: $newEvent) {
-            ...EventInfo
-        }
-        insert_schedule_Continuation_one(
-            object: {
-                colour: "#4471de"
-                defaultFor: "Presenters"
-                description: "Join the discussion room"
-                fromEvent: $newEventId
-                isActiveChoice: false
-                priority: 0
-                to: { type: "AutoDiscussionRoom", id: null }
-            }
-        ) @include(if: $insertContinuation) {
-            id
-        }
-    }
-    ${EventInfoFragmentDoc}
-`;
-
-export function useInsertEventMutation() {
-    return Urql.useMutation<InsertEventMutation, InsertEventMutationVariables>(InsertEventDocument);
-}
-export const UpdateEventDocument = gql`
-    mutation UpdateEvent(
-        $eventId: uuid!
-        $roomId: uuid!
-        $intendedRoomModeName: room_Mode_enum!
-        $originatingDataId: uuid = null
-        $name: String!
-        $startTime: timestamptz!
-        $durationSeconds: Int!
-        $itemId: uuid = null
-        $exhibitionId: uuid = null
-    ) {
-        update_schedule_Event_by_pk(
-            pk_columns: { id: $eventId }
-            _set: {
-                roomId: $roomId
-                intendedRoomModeName: $intendedRoomModeName
-                originatingDataId: $originatingDataId
-                name: $name
-                startTime: $startTime
-                durationSeconds: $durationSeconds
-                itemId: $itemId
-                exhibitionId: $exhibitionId
-            }
-        ) {
-            ...EventInfo
-        }
-    }
-    ${EventInfoFragmentDoc}
-`;
-
-export function useUpdateEventMutation() {
-    return Urql.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument);
 }
 export const UpdateShufflePeriodDocument = gql`
     mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {
@@ -56762,20 +54779,6 @@ export type GraphCacheKeysConfig = {
     conference_DemoCode_mutation_response?: (
         data: WithTypename<Conference_DemoCode_Mutation_Response>
     ) => null | string;
-    conference_OriginatingData?: (data: WithTypename<Conference_OriginatingData>) => null | string;
-    conference_OriginatingData_aggregate?: (data: WithTypename<Conference_OriginatingData_Aggregate>) => null | string;
-    conference_OriginatingData_aggregate_fields?: (
-        data: WithTypename<Conference_OriginatingData_Aggregate_Fields>
-    ) => null | string;
-    conference_OriginatingData_max_fields?: (
-        data: WithTypename<Conference_OriginatingData_Max_Fields>
-    ) => null | string;
-    conference_OriginatingData_min_fields?: (
-        data: WithTypename<Conference_OriginatingData_Min_Fields>
-    ) => null | string;
-    conference_OriginatingData_mutation_response?: (
-        data: WithTypename<Conference_OriginatingData_Mutation_Response>
-    ) => null | string;
     conference_Subconference?: (data: WithTypename<Conference_Subconference>) => null | string;
     conference_Subconference_aggregate?: (data: WithTypename<Conference_Subconference_Aggregate>) => null | string;
     conference_Subconference_aggregate_fields?: (
@@ -58214,21 +56217,6 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootConference_DemoCode_By_PkArgs,
             WithTypename<Conference_DemoCode> | string
-        >;
-        conference_OriginatingData?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootConference_OriginatingDataArgs,
-            Array<WithTypename<Conference_OriginatingData> | string>
-        >;
-        conference_OriginatingData_aggregate?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootConference_OriginatingData_AggregateArgs,
-            WithTypename<Conference_OriginatingData_Aggregate> | string
-        >;
-        conference_OriginatingData_by_pk?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootConference_OriginatingData_By_PkArgs,
-            WithTypename<Conference_OriginatingData> | string
         >;
         conference_Subconference?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -63764,16 +61752,6 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
-        originatingData?: GraphCacheResolver<
-            WithTypename<Collection_ProgramPerson>,
-            Record<string, never>,
-            WithTypename<Conference_OriginatingData> | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Collection_ProgramPerson>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         registrant?: GraphCacheResolver<
             WithTypename<Collection_ProgramPerson>,
             Record<string, never>,
@@ -63907,11 +61885,6 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Collection_ProgramPerson_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         registrantId?: GraphCacheResolver<
             WithTypename<Collection_ProgramPerson_Max_Fields>,
             Record<string, never>,
@@ -63958,11 +61931,6 @@ export type GraphCacheResolvers = {
             WithTypename<Collection_ProgramPerson_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Collection_ProgramPerson_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
         >;
         registrantId?: GraphCacheResolver<
             WithTypename<Collection_ProgramPerson_Min_Fields>,
@@ -64070,16 +62038,6 @@ export type GraphCacheResolvers = {
             WithTypename<Content_ItemTag_Aggregate> | string
         >;
         name?: GraphCacheResolver<WithTypename<Collection_Tag>, Record<string, never>, Scalars["String"] | string>;
-        originatingData?: GraphCacheResolver<
-            WithTypename<Collection_Tag>,
-            Record<string, never>,
-            WithTypename<Conference_OriginatingData> | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Collection_Tag>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         priority?: GraphCacheResolver<WithTypename<Collection_Tag>, Record<string, never>, Scalars["Int"] | string>;
         subconferenceId?: GraphCacheResolver<
             WithTypename<Collection_Tag>,
@@ -64199,11 +62157,6 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Collection_Tag_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         priority?: GraphCacheResolver<
             WithTypename<Collection_Tag_Max_Fields>,
             Record<string, never>,
@@ -64245,11 +62198,6 @@ export type GraphCacheResolvers = {
             WithTypename<Collection_Tag_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Collection_Tag_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
         >;
         priority?: GraphCacheResolver<
             WithTypename<Collection_Tag_Min_Fields>,
@@ -64429,16 +62377,6 @@ export type GraphCacheResolvers = {
             WithTypename<Conference_Conference>,
             Record<string, never>,
             Scalars["String"] | string
-        >;
-        originatingDatas?: GraphCacheResolver<
-            WithTypename<Conference_Conference>,
-            Conference_ConferenceOriginatingDatasArgs,
-            Array<WithTypename<Conference_OriginatingData> | string>
-        >;
-        originatingDatas_aggregate?: GraphCacheResolver<
-            WithTypename<Conference_Conference>,
-            Conference_ConferenceOriginatingDatas_AggregateArgs,
-            WithTypename<Conference_OriginatingData_Aggregate> | string
         >;
         programPeople?: GraphCacheResolver<
             WithTypename<Conference_Conference>,
@@ -64979,213 +62917,6 @@ export type GraphCacheResolvers = {
             Array<WithTypename<Conference_DemoCode> | string>
         >;
     };
-    conference_OriginatingData?: {
-        conference?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Record<string, never>,
-            WithTypename<Conference_Conference> | string
-        >;
-        conferenceId?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        createdAt?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        data?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataDataArgs,
-            Scalars["jsonb"] | string
-        >;
-        elements?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataElementsArgs,
-            Array<WithTypename<Content_Element> | string>
-        >;
-        elements_aggregate?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataElements_AggregateArgs,
-            WithTypename<Content_Element_Aggregate> | string
-        >;
-        events?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataEventsArgs,
-            Array<WithTypename<Schedule_Event> | string>
-        >;
-        events_aggregate?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataEvents_AggregateArgs,
-            WithTypename<Schedule_Event_Aggregate> | string
-        >;
-        id?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        items?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataItemsArgs,
-            Array<WithTypename<Content_Item> | string>
-        >;
-        items_aggregate?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataItems_AggregateArgs,
-            WithTypename<Content_Item_Aggregate> | string
-        >;
-        programPeople?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataProgramPeopleArgs,
-            Array<WithTypename<Collection_ProgramPerson> | string>
-        >;
-        programPeople_aggregate?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataProgramPeople_AggregateArgs,
-            WithTypename<Collection_ProgramPerson_Aggregate> | string
-        >;
-        rooms?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataRoomsArgs,
-            Array<WithTypename<Room_Room> | string>
-        >;
-        rooms_aggregate?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataRooms_AggregateArgs,
-            WithTypename<Room_Room_Aggregate> | string
-        >;
-        sourceId?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-        subconferenceId?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        tags?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataTagsArgs,
-            Array<WithTypename<Collection_Tag> | string>
-        >;
-        tags_aggregate?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Conference_OriginatingDataTags_AggregateArgs,
-            WithTypename<Collection_Tag_Aggregate> | string
-        >;
-        updatedAt?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-    };
-    conference_OriginatingData_aggregate?: {
-        aggregate?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Aggregate>,
-            Record<string, never>,
-            WithTypename<Conference_OriginatingData_Aggregate_Fields> | string
-        >;
-        nodes?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Aggregate>,
-            Record<string, never>,
-            Array<WithTypename<Conference_OriginatingData> | string>
-        >;
-    };
-    conference_OriginatingData_aggregate_fields?: {
-        count?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Aggregate_Fields>,
-            Conference_OriginatingData_Aggregate_FieldsCountArgs,
-            Scalars["Int"] | string
-        >;
-        max?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Conference_OriginatingData_Max_Fields> | string
-        >;
-        min?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Conference_OriginatingData_Min_Fields> | string
-        >;
-    };
-    conference_OriginatingData_max_fields?: {
-        conferenceId?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        createdAt?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Max_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        id?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        sourceId?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Max_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-        subconferenceId?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        updatedAt?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Max_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-    };
-    conference_OriginatingData_min_fields?: {
-        conferenceId?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        createdAt?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Min_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        id?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        sourceId?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Min_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-        subconferenceId?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        updatedAt?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Min_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-    };
-    conference_OriginatingData_mutation_response?: {
-        affected_rows?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Mutation_Response>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
-        returning?: GraphCacheResolver<
-            WithTypename<Conference_OriginatingData_Mutation_Response>,
-            Record<string, never>,
-            Array<WithTypename<Conference_OriginatingData> | string>
-        >;
-    };
     conference_Subconference?: {
         conference?: GraphCacheResolver<
             WithTypename<Conference_Subconference>,
@@ -65485,16 +63216,6 @@ export type GraphCacheResolvers = {
             Scalars["jsonb"] | string
         >;
         name?: GraphCacheResolver<WithTypename<Content_Element>, Record<string, never>, Scalars["String"] | string>;
-        originatingData?: GraphCacheResolver<
-            WithTypename<Content_Element>,
-            Record<string, never>,
-            WithTypename<Conference_OriginatingData> | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Content_Element>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         source?: GraphCacheResolver<
             WithTypename<Content_Element>,
             Content_ElementSourceArgs,
@@ -65731,11 +63452,6 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Content_Element_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         subconferenceId?: GraphCacheResolver<
             WithTypename<Content_Element_Max_Fields>,
             Record<string, never>,
@@ -65777,11 +63493,6 @@ export type GraphCacheResolvers = {
             WithTypename<Content_Element_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Content_Element_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
         >;
         subconferenceId?: GraphCacheResolver<
             WithTypename<Content_Element_Min_Fields>,
@@ -65939,16 +63650,6 @@ export type GraphCacheResolvers = {
             WithTypename<Content_Item>,
             Content_ItemItemTags_AggregateArgs,
             WithTypename<Content_ItemTag_Aggregate> | string
-        >;
-        originatingData?: GraphCacheResolver<
-            WithTypename<Content_Item>,
-            Record<string, never>,
-            WithTypename<Conference_OriginatingData> | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Content_Item>,
-            Record<string, never>,
-            Scalars["uuid"] | string
         >;
         room?: GraphCacheResolver<WithTypename<Content_Item>, Record<string, never>, WithTypename<Room_Room> | string>;
         shortTitle?: GraphCacheResolver<WithTypename<Content_Item>, Record<string, never>, Scalars["String"] | string>;
@@ -66660,11 +64361,6 @@ export type GraphCacheResolvers = {
             Scalars["timestamptz"] | string
         >;
         id?: GraphCacheResolver<WithTypename<Content_Item_Max_Fields>, Record<string, never>, Scalars["uuid"] | string>;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Content_Item_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         shortTitle?: GraphCacheResolver<
             WithTypename<Content_Item_Max_Fields>,
             Record<string, never>,
@@ -66703,11 +64399,6 @@ export type GraphCacheResolvers = {
             Scalars["timestamptz"] | string
         >;
         id?: GraphCacheResolver<WithTypename<Content_Item_Min_Fields>, Record<string, never>, Scalars["uuid"] | string>;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Content_Item_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         shortTitle?: GraphCacheResolver<
             WithTypename<Content_Item_Min_Fields>,
             Record<string, never>,
@@ -71958,16 +69649,6 @@ export type GraphCacheResolvers = {
             Room_ManagementMode_Enum | string
         >;
         name?: GraphCacheResolver<WithTypename<Room_Room>, Record<string, never>, Scalars["String"] | string>;
-        originatingData?: GraphCacheResolver<
-            WithTypename<Room_Room>,
-            Record<string, never>,
-            WithTypename<Conference_OriginatingData> | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Room_Room>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         participants?: GraphCacheResolver<
             WithTypename<Room_Room>,
             Room_RoomParticipantsArgs,
@@ -72445,11 +70126,6 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Room_Room_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         priority?: GraphCacheResolver<
             WithTypename<Room_Room_Max_Fields>,
             Record<string, never>,
@@ -72507,11 +70183,6 @@ export type GraphCacheResolvers = {
             WithTypename<Room_Room_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Room_Room_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
         >;
         priority?: GraphCacheResolver<
             WithTypename<Room_Room_Min_Fields>,
@@ -74158,16 +71829,6 @@ export type GraphCacheResolvers = {
         >;
         itemId?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Scalars["uuid"] | string>;
         name?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Scalars["String"] | string>;
-        originatingData?: GraphCacheResolver<
-            WithTypename<Schedule_Event>,
-            Record<string, never>,
-            WithTypename<Conference_OriginatingData> | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Schedule_Event>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         room?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
             Record<string, never>,
@@ -74567,11 +72228,6 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
         roomId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Max_Fields>,
             Record<string, never>,
@@ -74648,11 +72304,6 @@ export type GraphCacheResolvers = {
             WithTypename<Schedule_Event_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
-        >;
-        originatingDataId?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
         >;
         roomId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Min_Fields>,
@@ -79182,14 +76833,6 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootDelete_Conference_DemoCode_By_PkArgs,
         Maybe<WithTypename<Conference_DemoCode>>
     >;
-    delete_conference_OriginatingData?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootDelete_Conference_OriginatingDataArgs,
-        Maybe<WithTypename<Conference_OriginatingData_Mutation_Response>>
-    >;
-    delete_conference_OriginatingData_by_pk?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootDelete_Conference_OriginatingData_By_PkArgs,
-        Maybe<WithTypename<Conference_OriginatingData>>
-    >;
     delete_conference_Subconference?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Conference_SubconferenceArgs,
         Maybe<WithTypename<Conference_Subconference_Mutation_Response>>
@@ -79978,14 +77621,6 @@ export type GraphCacheOptimisticUpdaters = {
     insert_conference_DemoCode_one?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Conference_DemoCode_OneArgs,
         Maybe<WithTypename<Conference_DemoCode>>
-    >;
-    insert_conference_OriginatingData?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootInsert_Conference_OriginatingDataArgs,
-        Maybe<WithTypename<Conference_OriginatingData_Mutation_Response>>
-    >;
-    insert_conference_OriginatingData_one?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootInsert_Conference_OriginatingData_OneArgs,
-        Maybe<WithTypename<Conference_OriginatingData>>
     >;
     insert_conference_Subconference?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Conference_SubconferenceArgs,
@@ -80820,14 +78455,6 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootUpdate_Conference_DemoCode_By_PkArgs,
         Maybe<WithTypename<Conference_DemoCode>>
     >;
-    update_conference_OriginatingData?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootUpdate_Conference_OriginatingDataArgs,
-        Maybe<WithTypename<Conference_OriginatingData_Mutation_Response>>
-    >;
-    update_conference_OriginatingData_by_pk?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootUpdate_Conference_OriginatingData_By_PkArgs,
-        Maybe<WithTypename<Conference_OriginatingData>>
-    >;
     update_conference_Subconference?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Conference_SubconferenceArgs,
         Maybe<WithTypename<Conference_Subconference_Mutation_Response>>
@@ -81631,14 +79258,6 @@ export type GraphCacheUpdaters = {
         delete_conference_DemoCode_by_pk?: GraphCacheUpdateResolver<
             { delete_conference_DemoCode_by_pk: Maybe<WithTypename<Conference_DemoCode>> },
             Mutation_RootDelete_Conference_DemoCode_By_PkArgs
-        >;
-        delete_conference_OriginatingData?: GraphCacheUpdateResolver<
-            { delete_conference_OriginatingData: Maybe<WithTypename<Conference_OriginatingData_Mutation_Response>> },
-            Mutation_RootDelete_Conference_OriginatingDataArgs
-        >;
-        delete_conference_OriginatingData_by_pk?: GraphCacheUpdateResolver<
-            { delete_conference_OriginatingData_by_pk: Maybe<WithTypename<Conference_OriginatingData>> },
-            Mutation_RootDelete_Conference_OriginatingData_By_PkArgs
         >;
         delete_conference_Subconference?: GraphCacheUpdateResolver<
             { delete_conference_Subconference: Maybe<WithTypename<Conference_Subconference_Mutation_Response>> },
@@ -82515,14 +80134,6 @@ export type GraphCacheUpdaters = {
         insert_conference_DemoCode_one?: GraphCacheUpdateResolver<
             { insert_conference_DemoCode_one: Maybe<WithTypename<Conference_DemoCode>> },
             Mutation_RootInsert_Conference_DemoCode_OneArgs
-        >;
-        insert_conference_OriginatingData?: GraphCacheUpdateResolver<
-            { insert_conference_OriginatingData: Maybe<WithTypename<Conference_OriginatingData_Mutation_Response>> },
-            Mutation_RootInsert_Conference_OriginatingDataArgs
-        >;
-        insert_conference_OriginatingData_one?: GraphCacheUpdateResolver<
-            { insert_conference_OriginatingData_one: Maybe<WithTypename<Conference_OriginatingData>> },
-            Mutation_RootInsert_Conference_OriginatingData_OneArgs
         >;
         insert_conference_Subconference?: GraphCacheUpdateResolver<
             { insert_conference_Subconference: Maybe<WithTypename<Conference_Subconference_Mutation_Response>> },
@@ -83439,14 +81050,6 @@ export type GraphCacheUpdaters = {
         update_conference_DemoCode_by_pk?: GraphCacheUpdateResolver<
             { update_conference_DemoCode_by_pk: Maybe<WithTypename<Conference_DemoCode>> },
             Mutation_RootUpdate_Conference_DemoCode_By_PkArgs
-        >;
-        update_conference_OriginatingData?: GraphCacheUpdateResolver<
-            { update_conference_OriginatingData: Maybe<WithTypename<Conference_OriginatingData_Mutation_Response>> },
-            Mutation_RootUpdate_Conference_OriginatingDataArgs
-        >;
-        update_conference_OriginatingData_by_pk?: GraphCacheUpdateResolver<
-            { update_conference_OriginatingData_by_pk: Maybe<WithTypename<Conference_OriginatingData>> },
-            Mutation_RootUpdate_Conference_OriginatingData_By_PkArgs
         >;
         update_conference_Subconference?: GraphCacheUpdateResolver<
             { update_conference_Subconference: Maybe<WithTypename<Conference_Subconference_Mutation_Response>> },
@@ -84432,18 +82035,6 @@ export type GraphCacheUpdaters = {
         conference_DemoCode_by_pk?: GraphCacheUpdateResolver<
             { conference_DemoCode_by_pk: Maybe<WithTypename<Conference_DemoCode>> },
             Subscription_RootConference_DemoCode_By_PkArgs
-        >;
-        conference_OriginatingData?: GraphCacheUpdateResolver<
-            { conference_OriginatingData: Array<WithTypename<Conference_OriginatingData>> },
-            Subscription_RootConference_OriginatingDataArgs
-        >;
-        conference_OriginatingData_aggregate?: GraphCacheUpdateResolver<
-            { conference_OriginatingData_aggregate: WithTypename<Conference_OriginatingData_Aggregate> },
-            Subscription_RootConference_OriginatingData_AggregateArgs
-        >;
-        conference_OriginatingData_by_pk?: GraphCacheUpdateResolver<
-            { conference_OriginatingData_by_pk: Maybe<WithTypename<Conference_OriginatingData>> },
-            Subscription_RootConference_OriginatingData_By_PkArgs
         >;
         conference_Subconference?: GraphCacheUpdateResolver<
             { conference_Subconference: Array<WithTypename<Conference_Subconference>> },

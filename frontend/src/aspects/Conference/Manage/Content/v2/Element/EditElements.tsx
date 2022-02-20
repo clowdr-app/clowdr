@@ -7,10 +7,8 @@ import {
     AccordionPanel,
     Box,
     chakra,
-    Code,
     ListItem,
     OrderedList,
-    Text,
     useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
@@ -26,7 +24,6 @@ import { EditElement } from "./EditElement";
 export function EditElements({
     itemId,
     elements,
-    originatingData,
     itemType,
     openSendSubmissionRequests,
 }: {
@@ -85,30 +82,6 @@ export function EditElements({
                             </AccordionPanel>
                         </>
                     )}
-                </AccordionItem>
-            ) : undefined}
-            {originatingData ? (
-                <AccordionItem w="100%">
-                    <AccordionButton bgColor={bgColor}>
-                        Originating data
-                        <AccordionIcon ml="auto" />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                        <Text>
-                            The following shows the raw data provided to Midspace&apos;s Content Importer (accumulated
-                            across one or more imports).
-                        </Text>
-                        <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
-                            <Code w="100%" p={2}>
-                                Source Ids: {JSON.stringify(originatingData.sourceId.split("¬"), null, 2)}
-                            </Code>
-                        </Text>
-                        <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
-                            <Code w="100%" p={2}>
-                                {JSON.stringify(originatingData.data, null, 2)}
-                            </Code>
-                        </Text>
-                    </AccordionPanel>
                 </AccordionItem>
             ) : undefined}
             {itemType === Content_ItemType_Enum.Sponsor ? (

@@ -10,11 +10,11 @@ import {
     Select,
     Textarea,
 } from "@chakra-ui/react";
-import type { IntermediaryContentData, IntermediaryScheduleData } from "@midspace/shared-types/import/intermediary";
+import type { IntermediaryRegistrantData } from "@midspace/shared-types/import/registrant";
 import React, { useEffect, useState } from "react";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 
-export default function ConfigPanel<T = IntermediaryContentData | IntermediaryScheduleData>({
+export default function ConfigPanel({
     data,
     onChange,
     JSONataFunction,
@@ -24,8 +24,8 @@ export default function ConfigPanel<T = IntermediaryContentData | IntermediarySc
     presetJSONataUnknownFileTypeQuery,
 }: {
     data: ParsedData<any[]>[];
-    onChange?: (data: Record<string, T>) => void;
-    JSONataFunction: (data: any, query: string) => T | string | undefined;
+    onChange?: (data: Record<string, IntermediaryRegistrantData[]>) => void;
+    JSONataFunction: (data: any, query: string) => IntermediaryRegistrantData[] | string | undefined;
     presetJSONataXMLQuery?: string | ((name: string) => string);
     presetJSONataJSONQuery?: string | ((name: string) => string);
     presetJSONataCSVQuery?: string | ((name: string) => string);
@@ -86,7 +86,7 @@ export default function ConfigPanel<T = IntermediaryContentData | IntermediarySc
     const [errors, setErrors] = useState<Map<string, string>>(new Map());
     useEffect(() => {
         const t = setTimeout(() => {
-            const outputData: Record<string, T> = {};
+            const outputData: Record<string, IntermediaryRegistrantData[]> = {};
             const outputErrors = new Map<string, string>();
             for (const parsedData of data) {
                 if ("data" in parsedData) {

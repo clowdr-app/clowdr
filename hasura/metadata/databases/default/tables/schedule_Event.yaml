@@ -26,9 +26,6 @@ object_relationships:
 - name: item
   using:
     foreign_key_constraint_on: itemId
-- name: originatingData
-  using:
-    foreign_key_constraint_on: originatingDataId
 - name: room
   using:
     foreign_key_constraint_on: roomId
@@ -79,7 +76,6 @@ insert_permissions:
     - intendedRoomModeName
     - itemId
     - name
-    - originatingDataId
     - roomId
     - shufflePeriodId
     - startTime
@@ -108,7 +104,6 @@ insert_permissions:
     - intendedRoomModeName
     - itemId
     - name
-    - originatingDataId
     - roomId
     - shufflePeriodId
     - startTime
@@ -129,7 +124,6 @@ select_permissions:
     - intendedRoomModeName
     - itemId
     - name
-    - originatingDataId
     - roomId
     - shufflePeriodId
     - startTime
@@ -169,7 +163,6 @@ select_permissions:
     - intendedRoomModeName
     - itemId
     - name
-    - originatingDataId
     - roomId
     - shufflePeriodId
     - startTime
@@ -199,7 +192,6 @@ select_permissions:
     - intendedRoomModeName
     - itemId
     - name
-    - originatingDataId
     - roomId
     - shufflePeriodId
     - startTime
@@ -230,7 +222,6 @@ select_permissions:
     - intendedRoomModeName
     - itemId
     - name
-    - originatingDataId
     - roomId
     - shufflePeriodId
     - startTime
@@ -268,7 +259,6 @@ update_permissions:
     - intendedRoomModeName
     - itemId
     - name
-    - originatingDataId
     - roomId
     - shufflePeriodId
     - startTime
@@ -292,7 +282,6 @@ update_permissions:
     - intendedRoomModeName
     - itemId
     - name
-    - originatingDataId
     - roomId
     - shufflePeriodId
     - startTime

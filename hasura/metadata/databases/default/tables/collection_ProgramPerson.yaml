@@ -5,9 +5,6 @@ object_relationships:
 - name: conference
   using:
     foreign_key_constraint_on: conferenceId
-- name: originatingData
-  using:
-    foreign_key_constraint_on: originatingDataId
 - name: registrant
   using:
     foreign_key_constraint_on: registrantId
@@ -42,7 +39,6 @@ insert_permissions:
     - email
     - id
     - name
-    - originatingDataId
     - registrantId
     - subconferenceId
     - visibilityLevel
@@ -64,7 +60,6 @@ insert_permissions:
     - email
     - id
     - name
-    - originatingDataId
     - registrantId
     - subconferenceId
     - visibilityLevel
@@ -107,7 +102,6 @@ select_permissions:
     - visibilityLevel
     - conferenceId
     - id
-    - originatingDataId
     - registrantId
     - subconferenceId
     filter:
@@ -128,7 +122,6 @@ select_permissions:
     - visibilityLevel
     - conferenceId
     - id
-    - originatingDataId
     - registrantId
     - subconferenceId
     filter:
@@ -183,7 +176,6 @@ update_permissions:
     - affiliation
     - email
     - name
-    - originatingDataId
     - registrantId
     - subconferenceId
     - visibilityLevel
@@ -201,7 +193,6 @@ update_permissions:
     - affiliation
     - email
     - name
-    - originatingDataId
     - registrantId
     - subconferenceId
     - visibilityLevel

@@ -23,7 +23,6 @@
 - "!include conference_Configuration.yaml"
 - "!include conference_ConfigurationKey.yaml"
 - "!include conference_DemoCode.yaml"
-- "!include conference_OriginatingData.yaml"
 - "!include conference_Subconference.yaml"
 - "!include conference_VisibilityLevel.yaml"
 - "!include content_Element.yaml"

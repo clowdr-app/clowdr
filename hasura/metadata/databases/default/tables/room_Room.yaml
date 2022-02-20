@@ -44,9 +44,6 @@ object_relationships:
 - name: managementMode
   using:
     foreign_key_constraint_on: managementModeName
-- name: originatingData
-  using:
-    foreign_key_constraint_on: originatingDataId
 - name: rtmpOutput
   using:
     manual_configuration:
@@ -188,7 +185,6 @@ insert_permissions:
     - id
     - managementModeName
     - name
-    - originatingDataId
     - itemId
     - priority
     - subconferenceId
@@ -238,7 +234,6 @@ insert_permissions:
     - id
     - managementModeName
     - name
-    - originatingDataId
     - itemId
     - priority
     - subconferenceId
@@ -256,7 +251,6 @@ select_permissions:
     - id
     - managementModeName
     - name
-    - originatingDataId
     - itemId
     - priority
     - publicVonageSessionId
@@ -300,7 +294,6 @@ select_permissions:
     - chatId
     - conferenceId
     - id
-    - originatingDataId
     - itemId
     - subconferenceId
     computed_fields:
@@ -328,7 +321,6 @@ select_permissions:
     - chatId
     - conferenceId
     - id
-    - originatingDataId
     - itemId
     - subconferenceId
     computed_fields:
@@ -369,7 +361,6 @@ select_permissions:
     - chatId
     - conferenceId
     - id
-    - originatingDataId
     - itemId
     - subconferenceId
     computed_fields:
@@ -410,7 +401,6 @@ select_permissions:
     - chatId
     - conferenceId
     - id
-    - originatingDataId
     - itemId
     - subconferenceId
     computed_fields:
@@ -434,7 +424,6 @@ update_permissions:
     - colour
     - managementModeName
     - name
-    - originatingDataId
     - itemId
     - priority
     - subconferenceId
@@ -481,7 +470,6 @@ update_permissions:
     - colour
     - managementModeName
     - name
-    - originatingDataId
     - itemId
     - priority
     - subconferenceId

@@ -359,7 +359,7 @@ export async function invitationConfirmCurrentHandler(
                 ? "No invitation"
                 : !user.email && !isGlobalInviteCode
                 ? "User email address invalid"
-                : !isGlobalInviteCode && invitation?.registrant.userId !== user.id
+                : !isGlobalInviteCode && invitation?.registrant.userId && invitation?.registrant.userId !== user.id
                 ? "Invitation already used"
                 : true;
         }

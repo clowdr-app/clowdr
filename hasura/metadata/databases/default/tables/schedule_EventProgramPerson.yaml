@@ -147,6 +147,12 @@ update_permissions:
 delete_permissions:
 - permission:
     filter:
+      person:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+  role: attendee
+- permission:
+    filter:
       event:
         _or:
         - _and:

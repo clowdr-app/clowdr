@@ -4,7 +4,7 @@ import React, { createContext, useEffect } from "react";
 import useDebouncedState from "../CRUDTable/useDebouncedState";
 
 function useValue(_props: Record<never, never>) {
-    const mainPaneRef = React.useRef(null);
+    const mainPaneRef = React.useRef<HTMLDivElement>(null);
     const [mainPaneWidthLive, mainPaneHeightLive] = useSize(mainPaneRef);
 
     const [mainPaneWidth, , setMainPaneWidth] = useDebouncedState(0, 100);

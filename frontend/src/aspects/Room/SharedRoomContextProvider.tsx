@@ -10,7 +10,15 @@ const VonageRoom = React.lazy(() =>
 );
 
 function useValue() {
-    const vonageNode = useMemo(() => portals.createHtmlPortalNode<typeof VonageRoom>(), []);
+    const vonageNode = useMemo(
+        () =>
+            portals.createHtmlPortalNode<typeof VonageRoom>({
+                attributes: {
+                    style: "height: 100%;",
+                },
+            }),
+        []
+    );
     const chimeNode = useMemo(() => portals.createHtmlPortalNode<typeof ChimeRoom>(), []);
 
     const ctx = useMemo(() => ({ vonagePortalNode: vonageNode, chimePortalNode: chimeNode }), [vonageNode, chimeNode]);

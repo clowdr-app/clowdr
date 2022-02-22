@@ -1,8 +1,7 @@
-import { Box, VStack } from "@chakra-ui/react";
+import { Flex, VStack } from "@chakra-ui/react";
 import React, { useContext, useEffect, useMemo } from "react";
 import * as portals from "react-reverse-portal";
 import { validate } from "uuid";
-import { AppLayoutContext } from "../../../../App/AppLayoutContext";
 import { useUserId } from "../../../../Auth";
 import type { RegistrantIdSpec } from "../../../RegistrantsContext";
 import { useRegistrants } from "../../../RegistrantsContext";
@@ -328,8 +327,6 @@ export function InCall(): JSX.Element {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connected]);
 
-    const { mainPaneHeight } = useContext(AppLayoutContext);
-
     const displayEl = useMemo(() => {
         switch (display.actualDisplay.type) {
             case DisplayType.Browse:
@@ -342,10 +339,10 @@ export function InCall(): JSX.Element {
     return (
         <>
             {connected ? (
-                <VStack h={mainPaneHeight} width="100%" zIndex={1} alignItems="stretch" spacing={0} overflow="hidden">
-                    <Box flexGrow={1} flexShrink={1} minH={0} overflow="hidden">
+                <VStack h="100%" width="100%" zIndex={1} alignItems="stretch" spacing={0} overflow="hidden">
+                    <Flex flexDirection="column" flexGrow={1} flexShrink={1} minH="20em" width="100%" overflow="hidden">
                         {displayEl}
-                    </Box>
+                    </Flex>
                     <VonageRoomControlBar />
                 </VStack>
             ) : undefined}

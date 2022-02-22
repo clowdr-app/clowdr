@@ -94,7 +94,7 @@ export function VonageRoomInner({ stop }: { stop: boolean; cancelJoin?: () => vo
     }, [stop]);
 
     return (
-        <Box w="100%" isolation="isolate">
+        <Box w="100%" h="100%" isolation="isolate">
             <AutoplayAlert connected={connected} />
             <RecordingAlert />
             {uiEl}

@@ -1,9 +1,13 @@
+import { ArrowDownIcon } from "@chakra-ui/icons";
 import {
     AspectRatio,
     Box,
     Button,
     Center,
+    Flex,
+    Heading,
     HStack,
+    Spacer,
     Spinner,
     Text,
     useColorModeValue,
@@ -13,12 +17,11 @@ import {
 import type { ElementDataBlob, ZoomBlob } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import * as R from "ramda";
-import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
     Registrant_RegistrantRole_Enum,
-    RoomPage_RoomDetailsFragment,
-    Room_EventSummaryFragment,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     Room_PersonRole_Enum,
@@ -26,6 +29,7 @@ import {
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
+import { AppLayoutContext } from "../../../App/AppLayoutContext";
 import FAIcon from "../../../Chakra/FAIcon";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../Hooks/useRealTime";
@@ -36,8 +40,9 @@ import useCurrentRegistrant from "../../useCurrentRegistrant";
 import JoinZoomButton from "./JoinZoomButton";
 import { RoomContent } from "./RoomContent";
 import RoomContinuationChoices from "./RoomContinuationChoices";
-import { RoomControlBar } from "./RoomControlBar";
+import { RoomMembersButton } from "./RoomMembersButton";
 import RoomTimeAlert from "./RoomTimeAlert";
+import { RoomTitle } from "./RoomTitle";
 import { UpcomingBackstageBanner } from "./Stream/UpcomingBackstage";
 import { useHLSUri } from "./Stream/useHLSUri";
 import StreamTextCaptions from "./StreamTextCaptions";
@@ -374,12 +379,34 @@ function RoomInner({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent?.id]);
 
+    const { mainPaneHeight, mainPaneRef } = useContext(AppLayoutContext);
+
     const controlBarEl = useMemo(
-        () =>
-            roomDetails.managementModeName !== Room_ManagementMode_Enum.Public ? (
-                <RoomControlBar roomDetails={roomDetails} />
-            ) : undefined,
-        [roomDetails]
+        () => (
+            <HStack justifyContent="space-between" alignItems="center" py={2} px={4}>
+                <RoomTitle roomDetails={roomDetails} />
+                {showBackstage ? (
+                    <Heading as="h2" size="md">
+                        Backstages
+                    </Heading>
+                ) : undefined}
+                {(roomDetails.item || currentRoomEvent || nextRoomEvent) && !showBackstage ? (
+                    <Button
+                        rightIcon={<ArrowDownIcon />}
+                        variant="link"
+                        size="sm"
+                        onClick={() => mainPaneRef?.current?.scrollTo(0, mainPaneHeight)}
+                    >
+                        Scroll to content
+                    </Button>
+                ) : undefined}
+                <Spacer />
+                {roomDetails.managementModeName !== Room_ManagementMode_Enum.Public ? (
+                    <RoomMembersButton roomDetails={roomDetails} />
+                ) : undefined}
+            </HStack>
+        ),
+        [currentRoomEvent, mainPaneHeight, mainPaneRef, nextRoomEvent, roomDetails, showBackstage]
     );
 
     const roomEventsForCurrentRegistrant = useMemo(
@@ -533,19 +560,20 @@ function RoomInner({
     );
 
     const contentEl = useMemo(
-        () => (
-            <RoomContent
-                currentRoomEvent={currentRoomEvent}
-                nextRoomEvent={nextRoomEvent}
-                roomDetails={roomDetails}
-                onChooseVideo={(id) => {
-                    setSelectedVideoElementId(id);
-                    videoPlayerRef?.current?.focus();
-                    videoPlayerRef?.current?.scrollIntoView();
-                }}
-                currentlySelectedVideoElementId={selectedVideoElementId ?? undefined}
-            />
-        ),
+        () =>
+            roomDetails.item || currentRoomEvent || nextRoomEvent ? (
+                <RoomContent
+                    currentRoomEvent={currentRoomEvent}
+                    nextRoomEvent={nextRoomEvent}
+                    roomDetails={roomDetails}
+                    onChooseVideo={(id) => {
+                        setSelectedVideoElementId(id);
+                        videoPlayerRef?.current?.focus();
+                        videoPlayerRef?.current?.scrollIntoView();
+                    }}
+                    currentlySelectedVideoElementId={selectedVideoElementId ?? undefined}
+                />
+            ) : undefined,
         [currentRoomEvent, nextRoomEvent, roomDetails, selectedVideoElementId]
     );
 
@@ -669,17 +697,17 @@ function RoomInner({
 
     return (
         <>
-            <HStack width="100%" flexWrap="wrap" alignItems="stretch">
-                <VStack
-                    textAlign="left"
+            <VStack alignItems="stretch" flexGrow={1} w="100%">
+                <Flex
                     flexGrow={2.5}
+                    flexDir="column"
+                    textAlign="left"
                     alignItems="stretch"
-                    flexBasis={0}
                     minW="100%"
                     maxW="100%"
-                    pb="8ex"
+                    h={mainPaneHeight}
                 >
-                    {showBackstage ? backStageEl : undefined}
+                    {controlBarEl}
 
                     {!showBackstage ? (
                         <>
@@ -694,14 +722,7 @@ function RoomInner({
                               zoomEventStartsAt - now5s < 10 * 60 * 1000 ? (
                                 <JoinZoomButton zoomUrl={maybeZoomUrl} startTime={zoomEventStartsAt} />
                             ) : undefined}
-                        </>
-                    ) : undefined}
-
-                    {playerEl}
-
-                    {!showBackstage ? (
-                        <>
-                            <Box bgColor={bgColour} zIndex={2}>
+                            <Box bgColor={bgColour} zIndex={2} flexGrow={1}>
                                 <VideoChatRoom
                                     defaultVideoBackendName={defaultVideoBackend}
                                     roomDetails={roomDetails}
@@ -748,18 +769,20 @@ function RoomInner({
                                 />
                             </Box>
                         </>
-                    ) : undefined}
+                    ) : (
+                        backStageEl
+                    )}
+                </Flex>
 
-                    {controlBarEl}
+                {playerEl}
 
-                    {!showBackstage ? (
-                        <>
-                            <StreamTextCaptions streamTextEventId={currentRoomEvent?.streamTextEventId} />
-                            {contentEl}
-                        </>
-                    ) : undefined}
-                </VStack>
-            </HStack>
+                {!showBackstage ? (
+                    <>
+                        <StreamTextCaptions streamTextEventId={currentRoomEvent?.streamTextEventId} />
+                        {contentEl}
+                    </>
+                ) : undefined}
+            </VStack>
 
             <RoomContinuationChoices
                 currentRoomEvent={currentRoomEvent}

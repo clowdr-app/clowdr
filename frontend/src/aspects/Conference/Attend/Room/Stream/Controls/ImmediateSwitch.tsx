@@ -27,9 +27,10 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
 import { validate } from "uuid";
 import type {
+    Event_EventVonageSessionFragment,
     LiveIndicator_GetLatestQuery,
     LiveIndicator_GetLatestQueryVariables,
-    RoomEventDetailsFragment,
+    Room_EventSummaryFragment,
 } from "../../../../../../generated/graphql";
 import {
     LiveIndicator_GetLatestDocument,
@@ -83,7 +84,11 @@ gql`
     }
 `;
 
-export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
+export function ImmediateSwitch({
+    event,
+}: {
+    event: Room_EventSummaryFragment & Event_EventVonageSessionFragment;
+}): JSX.Element {
     const toast = useToast();
 
     const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);

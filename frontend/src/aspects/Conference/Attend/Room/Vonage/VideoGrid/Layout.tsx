@@ -149,7 +149,7 @@ export default function Layout({
     }, [allowedToControlLayout, isRecordingMode, noVideosEl, visualLayout]);
 
     return (
-        <VStack h="100%" justifyContent="center" ref={layoutPanelRef}>
+        <VStack h="100%" justifyContent="center" ref={layoutPanelRef} flexGrow={1}>
             <Box w={`${width}px`} h={`${height}px`}>
                 {layoutEl}
             </Box>

@@ -11,7 +11,6 @@ import {
     AlertTitle,
     Box,
     Button,
-    Heading,
     ListItem,
     Text,
     UnorderedList,
@@ -112,18 +111,9 @@ export default function Backstages({
     const [isWatchStreamConfirmOpen, setIsWatchStreamConfirmOpen] = useState<boolean>(false);
     const cancelRef = useRef<HTMLButtonElement>(null);
 
-    const heading = useMemo(
-        () => (
-            <Heading as="h3" size="lg">
-                {roomName}: Backstages
-            </Heading>
-        ),
-        [roomName]
-    );
-
     const welcomeInfo = useMemo(
         () => (
-            <Alert status="info" my={4}>
+            <Alert status="info">
                 <AlertIcon />
                 <Box flex="1">
                     <AlertTitle>Welcome to the backstages for {roomName}</AlertTitle>
@@ -229,8 +219,7 @@ export default function Backstages({
     return useMemo(
         () =>
             showBackstage ? (
-                <Box display={showBackstage ? "block" : "none"} p={5}>
-                    {heading}
+                <Box display={showBackstage ? "block" : "none"} py={2} px={4}>
                     {welcomeInfo}
                     {backstages}
                     {videoChatForPermissionReset}
@@ -239,6 +228,6 @@ export default function Backstages({
             ) : (
                 <></>
             ),
-        [videoChatForPermissionReset, backstages, heading, showBackstage, exitBackstageButton, welcomeInfo]
+        [videoChatForPermissionReset, backstages, showBackstage, exitBackstageButton, welcomeInfo]
     );
 }

@@ -96,8 +96,8 @@ export default function Backstage({
     );
 
     const vonageBackstage = useMemo(
-        () => <VonageBackstage eventId={event.id} onLeave={onLeave} hlsUri={hlsUri} />,
-        [event.id, onLeave, hlsUri]
+        () => <VonageBackstage event={event} onLeave={onLeave} hlsUri={hlsUri} />,
+        [event, onLeave, hlsUri]
     );
     const area = useMemo(
         () =>

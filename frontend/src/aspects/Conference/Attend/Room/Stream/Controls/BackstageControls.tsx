@@ -1,7 +1,7 @@
 import { Box, HStack } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { gql } from "urql";
-import type { RoomEventDetailsFragment } from "../../../../../../generated/graphql";
+import type { Room_EventSummaryFragment } from "../../../../../../generated/graphql";
 import { useVonageGlobalState } from "../../Vonage/State/VonageGlobalStateProvider";
 import { ImmediateSwitch } from "./ImmediateSwitch";
 import { LiveIndicator } from "./LiveIndicator";
@@ -33,7 +33,7 @@ export function BackstageControls({
     event,
     hlsUri,
 }: {
-    event: RoomEventDetailsFragment;
+    event: Room_EventSummaryFragment;
     hlsUri: string | undefined;
 }): JSX.Element {
     const vonageGlobalState = useVonageGlobalState();

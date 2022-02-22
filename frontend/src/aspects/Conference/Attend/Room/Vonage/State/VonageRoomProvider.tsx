@@ -156,7 +156,7 @@ const defaultVonageRoomSettings: VonageRoomSettings = {
     completeGetAccessToken: null,
 };
 
-export const VonageContext = React.createContext<VonageRoomContext>({
+export const VonageRoomContext = React.createContext<VonageRoomContext>({
     state: initialRoomState,
     computedState: initialComputedState,
     dispatch: () => null,
@@ -248,7 +248,7 @@ gql`
     }
 `;
 
-export function VonageRoomStateProvider({
+export function VonageRoomProvider({
     onPermissionsProblem,
     isBackstageRoom,
     canControlRecording,
@@ -558,9 +558,9 @@ export function VonageRoomStateProvider({
 
     const ctx = useMemo(() => ({ state, dispatch, computedState, settings }), [computedState, state, settings]);
 
-    return <VonageContext.Provider value={ctx}>{children}</VonageContext.Provider>;
+    return <VonageRoomContext.Provider value={ctx}>{children}</VonageRoomContext.Provider>;
 }
 
 export function useVonageRoom(): VonageRoomContext {
-    return React.useContext(VonageContext);
+    return React.useContext(VonageRoomContext);
 }

@@ -25,7 +25,7 @@ import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
-import type { RoomEventDetailsFragment } from "../../../../../../generated/graphql";
+import type { Room_EventSummaryFragment } from "../../../../../../generated/graphql";
 import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../../generated/graphql";
 import FAIcon from "../../../../../Chakra/FAIcon";
 import usePolling from "../../../../../Hooks/usePolling";
@@ -62,7 +62,7 @@ export function LiveIndicator({
 }: {
     isConnected: boolean;
     hlsUri: string | undefined;
-    event: RoomEventDetailsFragment;
+    event: Room_EventSummaryFragment;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
 

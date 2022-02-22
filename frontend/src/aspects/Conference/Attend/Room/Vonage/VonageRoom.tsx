@@ -12,7 +12,7 @@ import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructio
 import type { RoomOrEventId, VonageBroadcastLayout } from "./State/useVonageBroadcastLayout";
 import { VonageComputedStateProvider } from "./State/VonageComputedStateContext";
 import { VonageLayoutProvider } from "./State/VonageLayoutProvider";
-import { VonageRoomStateProvider } from "./State/VonageRoomProvider";
+import { VonageRoomProvider } from "./State/VonageRoomProvider";
 import type { CompleteGetAccessToken } from "./useGetAccessToken";
 import { AutoplayProvider } from "./VideoPlayback/AutoplayContext";
 import { VonageVideoPlaybackProvider } from "./VideoPlayback/VonageVideoPlaybackContext";
@@ -142,7 +142,7 @@ export function VonageRoom({
     );
 
     return mRegistrant ? (
-        <VonageRoomStateProvider
+        <VonageRoomProvider
             onPermissionsProblem={onPermissionsProblem}
             isBackstageRoom={isBackstageRoom}
             canControlRecording={canControlRecording}
@@ -204,7 +204,7 @@ export function VonageRoom({
                     </VonageLayoutProvider>
                 </VonageComputedStateProvider>
             </ChatProfileModalProvider>
-        </VonageRoomStateProvider>
+        </VonageRoomProvider>
     ) : (
         <></>
     );

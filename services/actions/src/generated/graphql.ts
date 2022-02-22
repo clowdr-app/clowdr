@@ -37190,6 +37190,20 @@ export type CheckForFrontendHostsQuery = {
     }>;
 };
 
+export type UpdateConferenceLogoMutationVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    userId: Scalars["String"];
+    logoMetadata?: InputMaybe<Scalars["jsonb"]>;
+}>;
+
+export type UpdateConferenceLogoMutation = {
+    __typename?: "mutation_root";
+    update_conference_Conference?: {
+        __typename?: "conference_Conference_mutation_response";
+        affected_rows: number;
+    } | null;
+};
+
 export type ElementAddNewVersionMutationVariables = Exact<{
     id: Scalars["uuid"];
     newVersion: Scalars["jsonb"];
@@ -41074,6 +41088,128 @@ export const CheckForFrontendHostsDocument = {
         },
     ],
 } as unknown as DocumentNode<CheckForFrontendHostsQuery, CheckForFrontendHostsQueryVariables>;
+export const UpdateConferenceLogoDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "updateConferenceLogo" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "userId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "logoMetadata" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } },
+                    defaultValue: { kind: "NullValue" },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_conference_Conference" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_and" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "id" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_eq" },
+                                                                            value: {
+                                                                                kind: "Variable",
+                                                                                name: {
+                                                                                    kind: "Name",
+                                                                                    value: "conferenceId",
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "createdBy" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_eq" },
+                                                                            value: {
+                                                                                kind: "Variable",
+                                                                                name: { kind: "Name", value: "userId" },
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "logoS3Data" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "logoMetadata" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "affected_rows" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<UpdateConferenceLogoMutation, UpdateConferenceLogoMutationVariables>;
 export const ElementAddNewVersionDocument = {
     kind: "Document",
     definitions: [

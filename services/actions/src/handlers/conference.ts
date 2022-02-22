@@ -1,7 +1,9 @@
 import { gql } from "@apollo/client/core";
-import type { getSlugArgs } from "@midspace/hasura/action-types";
-import { CheckForFrontendHostsDocument } from "../generated/graphql";
+import type { getSlugArgs, updateConferenceLogoArgs, UpdateConferenceLogoResponse } from "@midspace/hasura/action-types";
+import { CheckForFrontendHostsDocument, UpdateConferenceLogoDocument } from "../generated/graphql";
+import assert from "node:assert";
 import { apolloClient } from "../graphqlClient";
+import { checkS3Url } from "../lib/aws/s3";
 
 gql`
     query CheckForFrontendHosts($host: jsonb!) {
@@ -41,4 +43,67 @@ export async function handleGetSlug(args: getSlugArgs): Promise<string | null> {
     }
 
     return null;
+}
+
+gql`
+    mutation updateConferenceLogo(
+        $conferenceId: uuid!
+        $userId: String!
+        $logoMetadata: jsonb = null
+    ) {
+        update_conference_Conference(
+            where: {
+                _and: [
+                    { id: { _eq: $conferenceId } }
+                    { createdBy: { _eq: $userId } }
+                ]
+            }
+            _set: {
+                logoS3Data: $logoMetadata
+            }
+        ) {
+            affected_rows
+        }
+    }
+`;
+
+export async function handleUpdateConferenceLogo(
+    userId: string,
+    { conferenceId, url }: updateConferenceLogoArgs
+): Promise<UpdateConferenceLogoResponse> {
+    if (!url || url.length === 0) {
+        await apolloClient.mutate({
+            mutation: UpdateConferenceLogoDocument,
+            variables: {
+                conferenceId,
+                userId,
+                logoMetadata: null
+            },
+        });
+    } else {
+        const validatedS3URL = await checkS3Url(url);
+        if (validatedS3URL.result === "error") {
+            throw new Error("Invalid S3 URL");
+        }
+
+        assert(process.env.AWS_REGION);
+        assert(process.env.AWS_CONTENT_BUCKET_ID);
+
+        await apolloClient.mutate({
+            mutation: UpdateConferenceLogoDocument,
+            variables: {
+                conferenceId,
+                userId,
+                logoMetadata: {
+                    S3Region: process.env.AWS_REGION,
+                    S3Bucket: process.env.AWS_CONTENT_BUCKET_ID,
+                    S3Key: validatedS3URL.key
+                }
+            },
+        });
+    }
+
+    return {
+        ok: true
+    };
 }

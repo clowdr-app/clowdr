@@ -294,6 +294,8 @@ export class ChannelStackSyncService {
                     rtmpOutputUri
                     rtmpOutputStreamKey
                     rtmpOutputDestinationId
+                    rtmpBInputId
+                    rtmpBInputAttachmentName
                     room {
                         id
                         rtmpInput {
@@ -319,10 +321,15 @@ export class ChannelStackSyncService {
             .filter(
                 (stack) =>
                     stack.room &&
+                    // Rtmp Room input [required and missing] or [not required and present]
                     (stack.rtmpRoomInputId != stack.room.rtmpInput?.inputId ||
                         stack.rtmpRoomInputAttachmentName != stack.room.rtmpInput?.inputName ||
+                        // Rtmp Output URI or Stream Key changed
                         stack.rtmpOutputUri != stack.room.rtmpOutput?.url ||
-                        stack.rtmpOutputStreamKey != stack.room.rtmpOutput?.streamKey)
+                        stack.rtmpOutputStreamKey != stack.room.rtmpOutput?.streamKey ||
+                        // Rtmp Input B [missing and required] or [present and not required]
+                        (!stack.rtmpBInputAttachmentName && !stack.rtmpRoomInputAttachmentName) ||
+                        (stack.rtmpBInputAttachmentName && stack.rtmpRoomInputAttachmentName))
             )
             .map((stack) => ({
                 channelStackId: stack.id,

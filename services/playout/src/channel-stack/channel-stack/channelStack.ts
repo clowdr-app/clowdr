@@ -54,14 +54,14 @@ export interface ChannelStackDescription {
     rtmpAInputUri: string;
     rtmpAInputId: string;
     rtmpBInputUri: string;
-    rtmpBInputId: string;
+    rtmpBInputId: string | null;
     rtmpRoomInputId: string | null;
     mp4InputId: string;
     loopingMp4InputId: string;
     mp4InputAttachmentName: string;
     loopingMp4InputAttachmentName: string;
     rtmpAInputAttachmentName: string;
-    rtmpBInputAttachmentName: string;
+    rtmpBInputAttachmentName: string | null;
     rtmpRoomInputAttachmentName: string | null;
     mediaLiveChannelId: string;
     mediaPackageChannelId: string;
@@ -160,7 +160,7 @@ export class ChannelStack extends cdk.Stack {
         const mediaLiveChannel = this.createMediaLiveChannel(
             generateId(),
             rtmpAInput.ref,
-            rtmpBInput.ref,
+            !props.roomRtmpInput ? rtmpBInput.ref : null,
             mp4Input.ref,
             loopingMp4Input.ref,
             mediaPackageChannel.id,
@@ -203,9 +203,11 @@ export class ChannelStack extends cdk.Stack {
             value: mediaLiveChannel.rtmpAInputAttachmentName,
         });
 
-        new cdk.CfnOutput(this, "RtmpBInputAttachmentName", {
-            value: mediaLiveChannel.rtmpBInputAttachmentName,
-        });
+        if (mediaLiveChannel.rtmpBInputAttachmentName) {
+            new cdk.CfnOutput(this, "RtmpBInputAttachmentName", {
+                value: mediaLiveChannel.rtmpBInputAttachmentName,
+            });
+        }
 
         new cdk.CfnOutput(this, "MediaLiveChannelId", {
             value: mediaLiveChannel.channel.ref,
@@ -263,7 +265,7 @@ export class ChannelStack extends cdk.Stack {
     private createMediaLiveChannel(
         name: string,
         rtmpAInputId: string,
-        rtmpBInputId: string,
+        rtmpBInputId: string | null,
         mp4InputId: string,
         loopingMp4InputId: string,
         mediaPackageChannelId: string,
@@ -271,7 +273,7 @@ export class ChannelStack extends cdk.Stack {
     ): {
         channel: medialive.CfnChannel;
         rtmpAInputAttachmentName: string;
-        rtmpBInputAttachmentName: string;
+        rtmpBInputAttachmentName: string | null;
         mp4InputAttachmentName: string;
         loopingMp4InputAttachmentName: string;
         rtmpOutput: RtmpOutputIdentifiers | null;
@@ -287,11 +289,9 @@ export class ChannelStack extends cdk.Stack {
             rtmpAInputId,
             captionSelector
         );
-        const rtmpBInputAttachment = ChannelStack.createInputAttachment_RTMP_B(
-            `${generateId()}-rtmpB`,
-            rtmpBInputId,
-            captionSelector
-        );
+        const rtmpBInputAttachment = rtmpBInputId
+            ? ChannelStack.createInputAttachment_RTMP_B(`${generateId()}-rtmpB`, rtmpBInputId, captionSelector)
+            : null;
         let roomRtmpInputAttachment:
             | (medialive.CfnChannel.InputAttachmentProperty & {
                   inputAttachmentName: string;
@@ -372,7 +372,7 @@ export class ChannelStack extends cdk.Stack {
             channelClass: "SINGLE_PIPELINE",
             inputAttachments: [
                 rtmpAInputAttachment,
-                rtmpBInputAttachment,
+                ...(rtmpBInputAttachment ? [rtmpBInputAttachment] : []),
                 mp4InputAttachment,
                 loopingMp4InputAttachment,
                 ...(roomRtmpInputAttachment ? [roomRtmpInputAttachment] : []),
@@ -395,7 +395,7 @@ export class ChannelStack extends cdk.Stack {
         return {
             channel,
             rtmpAInputAttachmentName: rtmpAInputAttachment.inputAttachmentName,
-            rtmpBInputAttachmentName: rtmpBInputAttachment.inputAttachmentName,
+            rtmpBInputAttachmentName: rtmpBInputAttachment?.inputAttachmentName ?? null,
             mp4InputAttachmentName: mp4InputAttachment.inputAttachmentName,
             loopingMp4InputAttachmentName: loopingMp4InputAttachment.inputAttachmentName,
             rtmpOutput,

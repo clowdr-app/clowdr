@@ -40468,6 +40468,7 @@ export type ImmediateSwitch_GetElementsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly itemId?: any | null;
+        readonly roomId: any;
         readonly exhibitionId?: any | null;
         readonly item?: {
             readonly __typename?: "content_Item";
@@ -40481,6 +40482,15 @@ export type ImmediateSwitch_GetElementsQuery = {
                 readonly typeName: Content_ElementType_Enum;
             }>;
         } | null;
+        readonly room: {
+            readonly __typename?: "room_Room";
+            readonly id: any;
+            readonly rtmpInput?: {
+                readonly __typename?: "video_RoomRtmpInput";
+                readonly id: any;
+                readonly roomId?: any | null;
+            } | null;
+        };
         readonly exhibition?: {
             readonly __typename?: "collection_Exhibition";
             readonly id: any;
@@ -40570,6 +40580,7 @@ export type VonageBackstage_GetVonageSessionQuery = {
     readonly schedule_Event_by_pk?: {
         readonly __typename?: "schedule_Event";
         readonly id: any;
+        readonly roomId: any;
         readonly eventVonageSession?: {
             readonly __typename?: "video_EventVonageSession";
             readonly id: any;
@@ -40582,6 +40593,7 @@ export type VonageBackstage_GetVonageSessionQuery = {
 export type Event_EventVonageSessionFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
+    readonly roomId: any;
     readonly eventVonageSession?: {
         readonly __typename?: "video_EventVonageSession";
         readonly id: any;
@@ -44801,13 +44813,19 @@ export type DeleteRoomPersonMutation = {
     } | null;
 };
 
-export type GetIsExternalRtmpBroadcastEnabledQueryVariables = Exact<{
+export type GetIsExternalRtmpEnabledQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
 }>;
 
-export type GetIsExternalRtmpBroadcastEnabledQuery = {
+export type GetIsExternalRtmpEnabledQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Configuration_by_pk?: {
+    readonly broadcast?: {
+        readonly __typename?: "conference_Configuration";
+        readonly conferenceId: any;
+        readonly key: Conference_ConfigurationKey_Enum;
+        readonly value: any;
+    } | null;
+    readonly input?: {
         readonly __typename?: "conference_Configuration";
         readonly conferenceId: any;
         readonly key: Conference_ConfigurationKey_Enum;
@@ -48467,6 +48485,7 @@ export const VonageParticipantStreamDetailsFragmentDoc = gql`
 export const Event_EventVonageSessionFragmentDoc = gql`
     fragment Event_EventVonageSession on schedule_Event {
         id
+        roomId
         eventVonageSession {
             id
             sessionId
@@ -50545,6 +50564,14 @@ export const ImmediateSwitch_GetElementsDocument = gql`
                     name
                     itemId
                     typeName
+                }
+            }
+            roomId
+            room {
+                id
+                rtmpInput {
+                    id
+                    roomId
                 }
             }
             exhibitionId
@@ -53487,9 +53514,14 @@ export const DeleteRoomPersonDocument = gql`
 export function useDeleteRoomPersonMutation() {
     return Urql.useMutation<DeleteRoomPersonMutation, DeleteRoomPersonMutationVariables>(DeleteRoomPersonDocument);
 }
-export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
-    query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
-        conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_BROADCAST) {
+export const GetIsExternalRtmpEnabledDocument = gql`
+    query GetIsExternalRtmpEnabled($conferenceId: uuid!) {
+        broadcast: conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_BROADCAST) {
+            conferenceId
+            key
+            value
+        }
+        input: conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_INPUT) {
             conferenceId
             key
             value
@@ -53497,13 +53529,10 @@ export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
     }
 `;
 
-export function useGetIsExternalRtmpBroadcastEnabledQuery(
-    options: Omit<Urql.UseQueryArgs<GetIsExternalRtmpBroadcastEnabledQueryVariables>, "query">
+export function useGetIsExternalRtmpEnabledQuery(
+    options: Omit<Urql.UseQueryArgs<GetIsExternalRtmpEnabledQueryVariables>, "query">
 ) {
-    return Urql.useQuery<GetIsExternalRtmpBroadcastEnabledQuery>({
-        query: GetIsExternalRtmpBroadcastEnabledDocument,
-        ...options,
-    });
+    return Urql.useQuery<GetIsExternalRtmpEnabledQuery>({ query: GetIsExternalRtmpEnabledDocument, ...options });
 }
 export const ConferenceTechSupportAddressDocument = gql`
     query ConferenceTechSupportAddress($conferenceId: uuid!) {

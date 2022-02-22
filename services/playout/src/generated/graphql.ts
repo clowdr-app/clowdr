@@ -38281,6 +38281,8 @@ export type GetChannelStacksThatMightNeedUpdateQuery = {
         rtmpOutputUri?: string | null;
         rtmpOutputStreamKey?: string | null;
         rtmpOutputDestinationId?: string | null;
+        rtmpBInputId?: string | null;
+        rtmpBInputAttachmentName?: string | null;
         room?: {
             __typename?: "room_Room";
             id: any;
@@ -38436,6 +38438,10 @@ export type ChannelStackSync_GetChannelStackUpdateJobsQuery = {
         oldRtmpRoomInputAttachmentName?: string | null;
         newRtmpRoomInputId?: string | null;
         newRtmpRoomInputAttachmentName?: string | null;
+        oldRtmpBInputId?: string | null;
+        oldRtmpBInputAttachmentName?: string | null;
+        newRtmpBInputId?: string | null;
+        newRtmpBInputAttachmentName?: string | null;
     }>;
 };
 
@@ -38526,15 +38532,15 @@ export type CreateChannelStackMutationVariables = Exact<{
     mp4InputId: Scalars["String"];
     rtmpAInputId: Scalars["String"];
     rtmpAInputUri: Scalars["String"];
-    rtmpBInputId: Scalars["String"];
-    rtmpBInputUri: Scalars["String"];
+    rtmpBInputId?: InputMaybe<Scalars["String"]>;
+    rtmpBInputUri?: InputMaybe<Scalars["String"]>;
     rtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     endpointUri: Scalars["String"];
     cloudFrontDomain: Scalars["String"];
     mp4InputAttachmentName: Scalars["String"];
     loopingMp4InputAttachmentName: Scalars["String"];
     rtmpAInputAttachmentName: Scalars["String"];
-    rtmpBInputAttachmentName: Scalars["String"];
+    rtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
     rtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
     rtmpOutputUri?: InputMaybe<Scalars["String"]>;
     rtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
@@ -38595,6 +38601,9 @@ export type ChannelStack_UpdateJob_GetChannelStackQuery = {
         rtmpOutputDestinationId?: string | null;
         rtmpRoomInputId?: string | null;
         rtmpRoomInputAttachmentName?: string | null;
+        rtmpBInputId?: string | null;
+        rtmpBInputUri?: string | null;
+        rtmpBInputAttachmentName?: string | null;
         room?: {
             __typename?: "room_Room";
             id: any;
@@ -38622,6 +38631,10 @@ export type ChannelStack_CreateChannelStackUpdateJobMutationVariables = Exact<{
     oldRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
     newRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     newRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    oldRtmpBInputId?: InputMaybe<Scalars["String"]>;
+    oldRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    newRtmpBInputId?: InputMaybe<Scalars["String"]>;
+    newRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type ChannelStack_CreateChannelStackUpdateJobMutation = {
@@ -38790,6 +38803,11 @@ export type LocalSchedule_GetScheduleQuery = {
             rtmpInputName: Video_RtmpInput_Enum;
         } | null;
     }>;
+    room_Room_by_pk?: {
+        __typename?: "room_Room";
+        id: any;
+        rtmpInput?: { __typename?: "video_RoomRtmpInput"; id: any } | null;
+    } | null;
 };
 
 export type LocalSchedule_EventDetailsFragment = {
@@ -39733,6 +39751,8 @@ export const GetChannelStacksThatMightNeedUpdateDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputUri" } },
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputAttachmentName" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "room" },
@@ -40538,6 +40558,10 @@ export const ChannelStackSync_GetChannelStackUpdateJobsDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "oldRtmpRoomInputAttachmentName" } },
                                 { kind: "Field", name: { kind: "Name", value: "newRtmpRoomInputId" } },
                                 { kind: "Field", name: { kind: "Name", value: "newRtmpRoomInputAttachmentName" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpBInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpBInputAttachmentName" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpBInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpBInputAttachmentName" } },
                             ],
                         },
                     },
@@ -41076,12 +41100,12 @@ export const CreateChannelStackDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
                 },
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputUri" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
                 },
                 {
                     kind: "VariableDefinition",
@@ -41116,7 +41140,7 @@ export const CreateChannelStackDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputAttachmentName" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
                 },
                 {
                     kind: "VariableDefinition",
@@ -41533,6 +41557,9 @@ export const ChannelStack_UpdateJob_GetChannelStackDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
                                 { kind: "Field", name: { kind: "Name", value: "rtmpRoomInputId" } },
                                 { kind: "Field", name: { kind: "Name", value: "rtmpRoomInputAttachmentName" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputAttachmentName" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "room" },
@@ -41644,6 +41671,26 @@ export const ChannelStack_CreateChannelStackUpdateJobDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpRoomInputAttachmentName" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpBInputId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpBInputAttachmentName" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpBInputId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpBInputAttachmentName" } },
                     type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
                 },
             ],
@@ -41759,6 +41806,38 @@ export const ChannelStack_CreateChannelStackUpdateJobDocument = {
                                             value: {
                                                 kind: "Variable",
                                                 name: { kind: "Name", value: "newRtmpRoomInputAttachmentName" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpBInputId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpBInputId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpBInputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpBInputAttachmentName" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpBInputId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpBInputId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpBInputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpBInputAttachmentName" },
                                             },
                                         },
                                     ],
@@ -42803,6 +42882,31 @@ export const LocalSchedule_GetScheduleDocument = {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "FragmentSpread", name: { kind: "Name", value: "LocalSchedule_EventDetails" } },
+                            ],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "rtmpInput" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                                    },
+                                },
                             ],
                         },
                     },

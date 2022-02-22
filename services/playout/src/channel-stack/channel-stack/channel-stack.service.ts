@@ -141,7 +141,7 @@ export class ChannelStackService {
         const mp4InputAttachmentName = findExpectedOutput("Mp4InputAttachmentName");
         const loopingMp4InputAttachmentName = findExpectedOutput("LoopingMp4InputAttachmentName");
         const rtmpAInputAttachmentName = findExpectedOutput("RtmpAInputAttachmentName");
-        const rtmpBInputAttachmentName = findExpectedOutput("RtmpBInputAttachmentName");
+        const rtmpBInputAttachmentName = findOutput("RtmpBInputAttachmentName");
         const mediaLiveChannelId = findExpectedOutput("MediaLiveChannelId");
         const mediaPackageChannelId = findExpectedOutput("MediaPackageChannelId");
         const cloudFrontDistributionId = findExpectedOutput("CloudFrontDistributionId");
@@ -263,6 +263,14 @@ export class ChannelStackService {
             attachmentName: string;
         } | null,
         newRtmpRoomInput: {
+            inputId: string;
+            attachmentName: string;
+        } | null,
+        oldRtmpBInput: {
+            inputId: string;
+            attachmentName: string;
+        } | null,
+        newRtmpBInput: {
             inputId: string;
             attachmentName: string;
         } | null,
@@ -391,7 +399,7 @@ export class ChannelStackService {
                 if (hasExistingExternalRTMPInput !== requiresExternalRTMPInput) {
                     channelDescription.InputAttachments = oldRtmpRoomInput
                         ? channelDescription.InputAttachments.filter(
-                              (desc) => desc.InputId === oldRtmpRoomInput.inputId
+                              (desc) => desc.InputId !== oldRtmpRoomInput.inputId
                           )
                         : channelDescription.InputAttachments;
                     const inputWithCaptionSelectors = channelDescription.InputAttachments.find(
@@ -405,6 +413,36 @@ export class ChannelStackService {
                         channelDescription.InputAttachments.push({
                             InputId: newRtmpRoomInput.inputId,
                             InputAttachmentName: newRtmpRoomInput.attachmentName,
+                            InputSettings: {
+                                CaptionSelectors: captionSelectors,
+                            },
+                        });
+                    }
+                }
+
+                const hasExistingRtmpBInput =
+                    oldRtmpBInput &&
+                    Boolean(
+                        channelDescription.InputAttachments?.some((desc) => desc.InputId === oldRtmpBInput.inputId)
+                    );
+                const requiresRtmpBInput =
+                    newRtmpBInput &&
+                    !channelDescription.InputAttachments?.some((desc) => desc.InputId === newRtmpBInput.inputId);
+                if (hasExistingRtmpBInput !== requiresRtmpBInput) {
+                    channelDescription.InputAttachments = oldRtmpBInput
+                        ? channelDescription.InputAttachments.filter((desc) => desc.InputId !== oldRtmpBInput.inputId)
+                        : channelDescription.InputAttachments;
+                    const inputWithCaptionSelectors = channelDescription.InputAttachments.find(
+                        (x) => !!x.InputSettings?.CaptionSelectors
+                    );
+                    const captionSelectors = inputWithCaptionSelectors?.InputSettings?.CaptionSelectors;
+                    if (!captionSelectors) {
+                        throw new Error("Unable to find an existing input with caption selectors to re-use!");
+                    }
+                    if (newRtmpBInput) {
+                        channelDescription.InputAttachments.push({
+                            InputId: newRtmpBInput.inputId,
+                            InputAttachmentName: newRtmpBInput.attachmentName,
                             InputSettings: {
                                 CaptionSelectors: captionSelectors,
                             },
@@ -582,6 +620,8 @@ export class ChannelStackService {
                     job.mediaLiveChannelId,
                     job.oldRtmpRoomInput,
                     job.newRtmpRoomInput,
+                    job.oldRtmpBInput,
+                    job.newRtmpBInput,
                     job.newRtmpOutputUri,
                     job.newRtmpOutputStreamKey
                 );

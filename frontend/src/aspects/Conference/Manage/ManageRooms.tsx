@@ -60,7 +60,7 @@ import {
     useCreateRoomMutation,
     useDeleteRoomPersonMutation,
     useDeleteRoomsMutation,
-    useGetIsExternalRtmpBroadcastEnabledQuery,
+    useGetIsExternalRtmpEnabledQuery,
     useInsertRoomPeopleMutation,
     useManageRooms_SelectGroupsQuery,
     useManageRooms_SelectItemsQuery,
@@ -93,6 +93,7 @@ import { useTitle } from "../../Hooks/useTitle";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import ExternalRtmpBroadcastEditor from "./Room/ExternalRtmpBroadcastEditor";
+import ExternalRtmpInputEditor from "./Room/ExternalRtmpInputEditor";
 
 gql`
     fragment RoomParticipantWithRegistrantInfo on room_Participant {
@@ -254,8 +255,13 @@ gql`
         }
     }
 
-    query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
-        conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_BROADCAST) {
+    query GetIsExternalRtmpEnabled($conferenceId: uuid!) {
+        broadcast: conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_BROADCAST) {
+            conferenceId
+            key
+            value
+        }
+        input: conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_INPUT) {
             conferenceId
             key
             value
@@ -268,11 +274,13 @@ function RoomSecondaryEditor({
     isSecondaryPanelOpen,
     onSecondaryPanelClose,
     externalRtmpBroadcastEnabled,
+    externalRtmpInputEnabled,
 }: {
     room: RoomWithParticipantInfoFragment | null;
     isSecondaryPanelOpen: boolean;
     onSecondaryPanelClose: () => void;
     externalRtmpBroadcastEnabled: boolean;
+    externalRtmpInputEnabled: boolean;
 }): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
@@ -550,6 +558,26 @@ function RoomSecondaryEditor({
                                             )}
                                         </AccordionItem>
                                     ) : undefined}
+
+                                    {externalRtmpInputEnabled ? (
+                                        <AccordionItem>
+                                            {({ isExpanded }) => (
+                                                <>
+                                                    <AccordionButton>
+                                                        <Box flex="1" textAlign="left">
+                                                            Hybrid room (RTMP input)
+                                                        </Box>
+                                                        <AccordionIcon />
+                                                    </AccordionButton>
+                                                    <AccordionPanel>
+                                                        {isExpanded ? (
+                                                            <ExternalRtmpInputEditor roomId={room.id} />
+                                                        ) : undefined}
+                                                    </AccordionPanel>
+                                                </>
+                                            )}
+                                        </AccordionItem>
+                                    ) : undefined}
                                 </Accordion>
                             </>
                         ) : (
@@ -575,14 +603,14 @@ function EditableRoomsCRUDTable() {
             }),
         []
     );
-    const [externalRtmpBroadcastEnabledResponse] = useGetIsExternalRtmpBroadcastEnabledQuery({
+    const [externalRtmpEnabledResponse] = useGetIsExternalRtmpEnabledQuery({
         variables: {
             conferenceId: conference.id,
         },
         context,
     });
-    const externalRtmpBroadcastEnabled =
-        externalRtmpBroadcastEnabledResponse.data?.conference_Configuration_by_pk?.value === true;
+    const externalRtmpBroadcastEnabled = externalRtmpEnabledResponse.data?.broadcast?.value === true;
+    const externalRtmpInputEnabled = externalRtmpEnabledResponse.data?.input?.value === true;
 
     const [items] = useManageRooms_SelectItemsQuery({
         variables: {
@@ -1512,6 +1540,7 @@ function EditableRoomsCRUDTable() {
                 isSecondaryPanelOpen={isSecondaryPanelOpen}
                 onSecondaryPanelClose={onSecondaryPanelClose}
                 externalRtmpBroadcastEnabled={externalRtmpBroadcastEnabled}
+                externalRtmpInputEnabled={externalRtmpInputEnabled}
             />
         </>
     );

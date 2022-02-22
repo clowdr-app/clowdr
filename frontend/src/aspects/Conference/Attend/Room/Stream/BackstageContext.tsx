@@ -40,7 +40,6 @@ function useValue({ hlsUri, event }: Props) {
         variables: {
             eventId: event.id,
         },
-        pause: !isConnected,
         requestPolicy: "network-only",
     });
     const { start: startPolling, stop: stopPolling } = usePolling(refetchLiveIndicator, 20000, isConnected);
@@ -102,20 +101,21 @@ function useValue({ hlsUri, event }: Props) {
 
     const currentInput = useMemo(():
         | "filler"
-        | "rtmp_push"
+        | "rtmp_push:rtmpEvent"
+        | "rtmp_push:rtmpRoom"
         | "video"
         | "video_ending"
         | "video_unknown_duration"
         | null => {
         if (!latestSwitchData) {
-            return "rtmp_push";
+            return "rtmp_push:rtmpEvent";
         }
 
         switch (latestSwitchData.data.kind) {
             case "filler":
                 return "filler";
             case "rtmp_push":
-                return "rtmp_push";
+                return `rtmp_push:${latestSwitchData.data.source ?? "rtmpEvent"}`;
             case "video": {
                 if (!latestImmediateSwitchData?.video_ImmediateSwitch?.[0]?.executedAt) {
                     return null;
@@ -125,7 +125,7 @@ function useValue({ hlsUri, event }: Props) {
                 }
                 const switchedToVideoAt = Date.parse(latestImmediateSwitchData.video_ImmediateSwitch[0].executedAt);
                 if (now - switchedToVideoAt > durationCurrentElement * 1000) {
-                    return "rtmp_push";
+                    return "rtmp_push:rtmpEvent";
                 } else if (now - switchedToVideoAt > (durationCurrentElement - 10) * 1000) {
                     return "video_ending";
                 } else {

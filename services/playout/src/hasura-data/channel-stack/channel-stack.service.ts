@@ -18,6 +18,7 @@ import {
     FindChannelStacksByStackArnDocument,
     GetChannelStackByRoomDocument,
 } from "../../generated/graphql";
+import { shortId } from "../../utils/id";
 import { ConferenceConfigurationService } from "../conference-configuration/conference-configuration.service";
 import { GraphQlService } from "../graphql/graphql.service";
 import type { ChannelStackDetails } from "./channel-stack-details";
@@ -104,15 +105,15 @@ export class ChannelStackDataService {
                 $mp4InputId: String!
                 $rtmpAInputId: String!
                 $rtmpAInputUri: String!
-                $rtmpBInputId: String!
-                $rtmpBInputUri: String!
+                $rtmpBInputId: String
+                $rtmpBInputUri: String
                 $rtmpRoomInputId: String
                 $endpointUri: String!
                 $cloudFrontDomain: String!
                 $mp4InputAttachmentName: String!
                 $loopingMp4InputAttachmentName: String!
                 $rtmpAInputAttachmentName: String!
-                $rtmpBInputAttachmentName: String!
+                $rtmpBInputAttachmentName: String
                 $rtmpRoomInputAttachmentName: String
                 $rtmpOutputUri: String
                 $rtmpOutputStreamKey: String
@@ -275,6 +276,9 @@ export class ChannelStackDataService {
                     rtmpOutputDestinationId
                     rtmpRoomInputId
                     rtmpRoomInputAttachmentName
+                    rtmpBInputId
+                    rtmpBInputUri
+                    rtmpBInputAttachmentName
                     room {
                         id
                         rtmpInput {
@@ -304,6 +308,10 @@ export class ChannelStackDataService {
                 $oldRtmpRoomInputAttachmentName: String
                 $newRtmpRoomInputId: String
                 $newRtmpRoomInputAttachmentName: String
+                $oldRtmpBInputId: String
+                $oldRtmpBInputAttachmentName: String
+                $newRtmpBInputId: String
+                $newRtmpBInputAttachmentName: String
             ) {
                 insert_job_queues_ChannelStackUpdateJob_one(
                     object: {
@@ -320,6 +328,10 @@ export class ChannelStackDataService {
                         oldRtmpRoomInputAttachmentName: $oldRtmpRoomInputAttachmentName
                         newRtmpRoomInputId: $newRtmpRoomInputId
                         newRtmpRoomInputAttachmentName: $newRtmpRoomInputAttachmentName
+                        oldRtmpBInputId: $oldRtmpBInputId
+                        oldRtmpBInputAttachmentName: $oldRtmpBInputAttachmentName
+                        newRtmpBInputId: $newRtmpBInputId
+                        newRtmpBInputAttachmentName: $newRtmpBInputAttachmentName
                     }
                 ) {
                     id
@@ -374,6 +386,13 @@ export class ChannelStackDataService {
                 newRtmpRoomInputAttachmentName: hasNewRtmpRoomInput
                     ? result.data.video_ChannelStack_by_pk.room?.rtmpInput?.inputName ?? null
                     : null,
+
+                oldRtmpBInputId: result.data.video_ChannelStack_by_pk.rtmpBInputId ?? null,
+                oldRtmpBInputAttachmentName: result.data.video_ChannelStack_by_pk.rtmpBInputAttachmentName ?? null,
+                newRtmpBInputId: result.data.video_ChannelStack_by_pk.rtmpBInputId ?? null,
+                newRtmpBInputAttachmentName: hasNewRtmpRoomInput
+                    ? null
+                    : result.data.video_ChannelStack_by_pk.rtmpBInputAttachmentName ?? `${shortId()}-rtmpB`,
             },
         });
     }

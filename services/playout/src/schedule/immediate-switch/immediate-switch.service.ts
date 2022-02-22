@@ -183,7 +183,7 @@ export class ImmediateSwitchService {
                                     channelStack.rtmpRoomInputAttachmentName
                                         ? channelStack.rtmpRoomInputAttachmentName
                                         : eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
-                                        ? channelStack.rtmpBInputAttachmentName
+                                        ? channelStack.rtmpBInputAttachmentName ?? channelStack.rtmpAInputAttachmentName
                                         : channelStack.rtmpAInputAttachmentName,
                             },
                         },
@@ -206,7 +206,7 @@ export class ImmediateSwitchService {
                                     switchData.data.source === "rtmpRoom" && channelStack.rtmpRoomInputAttachmentName
                                         ? channelStack.rtmpRoomInputAttachmentName
                                         : eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
-                                        ? channelStack.rtmpBInputAttachmentName
+                                        ? channelStack.rtmpBInputAttachmentName ?? channelStack.rtmpAInputAttachmentName
                                         : channelStack.rtmpAInputAttachmentName,
                             },
                         },

@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import type { CombinedError, Operation } from "@urql/core";
-import { makeOperation } from "@urql/core";
+import { cacheExchange, makeOperation } from "@urql/core";
 import type { AuthConfig } from "@urql/exchange-auth";
 import { authExchange } from "@urql/exchange-auth";
 import { requestPolicyExchange } from "@urql/exchange-request-policy";
@@ -188,6 +188,7 @@ function UrqlProviderInner({
                                     authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
                             }),
                             // cache,
+                            cacheExchange,
                             authExchange(authOptions),
                             retryExchange(retryOptions),
                             fetchExchange,

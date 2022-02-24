@@ -387,7 +387,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["bootstrap"]
+            "args": ["bootstrap", "--", "--profile", "${input:aws-profile-name}"]
         },
         {
             "label": "AWS -- Deploy stacks",

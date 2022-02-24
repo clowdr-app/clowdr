@@ -63,6 +63,13 @@ The Hasura GraphQL engine will be configured with an arbitrary admin secret valu
 
 Several other setup steps require an arbitrarily selected secret value shared between services, and this method may be used for generating those values as well.
 
+## Install Packages
+
+Install all node packages (pnpm descends into subdirectories and creates all necessary `node_modules` directories):
+   ```
+   pnpm i
+   ```
+
 ## Cloud Services
 
 Midspace relies on various cloud services, which will need to be configured for local development as well.
@@ -71,15 +78,10 @@ Midspace relies on various cloud services, which will need to be configured for 
 1. [Set up user authentication](docs/auth-setup.md)
 1. **Full Setup:** [Set up AWS account and Deploy AWS CloudFormation Stacks](aws/README.md)
 1. [Set up video chat service](docs/video-service-setup.md)
-1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and an API key for it.
+1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and an API key for it from Settings -> API Keys.
 
 ## Setting Up Local Working Copy
 
-1. Clone this repository
-1. Install all node packages (pnpm descends into subdirectories and creates all necessary `node_modules` directories):
-   ```
-   pnpm i
-   ```
 1. Follow the Hasura setup: [Midspace Hasura ReadMe](hasura/README.md#Setting-up)
 1. Follow the Actions Service setup: [Midspace Actions Service
    ReadMe](services/actions/README.md#Setting-up)

@@ -6,7 +6,8 @@ Midspace uses the Vonage Video API (formerly TokBox OpenTok) for video chat.
    [Vonage Video API](https://www.vonage.co.uk/communications-apis/video/)
    account; then go to `Projects > Create New Project`, choose "Custom", and
    make a note of the API key that is generated.
-1. Generate a secure random value and note it as `VONAGE_WEBHOOK_SECRET`.
+1. If you have not already, generate a secure random value and note it as `VONAGE_WEBHOOK_SECRET`.
+1. Ensure that the Packetriot task (or your preferred tunnel setup) is running locally before proceeding to the next steps. Vonage will not accept the required URLs if they are not exposed via a tunnel.
 1. Open the _Project Settings_ for the Vonage Video API project you created.
 1. Use the `VONAGE_WEBHOOK_SECRET` value, the Actions Service public URL, and
    the following path to set the Session Monitoring URL:

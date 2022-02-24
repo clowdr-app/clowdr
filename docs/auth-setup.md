@@ -33,7 +33,7 @@ considered for merging._**
    http://localhost:3000/auth0/email-verification/result,
    https://<frontendSubdomain>.<PacketRiotDomain>/auth0/,
    https://<frontendSubdomain>.<PacketRiotDomain>/auth0/logged-in,
-   https://<frontendSubdomain>.<PacketRiotDomain>/auth0/email-verification/result,
+   https://<frontendSubdomain>.<PacketRiotDomain>/auth0/email-verification/result
    ```
    (Note that, for production, the first URL _must_ be the `auth0` address; see [the auth0 documentation on Email Templates / RedirectURLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
    **Full Setup**: If you have set up Netlify, you can optionally include your Netlify app url(s) in the Allowed Callback URLs (at the end). Netlify is a platform for hosting static websites. It takes our latest React site from git, builds it and deploys it to a CDN automatically. It's not required for most users - you could host the static part of the app wherever you want. For the local development case, you're just using a server on your local machine and maybe exposing it through a tunnel.
@@ -51,7 +51,7 @@ considered for merging._**
    http://localhost:3000/auth0/logged-out,
    http://localhost:3000/auth0/email-verification/required/no-redirect,
    https://<frontendSubdomain>.<PacketRiotDomain>/auth0/logged-out,
-   https://<frontendSubdomain>.<PacketRiotDomain>/auth0/email-verification/required/no-redirect,
+   https://<frontendSubdomain>.<PacketRiotDomain>/auth0/email-verification/required/no-redirect
    ```
    **Full Setup**: If using netlify, add these:
    ```
@@ -68,6 +68,7 @@ considered for merging._**
    https://<netlify-subdomain>.netlify.app
    ```
 1. **Don't forget to `Save changes`**
+1. Go to the application's Connections tab and ensure the Database and Social options are toggled on.
 
 ## 3. Create API
 

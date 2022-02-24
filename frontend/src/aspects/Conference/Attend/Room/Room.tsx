@@ -30,6 +30,7 @@ import {
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { AppLayoutContext } from "../../../App/AppLayoutContext";
+import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import FAIcon from "../../../Chakra/FAIcon";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../Hooks/useRealTime";
@@ -640,7 +641,7 @@ function RoomInner({
             currentEventIsVideoPlayer || (selectedVideoElementId && !currentRoomEvent) ? (
                 <Box pos="relative" ref={videoPlayerRef}>
                     {selectedVideoElementId ? (
-                        <Suspense fallback={<Spinner />}>
+                        <Suspense fallback={<CenteredSpinner caller="Room.tsx:644" />}>
                             <VideoPlayer elementId={selectedVideoElementId} />
                         </Suspense>
                     ) : (
@@ -705,7 +706,7 @@ function RoomInner({
                     alignItems="stretch"
                     minW="100%"
                     maxW="100%"
-                    h={mainPaneHeight}
+                    h={showDefaultVideoChatRoom ? mainPaneHeight : "auto"}
                 >
                     {controlBarEl}
 
@@ -722,7 +723,14 @@ function RoomInner({
                               zoomEventStartsAt - now5s < 10 * 60 * 1000 ? (
                                 <JoinZoomButton zoomUrl={maybeZoomUrl} startTime={zoomEventStartsAt} />
                             ) : undefined}
-                            <Box bgColor={bgColour} zIndex={2} flexGrow={1}>
+
+                            <Box
+                                // flexDirection="column"
+                                // justifyContent="center"
+                                bgColor={bgColour}
+                                zIndex={2}
+                                flexGrow={1}
+                            >
                                 <VideoChatRoom
                                     defaultVideoBackendName={defaultVideoBackend}
                                     roomDetails={roomDetails}

@@ -1,6 +1,26 @@
 import { AspectRatio, chakra } from "@chakra-ui/react";
+import useSize from "@react-hook/size";
 import type { ReactNode } from "react";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
+
+export function VideoAspectWrapperAuto({
+    initialAspectRatio,
+    children,
+}: {
+    initialAspectRatio?: number;
+    children: (onAspectRatioChange: (aspectRatio: number) => void) => ReactNode;
+}): JSX.Element {
+    const ref = useRef<HTMLDivElement>(null);
+    const [width, height] = useSize(ref);
+
+    return (
+        <chakra.div w="100%" h="100%" ref={ref}>
+            <VideoAspectWrapper maxWidth={width} maxHeight={height} initialAspectRatio={initialAspectRatio}>
+                {children}
+            </VideoAspectWrapper>
+        </chakra.div>
+    );
+}
 
 export function VideoAspectWrapper({
     initialAspectRatio,

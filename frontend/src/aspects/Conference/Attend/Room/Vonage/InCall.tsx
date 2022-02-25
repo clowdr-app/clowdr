@@ -1,4 +1,4 @@
-import { Flex, VStack } from "@chakra-ui/react";
+import { Box, Flex, VStack } from "@chakra-ui/react";
 import React, { useContext, useEffect, useMemo } from "react";
 import * as portals from "react-reverse-portal";
 import { validate } from "uuid";
@@ -19,6 +19,8 @@ import { useVonageLayout } from "./State/VonageLayoutProvider";
 import { useVonageRoom } from "./State/VonageRoomProvider";
 import { Browse } from "./VideoGrid/Browse";
 import Layout from "./VideoGrid/Layout";
+import VideoChatVideoPlayer from "./VideoPlayback/VideoChatVideoPlayer";
+import { VonageVideoPlaybackContext } from "./VideoPlayback/VonageVideoPlaybackContext";
 
 export function InCall(): JSX.Element {
     const registrant = useCurrentRegistrant();
@@ -336,11 +338,26 @@ export function InCall(): JSX.Element {
         }
     }, [display.actualDisplay.type, settings.canControlRecording, streamActivities, viewports]);
 
+    const videoPlayback = useContext(VonageVideoPlaybackContext);
+
     return (
         <>
             {connected ? (
-                <VStack h="100%" width="100%" zIndex={1} alignItems="stretch" spacing={0} overflow="hidden">
-                    <Flex flexDirection="column" flexGrow={1} flexShrink={1} minH="20em" width="100%" overflow="hidden">
+                <VStack h="100%" w="100%" zIndex={1} alignItems="stretch" overflow="hidden">
+                    {videoPlayback.latestCommand?.command?.type === "video" ? (
+                        <Box flexBasis={0} flexGrow={1.5} flexShrink={1} minH="10em" w="100%" p={2}>
+                            <VideoChatVideoPlayer />
+                        </Box>
+                    ) : undefined}
+                    <Flex
+                        flexDirection="column"
+                        flexBasis={0}
+                        flexGrow={1}
+                        flexShrink={1}
+                        minH="10em"
+                        w="100%"
+                        overflow="hidden"
+                    >
                         {displayEl}
                     </Flex>
                     <VonageRoomControlBar />

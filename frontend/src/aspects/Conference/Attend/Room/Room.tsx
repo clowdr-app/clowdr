@@ -380,7 +380,7 @@ function RoomInner({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent?.id]);
 
-    const { mainPaneHeight, mainPaneRef } = useContext(AppLayoutContext);
+    const { mainPaneHeight, mainPaneWidth, mainPaneRef } = useContext(AppLayoutContext);
 
     const controlBarEl = useMemo(
         () => (
@@ -665,7 +665,7 @@ function RoomInner({
                 </Box>
             ) : shouldShowLivePlayer && hlsUri ? (
                 <Box pos="relative">
-                    <VideoAspectWrapper>
+                    <VideoAspectWrapper maxHeight={mainPaneHeight} maxWidth={mainPaneWidth}>
                         {(onAspectRatioChange) => (
                             <Suspense fallback={<Spinner />}>
                                 <HlsPlayer
@@ -693,6 +693,8 @@ function RoomInner({
         roomDetails.chatId,
         roomDetails.id,
         hlsUri,
+        mainPaneHeight,
+        mainPaneWidth,
         secondsUntilBroadcastEvent,
     ]);
 

@@ -15,7 +15,7 @@ and all of our backend services.
 1. In `hasura/.env.local` set the value of `HASURA_GRAPHQL_ADMIN_SECRET` to the Hasura admin secret value generated at the beginning of this setup process. Set the value of `EVENT_SECRET` to another secure random value.
 1. Run the `Hasura Console -- Local Development` task within VSCode:
    `Terminal > Run Task`. This will start the GraphQL engine in Docker first, and that VSCode task will prompt for a Docker project name with a default filled in. Press enter to accept the default.
-   - Due to a race condition between writing Hasura's metadata and applying migrations, we recommend running these sequentially. To do this, comment out the `volume` `./hasura/metadata:/hasura-metada` in `docker-compose.yaml` and run the `Hasura Console -- Local Development` task. Once complete, uncomment `./hasura/metadata:/hasura-metada` and run `Hasura Console -- Local Development` again.
+   - If you find that the Docker container runs out of memory or crashes on first startup, then we recommend applying the migrations and writing the Hasura metadata sequentially. To do this, comment out the `volume` `./hasura/metadata:/hasura-metadata` in `docker-compose.yaml` and run the `Hasura Console -- Local Development` task. Once complete, uncomment `./hasura/metadata:/hasura-metadata` and run `Hasura Console -- Local Development` again.
 1. Check that the Docker Compose task ran successfully in the Task Output
    - If you get an error from this task, make sure the Docker app is running first!
 1. Check that the Hasura Console task ran successfully in the Task Output

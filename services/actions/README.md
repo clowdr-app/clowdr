@@ -22,7 +22,7 @@ Eventually this may be split into multiple microservices.
    - **Quick setup**: Set all the environment variables related to AWS to `XXXX`. BCP: This will not actually work right now, but let's give it a try this way and see how much further we can get.
    - **Full Setup**: You will need the outputs from running the AWS CDK deployment. `ChimeActionsUserAccessKeyId`, `ChimeActionsUserSecretAccessKey`, and `ChimeNotificationsTopic` are found in the `Outputs` tab for the `<prefix>-chime` stack that was deployed in `us-east-1 (N. Virginia)`, and most of the rest of the `AWS_...` environment variable values come from the `Outputs` for the `<prefix>-main` stack deployed to the default region.
 
-Now return to the main README.
+You may now return to [Part 2 of the Vonage Setup](../../docs/video-service-setup.md#part-2-after-actions-service-setup).
 
 ## Production: Creating a Google Cloud project
 
@@ -109,9 +109,6 @@ Note: `AWS_` values come from the outputs of your AWS CloudFormation deployment.
 | AWS_CHIME_MANAGER_ROLE_ARN                       | The IAM role providing management access to Amazon Chime (but comes from `main` stack output!)                                                                         | CDK `main` stack output  |
 | AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN   | The IAM role to be passed to Elastic Transcoder                                                                                                                        | CDK `main` stack output  |
 | AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN          | The ARN of the SNS topic for Elastic Transcoder notifications                                                                                                          | CDK `main` stack output  |
-| AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID            | The ID of the security group to be used for MediaLive RTMP Push inputs                                                                                                 | CDK `main` stack output  |
-| AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN            | The ARN of the SNS topic for MediaLive notifications                                                                                                                   | CDK `main` stack output  |
-| AWS_MEDIALIVE_SERVICE_ROLE_ARN                   | The IAM role to be passed to MediaLive                                                                                                                                 | CDK `main` stack output  |
 | AWS_MEDIACONVERT_SERVICE_ROLE_ARN                | The IAM role to be passed to MediaConvert                                                                                                                              | CDK `main` stack output  |
 | AWS_MEDIACONVERT_API_ENDPOINT                    | The customer-specific MediaConvert endpoint (Optional)                                                                                                                 | customer-specific        |
 | AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN                | The IAM role to be passed to MediaPackage                                                                                                                              | CDK `main` stack output  |

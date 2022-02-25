@@ -244,6 +244,19 @@
             }
         },
         {
+            "label": "Storybook -- Local Development",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["storybook"]
+        },
+        {
             "label": "Prettier: Format code",
             "type": "shell",
             "command": "pnpm",

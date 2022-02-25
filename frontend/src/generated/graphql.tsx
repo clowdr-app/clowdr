@@ -41810,6 +41810,20 @@ export type PreshowChecklistQuery = {
     }>;
 };
 
+export type SubmitConferenceLogoMutationVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    url: Scalars["String"];
+}>;
+
+export type SubmitConferenceLogoMutation = {
+    readonly __typename?: "mutation_root";
+    readonly updateConferenceLogo?: {
+        readonly __typename?: "UpdateConferenceLogoResponse";
+        readonly ok: boolean;
+        readonly url?: string | null;
+    } | null;
+};
+
 export type UpdateConferenceMutationVariables = Exact<{
     id: Scalars["uuid"];
     name?: InputMaybe<Scalars["String"]>;
@@ -51859,6 +51873,20 @@ export const PreshowChecklistDocument = gql`
 
 export function usePreshowChecklistQuery(options: Omit<Urql.UseQueryArgs<PreshowChecklistQueryVariables>, "query">) {
     return useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
+}
+export const SubmitConferenceLogoDocument = gql`
+    mutation SubmitConferenceLogo($conferenceId: uuid!, $url: String!) {
+        updateConferenceLogo(conferenceId: $conferenceId, url: $url) {
+            ok
+            url
+        }
+    }
+`;
+
+export function useSubmitConferenceLogoMutation() {
+    return Urql.useMutation<SubmitConferenceLogoMutation, SubmitConferenceLogoMutationVariables>(
+        SubmitConferenceLogoDocument
+    );
 }
 export const UpdateConferenceDocument = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {

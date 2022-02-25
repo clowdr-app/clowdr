@@ -26,6 +26,7 @@ import { useConference } from "../../useConference";
 import { roleOptions } from "../Content/v2/Submissions/SubmissionRequestsModal";
 import { DashboardPage } from "../DashboardPage";
 import DateTimeSetting from "./DateTimeSetting";
+import EditConferenceLogoForm from "./EditConferenceLogoForm";
 import MultiSelectSetting from "./MultiSelectSetting";
 import MultiSettingUpdater from "./MultiSettingUpdater";
 import RadioSetting from "./RadioSetting";
@@ -299,6 +300,12 @@ export default function ManageConfig(): JSX.Element {
                                 />
                             )}
                         </SettingUpdater>
+                    </Setting>
+                    <Setting
+                        title="Conference Logo"
+                        description="Logo to appear in the header of all pages for your conference"
+                    >
+                        <EditConferenceLogoForm {...{conference}}/>
                     </Setting>
                 </Section>
                 <Section

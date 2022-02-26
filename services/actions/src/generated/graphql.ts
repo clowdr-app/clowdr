@@ -38688,6 +38688,11 @@ export type GetEventTimingsQuery = {
         eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
         item?: { __typename?: "content_Item"; id: any; title: string; chatId?: any | null } | null;
         continuations: Array<{ __typename?: "schedule_Continuation"; id: any; to: any }>;
+        room: {
+            __typename?: "room_Room";
+            id: any;
+            rtmpInput?: { __typename?: "video_RoomRtmpInput"; id: any; inputId?: string | null } | null;
+        };
     } | null;
 };
 
@@ -44116,6 +44121,27 @@ export const GetEventTimingsDocument = {
                                         selections: [
                                             { kind: "Field", name: { kind: "Name", value: "id" } },
                                             { kind: "Field", name: { kind: "Name", value: "to" } },
+                                        ],
+                                    },
+                                },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "room" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "rtmpInput" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "inputId" } },
+                                                    ],
+                                                },
+                                            },
                                         ],
                                     },
                                 },

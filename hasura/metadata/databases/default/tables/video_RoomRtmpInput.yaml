@@ -5,6 +5,32 @@ object_relationships:
 - name: room
   using:
     foreign_key_constraint_on: roomId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      room:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+    columns:
+    - inputName
+    - roomId
+  role: conference-organizer
+- permission:
+    backend_only: false
+    check:
+      room:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: false
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+    columns:
+    - inputName
+    - roomId
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -32,3 +58,36 @@ select_permissions:
           - id:
               _in: X-Hasura-Room-Ids
   role: attendee
+- permission:
+    columns:
+    - address
+    - applicationInstance
+    - applicationName
+    - created_at
+    - id
+    - roomId
+    - updated_at
+    filter:
+      room:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - address
+    - applicationInstance
+    - applicationName
+    - created_at
+    - id
+    - roomId
+    - updated_at
+    filter:
+      room:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: false
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer

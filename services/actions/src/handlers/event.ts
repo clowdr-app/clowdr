@@ -198,6 +198,13 @@ gql`
                 id
                 to
             }
+            room {
+                id
+                rtmpInput {
+                    id
+                    inputId
+                }
+            }
         }
     }
 `;
@@ -224,13 +231,15 @@ export async function handleEventStartNotification(
         result.data.schedule_Event_by_pk.startTime === startTime &&
         (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.timingsUpdatedAt) === updatedAt)
     ) {
+        const isHybrid = Boolean(result.data.schedule_Event_by_pk.room?.rtmpInput?.inputId);
         logger.info(
-            { eventId: result.data.schedule_Event_by_pk.id, startTime },
+            { eventId: result.data.schedule_Event_by_pk.id, startTime, isHybrid },
             "Handling event start: matched expected startTime"
         );
         const nowMillis = new Date().getTime();
         const startTimeMillis = Date.parse(startTime);
-        const preloadMillis = 10000;
+        // If the event is hybrid, delay by 3 seconds to reduce risk of RTMP PUSH Input conflict between events
+        const preloadMillis = isHybrid ? -3000 : 10000;
         const waitForMillis = Math.max(startTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.schedule_Event_by_pk.id;
         const roomId = result.data.schedule_Event_by_pk.roomId;

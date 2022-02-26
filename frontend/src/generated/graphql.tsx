@@ -45239,6 +45239,25 @@ export type DeleteRoomRtmpOutputMutation = {
     } | null;
 };
 
+export type GetRoomRtmpInputQueryVariables = Exact<{
+    roomId: Scalars["uuid"];
+}>;
+
+export type GetRoomRtmpInputQuery = {
+    readonly __typename?: "query_root";
+    readonly room_Room_by_pk?: {
+        readonly __typename?: "room_Room";
+        readonly id: any;
+        readonly rtmpInput?: {
+            readonly __typename?: "video_RoomRtmpInput";
+            readonly id: any;
+            readonly address?: string | null;
+            readonly applicationName: string;
+            readonly applicationInstance: string;
+        } | null;
+    } | null;
+};
+
 export type AddEventPeople_ItemPersonFragment = {
     readonly __typename?: "content_ItemProgramPerson";
     readonly id: any;
@@ -53792,6 +53811,23 @@ export function useDeleteRoomRtmpOutputMutation() {
     return Urql.useMutation<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>(
         DeleteRoomRtmpOutputDocument
     );
+}
+export const GetRoomRtmpInputDocument = gql`
+    query GetRoomRtmpInput($roomId: uuid!) {
+        room_Room_by_pk(id: $roomId) {
+            id
+            rtmpInput {
+                id
+                address
+                applicationName
+                applicationInstance
+            }
+        }
+    }
+`;
+
+export function useGetRoomRtmpInputQuery(options: Omit<Urql.UseQueryArgs<GetRoomRtmpInputQueryVariables>, "query">) {
+    return Urql.useQuery<GetRoomRtmpInputQuery>({ query: GetRoomRtmpInputDocument, ...options });
 }
 export const AddEventPeople_SelectItemPeopleDocument = gql`
     query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {

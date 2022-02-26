@@ -708,7 +708,7 @@ function RoomInner({
                     alignItems="stretch"
                     minW="100%"
                     maxW="100%"
-                    h={showDefaultVideoChatRoom ? mainPaneHeight : "auto"}
+                    h={showDefaultVideoChatRoom && !showBackstage ? mainPaneHeight : "auto"}
                 >
                     {controlBarEl}
 

@@ -11,9 +11,10 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
+import { AppLayoutContext } from "../../../../App/AppLayoutContext";
 import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../../Hooks/useRealTime";
 import StreamTextCaptions from "../StreamTextCaptions";
@@ -99,10 +100,17 @@ export default function Backstage({
         () => <VonageBackstage event={event} onLeave={onLeave} hlsUri={hlsUri} />,
         [event, onLeave, hlsUri]
     );
+    const { mainPaneHeight } = useContext(AppLayoutContext);
     const area = useMemo(
         () =>
             isSelected ? (
-                <Box mt={2} p={2} border={isNow ? "solid " + onAirBorderColour : undefined} borderWidth={4}>
+                <Box
+                    h={`max(${mainPaneHeight}px, 40em)`}
+                    mt={2}
+                    p={2}
+                    border={isNow ? "solid " + onAirBorderColour : undefined}
+                    borderWidth={4}
+                >
                     {vonageBackstage}
                     <StreamTextCaptions streamTextEventId={event.streamTextEventId} />
                     <EmojiFloatContainer chatId={roomChatId ?? ""} xDurationMs={4000} yDurationMs={10000} />
@@ -113,7 +121,16 @@ export default function Backstage({
                     This event has now finished. Once you close this backstage, you will not be able to rejoin it.
                 </Alert>
             ) : undefined,
-        [isActive, isNow, isSelected, vonageBackstage, roomChatId, event.streamTextEventId, onAirBorderColour]
+        [
+            isActive,
+            isNow,
+            isSelected,
+            vonageBackstage,
+            roomChatId,
+            event.streamTextEventId,
+            onAirBorderColour,
+            mainPaneHeight,
+        ]
     );
 
     return (

@@ -1,4 +1,17 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Text, VStack } from "@chakra-ui/react";
+import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
+    Box,
+    Button,
+    Center,
+    Heading,
+    Text,
+    VStack,
+    Wrap,
+    WrapItem,
+} from "@chakra-ui/react";
 import useSize from "@react-hook/size";
 import React, { useContext, useMemo } from "react";
 import FAIcon from "../../../../../Chakra/FAIcon";
@@ -16,6 +29,7 @@ import { Fitted4 } from "./BroadcastLayouts/Fitted4";
 import { Pair } from "./BroadcastLayouts/Pair";
 import { PictureInPicture } from "./BroadcastLayouts/PictureInPicture";
 import { Single } from "./BroadcastLayouts/Single";
+import { Gallery } from "./BrowseLayouts/Gallery";
 
 export default function Layout({
     viewports,
@@ -48,15 +62,22 @@ export default function Layout({
                     alignItems="center"
                     justifyContent="center"
                     textAlign="center"
-                    p={8}
+                    px={8}
+                    py={4}
                     maxW="50ch"
                     colorScheme="RoomNoVideoAlert"
                 >
-                    <AlertIcon boxSize="8" />
-                    <AlertTitle fontSize="lg" my={4}>
-                        Nobody has their video turned on right now
-                    </AlertTitle>
-                    <AlertDescription mr={2}>
+                    <Wrap align="center" pb={2}>
+                        <WrapItem flexGrow={0}>
+                            <AlertIcon boxSize="8" />
+                        </WrapItem>
+                        <WrapItem flexGrow={1} flexBasis="min-content">
+                            <AlertTitle fontSize={{ base: "md", md: "lg" }} textAlign="left">
+                                Nobody has their video turned on right now
+                            </AlertTitle>
+                        </WrapItem>
+                    </Wrap>
+                    <AlertDescription mr={2} fontSize={{ base: "sm", md: "md" }}>
                         <Text>
                             {settings.isBackstageRoom
                                 ? "Nothing will be visible during your event broadcast until someone turns on their camera or shares their screen."
@@ -70,7 +91,7 @@ export default function Layout({
                         {connections.length > 1 ? (
                             <Button
                                 onClick={() => display.setChosenDisplay({ type: DisplayType.Browse })}
-                                mt={4}
+                                mt={2}
                                 colorScheme="RoomControlBarButton"
                                 size="xs"
                                 leftIcon={<FAIcon icon="chalkboard-teacher" iconStyle="s" />}
@@ -149,10 +170,23 @@ export default function Layout({
     }, [allowedToControlLayout, isRecordingMode, noVideosEl, visualLayout]);
 
     return (
-        <VStack h="100%" justifyContent="center" ref={layoutPanelRef} flexGrow={1}>
-            <Box w={`${width}px`} h={`${height}px`}>
-                {layoutEl}
+        <VStack h="100%" justifyContent="center" alignItems="stretch" flexGrow={1}>
+            <Heading as="h3" size="sm" flexGrow={0} flexShrink={1} pt={2}>
+                Preview of {settings.isBackstageRoom ? "stream" : "recording"}
+            </Heading>
+            <Box flexBasis={0} minH="10em" flexGrow={{ base: 1.5, md: 2.5, lg: 3 }} flexShrink={1} ref={layoutPanelRef}>
+                <Box w={`${width}px`} h={`${height}px`} mx="auto" flexGrow={1} flexShrink={1}>
+                    {layoutEl}
+                </Box>
             </Box>
+            {visualLayout.overflowViewports.length ? (
+                <VStack flexBasis={0} minH="5em" flexGrow={1} flexShrink={1}>
+                    <Heading as="h3" size="sm" pt={2}>
+                        Not included in {settings.isBackstageRoom ? "stream" : "recording"}
+                    </Heading>
+                    <Gallery viewports={visualLayout.overflowViewports} streamActivities={new Map()} />
+                </VStack>
+            ) : undefined}
         </VStack>
     );
 }

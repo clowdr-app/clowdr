@@ -2,7 +2,8 @@ import { Box, Spinner, VStack } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import React, { useCallback, useContext, useMemo } from "react";
 import * as portals from "react-reverse-portal";
-import type { Event_EventVonageSessionFragment, Room_EventSummaryFragment } from "../../../../../generated/graphql";
+import { useContextSelector } from "use-context-selector";
+import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
 import {
     Registrant_RegistrantRole_Enum,
     Schedule_EventProgramPersonRole_Enum,
@@ -12,6 +13,7 @@ import {
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import type { VonageRoom } from "../Vonage/VonageRoom";
+import { BackstageContext, BackstageProvider } from "./BackstageContext";
 import { BackstageControls } from "./Controls/BackstageControls";
 
 gql`
@@ -56,36 +58,34 @@ export function VonageBackstage({
         <>
             {result.fetching || (!result.data?.schedule_Event_by_pk && result.stale) ? <Spinner /> : undefined}
             {result.data?.schedule_Event_by_pk ? (
-                <VonageBackstageInner
-                    event={{ ...event, ...result.data.schedule_Event_by_pk }}
-                    isRaiseHandPreJoin={isRaiseHandPreJoin}
-                    isRaiseHandWaiting={isRaiseHandWaiting}
-                    completeJoinRef={completeJoinRef}
-                    onLeave={onLeave}
-                    hlsUri={hlsUri}
-                />
+                <BackstageProvider hlsUri={hlsUri} event={{ ...event, ...result.data.schedule_Event_by_pk }}>
+                    <VonageBackstageInner
+                        isRaiseHandPreJoin={isRaiseHandPreJoin}
+                        isRaiseHandWaiting={isRaiseHandWaiting}
+                        completeJoinRef={completeJoinRef}
+                        onLeave={onLeave}
+                    />
+                </BackstageProvider>
             ) : undefined}
         </>
     );
 }
 
 export function VonageBackstageInner({
-    event,
     isRaiseHandPreJoin = false,
     isRaiseHandWaiting,
     completeJoinRef,
     onLeave,
-    hlsUri,
 }: {
-    event: Room_EventSummaryFragment & Event_EventVonageSessionFragment;
     isRaiseHandPreJoin?: boolean;
     isRaiseHandWaiting?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onLeave?: () => void;
-    hlsUri: string | undefined;
 }): JSX.Element {
     const [, getEventVonageToken] = useGetEventVonageTokenMutation();
     const registrant = useCurrentRegistrant();
+    const sharedRoomContext = useContext(SharedRoomContext);
+    const event = useContextSelector(BackstageContext, (state) => state.event);
 
     const getAccessToken = useCallback(async () => {
         const result = await getEventVonageToken({
@@ -97,8 +97,6 @@ export function VonageBackstageInner({
         }
         return result.data?.joinEventVonageSession.accessToken;
     }, [getEventVonageToken, event.id, registrant.id]);
-
-    const sharedRoomContext = useContext(SharedRoomContext);
 
     const isPresenterOrChairOrOrganizer = useMemo(
         () =>
@@ -112,8 +110,8 @@ export function VonageBackstageInner({
     );
 
     return (
-        <VStack justifyContent="stretch" w="100%" alignItems="flex-start">
-            {!isRaiseHandPreJoin ? <BackstageControls event={event} hlsUri={hlsUri} /> : undefined}
+        <VStack h="100%" justifyContent="stretch" w="100%" alignItems="flex-start">
+            {!isRaiseHandPreJoin ? <BackstageControls /> : undefined}
             <Box w="100%" flexGrow={1}>
                 {event.eventVonageSession && sharedRoomContext ? (
                     <portals.OutPortal<typeof VonageRoom>

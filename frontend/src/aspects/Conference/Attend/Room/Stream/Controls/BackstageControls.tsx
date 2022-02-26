@@ -1,10 +1,9 @@
-import { Box, HStack } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import { Wrap, WrapItem } from "@chakra-ui/react";
+import React from "react";
 import { gql } from "urql";
-import type { Room_EventSummaryFragment } from "../../../../../../generated/graphql";
-import { useVonageGlobalState } from "../../Vonage/State/VonageGlobalStateProvider";
 import { ImmediateSwitch } from "./ImmediateSwitch";
 import { LiveIndicator } from "./LiveIndicator";
+import StreamPreview from "./StreamPreview";
 
 gql`
     subscription GetVonageParticipantStreams($eventId: uuid!) {
@@ -29,39 +28,18 @@ gql`
     }
 `;
 
-export function BackstageControls({
-    event,
-    hlsUri,
-}: {
-    event: Room_EventSummaryFragment;
-    hlsUri: string | undefined;
-}): JSX.Element {
-    const vonageGlobalState = useVonageGlobalState();
-    const [isConnected, setIsConnected] = useState<boolean>(false);
-    useEffect(() => {
-        const unobserve = vonageGlobalState.IsConnected.subscribe((isConn) => {
-            setIsConnected(isConn);
-        });
-        return () => {
-            unobserve();
-        };
-    }, [vonageGlobalState]);
-
-    const immediateSwitchControls = useMemo(
-        () => (
-            <Box maxW="30ch">
-                <ImmediateSwitch event={event} />
-            </Box>
-        ),
-        [event]
-    );
-
+export function BackstageControls(): JSX.Element {
     return (
-        <>
-            <LiveIndicator event={event} isConnected={isConnected} hlsUri={hlsUri} />
-            <HStack flexWrap="wrap" w="100%" justifyContent="flex-start" my={2}>
-                {immediateSwitchControls}
-            </HStack>
-        </>
+        <Wrap>
+            <WrapItem>
+                <StreamPreview />
+            </WrapItem>
+            <WrapItem>
+                <LiveIndicator />
+            </WrapItem>
+            <WrapItem maxW="25ch">
+                <ImmediateSwitch />
+            </WrapItem>
+        </Wrap>
     );
 }

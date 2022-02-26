@@ -1,4 +1,4 @@
-import { Spinner, Text } from "@chakra-ui/react";
+import { chakra, Link, Spinner, Text } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
@@ -185,6 +185,25 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
                                         <Text fontSize="xl" lineHeight="revert" fontWeight="light">
                                             Sorry, an authentication error has occurred. Please try again later.
                                         </Text>
+                                        <Text fontSize="md" lineHeight="revert" fontWeight="light">
+                                            <chakra.span fontStyle="italic" mr={1}>
+                                                Signed in with Google?
+                                            </chakra.span>
+                                            <chakra.span>
+                                                If you previously had an account with us and have signed in with Google
+                                                for the first time, we may need to reconcile your accounts. Please
+                                                contact our support team at{" "}
+                                            </chakra.span>
+                                            <Link
+                                                wordBreak="keep-all"
+                                                whiteSpace="nowrap"
+                                                href={`mailto:${
+                                                    import.meta.env.VITE_TECH_SUPPORT_ADDRESS ?? "support@midspace.app"
+                                                }`}
+                                            >
+                                                {import.meta.env.VITE_TECH_SUPPORT_ADDRESS ?? "support@midspace.app"}
+                                            </Link>
+                                        </Text>
                                     </GenericErrorPage>
                                 );
                             }
@@ -214,6 +233,25 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
                             <LinkButton aria-label="Go to home" to="/">
                                 Go to home
                             </LinkButton>
+                            <Text fontSize="md" lineHeight="revert" fontWeight="light">
+                                <chakra.span fontStyle="italic" mr={1}>
+                                    Signed in with Google?
+                                </chakra.span>
+                                <chakra.span>
+                                    If you previously had an account with us and have signed in with Google for the
+                                    first time, we may need to reconcile your accounts. Please contact our support team
+                                    at{" "}
+                                </chakra.span>
+                                <Link
+                                    wordBreak="keep-all"
+                                    whiteSpace="nowrap"
+                                    href={`mailto:${
+                                        import.meta.env.VITE_TECH_SUPPORT_ADDRESS ?? "support@midspace.app"
+                                    }`}
+                                >
+                                    {import.meta.env.VITE_TECH_SUPPORT_ADDRESS ?? "support@midspace.app"}
+                                </Link>
+                            </Text>
                         </>
                     </GenericErrorPage>
                 </Route>

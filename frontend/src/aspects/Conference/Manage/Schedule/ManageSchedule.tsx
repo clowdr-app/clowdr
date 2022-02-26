@@ -371,12 +371,26 @@ function EditableScheduleTable(): JSX.Element {
             }),
         []
     );
+    const wholeScheduleContext = useMemo(
+        () => ({
+            ...context,
+            additionalTypenames: [
+                "room_Room",
+                "schedule_Event",
+                "collection_Tag",
+                "collection_Exhibition",
+                "content_Item",
+                "collection_ProgramPerson",
+            ],
+        }),
+        [context]
+    );
     const [wholeSchedule] = useSelectWholeScheduleQuery({
         variables: {
             conferenceId: conference.id,
         },
         requestPolicy: "cache-and-network",
-        context,
+        context: wholeScheduleContext,
     });
     const data = useMemo(() => [...(wholeSchedule.data?.schedule_Event ?? [])], [wholeSchedule.data?.schedule_Event]);
 
@@ -1302,6 +1316,7 @@ function EditableScheduleTable(): JSX.Element {
                                           [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                                       },
                                   },
+                                  additionalTypenames: ["schedule_Event"],
                               }
                           );
                       },
@@ -1334,6 +1349,7 @@ function EditableScheduleTable(): JSX.Element {
                             [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                         },
                     },
+                    additionalTypenames: ["schedule_Event"],
                 });
             },
         }),
@@ -1359,6 +1375,7 @@ function EditableScheduleTable(): JSX.Element {
                                 [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
+                        additionalTypenames: ["schedule_Event"],
                     }
                 );
             },

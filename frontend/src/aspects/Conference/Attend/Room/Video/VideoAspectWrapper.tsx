@@ -1,31 +1,60 @@
-import { chakra } from "@chakra-ui/react";
+import { AspectRatio, chakra } from "@chakra-ui/react";
+import useSize from "@react-hook/size";
 import type { ReactNode } from "react";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 
-export function VideoAspectWrapper({
+export function VideoAspectWrapperAuto({
     initialAspectRatio,
     children,
 }: {
     initialAspectRatio?: number;
     children: (onAspectRatioChange: (aspectRatio: number) => void) => ReactNode;
 }): JSX.Element {
+    const ref = useRef<HTMLDivElement>(null);
+    const [width, height] = useSize(ref);
+
+    return (
+        <chakra.div w="100%" h="100%" ref={ref}>
+            <VideoAspectWrapper maxWidth={width} maxHeight={height} initialAspectRatio={initialAspectRatio}>
+                {children}
+            </VideoAspectWrapper>
+        </chakra.div>
+    );
+}
+
+export function VideoAspectWrapper({
+    initialAspectRatio,
+    maxHeight,
+    maxWidth,
+    children,
+}: {
+    initialAspectRatio?: number;
+    maxHeight?: number;
+    maxWidth?: number;
+    children: (onAspectRatioChange: (aspectRatio: number) => void) => ReactNode;
+}): JSX.Element {
     const [aspectRatio, setAspectRatio] = useState<number>(initialAspectRatio ?? 16 / 9);
-    const maxWidth = 90;
-    const heightFromWidth = maxWidth / aspectRatio;
-    const maxHeight = 90;
-    const widthFromHeight = maxHeight * aspectRatio;
 
     const innerElement = useMemo(() => children(setAspectRatio), [children, setAspectRatio]);
 
-    return (
-        <chakra.div
-            width="100%"
-            maxWidth={`${widthFromHeight}vh`}
-            height="min(90vh, auto)"
-            maxHeight={`${heightFromWidth}vw`}
-            mx="auto"
-        >
+    const dimensions = maxWidth
+        ? maxHeight
+            ? {
+                  width: `${Math.min(maxHeight * aspectRatio, maxWidth)}px`,
+                  height: `${Math.min(maxWidth / aspectRatio, maxHeight)}px`,
+              }
+            : null
+        : maxHeight
+        ? { width: `${maxHeight * aspectRatio}px`, height: `${maxHeight}px` }
+        : null;
+
+    return dimensions ? (
+        <chakra.div width={dimensions.width} height={dimensions.height} mx="auto">
             {innerElement}
         </chakra.div>
+    ) : (
+        <AspectRatio maxW={maxWidth} w="100%">
+            {innerElement}
+        </AspectRatio>
     );
 }

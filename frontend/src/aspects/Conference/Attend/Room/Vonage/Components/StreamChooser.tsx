@@ -4,7 +4,7 @@ import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
 import FAIcon from "../../../../../Chakra/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeCompare";
-import { useVonageLayout } from "../VonageLayoutProvider";
+import { useVonageLayout } from "../State/VonageLayoutProvider";
 
 export default function StreamChooser({
     centered,
@@ -16,11 +16,13 @@ export default function StreamChooser({
     isRecordingMode: boolean;
 }): JSX.Element {
     const {
-        availableStreams,
-        layout: { layout },
-        updateLayout,
-        saveLayout,
-        layoutChooser_isOpen,
+        layout: {
+            availableStreams,
+            layout: { layout },
+            updateLayout,
+            saveLayout,
+            layoutChooser_isOpen,
+        },
     } = useVonageLayout();
 
     const changeLayout = useCallback(

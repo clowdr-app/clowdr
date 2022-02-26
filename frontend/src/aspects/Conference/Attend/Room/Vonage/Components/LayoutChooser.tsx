@@ -2,17 +2,13 @@ import { Button, ButtonGroup, chakra, Flex, useToken, VStack } from "@chakra-ui/
 import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
 import React, { useEffect, useRef, useState } from "react";
-import { useVonageLayout } from "../VonageLayoutProvider";
+import { useVonageLayout } from "../State/VonageLayoutProvider";
 
 export default function LayoutChooser(): JSX.Element {
     const boxFill = useToken("colors", "gray.400");
     const insetBoxFillStroke = useToken("colors", "gray.600");
     const {
-        layout,
-        updateLayout,
-        saveLayout,
-        layoutChooser_isOpen: isOpen,
-        layoutChooser_onClose: onClose,
+        layout: { layout, updateLayout, saveLayout, layoutChooser_isOpen: isOpen, layoutChooser_onClose: onClose },
     } = useVonageLayout();
     const [initialLayout, setInitialLayout] = useState<{ layout: VonageSessionLayoutData; createdAt: number } | null>(
         null

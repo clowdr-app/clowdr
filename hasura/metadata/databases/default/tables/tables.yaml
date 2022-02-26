@@ -75,6 +75,7 @@
 - "!include room_ShuffleQueueEntry.yaml"
 - "!include room_ShuffleRoom.yaml"
 - "!include schedule_Continuation.yaml"
+- "!include schedule_CurrentEvents.yaml"
 - "!include schedule_Event.yaml"
 - "!include schedule_EventProgramPerson.yaml"
 - "!include schedule_EventProgramPersonRole.yaml"

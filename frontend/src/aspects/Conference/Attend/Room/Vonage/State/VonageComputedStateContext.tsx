@@ -1,16 +1,16 @@
 import { createStandaloneToast, useToast } from "@chakra-ui/react";
+import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { theme } from "../../../../Chakra/ChakraCustomProvider";
-import { useNavigationState } from "../../../../Menu/NavigationState";
-import { useEvent } from "../../../../Utils/useEvent";
-import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
-import { useRecordingState } from "./Recording/useRecordingState";
-import { useTranscript } from "./Transcript/useTranscript";
+import { theme } from "../../../../../Chakra/ChakraCustomProvider";
+import { useNavigationState } from "../../../../../Menu/NavigationState";
+import { useEvent } from "../../../../../Utils/useEvent";
+import { useRecordingState } from "../Recording/useRecordingState";
+import { useTranscript } from "../Transcript/useTranscript";
 import type { TranscriptData, VonageGlobalState } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
-import { useVonageLayout } from "./VonageLayoutProvider";
+import { useVonageRoom, VonageRoomStateActionType } from "./VonageRoomProvider";
 
 const standaloneToast = createStandaloneToast({ theme });
 
@@ -23,7 +23,6 @@ interface Props {
     beginJoin?: () => void;
     cancelJoin?: () => void;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
-    isBackstageRoom: boolean;
 }
 
 interface Outputs {
@@ -38,6 +37,14 @@ interface Outputs {
     onTranscriptRef: React.MutableRefObject<((data: TranscriptData) => void) | undefined>;
     joinRoom: () => Promise<void>;
     leaveRoom: () => Promise<void>;
+    cancelJoin?: () => void;
+    recentlyConnected: boolean;
+    recentlyToggledRecording: boolean;
+    setRecentlyToggledRecording: React.Dispatch<React.SetStateAction<boolean>>;
+    layoutData: {
+        layout: VonageSessionLayoutData;
+        createdAt: number;
+    } | null;
 }
 
 function useValue({
@@ -49,13 +56,11 @@ function useValue({
     beginJoin,
     cancelJoin,
     completeJoinRef,
-    isBackstageRoom,
 }: Props): Outputs {
     const navState = useNavigationState();
 
     const vonage = useVonageGlobalState();
-    const { dispatch } = useVonageRoom();
-    const layout = useVonageLayout();
+    const { dispatch, settings } = useVonageRoom();
 
     const [connected, setConnected] = useState<boolean>(false);
     const [streams, setStreams] = useState<OT.Stream[]>([]);
@@ -220,12 +225,14 @@ function useValue({
         [onRecordingIdReceived]
     );
 
-    const onLayoutReceived = useCallback(
-        (layoutData) => {
-            layout?.updateLayout((old) => (!old || old.createdAt < layoutData.createdAt ? layoutData : old));
-        },
-        [layout]
-    );
+    const [layoutData, setLayoutData] = useState<{
+        layout: VonageSessionLayoutData;
+        createdAt: number;
+    } | null>(null);
+
+    const onLayoutReceived = useCallback((layoutData) => {
+        setLayoutData((old) => (!old || old.createdAt < layoutData.createdAt ? layoutData : old));
+    }, []);
 
     useEvent(vonage, "streams-changed", setStreams);
     useEvent(vonage, "connections-changed", setConnections);
@@ -263,7 +270,7 @@ function useValue({
                 console.warn("Failed to initialise session", e);
             }
             // Auto-rejoin when hopping backstages
-            if (isBackstageRoom && wasAlreadyConnected && previousVonageSessionId.current && vonageSessionId) {
+            if (settings.isBackstageRoom && wasAlreadyConnected && previousVonageSessionId.current && vonageSessionId) {
                 joinRoom();
             }
             previousVonageSessionId.current = vonageSessionId;
@@ -271,6 +278,29 @@ function useValue({
         fn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vonageSessionId]);
+
+    const [recentlyConnected, setRecentlyConnected] = useState<boolean>(false);
+    const [recentlyToggledRecording, setRecentlyToggledRecording] = useState<boolean>(false);
+    useEffect(() => {
+        let tId: number | undefined;
+        if (vonage.state.type === StateType.Connected) {
+            setRecentlyConnected(true);
+
+            tId = setTimeout(
+                (() => {
+                    setRecentlyConnected(false);
+                }) as TimerHandler,
+                30000
+            );
+        } else {
+            setRecentlyConnected(false);
+        }
+        return () => {
+            if (tId) {
+                clearTimeout(tId);
+            }
+        };
+    }, [vonage.state.type]);
 
     return useMemo(
         () => ({
@@ -283,8 +313,13 @@ function useValue({
             joining,
             joinRoom,
             leaveRoom,
+            cancelJoin,
             isRecordingActive: recordingState.isRecordingActive,
             onTranscriptRef: transcript.onTranscriptRef,
+            recentlyConnected,
+            recentlyToggledRecording,
+            setRecentlyToggledRecording,
+            layoutData,
         }),
         [
             vonage,
@@ -296,8 +331,12 @@ function useValue({
             joining,
             joinRoom,
             leaveRoom,
+            cancelJoin,
             recordingState.isRecordingActive,
             transcript.onTranscriptRef,
+            recentlyConnected,
+            recentlyToggledRecording,
+            layoutData,
         ]
     );
 }

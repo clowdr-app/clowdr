@@ -308,13 +308,19 @@ export default function ManageContentV2(): JSX.Element {
             }),
         []
     );
+    const tagsContext = useMemo(() => ({ ...context, additionalTypenames: ["content_ItemTag"] }), [context]);
+    const itemsContext = useMemo(() => ({ ...context, additionalTypenames: ["content_Item"] }), [context]);
+    const exhibitionsContext = useMemo(
+        () => ({ ...context, additionalTypenames: ["content_ItemExhibition"] }),
+        [context]
+    );
     const [{ fetching: loadingAllTags, error: errorAllTags, data: allTags }, refetchAllTags] =
         useManageContent_SelectAllTagsQuery({
             requestPolicy: "network-only",
             variables: {
                 conferenceId: conference.id,
             },
-            context,
+            context: tagsContext,
         });
     useQueryErrorToast(errorAllTags, false);
 
@@ -324,7 +330,7 @@ export default function ManageContentV2(): JSX.Element {
             variables: {
                 conferenceId: conference.id,
             },
-            context,
+            context: exhibitionsContext,
         });
     useQueryErrorToast(errorAllExhibitions, false);
 
@@ -334,7 +340,7 @@ export default function ManageContentV2(): JSX.Element {
             variables: {
                 conferenceId: conference.id,
             },
-            context,
+            context: itemsContext,
         });
     useQueryErrorToast(errorAllItems, false);
     const data = useMemo(() => [...(allItems?.content_Item ?? [])], [allItems?.content_Item]);
@@ -674,6 +680,7 @@ export default function ManageContentV2(): JSX.Element {
                                 [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
+                        additionalTypenames: ["content_Item"],
                     }
                 );
             },
@@ -712,6 +719,7 @@ export default function ManageContentV2(): JSX.Element {
                                 [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
+                        additionalTypenames: ["content_Item"],
                     }
                 );
             },
@@ -739,6 +747,7 @@ export default function ManageContentV2(): JSX.Element {
                                 [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
                             },
                         },
+                        additionalTypenames: ["content_Item"],
                     }
                 );
             },

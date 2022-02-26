@@ -3,8 +3,8 @@ import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
-import { VideoChatChimeRoom } from "./ChimeRoom";
-import { VideoChatVonageRoom } from "./VonageRoom";
+import { VideoChatChime } from "./VideoChatChime";
+import { VideoChatVonage } from "./VideoChatVonage";
 
 export function VideoChatRoom({
     defaultVideoBackendName,
@@ -47,11 +47,11 @@ export function VideoChatRoom({
         return (
             <>
                 <Box pos="relative" display={enableChime ? "block" : "none"}>
-                    <VideoChatChimeRoom room={roomDetails} enable={enableChime} />
+                    <VideoChatChime room={roomDetails} enable={enableChime} />
                     {enableChime ? <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} /> : undefined}
                 </Box>
-                <Box display={enableVonage ? "block" : "none"}>
-                    <VideoChatVonageRoom
+                <Box display={enableVonage ? "block" : "none"} h="100%">
+                    <VideoChatVonage
                         room={roomDetails}
                         enable={enableVonage}
                         eventId={eventId}

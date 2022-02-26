@@ -1,7 +1,11 @@
 import { Heading, Spinner, Text, useToast, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
-import { Schedule_EventProgramPersonRole_Enum } from "../../../../generated/graphql";
+import {
+    Schedule_EventProgramPersonRole_Enum,
+    useRaiseHandPanel_GetEventDetailsQuery,
+} from "../../../../generated/graphql";
 import { VonageBackstage } from "../../../Conference/Attend/Room/Stream/VonageBackstage";
 import { useRegistrants } from "../../../Conference/RegistrantsContext";
 import type { Registrant } from "../../../Conference/useCurrentRegistrant";
@@ -9,6 +13,14 @@ import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { RaisedHandsList } from "./RaisedHandsList";
 import { RegistrantsList } from "./RegistrantsList";
+
+gql`
+    query RaiseHandPanel_GetEventDetails($eventId: uuid!) {
+        schedule_Event_by_pk(id: $eventId) {
+            ...Room_EventSummary
+        }
+    }
+`;
 
 export function RaiseHandPanel(): JSX.Element {
     const raiseHand = useRaiseHandState();
@@ -109,6 +121,13 @@ export function RaiseHandPanel(): JSX.Element {
         };
     }, [currentEventId, currentUser.id, raiseHand]);
 
+    const [result] = useRaiseHandPanel_GetEventDetailsQuery({
+        pause: !currentEventId || currentEventId.userRole !== Schedule_EventProgramPersonRole_Enum.Participant,
+        variables: {
+            eventId: currentEventId?.eventId,
+        },
+    });
+
     if (isBackstage) {
         return currentEventId && currentEventId.userRole === Schedule_EventProgramPersonRole_Enum.Chair ? (
             <VStack spacing={1} alignItems="flex-start" m={2}>
@@ -159,13 +178,17 @@ export function RaiseHandPanel(): JSX.Element {
                     </Text>
                 )}
 
-                <VonageBackstage
-                    eventId={currentEventId.eventId}
-                    isRaiseHandPreJoin={true}
-                    isRaiseHandWaiting={raisedHandUserIds.includes(currentUser.id)}
-                    completeJoinRef={completeJoinRef}
-                    hlsUri={undefined}
-                />
+                {result.data?.schedule_Event_by_pk ? (
+                    <VonageBackstage
+                        event={result.data?.schedule_Event_by_pk}
+                        isRaiseHandPreJoin={true}
+                        isRaiseHandWaiting={raisedHandUserIds.includes(currentUser.id)}
+                        completeJoinRef={completeJoinRef}
+                        hlsUri={undefined}
+                    />
+                ) : (
+                    <Spinner />
+                )}
                 <Text fontWeight="bold" pt={4}>
                     Raised hands
                 </Text>

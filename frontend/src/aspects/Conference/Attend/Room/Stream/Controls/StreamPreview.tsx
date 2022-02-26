@@ -1,9 +1,11 @@
 import { Box, Button, HStack, Spinner, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { Suspense, useEffect, useState } from "react";
 import { gql } from "urql";
+import { useContextSelector } from "use-context-selector";
 import { useEnableBackstageStreamPreviewQuery } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
 import { VideoAspectWrapper } from "../../Video/VideoAspectWrapper";
+import { BackstageContext } from "../BackstageContext";
 
 const HlsPlayer = React.lazy(() => import("../../Video/HlsPlayer"));
 
@@ -17,17 +19,13 @@ gql`
     }
 `;
 
-export default function StreamPreview({
-    hlsUri,
-    isLive,
-    isLiveOnAir,
-}: {
-    hlsUri: string | undefined;
-    isLive: boolean;
-    isLiveOnAir: boolean;
-}): JSX.Element {
+export default function StreamPreview(): JSX.Element {
+    const hlsUri = useContextSelector(BackstageContext, (state) => state.hlsUri);
+    const isLive = useContextSelector(BackstageContext, (state) => state.live);
+    const isLiveOnAir = useContextSelector(BackstageContext, (state) => state.liveOnAir);
+
     const bgColor = useColorModeValue("gray.100", "gray.800");
-    const [enabled, setEnabled] = useState<boolean>(true);
+    const [enabled, setEnabled] = useState<boolean>(false);
     const conference = useConference();
     const [configResponse] = useEnableBackstageStreamPreviewQuery({
         variables: {
@@ -104,7 +102,13 @@ export default function StreamPreview({
     ) : hlsUri && (!enabled || !delayCompleted) ? (
         <Button
             colorScheme="PrimaryActionButton"
-            size="md"
+            size="sm"
+            h="auto"
+            maxH="auto"
+            whiteSpace="normal"
+            flexShrink={1}
+            p={3}
+            w="min-content"
             onClick={() => {
                 setEnabled(true);
                 setDelayCompleted(true);

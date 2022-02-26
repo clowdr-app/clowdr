@@ -102,11 +102,13 @@ function StarEventButtonInner({
     registrant: Registrant;
 }): JSX.Element {
     const eventIds = useMemo(() => (typeof _eventIds === "string" ? [_eventIds] : _eventIds), [_eventIds]);
+    const getStarsContext = useMemo(() => ({ additionalTypenames: ["schedule_StarredEvent"] }), []);
     const [starsResponse] = useStarEventButton_GetStarsQuery({
         variables: {
             eventIds,
             registrantId: registrant.id,
         },
+        context: getStarsContext,
     });
 
     const [insertStarsResponse, insertStars] = useStarEventButton_InsertStarsMutation();
@@ -134,9 +136,12 @@ function StarEventButtonInner({
 
                     const ids = starsResponse.data?.schedule_StarredEvent.map((x) => x.id);
                     if (ids) {
-                        deleteStars({
-                            ids,
-                        });
+                        deleteStars(
+                            {
+                                ids,
+                            },
+                            getStarsContext
+                        );
                     }
                 }}
                 variant="ghost"
@@ -167,12 +172,15 @@ function StarEventButtonInner({
                     ev.preventDefault();
                     ev.stopPropagation();
 
-                    insertStars({
-                        objects: eventIds.map((eventId) => ({
-                            eventId,
-                            registrantId: registrant.id,
-                        })),
-                    });
+                    insertStars(
+                        {
+                            objects: eventIds.map((eventId) => ({
+                                eventId,
+                                registrantId: registrant.id,
+                            })),
+                        },
+                        getStarsContext
+                    );
                 }}
                 variant="ghost"
                 size="sm"

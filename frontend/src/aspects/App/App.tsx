@@ -12,7 +12,7 @@ import ChakraCustomProvider from "../Chakra/ChakraCustomProvider";
 import { GlobalChatStateProvider } from "../Chat/GlobalChatStateProvider";
 import { MyBackstagesModalProvider } from "../Conference/Attend/Profile/MyBackstages";
 import { PermissionInstructionsProvider } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
-import { VonageGlobalStateProvider } from "../Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
+import { VonageGlobalStateProvider } from "../Conference/Attend/Room/Vonage/State/VonageGlobalStateProvider";
 import { SocialiseModalProvider } from "../Conference/Attend/Rooms/V2/SocialiseModalProvider";
 import { LiveProgramRoomsProvider } from "../Conference/Attend/Rooms/V2/useLiveProgramRooms";
 import { ScheduleModalProvider } from "../Conference/Attend/Schedule/ProgramModal";
@@ -33,6 +33,7 @@ import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
 import CurrentUserProvider from "../Users/CurrentUser/CurrentUserProvider";
 import "./App.css";
+import { AppLayoutProvider } from "./AppLayoutContext";
 
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
@@ -113,9 +114,11 @@ function AppInner2(): JSX.Element {
                                                                 <SocialiseModalProvider>
                                                                     {/* <ShuffleRoomsQueueMonitor /> */}
                                                                     <PermissionInstructionsProvider>
-                                                                        <SharedRoomContextProvider>
-                                                                            {page}
-                                                                        </SharedRoomContextProvider>
+                                                                        <AppLayoutProvider>
+                                                                            <SharedRoomContextProvider>
+                                                                                {page}
+                                                                            </SharedRoomContextProvider>
+                                                                        </AppLayoutProvider>
                                                                     </PermissionInstructionsProvider>
                                                                 </SocialiseModalProvider>
                                                             </MyBackstagesModalProvider>

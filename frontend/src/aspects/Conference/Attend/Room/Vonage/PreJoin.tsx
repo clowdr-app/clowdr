@@ -1,14 +1,17 @@
 import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
-import { Box, Center, chakra, HStack, useConst, useToast, VStack } from "@chakra-ui/react";
-import React, { useEffect } from "react";
-import FAIcon from "../../../Chakra/FAIcon";
-import { getAudioContext } from "../../../Utils/getAudioContext";
-import { backgroundImage } from "../../../Vonage/resources";
-import { useVonageRoom } from "../../../Vonage/useVonageRoom";
+import { Box, Center, chakra, HStack, useConst, useToast } from "@chakra-ui/react";
+import React, { useContext, useEffect } from "react";
+import FAIcon from "../../../../Chakra/FAIcon";
+import { getAudioContext } from "../../../../Utils/getAudioContext";
+import { VonageRoomControlBar } from "./ControlBar/VonageRoomControlBar";
+import { backgroundImage } from "./resources";
+import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
+import { useVonageRoom } from "./State/VonageRoomProvider";
 
 export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLVideoElement> }): JSX.Element {
     const { state } = useVonageRoom();
+    const { cancelJoin } = useContext(VonageComputedStateContext);
     const toast = useToast();
     const audioContext = useConst(getAudioContext());
 
@@ -21,7 +24,7 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
     }, [cameraPreviewRef, state.cameraStream, toast]);
 
     return (
-        <VStack w="auto">
+        <HStack w="100%" h="100%" alignItems="center" justifyContent="center">
             <Box position="relative" mb={4}>
                 <Box position="absolute" width="100%" height="100%">
                     <Box
@@ -112,6 +115,7 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                     )}
                 </HStack>
             </Box>
-        </VStack>
+            <VonageRoomControlBar onCancelJoinRoom={cancelJoin} />
+        </HStack>
     );
 }

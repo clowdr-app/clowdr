@@ -1,6 +1,5 @@
 import React, { Suspense, useMemo } from "react";
 import * as portals from "react-reverse-portal";
-import { SharedRoomContext } from "./useSharedRoomContext";
 
 const PermissionInstructionsModal = React.lazy(() => import("./PermissionInstructionsModal"));
 const ChimeRoom = React.lazy(() =>
@@ -10,20 +9,31 @@ const VonageRoom = React.lazy(() =>
     import("../Conference/Attend/Room/Vonage/VonageRoom").then((x) => ({ default: x.VonageRoom }))
 );
 
-export function SharedRoomContextProvider({
-    children,
-}: {
-    children: string | React.ReactNodeArray | React.ReactNode;
-}): JSX.Element {
-    const vonageNode = useMemo(() => portals.createHtmlPortalNode(), []);
-    const chimeNode = useMemo(() => portals.createHtmlPortalNode(), []);
+function useValue() {
+    const vonageNode = useMemo(
+        () =>
+            portals.createHtmlPortalNode<typeof VonageRoom>({
+                attributes: {
+                    style: "height: 100%;",
+                },
+            }),
+        []
+    );
+    const chimeNode = useMemo(() => portals.createHtmlPortalNode<typeof ChimeRoom>(), []);
 
     const ctx = useMemo(() => ({ vonagePortalNode: vonageNode, chimePortalNode: chimeNode }), [vonageNode, chimeNode]);
 
+    return ctx;
+}
+
+export const SharedRoomContext = React.createContext({} as unknown as ReturnType<typeof useValue>);
+
+export function SharedRoomContextProvider({ children }: { children: JSX.Element }): JSX.Element {
+    const ctx = useValue();
     return (
         <>
             <Suspense fallback={<></>}>
-                <portals.InPortal node={vonageNode}>
+                <portals.InPortal node={ctx.vonagePortalNode}>
                     <VonageRoom
                         getAccessToken={async () => ""}
                         roomId={null}
@@ -35,13 +45,14 @@ export function SharedRoomContextProvider({
                         isRaiseHandWaiting={undefined}
                         requireMicrophoneOrCamera={false}
                         completeJoinRef={undefined}
+                        completeGetAccessToken={undefined}
                         canControlRecording={false}
                         layout={undefined}
                     />
                 </portals.InPortal>
             </Suspense>
             <Suspense fallback={<></>}>
-                <portals.InPortal node={chimeNode}>
+                <portals.InPortal node={ctx.chimePortalNode}>
                     <ChimeRoom disable={true} roomId="" />
                 </portals.InPortal>
             </Suspense>

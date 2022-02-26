@@ -1,6 +1,6 @@
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import React from "react";
-import { useVonageGlobalState } from "../VonageGlobalStateProvider";
+import { useVonageGlobalState } from "../State/VonageGlobalStateProvider";
 
 export default function MuteRemoveControlBar({
     streamId,

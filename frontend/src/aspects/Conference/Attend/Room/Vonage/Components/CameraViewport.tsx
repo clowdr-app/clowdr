@@ -1,13 +1,11 @@
-import { Box, Button } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import type OT from "@opentok/client";
-import React, { useEffect, useMemo, useState } from "react";
-import { useFullScreenHandle } from "react-full-screen";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { validate } from "uuid";
 import type { RegistrantDataFragment } from "../../../../../../generated/graphql";
-import FAIcon from "../../../../../Chakra/FAIcon";
 import { useRegistrant } from "../../../../RegistrantsContext";
-import { StateType } from "../VonageGlobalState";
-import { useVonageGlobalState } from "../VonageGlobalStateProvider";
+import { StateType } from "../State/VonageGlobalState";
+import { useVonageGlobalState } from "../State/VonageGlobalStateProvider";
 import CameraContainer from "./CameraContainer";
 import CameraPlaceholderImage from "./CameraPlaceholder";
 import MuteRemoveControlBar from "./MuteRemoveControlBar";
@@ -20,16 +18,7 @@ interface VideoStatus {
     error?: "codec-not-supported" | "quality" | "exceeds-max-streams";
 }
 
-export function CameraViewport({
-    registrantId,
-    stream,
-    connection,
-    isTalkingRef,
-    enableVideo = true,
-    resolution = "normal",
-    framerate: inputFramerate,
-    children,
-}: {
+export interface CameraViewportProps {
     registrantId?: string;
     connection?: OT.Connection;
     stream?: OT.Stream;
@@ -41,8 +30,19 @@ export function CameraViewport({
         talking: boolean;
     } | null>;
     children?: JSX.Element;
-}): JSX.Element {
-    const fullScreen = useFullScreenHandle();
+}
+
+export function CameraViewport({
+    registrantId,
+    stream,
+    connection,
+    isTalkingRef,
+    enableVideo = true,
+    resolution = "normal",
+    framerate: inputFramerate,
+    children,
+}: CameraViewportProps): JSX.Element {
+    const ref = useRef<HTMLDivElement>(null);
 
     const smallDimensions = useMemo<OT.Dimensions>(() => ({ width: 160, height: 120 }), []);
     const normalDimensions = useMemo<OT.Dimensions>(() => ({ width: 480, height: 360 }), []);
@@ -119,8 +119,8 @@ export function CameraViewport({
             return;
         }
 
-        if (!fullScreen.node.current) {
-            // console.error("No element to inject stream into", stream.streamId);
+        if (!ref.current) {
+            console.error("No element to inject stream into", stream.streamId);
             return;
         }
 
@@ -130,7 +130,7 @@ export function CameraViewport({
         }
 
         try {
-            const subscriber = vonage.state.session.subscribe(stream, fullScreen.node.current, {
+            const subscriber = vonage.state.session.subscribe(stream, ref.current, {
                 insertMode: "append",
                 height: "100%",
                 width: "100%",
@@ -278,7 +278,7 @@ export function CameraViewport({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vonage.state.type, stream]);
 
-    const cameraContainer = useMemo(() => <CameraContainer ref={fullScreen.node} />, [fullScreen.node]);
+    const cameraContainer = useMemo(() => <CameraContainer ref={ref} />, [ref]);
     return (
         <CameraViewportInner
             registrant={registrant}
@@ -292,23 +292,7 @@ export function CameraViewport({
             subscriber={subscriber}
             cameraType={cameraType ?? "camera"}
         >
-            <>
-                {children ?? cameraContainer}
-                {stream?.videoType === "screen" ? (
-                    <Button
-                        pos="absolute"
-                        zIndex={600}
-                        top={2}
-                        right={2}
-                        size="sm"
-                        onClick={() => {
-                            fullScreen.enter();
-                        }}
-                    >
-                        <FAIcon iconStyle="s" icon="expand-alt" />
-                    </Button>
-                ) : undefined}
-            </>
+            {children ?? cameraContainer}
         </CameraViewportInner>
     );
 }

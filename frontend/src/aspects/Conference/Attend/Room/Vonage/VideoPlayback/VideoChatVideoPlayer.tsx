@@ -3,7 +3,6 @@ import type { ToastId } from "@chakra-ui/react";
 import {
     Alert,
     AlertIcon,
-    AspectRatio,
     Box,
     ButtonGroup,
     HStack,
@@ -22,7 +21,8 @@ import {
 import { Duration } from "luxon";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import FAIcon from "../../../../../Chakra/FAIcon";
-import { useVonageRoom, VonageRoomStateActionType } from "../../../../../Vonage/useVonageRoom";
+import { VideoAspectWrapperAuto } from "../../Video/VideoAspectWrapper";
+import { useVonageRoom, VonageRoomStateActionType } from "../State/VonageRoomProvider";
 import { AutoplayContext } from "./AutoplayContext";
 import { useVideoCommands } from "./useVideoCommands";
 import { VonageVideoPlaybackContext } from "./VonageVideoPlaybackContext";
@@ -149,9 +149,9 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                 </Alert>
             ) : undefined}
             {videoPlayback.latestCommand?.command.type === "video" ? (
-                <Box position="relative">
-                    <AspectRatio w="min(100%, 90vh * (16 / 9))" maxW="100%" maxH="80vh" ratio={16 / 9} mx="auto">
-                        <Box>
+                <VideoAspectWrapperAuto>
+                    {() => (
+                        <Box position="relative" h="100%" w="100%">
                             <Skeleton isLoaded={Boolean(videoPlayback.video?.url)} position="relative">
                                 <video ref={videoRef} src={videoPlayback.video?.url}></video>
                             </Skeleton>
@@ -306,8 +306,8 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                 ) : undefined}
                             </HStack>
                         </Box>
-                    </AspectRatio>
-                </Box>
+                    )}
+                </VideoAspectWrapperAuto>
             ) : undefined}
         </>
     );

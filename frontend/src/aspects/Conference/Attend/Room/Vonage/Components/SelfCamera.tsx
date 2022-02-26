@@ -1,9 +1,9 @@
 import { useToast } from "@chakra-ui/react";
 import React, { useEffect, useRef } from "react";
-import type { VonageRoomState } from "../../../../../Vonage/useVonageRoom";
 import CameraContainer from "../Components/CameraContainer";
 import { CameraViewport } from "../Components/CameraViewport";
-import type { VonageGlobalState } from "../VonageGlobalState";
+import type { VonageGlobalState } from "../State/VonageGlobalState";
+import type { VonageRoomState } from "../State/VonageRoomProvider";
 
 export default function SelfCameraComponent({
     connected,

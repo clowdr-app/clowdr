@@ -11,18 +11,18 @@ import {
     AlertTitle,
     Box,
     Button,
-    Heading,
     ListItem,
     Text,
     UnorderedList,
 } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
 import { Room_Mode_Enum } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Hooks/useRealTime";
-import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
+import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
+import type { VonageRoom } from "../Vonage/VonageRoom";
 import Backstage from "./Backstage";
 import { isEventNow, isEventSoon } from "./isEventAt";
 
@@ -106,23 +106,14 @@ export default function Backstages({
         );
     }, [activeEvents, roomChatId, selectedEventId, onEventSelected, onLeave, hlsUri]);
 
-    const sharedRoomContext = useSharedRoomContext();
+    const sharedRoomContext = useContext(SharedRoomContext);
 
     const [isWatchStreamConfirmOpen, setIsWatchStreamConfirmOpen] = useState<boolean>(false);
     const cancelRef = useRef<HTMLButtonElement>(null);
 
-    const heading = useMemo(
-        () => (
-            <Heading as="h3" size="lg">
-                {roomName}: Backstages
-            </Heading>
-        ),
-        [roomName]
-    );
-
     const welcomeInfo = useMemo(
         () => (
-            <Alert status="info" my={4}>
+            <Alert status="info">
                 <AlertIcon />
                 <Box flex="1">
                     <AlertTitle>Welcome to the backstages for {roomName}</AlertTitle>
@@ -146,11 +137,11 @@ export default function Backstages({
         () =>
             showBackstage && !selectedEventId && sharedRoomContext ? (
                 <Box display="none">
-                    <portals.OutPortal
+                    <portals.OutPortal<typeof VonageRoom>
                         eventId={null}
                         node={sharedRoomContext.vonagePortalNode}
                         vonageSessionId=""
-                        getAccessToken={() => ""}
+                        getAccessToken={async () => ""}
                         disable={true}
                         isBackstageRoom={true}
                     />
@@ -228,8 +219,7 @@ export default function Backstages({
     return useMemo(
         () =>
             showBackstage ? (
-                <Box display={showBackstage ? "block" : "none"} p={5}>
-                    {heading}
+                <Box display={showBackstage ? "block" : "none"} py={2} px={4}>
                     {welcomeInfo}
                     {backstages}
                     {videoChatForPermissionReset}
@@ -238,6 +228,6 @@ export default function Backstages({
             ) : (
                 <></>
             ),
-        [videoChatForPermissionReset, backstages, heading, showBackstage, exitBackstageButton, welcomeInfo]
+        [videoChatForPermissionReset, backstages, showBackstage, exitBackstageButton, welcomeInfo]
     );
 }

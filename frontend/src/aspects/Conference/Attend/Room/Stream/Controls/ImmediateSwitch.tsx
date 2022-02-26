@@ -25,11 +25,11 @@ import { Field, Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
+import { useContextSelector } from "use-context-selector";
 import { validate } from "uuid";
 import type {
     LiveIndicator_GetLatestQuery,
     LiveIndicator_GetLatestQueryVariables,
-    RoomEventDetailsFragment,
 } from "../../../../../../generated/graphql";
 import {
     LiveIndicator_GetLatestDocument,
@@ -39,6 +39,7 @@ import {
 import FAIcon from "../../../../../Chakra/FAIcon";
 import { useRealTime } from "../../../../../Hooks/useRealTime";
 import { useConference } from "../../../../useConference";
+import { BackstageContext } from "../BackstageContext";
 
 gql`
     query ImmediateSwitch_GetElements($eventId: uuid!) {
@@ -83,8 +84,9 @@ gql`
     }
 `;
 
-export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
+export function ImmediateSwitch(): JSX.Element {
     const toast = useToast();
+    const event = useContextSelector(BackstageContext, (state) => state.event);
 
     const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);

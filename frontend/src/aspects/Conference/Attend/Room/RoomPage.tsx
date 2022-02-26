@@ -26,6 +26,10 @@ gql`
         publicVonageSessionId
         chatId
         itemId
+        roomMemberships(where: { registrantId: { _eq: $registrantId } }) {
+            id
+            personRoleName
+        }
         item {
             id
             typeName

@@ -1,7 +1,6 @@
 import {
     Box,
     Button,
-    HStack,
     List,
     ListItem,
     Modal,
@@ -30,19 +29,17 @@ import { useRegistrants } from "../../RegistrantsContext";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
-export function RoomControlBar({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
+export function RoomMembersButton({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
     const listModal = useDisclosure();
 
     return (
-        <HStack justifyContent="flex-end">
+        <>
             <Button aria-label="Members of this room" title="Members of this room" onClick={listModal.onOpen} size="sm">
-                <>
-                    <FAIcon icon="users" iconStyle="s" mr={3} />
-                    <Text>Members</Text>
-                </>
+                <FAIcon icon="users" iconStyle="s" mr={3} />
+                <Text>Members</Text>
             </Button>
             <RoomMembersModal isOpen={listModal.isOpen} onClose={listModal.onClose} roomDetails={roomDetails} />
-        </HStack>
+        </>
     );
 }
 

@@ -24,8 +24,8 @@ import {
     parseMediaElementSubtitlesUrl,
     parseMediaElementUrl,
 } from "../../../Content/Element/useMediaElement";
-import { VonageComputedStateContext } from "../VonageComputedStateContext";
-import { useVonageGlobalState } from "../VonageGlobalStateProvider";
+import { VonageComputedStateContext } from "../State/VonageComputedStateContext";
+import { useVonageGlobalState } from "../State/VonageGlobalStateProvider";
 
 gql`
     mutation VonageVideoPlaybackContext_InsertCommand($object: video_VonageVideoPlaybackCommand_insert_input!) {

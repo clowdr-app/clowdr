@@ -20,7 +20,6 @@ import { ShufflePeriodBox } from "../../../ShuffleRooms/WaitingPage";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import { ItemElementsWrapper } from "../Content/ItemElements";
 import { ExhibitionLayoutWrapper } from "../Exhibition/ExhibitionLayout";
-import { RoomTitle } from "./RoomTitle";
 import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { VideoElementButton } from "./Video/VideoElementButton";
 
@@ -91,8 +90,6 @@ export function RoomContent({
 
     return (
         <Box flexGrow={1} zIndex={1} px={[2, 2, 4]}>
-            <RoomTitle roomDetails={roomDetails} />
-
             {currentRoomEvent ? (
                 <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
                     <HStack justifyContent="space-between">

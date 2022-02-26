@@ -1,9 +1,9 @@
 import { gql } from "@urql/core";
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import * as portals from "react-reverse-portal";
 import type { RoomPage_RoomDetailsFragment } from "../../../../../generated/graphql";
 import { useGetRoomChimeDataMutation } from "../../../../../generated/graphql";
-import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
+import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
 gql`
@@ -16,14 +16,8 @@ gql`
     }
 `;
 
-export function VideoChatChimeRoom({
-    room,
-    enable,
-}: {
-    room: RoomPage_RoomDetailsFragment;
-    enable: boolean;
-}): JSX.Element {
-    const sharedRoomContext = useSharedRoomContext();
+export function VideoChatChime({ room, enable }: { room: RoomPage_RoomDetailsFragment; enable: boolean }): JSX.Element {
+    const sharedRoomContext = useContext(SharedRoomContext);
     const registrant = useCurrentRegistrant();
 
     const [, getRoomChimeData] = useGetRoomChimeDataMutation();

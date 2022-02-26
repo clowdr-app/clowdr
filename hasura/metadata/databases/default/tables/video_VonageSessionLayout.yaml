@@ -28,77 +28,52 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      _or:
-      - eventVonageSession:
-          _and:
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - _or:
+      eventVonageSession:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - _or:
+          - subconferenceId:
+              _is_null: true
+          - _and:
             - subconferenceId:
-                _is_null: true
-            - _and:
+                _is_null: false
+            - _or:
               - subconferenceId:
-                  _is_null: false
-              - _or:
-                - subconferenceId:
-                    _in: X-Hasura-Subconference-Ids
-                - event:
-                    visibilityLevel:
-                      _in:
-                      - PUBLIC
-                      - EXTERNAL
-          - event:
-              _and:
-              - room:
-                  _and:
-                  - _or:
-                    - _and:
-                      - conferenceId:
-                          _in: X-Hasura-Conference-Ids
-                      - subconferenceId:
-                          _is_null: true
-                    - _and:
-                      - subconferenceId:
-                          _is_null: false
-                      - conferenceId:
-                          _in: X-Hasura-Conference-Ids
-                      - subconferenceId:
-                          _in: X-Hasura-Subconference-Ids
-              - eventPeople:
-                  _and:
-                  - person:
-                      registrantId:
-                        _in: X-Hasura-Registrant-Ids
-                  - roleName:
-                      _in:
-                      - CHAIR
-                      - PRESENTER
-      - _and:
-        - _not:
-            eventVonageSession: {}
-        - rooms:
+                  _in: X-Hasura-Subconference-Ids
+              - event:
+                  visibilityLevel:
+                    _in:
+                    - PUBLIC
+                    - EXTERNAL
+        - event:
             _and:
-            - _or:
-              - _and:
-                - conferenceId:
-                    _in: X-Hasura-Conference-Ids
-                - subconferenceId:
-                    _is_null: true
-              - _and:
-                - subconferenceId:
-                    _is_null: false
-                - conferenceId:
-                    _in: X-Hasura-Conference-Ids
-                - subconferenceId:
-                    _in: X-Hasura-Subconference-Ids
-            - _or:
-              - managementModeName:
-                  _eq: PUBLIC
-              - id:
-                  _in: X-Hasura-Room-Ids
+            - room:
+                _and:
+                - _or:
+                  - _and:
+                    - conferenceId:
+                        _in: X-Hasura-Conference-Ids
+                    - subconferenceId:
+                        _is_null: true
+                  - _and:
+                    - subconferenceId:
+                        _is_null: false
+                    - conferenceId:
+                        _in: X-Hasura-Conference-Ids
+                    - subconferenceId:
+                        _in: X-Hasura-Subconference-Ids
+            - eventPeople:
+                _and:
+                - person:
+                    registrantId:
+                      _in: X-Hasura-Registrant-Ids
+                - roleName:
+                    _in:
+                    - CHAIR
+                    - PRESENTER
     columns:
     - conferenceId
-    - id
     - layoutData
     - subconferenceId
     - vonageSessionId
@@ -119,6 +94,90 @@ insert_permissions:
     - subconferenceId
     - vonageSessionId
   role: conference-organizer
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - _not:
+          eventVonageSession: {}
+      - rooms:
+          _and:
+          - _or:
+            - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+            - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+          - id:
+              _in: X-Hasura-Room-Ids
+    columns:
+    - conferenceId
+    - layoutData
+    - subconferenceId
+    - vonageSessionId
+  role: room-admin
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - _not:
+          eventVonageSession: {}
+      - rooms:
+          _and:
+          - _or:
+            - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+            - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+          - _or:
+            - currentEvents:
+                _and:
+                - roomId:
+                    _in: X-Hasura-Room-Ids
+                - eventPeople:
+                    _and:
+                    - eventPersonRole:
+                        name:
+                          _in:
+                          - CHAIR
+                          - PRESENTER
+                    - person:
+                        registrantId:
+                          _in: X-Hasura-Registrant-Ids
+            - item:
+                itemPeople:
+                  _and:
+                  - roleName:
+                      _in:
+                      - AUTHOR
+                      - PRESENTER
+                      - CHAIR
+                      - SESSION ORGANIZER
+                      - ORGANIZER
+                  - person:
+                      registrantId:
+                        _in: X-Hasura-Registrant-Ids
+    columns:
+    - conferenceId
+    - layoutData
+    - subconferenceId
+    - vonageSessionId
+  role: room-member
 - permission:
     backend_only: false
     check:

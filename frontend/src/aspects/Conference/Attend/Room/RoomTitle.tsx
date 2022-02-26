@@ -58,13 +58,13 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
                     borderRadius="md"
                 />
             ) : (
-                <Heading as="h2" textAlign="left">
+                <Heading as="h1" textAlign="left" size="lg" mr={4}>
                     <Twemoji className="twemoji" text={roomDetails.item.title} />
                 </Heading>
             )}
         </>
     ) : (
-        <Heading as="h1" id="page-heading" textAlign="left">
+        <Heading as="h1" id="page-heading" textAlign="left" size="lg" mr={4}>
             {roomDetails.name}
         </Heading>
     );

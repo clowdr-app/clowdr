@@ -7,8 +7,8 @@ import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
 import { EventEmitter } from "eventemitter3";
 import * as R from "ramda";
-import { StoredObservable } from "../../../../Observable";
-import { transparentImage } from "../../../../Vonage/resources";
+import { StoredObservable } from "../../../../../Observable";
+import { transparentImage } from "../resources";
 
 export type CameraResolutions = "640x480" | "1280x720";
 

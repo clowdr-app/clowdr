@@ -1,17 +1,8 @@
-import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogOverlay,
     Box,
     Button,
-    ButtonGroup,
     chakra,
     Flex,
-    Heading,
     HStack,
     IconButton,
     Popover,
@@ -21,38 +12,34 @@ import {
     PopoverTrigger,
     Portal,
     Spinner,
-    Tag,
-    TagLabel,
-    TagLeftIcon,
-    Text,
     Tooltip,
-    useDisclosure,
-    VStack,
+    useColorModeValue,
+    useToast,
     WrapItem,
 } from "@chakra-ui/react";
 import { AuthHeader } from "@midspace/shared-types/auth";
 import { Mutex } from "async-mutex";
-import type { MutableRefObject } from "react";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { gql } from "urql";
-import { useGetRoomChatIdQuery, useToggleVonageRecordingStateMutation } from "../../../../../generated/graphql";
-import FAIcon from "../../../../Chakra/FAIcon";
-import type { ChatState } from "../../../../Chat/ChatGlobalState";
-import QuickSendEmote from "../../../../Chat/Compose/QuickSendEmote";
-import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
-import { makeContext } from "../../../../GQL/make-context";
-import useIsNarrowView from "../../../../Hooks/useIsNarrowView";
-import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
-import { devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
-import type { DevicesProps } from "../VideoChat/PermissionInstructionsContext";
-import LayoutChooser from "./Components/LayoutChooser";
-import PlayVideoMenuButton from "./Components/PlayVideoMenu";
-import SubtitlesPanel from "./Components/SubtitlesPanel";
-import DeviceChooserModal from "./DeviceChooserModal";
-import type { TranscriptData } from "./VonageGlobalState";
-import { StateType } from "./VonageGlobalState";
-import { useVonageGlobalState } from "./VonageGlobalStateProvider";
-import { useVonageLayout } from "./VonageLayoutProvider";
+import { useGetRoomChatIdQuery, useToggleVonageRecordingStateMutation } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
+import type { ChatState } from "../../../../../Chat/ChatGlobalState";
+import QuickSendEmote from "../../../../../Chat/Compose/QuickSendEmote";
+import { useGlobalChatState } from "../../../../../Chat/GlobalChatStateProvider";
+import { makeContext } from "../../../../../GQL/make-context";
+import { devicesToFriendlyName } from "../../VideoChat/PermissionInstructions";
+import LayoutChooser from "../Components/LayoutChooser";
+import SubtitlesPanel from "../Components/SubtitlesPanel";
+import DeviceChooserModal from "../DeviceChooserModal";
+import { DisplayType } from "../State/useVonageDisplay";
+import { VonageComputedStateContext } from "../State/VonageComputedStateContext";
+import { StateType } from "../State/VonageGlobalState";
+import { useVonageGlobalState } from "../State/VonageGlobalStateProvider";
+import { useVonageLayout, VonageLayoutContext } from "../State/VonageLayoutProvider";
+import { useVonageRoom, VonageRoomStateActionType } from "../State/VonageRoomProvider";
+import { ControlBarButton } from "./ControlBarButton";
+import { ControlBarButtonGroup } from "./ControlBarButtonGroup";
+import PlayVideoMenuButton from "./PlayVideoMenu";
 
 gql`
     mutation ToggleVonageRecordingState($vonageSessionId: String!, $recordingActive: Boolean!) {
@@ -63,40 +50,15 @@ gql`
     }
 `;
 
-export function VonageRoomControlBar({
-    onJoinRoom,
-    onLeaveRoom,
-    onCancelJoinRoom,
-    joining,
-    joinRoomButtonText = "Join Room",
-    joiningRoomButtonText = "Waiting to be admitted",
-    requireMicrophoneOrCamera,
-    onPermissionsProblem,
-    isRecordingActive,
-    isBackstage,
-    canControlRecording,
-    roomId,
-    eventId,
-    onTranscriptRef,
-}: {
-    onJoinRoom: () => Promise<void>;
-    onLeaveRoom: () => void;
-    onCancelJoinRoom?: () => void;
-    joining: boolean;
-    joinRoomButtonText?: string;
-    joiningRoomButtonText?: string;
-    requireMicrophoneOrCamera: boolean;
-    isRecordingActive: boolean;
-    isBackstage: boolean;
-    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
-    canControlRecording: boolean;
-    roomId?: string;
-    eventId?: string;
-    onTranscriptRef?: MutableRefObject<((data: TranscriptData) => void) | undefined>;
-}): JSX.Element {
+export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: () => void }): JSX.Element {
     const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
-    const { layoutChooser_isOpen, layoutChooser_onOpen, layoutChooser_onClose } = useVonageLayout();
+    const {
+        layout: { layoutChooser_isOpen, layoutChooser_onOpen, layoutChooser_onClose },
+        display,
+    } = useVonageLayout();
+    const { isRecordingActive, joining, joinRoom, leaveRoom, onTranscriptRef, setRecentlyToggledRecording } =
+        useContext(VonageComputedStateContext);
 
     const [toggleVonageRecordingResponse, toggleVonageRecording] = useToggleVonageRecordingStateMutation();
 
@@ -165,7 +127,7 @@ export function VonageRoomControlBar({
                     break;
 
                 case "unable-to-list":
-                    onPermissionsProblem(
+                    settings.onPermissionsProblem(
                         {
                             camera: deviceModalState.showCamera,
                             microphone: deviceModalState.showMicrophone,
@@ -192,7 +154,7 @@ export function VonageRoomControlBar({
         [
             deviceModalState,
             dispatch,
-            onPermissionsProblem,
+            settings,
             startCameraOnClose,
             startMicrophoneOnClose,
             state.preferredCameraId,
@@ -259,7 +221,7 @@ export function VonageRoomControlBar({
                     });
                 } catch (err) {
                     console.log("Could not list device choices", { err });
-                    onPermissionsProblem(
+                    settings.onPermissionsProblem(
                         { camera: video, microphone: audio },
                         `Could not list choices of ${devicesToFriendlyName(
                             { camera: video, microphone: audio },
@@ -276,7 +238,7 @@ export function VonageRoomControlBar({
                 }
             })();
         },
-        [onPermissionsProblem, userMediaPermissionGranted.camera, userMediaPermissionGranted.microphone]
+        [settings, userMediaPermissionGranted.camera, userMediaPermissionGranted.microphone]
     );
 
     const startCamera = useCallback(() => {
@@ -395,47 +357,6 @@ export function VonageRoomControlBar({
         [vonage.state]
     );
 
-    const {
-        isOpen: isRecordingAlertOpen,
-        onOpen: onRecordingAlertOpen,
-        onClose: onRecordingAlertClose,
-    } = useDisclosure();
-    const recordingAlert_LeastDestructiveRef = useRef<HTMLButtonElement | null>(null);
-    const [recentlyConnected, setRecentlyConnected] = useState<boolean>(false);
-    const [recentlyToggledRecording, setRecentlyToggledRecording] = useState<boolean>(false);
-    useEffect(() => {
-        if (!isRecordingActive || vonage.state.type !== StateType.Connected) {
-            onRecordingAlertClose();
-        }
-    }, [isRecordingActive, onRecordingAlertClose, vonage.state.type]);
-    useEffect(() => {
-        let tId: number | undefined;
-        if (vonage.state.type === StateType.Connected) {
-            setRecentlyConnected(true);
-
-            tId = setTimeout(
-                (() => {
-                    setRecentlyConnected(false);
-                }) as TimerHandler,
-                30000
-            );
-        } else {
-            setRecentlyConnected(false);
-        }
-        return () => {
-            if (tId) {
-                clearTimeout(tId);
-            }
-        };
-    }, [vonage.state.type]);
-    useEffect(() => {
-        if (isRecordingActive && !recentlyConnected && !recentlyToggledRecording) {
-            onRecordingAlertOpen();
-        }
-        setRecentlyToggledRecording(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isRecordingActive]);
-
     const buttonsDirection = vonage.state.type === StateType.Connected ? "row" : "column";
 
     useEffect(() => {
@@ -450,15 +371,15 @@ export function VonageRoomControlBar({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.RoomId]: roomId,
+                [AuthHeader.RoomId]: settings.roomId,
             }),
-        [roomId]
+        [settings.roomId]
     );
     const [roomChatIdResponse] = useGetRoomChatIdQuery({
         variables: {
-            roomId,
+            roomId: settings.roomId,
         },
-        pause: !roomId,
+        pause: !settings.roomId,
         context,
     });
     const chatId = roomChatIdResponse.data?.room_Room_by_pk?.chatId;
@@ -474,7 +395,16 @@ export function VonageRoomControlBar({
         };
     }, [chatId, globalChatState]);
 
+    const controlBarBgColor = useColorModeValue(
+        "RoomControlBar.backgroundColor-light",
+        "RoomControlBar.backgroundColor-dark"
+    );
+
     const [subtitlesVisible, setSubtitlesVisible] = useState<boolean>(false);
+
+    const layout = useContext(VonageLayoutContext);
+    const toast = useToast();
+
     return (
         <>
             {vonage.state.type === StateType.Connected && subtitlesVisible && (
@@ -490,6 +420,8 @@ export function VonageRoomControlBar({
                 gridRowGap={2}
                 gridColumnGap={2}
                 w={vonage.state.type === StateType.Connected ? "100%" : "auto"}
+                bgColor={controlBarBgColor}
+                mt={0}
             >
                 <ControlBarButtonGroup
                     label="Devices"
@@ -501,7 +433,7 @@ export function VonageRoomControlBar({
                         text="Settings"
                         isLoading={isOpening}
                         icon="cog"
-                        onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
+                        onClick={() => onOpen(true, !joining || !settings.requireMicrophoneOrCamera)}
                         isEnabled={!joining}
                     />
                     <ControlBarButton
@@ -527,7 +459,7 @@ export function VonageRoomControlBar({
                             vonage.state.type === StateType.Connected
                                 ? receivingScreenShareCount >= settings.maximumSimultaneousScreenShares
                                     ? settings.maximumSimultaneousScreenShares === 1
-                                        ? "Someone else is sharing their screen at the moment"
+                                        ? "Someone else is sharing their screen"
                                         : "No more screens can be shared at the moment"
                                     : state.screenShareIntendedEnabled
                                     ? false
@@ -561,37 +493,86 @@ export function VonageRoomControlBar({
                     />
                 </ControlBarButtonGroup>
                 <WrapItem flex="1 1 auto" />
-                <ControlBarButtonGroup label="Layout & recording" isVisible={vonage.state.type === StateType.Connected}>
+                <ControlBarButtonGroup
+                    label="Layout &amp; recording"
+                    isVisible={vonage.state.type === StateType.Connected}
+                >
                     <ControlBarButton
                         label={{ active: "Stop recording", inactive: "Start recording" }}
                         icon={{ active: "circle", inactive: { style: "r", icon: "dot-circle" } }}
-                        isVisible={vonage.state.type === StateType.Connected && !isBackstage}
-                        isLimited={!canControlRecording ? (isRecordingActive ? "Recording" : "Not recording") : false}
+                        isVisible={vonage.state.type === StateType.Connected && !settings.isBackstageRoom}
+                        isLimited={
+                            !settings.canControlRecording ? (isRecordingActive ? "Recording" : "Not recording") : false
+                        }
                         isLoading={toggleVonageRecordingResponse.fetching}
                         isActive={isRecordingActive}
                         isDestructive
-                        onClick={() => {
+                        onClick={async () => {
                             if (vonage.state.type === StateType.Connected) {
                                 setRecentlyToggledRecording(true);
-                                toggleVonageRecording({
+                                const result = await toggleVonageRecording({
                                     vonageSessionId: vonage.state.session.sessionId,
                                     recordingActive: !isRecordingActive,
                                 });
+                                if (result.error) {
+                                    toast({
+                                        status: "error",
+                                        title: `Failed to ${isRecordingActive ? "stop" : "start"} room recording`,
+                                    });
+                                }
                             }
                         }}
                         isEnabled={!joining}
                     />
                     <ControlBarButton
-                        label={{ active: "Cancel", inactive: "Layout" }}
+                        label={{
+                            active: "Browse all participants",
+                            inactive: isRecordingActive ? "Show preview of the recording" : "Show presenter layout",
+                        }}
+                        icon={{
+                            active: { style: "s", icon: "chalkboard-teacher" },
+                            inactive: { style: "s", icon: "chalkboard-teacher" },
+                        }}
+                        isVisible={
+                            settings.isBackstageRoom ||
+                            isRecordingActive ||
+                            (Boolean(settings.eventId) && !settings.eventIsFuture)
+                        }
+                        isActive={layout?.display?.actualDisplay?.type === DisplayType.BroadcastLayout}
+                        isLimited={settings.isBackstageRoom ? "Showing broadcast preview" : false}
+                        onClick={() =>
+                            layout?.display?.setChosenDisplay(
+                                layout?.display?.chosenDisplay?.type === DisplayType.Browse
+                                    ? { type: DisplayType.Auto }
+                                    : { type: DisplayType.Browse }
+                            )
+                        }
+                        isEnabled={!joining}
+                    />
+                    <ControlBarButton
+                        label={{
+                            active: "Cancel",
+                            inactive: settings.isBackstageRoom
+                                ? "Change broadcast layout"
+                                : isRecordingActive
+                                ? "Change recording layout"
+                                : "Change event layout",
+                        }}
                         icon="th-large"
-                        isVisible={vonage.state.type === StateType.Connected}
+                        isVisible={
+                            vonage.state.type === StateType.Connected &&
+                            settings.canControlRecording &&
+                            display.actualDisplay.type === DisplayType.BroadcastLayout
+                        }
                         isActive={layoutChooser_isOpen}
                         onClick={layoutChooser_isOpen ? layoutChooser_onClose : layoutChooser_onOpen}
                         isEnabled={!joining}
                     />
                 </ControlBarButtonGroup>
-                {vonage.state.type === StateType.Connected && canControlRecording && !isBackstage ? (
-                    <PlayVideoMenuButton roomId={roomId} eventId={eventId} />
+                {vonage.state.type === StateType.Connected &&
+                settings.canControlRecording &&
+                !settings.isBackstageRoom ? (
+                    <PlayVideoMenuButton roomId={settings.roomId} eventId={settings.eventId} />
                 ) : undefined}
                 {vonage.state.type === StateType.Connected && chat ? (
                     <Popover placement="top">
@@ -615,13 +596,13 @@ export function VonageRoomControlBar({
                 ) : undefined}
                 <WrapItem flex="1 1 auto" />
                 {vonage.state.type === StateType.Connected ? (
-                    <Button size="sm" colorScheme="DestructiveActionButton" onClick={onLeaveRoom}>
+                    <Button size="sm" colorScheme="DestructiveActionButton" onClick={leaveRoom}>
                         Leave
                     </Button>
                 ) : (
                     <Tooltip
                         label={
-                            requireMicrophoneOrCamera &&
+                            settings.requireMicrophoneOrCamera &&
                             !state.microphoneIntendedEnabled &&
                             !state.cameraIntendedEnabled
                                 ? "Microphone or camera required"
@@ -636,11 +617,11 @@ export function VonageRoomControlBar({
                                 h="auto"
                                 p={4}
                                 variant="glowing"
-                                onClick={joining ? onCancelJoinRoom : onJoinRoom}
+                                onClick={joining ? onCancelJoinRoom : joinRoom}
                                 isLoading={!onCancelJoinRoom && joining}
                                 isDisabled={
                                     !joining &&
-                                    requireMicrophoneOrCamera &&
+                                    settings.requireMicrophoneOrCamera &&
                                     !state.microphoneIntendedEnabled &&
                                     !state.cameraIntendedEnabled
                                 }
@@ -652,7 +633,9 @@ export function VonageRoomControlBar({
                                 <HStack alignItems="flex-end">
                                     {joining ? <Spinner size="sm" speed="2.5s" thickness="4px" /> : undefined}
                                     <chakra.span fontSize="xl">
-                                        {joining ? joiningRoomButtonText : joinRoomButtonText}
+                                        {joining
+                                            ? settings.joiningRoomButtonText ?? "Waiting to be admitted"
+                                            : settings.joinRoomButtonText ?? "Join room"}
                                     </chakra.span>
                                 </HStack>
                                 {joining ? (
@@ -680,200 +663,6 @@ export function VonageRoomControlBar({
                 onClose={onClose}
                 onOpen={() => onOpen(true, true)}
             />
-            <AlertDialog
-                isOpen={isRecordingAlertOpen}
-                onClose={onRecordingAlertClose}
-                leastDestructiveRef={recordingAlert_LeastDestructiveRef}
-            >
-                <AlertDialogOverlay />
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <Heading as="h1" fontSize="md">
-                            Recording has started
-                        </Heading>
-                    </AlertDialogHeader>
-                    <AlertDialogBody>
-                        <VStack>
-                            <Text>
-                                Recording of the video-call in this room has started. The recording will be managed by
-                                the conference and be made available to you when recording ends. For further
-                                information, please contact your conference organizers.
-                            </Text>
-                            <Text>You can find recordings under the My Stuff menu on the left.</Text>
-                        </VStack>
-                    </AlertDialogBody>
-                    <AlertDialogFooter>
-                        <ButtonGroup spacing={2}>
-                            <Button
-                                onClick={() => {
-                                    onLeaveRoom();
-                                    onRecordingAlertClose();
-                                }}
-                            >
-                                Disconnect
-                            </Button>
-                            <Button
-                                ref={recordingAlert_LeastDestructiveRef}
-                                colorScheme="PrimaryActionButton"
-                                onClick={() => onRecordingAlertClose()}
-                            >
-                                Ok, stay connected
-                            </Button>
-                        </ButtonGroup>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </>
     );
 }
-
-function ControlBarButtonGroup({
-    label,
-    icon,
-    children,
-    noCollapse = false,
-    isVisible = true,
-}: React.PropsWithChildren<{
-    label: string;
-    icon?: string | IconProps;
-    isVisible?: boolean;
-    noCollapse?: boolean;
-}>): JSX.Element {
-    const narrowView = useIsNarrowView();
-    const { isOpen, onClose, onToggle } = useDisclosure();
-
-    return !isVisible ? (
-        <></>
-    ) : narrowView && !noCollapse ? (
-        <Popover isOpen={isOpen} onClose={onClose} placement="top">
-            <PopoverTrigger>
-                <ControlBarButton
-                    label={label}
-                    isActive={isOpen}
-                    icon={icon ? icon : { active: "chevron-down", inactive: "chevron-up" }}
-                    onClick={onToggle}
-                />
-            </PopoverTrigger>
-            <PopoverContent onClick={onClose} w="calc(2.5rem + 6px)">
-                <PopoverArrow />
-                <PopoverBody>
-                    <VStack>{children}</VStack>
-                </PopoverBody>
-            </PopoverContent>
-        </Popover>
-    ) : (
-        <>{children}</>
-    );
-}
-
-interface IconProps {
-    icon: string;
-    style: "b" | "s" | "r";
-}
-
-interface ControlBarButtonProps {
-    label:
-        | string
-        | {
-              active: string;
-              inactive: string;
-          };
-    text?:
-        | string
-        | {
-              active: string;
-              inactive: string;
-          };
-    icon: string | IconProps | { active: string | IconProps; inactive: string | IconProps };
-
-    isVisible?: boolean;
-    isLoading?: boolean;
-    isActive?: boolean;
-    isEnabled?: boolean;
-    isLimited?: false | string;
-    isDestructive?: boolean;
-
-    onClick: (() => void) | { active: () => void; inactive: () => void };
-}
-
-const ControlBarButton = React.forwardRef<HTMLButtonElement, ControlBarButtonProps>(function ControlBarButton(
-    {
-        label,
-        text,
-        icon,
-        isVisible = true,
-        isLoading = false,
-        isActive,
-        isEnabled = true,
-        isLimited = false,
-        isDestructive = false,
-        onClick,
-    }: ControlBarButtonProps,
-    ref
-): JSX.Element {
-    const iconProps = useMemo(
-        () =>
-            typeof icon === "string"
-                ? ({ icon, style: "s" } as IconProps)
-                : "active" in icon
-                ? isActive
-                    ? typeof icon.active === "string"
-                        ? ({ icon: icon.active, style: "s" } as IconProps)
-                        : icon.active
-                    : typeof icon.inactive === "string"
-                    ? ({ icon: icon.inactive, style: "s" } as IconProps)
-                    : icon.inactive
-                : icon,
-        [icon, isActive]
-    );
-    const labelValue = typeof label === "string" ? label : isActive ? label.active : label.inactive;
-    const textValue = text && (typeof text === "string" ? text : isActive ? text.active : text.inactive);
-    const onClickValue = typeof onClick === "function" ? onClick : isActive ? onClick.active : onClick.inactive;
-    const vonage = useVonageGlobalState();
-
-    return isVisible ? (
-        isLimited ? (
-            <Tag
-                size="sm"
-                variant="outline"
-                colorScheme="RoomControlBarNotice"
-                px={2}
-                py="4px"
-                ml={1}
-                mr="auto"
-                maxW="190px"
-                ref={ref}
-            >
-                <TagLeftIcon as={CheckCircleIcon} />
-                <TagLabel whiteSpace="normal">{isLimited}</TagLabel>
-            </Tag>
-        ) : (
-            <Tooltip label={labelValue}>
-                <Button
-                    size="sm"
-                    isLoading={isLoading}
-                    leftIcon={<FAIcon iconStyle={iconProps.style} icon={iconProps.icon} />}
-                    iconSpacing={vonage.state.type === StateType.Connected ? 0 : undefined}
-                    onClick={onClickValue}
-                    isDisabled={!isEnabled}
-                    colorScheme={
-                        isActive === undefined
-                            ? "RoomControlBarButton"
-                            : isActive
-                            ? isDestructive
-                                ? "DestructiveActionButton"
-                                : "ActiveRoomControlBarButton"
-                            : "InactiveRoomControlBarButton"
-                    }
-                    aria-label={labelValue}
-                    w={vonage.state.type === StateType.Connected ? "2.5em" : undefined}
-                    ref={ref}
-                >
-                    {vonage.state.type === StateType.Connected ? "" : textValue}
-                </Button>
-            </Tooltip>
-        )
-    ) : (
-        <></>
-    );
-});

@@ -40,7 +40,7 @@ To configure a single profile/instance, follow these steps:
      - `sso_region`: e.g. `eu-west-1`
      - `sso_account_id`: the numeric ID of the AWS account your SSO user has been granted access to.
 
-1. Using these credentials, add a named profile to [`~/.aws/config`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). In this case, we're using the name `sandbox`, but you can choose whatever you like.
+1. Using these credentials, add a named profile to [`~/.aws/config`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). In this case, we're using the name `sandbox`, but you can choose whatever you like. If the directory `~/.aws` does not exist on your machine, you may create it manually and create an extensionless `config` file inside.
 
    - For example:
 
@@ -91,7 +91,7 @@ If you just want to get up and running as quickly as possible, and you do not ca
 ## Setting up local env files
 
 1. `cd` into the `aws` folder
-1. `cp env.sandbox.example env.sandbox` and fill in environment variable values following the instructions in comments `env.sandbox`. It is recommended to generate a secure random `VONAGE_API_KEY`.
+1. `cp .env.sandbox.example .env.sandbox` and fill in environment variable values following the instructions in comments `.env.sandbox`. It is recommended to generate a secure random `VONAGE_API_KEY`.
 1. Optional Configure additional env files for each instance of Midspace you want to deploy (e.g. personal sandbox, staging, production).
    - The env file must be named `.env.<profile>`, where `<profile>` is the name of an AWS profile that you configured.
    - You can deploy multiple Midspace instances to the same AWS account by setting a different `STACK_PREFIX` in the corresponding env file. This is, however, not recommended.
@@ -102,7 +102,7 @@ If you just want to get up and running as quickly as possible, and you do not ca
 **Info:** The stack `<prefix>-main` contains the main infrastructure for the Midspace app (e.g. S3 buckets, permissions for transcode/transcribe etc.). The stack `<prefix>-chime` contains AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane. The stack `<prefix>-img` contains the infrastructure for serverless resizing of profile images.
 
 1. Run the `AWS -- Deploy stacks` VSCode task to deploy the Midspace infrastructure to your account. You will be asked for the name of the AWS profile you want to deploy to.
-1. Make a note of the various output values. These are required as environment variables when setting up the actions service and other services. They can be viewed later by logging in to AWS CloudFormation, clicking the stack in question, and then clicking the Outputs tab.
+1. Make a note of the various output values. These are required as environment variables when setting up the actions service and other services. They can be viewed later by logging in to AWS CloudFormation, clicking the stack in question, and then clicking the Outputs tab. Note that your stacks may have been deployed to different AWS regions depending on your configuration. To access the stacks in CloudFormation you will need to change the region in the AWS console, via the menu bar dropdown, to the respective deployment region.
 
 ## Useful commands
 

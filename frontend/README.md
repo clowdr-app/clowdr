@@ -40,6 +40,8 @@ need to regenerate the GraphQL code. You can do this using the VSCode Task
 
 ## Local Development
 
+Refer to the comments in the `vite.config.ts` file regarding server configuration. For local development, you will likely need to comment out the first set of the `hmr` configuration options and uncomment the second set of the `hmr` configuration options.
+
 If the environment configuration changes, or for example, the `package.json`
 commands change, then you will need to restart tasks for this frontend.
 

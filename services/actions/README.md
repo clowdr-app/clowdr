@@ -22,7 +22,7 @@ Eventually this may be split into multiple microservices.
    - **Quick setup**: Set all the environment variables related to AWS to `XXXX`. BCP: This will not actually work right now, but let's give it a try this way and see how much further we can get.
    - **Full Setup**: You will need the outputs from running the AWS CDK deployment. `ChimeActionsUserAccessKeyId`, `ChimeActionsUserSecretAccessKey`, and `ChimeNotificationsTopic` are found in the `Outputs` tab for the `<prefix>-chime` stack that was deployed in `us-east-1 (N. Virginia)`, and most of the rest of the `AWS_...` environment variable values come from the `Outputs` for the `<prefix>-main` stack deployed to the default region.
 
-Now return to the main README.
+You may now return to [Part 2 of the Vonage Setup](../../docs/video-service-setup.md#part-2-after-actions-service-setup).
 
 ## Production: Creating a Google Cloud project
 
@@ -103,14 +103,12 @@ Note: `AWS_` values come from the outputs of your AWS CloudFormation deployment.
 | AWS_CHIME_ACTIONS_USER_ACCESS_KEY_ID             | The access key ID for your chime stack AWS user                                                                                                                        | CDK `chime` stack output |
 | AWS_CHIME_ACTIONS_USER_SECRET_ACCESS_KEY         | The secret access key for your chime stack AWS user                                                                                                                    | CDK `chime` stack output |
 | AWS_CHIME_NOTIFICATIONS_TOPIC_ARN                | The ARN of the SNS topic for Chime notifications                                                                                                                       | CDK `chime` stack output |
-| AWS_ACTIONS_USER_ACCESS_KEY_ID                   | The secret access key for your main stack AWS user                                                                                                                     | CDK `main` stack output  |
+| AWS_ACTIONS_USER_ACCESS_KEY_ID                   | The access key for your main stack AWS user                                                                                                                            | CDK `main` stack output  |
+| AWS_ACTIONS_USER_SECRET_ACCESS_KEY               | The secret access key for your main stack AWS user                                                                                                                     | CDK `main` stack output  |
 | AWS_CONTENT_BUCKET_ID                            | The S3 bucket ID for content storage                                                                                                                                   | CDK `main` stack output  |
 | AWS_CHIME_MANAGER_ROLE_ARN                       | The IAM role providing management access to Amazon Chime (but comes from `main` stack output!)                                                                         | CDK `main` stack output  |
 | AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN   | The IAM role to be passed to Elastic Transcoder                                                                                                                        | CDK `main` stack output  |
 | AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN          | The ARN of the SNS topic for Elastic Transcoder notifications                                                                                                          | CDK `main` stack output  |
-| AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID            | The ID of the security group to be used for MediaLive RTMP Push inputs                                                                                                 | CDK `main` stack output  |
-| AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN            | The ARN of the SNS topic for MediaLive notifications                                                                                                                   | CDK `main` stack output  |
-| AWS_MEDIALIVE_SERVICE_ROLE_ARN                   | The IAM role to be passed to MediaLive                                                                                                                                 | CDK `main` stack output  |
 | AWS_MEDIACONVERT_SERVICE_ROLE_ARN                | The IAM role to be passed to MediaConvert                                                                                                                              | CDK `main` stack output  |
 | AWS_MEDIACONVERT_API_ENDPOINT                    | The customer-specific MediaConvert endpoint (Optional)                                                                                                                 | customer-specific        |
 | AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN                | The IAM role to be passed to MediaPackage                                                                                                                              | CDK `main` stack output  |
@@ -120,7 +118,7 @@ Note: `AWS_` values come from the outputs of your AWS CloudFormation deployment.
 | AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN           | The ARN of the SNS topic for transcription notifications                                                                                                               | CDK `main` stack output  |
 | AWS_PUBLIC_TRANSCRIBE_USER_ACCESS_KEY_ID             |  | CDK `main` stack output |
 | AWS_PUBLIC_TRANSCRIBE_USER_SECRET_ACCESS_KEY         |  | CDK `main` stack output |
-| AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME          | The name of the CloudFront (separate AWS service from CloudFormation!) distribution obtained from deploying the Serverless Image Handler stack (e.g. `f9da4dbs83dnsl`) | AWS CloudFront           |
+| AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME          | The name of the CloudFront (separate AWS service from CloudFormation!) distribution obtained from deploying the Serverless Image Handler stack (e.g. `f9da4dbs83dnsl`—not the CloudFront ID, but your unique subdomain of cloudfront.net) | AWS CloudFront           |
 | AWS_IMAGES_SECRET_ACCESS_ROLE_ARN                | The ARN of the role for accessing the Serverless Image Handler secret.                                                                                                 | CDK `img` stack output   |
 | AWS_IMAGES_SECRET_ARN                            | The ARN of the secret for the Serverless Image Handler.                                                                                                                | CDK `img` stack output   |
 | OPENTOK_API_KEY                                  | Your Vonage Video API key (project API key, displayed in multicolored box at top of Vonage project page)                                                               | Vonage Project Settings  |

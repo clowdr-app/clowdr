@@ -348,7 +348,7 @@ export function InCall(): JSX.Element {
     return (
         <>
             {connected ? (
-                <VStack h="100%" w="100%" zIndex={1} alignItems="stretch" overflow="hidden">
+                <VStack h="100%" w="100%" zIndex={1} alignItems="stretch" overflow="hidden" spacing={0}>
                     {videoPlayback.latestCommand?.command?.type === "video" ? (
                         <Box flexBasis={0} flexGrow={1.5} flexShrink={1} minH="10em" w="100%" p={2}>
                             <VideoChatVideoPlayer />

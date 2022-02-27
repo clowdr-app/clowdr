@@ -388,7 +388,7 @@ function RoomInner({
     const scrollRef = useRef<HTMLDivElement>(null);
     const controlBarEl = useMemo(
         () => (
-            <HStack justifyContent="space-between" alignItems="center" py={2} px={4}>
+            <HStack justifyContent="space-between" alignItems="center" flexWrap="wrap" gridRowGap={2} py={2} px={4}>
                 <RoomTitle roomDetails={roomDetails} />
                 {showBackstage ? (
                     <Heading as="h2" size="md">
@@ -406,7 +406,9 @@ function RoomInner({
                     </Button>
                 ) : undefined}
                 <Spacer />
-                <RoomMembersButton roomDetails={roomDetails} />
+                <Flex flex="1" justifyContent="flex-end">
+                    <RoomMembersButton roomDetails={roomDetails} />
+                </Flex>
             </HStack>
         ),
         [currentRoomEvent, nextRoomEvent, roomDetails, showBackstage]

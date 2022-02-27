@@ -53,8 +53,10 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
                     src={sponsorLogoUrl}
                     alt={`${roomDetails.item.title} logo`}
                     maxWidth="20rem"
+                    maxHeight="8rem"
                     bgColor="Room.sponsorLogoBackgroundColor"
-                    p={5}
+                    p={1}
+                    pr={3}
                     borderRadius="md"
                 />
             ) : (

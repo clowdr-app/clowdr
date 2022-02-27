@@ -15,7 +15,6 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Redirect } from "react-router-dom";
 import { gql } from "urql";
 import { Registrant_RegistrantRole_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
@@ -247,19 +246,6 @@ function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: strin
 
 export default function ViewProfilePage({ registrantId }: { registrantId?: string }): JSX.Element {
     const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
-    const maybeCurrentUser = useMaybeCurrentUser();
-    const { conferencePath } = useAuthParameters();
-
-    if (
-        (!maybeCurrentUser.user ||
-            !maybeCurrentRegistrant ||
-            maybeCurrentRegistrant.userId !== maybeCurrentUser.user.id ||
-            (registrantId && maybeCurrentRegistrant.id !== registrantId)) &&
-        maybeCurrentRegistrant?.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
-        maybeCurrentRegistrant?.conferenceRole !== Registrant_RegistrantRole_Enum.Moderator
-    ) {
-        return <Redirect to={conferencePath ?? "/"} />;
-    }
 
     if (registrantId) {
         return <ViewProfilePage_FetchRegistrant registrantId={registrantId} />;

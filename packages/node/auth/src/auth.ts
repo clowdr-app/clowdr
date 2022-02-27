@@ -247,9 +247,6 @@ export async function computeAuthHeaders(
                                             result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
                                             allowedRoles.push(HasuraRoleName.RoomAdmin);
                                             allowedRoles.push(HasuraRoleName.RoomMember);
-                                        } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
-                                            result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
-                                            allowedRoles.push(HasuraRoleName.RoomMember);
                                         } else {
                                             const role = await roomMembershipsCache(logger).getField(
                                                 room.id,
@@ -264,6 +261,11 @@ export async function computeAuthHeaders(
                                                 if (role === Room_PersonRole_Enum.Admin) {
                                                     allowedRoles.push(HasuraRoleName.RoomAdmin);
                                                 }
+                                            } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
+                                                result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
+                                                    room.id
+                                                );
+                                                allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else {
                                                 return false;
                                             }
@@ -397,11 +399,6 @@ export async function computeAuthHeaders(
                                                 );
                                                 allowedRoles.push(HasuraRoleName.RoomAdmin);
                                                 allowedRoles.push(HasuraRoleName.RoomMember);
-                                            } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
-                                                result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
-                                                    room.id
-                                                );
-                                                allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else {
                                                 const role = await roomMembershipsCache(logger).getField(
                                                     room.id,
@@ -416,6 +413,13 @@ export async function computeAuthHeaders(
                                                     if (role === Room_PersonRole_Enum.Admin) {
                                                         allowedRoles.push(HasuraRoleName.RoomAdmin);
                                                     }
+                                                } else if (
+                                                    room.managementModeName === Room_ManagementMode_Enum.Public
+                                                ) {
+                                                    result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
+                                                        room.id
+                                                    );
+                                                    allowedRoles.push(HasuraRoleName.RoomMember);
                                                 } else {
                                                     return false;
                                                 }

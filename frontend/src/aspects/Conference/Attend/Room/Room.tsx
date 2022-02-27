@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Center,
+    chakra,
     Flex,
     Heading,
     HStack,
@@ -746,7 +747,7 @@ function RoomInner({
 
     return (
         <>
-            <VStack alignItems="stretch" flexGrow={1} w="100%">
+            <VStack alignItems="stretch" flexGrow={1} w="100%" spacing={0}>
                 <Flex
                     flexGrow={2.5}
                     flexDir="column"
@@ -805,7 +806,7 @@ function RoomInner({
 
                 {!showBackstage ? (
                     <>
-                        <div ref={scrollRef} />
+                        <chakra.div ref={scrollRef} />
                         <StreamTextCaptions streamTextEventId={currentRoomEvent?.streamTextEventId} />
                         {contentEl}
                     </>

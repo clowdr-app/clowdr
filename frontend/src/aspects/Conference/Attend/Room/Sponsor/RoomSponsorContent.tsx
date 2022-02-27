@@ -1,4 +1,4 @@
-import { Divider, Spinner } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useRoomSponsorContent_GetElementsQuery } from "../../../../../generated/graphql";
@@ -43,7 +43,6 @@ export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element 
 
     return (
         <>
-            <Divider mb={6} />
             {loading ? <Spinner /> : error ? <>An error occurred loading in data.</> : undefined}
             <ElementsGridLayout elements={elements} />
         </>

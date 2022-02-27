@@ -12,6 +12,7 @@ import {
 } from "../../../../../generated/graphql";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
+import { RecordingControlReason } from "../Vonage/State/VonageRoomProvider";
 import type { VonageRoom } from "../Vonage/VonageRoom";
 import { BackstageContext, BackstageProvider } from "./BackstageContext";
 import { BackstageControls } from "./Controls/BackstageControls";
@@ -98,16 +99,22 @@ export function VonageBackstageInner({
         return result.data?.joinEventVonageSession.accessToken;
     }, [getEventVonageToken, event.id, registrant.id]);
 
-    const isPresenterOrChairOrOrganizer = useMemo(
-        () =>
-            registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+    const canControlRecordingAs = useMemo(() => {
+        const reasons: Set<RecordingControlReason> = new Set();
+        if (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) {
+            reasons.add(RecordingControlReason.ConferenceOrganizer);
+        }
+        if (
             event.eventPeople.some(
                 (person) =>
                     person.person?.registrantId === registrant.id &&
                     person.roleName !== Schedule_EventProgramPersonRole_Enum.Participant
-            ),
-        [event.eventPeople, registrant.conferenceRole, registrant.id]
-    );
+            )
+        ) {
+            reasons.add(RecordingControlReason.EventPerson);
+        }
+        return reasons;
+    }, [event.eventPeople, registrant.conferenceRole, registrant.id]);
 
     return (
         <VStack h="100%" justifyContent="stretch" w="100%" alignItems="flex-start">
@@ -126,7 +133,7 @@ export function VonageBackstageInner({
                         requireMicrophoneOrCamera={isRaiseHandPreJoin}
                         completeJoinRef={completeJoinRef}
                         onLeave={onLeave}
-                        canControlRecording={isPresenterOrChairOrOrganizer}
+                        canControlRecordingAs={canControlRecordingAs}
                     />
                 ) : (
                     <>No room session available.</>

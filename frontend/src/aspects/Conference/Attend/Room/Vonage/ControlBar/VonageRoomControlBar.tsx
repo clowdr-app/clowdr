@@ -502,7 +502,11 @@ export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: 
                         icon={{ active: "circle", inactive: { style: "r", icon: "dot-circle" } }}
                         isVisible={vonage.state.type === StateType.Connected && !settings.isBackstageRoom}
                         isLimited={
-                            !settings.canControlRecording ? (isRecordingActive ? "Recording" : "Not recording") : false
+                            !settings.canControlRecordingAs.size
+                                ? isRecordingActive
+                                    ? "Recording"
+                                    : "Not recording"
+                                : false
                         }
                         isLoading={toggleVonageRecordingResponse.fetching}
                         isActive={isRecordingActive}
@@ -561,7 +565,7 @@ export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: 
                         icon="th-large"
                         isVisible={
                             vonage.state.type === StateType.Connected &&
-                            settings.canControlRecording &&
+                            Boolean(settings.canControlRecordingAs.size) &&
                             display.actualDisplay.type === DisplayType.BroadcastLayout
                         }
                         isActive={layoutChooser_isOpen}
@@ -570,7 +574,7 @@ export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: 
                     />
                 </ControlBarButtonGroup>
                 {vonage.state.type === StateType.Connected &&
-                settings.canControlRecording &&
+                settings.canControlRecordingAs.size &&
                 !settings.isBackstageRoom ? (
                     <PlayVideoMenuButton roomId={settings.roomId} eventId={settings.eventId} />
                 ) : undefined}

@@ -7,14 +7,13 @@ import {
 } from "@midspace/shared-types/vonage";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
-    Registrant_RegistrantRole_Enum,
     useInsertVonageSessionLayoutMutation,
     useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery,
 } from "../../../../../../generated/graphql";
 import { makeContext } from "../../../../../GQL/make-context";
 import { useConference } from "../../../../useConference";
-import useCurrentRegistrant from "../../../../useCurrentRegistrant";
 import { VonageComputedStateContext } from "./VonageComputedStateContext";
+import { RecordingControlReason } from "./VonageRoomProvider";
 
 export interface AvailableStream {
     streamId?: string;
@@ -51,7 +50,8 @@ export type RoomOrEventId =
 
 export function useVonageBroadcastLayout(
     vonageSessionId: string,
-    roomOrEventId: RoomOrEventId | null
+    roomOrEventId: RoomOrEventId | null,
+    canControlRecordingAs: Set<RecordingControlReason>
 ): VonageBroadcastLayout {
     const [result, refetchLayout] = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
         variables: {
@@ -97,16 +97,28 @@ export function useVonageBroadcastLayout(
 
     const [availableStreams, setAvailableStreams] = useState<AvailableStream[]>([]);
 
-    const registrant = useCurrentRegistrant();
-
     const saveContext = useMemo(() => {
         if (!roomOrEventId) {
             return undefined;
         }
-        if (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) {
+        if (canControlRecordingAs.has(RecordingControlReason.ConferenceOrganizer)) {
             return makeContext({
                 [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
             });
+        }
+        if (canControlRecordingAs.has(RecordingControlReason.RoomAdmin)) {
+            switch (roomOrEventId.type) {
+                case "room":
+                    return makeContext({
+                        [AuthHeader.Role]: HasuraRoleName.RoomAdmin,
+                        [AuthHeader.RoomId]: roomOrEventId.id,
+                    });
+                case "room-with-event":
+                    return makeContext({
+                        [AuthHeader.Role]: HasuraRoleName.RoomAdmin,
+                        [AuthHeader.RoomId]: roomOrEventId.roomId,
+                    });
+            }
         }
         switch (roomOrEventId.type) {
             case "room":
@@ -124,7 +136,7 @@ export function useVonageBroadcastLayout(
                     [AuthHeader.Role]: HasuraRoleName.Attendee,
                 });
         }
-    }, [roomOrEventId]);
+    }, [canControlRecordingAs, roomOrEventId]);
 
     const saveLayout = useCallback(
         async (_layoutData?: { layout: VonageSessionLayoutData; createdAt: number } | null) => {

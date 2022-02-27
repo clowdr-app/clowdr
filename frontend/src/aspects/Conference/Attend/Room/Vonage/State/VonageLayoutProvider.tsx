@@ -5,6 +5,7 @@ import type { RoomOrEventId, VonageBroadcastLayout } from "./useVonageBroadcastL
 import { useVonageBroadcastLayout } from "./useVonageBroadcastLayout";
 import type { VonageDisplay } from "./useVonageDisplay";
 import { useVonageDisplay } from "./useVonageDisplay";
+import type { RecordingControlReason } from "./VonageRoomProvider";
 
 gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
@@ -34,10 +35,16 @@ export interface VonageLayout {
     display: VonageDisplay;
 }
 
+export interface Props {
+    vonageSessionId: string;
+    type: RoomOrEventId | null;
+    canControlRecordingAs: Set<RecordingControlReason>;
+}
+
 export const VonageLayoutContext = React.createContext<VonageLayout | undefined>(undefined);
 
-function useValue(vonageSessionId: string, type: RoomOrEventId | null): VonageLayout {
-    const layout = useVonageBroadcastLayout(vonageSessionId, type);
+function useValue(props: Props): VonageLayout {
+    const layout = useVonageBroadcastLayout(props.vonageSessionId, props.type, props.canControlRecordingAs);
     const display = useVonageDisplay();
 
     return useMemo(
@@ -49,14 +56,8 @@ function useValue(vonageSessionId: string, type: RoomOrEventId | null): VonageLa
     );
 }
 
-export function VonageLayoutProvider({
-    vonageSessionId,
-    type,
-    children,
-}: PropsWithChildren<{ vonageSessionId: string; type: RoomOrEventId | null }>): JSX.Element {
-    return (
-        <VonageLayoutContext.Provider value={useValue(vonageSessionId, type)}>{children}</VonageLayoutContext.Provider>
-    );
+export function VonageLayoutProvider(props: PropsWithChildren<Props>): JSX.Element {
+    return <VonageLayoutContext.Provider value={useValue(props)}>{props.children}</VonageLayoutContext.Provider>;
 }
 
 export function useVonageLayout(): VonageLayout {

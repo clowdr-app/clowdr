@@ -26,6 +26,7 @@ import {
 } from "../../../Content/Element/useMediaElement";
 import { VonageComputedStateContext } from "../State/VonageComputedStateContext";
 import { useVonageGlobalState } from "../State/VonageGlobalStateProvider";
+import type { RecordingControlReason } from "../State/VonageRoomProvider";
 
 gql`
     mutation VonageVideoPlaybackContext_InsertCommand($object: video_VonageVideoPlaybackCommand_insert_input!) {
@@ -50,7 +51,7 @@ gql`
 
 type Props = {
     vonageSessionId: string;
-    canControlPlayback: boolean;
+    canControlPlaybackAs: Set<RecordingControlReason>;
 };
 
 function parseStoredCommand(
@@ -71,7 +72,7 @@ function parseStoredCommand(
     };
 }
 
-function useValue({ vonageSessionId, canControlPlayback }: Props) {
+function useValue({ vonageSessionId, canControlPlaybackAs }: Props) {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
     const context = useMemo(
@@ -184,7 +185,7 @@ function useValue({ vonageSessionId, canControlPlayback }: Props) {
         video,
         subtitles,
         errors,
-        canControlPlayback,
+        canControlPlaybackAs,
     };
 }
 

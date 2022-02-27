@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
+import type { RecordingControlReason } from "../Vonage/State/VonageRoomProvider";
 import { VideoChatChime } from "./VideoChatChime";
 import { VideoChatVonage } from "./VideoChatVonage";
 
@@ -12,7 +13,7 @@ export function VideoChatRoom({
     enable,
     eventId,
     eventIsFuture,
-    isPresenterOrChairOrOrganizer,
+    canControlRecordingAs,
 }: {
     videoRoomBackendName?: string;
     defaultVideoBackendName?: string;
@@ -20,7 +21,7 @@ export function VideoChatRoom({
     enable: boolean;
     eventId: string | undefined;
     eventIsFuture: boolean;
-    isPresenterOrChairOrOrganizer: boolean;
+    canControlRecordingAs: Set<RecordingControlReason>;
 }): JSX.Element {
     const backend = useMemo(() => {
         switch (roomDetails.backendName) {
@@ -56,7 +57,7 @@ export function VideoChatRoom({
                         enable={enableVonage}
                         eventId={eventId}
                         eventIsFuture={eventIsFuture}
-                        isPresenterOrChairOrOrganizer={isPresenterOrChairOrOrganizer}
+                        canControlRecordingAs={canControlRecordingAs}
                     />
                     {enableVonage ? <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} /> : undefined}
                 </Box>
@@ -65,16 +66,7 @@ export function VideoChatRoom({
                 ) : undefined}
             </>
         );
-    }, [
-        enableChime,
-        roomDetails,
-        enableVonage,
-        eventId,
-        eventIsFuture,
-        isPresenterOrChairOrOrganizer,
-        backend,
-        enable,
-    ]);
+    }, [enableChime, roomDetails, enableVonage, eventId, eventIsFuture, canControlRecordingAs, backend, enable]);
 
     return breakoutRoomEl;
 }

@@ -49,6 +49,7 @@ import StreamTextCaptions from "./StreamTextCaptions";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { VideoAspectWrapper } from "./Video/VideoAspectWrapper";
 import { VideoChatRoom } from "./VideoChat/VideoChatRoom";
+import { RecordingControlReason } from "./Vonage/State/VonageRoomProvider";
 
 const Backstages = React.lazy(() => import("./Stream/Backstages"));
 const VideoPlayer = React.lazy(() => import("./Video/VideoPlayerEventPlayer"));
@@ -695,6 +696,47 @@ function RoomInner({
         secondsUntilBroadcastEvent,
     ]);
 
+    const canControlRecordingAs = useMemo(() => {
+        const reasons: Set<RecordingControlReason> = new Set();
+        if (currentRegistrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) {
+            reasons.add(RecordingControlReason.ConferenceOrganizer);
+        }
+        if (
+            roomDetails.roomMemberships.some((membership) => membership.personRoleName === Room_PersonRole_Enum.Admin)
+        ) {
+            reasons.add(RecordingControlReason.RoomAdmin);
+        }
+        if (currentRoomEvent) {
+            if (
+                currentRoomEvent.eventPeople.some(
+                    (person) =>
+                        person.person?.registrantId === currentRegistrant.id &&
+                        person.roleName !== Schedule_EventProgramPersonRole_Enum.Participant
+                )
+            ) {
+                reasons.add(RecordingControlReason.EventPerson);
+            }
+        } else if (
+            roomDetails.item?.selfPeople.some(
+                (itemPerson) =>
+                    itemPerson.roleName.toUpperCase() === "AUTHOR" ||
+                    itemPerson.roleName.toUpperCase() === "PRESENTER" ||
+                    itemPerson.roleName.toUpperCase() === "CHAIR" ||
+                    itemPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
+                    itemPerson.roleName.toUpperCase() === "ORGANIZER"
+            )
+        ) {
+            reasons.add(RecordingControlReason.ItemPerson);
+        }
+        return reasons;
+    }, [
+        currentRegistrant.conferenceRole,
+        currentRegistrant.id,
+        currentRoomEvent,
+        roomDetails.item?.selfPeople,
+        roomDetails.roomMemberships,
+    ]);
+
     return (
         <>
             <VStack alignItems="stretch" flexGrow={1} w="100%">
@@ -742,37 +784,7 @@ function RoomInner({
                                             : undefined)
                                     }
                                     eventIsFuture={!currentRoomEvent}
-                                    isPresenterOrChairOrOrganizer={
-                                        currentRegistrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
-                                        roomDetails.roomMemberships.some(
-                                            (membership) => membership.personRoleName === Room_PersonRole_Enum.Admin
-                                        ) ||
-                                        (currentRoomEvent
-                                            ? currentRoomEvent.eventPeople.some(
-                                                  (person) =>
-                                                      person.person?.registrantId === currentRegistrant.id &&
-                                                      person.roleName !==
-                                                          Schedule_EventProgramPersonRole_Enum.Participant
-                                              )
-                                            : /*nextRoomEvent &&
-                                              nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat
-                                            ? nextRoomEvent.eventPeople.some(
-                                                  (person) =>
-                                                      person.person?.registrantId === currentRegistrant.id &&
-                                                      person.roleName !==
-                                                          Schedule_EventProgramPersonRole_Enum.Participant
-                                              )
-                                            :*/ Boolean(
-                                                  roomDetails.item?.selfPeople.some(
-                                                      (itemPerson) =>
-                                                          itemPerson.roleName.toUpperCase() === "AUTHOR" ||
-                                                          itemPerson.roleName.toUpperCase() === "PRESENTER" ||
-                                                          itemPerson.roleName.toUpperCase() === "CHAIR" ||
-                                                          itemPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
-                                                          itemPerson.roleName.toUpperCase() === "ORGANIZER"
-                                                  )
-                                              ))
-                                    }
+                                    canControlRecordingAs={canControlRecordingAs}
                                 />
                             </Box>
                         </>

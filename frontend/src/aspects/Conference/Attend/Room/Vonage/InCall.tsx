@@ -334,9 +334,14 @@ export function InCall(): JSX.Element {
             case DisplayType.Browse:
                 return <Browse streamActivities={streamActivities} viewports={viewports} />;
             case DisplayType.BroadcastLayout:
-                return <Layout viewports={viewports} allowedToControlLayout={settings.canControlRecording} />;
+                return (
+                    <Layout
+                        viewports={viewports}
+                        allowedToControlLayout={Boolean(settings.canControlRecordingAs.size)}
+                    />
+                );
         }
-    }, [display.actualDisplay.type, settings.canControlRecording, streamActivities, viewports]);
+    }, [display.actualDisplay.type, settings.canControlRecordingAs, streamActivities, viewports]);
 
     const videoPlayback = useContext(VonageVideoPlaybackContext);
 

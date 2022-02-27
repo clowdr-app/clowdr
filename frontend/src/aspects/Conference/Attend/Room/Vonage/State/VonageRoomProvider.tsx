@@ -121,10 +121,17 @@ const initialComputedState: VonageRoomComputedState = {
     audioTrack: null,
 };
 
+export const enum RecordingControlReason {
+    ConferenceOrganizer = "CONFERENCE_ORGANIZER",
+    EventPerson = "EVENT_PERSON",
+    ItemPerson = "ITEM_PERSON",
+    RoomAdmin = "ROOM_ADMIN",
+}
+
 export interface VonageRoomSettings {
     maximumSimultaneousScreenShares: number;
     isBackstageRoom: boolean;
-    canControlRecording: boolean;
+    canControlRecordingAs: Set<RecordingControlReason>;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
@@ -145,7 +152,7 @@ interface VonageRoomContext {
 const defaultVonageRoomSettings: VonageRoomSettings = {
     maximumSimultaneousScreenShares: 1,
     isBackstageRoom: false,
-    canControlRecording: false,
+    canControlRecordingAs: new Set(),
     onPermissionsProblem: () => {
         //
     },
@@ -251,7 +258,7 @@ gql`
 export function VonageRoomProvider({
     onPermissionsProblem,
     isBackstageRoom,
-    canControlRecording,
+    canControlRecordingAs,
     joinRoomButtonText,
     joiningRoomButtonText,
     requireMicrophoneOrCamera,
@@ -263,7 +270,7 @@ export function VonageRoomProvider({
 }: {
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     isBackstageRoom: boolean;
-    canControlRecording: boolean;
+    canControlRecordingAs: Set<RecordingControlReason>;
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
     requireMicrophoneOrCamera: boolean;
@@ -529,7 +536,7 @@ export function VonageRoomProvider({
                 {
                     maximumSimultaneousScreenShares:
                         maxSimultaneousScreenSharesResponse?.data?.conference_Configuration_by_pk?.value ?? undefined,
-                    canControlRecording,
+                    canControlRecordingAs,
                     isBackstageRoom,
                     onPermissionsProblem,
                     joinRoomButtonText,
@@ -542,7 +549,7 @@ export function VonageRoomProvider({
                 }
             ),
         [
-            canControlRecording,
+            canControlRecordingAs,
             isBackstageRoom,
             onPermissionsProblem,
             joinRoomButtonText,

@@ -11,6 +11,7 @@ import type {
 import { GetRoomVonageSessionIdDocument } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Hooks/useRealTime";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
+import type { RecordingControlReason } from "../Vonage/State/VonageRoomProvider";
 import { useGetAccessToken } from "../Vonage/useGetAccessToken";
 import type { VonageRoom } from "../Vonage/VonageRoom";
 
@@ -28,13 +29,13 @@ export function VideoChatVonage({
     eventId,
     enable,
     eventIsFuture,
-    isPresenterOrChairOrOrganizer,
+    canControlRecordingAs,
 }: {
     room: RoomPage_RoomDetailsFragment;
     eventId: string | undefined;
     enable: boolean;
     eventIsFuture: boolean;
-    isPresenterOrChairOrOrganizer: boolean;
+    canControlRecordingAs: Set<RecordingControlReason>;
 }): JSX.Element {
     const sharedRoomContext = useContext(SharedRoomContext);
 
@@ -81,7 +82,7 @@ export function VideoChatVonage({
                 getAccessToken={getAccessToken}
                 completeGetAccessToken={completeGetAccessToken}
                 isBackstageRoom={false}
-                canControlRecording={isPresenterOrChairOrOrganizer}
+                canControlRecordingAs={canControlRecordingAs}
                 roomId={room.id}
                 eventId={eventId}
                 eventIsFuture={eventIsFuture}

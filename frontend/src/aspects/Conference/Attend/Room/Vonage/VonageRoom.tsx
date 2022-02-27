@@ -12,7 +12,7 @@ import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructio
 import type { RoomOrEventId, VonageBroadcastLayout } from "./State/useVonageBroadcastLayout";
 import { VonageComputedStateProvider } from "./State/VonageComputedStateContext";
 import { VonageLayoutProvider } from "./State/VonageLayoutProvider";
-import { VonageRoomProvider } from "./State/VonageRoomProvider";
+import { RecordingControlReason, VonageRoomProvider } from "./State/VonageRoomProvider";
 import type { CompleteGetAccessToken } from "./useGetAccessToken";
 import { AutoplayProvider } from "./VideoPlayback/AutoplayContext";
 import { VonageVideoPlaybackProvider } from "./VideoPlayback/VonageVideoPlaybackContext";
@@ -59,7 +59,7 @@ export function VonageRoom({
     completeJoinRef,
     completeGetAccessToken,
     onLeave,
-    canControlRecording,
+    canControlRecordingAs,
     eventIsFuture,
 }: {
     roomId: string | null;
@@ -74,7 +74,7 @@ export function VonageRoom({
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     completeGetAccessToken?: CompleteGetAccessToken | null;
     onLeave?: () => void;
-    canControlRecording: boolean;
+    canControlRecordingAs: Set<RecordingControlReason>;
     layout?: VonageBroadcastLayout;
     eventIsFuture?: boolean;
 }): JSX.Element {
@@ -145,7 +145,7 @@ export function VonageRoom({
         <VonageRoomProvider
             onPermissionsProblem={onPermissionsProblem}
             isBackstageRoom={isBackstageRoom}
-            canControlRecording={canControlRecording}
+            canControlRecordingAs={canControlRecordingAs}
             joinRoomButtonText={
                 isBackstageRoom ? (raiseHandPrejoinEventId ? "I'm ready" : "Connect to the backstage") : undefined
             }
@@ -192,11 +192,15 @@ export function VonageRoom({
                     cancelJoin={cancelJoin}
                     onRecordingIdReceived={onRecordingIdReceived}
                 >
-                    <VonageLayoutProvider vonageSessionId={vonageSessionId} type={roomType}>
+                    <VonageLayoutProvider
+                        vonageSessionId={vonageSessionId}
+                        type={roomType}
+                        canControlRecordingAs={canControlRecordingAs}
+                    >
                         <AutoplayProvider>
                             <VonageVideoPlaybackProvider
                                 vonageSessionId={vonageSessionId}
-                                canControlPlayback={canControlRecording}
+                                canControlPlaybackAs={canControlRecordingAs}
                             >
                                 <VonageRoomInner stop={!roomCouldBeInUse || disable} />
                             </VonageVideoPlaybackProvider>

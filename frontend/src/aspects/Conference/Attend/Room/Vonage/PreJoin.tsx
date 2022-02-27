@@ -25,7 +25,7 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
 
     return (
         <HStack w="100%" h="100%" alignItems="center" justifyContent="center">
-            <Box position="relative" mb={4}>
+            <Box position="relative" my={4}>
                 <Box position="absolute" width="100%" height="100%">
                     <Box
                         position="absolute"

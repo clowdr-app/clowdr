@@ -91,7 +91,7 @@ export function RoomContent({
     return (
         <Box flexGrow={1} zIndex={1} px={[2, 2, 4]}>
             {currentRoomEvent ? (
-                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={2}>
                     <HStack justifyContent="space-between">
                         <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now5s)}</Text>
                         {currentRoomEvent.endTime ? (
@@ -134,7 +134,7 @@ export function RoomContent({
                 <></>
             )}
             {nextRoomEvent ? (
-                <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
+                <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={2}>
                     <Heading as="h3" textAlign="left" size="lg" mb={1}>
                         {nextRoomEvent.name}
                     </Heading>
@@ -166,7 +166,7 @@ export function RoomContent({
             )}
 
             {roomDetails.item?.id && roomDetails.item.typeName !== Content_ItemType_Enum.Sponsor ? (
-                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={2}>
                     <ItemElementsWrapper itemId={roomDetails.item.id} linkToItem={true} />
                 </Box>
             ) : (

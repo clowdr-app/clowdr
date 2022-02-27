@@ -36,6 +36,7 @@ import { useRealTime } from "../../../Hooks/useRealTime";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
+import { useEvent } from "../../../Utils/useEvent";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import JoinZoomButton from "./JoinZoomButton";
 import { RoomMembersButton } from "./Members/RoomMembersButton";
@@ -49,6 +50,7 @@ import StreamTextCaptions from "./StreamTextCaptions";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { VideoAspectWrapper } from "./Video/VideoAspectWrapper";
 import { VideoChatRoom } from "./VideoChat/VideoChatRoom";
+import { useVonageGlobalState } from "./Vonage/State/VonageGlobalStateProvider";
 import { RecordingControlReason } from "./Vonage/State/VonageRoomProvider";
 
 const Backstages = React.lazy(() => import("./Stream/Backstages"));
@@ -380,8 +382,9 @@ function RoomInner({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent?.id]);
 
-    const { mainPaneHeight, mainPaneWidth, mainPaneRef } = useContext(AppLayoutContext);
+    const { mainPaneHeight, mainPaneWidth } = useContext(AppLayoutContext);
 
+    const scrollRef = useRef<HTMLDivElement>(null);
     const controlBarEl = useMemo(
         () => (
             <HStack justifyContent="space-between" alignItems="center" py={2} px={4}>
@@ -396,7 +399,7 @@ function RoomInner({
                         rightIcon={<ArrowDownIcon />}
                         variant="link"
                         size="sm"
-                        onClick={() => mainPaneRef?.current?.scrollTo(0, mainPaneHeight)}
+                        onClick={() => scrollRef?.current?.scrollIntoView(true)}
                     >
                         Scroll to content
                     </Button>
@@ -405,7 +408,7 @@ function RoomInner({
                 <RoomMembersButton roomDetails={roomDetails} />
             </HStack>
         ),
-        [currentRoomEvent, mainPaneHeight, mainPaneRef, nextRoomEvent, roomDetails, showBackstage]
+        [currentRoomEvent, nextRoomEvent, roomDetails, showBackstage]
     );
 
     const roomEventsForCurrentRegistrant = useMemo(
@@ -737,6 +740,10 @@ function RoomInner({
         roomDetails.roomMemberships,
     ]);
 
+    const vonage = useVonageGlobalState();
+    const [connected, setConnected] = useState<boolean>(vonage.IsConnected.value);
+    useEvent(vonage, "session-connected", setConnected);
+
     return (
         <>
             <VStack alignItems="stretch" flexGrow={1} w="100%">
@@ -747,7 +754,8 @@ function RoomInner({
                     alignItems="stretch"
                     minW="100%"
                     maxW="100%"
-                    h={showDefaultVideoChatRoom && !showBackstage ? mainPaneHeight : "auto"}
+                    transition="height 1s ease"
+                    h={showDefaultVideoChatRoom && !showBackstage && connected ? mainPaneHeight : "undefined"}
                 >
                     {controlBarEl}
 
@@ -797,6 +805,7 @@ function RoomInner({
 
                 {!showBackstage ? (
                     <>
+                        <div ref={scrollRef} />
                         <StreamTextCaptions streamTextEventId={currentRoomEvent?.streamTextEventId} />
                         {contentEl}
                     </>

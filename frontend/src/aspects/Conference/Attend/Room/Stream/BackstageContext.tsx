@@ -4,7 +4,8 @@ import { ImmediateSwitchData } from "@midspace/shared-types/video/immediateSwitc
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
-import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import type { PropsWithChildren } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createContext } from "use-context-selector";
 import type { Event_EventVonageSessionFragment, Room_EventSummaryFragment } from "../../../../../generated/graphql";
 import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../generated/graphql";

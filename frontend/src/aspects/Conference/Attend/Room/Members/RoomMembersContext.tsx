@@ -43,10 +43,12 @@ interface Result {
 
 function useValue(props: Props): Result {
     const context = useMemo(
-        () =>
-            makeContext({
+        () => ({
+            ...makeContext({
                 [AuthHeader.RoomId]: props.roomId,
             }),
+            additionalTypenames: ["room_RoomMembership"],
+        }),
         [props.roomId]
     );
     const [{ fetching: loading, error, data }] = useGetRoomMembersQuery({

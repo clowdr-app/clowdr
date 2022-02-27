@@ -148,46 +148,62 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
                     {roomDetails.managementModeName === Room_ManagementMode_Enum.Public ? "Admins" : "Members"}
                 </Heading>
                 <List my={2} spacing={2} maxH="40vh" overflowY="auto">
-                    {sortedRegistrants.map((registrant) => (
-                        <ListItem key={registrant.id} whiteSpace="normal">
-                            <ButtonGroup as={HStack} isAttached={true} w="100%">
-                                <LinkButton
-                                    justifyContent="flex-start"
-                                    to={`${conferencePath}/profile/view/${registrant.id}`}
-                                    size="sm"
-                                    linkProps={{ width: "100%" }}
-                                    w="100%"
-                                    leftIcon={<FAIcon icon="user" iconStyle="s" mr={5} />}
-                                    flexGrow={1}
-                                >
-                                    <Text>{registrant.displayName}</Text>
-                                    {roomMembers?.find(
-                                        (r) =>
-                                            r.registrantId === registrant.id &&
-                                            r.personRoleName === Room_PersonRole_Enum.Admin
-                                    ) ? (
-                                        <Tag ml={2} colorScheme="SecondaryActionButton" size="sm">
-                                            Admin
-                                        </Tag>
-                                    ) : undefined}
-                                </LinkButton>
-                                {canControlMembers ? (
-                                    <IconButton
-                                        icon={<DeleteIcon />}
-                                        aria-label="Delete member"
-                                        onClick={() => deleteMember(registrant.id)}
-                                        isDisabled={registrant.id === mRegistrant?.id}
+                    {sortedRegistrants.length ? (
+                        sortedRegistrants.map((registrant) => (
+                            <ListItem key={registrant.id} whiteSpace="normal">
+                                <ButtonGroup as={HStack} isAttached={true} w="100%">
+                                    <LinkButton
+                                        justifyContent="flex-start"
+                                        to={`${conferencePath}/profile/view/${registrant.id}`}
                                         size="sm"
-                                        colorScheme="DestructiveActionButton"
-                                    />
-                                ) : undefined}
-                            </ButtonGroup>
+                                        linkProps={{ width: "100%" }}
+                                        w="100%"
+                                        leftIcon={<FAIcon icon="user" iconStyle="s" mr={5} />}
+                                        flexGrow={1}
+                                    >
+                                        <Text>{registrant.displayName}</Text>
+                                        {roomMembers?.find(
+                                            (r) =>
+                                                r.registrantId === registrant.id &&
+                                                r.personRoleName === Room_PersonRole_Enum.Admin
+                                        ) ? (
+                                            <Tag ml={2} colorScheme="SecondaryActionButton" size="sm">
+                                                Admin
+                                            </Tag>
+                                        ) : undefined}
+                                    </LinkButton>
+                                    {canControlMembers ? (
+                                        <IconButton
+                                            icon={<DeleteIcon />}
+                                            aria-label="Delete member"
+                                            onClick={() => deleteMember(registrant.id)}
+                                            isDisabled={registrant.id === mRegistrant?.id}
+                                            size="sm"
+                                            colorScheme="DestructiveActionButton"
+                                        />
+                                    ) : undefined}
+                                </ButtonGroup>
+                            </ListItem>
+                        ))
+                    ) : (
+                        <ListItem>
+                            No{" "}
+                            {roomDetails.managementModeName === Room_ManagementMode_Enum.Public ? "admins" : "members"}{" "}
+                            have been added to this room.
                         </ListItem>
-                    ))}
+                    )}
                 </List>
             </section>
         ),
-        [canControlMembers, conferencePath, deleteMember, mRegistrant?.id, roomMembers, sortedRegistrants]
+        [
+            canControlMembers,
+            conferencePath,
+            deleteMember,
+            mRegistrant?.id,
+            roomDetails.managementModeName,
+            roomMembers,
+            sortedRegistrants,
+        ]
     );
 
     return (loading || sortedRegistrants.length !== roomMembers?.length) ?? 0 ? (

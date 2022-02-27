@@ -72,10 +72,13 @@ export function AddRoomPersonModal({
                     roomId,
                     role,
                 },
-                makeContext({
-                    [AuthHeader.RoomId]: roomId,
-                    [AuthHeader.Role]: "room-admin",
-                })
+                {
+                    ...makeContext({
+                        [AuthHeader.RoomId]: roomId,
+                        [AuthHeader.Role]: "room-admin",
+                    }),
+                    additionalTypenames: ["room_RoomMembership"],
+                }
             );
             if (result.error) {
                 toast({

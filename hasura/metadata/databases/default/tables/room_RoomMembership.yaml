@@ -56,7 +56,9 @@ insert_permissions:
                 _in: X-Hasura-Subconference-Ids
         - _and:
           - managementModeName:
-              _eq: PRIVATE
+              _in:
+              - PRIVATE
+              - PUBLIC
           - id:
               _in: X-Hasura-Room-Ids
     columns:
@@ -158,11 +160,8 @@ select_permissions:
                 _in: X-Hasura-Conference-Ids
             - subconferenceId:
                 _in: X-Hasura-Subconference-Ids
-        - _and:
-          - managementModeName:
-              _eq: PRIVATE
-          - id:
-              _in: X-Hasura-Room-Ids
+        - id:
+            _in: X-Hasura-Room-Ids
   role: room-admin
 - permission:
     columns:
@@ -246,7 +245,9 @@ update_permissions:
                 _in: X-Hasura-Subconference-Ids
         - _and:
           - managementModeName:
-              _eq: PRIVATE
+              _in:
+              - PRIVATE
+              - PUBLIC
           - id:
               _in: X-Hasura-Room-Ids
   role: room-admin
@@ -295,7 +296,9 @@ delete_permissions:
                 _in: X-Hasura-Subconference-Ids
         - _and:
           - managementModeName:
-              _eq: PRIVATE
+              _in:
+              - PRIVATE
+              - PUBLIC
           - id:
               _in: X-Hasura-Room-Ids
   role: room-admin

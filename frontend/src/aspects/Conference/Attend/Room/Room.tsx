@@ -22,7 +22,6 @@ import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "..
 import {
     Content_ItemType_Enum,
     Registrant_RegistrantRole_Enum,
-    Room_ManagementMode_Enum,
     Room_Mode_Enum,
     Room_PersonRole_Enum,
     Schedule_EventProgramPersonRole_Enum,
@@ -39,9 +38,9 @@ import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import JoinZoomButton from "./JoinZoomButton";
+import { RoomMembersButton } from "./Members/RoomMembersButton";
 import { RoomContent } from "./RoomContent";
 import RoomContinuationChoices from "./RoomContinuationChoices";
-import { RoomMembersButton } from "./RoomMembersButton";
 import RoomTimeAlert from "./RoomTimeAlert";
 import { RoomTitle } from "./RoomTitle";
 import { UpcomingBackstageBanner } from "./Stream/UpcomingBackstage";
@@ -402,9 +401,7 @@ function RoomInner({
                     </Button>
                 ) : undefined}
                 <Spacer />
-                {roomDetails.managementModeName !== Room_ManagementMode_Enum.Public ? (
-                    <RoomMembersButton roomDetails={roomDetails} />
-                ) : undefined}
+                <RoomMembersButton roomDetails={roomDetails} />
             </HStack>
         ),
         [currentRoomEvent, mainPaneHeight, mainPaneRef, nextRoomEvent, roomDetails, showBackstage]

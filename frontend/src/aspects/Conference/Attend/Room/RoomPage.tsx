@@ -62,17 +62,6 @@ gql`
         backendName
     }
 
-    query RoomPage_IsAdmin($roomId: uuid!, $registrantId: uuid!) {
-        room_RoomMembership(
-            where: { personRoleName: { _eq: ADMIN }, registrantId: { _eq: $registrantId }, roomId: { _eq: $roomId } }
-        ) {
-            id
-            personRoleName
-            registrantId
-            roomId
-        }
-    }
-
     query RoomPage_GetRoomChannelStack($roomId: uuid!) {
         video_ChannelStack(where: { roomId: { _eq: $roomId } }) {
             ...RoomPage_RoomChannelStack

@@ -39030,6 +39030,58 @@ export type Registrant_RegistrantCreateRoomMutation = {
     } | null;
 };
 
+export type AddRegistrantToRoomMutationVariables = Exact<{
+    registrantId: Scalars["uuid"];
+    roomId: Scalars["uuid"];
+    role: Room_PersonRole_Enum;
+}>;
+
+export type AddRegistrantToRoomMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_room_RoomMembership_one?: { readonly __typename?: "room_RoomMembership"; readonly id: any } | null;
+};
+
+export type GetRoomMembersQueryVariables = Exact<{
+    roomId: Scalars["uuid"];
+}>;
+
+export type GetRoomMembersQuery = {
+    readonly __typename?: "query_root";
+    readonly room_Room_by_pk?: {
+        readonly __typename?: "room_Room";
+        readonly id: any;
+        readonly managementModeName: Room_ManagementMode_Enum;
+        readonly roomMemberships: ReadonlyArray<{
+            readonly __typename?: "room_RoomMembership";
+            readonly id: any;
+            readonly roomId: any;
+            readonly personRoleName: Room_PersonRole_Enum;
+            readonly registrantId: any;
+        }>;
+    } | null;
+};
+
+export type RoomMemberFragment = {
+    readonly __typename?: "room_RoomMembership";
+    readonly id: any;
+    readonly roomId: any;
+    readonly personRoleName: Room_PersonRole_Enum;
+    readonly registrantId: any;
+};
+
+export type RemoveRegistrantFromRoomMutationVariables = Exact<{
+    registrantId: Scalars["uuid"];
+    roomId: Scalars["uuid"];
+}>;
+
+export type RemoveRegistrantFromRoomMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_room_RoomMembership?: {
+        readonly __typename?: "room_RoomMembership_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
 export type Room_GetEventsQueryVariables = Exact<{
     roomId: Scalars["uuid"];
     now: Scalars["timestamptz"];
@@ -39196,16 +39248,6 @@ export type Room_GetDefaultVideoRoomBackendQuery = {
     readonly system_Configuration_by_pk?: { readonly __typename?: "system_Configuration"; readonly value: any } | null;
 };
 
-export type AddParticipantToRoomMutationVariables = Exact<{
-    registrantId: Scalars["uuid"];
-    roomId: Scalars["uuid"];
-}>;
-
-export type AddParticipantToRoomMutation = {
-    readonly __typename?: "mutation_root";
-    readonly insert_room_RoomMembership_one?: { readonly __typename?: "room_RoomMembership"; readonly id: any } | null;
-};
-
 export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
     roomId: Scalars["uuid"];
     registrantId: Scalars["uuid"];
@@ -39302,22 +39344,6 @@ export type RoomPage_RoomDetailsFragment = {
         readonly durationMinutes: number;
         readonly reshuffleUponEnd: boolean;
         readonly shufflePeriodId: any;
-        readonly roomId: any;
-    }>;
-};
-
-export type RoomPage_IsAdminQueryVariables = Exact<{
-    roomId: Scalars["uuid"];
-    registrantId: Scalars["uuid"];
-}>;
-
-export type RoomPage_IsAdminQuery = {
-    readonly __typename?: "query_root";
-    readonly room_RoomMembership: ReadonlyArray<{
-        readonly __typename?: "room_RoomMembership";
-        readonly id: any;
-        readonly personRoleName: Room_PersonRole_Enum;
-        readonly registrantId: any;
         readonly roomId: any;
     }>;
 };
@@ -45995,29 +46021,6 @@ export type DeletePushNotificationSubscriptionMutation = {
     } | null;
 };
 
-export type GetRoomMembersQueryVariables = Exact<{
-    roomId: Scalars["uuid"];
-}>;
-
-export type GetRoomMembersQuery = {
-    readonly __typename?: "query_root";
-    readonly room_RoomMembership: ReadonlyArray<{
-        readonly __typename?: "room_RoomMembership";
-        readonly id: any;
-        readonly roomId: any;
-        readonly personRoleName: Room_PersonRole_Enum;
-        readonly registrantId: any;
-    }>;
-};
-
-export type RoomMemberFragment = {
-    readonly __typename?: "room_RoomMembership";
-    readonly id: any;
-    readonly roomId: any;
-    readonly personRoleName: Room_PersonRole_Enum;
-    readonly registrantId: any;
-};
-
 export type GetAllRoomParticipantsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
 }>;
@@ -47290,6 +47293,14 @@ export const ProfilePage_ItemFragmentDoc = gql`
     }
     ${ProgramPersonDataFragmentDoc}
     ${ItemTagDataFragmentDoc}
+`;
+export const RoomMemberFragmentDoc = gql`
+    fragment RoomMember on room_RoomMembership {
+        id
+        roomId
+        personRoleName
+        registrantId
+    }
 `;
 export const PrefetchShuffleQueueEntryDataFragmentDoc = gql`
     fragment PrefetchShuffleQueueEntryData on room_ShuffleQueueEntry {
@@ -48717,14 +48728,6 @@ export const MinimalEventInfoFragmentDoc = gql`
         }
     }
 `;
-export const RoomMemberFragmentDoc = gql`
-    fragment RoomMember on room_RoomMembership {
-        id
-        roomId
-        personRoleName
-        registrantId
-    }
-`;
 export const RoomParticipantDetailsFragmentDoc = gql`
     fragment RoomParticipantDetails on room_Participant {
         conferenceId
@@ -49381,6 +49384,50 @@ export function useRegistrant_RegistrantCreateRoomMutation() {
         Registrant_RegistrantCreateRoomDocument
     );
 }
+export const AddRegistrantToRoomDocument = gql`
+    mutation AddRegistrantToRoom($registrantId: uuid!, $roomId: uuid!, $role: room_PersonRole_enum!) {
+        insert_room_RoomMembership_one(
+            object: { registrantId: $registrantId, roomId: $roomId, personRoleName: $role }
+        ) {
+            id
+        }
+    }
+`;
+
+export function useAddRegistrantToRoomMutation() {
+    return Urql.useMutation<AddRegistrantToRoomMutation, AddRegistrantToRoomMutationVariables>(
+        AddRegistrantToRoomDocument
+    );
+}
+export const GetRoomMembersDocument = gql`
+    query GetRoomMembers($roomId: uuid!) {
+        room_Room_by_pk(id: $roomId) {
+            id
+            managementModeName
+            roomMemberships {
+                ...RoomMember
+            }
+        }
+    }
+    ${RoomMemberFragmentDoc}
+`;
+
+export function useGetRoomMembersQuery(options: Omit<Urql.UseQueryArgs<GetRoomMembersQueryVariables>, "query">) {
+    return Urql.useQuery<GetRoomMembersQuery>({ query: GetRoomMembersDocument, ...options });
+}
+export const RemoveRegistrantFromRoomDocument = gql`
+    mutation RemoveRegistrantFromRoom($registrantId: uuid!, $roomId: uuid!) {
+        delete_room_RoomMembership(where: { registrantId: { _eq: $registrantId }, roomId: { _eq: $roomId } }) {
+            affected_rows
+        }
+    }
+`;
+
+export function useRemoveRegistrantFromRoomMutation() {
+    return Urql.useMutation<RemoveRegistrantFromRoomMutation, RemoveRegistrantFromRoomMutationVariables>(
+        RemoveRegistrantFromRoomDocument
+    );
+}
 export const Room_GetEventsDocument = gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
         schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }) {
@@ -49409,21 +49456,6 @@ export function useRoom_GetDefaultVideoRoomBackendQuery(
         ...options,
     });
 }
-export const AddParticipantToRoomDocument = gql`
-    mutation AddParticipantToRoom($registrantId: uuid!, $roomId: uuid!) {
-        insert_room_RoomMembership_one(
-            object: { registrantId: $registrantId, roomId: $roomId, personRoleName: PARTICIPANT }
-        ) {
-            id
-        }
-    }
-`;
-
-export function useAddParticipantToRoomMutation() {
-    return Urql.useMutation<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>(
-        AddParticipantToRoomDocument
-    );
-}
 export const RoomPage_GetRoomDetailsDocument = gql`
     query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
         room_Room_by_pk(id: $roomId) {
@@ -49437,22 +49469,6 @@ export function useRoomPage_GetRoomDetailsQuery(
     options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomDetailsQueryVariables>, "query">
 ) {
     return Urql.useQuery<RoomPage_GetRoomDetailsQuery>({ query: RoomPage_GetRoomDetailsDocument, ...options });
-}
-export const RoomPage_IsAdminDocument = gql`
-    query RoomPage_IsAdmin($roomId: uuid!, $registrantId: uuid!) {
-        room_RoomMembership(
-            where: { personRoleName: { _eq: ADMIN }, registrantId: { _eq: $registrantId }, roomId: { _eq: $roomId } }
-        ) {
-            id
-            personRoleName
-            registrantId
-            roomId
-        }
-    }
-`;
-
-export function useRoomPage_IsAdminQuery(options: Omit<Urql.UseQueryArgs<RoomPage_IsAdminQueryVariables>, "query">) {
-    return Urql.useQuery<RoomPage_IsAdminQuery>({ query: RoomPage_IsAdminDocument, ...options });
 }
 export const RoomPage_GetRoomChannelStackDocument = gql`
     query RoomPage_GetRoomChannelStack($roomId: uuid!) {
@@ -53838,18 +53854,6 @@ export function useDeletePushNotificationSubscriptionMutation() {
         DeletePushNotificationSubscriptionMutation,
         DeletePushNotificationSubscriptionMutationVariables
     >(DeletePushNotificationSubscriptionDocument);
-}
-export const GetRoomMembersDocument = gql`
-    query GetRoomMembers($roomId: uuid!) {
-        room_RoomMembership(where: { roomId: { _eq: $roomId } }) {
-            ...RoomMember
-        }
-    }
-    ${RoomMemberFragmentDoc}
-`;
-
-export function useGetRoomMembersQuery(options: Omit<Urql.UseQueryArgs<GetRoomMembersQueryVariables>, "query">) {
-    return Urql.useQuery<GetRoomMembersQuery>({ query: GetRoomMembersDocument, ...options });
 }
 export const GetAllRoomParticipantsDocument = gql`
     query GetAllRoomParticipants($conferenceId: uuid!) {

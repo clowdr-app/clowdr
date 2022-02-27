@@ -10,21 +10,21 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useClient } from "urql";
-import type { SearchRegistrantsQuery, SearchRegistrantsQueryVariables } from "../../../../generated/graphql";
-import { SearchRegistrantsDocument } from "../../../../generated/graphql";
-import FAIcon from "../../../Chakra/FAIcon";
-import useDebouncedState from "../../../CRUDTable/useDebouncedState";
-import { useConference } from "../../useConference";
+import type { SearchRegistrantsQuery, SearchRegistrantsQueryVariables } from "../../../../../generated/graphql";
+import { SearchRegistrantsDocument } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
+import useDebouncedState from "../../../../CRUDTable/useDebouncedState";
+import { useConference } from "../../../useConference";
 
 export function RegistrantSearch({
-    selectedRegistrantIds,
+    excludeRegistrantIds,
     onSelect,
 }: {
-    selectedRegistrantIds: string[];
+    excludeRegistrantIds: string[];
     onSelect: (registrantId: string) => Promise<void>;
 }): JSX.Element {
     const [search, searchDebounced, setSearch] = useDebouncedState<string>("");
-    const [options, setOptions] = useState<{ label: string; value: string; inRoom: boolean }[]>([]);
+    const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
     const ariaSearchResultStr = `${options.length} people`;
     const conference = useConference();
 
@@ -42,15 +42,14 @@ export function RegistrantSearch({
                 .toPromise();
             return (
                 result.data?.registrant_searchRegistrants
-                    .filter((item) => !!item.userId)
+                    .filter((item) => Boolean(item.userId) && !excludeRegistrantIds.includes(item.id as string))
                     .map((item) => ({
                         value: item.id,
                         label: item.displayName,
-                        inRoom: selectedRegistrantIds.includes(item.id as string),
                     })) ?? []
             );
         },
-        [conference.id, client, selectedRegistrantIds]
+        [conference.id, client, excludeRegistrantIds]
     );
     useEffect(() => {
         async function fn() {
@@ -64,7 +63,7 @@ export function RegistrantSearch({
     return (
         <>
             <FormControl>
-                <FormLabel htmlFor="registrant_id">Registrant</FormLabel>
+                <FormLabel>Registrant</FormLabel>
                 <Input
                     aria-label={"Search found " + ariaSearchResultStr}
                     type="text"
@@ -84,18 +83,13 @@ export function RegistrantSearch({
                     <ListItem key={option.value} my={2}>
                         <Button
                             onClick={async () => await onSelect(option.value)}
-                            aria-label={
-                                option.inRoom ? `${option.label} already in room` : `Add ${option.label} to room`
-                            }
-                            p={0}
-                            mr={3}
+                            aria-label={`Choose ${option.label}`}
                             size="sm"
-                            colorScheme="PrimaryActionButton"
-                            isDisabled={option.inRoom}
+                            colorScheme="SecondaryActionButton"
+                            leftIcon={<FAIcon icon="user" iconStyle="s" />}
                         >
-                            <FAIcon icon={option.inRoom ? "check-circle" : "plus-circle"} iconStyle="s" />
+                            {option.label}
                         </Button>
-                        {option.label}
                     </ListItem>
                 ))}
             </List>

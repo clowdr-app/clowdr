@@ -5,6 +5,7 @@ import {
     AlertTitle,
     Box,
     Button,
+    Center,
     Heading,
     Text,
     VStack,
@@ -53,55 +54,55 @@ export default function Layout({
 
     const noVideosEl = useMemo(
         () => (
-            // <Center h="100%" w="100%">
-            <Alert
-                status="info"
-                variant="subtle"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                textAlign="center"
-                px={8}
-                py={4}
-                my="auto"
-                maxW="50ch"
-                colorScheme="RoomNoVideoAlert"
-            >
-                <Wrap align="center" pb={2}>
-                    <WrapItem flexGrow={0}>
-                        <AlertIcon boxSize="8" />
-                    </WrapItem>
-                    <WrapItem flexGrow={1} flexBasis="min-content">
-                        <AlertTitle fontSize={{ base: "md", md: "lg" }} textAlign="left">
-                            Nobody has their video turned on right now
-                        </AlertTitle>
-                    </WrapItem>
-                </Wrap>
-                <AlertDescription mr={2} fontSize={{ base: "sm", md: "md" }}>
-                    <Text>
-                        {settings.isBackstageRoom
-                            ? "Nothing will be visible during your event broadcast until someone turns on their camera or shares their screen."
-                            : isRecordingActive
-                            ? "No video tiles will appear in the recording until someone turns on their camera or shares their screen."
-                            : "No video tiles will appear here until someone turns on their camera or shares their screen."}
-                    </Text>
-                    <Text mt={2}>{`${Math.max(connections.length - 1, 0)} other ${
-                        connections.length - 1 === 1 ? "person is" : "people are"
-                    } connected to this video chat.`}</Text>
-                    {connections.length > 1 ? (
-                        <Button
-                            onClick={() => display.setChosenDisplay({ type: DisplayType.Browse })}
-                            mt={2}
-                            colorScheme="RoomControlBarButton"
-                            size="xs"
-                            leftIcon={<FAIcon icon="chalkboard-teacher" iconStyle="s" />}
-                        >
-                            Browse all participants
-                        </Button>
-                    ) : undefined}
-                </AlertDescription>
-            </Alert>
-            // </Center>
+            <Center h="100%" w="100%">
+                <Alert
+                    status="info"
+                    variant="subtle"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                    px={8}
+                    py={4}
+                    my="auto"
+                    maxW="50ch"
+                    colorScheme="RoomNoVideoAlert"
+                >
+                    <Wrap align="center" pb={2}>
+                        <WrapItem flexGrow={0}>
+                            <AlertIcon boxSize="8" />
+                        </WrapItem>
+                        <WrapItem flexGrow={1} flexBasis="min-content">
+                            <AlertTitle fontSize={{ base: "md", md: "lg" }} textAlign="left">
+                                Nobody has their video turned on right now
+                            </AlertTitle>
+                        </WrapItem>
+                    </Wrap>
+                    <AlertDescription mr={2} fontSize={{ base: "sm", md: "md" }}>
+                        <Text>
+                            {settings.isBackstageRoom
+                                ? "Nothing will be visible during your event broadcast until someone turns on their camera or shares their screen."
+                                : isRecordingActive
+                                ? "No video tiles will appear in the recording until someone turns on their camera or shares their screen."
+                                : "No video tiles will appear here until someone turns on their camera or shares their screen."}
+                        </Text>
+                        <Text mt={2}>{`${Math.max(connections.length - 1, 0)} other ${
+                            connections.length - 1 === 1 ? "person is" : "people are"
+                        } connected to this video chat.`}</Text>
+                        {connections.length > 1 ? (
+                            <Button
+                                onClick={() => display.setChosenDisplay({ type: DisplayType.Browse })}
+                                mt={2}
+                                colorScheme="RoomControlBarButton"
+                                size="xs"
+                                leftIcon={<FAIcon icon="chalkboard-teacher" iconStyle="s" />}
+                            >
+                                Browse all participants
+                            </Button>
+                        ) : undefined}
+                    </AlertDescription>
+                </Alert>
+            </Center>
         ),
         [connections.length, display, isRecordingActive, settings.isBackstageRoom]
     );

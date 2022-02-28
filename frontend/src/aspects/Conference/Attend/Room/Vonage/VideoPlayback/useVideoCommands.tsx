@@ -59,28 +59,35 @@ export function useVideoCommands(): Outputs {
     const [currentTime, setCurrentTime] = useState<number>(0);
 
     const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(null);
-    const videoRef = useCallbackRef(null, (value: HTMLVideoElement | null) => {
+    const videoRef = useCallbackRef(null, (value: HTMLVideoElement | null, previous: HTMLVideoElement | null) => {
         setVideoElement(value);
 
+        if (previous) {
+            previous.pause();
+            // TODO: figure out how to remove event listeners from previous element
+        }
+
         if (value) {
-            const endedListener = (_event: Event) => {
-                setEnded(true);
+            const endedListener = (event: Event) => {
+                if (event.target === videoRef.current) {
+                    setEnded(true);
+                }
             };
 
             const timeUpdateListener = (event: Event) => {
-                if (event.target instanceof HTMLMediaElement) {
+                if (event.target instanceof HTMLMediaElement && event.target === videoRef.current) {
                     setCurrentTime(event.target.currentTime);
                 }
             };
 
             const durationChangeListener = (event: Event) => {
-                if (event.target instanceof HTMLMediaElement) {
+                if (event.target instanceof HTMLMediaElement && event.target === videoRef.current) {
                     setDuration(event.target.duration);
                 }
             };
 
             const readyListener = (event: Event) => {
-                if (event.target instanceof HTMLMediaElement) {
+                if (event.target instanceof HTMLMediaElement && event.target === videoRef.current) {
                     if (videoPlaybackRef.current.latestCommand) {
                         setVideoElementState(event.target, videoPlaybackRef.current.latestCommand).catch(() => {
                             autoplay.unblockAutoplay().catch((err) => console.error(err));
@@ -93,19 +100,7 @@ export function useVideoCommands(): Outputs {
             value.addEventListener("timeupdate", timeUpdateListener);
             value.addEventListener("durationchange", durationChangeListener);
             value.addEventListener("canplay", readyListener);
-
-            return () => {
-                if (value) {
-                    value.removeEventListener("pause", endedListener);
-                    value.removeEventListener("timeupdate", timeUpdateListener);
-                    value.removeEventListener("durationchange", durationChangeListener);
-                    value.removeEventListener("canplay", readyListener);
-                }
-            };
         }
-        return () => {
-            //
-        };
     });
 
     useEffect(() => {

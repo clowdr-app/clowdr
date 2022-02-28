@@ -19,7 +19,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { Duration } from "luxon";
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import FAIcon from "../../../../../Chakra/FAIcon";
 import { VideoAspectWrapperAuto } from "../../Video/VideoAspectWrapper";
 import { useVonageRoom, VonageRoomStateActionType } from "../State/VonageRoomProvider";
@@ -138,6 +138,11 @@ export default function VideoChatVideoPlayer(): JSX.Element {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [videoPlayback.latestCommand?.command]);
 
+    const videoEl = useMemo(
+        () => <video ref={videoRef} src={videoPlayback.video?.url}></video>,
+        [videoPlayback.video?.url, videoRef]
+    );
+
     return (
         <>
             {videoPlayback.errors.parseBlobError ||
@@ -153,7 +158,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                     {() => (
                         <Box position="relative" h="100%" w="100%">
                             <Skeleton isLoaded={Boolean(videoPlayback.video?.url)} position="relative">
-                                <video ref={videoRef} src={videoPlayback.video?.url}></video>
+                                {videoEl}
                             </Skeleton>
                             <HStack p={2} position="absolute" bottom="0px" left="0px" width="100%" alignItems="stretch">
                                 {videoPlayback.canControlPlaybackAs.size ? (

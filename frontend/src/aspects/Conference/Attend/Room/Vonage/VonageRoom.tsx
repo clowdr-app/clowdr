@@ -12,7 +12,8 @@ import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructio
 import type { RoomOrEventId, VonageBroadcastLayout } from "./State/useVonageBroadcastLayout";
 import { VonageComputedStateProvider } from "./State/VonageComputedStateContext";
 import { VonageLayoutProvider } from "./State/VonageLayoutProvider";
-import { RecordingControlReason, VonageRoomProvider } from "./State/VonageRoomProvider";
+import type { RecordingControlReason } from "./State/VonageRoomProvider";
+import { VonageRoomProvider } from "./State/VonageRoomProvider";
 import type { CompleteGetAccessToken } from "./useGetAccessToken";
 import { AutoplayProvider } from "./VideoPlayback/AutoplayContext";
 import { VonageVideoPlaybackProvider } from "./VideoPlayback/VonageVideoPlaybackContext";

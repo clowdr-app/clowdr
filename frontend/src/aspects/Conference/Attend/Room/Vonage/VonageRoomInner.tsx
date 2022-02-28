@@ -1,22 +1,17 @@
 import { Box } from "@chakra-ui/react";
-import React, { useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import useCurrentRegistrant from "../../../useCurrentRegistrant";
-import { useAWSTranscription } from "../Transcription/AWSTranscribe";
+import React, { useContext, useEffect, useMemo, useRef } from "react";
 import { AutoplayAlert } from "../VideoChat/AutoplayAlert";
 import { RecordingAlert } from "./Components/RecordingAlert";
 import { InCall } from "./InCall";
 import { PreJoin } from "./PreJoin";
 import { VonageComputedStateContext } from "./State/VonageComputedStateContext";
-import { VonageGlobalState } from "./State/VonageGlobalState";
 import { useVonageRoom, VonageRoomStateActionType } from "./State/VonageRoomProvider";
 
 export function VonageRoomInner({ stop }: { stop: boolean; cancelJoin?: () => void }): JSX.Element {
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
     const { state, dispatch } = useVonageRoom();
-    const { camera, connected, joining, vonage, leaveRoom } = useContext(VonageComputedStateContext);
-
-    const registrant = useCurrentRegistrant();
+    const { connected, joining, leaveRoom } = useContext(VonageComputedStateContext);
 
     // const onPartialTranscript = useCallback<(transcript: string) => void>(
     //     (transcript) => {
@@ -24,19 +19,19 @@ export function VonageRoomInner({ stop }: { stop: boolean; cancelJoin?: () => vo
     //     },
     //     [registrant.displayName, registrant.id, vonage]
     // );
-    const onCompleteTranscript = useCallback<(transcript: string) => void>(
-        (transcript) => {
-            const data = VonageGlobalState.createTranscriptData(
-                registrant.id,
-                registrant.displayName,
-                false,
-                transcript
-            );
-            vonage.sendTranscript(data);
-        },
-        [registrant.displayName, registrant.id, vonage]
-    );
-    useAWSTranscription(camera, undefined, onCompleteTranscript);
+    // const onCompleteTranscript = useCallback<(transcript: string) => void>(
+    //     (transcript) => {
+    //         const data = VonageGlobalState.createTranscriptData(
+    //             registrant.id,
+    //             registrant.displayName,
+    //             false,
+    //             transcript
+    //         );
+    //         vonage.sendTranscript(data);
+    //     },
+    //     [registrant.displayName, registrant.id, vonage]
+    // );
+    // useAWSTranscription(camera, undefined, onCompleteTranscript);
 
     const uiEl = useMemo(() => (connected ? <InCall /> : <PreJoin cameraPreviewRef={cameraPreviewRef} />), [connected]);
 

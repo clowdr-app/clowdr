@@ -119,7 +119,7 @@ type Query {
 type Mutation {
   updateConferenceLogo(
     conferenceId: uuid!
-    url: String
+    s3URL: String
   ): UpdateConferenceLogoResponse
 }
 
@@ -337,6 +337,6 @@ type TranscribeGeneratePresignedUrlOutput {
 
 type UpdateConferenceLogoResponse {
   ok: Boolean!
-  url: String
+  logoURL: String
 }
 

@@ -939,8 +939,8 @@ export type TranscribeGeneratePresignedUrlOutput = {
 
 export type UpdateConferenceLogoResponse = {
     __typename?: "UpdateConferenceLogoResponse";
+    logoURL?: Maybe<Scalars["String"]>;
     ok: Scalars["Boolean"];
-    url?: Maybe<Scalars["String"]>;
 };
 
 export type UpdateProfilePhotoResponse = {
@@ -7033,6 +7033,7 @@ export type Conference_Conference = {
     /** An aggregate relationship */
     items_aggregate: Content_Item_Aggregate;
     logoS3Data?: Maybe<Scalars["jsonb"]>;
+    logoURL?: Maybe<Scalars["String"]>;
     name: Scalars["String"];
     /** An array relationship */
     originatingDatas: Array<Conference_OriginatingData>;
@@ -7371,6 +7372,7 @@ export type Conference_Conference_Bool_Exp = {
     id?: InputMaybe<Uuid_Comparison_Exp>;
     items?: InputMaybe<Content_Item_Bool_Exp>;
     logoS3Data?: InputMaybe<Jsonb_Comparison_Exp>;
+    logoURL?: InputMaybe<String_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
     originatingDatas?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
@@ -7432,6 +7434,7 @@ export type Conference_Conference_Insert_Input = {
     id?: InputMaybe<Scalars["uuid"]>;
     items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
     logoS3Data?: InputMaybe<Scalars["jsonb"]>;
+    logoURL?: InputMaybe<Scalars["String"]>;
     name?: InputMaybe<Scalars["String"]>;
     originatingDatas?: InputMaybe<Conference_OriginatingData_Arr_Rel_Insert_Input>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
@@ -7455,6 +7458,7 @@ export type Conference_Conference_Max_Fields = {
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     demoCodeId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
+    logoURL?: Maybe<Scalars["String"]>;
     name?: Maybe<Scalars["String"]>;
     shortName?: Maybe<Scalars["String"]>;
     slug?: Maybe<Scalars["String"]>;
@@ -7469,6 +7473,7 @@ export type Conference_Conference_Max_Order_By = {
     defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     demoCodeId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
+    logoURL?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     shortName?: InputMaybe<Order_By>;
     slug?: InputMaybe<Order_By>;
@@ -7484,6 +7489,7 @@ export type Conference_Conference_Min_Fields = {
     defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     demoCodeId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
+    logoURL?: Maybe<Scalars["String"]>;
     name?: Maybe<Scalars["String"]>;
     shortName?: Maybe<Scalars["String"]>;
     slug?: Maybe<Scalars["String"]>;
@@ -7498,6 +7504,7 @@ export type Conference_Conference_Min_Order_By = {
     defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     demoCodeId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
+    logoURL?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     shortName?: InputMaybe<Order_By>;
     slug?: InputMaybe<Order_By>;
@@ -7545,6 +7552,7 @@ export type Conference_Conference_Order_By = {
     id?: InputMaybe<Order_By>;
     items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
     logoS3Data?: InputMaybe<Order_By>;
+    logoURL?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     originatingDatas_aggregate?: InputMaybe<Conference_OriginatingData_Aggregate_Order_By>;
     programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
@@ -7588,6 +7596,8 @@ export enum Conference_Conference_Select_Column {
     /** column name */
     LogoS3Data = "logoS3Data",
     /** column name */
+    LogoUrl = "logoURL",
+    /** column name */
     Name = "name",
     /** column name */
     ShortName = "shortName",
@@ -7607,6 +7617,7 @@ export type Conference_Conference_Set_Input = {
     demoCodeId?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
     logoS3Data?: InputMaybe<Scalars["jsonb"]>;
+    logoURL?: InputMaybe<Scalars["String"]>;
     name?: InputMaybe<Scalars["String"]>;
     shortName?: InputMaybe<Scalars["String"]>;
     slug?: InputMaybe<Scalars["String"]>;
@@ -7631,6 +7642,8 @@ export enum Conference_Conference_Update_Column {
     Id = "id",
     /** column name */
     LogoS3Data = "logoS3Data",
+    /** column name */
+    LogoUrl = "logoURL",
     /** column name */
     Name = "name",
     /** column name */
@@ -17203,7 +17216,7 @@ export type Mutation_RootToggleVonageRecordingStateArgs = {
 /** mutation root */
 export type Mutation_RootUpdateConferenceLogoArgs = {
     conferenceId: Scalars["uuid"];
-    url?: InputMaybe<Scalars["String"]>;
+    s3URL?: InputMaybe<Scalars["String"]>;
 };
 
 /** mutation root */

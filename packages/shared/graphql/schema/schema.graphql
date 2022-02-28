@@ -1159,8 +1159,8 @@ type TranscribeGeneratePresignedUrlOutput {
 }
 
 type UpdateConferenceLogoResponse {
+    logoURL: String
     ok: Boolean!
-    url: String
 }
 
 type UpdateProfilePhotoResponse {
@@ -9657,6 +9657,7 @@ type conference_Conference {
         """
         path: String
     ): jsonb
+    logoURL: String
     name: String!
     """
     An array relationship
@@ -10130,6 +10131,7 @@ input conference_Conference_bool_exp {
     id: uuid_comparison_exp
     items: content_Item_bool_exp
     logoS3Data: jsonb_comparison_exp
+    logoURL: String_comparison_exp
     name: String_comparison_exp
     originatingDatas: conference_OriginatingData_bool_exp
     programPeople: collection_ProgramPerson_bool_exp
@@ -10211,6 +10213,7 @@ input conference_Conference_insert_input {
     id: uuid
     items: content_Item_arr_rel_insert_input
     logoS3Data: jsonb
+    logoURL: String
     name: String
     originatingDatas: conference_OriginatingData_arr_rel_insert_input
     programPeople: collection_ProgramPerson_arr_rel_insert_input
@@ -10235,6 +10238,7 @@ type conference_Conference_max_fields {
     defaultProgramVisibilityLevel: String
     demoCodeId: uuid
     id: uuid
+    logoURL: String
     name: String
     shortName: String
     slug: String
@@ -10251,6 +10255,7 @@ input conference_Conference_max_order_by {
     defaultProgramVisibilityLevel: order_by
     demoCodeId: order_by
     id: order_by
+    logoURL: order_by
     name: order_by
     shortName: order_by
     slug: order_by
@@ -10267,6 +10272,7 @@ type conference_Conference_min_fields {
     defaultProgramVisibilityLevel: String
     demoCodeId: uuid
     id: uuid
+    logoURL: String
     name: String
     shortName: String
     slug: String
@@ -10283,6 +10289,7 @@ input conference_Conference_min_order_by {
     defaultProgramVisibilityLevel: order_by
     demoCodeId: order_by
     id: order_by
+    logoURL: order_by
     name: order_by
     shortName: order_by
     slug: order_by
@@ -10343,6 +10350,7 @@ input conference_Conference_order_by {
     id: order_by
     items_aggregate: content_Item_aggregate_order_by
     logoS3Data: order_by
+    logoURL: order_by
     name: order_by
     originatingDatas_aggregate: conference_OriginatingData_aggregate_order_by
     programPeople_aggregate: collection_ProgramPerson_aggregate_order_by
@@ -10410,6 +10418,10 @@ enum conference_Conference_select_column {
     """
     column name
     """
+    logoURL
+    """
+    column name
+    """
     name
     """
     column name
@@ -10437,6 +10449,7 @@ input conference_Conference_set_input {
     demoCodeId: uuid
     id: uuid
     logoS3Data: jsonb
+    logoURL: String
     name: String
     shortName: String
     slug: String
@@ -10479,6 +10492,10 @@ enum conference_Conference_update_column {
     column name
     """
     logoS3Data
+    """
+    column name
+    """
+    logoURL
     """
     column name
     """
@@ -22896,7 +22913,7 @@ type mutation_root {
     submitGoogleOAuthCode(code: String!, state: String!): SubmitGoogleOAuthCodeOutput
     submitUploadableElement(data: jsonb!, elementId: uuid!, magicToken: String!): SubmitUploadableElementOutput
     toggleVonageRecordingState(recordingActive: Boolean!, vonageSessionId: String!): ToggleVonageRecordingStateOutput
-    updateConferenceLogo(conferenceId: uuid!, url: String): UpdateConferenceLogoResponse
+    updateConferenceLogo(conferenceId: uuid!, s3URL: String): UpdateConferenceLogoResponse
     updateProfilePhoto(registrantId: uuid!, s3URL: String): UpdateProfilePhotoResponse
     updateSubtitles(elementId: String!, magicToken: String!, subtitleText: String!): SubmitUpdatedSubtitlesOutput
     """

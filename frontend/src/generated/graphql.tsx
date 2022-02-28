@@ -950,8 +950,8 @@ export type TranscribeGeneratePresignedUrlOutput = {
 
 export type UpdateConferenceLogoResponse = {
     readonly __typename?: "UpdateConferenceLogoResponse";
+    readonly logoURL?: Maybe<Scalars["String"]>;
     readonly ok: Scalars["Boolean"];
-    readonly url?: Maybe<Scalars["String"]>;
 };
 
 export type UpdateProfilePhotoResponse = {
@@ -7044,6 +7044,7 @@ export type Conference_Conference = {
     /** An aggregate relationship */
     readonly items_aggregate: Content_Item_Aggregate;
     readonly logoS3Data?: Maybe<Scalars["jsonb"]>;
+    readonly logoURL?: Maybe<Scalars["String"]>;
     readonly name: Scalars["String"];
     /** An array relationship */
     readonly originatingDatas: ReadonlyArray<Conference_OriginatingData>;
@@ -7382,6 +7383,7 @@ export type Conference_Conference_Bool_Exp = {
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly items?: InputMaybe<Content_Item_Bool_Exp>;
     readonly logoS3Data?: InputMaybe<Jsonb_Comparison_Exp>;
+    readonly logoURL?: InputMaybe<String_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly originatingDatas?: InputMaybe<Conference_OriginatingData_Bool_Exp>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
@@ -7443,6 +7445,7 @@ export type Conference_Conference_Insert_Input = {
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
     readonly logoS3Data?: InputMaybe<Scalars["jsonb"]>;
+    readonly logoURL?: InputMaybe<Scalars["String"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly originatingDatas?: InputMaybe<Conference_OriginatingData_Arr_Rel_Insert_Input>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
@@ -7466,6 +7469,7 @@ export type Conference_Conference_Max_Fields = {
     readonly defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     readonly demoCodeId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
+    readonly logoURL?: Maybe<Scalars["String"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly shortName?: Maybe<Scalars["String"]>;
     readonly slug?: Maybe<Scalars["String"]>;
@@ -7480,6 +7484,7 @@ export type Conference_Conference_Max_Order_By = {
     readonly defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     readonly demoCodeId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
+    readonly logoURL?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly shortName?: InputMaybe<Order_By>;
     readonly slug?: InputMaybe<Order_By>;
@@ -7495,6 +7500,7 @@ export type Conference_Conference_Min_Fields = {
     readonly defaultProgramVisibilityLevel?: Maybe<Scalars["String"]>;
     readonly demoCodeId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
+    readonly logoURL?: Maybe<Scalars["String"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly shortName?: Maybe<Scalars["String"]>;
     readonly slug?: Maybe<Scalars["String"]>;
@@ -7509,6 +7515,7 @@ export type Conference_Conference_Min_Order_By = {
     readonly defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     readonly demoCodeId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
+    readonly logoURL?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly shortName?: InputMaybe<Order_By>;
     readonly slug?: InputMaybe<Order_By>;
@@ -7556,6 +7563,7 @@ export type Conference_Conference_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
     readonly logoS3Data?: InputMaybe<Order_By>;
+    readonly logoURL?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly originatingDatas_aggregate?: InputMaybe<Conference_OriginatingData_Aggregate_Order_By>;
     readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
@@ -7599,6 +7607,8 @@ export enum Conference_Conference_Select_Column {
     /** column name */
     LogoS3Data = "logoS3Data",
     /** column name */
+    LogoUrl = "logoURL",
+    /** column name */
     Name = "name",
     /** column name */
     ShortName = "shortName",
@@ -7618,6 +7628,7 @@ export type Conference_Conference_Set_Input = {
     readonly demoCodeId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly logoS3Data?: InputMaybe<Scalars["jsonb"]>;
+    readonly logoURL?: InputMaybe<Scalars["String"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly shortName?: InputMaybe<Scalars["String"]>;
     readonly slug?: InputMaybe<Scalars["String"]>;
@@ -7642,6 +7653,8 @@ export enum Conference_Conference_Update_Column {
     Id = "id",
     /** column name */
     LogoS3Data = "logoS3Data",
+    /** column name */
+    LogoUrl = "logoURL",
     /** column name */
     Name = "name",
     /** column name */
@@ -17214,7 +17227,7 @@ export type Mutation_RootToggleVonageRecordingStateArgs = {
 /** mutation root */
 export type Mutation_RootUpdateConferenceLogoArgs = {
     conferenceId: Scalars["uuid"];
-    url?: InputMaybe<Scalars["String"]>;
+    s3URL?: InputMaybe<Scalars["String"]>;
 };
 
 /** mutation root */
@@ -41812,7 +41825,7 @@ export type PreshowChecklistQuery = {
 
 export type SubmitConferenceLogoMutationVariables = Exact<{
     conferenceId: Scalars["uuid"];
-    url: Scalars["String"];
+    s3URL: Scalars["String"];
 }>;
 
 export type SubmitConferenceLogoMutation = {
@@ -41820,7 +41833,7 @@ export type SubmitConferenceLogoMutation = {
     readonly updateConferenceLogo?: {
         readonly __typename?: "UpdateConferenceLogoResponse";
         readonly ok: boolean;
-        readonly url?: string | null;
+        readonly logoURL?: string | null;
     } | null;
 };
 
@@ -51875,10 +51888,10 @@ export function usePreshowChecklistQuery(options: Omit<Urql.UseQueryArgs<Preshow
     return useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
 }
 export const SubmitConferenceLogoDocument = gql`
-    mutation SubmitConferenceLogo($conferenceId: uuid!, $url: String!) {
-        updateConferenceLogo(conferenceId: $conferenceId, url: $url) {
+    mutation SubmitConferenceLogo($conferenceId: uuid!, $s3URL: String!) {
+        updateConferenceLogo(conferenceId: $conferenceId, s3URL: $s3URL) {
             ok
-            url
+            logoURL
         }
     }
 `;
@@ -59525,15 +59538,15 @@ export type GraphCacheResolvers = {
         >;
     };
     UpdateConferenceLogoResponse?: {
+        logoURL?: GraphCacheResolver<
+            WithTypename<UpdateConferenceLogoResponse>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         ok?: GraphCacheResolver<
             WithTypename<UpdateConferenceLogoResponse>,
             Record<string, never>,
             Scalars["Boolean"] | string
-        >;
-        url?: GraphCacheResolver<
-            WithTypename<UpdateConferenceLogoResponse>,
-            Record<string, never>,
-            Scalars["String"] | string
         >;
     };
     UpdateProfilePhotoResponse?: {
@@ -63855,6 +63868,11 @@ export type GraphCacheResolvers = {
             Conference_ConferenceLogoS3DataArgs,
             Scalars["jsonb"] | string
         >;
+        logoURL?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         name?: GraphCacheResolver<
             WithTypename<Conference_Conference>,
             Record<string, never>,
@@ -64016,6 +64034,11 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
+        logoURL?: GraphCacheResolver<
+            WithTypename<Conference_Conference_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         name?: GraphCacheResolver<
             WithTypename<Conference_Conference_Max_Fields>,
             Record<string, never>,
@@ -64067,6 +64090,11 @@ export type GraphCacheResolvers = {
             WithTypename<Conference_Conference_Min_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
+        >;
+        logoURL?: GraphCacheResolver<
+            WithTypename<Conference_Conference_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
         >;
         name?: GraphCacheResolver<
             WithTypename<Conference_Conference_Min_Fields>,

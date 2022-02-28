@@ -3,7 +3,9 @@ import type { getSlugArgs, updateConferenceLogoArgs, UpdateConferenceLogoRespons
 import { CheckForFrontendHostsDocument, UpdateConferenceLogoDocument } from "../generated/graphql";
 import assert from "node:assert";
 import { apolloClient } from "../graphqlClient";
+import { generateSignedImageURL } from "../lib/aws/cloudFront";
 import { checkS3Url } from "../lib/aws/s3";
+import { getImagesSecretValue } from "../lib/aws/secretsManager";
 
 gql`
     query CheckForFrontendHosts($host: jsonb!) {
@@ -69,9 +71,10 @@ gql`
 
 export async function handleUpdateConferenceLogo(
     userId: string,
-    { conferenceId, url }: updateConferenceLogoArgs
+    { conferenceId, s3URL }: updateConferenceLogoArgs
 ): Promise<UpdateConferenceLogoResponse> {
-    if (!url || url.length === 0) {
+    let logoURL: string | undefined;
+    if (!s3URL || s3URL.length === 0) {
         await apolloClient.mutate({
             mutation: UpdateConferenceLogoDocument,
             variables: {
@@ -81,13 +84,28 @@ export async function handleUpdateConferenceLogo(
             },
         });
     } else {
-        const validatedS3URL = await checkS3Url(url);
+        const validatedS3URL = await checkS3Url(s3URL);
         if (validatedS3URL.result === "error") {
             throw new Error("Invalid S3 URL");
         }
 
         assert(process.env.AWS_REGION);
         assert(process.env.AWS_CONTENT_BUCKET_ID);
+
+        assert(
+            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+            "AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME not provided."
+        );
+
+        const secret = await getImagesSecretValue();
+        logoURL = generateSignedImageURL(
+            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+            secret,
+            process.env.AWS_CONTENT_BUCKET_ID,
+            validatedS3URL.key,
+            50,
+            50
+        );
 
         await apolloClient.mutate({
             mutation: UpdateConferenceLogoDocument,
@@ -98,12 +116,14 @@ export async function handleUpdateConferenceLogo(
                     S3Region: process.env.AWS_REGION,
                     S3Bucket: process.env.AWS_CONTENT_BUCKET_ID,
                     S3Key: validatedS3URL.key
-                }
+                },
+                logoURL
             },
         });
     }
 
     return {
-        ok: true
+        ok: true,
+        logoURL
     };
 }

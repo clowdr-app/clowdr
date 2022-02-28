@@ -17,10 +17,10 @@ const DragDrop = React.lazy(() => import("@uppy/react").then((x) => ({ default: 
 const StatusBar = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.StatusBar })));
 
 gql`
-    mutation SubmitConferenceLogo($conferenceId: uuid!, $url: String!) {
-        updateConferenceLogo(conferenceId: $conferenceId, url: $url) {
+    mutation SubmitConferenceLogo($conferenceId: uuid!, $s3URL: String!) {
+        updateConferenceLogo(conferenceId: $conferenceId, s3URL: $s3URL) {
             ok
-            url
+            logoURL
         }
     }
 `;
@@ -131,9 +131,9 @@ export default function EditConferenceLogoForm({
                     }
 
                     try {
-                        const url = result.successful[0].uploadURL;
+                        const s3URL = result.successful[0].uploadURL;
                         const submitResult = await submitConferenceLogo({
-                            url,
+                            s3URL,
                             conferenceId: conference.id,
                         });
 
@@ -241,7 +241,7 @@ export default function EditConferenceLogoForm({
                                                     (async () => {
                                                         try {
                                                             await submitConferenceLogo({
-                                                                url: "",
+                                                                s3URL: "",
                                                                 conferenceId: conference.id,
                                                             });
                                                         } finally {

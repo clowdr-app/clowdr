@@ -80,7 +80,7 @@ export type ProfilePhotoURLResponse = {
 
 export type UpdateConferenceLogoResponse = {
     ok: boolean
-    url?: Maybe<string>
+    logoURL?: Maybe<string>
 }
 
 export type UpdateProfilePhotoResponse = {
@@ -258,7 +258,7 @@ export type submitGoogleOAuthCodeArgs = {
 
 export type updateConferenceLogoArgs = {
     conferenceId: uuid
-    url?: Maybe<string>
+    s3URL?: Maybe<string>
 }
 
 export type updateProfilePhotoArgs = {

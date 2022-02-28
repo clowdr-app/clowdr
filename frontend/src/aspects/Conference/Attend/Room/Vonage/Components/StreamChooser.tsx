@@ -119,7 +119,7 @@ export default function StreamChooser({
                     </HStack>
                 </MenuButton>
                 <Portal>
-                    <MenuList zIndex={10000}>
+                    <MenuList zIndex={10000} maxH="10em" overflowY="auto">
                         <MenuItem
                             onClick={() => {
                                 changeLayout(null);

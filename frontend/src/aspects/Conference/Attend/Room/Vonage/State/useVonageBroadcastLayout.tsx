@@ -123,7 +123,7 @@ export function useVonageBroadcastLayout(
         switch (roomOrEventId.type) {
             case "room":
                 return makeContext({
-                    [AuthHeader.Role]: HasuraRoleName.RoomAdmin,
+                    [AuthHeader.Role]: HasuraRoleName.RoomMember,
                     [AuthHeader.RoomId]: roomOrEventId.id,
                 });
             case "room-with-event":

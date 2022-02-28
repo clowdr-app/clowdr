@@ -1,7 +1,7 @@
 import type { EventStreamMarshaller, Message as AWSEventStreamMessage } from "@aws-sdk/eventstream-marshaller";
 import * as marshaller from "@aws-sdk/eventstream-marshaller";
 import * as util_utf8_node from "@aws-sdk/util-utf8-node";
-import { useConst, useToast } from "@chakra-ui/react";
+import { useConst, useId, useToast } from "@chakra-ui/react";
 import { datadogLogs } from "@datadog/browser-logs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
@@ -91,6 +91,8 @@ export function useAWSTranscription(
     onCompleteTranscript?: (transcript: string) => void
 ) {
     const toast = useToast();
+    const errorInitializeToastId = useId();
+    const errorCloseToastId = useId();
 
     const audioContext = useConst(getAudioContext());
     const processorNode = useMemo(() => audioContext?.createScriptProcessor(4096, 1, 1), [audioContext]);
@@ -174,14 +176,16 @@ export function useAWSTranscription(
             if (!audioContext || !processorNode) {
                 const audioTrack = camera?.getAudioSource();
                 if (camera && audioTrack) {
-                    toast({
-                        status: "error",
-                        position: "bottom",
-                        isClosable: true,
-                        title: "Error initializing closed-captioning",
-                        description:
-                            "Your browser does not support web audio contexts. Please use the latest version of Chrome or FireFox to enable generating closed-captions for your microphone.",
-                    });
+                    if (!toast.isActive(errorInitializeToastId)) {
+                        toast({
+                            status: "error",
+                            position: "bottom",
+                            isClosable: true,
+                            title: "Error initializing closed-captioning",
+                            description:
+                                "Your browser does not support web audio contexts. Please use the latest version of Chrome or FireFox to enable generating closed-captions for your microphone.",
+                        });
+                    }
                 }
                 return;
             }
@@ -239,16 +243,30 @@ export function useAWSTranscription(
                 stopTranscribing();
                 if (closeEvent.code != 1000) {
                     datadogLogs.logger.error("Transcribe error on close", { webSocketReason: closeEvent.reason });
-                    toast({
-                        status: "error",
-                        position: "bottom",
-                        isClosable: true,
-                        title: "Error occurred in closed-captioning systems",
-                        description:
-                            "Unknown reason for AWS Transcribe failure. Closed captioining may not be functioning for your microphone.",
-                    });
+                    if (!toast.isActive(errorCloseToastId)) {
+                        toast({
+                            id: errorCloseToastId,
+                            status: "error",
+                            position: "bottom",
+                            isClosable: true,
+                            title: "Error occurred in closed-captioning systems",
+                            description:
+                                "Unknown reason for AWS Transcribe failure. Closed captioining may not be functioning for your microphone.",
+                        });
+                    }
                 }
             };
         }
-    }, [audioContext, camera, eventStreamMarshaller, intendedActive, preSignedUrl, processorNode, socket, toast]);
+    }, [
+        audioContext,
+        camera,
+        errorCloseToastId,
+        errorInitializeToastId,
+        eventStreamMarshaller,
+        intendedActive,
+        preSignedUrl,
+        processorNode,
+        socket,
+        toast,
+    ]);
 }

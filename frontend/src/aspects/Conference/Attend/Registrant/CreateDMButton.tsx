@@ -34,6 +34,8 @@ export default function CreateDMButton({
                         console.error("Failed to create DM", result.error);
                         throw new Error("Failed to create DM");
                     } else {
+                        await new Promise((r) => setTimeout(r, 500));
+
                         if (result.data.createRoomDm.message !== "DM already exists") {
                             toast({
                                 title: result.data.createRoomDm.message ?? "Created new DM",

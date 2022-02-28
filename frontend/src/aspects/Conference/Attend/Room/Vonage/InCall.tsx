@@ -1,4 +1,4 @@
-import { Box, Flex, VStack } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import React, { useContext, useEffect, useMemo } from "react";
 import * as portals from "react-reverse-portal";
 import { validate } from "uuid";
@@ -348,25 +348,19 @@ export function InCall(): JSX.Element {
     return (
         <>
             {connected ? (
-                <VStack h="100%" w="100%" zIndex={1} alignItems="stretch" overflow="hidden" spacing={0}>
-                    {videoPlayback.latestCommand?.command?.type === "video" ? (
-                        <Box flexBasis={0} flexGrow={1.5} flexShrink={1} minH="10em" w="100%" p={2}>
-                            <VideoChatVideoPlayer />
-                        </Box>
-                    ) : undefined}
-                    <Flex
-                        flexDirection="column"
-                        flexBasis={0}
-                        flexGrow={1}
-                        flexShrink={1}
-                        minH="10em"
-                        w="100%"
-                        overflow="hidden"
-                    >
-                        {displayEl}
+                <Flex flexDirection="column" h="100%" w="100%" zIndex={1} alignItems="stretch">
+                    <Flex flexDirection="column" w="100%" zIndex={1} alignItems="stretch" flex={1} overflowY="auto">
+                        {videoPlayback.latestCommand?.command?.type === "video" ? (
+                            <Box flexBasis={0} flexGrow={1.5} flexShrink={1} minH="10em" w="100%" p={2}>
+                                <VideoChatVideoPlayer />
+                            </Box>
+                        ) : undefined}
+                        <Flex flexDirection="column" flexBasis={0} flexGrow={1} flexShrink={1} minH="10em" w="100%">
+                            {displayEl}
+                        </Flex>
                     </Flex>
                     <VonageRoomControlBar />
-                </VStack>
+                </Flex>
             ) : undefined}
             {[...streamPortalNodes.values()].map((x) => x.element)}
             {[...connectionPortalNodes.values()].map((x) => x.element)}

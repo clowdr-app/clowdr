@@ -45,6 +45,7 @@ gql`
         name
         shortName
         slug
+        logoURL
 
         supportAddress: configurations(where: { key: { _eq: SUPPORT_ADDRESS } }) {
             conferenceId

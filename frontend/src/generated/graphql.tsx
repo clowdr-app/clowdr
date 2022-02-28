@@ -46318,6 +46318,7 @@ export type ConferenceById_WithUserQuery = {
         readonly name: string;
         readonly shortName: string;
         readonly slug: string;
+        readonly logoURL?: string | null;
         readonly announcementsChatId?: any | null;
         readonly supportAddress: ReadonlyArray<{
             readonly __typename?: "conference_Configuration";
@@ -46431,6 +46432,7 @@ export type ConferenceById_WithoutUserQuery = {
         readonly name: string;
         readonly shortName: string;
         readonly slug: string;
+        readonly logoURL?: string | null;
         readonly supportAddress: ReadonlyArray<{
             readonly __typename?: "conference_Configuration";
             readonly conferenceId: any;
@@ -46542,6 +46544,7 @@ export type PublicConferenceInfoFragment = {
     readonly name: string;
     readonly shortName: string;
     readonly slug: string;
+    readonly logoURL?: string | null;
     readonly supportAddress: ReadonlyArray<{
         readonly __typename?: "conference_Configuration";
         readonly conferenceId: any;
@@ -49554,6 +49557,7 @@ export const PublicConferenceInfoFragmentDoc = gql`
         name
         shortName
         slug
+        logoURL
         supportAddress: configurations(where: { key: { _eq: SUPPORT_ADDRESS } }) {
             conferenceId
             key

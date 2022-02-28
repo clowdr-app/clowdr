@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, FormHelperText, Image, Spinner, Text, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormHelperText, Image, Spinner, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
@@ -9,7 +9,7 @@ import { gql } from "@urql/core";
 import { Form, Formik } from "formik";
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitConferenceLogoMutation } from "../../../../generated/graphql";
-// import FAIcon from "../../../Chakra/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { ConferenceInfoFragment } from "../../useConference";
 
@@ -95,7 +95,7 @@ export default function EditConferenceLogoForm({
         uppy?.on("file-removed", updateFiles);
     }, [conference, toast, updateFiles, uppy]);
 
-    // const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     return (
         <Suspense fallback={<Spinner />}>
@@ -182,7 +182,7 @@ export default function EditConferenceLogoForm({
                                         overflow="hidden"
                                         backgroundColor="#222"
                                     >
-                                        {files.length === 1 ? (
+                                        {files.length === 1 || conference.logoURL ? (
                                             <Image
                                                 mt={2}
                                                 alt={
@@ -190,7 +190,11 @@ export default function EditConferenceLogoForm({
                                                         ? "Preview of the selected file."
                                                         : "Your current profile picture."
                                                 }
-                                                src={URL.createObjectURL(files[0].data) as string}
+                                                src={
+                                                    (files.length === 1
+                                                        ? URL.createObjectURL(files[0].data)
+                                                        : conference.logoURL) as string
+                                                }
                                                 objectFit="cover"
                                                 w="100%"
                                                 h="100%"
@@ -202,31 +206,10 @@ export default function EditConferenceLogoForm({
                                                 filter="brightness(25%)"
                                             />
                                         ) : undefined}
-                                        <Flex
-                                            w="100%"
-                                            h="100%"
-                                            pos="absolute"
-                                            justifyContent={files.length === 1 ? "center" : "flex-start"}
-                                            alignItems="center"
-                                            flexDir="column"
-                                            p={5}
-                                        >
-                                            <Text
-                                                as="span"
-                                                mt={files.length === 1 ? 0 : 10}
-                                                fontWeight="bold"
-                                                fontSize="1.5em"
-                                                textAlign="center"
-                                            >
-                                                {files.length === 1
-                                                    ? "Please press Upload when you're ready"
-                                                    : "Please upload a picture."}
-                                            </Text>
-                                        </Flex>
                                         <Box display={files.length === 1 ? "none" : ""}>
                                             <DragDrop width={50} height={50} uppy={uppy} allowMultipleFiles={false} />
                                         </Box>
-                                        {/* {conference.logoS3Data ? (
+                                        {conference.logoURL ? (
                                             <Button
                                                 isLoading={isDeleting}
                                                 pos="absolute"
@@ -252,7 +235,7 @@ export default function EditConferenceLogoForm({
                                             >
                                                 <FAIcon iconStyle="s" icon="trash-alt" />
                                             </Button>
-                                        ) : undefined} */}
+                                        ) : undefined}
                                     </Box>
                                     <FormHelperText style={{paddingLeft: 16}}>
                                         Drag and drop an image file or click to select a file.<br />

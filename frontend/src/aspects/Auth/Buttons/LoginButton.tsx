@@ -1,26 +1,25 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button, MenuItem } from "@chakra-ui/react";
+import { Button, MenuItem, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import MenuButton from "../../Menu/V2/MenuButton";
+import FAIcon from "../../Chakra/FAIcon";
+import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 
 export default function LoginButton({
     asMenuItem,
-    asMenuButtonV2,
+    asMenuButton,
     redirectTo,
     size,
     emailHint,
     isLoading,
-    showLabel,
     colorScheme,
 }: {
     size?: string;
     asMenuItem?: boolean;
-    asMenuButtonV2?: boolean;
+    asMenuButton?: boolean;
     redirectTo?: string;
     emailHint?: string;
     isLoading?: boolean;
-    showLabel?: boolean;
     colorScheme?: string;
 }): JSX.Element {
     const { loginWithRedirect } = useAuth0();
@@ -35,26 +34,43 @@ export default function LoginButton({
         },
     };
 
-    return asMenuButtonV2 ? (
-        <MenuButton
-            label="Login"
-            iconStyle="s"
-            icon="sign-in-alt"
+    const buttonHoverBgColor = useColorModeValue(
+        "MainMenuHeaderBar.buttonHoverBackgroundColor-light",
+        "MainMenuHeaderBar.buttonHoverBackgroundColor-dark"
+    );
+    const buttonFocusBgColor = useColorModeValue(
+        "MainMenuHeaderBar.buttonFocusBackgroundColor-light",
+        "MainMenuHeaderBar.buttonFocusBackgroundColor-dark"
+    );
+
+    return asMenuButton ? (
+        <Button
+            aria-label="Login"
+            variant="ghost"
+            size="md"
+            w="auto"
+            h="calc(100% - 3px)"
+            py={0}
+            px={2}
+            m="3px"
             borderRadius={0}
-            colorScheme="RightMenuButton"
-            side="right"
+            _hover={{
+                bgColor: buttonHoverBgColor,
+            }}
+            _focus={{
+                bgColor: buttonFocusBgColor,
+                boxShadow: defaultOutline_AsBoxShadow,
+            }}
+            _active={{
+                bgColor: buttonFocusBgColor,
+                boxShadow: defaultOutline_AsBoxShadow,
+            }}
             onClick={() => loginWithRedirect(opts)}
-            mb={1}
-            showLabel={showLabel}
-        />
-    ) : asMenuItem ? (
-        <MenuItem
-            size={size ?? "sm"}
-            onClick={() => loginWithRedirect(opts)}
-            colorScheme={colorScheme ?? "RightMenuButton"}
         >
-            Log In
-        </MenuItem>
+            <FAIcon iconStyle="s" icon="sign-in-alt" mr={2} aria-hidden={true} /> Login
+        </Button>
+    ) : asMenuItem ? (
+        <MenuItem onClick={() => loginWithRedirect(opts)}>Login</MenuItem>
     ) : (
         <Button
             isLoading={isLoading}
@@ -62,7 +78,7 @@ export default function LoginButton({
             onClick={() => loginWithRedirect(opts)}
             colorScheme={colorScheme ?? "LoginButtonWithinPage"}
         >
-            Log In
+            Login
         </Button>
     );
 }

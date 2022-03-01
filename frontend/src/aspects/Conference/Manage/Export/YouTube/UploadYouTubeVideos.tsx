@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -24,25 +23,32 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import type { YouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
-import { isYouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
+import type { YouTubeDataBlob } from "@midspace/shared-types/registrantGoogleAccount";
+import { isYouTubeDataBlob } from "@midspace/shared-types/registrantGoogleAccount";
+import { gql } from "@urql/core";
 import Mustache from "mustache";
 import * as R from "ramda";
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
-import type { SubmitHandler} from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 import { useFieldArray, useForm } from "react-hook-form";
+import { useClient } from "urql";
 import type {
-    Job_Queues_UploadYouTubeVideoJob_Insert_Input} from "../../../../../generated/graphql";
+    Job_Queues_UploadYouTubeVideoJob_Insert_Input,
+    UploadYouTubeVideos_GetTemplateDataQuery,
+    UploadYouTubeVideos_GetTemplateDataQueryVariables,
+} from "../../../../../generated/graphql";
 import {
+    UploadYouTubeVideos_GetTemplateDataDocument,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
     useUploadYouTubeVideos_GetElementsQuery,
-    useUploadYouTubeVideos_GetTemplateDataQuery,
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
 } from "../../../../../generated/graphql";
-import { useRestorableState } from "../../../../Generic/useRestorableState";
-import { FAIcon } from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
+import { makeContext } from "../../../../GQL/make-context";
+import { useRestorableState } from "../../../../Hooks/useRestorableState";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { ChooseElementByTagModal } from "./ChooseElementByTagModal";
@@ -55,6 +61,7 @@ gql`
     query UploadYouTubeVideos_GetRegistrantGoogleAccounts($registrantId: uuid!) {
         registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId } }) {
             id
+            registrantId
             googleAccountEmail
             youTubeData
         }
@@ -74,6 +81,7 @@ gql`
         content_Element(where: { id: { _in: $elementIds } }) {
             id
             name
+            itemId
             item {
                 id
                 title
@@ -85,16 +93,19 @@ gql`
         content_Element(where: { id: { _in: $elementIds } }) {
             id
             name
+            itemId
             item {
                 id
                 shortTitle
                 title
                 elements {
                     id
+                    itemId
                     youTubeUploads {
                         id
                         videoTitle
                         videoId
+                        elementId
                     }
                 }
                 abstractElements: elements(
@@ -112,6 +123,10 @@ gql`
                 }
                 authors: itemPeople(where: { roleName: { _eq: "AUTHOR" } }, order_by: { priority: asc }) {
                     id
+                    itemId
+                    personId
+                    roleName
+                    priority
                     person {
                         id
                         name
@@ -120,6 +135,10 @@ gql`
                 }
                 presenters: itemPeople(where: { roleName: { _eq: "PRESENTER" } }, order_by: { priority: asc }) {
                     id
+                    itemId
+                    personId
+                    roleName
+                    priority
                     person {
                         id
                         name
@@ -133,6 +152,8 @@ gql`
     fragment UploadYouTubeVideos_Element on content_Element {
         id
         data
+        itemId
+        typeName
     }
 
     mutation UploadYouTubeVideos_RefreshYouTubeData($registrantId: uuid!, $registrantGoogleAccountId: uuid!) {
@@ -164,20 +185,27 @@ export function UploadYouTubeVideos(): JSX.Element {
     const registrant = useCurrentRegistrant();
     const { selectedGoogleAccountId, googleAccounts, finished, setFinished } = useContext(YouTubeExportContext);
 
-    const [refreshYouTubeData] = useUploadYouTubeVideos_RefreshYouTubeDataMutation();
+    const [, refreshYouTubeData] = useUploadYouTubeVideos_RefreshYouTubeDataMutation();
     useEffect(() => {
         async function fn() {
             if (selectedGoogleAccountId) {
-                const result = await refreshYouTubeData({
-                    variables: {
+                const result = await refreshYouTubeData(
+                    {
                         registrantId: registrant.id,
                         registrantGoogleAccountId: selectedGoogleAccountId,
                     },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
                 if (!result.data?.refreshYouTubeData?.success) {
                     throw new Error(result.data?.refreshYouTubeData?.message ?? "Unknown reason");
                 }
-                await googleAccounts.refetch();
+                await googleAccounts[1]();
             }
         }
         fn();
@@ -256,7 +284,7 @@ export function UploadYouTubeVideos(): JSX.Element {
     );
 
     const channelOptions = useMemo(() => {
-        const registrantGoogleAccount = googleAccounts.data?.registrant_GoogleAccount.find(
+        const registrantGoogleAccount = googleAccounts[0].data?.registrant_GoogleAccount.find(
             (a) => a.id === selectedGoogleAccountId
         );
 
@@ -273,10 +301,10 @@ export function UploadYouTubeVideos(): JSX.Element {
                 </option>
             )) ?? []
         );
-    }, [selectedGoogleAccountId, googleAccounts.data?.registrant_GoogleAccount]);
+    }, [selectedGoogleAccountId, googleAccounts]);
 
     const playlistOptions = useMemo(() => {
-        const registrantGoogleAccount = googleAccounts.data?.registrant_GoogleAccount.find(
+        const registrantGoogleAccount = googleAccounts[0].data?.registrant_GoogleAccount.find(
             (a) => a.id === selectedGoogleAccountId
         );
 
@@ -295,17 +323,25 @@ export function UploadYouTubeVideos(): JSX.Element {
                     </option>
                 )) ?? []
         );
-    }, [selectedGoogleAccountId, channelId, googleAccounts.data?.registrant_GoogleAccount]);
+    }, [selectedGoogleAccountId, channelId, googleAccounts]);
 
-    const [createJobs] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation();
+    const [, createJobs] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation();
 
     const chooseVideoDisclosure = useDisclosure();
     const chooseByTagDisclosure = useDisclosure();
 
-    const { data } = useUploadYouTubeVideos_GetElementsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [{ data }] = useUploadYouTubeVideos_GetElementsQuery({
         variables: {
             elementIds,
         },
+        context,
     });
 
     const elements = useMemo(() => {
@@ -318,22 +354,33 @@ export function UploadYouTubeVideos(): JSX.Element {
         return R.fromPairs(pairs);
     }, [data]);
 
-    const { refetch: refetchTemplateData } = useUploadYouTubeVideos_GetTemplateDataQuery({ skip: true });
-
+    const client = useClient();
     const compileTemplates = useCallback(
         async (
             elementIds: string[],
             titleTemplateString: string,
             descriptionTemplateString: string
         ): Promise<{ [elementId: string]: { title: string; description: string } }> => {
-            const result = await refetchTemplateData({ elementIds });
-
-            if (!result || !result.data) {
-                console.error("Could not retrieve data for content item templates", result.error, result.errors);
-                throw new Error("Could not retrieve data for content item templates");
-            }
+            const result = await client
+                .query<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>(
+                    UploadYouTubeVideos_GetTemplateDataDocument,
+                    { elementIds },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                )
+                .toPromise();
 
             const pairs = elementIds.map((elementId): [string, { title: string; description: string }] => {
+                if (!result || !result.data) {
+                    console.error("Could not retrieve data for content item templates", result.error);
+                    throw new Error("Could not retrieve data for content item templates");
+                }
+
                 const element = result.data.content_Element.find((x) => x.id === elementId);
 
                 if (!element) {
@@ -449,7 +496,7 @@ export function UploadYouTubeVideos(): JSX.Element {
 
             return R.fromPairs(pairs);
         },
-        [refetchTemplateData]
+        [client]
     );
 
     const getDescriptionError = useCallback((description: string) => {
@@ -518,8 +565,8 @@ export function UploadYouTubeVideos(): JSX.Element {
                     return;
                 }
 
-                await createJobs({
-                    variables: {
+                await createJobs(
+                    {
                         objects: data.elementIds.map(
                             (id): Job_Queues_UploadYouTubeVideoJob_Insert_Input => ({
                                 elementId: id,
@@ -532,7 +579,14 @@ export function UploadYouTubeVideos(): JSX.Element {
                             })
                         ),
                     },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
                 toast({
                     status: "success",
                     title: "Starting upload to YouTube",

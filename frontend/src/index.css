@@ -63,3 +63,12 @@ code {
     margin-right: 1px;
     vertical-align: baseline;
 }
+
+.markdown-twemoji {
+    display: inline-block;
+    height: 1em;
+    margin: 0 1px;
+    max-width: unset;
+    padding: 0;
+    vertical-align: middle;
+}

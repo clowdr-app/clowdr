@@ -1,5 +1,3 @@
-import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -19,22 +17,24 @@ import {
     useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import Papa from "papaparse";
-import type { LegacyRef} from "react";
+import type { LegacyRef } from "react";
 import React, { useCallback, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
     ManageProgramPeople_ProgramPersonWithAccessTokenFragment,
-    ManageProgramPeople_RegistrantFragment} from "../../../generated/graphql";
+    ManageProgramPeople_RegistrantFragment,
+} from "../../../generated/graphql";
 import {
-    ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
-    Permissions_Permission_Enum,
     useManageProgramPeople_DeleteProgramPersonsMutation,
     useManageProgramPeople_InsertProgramPersonMutation,
     useManageProgramPeople_SelectAllPeopleQuery,
     useManageProgramPeople_SelectAllRegistrantsQuery,
     useManageProgramPeople_UpdateProgramPersonMutation,
 } from "../../../generated/graphql";
+import FAIcon from "../../Chakra/FAIcon";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
 import type {
@@ -44,16 +44,16 @@ import type {
     Delete,
     Insert,
     RowSpecification,
-    Update} from "../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection
+    Update,
 } from "../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
+import { useAuthParameters } from "../../GQL/AuthParameters";
+import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { FAIcon } from "../../Icons/FAIcon";
-import { maybeCompare } from "../../Utils/maybeSort";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
+import { useTitle } from "../../Hooks/useTitle";
+import { maybeCompare } from "../../Utils/maybeCompare";
+import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 
 // TODO: Handle duplicate email addresses (edit/create)
@@ -73,19 +73,18 @@ gql`
         }
     }
 
-    fragment ManageProgramPeople_ProgramPersonWithAccessToken on collection_ProgramPersonWithAccessToken {
+    fragment ManageProgramPeople_ProgramPersonWithAccessToken on collection_ProgramPerson {
         id
         conferenceId
         name
         affiliation
         email
-        originatingDataId
         registrantId
         accessToken
     }
 
     query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!) {
-        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ManageProgramPeople_ProgramPersonWithAccessToken
         }
     }
@@ -96,14 +95,14 @@ gql`
         }
     }
 
-    mutation ManageProgramPeople_InsertProgramPerson($person: collection_ProgramPersonWithAccessToken_insert_input!) {
-        insert_collection_ProgramPersonWithAccessToken_one(object: $person) {
+    mutation ManageProgramPeople_InsertProgramPerson($person: collection_ProgramPerson_insert_input!) {
+        insert_collection_ProgramPerson_one(object: $person) {
             ...ManageProgramPeople_ProgramPersonWithAccessToken
         }
     }
 
     mutation ManageProgramPeople_DeleteProgramPersons($ids: [uuid!] = []) {
-        delete_collection_ProgramPersonWithAccessToken(where: { id: { _in: $ids } }) {
+        delete_collection_ProgramPerson(where: { id: { _in: $ids } }) {
             returning {
                 id
             }
@@ -117,7 +116,7 @@ gql`
         $email: String
         $registrantId: uuid
     ) {
-        update_collection_ProgramPersonWithAccessToken(
+        update_collection_ProgramPerson(
             where: { id: { _eq: $id } }
             _set: { name: $name, affiliation: $affiliation, email: $email, registrantId: $registrantId }
         ) {
@@ -130,12 +129,21 @@ gql`
 
 export default function ManageProgramPeople(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage program people at ${conference.shortName}`);
 
-    const { data: registrantsData } = useManageProgramPeople_SelectAllRegistrantsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [{ data: registrantsData }] = useManageProgramPeople_SelectAllRegistrantsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const registrants = useMemo(
@@ -487,30 +495,27 @@ export default function ManageProgramPeople(): JSX.Element {
         [registrantOptions, registrants]
     );
 
-    const {
-        loading: loadingAllProgramPersons,
-        error: errorAllProgramPersons,
-        data: allProgramPersons,
-        refetch,
-    } = useManageProgramPeople_SelectAllPeopleQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllProgramPersons, error: errorAllProgramPersons, data: allProgramPersons }, refetch] =
+        useManageProgramPeople_SelectAllPeopleQuery({
+            requestPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+            context,
+        });
     useQueryErrorToast(errorAllProgramPersons, false);
     const data = useMemo(
-        () => [...(allProgramPersons?.collection_ProgramPersonWithAccessToken ?? [])],
-        [allProgramPersons?.collection_ProgramPersonWithAccessToken]
+        () => [...(allProgramPersons?.collection_ProgramPerson ?? [])],
+        [allProgramPersons?.collection_ProgramPerson]
     );
 
-    const [insertProgramPerson, insertProgramPersonResponse] = useManageProgramPeople_InsertProgramPersonMutation();
-    const [deleteProgramPersons, deleteProgramPersonsResponse] = useManageProgramPeople_DeleteProgramPersonsMutation();
-    const [updateProgramPerson, updateProgramPersonResponse] = useManageProgramPeople_UpdateProgramPersonMutation();
+    const [insertProgramPersonResponse, insertProgramPerson] = useManageProgramPeople_InsertProgramPersonMutation();
+    const [deleteProgramPersonsResponse, deleteProgramPersons] = useManageProgramPeople_DeleteProgramPersonsMutation();
+    const [updateProgramPersonResponse, updateProgramPerson] = useManageProgramPeople_UpdateProgramPersonMutation();
 
     const insert: Insert<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
-            ongoing: insertProgramPersonResponse.loading,
+            ongoing: insertProgramPersonResponse.fetching,
             generateDefaults: () => {
                 const programpersonId = uuidv4();
                 return {
@@ -521,8 +526,8 @@ export default function ManageProgramPeople(): JSX.Element {
             makeWhole: (d) =>
                 d.name?.length ? (d as ManageProgramPeople_ProgramPersonWithAccessTokenFragment) : undefined,
             start: (record) => {
-                insertProgramPerson({
-                    variables: {
+                insertProgramPerson(
+                    {
                         person: {
                             id: record.id,
                             conferenceId: conference.id,
@@ -532,90 +537,68 @@ export default function ManageProgramPeople(): JSX.Element {
                             name: record.name,
                         },
                     },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.insert_collection_ProgramPersonWithAccessToken_one) {
-                            const data = _data.insert_collection_ProgramPersonWithAccessToken_one;
-                            cache.writeFragment({
-                                data,
-                                fragment: ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
-                                fragmentName: "ManageProgramPeople_ProgramPersonWithAccessToken",
-                            });
-                        }
-                    },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
             },
         }),
-        [conference.id, insertProgramPerson, insertProgramPersonResponse.loading]
+        [conference.id, insertProgramPerson, insertProgramPersonResponse.fetching]
     );
 
     const startUpdate = useCallback(
         async (record: ManageProgramPeople_ProgramPersonWithAccessTokenFragment) => {
-            return updateProgramPerson({
-                variables: {
+            return updateProgramPerson(
+                {
                     id: record.id,
                     name: record.name as string,
                     affiliation: record.affiliation !== "" ? record.affiliation ?? null : null,
                     registrantId: record.registrantId ?? null,
                     email: record.email !== "" ? record.email ?? null : null,
                 },
-                update: (cache, { data: _data }) => {
-                    if (_data?.update_collection_ProgramPersonWithAccessToken?.returning.length) {
-                        const data = _data.update_collection_ProgramPersonWithAccessToken.returning[0];
-                        cache.writeFragment({
-                            data,
-                            fragment: ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
-                            fragmentName: "ManageProgramPeople_ProgramPersonWithAccessToken",
-                        });
-                    }
-                },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                }
+            );
         },
         [updateProgramPerson]
     );
 
     const update: Update<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
-            ongoing: updateProgramPersonResponse.loading,
+            ongoing: updateProgramPersonResponse.fetching,
             start: startUpdate,
         }),
-        [updateProgramPersonResponse.loading, startUpdate]
+        [updateProgramPersonResponse.fetching, startUpdate]
     );
 
     const deleteP: Delete<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
-            ongoing: deleteProgramPersonsResponse.loading,
+            ongoing: deleteProgramPersonsResponse.fetching,
             start: (keys) => {
-                deleteProgramPersons({
-                    variables: {
+                deleteProgramPersons(
+                    {
                         ids: keys,
                     },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.delete_collection_ProgramPersonWithAccessToken) {
-                            const data = _data.delete_collection_ProgramPersonWithAccessToken;
-                            const deletedIds = data.returning.map((x) => x.id);
-                            cache.modify({
-                                fields: {
-                                    collection_ProgramPersonWithAccessToken(
-                                        existingRefs: Reference[] = [],
-                                        { readField }
-                                    ) {
-                                        deletedIds.forEach((x) => {
-                                            cache.evict({
-                                                id: x.id,
-                                                fieldName: "ManageProgramPeople_ProgramPersonWithAccessToken",
-                                                broadcast: true,
-                                            });
-                                        });
-                                        return existingRefs.filter((ref) => !deletedIds.includes(readField("id", ref)));
-                                    },
-                                },
-                            });
-                        }
-                    },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
             },
         }),
-        [deleteProgramPersons, deleteProgramPersonsResponse.loading]
+        [deleteProgramPersons, deleteProgramPersonsResponse.fetching]
     );
 
     const toast = useToast();
@@ -691,7 +674,7 @@ export default function ManageProgramPeople(): JSX.Element {
             {
                 render: function ImportButton(_selectedData: any) {
                     return (
-                        <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/content`}>
+                        <LinkButton colorScheme="purple" to={`${conferencePath}/manage/import/content`}>
                             Import
                         </LinkButton>
                     );
@@ -740,7 +723,6 @@ export default function ManageProgramPeople(): JSX.Element {
                                 "Conference Id": person.conferenceId,
                                 "Person Id": person.id,
                                 "Registrant Id": person.registrantId ?? "",
-                                "Externally Sourced Data Id": person.originatingDataId,
                                 Name: person.name,
                                 Affiliation: person.affiliation ?? "",
                                 Email: person.email ?? "",
@@ -751,7 +733,6 @@ export default function ManageProgramPeople(): JSX.Element {
                                     "Conference Id",
                                     "Person Id",
                                     "Registrant Id",
-                                    "Externally Sourced Data Id",
                                     "Name",
                                     "Affiliation",
                                     "Email",
@@ -770,11 +751,8 @@ export default function ManageProgramPeople(): JSX.Element {
                             .getMinutes()
                             .toString()
                             .padStart(2, "0")} - Midspace Program People.csv`;
-                        if (navigator.msSaveBlob) {
-                            navigator.msSaveBlob(csvData, fileName);
-                        } else {
-                            csvURL = window.URL.createObjectURL(csvData);
-                        }
+
+                        csvURL = window.URL.createObjectURL(csvData);
 
                         const tempLink = document.createElement("a");
                         tempLink.href = csvURL ?? "";
@@ -850,20 +828,13 @@ export default function ManageProgramPeople(): JSX.Element {
                 },
             },
         ],
-        [autoLink, conference.slug, data, green, greenAlt]
+        [autoLink, conferencePath, data, green, greenAlt]
     );
 
     const pageSizes = useMemo(() => [10, 20, 35, 50], []);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permissions_Permission_Enum.ConferenceManageAttendees,
-                Permissions_Permission_Enum.ConferenceManageRoles,
-                Permissions_Permission_Enum.ConferenceManageGroups,
-            ]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -871,7 +842,7 @@ export default function ManageProgramPeople(): JSX.Element {
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Program People
             </Heading>
-            {loadingAllProgramPersons && !allProgramPersons?.collection_ProgramPersonWithAccessToken ? (
+            {loadingAllProgramPersons && !allProgramPersons?.collection_ProgramPerson ? (
                 <></>
             ) : errorAllProgramPersons ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
@@ -879,10 +850,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 <></>
             )}
             <CRUDTable
-                data={
-                    !loadingAllProgramPersons &&
-                    (allProgramPersons?.collection_ProgramPersonWithAccessToken ? data : null)
-                }
+                data={!loadingAllProgramPersons && (allProgramPersons?.collection_ProgramPerson ? data : null)}
                 tableUniqueName="ManageConferenceProgramPeople"
                 row={row}
                 columns={columns}
@@ -893,6 +861,6 @@ export default function ManageProgramPeople(): JSX.Element {
                 buttons={buttons}
                 forceReload={forceReloadRef}
             />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

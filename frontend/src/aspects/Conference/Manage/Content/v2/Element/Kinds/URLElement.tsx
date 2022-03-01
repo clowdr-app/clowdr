@@ -1,14 +1,7 @@
 import { FormControl, FormLabel, Input, Text, useToast } from "@chakra-ui/react";
-import type {
-    ImageUrlBlob,
-    PaperUrlBlob,
-    PosterUrlBlob,
-    VideoUrlBlob,
-    ZoomBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    ElementBaseType
-} from "@clowdr-app/shared-types/build/content";
-import assert from "assert";
+import { assert } from "@midspace/assert";
+import type { ImageUrlBlob, PaperUrlBlob, PosterUrlBlob, VideoUrlBlob, ZoomBlob } from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Content_ElementType_Enum } from "../../../../../../../generated/graphql";
@@ -30,7 +23,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.Zoom,
     ],
     createDefault: (type, conferenceId, itemId) => {
-        assert(
+        assert.truthy(
             type === Content_ElementType_Enum.ImageUrl ||
                 type === Content_ElementType_Enum.PaperUrl ||
                 type === Content_ElementType_Enum.VideoUrl ||
@@ -161,7 +154,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
                                 };
                                 update(newData);
                                 setUrl(null);
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.error("Error saving URL", e);
                                 toast({
                                     status: "error",
@@ -217,7 +210,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
                                 };
                                 update(newData);
                                 setUrl(null);
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.error("Error saving URL title", e);
                                 toast({
                                     status: "error",

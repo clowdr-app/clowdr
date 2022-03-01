@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client/core";
-import { VideoBroadcastBlob } from "@clowdr-app/shared-types/build/content";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
+import type { Bunyan } from "@eropple/nestjs-bunyan";
+import { RootLogger } from "@eropple/nestjs-bunyan";
+import type { VideoBroadcastBlob } from "@midspace/shared-types/content";
 import { Injectable } from "@nestjs/common";
 import { add, addHours, addMinutes } from "date-fns";
 import * as R from "ramda";
+import type { LocalSchedule_EventDetailsFragment, LocalSchedule_EventFragment } from "../../generated/graphql";
 import {
-    LocalSchedule_EventDetailsFragment,
-    LocalSchedule_EventFragment,
     LocalSchedule_GetEventDocument,
     LocalSchedule_GetEventScheduleDocument,
     LocalSchedule_GetRoomsWithEventsStartingDocument,
@@ -298,41 +298,31 @@ export class LocalScheduleService {
 
         gql`
             query LocalSchedule_GetRoomsWithoutEvents($from: timestamptz, $to: timestamptz) {
-                room_Room(
+                video_ChannelStack(
                     where: {
+                        roomId: { _is_null: false }
                         _or: [
                             {
-                                _and: [
-                                    {
-                                        _not: {
-                                            events: {
-                                                startTime: { _gte: $from, _lte: $to }
-                                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
-                                            }
+                                room: {
+                                    _not: {
+                                        events: {
+                                            intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                            _or: [
+                                                { startTime: { _gte: $from, _lte: $to } }
+                                                { startTime: { _lte: $from }, endTime: { _gte: $from } }
+                                            ]
                                         }
                                     }
-                                    {
-                                        _not: {
-                                            events: {
-                                                startTime: { _lte: $from }
-                                                endTime: { _gte: $from }
-                                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
-                                            }
-                                        }
-                                    }
-                                    { channelStack: {} }
-                                ]
+                                }
                             }
-                            { channelStack: { channelStackUpdateJobs: { jobStatusName: { _in: [NEW, IN_PROGRESS] } } } }
+                            { channelStackUpdateJobs: { jobStatusName: { _in: [NEW, IN_PROGRESS] } } }
                         ]
                     }
                 ) {
                     id
                     conferenceId
-                    channelStack {
-                        id
-                        mediaLiveChannelId
-                    }
+                    roomId
+                    mediaLiveChannelId
                 }
             }
         `;
@@ -345,11 +335,11 @@ export class LocalScheduleService {
             },
         });
 
-        return result.data.room_Room.map((room) => ({
-            roomId: room.id,
-            conferenceId: room.conferenceId,
-            channelStackId: room.channelStack?.id ?? null,
-            mediaLiveChannelId: room.channelStack?.mediaLiveChannelId ?? null,
+        return result.data.video_ChannelStack.map((stack) => ({
+            roomId: stack.roomId as string,
+            conferenceId: stack.conferenceId,
+            channelStackId: stack.id,
+            mediaLiveChannelId: stack?.mediaLiveChannelId ?? null,
         }));
     }
 

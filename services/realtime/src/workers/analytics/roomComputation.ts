@@ -1,14 +1,16 @@
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import { gql } from "@urql/core";
+import type { Analytics_ListRoomsQuery, Analytics_ListRoomsQueryVariables } from "../../generated/graphql";
 import {
     Analytics_FetchRoomPresenceDocument,
     Analytics_InsertRoomPresenceDocument,
     Analytics_ListRoomsDocument,
 } from "../../generated/graphql";
-import { apolloClient } from "../../graphqlClient";
+import { logger } from "../../lib/logger";
 import { getVerifiedPageKey } from "../../lib/presence";
 import { ModelName, onBatchUpdate } from "../../rabbitmq/analytics/batchUpdate";
 
-console.info("Analytics computation worker running");
+logger.info("Analytics computation worker running");
 
 gql`
     query Analytics_ListRooms($conferenceId: uuid!) {
@@ -55,16 +57,15 @@ async function onRoomBatchUpdate(conferenceId: string, backdateDistance?: number
             : 7 * 24 * 60 * 60 * 1000);
     const dateCutoff = new Date(Date.now() - backdateDistance).toISOString();
 
-    console.log(`Rooms Batch Update: Conference Id ${conferenceId} (stats going back to ${dateCutoff})`);
+    logger.info(`Rooms Batch Update: Conference Id ${conferenceId} (stats going back to ${dateCutoff})`);
 
-    const roomsResponse = await apolloClient?.query({
-        query: Analytics_ListRoomsDocument,
-        variables: {
+    const roomsResponse = await gqlClient
+        ?.query<Analytics_ListRoomsQuery, Analytics_ListRoomsQueryVariables>(Analytics_ListRoomsDocument, {
             conferenceId,
-        },
-    });
+        })
+        .toPromise();
 
-    if (roomsResponse && roomsResponse.data.conference_Conference_by_pk) {
+    if (roomsResponse?.data && roomsResponse.data.conference_Conference_by_pk) {
         const conferenceSlug = roomsResponse.data.conference_Conference_by_pk.slug;
         const roomIds = roomsResponse.data.room_Room.map((x) => x.id);
         const roomHashes = roomIds.map((roomId) => {
@@ -78,22 +79,21 @@ async function onRoomBatchUpdate(conferenceId: string, backdateDistance?: number
         let lastResponseSize = Number.POSITIVE_INFINITY;
         let offset = 0;
         while (lastResponseSize > 0) {
-            const statsResponse = await apolloClient?.query({
-                query: Analytics_FetchRoomPresenceDocument,
-                variables: {
+            const statsResponse = await gqlClient
+                ?.query(Analytics_FetchRoomPresenceDocument, {
                     limit: batchSize,
                     offset,
                     dateCutoff,
-                },
-            });
+                })
+                .toPromise();
             offset += batchSize;
             lastResponseSize = statsResponse?.data.analytics_AppStats.length ?? 0;
 
-            if (statsResponse && statsResponse.data.analytics_AppStats.length > 0) {
+            if (statsResponse?.data && statsResponse.data.analytics_AppStats.length > 0) {
                 const firstSet = statsResponse.data.analytics_AppStats[0];
                 const lastSet = statsResponse.data.analytics_AppStats[statsResponse.data.analytics_AppStats.length - 1];
                 const numSets = statsResponse.data.analytics_AppStats.length;
-                console.log(
+                logger.info(
                     `Rooms Batch Update: Conference Id ${conferenceId}. Processing stat sets for: ${firstSet.created_at} to ${lastSet.created_at} (${numSets} sets) (Offset: ${offset}, Batch size: ${batchSize}, Date cutoff: ${dateCutoff})`
                 );
 
@@ -104,18 +104,18 @@ async function onRoomBatchUpdate(conferenceId: string, backdateDistance?: number
                                 roomHashes.map(async (roomHash) => {
                                     try {
                                         const stat = statSet.pages[`PresenceList:${roomHash.hash}`];
-                                        if (typeof stat === "number") {
-                                            await apolloClient?.mutate({
-                                                mutation: Analytics_InsertRoomPresenceDocument,
-                                                variables: {
+                                        if (typeof stat === "number" && stat > 0) {
+                                            await gqlClient
+                                                ?.mutation(Analytics_InsertRoomPresenceDocument, {
                                                     roomId: roomHash.id,
                                                     createdAt: statSet.created_at,
                                                     count: stat,
-                                                },
-                                            });
+                                                })
+                                                .toPromise();
                                         }
                                     } catch (error: any) {
-                                        console.error(
+                                        logger.error(
+                                            { error },
                                             "Error processing room statistic: " +
                                                 conferenceId +
                                                 " @ " +
@@ -130,7 +130,8 @@ async function onRoomBatchUpdate(conferenceId: string, backdateDistance?: number
                             );
                         }
                     } catch (error: any) {
-                        console.error(
+                        logger.error(
+                            { error },
                             "Error processing room statistics set: " + conferenceId + " @ " + statSet.created_at
                         );
                     }
@@ -138,7 +139,7 @@ async function onRoomBatchUpdate(conferenceId: string, backdateDistance?: number
             }
         }
 
-        console.log(`Rooms Batch Update: Conference Id ${conferenceId}: Done processing stat sets.`);
+        logger.info(`Rooms Batch Update: Conference Id ${conferenceId}: Done processing stat sets.`);
     }
 }
 

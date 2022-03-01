@@ -1,6 +1,7 @@
-import { gql } from "@apollo/client";
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Button, useToast } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
 import { useItem_CreateRoomMutation } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
@@ -26,7 +27,7 @@ export function CreateRoomButton({
 } & ButtonProps): JSX.Element {
     const conference = useConference();
     const toast = useToast();
-    const [createVideoChatMutation] = useItem_CreateRoomMutation();
+    const [, createVideoChatMutation] = useItem_CreateRoomMutation();
     const [creatingVideoChat, setCreatingVideoChat] = useState<boolean>(false);
     const createVideoChat = useCallback(async () => {
         if (!groupId) {
@@ -35,19 +36,26 @@ export function CreateRoomButton({
 
         try {
             setCreatingVideoChat(true);
-            const { data } = await createVideoChatMutation({
-                variables: {
+            const { data } = await createVideoChatMutation(
+                {
                     conferenceId: conference.id,
                     itemId: groupId,
                 },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                }
+            );
 
             if (!data?.createItemRoom || !data.createItemRoom.roomId) {
                 throw new Error(`No data returned: ${data?.createItemRoom?.message}`);
             }
 
             refetch?.();
-        } catch (e) {
+        } catch (e: any) {
             toast({
                 status: "error",
                 title: "Failed to create room.",

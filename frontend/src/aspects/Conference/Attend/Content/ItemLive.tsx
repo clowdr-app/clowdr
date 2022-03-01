@@ -3,21 +3,21 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type {
     ItemElements_ItemDataFragment,
     ItemEventFragment,
-    ItemPage_ItemRoomsFragment} from "../../../../generated/graphql";
-import {
-    Content_ItemType_Enum
+    ItemPage_ItemRoomsFragment,
 } from "../../../../generated/graphql";
+import { Content_ItemType_Enum } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import usePolling from "../../../Generic/usePolling";
-import FAIcon from "../../../Icons/FAIcon";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import usePolling from "../../../Hooks/usePolling";
 import PageCountText from "../../../Realtime/PageCountText";
-import { useConference } from "../../useConference";
 
 export function ItemLive({
     itemData,
 }: {
     itemData: ItemElements_ItemDataFragment & { events: readonly ItemEventFragment[] } & ItemPage_ItemRoomsFragment;
 }): JSX.Element {
+    const { conferencePath } = useAuthParameters();
     const [liveEvents, setLiveEvents] = useState<ItemEventFragment[] | null>(null);
     // const [nextEvent, setNextEvent] = useState<ItemEventFragment | null>(null);
     // const [now, setNow] = useState<number>(Date.now());
@@ -38,16 +38,14 @@ export function ItemLive({
     usePolling(computeLiveEvent, 30000, true);
     useEffect(() => computeLiveEvent(), [computeLiveEvent]);
 
-    const currentRoom = useMemo(() => (itemData.rooms.length > 0 ? itemData.rooms[0] : undefined), [itemData.rooms]);
-
-    const conference = useConference();
+    const currentRoom = useMemo(() => (itemData.room ? itemData.room : undefined), [itemData.room]);
 
     return (
         <Flex mb={2} flexWrap="wrap">
             {currentRoom ? (
                 <LinkButton
                     width="100%"
-                    to={`/conference/${conference.slug}/room/${currentRoom.id}`}
+                    to={`${conferencePath}/room/${currentRoom.id}`}
                     size="lg"
                     colorScheme="PrimaryActionButton"
                     height="auto"
@@ -73,14 +71,14 @@ export function ItemLive({
                                 </>
                             )}
                         </Text>
-                        <PageCountText path={`/conference/${conference.slug}/room/${currentRoom.id}`} />
+                        <PageCountText path={`${conferencePath}/room/${currentRoom.id}`} />
                     </VStack>
                 </LinkButton>
             ) : undefined}
             {liveEvents?.map((event) => (
                 <LinkButton
                     width="100%"
-                    to={`/conference/${conference.slug}/room/${event.roomId}`}
+                    to={`${conferencePath}/room/${event.roomId}`}
                     key={event.id}
                     size="lg"
                     colorScheme="LiveActionButton"

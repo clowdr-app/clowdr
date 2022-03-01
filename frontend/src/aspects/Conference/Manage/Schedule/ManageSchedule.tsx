@@ -1,5 +1,3 @@
-import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -39,6 +37,8 @@ import {
     useDisclosure,
     VisuallyHidden,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import { DateTime } from "luxon";
 import Papa from "papaparse";
 import type { LegacyRef, Ref } from "react";
@@ -54,8 +54,6 @@ import type {
 } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
-    EventInfoFragmentDoc,
-    Permissions_Permission_Enum,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     useDeleteEventInfosMutation,
@@ -64,7 +62,8 @@ import {
     useSelectWholeScheduleQuery,
     useUpdateEventInfoMutation,
 } from "../../../../generated/graphql";
-import { useAppSettings } from "../../../App/AppSettingsProvider";
+import { useAppSettings } from "../../../App";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import {
@@ -84,10 +83,11 @@ import type {
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { useRealTime } from "../../../Generic/useRealTime";
-import FAIcon from "../../../Icons/FAIcon";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { makeContext } from "../../../GQL/make-context";
+import { useRealTime } from "../../../Hooks/useRealTime";
+import { useTitle } from "../../../Hooks/useTitle";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import BatchAddEventPeople from "./BatchAddEventPeople";
 import ContinuationsEditor from "./ContinuationsEditor";
@@ -95,6 +95,126 @@ import EditStreamTextIntegration from "./EditStreamTextIntegration";
 import { EventProgramPersonsModal, requiresEventPeople } from "./EventProgramPersonsModal";
 
 gql`
+    fragment RoomInfo on room_Room {
+        capacity
+        conferenceId
+        currentModeName
+        id
+        name
+        priority
+        itemId
+        managementModeName
+        isProgramRoom
+    }
+
+    fragment ElementInfo on content_Element {
+        conferenceId
+        itemId
+        typeName
+        data
+        id
+        isHidden
+        layoutData
+        name
+        uploadsRemaining
+    }
+
+    fragment ProgramPersonInfo on collection_ProgramPerson {
+        id
+        conferenceId
+        name
+        affiliation
+        email
+        registrantId
+    }
+
+    fragment ItemTagInfo on content_ItemTag {
+        id
+        tagId
+        itemId
+    }
+
+    fragment ItemExhibitionInfo on content_ItemExhibition {
+        id
+        itemId
+        exhibitionId
+        priority
+        layout
+    }
+
+    fragment ItemPersonInfo on content_ItemProgramPerson {
+        id
+        itemId
+        personId
+        priority
+        roleName
+    }
+
+    fragment ItemFullNestedInfo on content_Item {
+        id
+        conferenceId
+        typeName
+        title
+        shortTitle
+        elements {
+            ...ElementInfo
+        }
+        itemTags {
+            ...ItemTagInfo
+        }
+        itemExhibitions {
+            ...ItemExhibitionInfo
+        }
+        itemPeople {
+            ...ItemPersonInfo
+        }
+        room {
+            id
+            created_at
+        }
+    }
+
+    fragment TagInfo on collection_Tag {
+        id
+        conferenceId
+        colour
+        name
+        priority
+    }
+
+    fragment ExhibitionInfo on collection_Exhibition {
+        id
+        conferenceId
+        colour
+        name
+        priority
+        isHidden
+    }
+
+    query SelectWholeSchedule($conferenceId: uuid!) {
+        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
+            ...RoomInfo
+        }
+        schedule_Event(
+            where: { conferenceId: { _eq: $conferenceId } }
+            order_by: [{ startTime: asc }, { endTime: asc }]
+        ) {
+            ...EventInfo
+        }
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...TagInfo
+        }
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ExhibitionInfo
+        }
+        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ItemFullNestedInfo
+        }
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ProgramPersonInfo
+        }
+    }
+
     query ManageSchedule_ShufflePeriods($conferenceId: uuid!, $now: timestamptz!) {
         room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, endAt: { _gt: $now } }) {
             ...ShufflePeriodInfo
@@ -104,6 +224,8 @@ gql`
     fragment ShufflePeriodInfo on room_ShufflePeriod {
         id
         name
+        conferenceId
+        endAt
     }
 
     mutation InsertEventInfo(
@@ -111,7 +233,6 @@ gql`
         $roomId: uuid!
         $conferenceId: uuid!
         $intendedRoomModeName: room_Mode_enum!
-        $originatingDataId: uuid = null
         $name: String!
         $startTime: timestamptz!
         $durationSeconds: Int!
@@ -128,7 +249,6 @@ gql`
                 roomId: $roomId
                 conferenceId: $conferenceId
                 intendedRoomModeName: $intendedRoomModeName
-                originatingDataId: $originatingDataId
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
@@ -160,7 +280,6 @@ gql`
         $eventId: uuid!
         $roomId: uuid!
         $intendedRoomModeName: room_Mode_enum!
-        $originatingDataId: uuid = null
         $name: String!
         $startTime: timestamptz!
         $durationSeconds: Int!
@@ -175,7 +294,6 @@ gql`
             _set: {
                 roomId: $roomId
                 intendedRoomModeName: $intendedRoomModeName
-                originatingDataId: $originatingDataId
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
@@ -247,24 +365,47 @@ const liveStreamRoomModes: Room_Mode_Enum[] = [
 
 function EditableScheduleTable(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const {
         developer: { allowOngoingEventCreation },
     } = useAppSettings();
-    const wholeSchedule = useSelectWholeScheduleQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const wholeScheduleContext = useMemo(
+        () => ({
+            ...context,
+            additionalTypenames: [
+                "room_Room",
+                "schedule_Event",
+                "collection_Tag",
+                "collection_Exhibition",
+                "content_Item",
+                "collection_ProgramPerson",
+            ],
+        }),
+        [context]
+    );
+    const [wholeSchedule] = useSelectWholeScheduleQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+        requestPolicy: "cache-and-network",
+        context: wholeScheduleContext,
     });
     const data = useMemo(() => [...(wholeSchedule.data?.schedule_Event ?? [])], [wholeSchedule.data?.schedule_Event]);
 
     const shufflePeriodsNow = useMemo(() => new Date().toISOString(), []);
-    const shufflePeriodsResponse = useManageSchedule_ShufflePeriodsQuery({
+    const [shufflePeriodsResponse] = useManageSchedule_ShufflePeriodsQuery({
         variables: {
             conferenceId: conference.id,
             now: shufflePeriodsNow,
         },
+        context,
     });
     const shufflePeriodOptions = useMemo(
         () =>
@@ -286,13 +427,10 @@ function EditableScheduleTable(): JSX.Element {
                 ? [...wholeSchedule.data.room_Room]
                       .filter(
                           (room) =>
-                              (!room.originatingItemId ||
+                              (!room.itemId ||
                                   wholeSchedule.data?.content_Item.some(
-                                      (x) =>
-                                          x.id === room.originatingItemId &&
-                                          x.typeName === Content_ItemType_Enum.Sponsor
+                                      (x) => x.id === room.itemId && x.typeName === Content_ItemType_Enum.Sponsor
                                   )) &&
-                              !room.originatingEventId &&
                               room.managementModeName !== Room_ManagementMode_Enum.Dm &&
                               room.managementModeName !== Room_ManagementMode_Enum.Managed
                       )
@@ -358,9 +496,9 @@ function EditableScheduleTable(): JSX.Element {
     } = useDisclosure();
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-    const [insertEvent, insertEventResponse] = useInsertEventInfoMutation();
-    const [updateEvent, updateEventResponse] = useUpdateEventInfoMutation();
-    const [deleteEvents, deleteEventsResponse] = useDeleteEventInfosMutation();
+    const [insertEventResponse, insertEvent] = useInsertEventInfoMutation();
+    const [updateEventResponse, updateEvent] = useUpdateEventInfoMutation();
+    const [deleteEventsResponse, deleteEvents] = useDeleteEventInfosMutation();
 
     const columns: Array<ColumnSpecification<EventInfoFragment>> = React.useMemo(
         () => [
@@ -551,7 +689,7 @@ function EditableScheduleTable(): JSX.Element {
                             {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/room/${value.id}`}
+                                    to={`${conferencePath}/room/${value.id}`}
                                     size="xs"
                                     aria-label="Go to room in new tab"
                                 >
@@ -758,7 +896,7 @@ function EditableScheduleTable(): JSX.Element {
                             {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/item/${value.id}`}
+                                    to={`${conferencePath}/item/${value.id}`}
                                     size="xs"
                                     aria-label="Go to content in new tab"
                                 >
@@ -843,7 +981,7 @@ function EditableScheduleTable(): JSX.Element {
                             {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/exhibition/${value.id}`}
+                                    to={`${conferencePath}/exhibition/${value.id}`}
                                     size="xs"
                                     aria-label="Go to exhibition in new tab"
                                 >
@@ -926,7 +1064,7 @@ function EditableScheduleTable(): JSX.Element {
                             {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/manage/shuffle`}
+                                    to={`${conferencePath}/manage/shuffle`}
                                     size="xs"
                                     aria-label="Go to shuffle period in new tab"
                                 >
@@ -1049,13 +1187,13 @@ function EditableScheduleTable(): JSX.Element {
             wholeSchedule.data?.room_Room,
             wholeSchedule.data?.content_Item,
             wholeSchedule.data?.collection_Exhibition,
-            conference.slug,
             roomOptions,
             roomModeOptions,
             itemOptions,
             exhibitionOptions,
             shufflePeriodsResponse.data?.room_ShufflePeriod,
             shufflePeriodOptions,
+            conferencePath,
         ]
     );
 
@@ -1187,7 +1325,7 @@ function EditableScheduleTable(): JSX.Element {
         () =>
             roomOptions && roomOptions.length > 0
                 ? {
-                      ongoing: insertEventResponse.loading,
+                      ongoing: insertEventResponse.fetching,
                       generateDefaults: () => ({
                           id: uuidv4(),
                           durationSeconds: 300,
@@ -1207,14 +1345,13 @@ function EditableScheduleTable(): JSX.Element {
                           itemId: null,
                           exhibitionId: null,
                           shufflePeriodId: null,
-                          originatingDataId: null,
                           enableRecording: true,
                           automaticParticipationSurvey: false,
                       }),
                       makeWhole: (d) => d as EventInfoFragment,
                       start: (record) => {
-                          insertEvent({
-                              variables: {
+                          insertEvent(
+                              {
                                   ...record,
                                   insertContinuation:
                                       (record.intendedRoomModeName === Room_Mode_Enum.Presentation ||
@@ -1223,37 +1360,19 @@ function EditableScheduleTable(): JSX.Element {
                                           ? true
                                           : false,
                               },
-                              update: (cache, { data: _data }) => {
-                                  if (_data?.insert_schedule_Event_one) {
-                                      const data = _data.insert_schedule_Event_one;
-                                      cache.modify({
-                                          fields: {
-                                              schedule_Event(existingRefs: Reference[] = [], { readField }) {
-                                                  const newRef = cache.writeFragment({
-                                                      data: {
-                                                          ...data,
-                                                          endTime: new Date(
-                                                              Date.parse(data.startTime) + 1000 * data.durationSeconds
-                                                          ).toISOString(),
-                                                      },
-                                                      fragment: EventInfoFragmentDoc,
-                                                      fragmentName: "EventInfo",
-                                                  });
-                                                  if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                      return existingRefs;
-                                                  }
-
-                                                  return [...existingRefs, newRef];
-                                              },
-                                          },
-                                      });
-                                  }
-                              },
-                          });
+                              {
+                                  fetchOptions: {
+                                      headers: {
+                                          [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                      },
+                                  },
+                                  additionalTypenames: ["schedule_Event"],
+                              }
+                          );
                       },
                   }
                 : undefined,
-        [conference.id, insertEvent, insertEventResponse.loading, roomOptions]
+        [conference.id, insertEvent, insertEventResponse.fetching, roomOptions]
     );
 
     const update:
@@ -1263,7 +1382,7 @@ function EditableScheduleTable(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: updateEventResponse.loading,
+            ongoing: updateEventResponse.fetching,
             start: (record) => {
                 const variables: any = {
                     ...record,
@@ -1272,38 +1391,19 @@ function EditableScheduleTable(): JSX.Element {
                 delete variables.id;
                 delete variables.endTime;
                 delete variables.eventPeople;
-                delete variables.eventTags;
                 delete variables.conferenceId;
                 delete variables.__typename;
-                updateEvent({
-                    variables,
-                    optimisticResponse: {
-                        update_schedule_Event_by_pk: record,
+                updateEvent(variables, {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
                     },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.update_schedule_Event_by_pk) {
-                            const data = _data.update_schedule_Event_by_pk;
-                            cache.modify({
-                                fields: {
-                                    schedule_Event(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: EventInfoFragmentDoc,
-                                            fragmentName: "EventInfo",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
-                    },
+                    additionalTypenames: ["schedule_Event"],
                 });
             },
         }),
-        [updateEvent, updateEventResponse.loading]
+        [updateEvent, updateEventResponse.fetching]
     );
 
     const deleteProps:
@@ -1313,29 +1413,24 @@ function EditableScheduleTable(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: deleteEventsResponse.loading,
+            ongoing: deleteEventsResponse.fetching,
             start: (keys) => {
-                deleteEvents({
-                    variables: {
+                deleteEvents(
+                    {
                         eventIds: keys,
                     },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.delete_schedule_Event) {
-                            const data = _data.delete_schedule_Event;
-                            const deletedIds = data.returning.map((x) => x.id);
-                            deletedIds.forEach((x) => {
-                                cache.evict({
-                                    id: x.id,
-                                    fieldName: "EventInfo",
-                                    broadcast: true,
-                                });
-                            });
-                        }
-                    },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                        additionalTypenames: ["schedule_Event"],
+                    }
+                );
             },
         }),
-        [deleteEvents, deleteEventsResponse.loading]
+        [deleteEvents, deleteEventsResponse.fetching]
     );
 
     const batchAddPeopleDisclosure = useDisclosure();
@@ -1347,7 +1442,7 @@ function EditableScheduleTable(): JSX.Element {
             {
                 render: function ImportButton(_selectedData) {
                     return (
-                        <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/schedule`}>
+                        <LinkButton colorScheme="purple" to={`${conferencePath}/manage/import/program`}>
                             Import
                         </LinkButton>
                     );
@@ -1360,7 +1455,6 @@ function EditableScheduleTable(): JSX.Element {
                             dataToExport.map((event) => ({
                                 "Conference Id": event.conferenceId,
                                 "Event Id": event.id,
-                                "Externally Sourced Data Id": event.originatingDataId,
 
                                 Start: new Date(event.startTime).toISOString(),
                                 End: event.endTime
@@ -1393,7 +1487,7 @@ function EditableScheduleTable(): JSX.Element {
                                 "Shuffle Period Id": event.shufflePeriodId ?? "",
 
                                 People: event.eventPeople.map((eventPerson) => {
-                                    const person = wholeSchedule.data?.collection_ProgramPersonWithAccessToken.find(
+                                    const person = wholeSchedule.data?.collection_ProgramPerson.find(
                                         (person) => person.id === eventPerson.personId
                                     );
                                     return `${eventPerson.personId} (${eventPerson.roleName}) [${
@@ -1405,7 +1499,7 @@ function EditableScheduleTable(): JSX.Element {
                                     }]`;
                                 }),
                                 "Registered People": event.eventPeople.flatMap((eventPerson) => {
-                                    const person = wholeSchedule.data?.collection_ProgramPersonWithAccessToken.find(
+                                    const person = wholeSchedule.data?.collection_ProgramPerson.find(
                                         (person) => person.id === eventPerson.personId
                                     );
                                     return person?.registrantId
@@ -1421,24 +1515,22 @@ function EditableScheduleTable(): JSX.Element {
                                         : [];
                                 }),
 
-                                "Participate Link": `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
+                                "Participate Link": `${window.location.origin}${conferencePath}/room/${event.roomId}`,
                                 "Info link": event.itemId
-                                    ? `${window.location.origin}/conference/${conference.slug}/item/${event.itemId}`
+                                    ? `${window.location.origin}${conferencePath}/item/${event.itemId}`
                                     : event.exhibitionId
-                                    ? `${window.location.origin}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
-                                    : `${window.location.origin}/conference/${conference.slug}/schedule`,
-                                "Room Link": `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
+                                    ? `${window.location.origin}${conferencePath}/exhibition/${event.exhibitionId}`
+                                    : `${window.location.origin}${conferencePath}/schedule`,
+                                "Room Link": `${window.location.origin}${conferencePath}/room/${event.roomId}`,
                                 "Content Link": event.itemId
-                                    ? `${window.location.origin}/conference/${conference.slug}/item/${event.itemId}`
+                                    ? `${window.location.origin}${conferencePath}/item/${event.itemId}`
                                     : "",
                                 "Exhibition Link": event.exhibitionId
-                                    ? `${window.location.origin}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
+                                    ? `${window.location.origin}${conferencePath}/exhibition/${event.exhibitionId}`
                                     : "",
                                 "Shuffle Link": event.shufflePeriodId
-                                    ? `${window.location.origin}/conference/${conference.slug}/shuffle`
+                                    ? `${window.location.origin}${conferencePath}/shuffle`
                                     : "",
-
-                                "Tag Ids": event.eventTags.map((eventTag) => eventTag.tagId),
 
                                 "Recording Enabled": event.enableRecording,
                                 "Automatic Participation Survey Enabled": event.automaticParticipationSurvey,
@@ -1447,7 +1539,6 @@ function EditableScheduleTable(): JSX.Element {
                                 columns: [
                                     "Conference Id",
                                     "Event Id",
-                                    "Externally Sourced Data Id",
                                     "Start",
                                     "End",
                                     "Duration (seconds)",
@@ -1485,11 +1576,8 @@ function EditableScheduleTable(): JSX.Element {
                             .getMinutes()
                             .toString()
                             .padStart(2, "0")} - Midspace Schedule.csv`;
-                        if (navigator.msSaveBlob) {
-                            navigator.msSaveBlob(csvData, fileName);
-                        } else {
-                            csvURL = window.URL.createObjectURL(csvData);
-                        }
+
+                        csvURL = window.URL.createObjectURL(csvData);
 
                         const tempLink = document.createElement("a");
                         tempLink.href = csvURL ?? "";
@@ -1558,12 +1646,12 @@ function EditableScheduleTable(): JSX.Element {
             },
         ],
         [
-            conference.slug,
             wholeSchedule.data?.room_Room,
             wholeSchedule.data?.content_Item,
             wholeSchedule.data?.collection_Exhibition,
             wholeSchedule.data?.schedule_Event,
-            wholeSchedule.data?.collection_ProgramPersonWithAccessToken,
+            wholeSchedule.data?.collection_ProgramPerson,
+            conferencePath,
         ]
     );
 
@@ -1574,11 +1662,7 @@ function EditableScheduleTable(): JSX.Element {
                     <FAIcon icon="clock" iconStyle="s" mr={2} />
                     <Text as="span">Timezone: {localTimeZone}</Text>
                 </Center>
-                <LinkButton
-                    linkProps={{ m: "3px" }}
-                    to={`/conference/${conference.slug}/manage/rooms`}
-                    colorScheme="yellow"
-                >
+                <LinkButton linkProps={{ m: "3px" }} to={`${conferencePath}/manage/rooms`} colorScheme="yellow">
                     Manage Rooms
                 </LinkButton>
                 <Button onClick={batchAddPeopleDisclosure.onOpen}>Add people to events (batch)</Button>
@@ -1593,7 +1677,7 @@ function EditableScheduleTable(): JSX.Element {
             ) : undefined}
             <CRUDTable
                 tableUniqueName="ManageConferenceSchedule"
-                data={!wholeSchedule.loading && (wholeSchedule.data?.schedule_Event ? data : null)}
+                data={!wholeSchedule.fetching && (wholeSchedule.data?.schedule_Event ? data : null)}
                 columns={columns}
                 row={row}
                 edit={edit}
@@ -1619,7 +1703,7 @@ function EditableScheduleTable(): JSX.Element {
             />
             <EventSecondaryEditor
                 yellowC={yellow}
-                programPeople={wholeSchedule.data?.collection_ProgramPersonWithAccessToken ?? []}
+                programPeople={wholeSchedule.data?.collection_ProgramPerson ?? []}
                 events={wholeSchedule.data?.schedule_Event ?? []}
                 index={editingIndex}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}
@@ -1643,10 +1727,7 @@ export default function ManageSchedule(): JSX.Element {
     const title = useTitle(`Manage schedule of ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="4xl">
                 Manage {conference.shortName}
@@ -1655,7 +1736,7 @@ export default function ManageSchedule(): JSX.Element {
                 Events
             </Heading>
             <EditableScheduleTable />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }
 

@@ -14,147 +14,108 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      _or:
-      - _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_NAME
-      - conference:
-          createdBy:
-            _eq: X-Hasura-User-Id
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
     columns:
     - conferenceId
     - key
     - value
-  role: user
+    - created_at
+    - updated_at
+  role: conference-organizer
 select_permissions:
 - permission:
     columns:
-    - conferenceId
-    - key
     - value
-    filter:
-      key:
-        _in:
-        - CLOWDR_APP_VERSION
-        - REGISTRATION_URL
-        - SUPPORT_ADDRESS
-        - SCHEDULE_VIEW_VERSION
-        - SPONSORS_LABEL
-        - DISABLE_NEARBY_EVENTS
-        - THEME_COMPONENT_COLORS
-        - DISABLE_ALL_EVENTS_FOR_ITEM
-        - VISIBLE_EXHIBITIONS_LABEL
-        - HIDDEN_EXHIBITIONS_LABEL
-        - FORCE_MENU_SPONSORS_LINK
-        - EVENT_BOX_HIDE_EXHIBITION_PEOPLE
-  role: unauthenticated
-- permission:
-    columns:
-    - conferenceId
+    - key
     - created_at
-    - key
     - updated_at
-    - value
+    - conferenceId
     filter:
-      _or:
-      - _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_NAME
-      - conference:
-          createdBy:
-            _eq: X-Hasura-User-Id
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
       - key:
           _in:
           - CLOWDR_APP_VERSION
           - REGISTRATION_URL
           - SUPPORT_ADDRESS
           - SCHEDULE_VIEW_VERSION
-          - ENABLE_BACKSTAGE_STREAM_PREVIEW
           - SPONSORS_LABEL
           - DISABLE_NEARBY_EVENTS
+          - THEME_COMPONENT_COLORS
+          - DISABLE_ALL_EVENTS_FOR_ITEM
+          - VISIBLE_EXHIBITIONS_LABEL
+          - HIDDEN_EXHIBITIONS_LABEL
+          - FORCE_MENU_SPONSORS_LINK
+          - ENABLE_BACKSTAGE_STREAM_PREVIEW
           - VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES
           - MY_BACKSTAGES_NOTICE
+  role: attendee
+- permission:
+    columns:
+    - value
+    - key
+    - created_at
+    - updated_at
+    - conferenceId
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - value
+    - key
+    - created_at
+    - updated_at
+    - conferenceId
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: subconference-organizer
+- permission:
+    columns:
+    - value
+    - key
+    - created_at
+    - updated_at
+    - conferenceId
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - key:
+          _in:
+          - CLOWDR_APP_VERSION
+          - REGISTRATION_URL
+          - SUPPORT_ADDRESS
+          - SCHEDULE_VIEW_VERSION
+          - SPONSORS_LABEL
+          - DISABLE_NEARBY_EVENTS
           - THEME_COMPONENT_COLORS
           - DISABLE_ALL_EVENTS_FOR_ITEM
           - VISIBLE_EXHIBITIONS_LABEL
           - HIDDEN_EXHIBITIONS_LABEL
           - FORCE_MENU_SPONSORS_LINK
           - EVENT_BOX_HIDE_EXHIBITION_PEOPLE
-  role: user
+  role: unauthenticated
 update_permissions:
 - permission:
     check: null
     columns:
     - value
+    - key
+    - created_at
+    - updated_at
+    - conferenceId
     filter:
-      _or:
-      - _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_NAME
-      - conference:
-          createdBy:
-            _eq: X-Hasura-User-Id
-  role: user
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer
 delete_permissions:
 - permission:
     filter:
-      _or:
-      - _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_NAME
-      - conference:
-          createdBy:
-            _eq: X-Hasura-User-Id
-  role: user
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer

@@ -2,17 +2,17 @@ import { Heading, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Redirect } from "react-router-dom";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
+import FAIcon from "../Chakra/FAIcon";
 import { LinkButton } from "../Chakra/LinkButton";
-import FAIcon from "../Icons/FAIcon";
+import { useTitle } from "../Hooks/useTitle";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import { useTitle } from "../Utils/useTitle";
 
 export default function LoggedOutPage(): JSX.Element {
     const title = useTitle("Logged Out");
     const mUser = useMaybeCurrentUser();
 
     if (mUser.loading) {
-        return <CenteredSpinner spinnerProps={{ label: "Loading user info" }} />;
+        return <CenteredSpinner spinnerProps={{ label: "Loading user info" }} caller="LoggedOutPage:15" />;
     }
 
     if (mUser.user) {

@@ -1,6 +1,21 @@
-import { gql } from "@apollo/client";
-import { Box, Flex, Heading, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
-import assert from "assert";
+import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
+    Box,
+    Button,
+    Center,
+    Flex,
+    Heading,
+    Text,
+    Tooltip,
+    useColorMode,
+    useColorModeValue,
+    useToken,
+} from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
+import { gql } from "@urql/core";
 import { DateTime } from "luxon";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
@@ -15,12 +30,16 @@ import type {
     Schedule_SelectSummariesQuery,
     Schedule_TagFragment,
 } from "../../../../../generated/graphql";
-import { Permissions_Permission_Enum, useSchedule_SelectSummariesQuery } from "../../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { useTitle } from "../../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import {
+    useSchedule_SelectSummariesQuery,
+    useStarredEvents_SelectEventIdsQuery,
+} from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
+import QueryWrapper from "../../../../GQL/QueryWrapper";
+import { useTitle } from "../../../../Hooks/useTitle";
+import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
+import { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import type { TimelineEvent } from "./DayList";
 import DayList from "./DayList";
 import DownloadCalendarButton from "./DownloadCalendarButton";
@@ -38,6 +57,7 @@ gql`
         name
         layoutData
         data
+        itemId
     }
 
     fragment Schedule_ProgramPerson on collection_ProgramPerson {
@@ -45,10 +65,12 @@ gql`
         name
         affiliation
         registrantId
+        conferenceId
     }
 
     fragment Schedule_ItemPerson on content_ItemProgramPerson {
         id
+        itemId
         personId
         priority
         roleName
@@ -59,6 +81,7 @@ gql`
         title
         shortTitle
         typeName
+        conferenceId
         itemTags {
             id
             itemId
@@ -79,9 +102,6 @@ gql`
         abstractElements: elements(where: { typeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {
             ...Schedule_Element
         }
-        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-            ...Schedule_ItemPerson
-        }
     }
 
     query Schedule_SelectItem($id: uuid!) {
@@ -92,6 +112,7 @@ gql`
 
     fragment Schedule_EventSummary on schedule_Event {
         id
+        conferenceId
         roomId
         intendedRoomModeName
         name
@@ -108,6 +129,7 @@ gql`
         currentModeName
         priority
         managementModeName
+        conferenceId
     }
 
     fragment Schedule_Tag on collection_Tag {
@@ -115,6 +137,7 @@ gql`
         name
         colour
         priority
+        conferenceId
     }
 
     query Schedule_SelectSummaries($conferenceId: uuid!) {
@@ -134,6 +157,15 @@ gql`
         }
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...Schedule_Tag
+        }
+    }
+
+    query StarredEvents_SelectEventIds($registrantId: uuid!) {
+        schedule_StarredEvent(where: { registrantId: { _eq: $registrantId } }) {
+            ...StarredEvent
+        }
+        schedule_Event(where: { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
+            id
         }
     }
 `;
@@ -291,7 +323,10 @@ function assignColumns(frames: Frame[]): Frame[] {
                 (x) => x.session.room?.priority ?? Number.POSITIVE_INFINITY,
                 currentFrame.items.filter((x) => x.column === -1)
             );
-            assert(currentFrameUnassignedItems.length <= availableColumns.length, "Hmm, something weird happened!");
+            assert.truthy(
+                currentFrameUnassignedItems.length <= availableColumns.length,
+                "Hmm, something weird happened!"
+            );
             let nextColIdx = 0;
             for (const item of currentFrameUnassignedItems) {
                 item.column = availableColumns[nextColIdx++];
@@ -464,7 +499,7 @@ function ScheduleFrame({
 
 export function ScheduleInner({
     rooms,
-    events: rawEvents,
+    events: inputEvents,
     items,
     people,
     tags,
@@ -479,6 +514,26 @@ export function ScheduleInner({
     titleStr?: string;
     noEventsText?: string;
 }): JSX.Element {
+    const registrant = useMaybeCurrentRegistrant();
+    const [filterToStarredEvents, setFilterToStarredEvents] = useState<boolean>(false);
+    const [starredEventsResponse] = useStarredEvents_SelectEventIdsQuery({
+        variables: {
+            registrantId: registrant?.id,
+        },
+        pause: !registrant || !filterToStarredEvents,
+    });
+    const rawEvents = useMemo(
+        () =>
+            filterToStarredEvents && starredEventsResponse.data
+                ? inputEvents.filter(
+                      (x) =>
+                          starredEventsResponse.data?.schedule_Event.some((y) => x.id === y.id) ||
+                          starredEventsResponse.data?.schedule_StarredEvent.some((y) => x.id === y.eventId)
+                  )
+                : inputEvents,
+        [filterToStarredEvents, inputEvents, starredEventsResponse.data]
+    );
+
     const eventsByRoom = useMemo(
         () =>
             R.groupBy<Schedule_EventSummaryExt>(
@@ -648,28 +703,66 @@ export function ScheduleInner({
         [rawEvents, items, people]
     );
 
+    const grey = useColorModeValue("gray.200", "gray.600");
+    const localTimeZone = useMemo(() => {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }, []);
+
     /*Plus 30 to the width to account for scrollbars!*/
     return (
-        <Flex h="100%" w="100%" minW="100%" maxW={timeBarWidth + maxParallelRooms * roomColWidth + 30} flexDir="column">
-            <Flex w="100%" direction="row" justify="center" alignItems="center" flexWrap="wrap">
-                <Heading as="h1" id="page-heading" mx={4} mb={2}>
-                    {titleStr ?? "Schedule"}
-                </Heading>
+        <Flex
+            h="100%"
+            w="100%"
+            minW="100%"
+            maxW={timeBarWidth + maxParallelRooms * roomColWidth + 30}
+            flexDir="column"
+            flex="0 1 100%"
+            mt={2}
+            overflow="hidden"
+        >
+            <Flex w="100%" direction="row" justify="flex-start" alignItems="stretch" flexWrap="wrap" px={2}>
+                <Center
+                    fontSize="sm"
+                    mb={2}
+                    borderStyle="solid"
+                    borderWidth={1}
+                    borderColor={grey}
+                    borderRadius={5}
+                    p={1}
+                    mr={2}
+                >
+                    <FAIcon icon="clock" iconStyle="s" mr={2} />
+                    <Text as="span">Timezone: {localTimeZone}</Text>
+                </Center>
                 {dayList}
-                <DownloadCalendarButton
-                    events={eventsWithItems}
-                    ml={2}
-                    calendarName={titleStr ?? "Complete Schedule"}
-                />
+                <Button
+                    onClick={() => {
+                        setFilterToStarredEvents((old) => !old);
+                    }}
+                    colorScheme={filterToStarredEvents ? "SecondaryActionButton" : "PrimaryActionButton"}
+                    size="sm"
+                    mr={2}
+                >
+                    <FAIcon iconStyle={filterToStarredEvents ? "s" : "r"} icon="star" />
+                    &nbsp;&nbsp;{filterToStarredEvents ? "Show full schedule" : "Show my schedule"}
+                </Button>
+                <Tooltip
+                    label={
+                        filterToStarredEvents
+                            ? "Download the calendar and import it to your preferred calendar app to receive reminders."
+                            : "Filter to your schedule to download the calendar."
+                    }
+                >
+                    <div>
+                        <DownloadCalendarButton
+                            events={eventsWithItems}
+                            mb={2}
+                            calendarName={titleStr ?? "My Schedule"}
+                            isDisabled={!filterToStarredEvents}
+                        />
+                    </div>
+                </Tooltip>
             </Flex>
-            <Text w="auto" textAlign="left" p={0} my={1}>
-                <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
-                Dates and times are shown in your local timezone.
-            </Text>
-            <Text w="auto" textAlign="left" p={0} my={1}>
-                <FAIcon iconStyle="s" icon="bell" mr={2} mb={1} />
-                Download the calendar and import it to your preferred calendar app to receive reminders.
-            </Text>
             <Box
                 cursor="pointer"
                 as={ScrollContainer}
@@ -690,21 +783,41 @@ export function ScheduleInner({
                     {frameEls}
                 </Flex>
             </Box>
-            {!rawEvents.length ? <Box>No events {noEventsText ? noEventsText.toLowerCase() : ""}</Box> : undefined}
+            {!rawEvents.length ? (
+                <Center h="100%" maxWidth="50ch" margin="0 auto">
+                    <Alert
+                        status="info"
+                        variant="subtle"
+                        flexDirection="column"
+                        alignItems="center"
+                        justifyContent="center"
+                        textAlign="center"
+                        p={8}
+                    >
+                        <AlertIcon boxSize="8" />
+                        <AlertTitle fontSize="lg" my={4}>
+                            No events found.
+                        </AlertTitle>
+                        <AlertDescription mr={2}>
+                            There are no events
+                            {noEventsText ? ` ${noEventsText.toLowerCase()}` : " in the schedule yet"}.
+                        </AlertDescription>
+                    </Alert>
+                </Center>
+            ) : undefined}
         </Flex>
     );
 }
 
 export function ScheduleFetchWrapper(): JSX.Element {
     const conference = useConference();
-    const roomsResult = useSchedule_SelectSummariesQuery({
+    const [roomsResult] = useSchedule_SelectSummariesQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "cache-first",
     });
     return (
-        <ApolloQueryWrapper<
+        <QueryWrapper<
             Schedule_SelectSummariesQuery,
             unknown,
             {
@@ -725,7 +838,7 @@ export function ScheduleFetchWrapper(): JSX.Element {
             })}
         >
             {(data) => <ScheduleInner {...data} />}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 
@@ -734,14 +847,22 @@ export default function Schedule(): JSX.Element {
     const title = useTitle(`Schedule of ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permissions_Permission_Enum.ConferenceView,
-                Permissions_Permission_Enum.ConferenceManageSchedule,
-            ]}
-        >
+        <RequireRole attendeeRole>
             {title}
-            <ScheduleFetchWrapper />
-        </RequireAtLeastOnePermissionWrapper>
+            <Flex pos="absolute" top={0} left={0} w="100%" h="100%" flexDir="column" overflow="hidden">
+                <Heading
+                    as="h1"
+                    id="page-heading"
+                    textAlign="left"
+                    alignSelf="flex-start"
+                    px={2}
+                    pt={2}
+                    flex="0 0 auto"
+                >
+                    Schedule
+                </Heading>
+                <ScheduleFetchWrapper />
+            </Flex>
+        </RequireRole>
     );
 }

@@ -1,9 +1,12 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { RegistrantGoogleAccountData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { handleRefreshYouTubeData, handleRegistrantGoogleAccountDeleted } from "../handlers/registrantGoogleAccount";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { Payload, RegistrantGoogleAccountData } from "../types/hasura/event";
 
 export const router = express.Router();
 
@@ -12,17 +15,17 @@ router.use(checkEventSecret);
 
 router.post("/deleted", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<RegistrantGoogleAccountData>>(req.body);
-    } catch (e) {
-        console.error("Received incorrect payload", e);
+        assertType<EventPayload<RegistrantGoogleAccountData>>(req.body);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
 
     try {
-        await handleRegistrantGoogleAccountDeleted(req.body);
-    } catch (e) {
-        console.error("Failure while handling RegistrantGoogleAccount deleted", e);
+        await handleRegistrantGoogleAccountDeleted(req.log, req.body);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Failure while handling RegistrantGoogleAccount deleted");
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -31,20 +34,19 @@ router.post("/deleted", json(), async (req: Request, res: Response) => {
 });
 
 router.post("/refreshYouTubeData", json(), async (req: Request, res: Response<RefreshYouTubeDataOutput>) => {
-    console.log(req.originalUrl);
     const params = req.body.input;
     try {
         assertType<refreshYouTubeDataArgs>(params);
-    } catch (e) {
-        console.error(`${req.originalUrl}: invalid request`, req.body, e);
+    } catch (e: any) {
+        req.log.error({ err: e, body: req.body }, "Invalid request");
         return res.status(500).json({ success: false, message: e.message });
     }
 
     try {
-        const result = await handleRefreshYouTubeData(params);
+        const result = await handleRefreshYouTubeData(req.log, params);
         return res.status(200).json(result);
-    } catch (e) {
-        console.error(`${req.originalUrl}: failed to refresh YouTube data`, params, e);
+    } catch (e: any) {
+        req.log.error({ params, err: e }, "Failed to refresh YouTube data");
         return res.status(500).json({ success: false, message: e.message });
     }
 });

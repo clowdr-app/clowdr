@@ -1,12 +1,21 @@
 import { gql } from "@apollo/client/core";
-import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type {
+    getGoogleOAuthUrlArgs,
+    GetGoogleOAuthUrlOutput,
+    submitGoogleOAuthCodeArgs,
+    SubmitGoogleOAuthCodeOutput,
+} from "@midspace/hasura/action-types";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
-import { Credentials } from "google-auth-library";
+import type { Credentials } from "google-auth-library";
 import { google } from "googleapis";
 import jwt_decode from "jwt-decode";
+import type { P } from "pino";
 import * as R from "ramda";
 import { assertType } from "typescript-is";
+import type { UploadYouTubeVideoJobDataFragment } from "../generated/graphql";
 import {
     CompleteUploadYouTubeVideoJobDocument,
     CreateYouTubeUploadDocument,
@@ -16,12 +25,12 @@ import {
     MarkAndSelectNewUploadYouTubeVideoJobsDocument,
     SelectNewUploadYouTubeVideoJobsDocument,
     UnmarkUploadYouTubeVideoJobsDocument,
-    UploadYouTubeVideoJobDataFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { registrantBelongsToUser } from "../lib/authorisation";
 import { S3 } from "../lib/aws/awsClient";
-import { createOAuth2Client, GoogleIdToken } from "../lib/googleAuth";
+import type { GoogleIdToken } from "../lib/googleAuth";
+import { createOAuth2Client } from "../lib/googleAuth";
 import { callWithRetry } from "../utils";
 import { handleRefreshYouTubeData } from "./registrantGoogleAccount";
 
@@ -94,13 +103,14 @@ gql`
 `;
 
 export async function handleSubmitGoogleOAuthToken(
+    logger: P.Logger,
     params: submitGoogleOAuthCodeArgs,
     userId: string
 ): Promise<SubmitGoogleOAuthCodeOutput> {
     try {
         assert(process.env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID environment variable not provided");
 
-        console.log("Retrieving Google auth token", { userId, registrantId: params.state });
+        logger.info({ userId, registrantId: params.state }, "Retrieving Google auth token");
         const validRegistrant = await registrantBelongsToUser(params.state, userId);
         assert(validRegistrant, "Registrant does not belong to the user");
 
@@ -126,13 +136,13 @@ export async function handleSubmitGoogleOAuthToken(
         });
 
         if (!token.tokens.id_token) {
-            console.error("Failed to retrieve id_token", { userId });
+            logger.error({ userId }, "Failed to retrieve id_token");
             throw new Error("Failed to retrieve id_token");
         }
 
-        console.log("Retrieved Google auth token", { userId });
+        logger.info({ userId }, "Retrieved Google auth token");
 
-        console.log("Verifying Google JWT", { userId, registrantId: params.state });
+        logger.info({ userId, registrantId: params.state }, "Verifying Google JWT");
         await oauth2Client.verifyIdToken({
             idToken: token.tokens.id_token,
             audience: oauth2Client._clientId,
@@ -140,7 +150,7 @@ export async function handleSubmitGoogleOAuthToken(
 
         const tokenData = jwt_decode<GoogleIdToken>(token.tokens.id_token);
 
-        console.log("Saving Google OAuth tokens", { userId, registrantId: params.state });
+        logger.info({ userId, registrantId: params.state }, "Saving Google OAuth tokens");
         const result = await apolloClient.mutate({
             mutation: Google_CreateRegistrantGoogleAccountDocument,
             variables: {
@@ -153,16 +163,19 @@ export async function handleSubmitGoogleOAuthToken(
 
         if (result.data?.insert_registrant_GoogleAccount_one?.id) {
             try {
-                await handleRefreshYouTubeData({
+                await handleRefreshYouTubeData(logger, {
                     registrantGoogleAccountId: result.data.insert_registrant_GoogleAccount_one.id,
                     registrantId: params.state,
                 });
             } catch (err) {
-                console.error("Failed to refresh data from YouTube account", {
-                    registrantGoogleAccountId: result.data.insert_registrant_GoogleAccount_one.id,
-                    registrantId: params.state,
-                    err,
-                });
+                logger.error(
+                    {
+                        registrantGoogleAccountId: result.data.insert_registrant_GoogleAccount_one.id,
+                        registrantId: params.state,
+                        err,
+                    },
+                    "Failed to refresh data from YouTube account"
+                );
             }
         }
 
@@ -170,7 +183,7 @@ export async function handleSubmitGoogleOAuthToken(
             success: true,
         };
     } catch (err) {
-        console.error("Failed to exchange authorisation code for token", { err, userId, registrantId: params.state });
+        logger.error({ err, userId, registrantId: params.state }, "Failed to exchange authorisation code for token");
         return {
             success: false,
             message: "Failed to exchange authorisation code for token",
@@ -186,6 +199,7 @@ gql`
         $videoStatus: String!
         $uploadYouTubeVideoJobId: uuid!
         $conferenceId: uuid!
+        $subconferenceId: uuid!
         $videoPrivacyStatus: String!
     ) {
         insert_video_YouTubeUpload_one(
@@ -197,6 +211,7 @@ gql`
                 videoPrivacyStatus: $videoPrivacyStatus
                 uploadYouTubeVideoJobId: $uploadYouTubeVideoJobId
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
             }
         ) {
             id
@@ -204,7 +219,7 @@ gql`
     }
 `;
 
-async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment): Promise<void> {
+async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVideoJobDataFragment): Promise<void> {
     try {
         const elementDataBlob = assertType<ElementDataBlob>(job.element.data);
 
@@ -234,7 +249,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                 const previousPercentage = Math.floor((bytesRead / totalBytes) * 100);
                 const newPercentage = Math.floor((event.bytesRead / totalBytes) * 100);
                 if (previousPercentage < newPercentage && newPercentage % 10 === 0) {
-                    console.log(`YouTube upload: ${newPercentage}%`, job.id);
+                    logger.info({ jobId: job.id, progressPercent: newPercentage }, "Uploading to YouTube");
                 }
                 bytesRead = event.bytesRead;
             },
@@ -266,7 +281,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                 },
             })
             .catch(async (error) => {
-                console.error("YouTube upload failed", job.id, error);
+                logger.error({ jobId: job.id, err: error }, "YouTube upload failed");
                 try {
                     await callWithRetry(async () => {
                         await apolloClient.mutate({
@@ -277,14 +292,17 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                             },
                         });
                     });
-                } catch (e) {
-                    console.error("Failure while recording failure of YouTube upload job", e);
+                } catch (e: any) {
+                    logger.error({ err: e }, "Failure while recording failure of YouTube upload job");
                 }
             })
             .then(async (result) => {
                 try {
                     if (!result || !result.data.id || !result.data.snippet || !result.data.status) {
-                        console.error("Missing data from YouTube API on completion of video upload", job.id, result);
+                        logger.error(
+                            { jobId: job.id, result },
+                            "Missing data from YouTube API on completion of video upload"
+                        );
                         await callWithRetry(async () => {
                             await apolloClient.mutate({
                                 mutation: FailUploadYouTubeVideoJobDocument,
@@ -297,7 +315,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                         return;
                     }
 
-                    console.log("Finished uploading YouTube video", job.id, result.data);
+                    logger.info({ jobId: job.id, data: result.data }, "Finished uploading YouTube video");
 
                     await callWithRetry(async () => {
                         await apolloClient.mutate({
@@ -309,8 +327,10 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                     });
                     await callWithRetry(async () => {
                         assert(result.data.id);
-                        assert(result.data.snippet);
+                        assert(result.data.snippet?.title);
                         assert(result.data.status);
+                        assert(result.data.status?.uploadStatus);
+                        assert(result.data.status?.privacyStatus);
                         await apolloClient.mutate({
                             mutation: CreateYouTubeUploadDocument,
                             variables: {
@@ -321,12 +341,13 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                                 videoPrivacyStatus: result.data.status.privacyStatus,
                                 uploadYouTubeVideoJobId: job.id,
                                 conferenceId: job.conferenceId,
+                                subconferenceId: job.subconferenceId,
                             },
                         });
                     });
 
                     if (job.playlistId) {
-                        console.log("Adding YouTube video to playlist", job.id);
+                        logger.info({ jobId: job.id }, "Adding YouTube video to playlist");
                         await youtubeClient.playlistItems.insert({
                             part: ["id", "snippet"],
                             requestBody: {
@@ -345,7 +366,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                         latestVersion.data.baseType === ElementBaseType.Video &&
                         latestVersion.data.subtitles["en_US"]
                     ) {
-                        console.log("Starting YouTube caption upload", job.id);
+                        logger.info({ jobId: job.id }, "Starting YouTube caption upload");
                         const { bucket: subtitlesBucket, key: subtitlesKey } = new AmazonS3Uri(
                             latestVersion.data.subtitles["en_US"].s3Url
                         );
@@ -372,12 +393,12 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                                 },
                             },
                         });
-                        console.log("Finished uploading YouTube caption", job.id);
+                        logger.info({ jobId: job.id }, "Finished uploading YouTube caption");
                     } else {
-                        console.log("No YouTube captions to upload", job.id);
+                        logger.info({ jobId: job.id }, "No YouTube captions to upload");
                     }
-                } catch (e) {
-                    console.error("Failure while recording completion of YouTube upload", job.id, e);
+                } catch (e: any) {
+                    logger.error({ err: e, jobId: job.id }, "Failure while recording completion of YouTube upload");
                     try {
                         await callWithRetry(async () => {
                             await apolloClient.mutate({
@@ -388,13 +409,13 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                                 },
                             });
                         });
-                    } catch (e) {
-                        console.error("Failure while recording failure to complete YouTube upload", e);
+                    } catch (e: any) {
+                        logger.error({ err: e }, "Failure while recording failure to complete YouTube upload");
                     }
                 }
             });
-    } catch (e) {
-        console.error("Failure starting UploadYouTubeVideoJob", job.id, e);
+    } catch (e: any) {
+        logger.error({ err: e, jobId: job.id }, "Failure starting UploadYouTubeVideoJob");
         throw new Error("Failure starting job");
     }
 }
@@ -425,6 +446,7 @@ gql`
     fragment UploadYouTubeVideoJobData on job_queues_UploadYouTubeVideoJob {
         id
         conferenceId
+        subconferenceId
         jobStatusName
         retriesCount
         registrantGoogleAccount {
@@ -471,8 +493,8 @@ gql`
     }
 `;
 
-export async function handleUploadYouTubeVideoJobQueue(): Promise<void> {
-    console.log("Processing UploadYouTubeVideoJob queue");
+export async function handleUploadYouTubeVideoJobQueue(logger: P.Logger): Promise<void> {
+    logger.info("Processing UploadYouTubeVideoJob queue");
 
     const newJobs = await apolloClient.query({
         query: SelectNewUploadYouTubeVideoJobsDocument,
@@ -493,11 +515,11 @@ export async function handleUploadYouTubeVideoJobQueue(): Promise<void> {
                 if (job.retriesCount < 3) {
                     await snooze(Math.floor(Math.random() * 5 * 1000));
                     await callWithRetry(async () => {
-                        await startUploadYouTubeVideoJob(job);
+                        await startUploadYouTubeVideoJob(logger, job);
                     });
                 }
-            } catch (e) {
-                console.error("Could not start UploadYouTubeVideoJob", job.id, e);
+            } catch (e: any) {
+                logger.error({ jobId: job.id, err: e }, "Could not start UploadYouTubeVideoJob");
                 return job.id;
             }
             return undefined;
@@ -513,7 +535,7 @@ export async function handleUploadYouTubeVideoJobQueue(): Promise<void> {
                 },
             });
         });
-    } catch (e) {
-        console.error("Could not record failed UploadYouTubeVideoJobs", e);
+    } catch (e: any) {
+        logger.error({ err: e }, "Could not record failed UploadYouTubeVideoJobs");
     }
 }

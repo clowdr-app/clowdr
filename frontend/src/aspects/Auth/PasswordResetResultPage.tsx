@@ -1,7 +1,7 @@
 import { Heading } from "@chakra-ui/react";
 import React from "react";
-import FAIcon from "../Icons/FAIcon";
-import LoginButton from "./Buttons/LoginButton";
+import FAIcon from "../Chakra/FAIcon";
+import { LoginButton } from "./Buttons";
 
 export default function PasswordResetResultPage({
     message,
@@ -16,7 +16,7 @@ export default function PasswordResetResultPage({
             <Heading as="h1" id="page-heading" fontSize="4xl" lineHeight="revert">
                 {success ? "Your password was reset" : message ?? "Password reset - status unknown"}
             </Heading>
-            <LoginButton size="lg" asMenuItem={false} />
+            <LoginButton size="lg" />
         </>
     );
 }

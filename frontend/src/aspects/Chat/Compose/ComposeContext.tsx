@@ -1,8 +1,8 @@
+import { assert } from "@midspace/assert";
 import type { UppyFile } from "@uppy/core";
-import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import type { ChatConfiguration} from "../Configuration";
+import type { ChatConfiguration } from "../Configuration";
 import { useChatConfiguration } from "../Configuration";
 import type { MinMax } from "../Types/Base";
 import type { AnswerMessageData, MessageData, MessageMediaData, OrdinaryMessageData } from "../Types/Messages";
@@ -58,6 +58,8 @@ export function defaultAvailableMessageType(config: ChatConfiguration): Chat_Mes
     if (config.permissions.canPoll) {
         return Chat_MessageType_Enum.Poll;
     }
+
+    return undefined;
 }
 
 export function ComposeContextProvider({
@@ -69,7 +71,7 @@ export function ComposeContextProvider({
 }): JSX.Element {
     const config = useChatConfiguration();
     const defaultType = defaultAvailableMessageType(config);
-    assert(defaultType !== undefined, "No available message types to send!");
+    assert.truthy(defaultType !== undefined, "No available message types to send!");
     const [newMessage, setNewMessage] = useState<string>("");
     const [newMessageType, setNewMessageType] = useState<Chat_MessageType_Enum>(defaultType);
     const [newMessageData, setNewMessageData] = useState<MessageData>({});
@@ -91,6 +93,8 @@ export function ComposeContextProvider({
                     return config.answerConfig.length?.min;
                 case Chat_MessageType_Enum.Poll:
                     return config.pollConfig.questionLength?.min;
+                default:
+                    return Number.MAX_VALUE;
             }
         }, [
             newMessageType,
@@ -112,6 +116,8 @@ export function ComposeContextProvider({
                 return config.answerConfig.length?.max;
             case Chat_MessageType_Enum.Poll:
                 return config.pollConfig.questionLength?.max;
+            default:
+                return 0;
         }
     }, [
         newMessageType,
@@ -200,7 +206,7 @@ export function ComposeContextProvider({
                 }
 
                 try {
-                    assert(
+                    assert.truthy(
                         config.state?.Id,
                         "config.state is null. Chat state is not available in the current context."
                     );

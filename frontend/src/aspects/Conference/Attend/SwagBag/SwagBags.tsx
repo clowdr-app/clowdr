@@ -1,29 +1,20 @@
-import { gql } from "@apollo/client";
 import { Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
-import type {
-    ElementBlob,
-    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    ElementBaseType,
-    isElementDataBlob,
-} from "@clowdr-app/shared-types/build/content";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import type { ElementBlob, ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
+import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import type {
-    ElementDataFragment,
-    SwagBagFragment} from "../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    useSelectSwagBagsQuery,
-} from "../../../../generated/graphql";
+import type { ElementDataFragment, SwagBagFragment } from "../../../../generated/graphql";
+import { Content_ElementType_Enum, useSelectSwagBagsQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import FAIcon from "../../../Icons/FAIcon";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useTitle } from "../../../Hooks/useTitle";
 import PageCountText from "../../../Realtime/PageCountText";
-import { maybeCompare } from "../../../Utils/maybeSort";
-import { useTitle } from "../../../Utils/useTitle";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import { useConference } from "../../useConference";
 import { Element } from "../Content/Element/Element";
 
@@ -31,6 +22,8 @@ gql`
     fragment SwagBag on content_Item {
         id
         title
+        conferenceId
+        typeName
         elements(where: { isHidden: { _eq: false } }) {
             ...ElementData
         }
@@ -45,14 +38,14 @@ gql`
 
 export default function SwagBags(): JSX.Element {
     const conference = useConference();
-    const swagBagsResponse = useSelectSwagBagsQuery({
+    const [swagBagsResponse] = useSelectSwagBagsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
 
-    return swagBagsResponse.loading && !swagBagsResponse.data ? (
-        <CenteredSpinner spinnerProps={{ label: "Loading your swag" }} />
+    return swagBagsResponse.fetching && !swagBagsResponse.data ? (
+        <CenteredSpinner spinnerProps={{ label: "Loading your swag" }} caller="SwagBag:48" />
     ) : (
         <SwagBagsInner bags={swagBagsResponse.data?.content_Item ?? []} />
     );
@@ -66,10 +59,12 @@ function SwagBagsInner({ bags }: { bags: readonly SwagBagFragment[] }): JSX.Elem
     return (
         <>
             {title}
-            <Heading as="h1" id="page-heading" pt={2}>
-                My Conference Swag
+            <Heading as="h1" id="page-heading" pt={2} alignSelf="flex-start" px={[2, 2, 4]}>
+                Conference Swag
             </Heading>
-            <Text>Gifts, goodies and freebies from the conference organisers and sponsors. Enjoy!</Text>
+            <Text alignSelf="flex-start" px={[2, 2, 4]}>
+                Gifts, goodies and freebies from the conference organisers and sponsors. Enjoy!
+            </Text>
             <Flex
                 w="100%"
                 flexWrap="wrap"
@@ -78,6 +73,7 @@ function SwagBagsInner({ bags }: { bags: readonly SwagBagFragment[] }): JSX.Elem
                 flexDir="row"
                 gridColumnGap={[4, 4, 8]}
                 gridRowGap={[4, 4, 8]}
+                px={[2, 2, 4]}
             >
                 {sortedItems.map((bag) => (
                     <BagTile key={bag.id} bag={bag} />
@@ -88,7 +84,7 @@ function SwagBagsInner({ bags }: { bags: readonly SwagBagFragment[] }): JSX.Elem
 }
 
 function BagTile({ bag }: { bag: SwagBagFragment }) {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     const primaryElement: ElementDataFragment | undefined = useMemo(() => {
         const sortOrder = [
@@ -291,19 +287,19 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
                 return latestVersion.data.url;
             } else {
                 const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
-                return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+                return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
             }
         } catch {
             return null;
         }
     }, [logoElement]);
 
-    const itemUrl = `/conference/${conference.slug}/item/${bag.id}`;
+    const itemUrl = `${conferencePath}/item/${bag.id}`;
 
     return (
         <Flex
             flex={["1 0 100%", "1 0 100%", "1 0 47%"]}
-            borderColour="gray.400"
+            borderColor="gray.400"
             borderTop="1px solid"
             justifyContent="center"
             overflow="hidden"

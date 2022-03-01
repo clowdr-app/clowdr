@@ -1,11 +1,13 @@
-import { gql } from "@apollo/client";
-import React from "react";
+import { AuthHeader } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
+import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
-import { Permissions_Permission_Enum, useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
+import { useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { makeContext } from "../../../GQL/make-context";
+import QueryWrapper from "../../../GQL/QueryWrapper";
+import { useTitle } from "../../../Hooks/useTitle";
+import RequireRole from "../../RequireRole";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import Room from "./Room";
 
@@ -23,7 +25,12 @@ gql`
         isProgramRoom
         publicVonageSessionId
         chatId
-        originatingItem {
+        itemId
+        roomMemberships(where: { registrantId: { _eq: $registrantId } }) {
+            id
+            personRoleName
+        }
+        item {
             id
             typeName
             elements(
@@ -33,6 +40,9 @@ gql`
             ) {
                 id
                 data
+                layoutData
+                typeName
+                updatedAt
             }
             selfPeople: itemPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
                 id
@@ -41,15 +51,13 @@ gql`
             title
         }
         managementModeName
-        selfAdminPerson: roomPeople(where: { personRoleName: { _eq: ADMIN }, registrantId: { _eq: $registrantId } }) {
-            id
-        }
         shuffleRooms(limit: 1, order_by: { id: desc }) {
             id
             startedAt
             durationMinutes
             reshuffleUponEnd
             shufflePeriodId
+            roomId
         }
         backendName
     }
@@ -63,46 +71,52 @@ gql`
     fragment RoomPage_RoomChannelStack on video_ChannelStack {
         cloudFrontDomain
         endpointUri
+        roomId
         id
     }
 `;
 
 export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
     return (
-        <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
-            permissions={[
-                Permissions_Permission_Enum.ConferenceViewAttendees,
-                Permissions_Permission_Enum.ConferenceManageSchedule,
-            ]}
-        >
+        <RequireRole componentIfDenied={<PageNotFound />} attendeeRole>
             <RoomPageInner roomId={roomId} />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }
 
 function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     const registrant = useCurrentRegistrant();
-    const roomDetailsResponse = useRoomPage_GetRoomDetailsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.RoomId]: roomId,
+            }),
+        [roomId]
+    );
+    const [roomDetailsResponse] = useRoomPage_GetRoomDetailsQuery({
         variables: {
             roomId,
             registrantId: registrant.id,
         },
+        context,
     });
+
     const title = useTitle(
-        roomDetailsResponse.loading ? "Loading room" : roomDetailsResponse.data?.room_Room_by_pk?.name ?? "Unknown room"
+        roomDetailsResponse.fetching
+            ? "Loading room"
+            : roomDetailsResponse?.data?.room_Room_by_pk?.name ?? "Unknown room"
     );
 
     return (
         <>
             {title}
-            <ApolloQueryWrapper
+            <QueryWrapper
                 getter={(data) => data.room_Room_by_pk}
                 queryResult={roomDetailsResponse}
                 childrenNoData={() => <PageNotFound />}
             >
                 {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
         </>
     );
 }
@@ -112,6 +126,7 @@ gql`
         schedule_Event_by_pk(id: $eventId) {
             eventVonageSession {
                 sessionId
+                eventId
                 id
             }
             id

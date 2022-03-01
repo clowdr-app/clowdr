@@ -1,9 +1,9 @@
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
-import FAIcon from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
+import { useTitle } from "../Hooks/useTitle";
 import { getCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
-import { useTitle } from "../Utils/useTitle";
-import LoginButton from "./Buttons/LoginButton";
+import { LoginButton } from "./Buttons";
 
 export default function EmailVerificationRequiredPage({
     message,

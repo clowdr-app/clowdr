@@ -1,12 +1,14 @@
-import { gql } from "@apollo/client";
 import { Button, FormControl, FormLabel, Select, useToast, VStack } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import {
     useEventVonageControls_GetEventsQuery,
     useEventVonageControls_StopEventBroadcastMutation,
 } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 
 gql`
     query EventVonageControls_GetEvents($conferenceId: uuid!) {
@@ -15,6 +17,9 @@ gql`
         ) {
             id
             name
+            conferenceId
+            intendedRoomModeName
+            itemId
             item {
                 id
                 title
@@ -29,13 +34,21 @@ gql`
 `;
 
 export function EventVonageControls({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const { data } = useEventVonageControls_GetEventsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [{ data }] = useEventVonageControls_GetEventsQuery({
         variables: {
             conferenceId,
         },
+        context,
     });
 
-    const [stopEventBroadcastMutation] = useEventVonageControls_StopEventBroadcastMutation();
+    const [, stopEventBroadcastMutation] = useEventVonageControls_StopEventBroadcastMutation();
 
     const toast = useToast();
 
@@ -58,11 +71,18 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
                     if (!values.eventId) {
                         throw new Error("No event selected");
                     }
-                    const result = await stopEventBroadcastMutation({
-                        variables: {
+                    const result = await stopEventBroadcastMutation(
+                        {
                             eventId: values.eventId,
                         },
-                    });
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                },
+                            },
+                        }
+                    );
 
                     if (result.data?.stopEventBroadcast) {
                         toast({
@@ -72,7 +92,7 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
                     } else {
                         throw new Error("No response from server");
                     }
-                } catch (e) {
+                } catch (e: any) {
                     toast({
                         status: "error",
                         title: "Failed to stop broadcasts",

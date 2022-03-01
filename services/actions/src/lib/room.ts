@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import { Meeting } from "@aws-sdk/client-chime";
+import type { Meeting } from "@aws-sdk/client-chime";
 import assert from "assert";
+import type { P } from "pino";
 import { is } from "typescript-is";
 import {
     CreateItemRoom_GetItemDocument,
@@ -18,14 +19,15 @@ import { callWithRetry } from "../utils";
 import { createChimeMeeting, doesChimeMeetingExist } from "./aws/chime";
 import { deleteRoomChimeMeeting } from "./roomChimeMeeting";
 
-export async function createItemVideoChatRoom(itemId: string, conferenceId: string): Promise<string> {
+export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, conferenceId: string): Promise<string> {
     gql`
         query CreateItemRoom_GetItem($id: uuid!) {
             content_Item_by_pk(id: $id) {
                 id
                 chatId
                 conferenceId
-                rooms(where: { originatingEventId: { _is_null: true } }, order_by: { created_at: asc }, limit: 1) {
+                subconferenceId
+                room {
                     id
                 }
                 title
@@ -44,8 +46,8 @@ export async function createItemVideoChatRoom(itemId: string, conferenceId: stri
         throw new Error("Could not find specified content group in the conference");
     }
 
-    if (itemResult.data.content_Item_by_pk.rooms.length > 0) {
-        return itemResult.data.content_Item_by_pk.rooms[0].id;
+    if (itemResult.data.content_Item_by_pk.room) {
+        return itemResult.data.content_Item_by_pk.room.id;
     }
 
     gql`
@@ -53,7 +55,8 @@ export async function createItemVideoChatRoom(itemId: string, conferenceId: stri
             $chatId: uuid = null
             $conferenceId: uuid!
             $name: String!
-            $originatingItemId: uuid!
+            $itemId: uuid!
+            $subconferenceId: uuid = null
         ) {
             insert_room_Room_one(
                 object: {
@@ -62,8 +65,9 @@ export async function createItemVideoChatRoom(itemId: string, conferenceId: stri
                     conferenceId: $conferenceId
                     currentModeName: VIDEO_CHAT
                     name: $name
-                    originatingItemId: $originatingItemId
+                    itemId: $itemId
                     managementModeName: PUBLIC
+                    subconferenceId: $subconferenceId
                 }
             ) {
                 id
@@ -71,26 +75,29 @@ export async function createItemVideoChatRoom(itemId: string, conferenceId: stri
         }
     `;
 
-    console.log("Creating new breakout room for content group", itemId, conferenceId);
+    logger.info({ itemId, conferenceId }, "Creating new breakout room for content group");
 
     const createResult = await apolloClient.mutate({
         mutation: Item_CreateRoomDocument,
         variables: {
             conferenceId: conferenceId,
             name: `${itemResult.data.content_Item_by_pk.title}`,
-            originatingItemId: itemId,
+            itemId,
             chatId: itemResult.data.content_Item_by_pk.chatId,
         },
     });
     return createResult.data?.insert_room_Room_one?.id;
 }
 
-export async function getRoomConferenceId(roomId: string): Promise<string> {
+export async function getRoomConferenceId(
+    roomId: string
+): Promise<{ conferenceId: string; subconferenceId: string | null }> {
     gql`
         query GetRoomConferenceId($roomId: uuid!) {
             room_Room_by_pk(id: $roomId) {
                 id
                 conferenceId
+                subconferenceId
             }
         }
     `;
@@ -106,7 +113,10 @@ export async function getRoomConferenceId(roomId: string): Promise<string> {
         throw new Error("Could not find room");
     }
 
-    return room.data.room_Room_by_pk.conferenceId;
+    return {
+        conferenceId: room.data.room_Room_by_pk.conferenceId,
+        subconferenceId: room.data.room_Room_by_pk.subconferenceId ?? null,
+    };
 }
 
 export async function canUserJoinRoom(registrantId: string, roomId: string, conferenceId: string): Promise<boolean> {
@@ -117,7 +127,7 @@ export async function canUserJoinRoom(registrantId: string, roomId: string, conf
                     id: { _eq: $roomId }
                     conference: { registrants: { id: { _eq: $registrantId } }, id: { _eq: $conferenceId } }
                     _or: [
-                        { roomPeople: { registrant: { id: { _eq: $registrantId } } } }
+                        { roomMemberships: { registrant: { id: { _eq: $registrantId } } } }
                         { managementModeName: { _eq: PUBLIC } }
                     ]
                 }
@@ -129,15 +139,6 @@ export async function canUserJoinRoom(registrantId: string, roomId: string, conf
                         id
                     }
                 }
-            }
-            FlatUserPermission(
-                where: {
-                    user: { registrants: { id: { _eq: $registrantId } } }
-                    conference: { id: { _eq: $conferenceId } }
-                    permission_name: { _eq: "CONFERENCE_VIEW_ATTENDEES" }
-                }
-            ) {
-                permission_name
             }
         }
     `;
@@ -151,10 +152,10 @@ export async function canUserJoinRoom(registrantId: string, roomId: string, conf
             },
         })
     );
-    return result.data.FlatUserPermission.length > 0 && result.data.room_Room.length > 0;
+    return result.data.room_Room.length > 0;
 }
 
-export async function createRoomChimeMeeting(roomId: string, conferenceId: string): Promise<Meeting> {
+export async function createRoomChimeMeeting(logger: P.Logger, roomId: string, conferenceId: string): Promise<Meeting> {
     const chimeMeetingData = await createChimeMeeting(roomId);
 
     gql`
@@ -188,15 +189,15 @@ export async function createRoomChimeMeeting(roomId: string, conferenceId: strin
                 chimeMeetingId: chimeMeetingData.MeetingId,
             },
         });
-    } catch (e) {
-        console.error("Failed to create a room Chime meeting", { err: e, roomId, conferenceId });
+    } catch (e: any) {
+        logger.error({ err: e, roomId, conferenceId }, "Failed to create a room Chime meeting");
         throw e;
     }
 
     return chimeMeetingData;
 }
 
-export async function getExistingRoomChimeMeeting(roomId: string): Promise<Meeting | null> {
+export async function getExistingRoomChimeMeeting(logger: P.Logger, roomId: string): Promise<Meeting | null> {
     gql`
         query GetRoomChimeMeeting($roomId: uuid!) {
             room_ChimeMeeting(where: { roomId: { _eq: $roomId } }) {
@@ -217,19 +218,25 @@ export async function getExistingRoomChimeMeeting(roomId: string): Promise<Meeti
         const chimeMeetingId = result.data.room_ChimeMeeting[0].id;
         const chimeMeetingData: Meeting = result.data.room_ChimeMeeting[0].chimeMeetingData;
         if (!is<Meeting>(chimeMeetingData)) {
-            console.warn("Retrieved Chime meeting data could not be validated, deleting record", {
-                chimeMeetingData,
-                roomId,
-            });
+            logger.warn(
+                {
+                    chimeMeetingData,
+                    roomId,
+                },
+                "Retrieved Chime meeting data could not be validated, deleting record"
+            );
             await deleteRoomChimeMeeting(chimeMeetingId);
             return null;
         }
 
         if (!chimeMeetingData.MeetingId || typeof chimeMeetingData.MeetingId !== "string") {
-            console.warn("Retrieved Chime meeting data could not be validated, deleting record", {
-                chimeMeetingData,
-                roomId,
-            });
+            logger.warn(
+                {
+                    chimeMeetingData,
+                    roomId,
+                },
+                "Retrieved Chime meeting data could not be validated, deleting record"
+            );
             await deleteRoomChimeMeeting(chimeMeetingId);
             return null;
         }
@@ -237,10 +244,13 @@ export async function getExistingRoomChimeMeeting(roomId: string): Promise<Meeti
         const exists = await doesChimeMeetingExist(chimeMeetingData.MeetingId);
 
         if (!exists) {
-            console.warn("Chime meeting no longer exists, deleting record", {
-                chimeMeetingData,
-                roomId,
-            });
+            logger.warn(
+                {
+                    chimeMeetingData,
+                    roomId,
+                },
+                "Chime meeting no longer exists, deleting record"
+            );
             await deleteRoomChimeMeeting(chimeMeetingId);
             return null;
         }
@@ -271,23 +281,24 @@ export async function getExistingRoomVonageMeeting(roomId: string): Promise<stri
     return result.data.room_Room_by_pk?.publicVonageSessionId ?? null;
 }
 
-export async function getRoomChimeMeeting(roomId: string, conferenceId: string): Promise<Meeting> {
-    const existingChimeMeetingData = await getExistingRoomChimeMeeting(roomId);
+export async function getRoomChimeMeeting(logger: P.Logger, roomId: string): Promise<Meeting> {
+    const existingChimeMeetingData = await getExistingRoomChimeMeeting(logger, roomId);
 
     if (existingChimeMeetingData) {
         return existingChimeMeetingData;
     }
 
     try {
-        const chimeMeetingData = await createRoomChimeMeeting(roomId, conferenceId);
+        const { conferenceId } = await getRoomConferenceId(roomId);
+        const chimeMeetingData = await createRoomChimeMeeting(logger, roomId, conferenceId);
         return chimeMeetingData;
-    } catch (e) {
-        const existingChimeMeetingData = await getExistingRoomChimeMeeting(roomId);
+    } catch (e: any) {
+        const existingChimeMeetingData = await getExistingRoomChimeMeeting(logger, roomId);
         if (existingChimeMeetingData) {
             return existingChimeMeetingData;
         }
 
-        console.error("Could not get Chime meeting data", { err: e, roomId, conferenceId });
+        logger.error({ err: e, roomId }, "Could not get Chime meeting data");
         throw new Error("Could not get Chime meeting data");
     }
 }

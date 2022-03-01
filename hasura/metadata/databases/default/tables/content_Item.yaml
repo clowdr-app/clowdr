@@ -13,14 +13,11 @@ object_relationships:
 - name: conference
   using:
     foreign_key_constraint_on: conferenceId
-- name: originatingData
-  using:
-    foreign_key_constraint_on: originatingDataId
 - name: room
   using:
     manual_configuration:
       column_mapping:
-        id: originatingItemId
+        id: itemId
       insertion_order: null
       remote_table:
         name: Room
@@ -82,13 +79,15 @@ array_relationships:
       table:
         name: ItemTag
         schema: content
-- name: rooms
+- name: sponsorshipTierMemberships
   using:
-    foreign_key_constraint_on:
-      column: originatingItemId
-      table:
-        name: Room
-        schema: room
+    manual_configuration:
+      column_mapping:
+        id: itemId
+      insertion_order: null
+      remote_table:
+        name: TierMember
+        schema: sponsor
 - name: stats
   using:
     manual_configuration:
@@ -108,62 +107,48 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      _or:
-      - _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_CONTENT
-      - conference:
-          createdBy:
-            _eq: X-Hasura-User-Id
-    columns:
-    - conferenceId
-    - typeName
-    - id
-    - originatingDataId
-    - shortTitle
-    - title
-  role: user
-select_permissions:
-- permission:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - subconferenceId:
+          _is_null: true
     columns:
     - chatId
     - conferenceId
-    - typeName
-    - created_at
     - id
-    - originatingDataId
     - shortTitle
+    - subconferenceId
     - title
-    - updated_at
-    filter:
-      conference:
-        _and:
-        - slug:
-            _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUnauthPermission
-              schema: public
-            _where:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_VIEW
-  role: unauthenticated
+    - typeName
+    - visibilityLevel
+  role: conference-organizer
+- permission:
+    backend_only: false
+    check:
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+    columns:
+    - chatId
+    - conferenceId
+    - id
+    - shortTitle
+    - subconferenceId
+    - title
+    - typeName
+    - visibilityLevel
+  role: subconference-organizer
+select_permissions:
 - permission:
     allow_aggregations: true
     columns:
@@ -171,87 +156,217 @@ select_permissions:
     - conferenceId
     - created_at
     - id
-    - originatingDataId
     - shortTitle
+    - subconferenceId
     - title
     - typeName
     - updated_at
+    - visibilityLevel
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - _or:
+        - subconferenceId:
+            _is_null: true
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - _or:
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+            - visibilityLevel:
+                _in:
+                - PUBLIC
+                - EXTERNAL
+            - typeName:
+                _in:
+                - LANDING_PAGE
+  role: attendee
+- permission:
+    columns:
+    - shortTitle
+    - title
+    - typeName
+    - visibilityLevel
+    - created_at
+    - updated_at
+    - chatId
+    - conferenceId
+    - id
+    - subconferenceId
     computed_fields:
     - hasUnsubmittedElements
     filter:
       _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _or:
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _in:
-                  - CONFERENCE_VIEW
-                  - CONFERENCE_MANAGE_CONTENT
-        - _exists:
-            _table:
-              name: FlatUnauthPermission
-              schema: public
-            _where:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_VIEW
-  role: user
-update_permissions:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - subconferenceId:
+          _is_null: true
+  role: conference-organizer
 - permission:
-    check: {}
     columns:
-    - typeName
-    - originatingDataId
     - shortTitle
     - title
+    - typeName
+    - visibilityLevel
+    - created_at
+    - updated_at
+    - chatId
+    - conferenceId
+    - id
+    - subconferenceId
+    computed_fields:
+    - hasUnsubmittedElements
+    filter:
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
+- permission:
+    columns:
+    - shortTitle
+    - title
+    - typeName
+    - visibilityLevel
+    - created_at
+    - updated_at
+    - chatId
+    - conferenceId
+    - id
+    - subconferenceId
+    computed_fields:
+    - hasUnsubmittedElements
+    filter:
+      itemPeople:
+        person:
+          accessToken:
+            _eq: X-Hasura-Magic-Token
+  role: submitter
+- permission:
+    columns:
+    - chatId
+    - conferenceId
+    - created_at
+    - id
+    - shortTitle
+    - subconferenceId
+    - title
+    - typeName
+    - updated_at
+    - visibilityLevel
     filter:
       _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _eq: CONFERENCE_MANAGE_CONTENT
-  role: user
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - _or:
+          - subconferenceId:
+              _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+      - _or:
+        - visibilityLevel:
+            _in:
+            - PUBLIC_ONLY
+            - PUBLIC
+        - typeName:
+            _eq: LANDING_PAGE
+  role: unauthenticated
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - chatId
+    - shortTitle
+    - subconferenceId
+    - title
+    - typeName
+    - visibilityLevel
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - subconferenceId:
+          _is_null: true
+  role: conference-organizer
+- permission:
+    check: null
+    columns:
+    - shortTitle
+    - subconferenceId
+    - title
+    - typeName
+    - visibilityLevel
+    filter:
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
       _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _eq: CONFERENCE_MANAGE_CONTENT
-  role: user
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - subconferenceId:
+          _is_null: true
+  role: conference-organizer
+- permission:
+    filter:
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - chatId
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: Cache_ContentItem
+  retry_conf:
+    interval_sec: 10
+    num_retries: 3
+    timeout_sec: 10
+  webhook: "{{CACHES_BASE_URL}}/cache/update/contentItem"

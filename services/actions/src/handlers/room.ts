@@ -1,9 +1,18 @@
 import { gql } from "@apollo/client/core";
+import type {
+    createContentGroupRoomArgs,
+    CreateContentGroupRoomOutput,
+    createRoomDmArgs,
+    CreateRoomDmOutput,
+} from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { RoomData } from "@midspace/hasura/event-data";
 import assert from "assert";
 import { sub } from "date-fns";
+import type { P } from "pino";
 import * as R from "ramda";
 import {
-    AddRegistrantToRoomPeopleDocument,
+    AddRegistrantToRoomMembershipsDocument,
     CreateDmRoomDocument,
     CreateDmRoom_GetExistingRoomsDocument,
     CreateDmRoom_GetRegistrantsDocument,
@@ -16,9 +25,8 @@ import { getRegistrant } from "../lib/authorisation";
 import { createItemVideoChatRoom } from "../lib/room";
 import { deleteRoomParticipantsCreatedBefore } from "../lib/roomParticipant";
 import Vonage from "../lib/vonage/vonageClient";
-import { Payload, RoomData } from "../types/hasura/event";
 
-export async function handleRoomCreated(payload: Payload<RoomData>): Promise<void> {
+export async function handleRoomCreated(logger: P.Logger, payload: EventPayload<RoomData>): Promise<void> {
     assert(payload.event.data.new, "Expected new row data");
 
     if (!payload.event.data.new.publicVonageSessionId) {
@@ -27,7 +35,8 @@ export async function handleRoomCreated(payload: Payload<RoomData>): Promise<voi
 
     // If room was created by a user, add them as an admin
     if (payload.event.session_variables && "x-hasura-user-id" in payload.event.session_variables) {
-        await addUserToRoomPeople(
+        await addUserToRoomMemberships(
+            logger,
             payload.event.session_variables["x-hasura-user-id"],
             payload.event.data.new.id,
             Room_PersonRole_Enum.Admin
@@ -61,18 +70,18 @@ async function createRoomVonageSession(roomId: string): Promise<string> {
     return sessionResult.sessionId;
 }
 
-export async function addUserToRoomPeople(userId: string, roomId: string, role: Room_PersonRole_Enum): Promise<void> {
+export async function addUserToRoomMemberships(
+    logger: P.Logger,
+    userId: string,
+    roomId: string,
+    role: Room_PersonRole_Enum
+): Promise<void> {
     gql`
         query GetRegistrantsForRoomAndUser($roomId: uuid!, $userId: String!) {
-            room_Room_by_pk(id: $roomId) {
+            registrant_Registrant(
+                where: { conference: { rooms: { id: { _eq: $roomId } } }, userId: { _eq: $userId } }
+            ) {
                 id
-                conference {
-                    registrants(where: { userId: { _eq: $userId } }) {
-                        userId
-                        id
-                    }
-                    id
-                }
             }
         }
     `;
@@ -85,29 +94,20 @@ export async function addUserToRoomPeople(userId: string, roomId: string, role: 
         },
     });
 
-    if (result.error || result.errors) {
-        console.error("Failed to get registrant to be added to the room people list", userId, roomId);
-        throw new Error("Failed to get registrant to be added to the room people list");
-    }
-
-    if (
-        !result.data.room_Room_by_pk?.conference.registrants ||
-        result.data.room_Room_by_pk.conference.registrants.length === 0 ||
-        !result.data.room_Room_by_pk.conference.registrants[0].userId
-    ) {
-        console.error("Could not find an registrant to be added to the room people list", userId, roomId);
+    if (!result.data.registrant_Registrant?.length) {
+        logger.error({ userId, roomId }, "Could not find an registrant to be added to the room people list");
         throw new Error("Could not find an registrant to be added to the room people list");
     }
 
-    const registrantId = result.data.room_Room_by_pk.conference.registrants[0].id;
+    const registrantId = result.data.registrant_Registrant[0].id;
 
     gql`
-        mutation AddRegistrantToRoomPeople(
+        mutation AddRegistrantToRoomMemberships(
             $registrantId: uuid!
             $roomId: uuid!
             $roomPersonRoleName: room_PersonRole_enum!
         ) {
-            insert_room_RoomPerson_one(
+            insert_room_RoomMembership_one(
                 object: { registrantId: $registrantId, roomId: $roomId, personRoleName: $roomPersonRoleName }
             ) {
                 id
@@ -116,7 +116,7 @@ export async function addUserToRoomPeople(userId: string, roomId: string, role: 
     `;
 
     await apolloClient.mutate({
-        mutation: AddRegistrantToRoomPeopleDocument,
+        mutation: AddRegistrantToRoomMembershipsDocument,
         variables: {
             registrantId,
             roomId,
@@ -165,7 +165,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
             room_Room(
                 where: {
                     conferenceId: { _eq: $conferenceId }
-                    roomPeople: {
+                    roomMemberships: {
                         registrantId: { _in: $registrantIds }
                         _not: { registrantId: { _nin: $registrantIds } }
                     }
@@ -174,7 +174,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
             ) {
                 id
                 chatId
-                roomPeople {
+                roomMemberships {
                     registrantId
                     id
                 }
@@ -193,7 +193,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
     const fullMatch = existingRoomsResult.data.room_Room.find((room) =>
         R.isEmpty(
             R.symmetricDifference(
-                room.roomPeople.map((person) => person.registrantId),
+                room.roomMemberships.map((person) => person.registrantId),
                 [...filteredRegistrants, myRegistrant.id]
             )
         )
@@ -213,16 +213,17 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
             $capacity: Int!
             $conferenceId: uuid!
             $name: String!
-            $data: [room_RoomPerson_insert_input!]!
+            $data: [room_RoomMembership_insert_input!]!
         ) {
             insert_room_Room_one(
                 object: {
                     capacity: $capacity
                     conferenceId: $conferenceId
+                    subconferenceId: null
                     currentModeName: VIDEO_CHAT
                     name: $name
                     managementModeName: DM
-                    roomPeople: { data: $data }
+                    roomMemberships: { data: $data }
                 }
             ) {
                 id
@@ -262,34 +263,35 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
 }
 
 export async function handleCreateForItem(
+    logger: P.Logger,
     params: createContentGroupRoomArgs,
     userId: string
 ): Promise<CreateContentGroupRoomOutput> {
     try {
         // todo: verify user role here. It's not critically important though.
         getRegistrant(userId, params.conferenceId);
-    } catch (e) {
-        console.error("Could not find registrant at conference when creating breakout room", e);
+    } catch (e: any) {
+        logger.error({ err: e }, "Could not find registrant at conference when creating breakout room");
         return {
             message: "Registrant is not a member of the conference",
         };
     }
 
     try {
-        const roomId = await createItemVideoChatRoom(params.itemId, params.conferenceId);
+        const roomId = await createItemVideoChatRoom(logger, params.itemId, params.conferenceId);
         return {
             roomId,
         };
-    } catch (e) {
-        console.error("Failed to create content group breakout room", e);
+    } catch (e: any) {
+        logger.error({ err: e }, "Failed to create content group breakout room");
         return {
             message: "Could not create room",
         };
     }
 }
 
-export async function handleRemoveOldRoomParticipants(): Promise<void> {
-    console.log("Removing room participants created more than 24 hours ago");
+export async function handleRemoveOldRoomParticipants(logger: P.Logger): Promise<void> {
+    logger.info("Removing room participants created more than 24 hours ago");
     const deleted = await deleteRoomParticipantsCreatedBefore(sub(new Date(), { hours: 24 }));
-    console.log(`Removed ${deleted} room participants created more than 24 hours ago`);
+    logger.info({ count: deleted }, `Removed ${deleted} room participants created more than 24 hours ago`);
 }

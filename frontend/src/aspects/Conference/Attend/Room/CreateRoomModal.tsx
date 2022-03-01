@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -16,14 +15,11 @@ import {
     Switch,
     useToast,
 } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React from "react";
-import {
-    RoomListRoomDetailsFragmentDoc,
-    Room_ManagementMode_Enum,
-    useRegistrant_RegistrantCreateRoomMutation,
-} from "../../../../generated/graphql";
+import { gql } from "urql";
+import { Room_ManagementMode_Enum, useRegistrant_RegistrantCreateRoomMutation } from "../../../../generated/graphql";
 import { normaliseName, validateShortName } from "../../NewConferenceForm";
 import { useConference } from "../../useConference";
 
@@ -56,7 +52,7 @@ export function CreateRoomModal({
     onClose: () => void;
     onCreated: (id: string, cb: () => void) => Promise<void>;
 }): JSX.Element {
-    const [createRegistrantRoomMutation] = useRegistrant_RegistrantCreateRoomMutation();
+    const [, createRegistrantRoomMutation] = useRegistrant_RegistrantCreateRoomMutation();
     const conference = useConference();
     const toast = useToast();
 
@@ -75,23 +71,11 @@ export function CreateRoomModal({
                         const name = normaliseName(values.new_room_name);
                         try {
                             const result = await createRegistrantRoomMutation({
-                                variables: {
-                                    conferenceId: conference.id,
-                                    name,
-                                    managementModeName: values.new_room_private
-                                        ? Room_ManagementMode_Enum.Private
-                                        : Room_ManagementMode_Enum.Public,
-                                },
-                                update: (cache, { data: _data }) => {
-                                    if (_data?.insert_room_Room_one) {
-                                        const data = _data.insert_room_Room_one;
-                                        cache.writeFragment({
-                                            data,
-                                            fragment: RoomListRoomDetailsFragmentDoc,
-                                            fragmentName: "RoomListRoomDetails",
-                                        });
-                                    }
-                                },
+                                conferenceId: conference.id,
+                                name,
+                                managementModeName: values.new_room_private
+                                    ? Room_ManagementMode_Enum.Private
+                                    : Room_ManagementMode_Enum.Public,
                             });
 
                             if (!result.data?.insert_room_Room_one?.id) {
@@ -109,7 +93,7 @@ export function CreateRoomModal({
                                     resolve();
                                 });
                             });
-                        } catch (e) {
+                        } catch (e: any) {
                             if ("message" in e && (e.message as string).includes("duplicate")) {
                                 toast({
                                     title: "Could not create room",

@@ -13,19 +13,13 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
-import type {
-    RoomPage_RoomDetailsFragment,
-    Room_EventSummaryFragment} from "../../../../generated/graphql";
-import {
-    Content_ItemType_Enum,
-    Room_Mode_Enum,
-} from "../../../../generated/graphql";
-import { useRealTime } from "../../../Generic/useRealTime";
+import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
+import { Content_ItemType_Enum, Room_Mode_Enum } from "../../../../generated/graphql";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { ShufflePeriodBox } from "../../../ShuffleRooms/WaitingPage";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import { ItemElementsWrapper } from "../Content/ItemElements";
 import { ExhibitionLayoutWrapper } from "../Exhibition/ExhibitionLayout";
-import { RoomTitle } from "./RoomTitle";
 import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { VideoElementButton } from "./Video/VideoElementButton";
 
@@ -95,11 +89,9 @@ export function RoomContent({
     );
 
     return (
-        <Box flexGrow={1}>
-            <RoomTitle roomDetails={roomDetails} />
-
+        <Box flexGrow={1} zIndex={1} px={[2, 2, 4]}>
             {currentRoomEvent ? (
-                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={2}>
                     <HStack justifyContent="space-between">
                         <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now5s)}</Text>
                         {currentRoomEvent.endTime ? (
@@ -142,7 +134,7 @@ export function RoomContent({
                 <></>
             )}
             {nextRoomEvent ? (
-                <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
+                <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={2}>
                     <Heading as="h3" textAlign="left" size="lg" mb={1}>
                         {nextRoomEvent.name}
                     </Heading>
@@ -167,23 +159,22 @@ export function RoomContent({
             {!currentRoomEvent &&
             !nextRoomEvent &&
             roomDetails.isProgramRoom &&
-            roomDetails.originatingItem?.typeName !== Content_ItemType_Enum.Sponsor ? (
+            roomDetails.item?.typeName !== Content_ItemType_Enum.Sponsor ? (
                 <Text p={5}>No events in this room in the next hour.</Text>
             ) : (
                 <></>
             )}
 
-            {roomDetails.originatingItem?.id &&
-            roomDetails.originatingItem.typeName !== Content_ItemType_Enum.Sponsor ? (
-                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                    <ItemElementsWrapper itemId={roomDetails.originatingItem.id} linkToItem={true} />
+            {roomDetails.item?.id && roomDetails.item.typeName !== Content_ItemType_Enum.Sponsor ? (
+                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={2}>
+                    <ItemElementsWrapper itemId={roomDetails.item.id} linkToItem={true} />
                 </Box>
             ) : (
                 <></>
             )}
 
-            {roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor ? (
-                <RoomSponsorContent itemId={roomDetails.originatingItem.id} />
+            {roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor ? (
+                <RoomSponsorContent itemId={roomDetails.item.id} />
             ) : (
                 <></>
             )}

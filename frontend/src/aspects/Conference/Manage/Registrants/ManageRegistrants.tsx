@@ -1,5 +1,3 @@
-import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -15,37 +13,45 @@ import {
     MenuItem,
     MenuItemOption,
     MenuList,
+    Select,
     Text,
     Tooltip,
     useClipboard,
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import assert from "assert";
+import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import Papa from "papaparse";
 import type { LegacyRef } from "react";
 import React, { useMemo, useState } from "react";
+import { useClient } from "urql";
 import { v4 as uuidv4 } from "uuid";
-import type { RegistrantPartsFragment } from "../../../../generated/graphql";
+import type {
+    ManageRegistrants_SelectProfilesQuery,
+    ManageRegistrants_SelectProfilesQueryVariables,
+    RegistrantPartsFragment,
+} from "../../../../generated/graphql";
 import {
-    InvitationPartsFragmentDoc,
-    Permissions_Permission_Enum,
-    RegistrantPartsFragmentDoc,
+    ManageRegistrants_SelectProfilesDocument,
+    Registrant_RegistrantRole_Enum,
     useDeleteRegistrantsMutation,
     useInsertInvitationEmailJobsMutation,
     useInsertRegistrantMutation,
     useInsertRegistrantWithoutInviteMutation,
     useManagePeople_InsertCustomEmailJobMutation,
-    useManageRegistrants_SelectProfilesQuery,
     useSelectAllGroupsQuery,
     useSelectAllRegistrantsQuery,
     useUpdateRegistrantMutation,
 } from "../../../../generated/graphql";
 import type { BadgeData } from "../../../Badges/ProfileBadge";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import MultiSelect from "../../../Chakra/MultiSelect";
 import {
     CheckBoxColumnFilter,
+    formatEnumValue,
     MultiSelectColumnFilter,
     SelectColumnFilter,
     TextColumnFilter,
@@ -63,11 +69,12 @@ import type {
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { maybeCompare } from "../../../Utils/maybeSort";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useTitle } from "../../../Hooks/useTitle";
+import { maybeCompare } from "../../../Utils/maybeCompare";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import { SendEmailModal } from "./SendEmailModal";
 
@@ -86,13 +93,14 @@ gql`
     fragment RegistrantParts on registrant_Registrant {
         conferenceId
         id
+        conferenceRole
+        invitation {
+            ...InvitationParts
+        }
         groupRegistrants {
             registrantId
             id
             groupId
-        }
-        invitation {
-            ...InvitationParts
         }
         userId
         updatedAt
@@ -158,14 +166,14 @@ gql`
 
     mutation UpdateRegistrant(
         $registrantId: uuid!
-        $registrantName: String!
-        $upsertGroups: [permissions_GroupRegistrant_insert_input!]!
+        $registrantUpdates: registrant_Registrant_set_input!
+        $upsertGroups: [registrant_GroupRegistrant_insert_input!]!
         $remainingGroupIds: [uuid!]
     ) {
-        update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: { displayName: $registrantName }) {
+        update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: $registrantUpdates) {
             ...RegistrantParts
         }
-        insert_permissions_GroupRegistrant(
+        insert_registrant_GroupRegistrant(
             objects: $upsertGroups
             on_conflict: { constraint: GroupRegistrant_groupId_registrantId_key, update_columns: [] }
         ) {
@@ -175,7 +183,7 @@ gql`
                 groupId
             }
         }
-        delete_permissions_GroupRegistrant(
+        delete_registrant_GroupRegistrant(
             where: { registrantId: { _eq: $registrantId }, groupId: { _nin: $remainingGroupIds } }
         ) {
             returning {
@@ -232,30 +240,41 @@ type RegistrantDescriptor = RegistrantPartsFragment & {
 
 export default function ManageRegistrants(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
-    const {
-        loading: loadingAllGroups,
-        error: errorAllGroups,
-        data: allGroups,
-    } = useSelectAllGroupsQuery({
-        fetchPolicy: "network-only",
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }] = useSelectAllGroupsQuery({
+        requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     useQueryErrorToast(errorAllGroups, false);
 
-    const {
-        loading: loadingAllRegistrants,
-        error: errorAllRegistrants,
-        data: allRegistrants,
-        refetch: refetchAllRegistrants,
-    } = useSelectAllRegistrantsQuery({
-        fetchPolicy: "network-only",
+    const selectAllRegistrantsContext = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [
+        { fetching: loadingAllRegistrants, error: errorAllRegistrants, data: allRegistrants },
+        refetchAllRegistrants,
+    ] = useSelectAllRegistrantsQuery({
+        requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
+        context: selectAllRegistrantsContext,
     });
     useQueryErrorToast(errorAllRegistrants, false);
     const data = useMemo(
@@ -263,11 +282,11 @@ export default function ManageRegistrants(): JSX.Element {
         [allRegistrants?.registrant_Registrant]
     );
 
-    const [insertRegistrant, insertRegistrantResponse] = useInsertRegistrantMutation();
-    const [insertRegistrantWithoutInvite, insertRegistrantWithoutInviteResponse] =
+    const [insertRegistrantResponse, insertRegistrant] = useInsertRegistrantMutation();
+    const [insertRegistrantWithoutInviteResponse, insertRegistrantWithoutInvite] =
         useInsertRegistrantWithoutInviteMutation();
-    const [deleteRegistrants, deleteRegistrantsResponse] = useDeleteRegistrantsMutation();
-    const [updateRegistrant, updateRegistrantResponse] = useUpdateRegistrantMutation();
+    const [deleteRegistrantsResponse, deleteRegistrants] = useDeleteRegistrantsMutation();
+    const [updateRegistrantResponse, updateRegistrant] = useUpdateRegistrantMutation();
 
     const row: RowSpecification<RegistrantDescriptor> = useMemo(
         () => ({
@@ -309,9 +328,20 @@ export default function ManageRegistrants(): JSX.Element {
         []
     );
 
+    const roleOptions = useMemo(
+        () =>
+            Object.keys(Registrant_RegistrantRole_Enum)
+                .map((x) => {
+                    const v = (Registrant_RegistrantRole_Enum as any)[x];
+                    return { value: v, label: formatEnumValue(v) };
+                })
+                .sort((x, y) => x.label.localeCompare(y.label)),
+        []
+    );
+
     const columns: ColumnSpecification<RegistrantDescriptor>[] = useMemo(() => {
         const groupOptions: { value: string; label: string }[] =
-            allGroups?.permissions_Group.map((group) => ({
+            allGroups?.registrant_Group.map((group) => ({
                 value: group.id,
                 label: group.name,
             })) ?? [];
@@ -502,7 +532,7 @@ export default function ManageRegistrants(): JSX.Element {
                 get: (data) => data.invitation?.invitedEmailAddress ?? "",
                 set: (record, value: string) => {
                     if (!record.invitation) {
-                        assert(record.id);
+                        assert.truthy(record.id);
                         record.invitation = {
                             registrantId: record.id as DeepWriteable<any>,
                             createdAt: new Date().toISOString() as any as DeepWriteable<any>,
@@ -567,7 +597,7 @@ export default function ManageRegistrants(): JSX.Element {
                         return undefined;
                     } else {
                         return (
-                            <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                            <Text fontSize="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
                                 Invite code
                             </Text>
                         );
@@ -607,12 +637,55 @@ export default function ManageRegistrants(): JSX.Element {
                 },
             },
             {
+                id: "role",
+                header: function RoleHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    return isInCreate ? (
+                        <FormLabel>Role</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={onClick}>
+                            Role{sortDir !== null ? ` ${sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.conferenceRole,
+                set: (record, v: Registrant_RegistrantRole_Enum) => {
+                    record.conferenceRole = v;
+                },
+                filterFn: (rows, v: Registrant_RegistrantRole_Enum) => rows.filter((r) => r.conferenceRole === v),
+                filterEl: SelectColumnFilter(Object.values(Registrant_RegistrantRole_Enum)),
+                sort: (x: Registrant_RegistrantRole_Enum, y: Registrant_RegistrantRole_Enum) => x.localeCompare(y),
+                cell: function RoomModeCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<RegistrantDescriptor>, Registrant_RegistrantRole_Enum | undefined>) {
+                    return (
+                        <Select
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value as Registrant_RegistrantRole_Enum)}
+                            onBlur={onBlur}
+                            ref={ref as LegacyRef<HTMLSelectElement>}
+                            maxW={400}
+                        >
+                            {roleOptions.map((option) => {
+                                return (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                );
+                            })}
+                        </Select>
+                    );
+                },
+            },
+            {
                 id: "groups",
                 header: function ContentHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
                     return isInCreate ? (
                         <FormLabel>Groups</FormLabel>
                     ) : (
-                        <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                        <Text fontSize="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
                             Groups
                         </Text>
                     );
@@ -666,11 +739,11 @@ export default function ManageRegistrants(): JSX.Element {
             },
         ];
         return result;
-    }, [allGroups?.permissions_Group, inviteStatusFilterOptions]);
+    }, [allGroups?.registrant_Group, inviteStatusFilterOptions, roleOptions]);
 
-    const [insertInvitationEmailJobsMutation, { loading: insertInvitationEmailJobsLoading }] =
+    const [{ fetching: insertInvitationEmailJobsLoading }, insertInvitationEmailJobsMutation] =
         useInsertInvitationEmailJobsMutation();
-    const [insertCustomEmailJobMutation] = useManagePeople_InsertCustomEmailJobMutation();
+    const [, insertCustomEmailJobMutation] = useManagePeople_InsertCustomEmailJobMutation();
     const [sendCustomEmailRegistrants, setSendCustomEmailRegistrants] = useState<RegistrantDescriptor[]>([]);
     const sendCustomEmailModal = useDisclosure();
 
@@ -678,7 +751,7 @@ export default function ManageRegistrants(): JSX.Element {
 
     const insert: Insert<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: insertRegistrantResponse.loading,
+            ongoing: insertRegistrantResponse.fetching,
             generateDefaults: () => {
                 const registrantId = uuidv4();
                 return {
@@ -690,8 +763,8 @@ export default function ManageRegistrants(): JSX.Element {
             makeWhole: (d) => (d.displayName?.length ? (d as RegistrantDescriptor) : undefined),
             start: (record) => {
                 if (record.invitation?.invitedEmailAddress) {
-                    insertRegistrant({
-                        variables: {
+                    insertRegistrant(
+                        {
                             registrant: {
                                 id: record.id,
                                 conferenceId: conference.id,
@@ -705,143 +778,100 @@ export default function ManageRegistrants(): JSX.Element {
                                 invitedEmailAddress: record.invitation?.invitedEmailAddress,
                             },
                         },
-                        update: (cache, { data: _data }) => {
-                            if (_data?.insert_registrant_Registrant_one) {
-                                const data = _data.insert_registrant_Registrant_one;
-                                cache.writeFragment({
-                                    data,
-                                    fragment: RegistrantPartsFragmentDoc,
-                                    fragmentName: "RegistrantParts",
-                                });
-                            }
-                            if (_data?.insert_registrant_Invitation_one) {
-                                const data = _data.insert_registrant_Invitation_one;
-                                cache.writeFragment({
-                                    data,
-                                    fragment: InvitationPartsFragmentDoc,
-                                    fragmentName: "InvitationParts",
-                                });
-                            }
-                        },
-                    });
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                },
+                            },
+                        }
+                    );
                 } else {
-                    insertRegistrantWithoutInvite({
-                        variables: {
+                    insertRegistrantWithoutInvite(
+                        {
                             registrant: {
                                 id: record.id,
                                 conferenceId: conference.id,
                                 displayName: record.displayName,
+                                conferenceRole: record.conferenceRole,
                                 groupRegistrants: {
                                     data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
                                 },
                             },
                         },
-                        update: (cache, { data: _data }) => {
-                            if (_data?.insert_registrant_Registrant_one) {
-                                const data = _data.insert_registrant_Registrant_one;
-                                cache.writeFragment({
-                                    data,
-                                    fragment: RegistrantPartsFragmentDoc,
-                                    fragmentName: "RegistrantParts",
-                                });
-                            }
-                        },
-                    });
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                },
+                            },
+                        }
+                    );
                 }
             },
         }),
-        [conference.id, insertRegistrant, insertRegistrantResponse.loading, insertRegistrantWithoutInvite]
+        [conference.id, insertRegistrant, insertRegistrantResponse.fetching, insertRegistrantWithoutInvite]
     );
 
     const update: Update<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: updateRegistrantResponse.loading,
+            ongoing: updateRegistrantResponse.fetching,
             start: (record) => {
-                updateRegistrant({
-                    variables: {
+                updateRegistrant(
+                    {
                         registrantId: record.id,
-                        registrantName: record.displayName,
+                        registrantUpdates: {
+                            displayName: record.displayName,
+                            conferenceRole: record.conferenceRole,
+                        },
                         upsertGroups: record.groupRegistrants.map((x) => ({
                             groupId: x.groupId,
                             registrantId: x.registrantId,
                         })),
                         remainingGroupIds: record.groupRegistrants.map((x) => x.groupId),
                     },
-                    optimisticResponse: {
-                        update_registrant_Registrant_by_pk: record,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.update_registrant_Registrant_by_pk) {
-                            const data = _data.update_registrant_Registrant_by_pk;
-                            cache.writeFragment({
-                                data,
-                                fragment: RegistrantPartsFragmentDoc,
-                                fragmentName: "RegistrantParts",
-                            });
-                        }
-                    },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
             },
         }),
-        [updateRegistrant, updateRegistrantResponse.loading]
+        [updateRegistrant, updateRegistrantResponse.fetching]
     );
 
     const deleteP: Delete<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: deleteRegistrantsResponse.loading,
+            ongoing: deleteRegistrantsResponse.fetching,
             start: (keys) => {
-                deleteRegistrants({
-                    variables: {
+                deleteRegistrants(
+                    {
                         deleteRegistrantIds: keys,
                     },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.delete_registrant_Registrant) {
-                            const data = _data.delete_registrant_Registrant;
-                            const deletedIds = data.returning.map((x) => x.id);
-                            cache.modify({
-                                fields: {
-                                    registrant_Registrant(existingRefs: Reference[] = [], { readField }) {
-                                        deletedIds.forEach((x) => {
-                                            cache.evict({
-                                                id: x.id,
-                                                fieldName: "RegistrantParts",
-                                                broadcast: true,
-                                            });
-                                        });
-                                        return existingRefs.filter((ref) => !deletedIds.includes(readField("id", ref)));
-                                    },
-                                },
-                            });
-                        }
-                    },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
             },
         }),
-        [deleteRegistrants, deleteRegistrantsResponse.loading]
-    );
-
-    const enabledGroups = useMemo(
-        () => allGroups?.permissions_Group.filter((x) => x.enabled),
-        [allGroups?.permissions_Group]
-    );
-    const disabledGroups = useMemo(
-        () => allGroups?.permissions_Group.filter((x) => !x.enabled),
-        [allGroups?.permissions_Group]
+        [deleteRegistrants, deleteRegistrantsResponse.fetching]
     );
 
     const [exportWithProfileData, setExportWithProfileData] = useState<boolean>(false);
-    const selectProfiles = useManageRegistrants_SelectProfilesQuery({
-        skip: true,
-    });
+    const client = useClient();
     const buttons: ExtraButton<RegistrantDescriptor>[] = useMemo(
         () => [
             {
                 render: function ImportButton(_selectedData) {
                     return (
-                        <LinkButton
-                            colorScheme="purple"
-                            to={`/conference/${conference.slug}/manage/import/registrants`}
-                        >
+                        <LinkButton colorScheme="purple" to={`${conferencePath}/manage/import/registrants`}>
                             Import
                         </LinkButton>
                     );
@@ -852,10 +882,25 @@ export default function ManageRegistrants(): JSX.Element {
                     async function doExport(dataToExport: RegistrantDescriptor[]) {
                         const profiles = exportWithProfileData
                             ? (
-                                  await selectProfiles.refetch({
-                                      registrantIds: dataToExport.map((x) => x.id),
-                                  })
-                              ).data.registrant_Profile
+                                  await client
+                                      .query<
+                                          ManageRegistrants_SelectProfilesQuery,
+                                          ManageRegistrants_SelectProfilesQueryVariables
+                                      >(
+                                          ManageRegistrants_SelectProfilesDocument,
+                                          {
+                                              registrantIds: dataToExport.map((x) => x.id),
+                                          },
+                                          {
+                                              fetchOptions: {
+                                                  headers: {
+                                                      [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                  },
+                                              },
+                                          }
+                                      )
+                                      .toPromise()
+                              ).data?.registrant_Profile ?? []
                             : [];
 
                         const csvText = Papa.unparse(
@@ -872,7 +917,7 @@ export default function ManageRegistrants(): JSX.Element {
                                     "Group Ids": registrant.groupRegistrants.map((x) => x.groupId),
                                     "Group Names": registrant.groupRegistrants.map(
                                         (x) =>
-                                            allGroups?.permissions_Group.find((g) => g.id === x.groupId)?.name ??
+                                            allGroups?.registrant_Group.find((g) => g.id === x.groupId)?.name ??
                                             "<Hidden>"
                                     ),
                                     "Created At": registrant.createdAt,
@@ -943,11 +988,8 @@ export default function ManageRegistrants(): JSX.Element {
                             .getMinutes()
                             .toString()
                             .padStart(2, "0")} - Midspace Registrants.csv`;
-                        if (navigator.msSaveBlob) {
-                            navigator.msSaveBlob(csvData, fileName);
-                        } else {
-                            csvURL = window.URL.createObjectURL(csvData);
-                        }
+
+                        csvURL = window.URL.createObjectURL(csvData);
 
                         const tempLink = document.createElement("a");
                         tempLink.href = csvURL ?? "";
@@ -979,11 +1021,11 @@ export default function ManageRegistrants(): JSX.Element {
                                             doExport(data);
                                         }}
                                     >
-                                        All
+                                        All registrants
                                     </MenuItem>
-                                    {enabledGroups?.length ? (
-                                        <MenuGroup title="Enabled groups">
-                                            {enabledGroups.map((group) => (
+                                    {allGroups?.registrant_Group.length ? (
+                                        <MenuGroup title="Groups">
+                                            {allGroups.registrant_Group.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={() => {
@@ -998,29 +1040,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 </MenuItem>
                                             ))}
                                         </MenuGroup>
-                                    ) : (
-                                        <Text px={2}>No groups enabled.</Text>
-                                    )}
-                                    {disabledGroups?.length ? (
-                                        <MenuGroup title="Disabled groups">
-                                            {disabledGroups.map((group) => (
-                                                <MenuItem
-                                                    key={group.id}
-                                                    onClick={() => {
-                                                        doExport(
-                                                            data.filter((a) =>
-                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
-                                                            )
-                                                        );
-                                                    }}
-                                                >
-                                                    {group.name}
-                                                </MenuItem>
-                                            ))}
-                                        </MenuGroup>
-                                    ) : (
-                                        <></>
-                                    )}
+                                    ) : undefined}
                                 </MenuList>
                             </Menu>
                         );
@@ -1043,89 +1063,37 @@ export default function ManageRegistrants(): JSX.Element {
             },
             {
                 render: function SendInitialInvitesButton({ selectedData }: { selectedData: RegistrantDescriptor[] }) {
-                    const tooltip = (filler: string, filler2: string) =>
-                        `Sends invitations to ${filler} who have not already been sent an invite${filler2}.`;
+                    const tooltip = (filler: string) =>
+                        `Sends invitations to ${filler} who have not already been sent an invite.`;
                     if (selectedData.length === 0) {
                         return (
                             <Menu>
-                                <Tooltip label={tooltip("all registrants (from a group)", "")}>
+                                <Tooltip label={tooltip("all registrants (from a group)")}>
                                     <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                         Send initial invitations
                                     </MenuButton>
                                 </Tooltip>
                                 <MenuList>
-                                    {enabledGroups?.length ? (
-                                        <MenuGroup title="Enabled groups">
-                                            {enabledGroups.map((group) => (
-                                                <MenuItem
-                                                    key={group.id}
-                                                    onClick={async () => {
-                                                        const result = await insertInvitationEmailJobsMutation({
-                                                            variables: {
-                                                                registrantIds: data
-                                                                    .filter((a) =>
-                                                                        a.groupRegistrants.some(
-                                                                            (ga) => ga.groupId === group.id
-                                                                        )
-                                                                    )
-                                                                    .map((a) => a.id),
-                                                                conferenceId: conference.id,
-                                                                sendRepeat: false,
-                                                            },
-                                                        });
-                                                        if (result.errors && result.errors.length > 0) {
-                                                            toast({
-                                                                title: "Failed to send invitation emails",
-                                                                description: result.errors[0].message,
-                                                                isClosable: true,
-                                                                status: "error",
-                                                            });
-                                                        } else {
-                                                            toast({
-                                                                title: "Invitation emails sent",
-                                                                duration: 8000,
-                                                                status: "success",
-                                                            });
-                                                        }
-
-                                                        await refetchAllRegistrants();
-                                                    }}
-                                                >
-                                                    {group.name}
-                                                </MenuItem>
-                                            ))}
-                                        </MenuGroup>
-                                    ) : (
-                                        <Text px={2}>No groups enabled.</Text>
-                                    )}
-                                </MenuList>
-                            </Menu>
-                        );
-                    } else {
-                        return (
-                            <Tooltip
-                                label={tooltip(
-                                    "selected registrants",
-                                    " and are members of at least one enabled group"
-                                )}
-                            >
-                                <Box>
-                                    <Button
-                                        colorScheme="purple"
-                                        isDisabled={selectedData.length === 0}
-                                        isLoading={insertInvitationEmailJobsLoading}
+                                    <MenuItem
                                         onClick={async () => {
-                                            const result = await insertInvitationEmailJobsMutation({
-                                                variables: {
-                                                    registrantIds: selectedData.map((x) => x.id),
+                                            const result = await insertInvitationEmailJobsMutation(
+                                                {
+                                                    registrantIds: data.map((a) => a.id),
                                                     conferenceId: conference.id,
                                                     sendRepeat: false,
                                                 },
-                                            });
-                                            if (result.errors && result.errors.length > 0) {
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        },
+                                                    },
+                                                }
+                                            );
+                                            if (result.error) {
                                                 toast({
                                                     title: "Failed to send invitation emails",
-                                                    description: result.errors[0].message,
+                                                    description: result.error.message,
                                                     isClosable: true,
                                                     status: "error",
                                                 });
@@ -1137,7 +1105,103 @@ export default function ManageRegistrants(): JSX.Element {
                                                 });
                                             }
 
-                                            await refetchAllRegistrants();
+                                            refetchAllRegistrants();
+                                        }}
+                                    >
+                                        All registrants
+                                    </MenuItem>
+                                    {allGroups?.registrant_Group.length ? (
+                                        <MenuGroup title="Groups">
+                                            {allGroups?.registrant_Group.map((group) => (
+                                                <MenuItem
+                                                    key={group.id}
+                                                    onClick={async () => {
+                                                        const result = await insertInvitationEmailJobsMutation(
+                                                            {
+                                                                registrantIds: data
+                                                                    .filter((a) =>
+                                                                        a.groupRegistrants.some(
+                                                                            (ga) => ga.groupId === group.id
+                                                                        )
+                                                                    )
+                                                                    .map((a) => a.id),
+                                                                conferenceId: conference.id,
+                                                                sendRepeat: false,
+                                                            },
+                                                            {
+                                                                fetchOptions: {
+                                                                    headers: {
+                                                                        [AuthHeader.Role]:
+                                                                            HasuraRoleName.ConferenceOrganizer,
+                                                                    },
+                                                                },
+                                                            }
+                                                        );
+                                                        if (result.error) {
+                                                            toast({
+                                                                title: "Failed to send invitation emails",
+                                                                description: result.error.message,
+                                                                isClosable: true,
+                                                                status: "error",
+                                                            });
+                                                        } else {
+                                                            toast({
+                                                                title: "Invitation emails sent",
+                                                                duration: 8000,
+                                                                status: "success",
+                                                            });
+                                                        }
+
+                                                        refetchAllRegistrants();
+                                                    }}
+                                                >
+                                                    {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : undefined}
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip label={tooltip("selected registrants")}>
+                                <Box>
+                                    <Button
+                                        colorScheme="purple"
+                                        isDisabled={selectedData.length === 0}
+                                        isLoading={insertInvitationEmailJobsLoading}
+                                        onClick={async () => {
+                                            const result = await insertInvitationEmailJobsMutation(
+                                                {
+                                                    registrantIds: selectedData.map((x) => x.id),
+                                                    conferenceId: conference.id,
+                                                    sendRepeat: false,
+                                                },
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        },
+                                                    },
+                                                }
+                                            );
+                                            if (result.error) {
+                                                toast({
+                                                    title: "Failed to send invitation emails",
+                                                    description: result.error.message,
+                                                    isClosable: true,
+                                                    status: "error",
+                                                });
+                                            } else {
+                                                toast({
+                                                    title: "Invitation emails sent",
+                                                    duration: 8000,
+                                                    status: "success",
+                                                });
+                                            }
+
+                                            refetchAllRegistrants();
                                         }}
                                     >
                                         Send initial invitations
@@ -1160,75 +1224,26 @@ export default function ManageRegistrants(): JSX.Element {
                                     </MenuButton>
                                 </Tooltip>
                                 <MenuList>
-                                    {enabledGroups?.length ? (
-                                        <MenuGroup title="Enabled groups">
-                                            {enabledGroups.map((group) => (
-                                                <MenuItem
-                                                    key={group.id}
-                                                    onClick={async () => {
-                                                        const result = await insertInvitationEmailJobsMutation({
-                                                            variables: {
-                                                                registrantIds: data
-                                                                    .filter((a) =>
-                                                                        a.groupRegistrants.some(
-                                                                            (ga) => ga.groupId === group.id
-                                                                        )
-                                                                    )
-                                                                    .map((a) => a.id),
-                                                                conferenceId: conference.id,
-                                                                sendRepeat: true,
-                                                            },
-                                                        });
-                                                        if (result.errors && result.errors.length > 0) {
-                                                            toast({
-                                                                title: "Failed to send invitation emails",
-                                                                description: result.errors[0].message,
-                                                                isClosable: true,
-                                                                status: "error",
-                                                            });
-                                                        } else {
-                                                            toast({
-                                                                title: "Invitation emails sent",
-                                                                duration: 8000,
-                                                                status: "success",
-                                                            });
-                                                        }
-
-                                                        await refetchAllRegistrants();
-                                                    }}
-                                                >
-                                                    {group.name}
-                                                </MenuItem>
-                                            ))}
-                                        </MenuGroup>
-                                    ) : (
-                                        <Text px={2}>No groups enabled.</Text>
-                                    )}
-                                </MenuList>
-                            </Menu>
-                        );
-                    } else {
-                        return (
-                            <Tooltip
-                                label={tooltip("selected registrants who are members of at least one enabled group")}
-                            >
-                                <Box>
-                                    <Button
-                                        colorScheme="purple"
-                                        isDisabled={selectedData.length === 0}
-                                        isLoading={insertInvitationEmailJobsLoading}
+                                    <MenuItem
                                         onClick={async () => {
-                                            const result = await insertInvitationEmailJobsMutation({
-                                                variables: {
-                                                    registrantIds: selectedData.map((x) => x.id),
+                                            const result = await insertInvitationEmailJobsMutation(
+                                                {
+                                                    registrantIds: data.map((a) => a.id),
                                                     conferenceId: conference.id,
                                                     sendRepeat: true,
                                                 },
-                                            });
-                                            if (result.errors && result.errors.length > 0) {
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        },
+                                                    },
+                                                }
+                                            );
+                                            if (result.error) {
                                                 toast({
                                                     title: "Failed to send invitation emails",
-                                                    description: result.errors[0].message,
+                                                    description: result.error.message,
                                                     isClosable: true,
                                                     status: "error",
                                                 });
@@ -1240,7 +1255,103 @@ export default function ManageRegistrants(): JSX.Element {
                                                 });
                                             }
 
-                                            await refetchAllRegistrants();
+                                            refetchAllRegistrants();
+                                        }}
+                                    >
+                                        All registrants
+                                    </MenuItem>
+                                    {allGroups?.registrant_Group.length ? (
+                                        <MenuGroup title="Groups">
+                                            {allGroups.registrant_Group.map((group) => (
+                                                <MenuItem
+                                                    key={group.id}
+                                                    onClick={async () => {
+                                                        const result = await insertInvitationEmailJobsMutation(
+                                                            {
+                                                                registrantIds: data
+                                                                    .filter((a) =>
+                                                                        a.groupRegistrants.some(
+                                                                            (ga) => ga.groupId === group.id
+                                                                        )
+                                                                    )
+                                                                    .map((a) => a.id),
+                                                                conferenceId: conference.id,
+                                                                sendRepeat: true,
+                                                            },
+                                                            {
+                                                                fetchOptions: {
+                                                                    headers: {
+                                                                        [AuthHeader.Role]:
+                                                                            HasuraRoleName.ConferenceOrganizer,
+                                                                    },
+                                                                },
+                                                            }
+                                                        );
+                                                        if (result.error) {
+                                                            toast({
+                                                                title: "Failed to send invitation emails",
+                                                                description: result.error.message,
+                                                                isClosable: true,
+                                                                status: "error",
+                                                            });
+                                                        } else {
+                                                            toast({
+                                                                title: "Invitation emails sent",
+                                                                duration: 8000,
+                                                                status: "success",
+                                                            });
+                                                        }
+
+                                                        refetchAllRegistrants();
+                                                    }}
+                                                >
+                                                    {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : undefined}
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip label={tooltip("selected registrants")}>
+                                <Box>
+                                    <Button
+                                        colorScheme="purple"
+                                        isDisabled={selectedData.length === 0}
+                                        isLoading={insertInvitationEmailJobsLoading}
+                                        onClick={async () => {
+                                            const result = await insertInvitationEmailJobsMutation(
+                                                {
+                                                    registrantIds: selectedData.map((x) => x.id),
+                                                    conferenceId: conference.id,
+                                                    sendRepeat: true,
+                                                },
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        },
+                                                    },
+                                                }
+                                            );
+                                            if (result.error) {
+                                                toast({
+                                                    title: "Failed to send invitation emails",
+                                                    description: result.error.message,
+                                                    isClosable: true,
+                                                    status: "error",
+                                                });
+                                            } else {
+                                                toast({
+                                                    title: "Invitation emails sent",
+                                                    duration: 8000,
+                                                    status: "success",
+                                                });
+                                            }
+
+                                            refetchAllRegistrants();
                                         }}
                                     >
                                         Send repeat invitations
@@ -1263,9 +1374,17 @@ export default function ManageRegistrants(): JSX.Element {
                                 </MenuButton>
                                 {/*</Tooltip>*/}
                                 <MenuList>
-                                    {enabledGroups?.length ? (
-                                        <MenuGroup title="Enabled groups">
-                                            {enabledGroups.map((group) => (
+                                    <MenuItem
+                                        onClick={() => {
+                                            setSendCustomEmailRegistrants(data);
+                                            sendCustomEmailModal.onOpen();
+                                        }}
+                                    >
+                                        All registrants
+                                    </MenuItem>
+                                    {allGroups?.registrant_Group.length ? (
+                                        <MenuGroup title="Groups">
+                                            {allGroups.registrant_Group.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={() => {
@@ -1281,30 +1400,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 </MenuItem>
                                             ))}
                                         </MenuGroup>
-                                    ) : (
-                                        <Text px={2}>No groups enabled.</Text>
-                                    )}
-                                    {disabledGroups?.length ? (
-                                        <MenuGroup title="Disabled groups">
-                                            {disabledGroups.map((group) => (
-                                                <MenuItem
-                                                    key={group.id}
-                                                    onClick={async () => {
-                                                        setSendCustomEmailRegistrants(
-                                                            data.filter((a) =>
-                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
-                                                            )
-                                                        );
-                                                        sendCustomEmailModal.onOpen();
-                                                    }}
-                                                >
-                                                    {group.name}
-                                                </MenuItem>
-                                            ))}
-                                        </MenuGroup>
-                                    ) : (
-                                        <></>
-                                    )}
+                                    ) : undefined}
                                 </MenuList>
                             </Menu>
                         );
@@ -1330,31 +1426,22 @@ export default function ManageRegistrants(): JSX.Element {
             },
         ],
         [
-            allGroups?.permissions_Group,
-            conference.id,
-            conference.slug,
-            data,
-            disabledGroups,
-            enabledGroups,
+            conferencePath,
             exportWithProfileData,
-            insertInvitationEmailJobsLoading,
+            client,
+            allGroups?.registrant_Group,
+            data,
             insertInvitationEmailJobsMutation,
+            conference.id,
             refetchAllRegistrants,
-            selectProfiles,
-            sendCustomEmailModal,
             toast,
+            insertInvitationEmailJobsLoading,
+            sendCustomEmailModal,
         ]
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permissions_Permission_Enum.ConferenceManageAttendees,
-                Permissions_Permission_Enum.ConferenceManageRoles,
-                Permissions_Permission_Enum.ConferenceManageGroups,
-            ]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -1375,7 +1462,7 @@ export default function ManageRegistrants(): JSX.Element {
                 data={
                     !loadingAllGroups &&
                     !loadingAllRegistrants &&
-                    (allGroups?.permissions_Group && allRegistrants?.registrant_Registrant ? data : null)
+                    (allGroups?.registrant_Group && allRegistrants?.registrant_Registrant ? data : null)
                 }
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={
@@ -1405,20 +1492,27 @@ export default function ManageRegistrants(): JSX.Element {
                 onClose={sendCustomEmailModal.onClose}
                 registrants={sendCustomEmailRegistrants}
                 send={async (registrantIds: string[], markdownBody: string, subject: string) => {
-                    const result = await insertCustomEmailJobMutation({
-                        variables: {
+                    const result = await insertCustomEmailJobMutation(
+                        {
                             registrantIds,
                             conferenceId: conference.id,
                             markdownBody,
                             subject,
                         },
-                    });
-                    if (result?.errors && result.errors.length > 0) {
-                        console.error("Failed to insert CustomEmailJob", result.errors);
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                },
+                            },
+                        }
+                    );
+                    if (result?.error) {
+                        console.error("Failed to insert CustomEmailJob", result.error);
                         throw new Error("Error submitting query");
                     }
                 }}
             />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

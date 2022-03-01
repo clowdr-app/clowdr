@@ -1,0 +1,77 @@
+Session,,,,,,Presentation,,,,Speakers and Authors,,,,Content,,,,,Misc.,,
+"Session Title
+(required)","Session Start
+(UTC)","Session Duration
+(minutes)","Session Abstract
+(optional)","Chair Names
+(required)","Chair Emails
+(required)","Title
+(required)","Type
+(open cell dropdown for options)
+(required)","Duration
+(minutes)
+(optional)","Abstract
+(optional)","Speaker Names
+(separate with semi-colons)
+(required)","Speaker Emails
+(separate with semi-colons, same order as names)
+(required)","Speaker Affiliations
+(separate with semi-colons, same order as names)
+(required)","Other Authors (non-speakers)
+(separate with semi-colons)
+(optional)","Editable abstract?
+(Can speakers edit their abstract)",Video upload?,Slides upload?,Image/poster upload?,Website link?,"Interaction Mode
+(default: video chat up to 250 people)
+(optional)","Room Name for Session
+(optional)","Tags
+(separate by semicolons)
+(optional)"
+My awesome first session!,2021/01/01 13:00,90 ,,Ed Nutting,support+template@midspace.app,Introduction,Presentation,10 ,,Ed Nutting; Cristal Mojica,support+template1@midspace.app; support+template2@midspace.app,Midspace; Midspace,,No,Request upload from speaker,Request upload from speaker,Do not request upload,Do not request upload,,,
+,,,,,,Why virtual sessions are great,Keynote,60 ,,Ed Nutting,support+template1@midspace.app; support+template2@midspace.app,Midspace,Crista Lopes,Yes,Request upload from speaker,Request upload from speaker,Do not request upload,Do not request upload,,,Keynotes
+,,,,,,Using Midspace,Tutorial,10 ,,Cristal Mojica,support+template1@midspace.app; support+template2@midspace.app,Midspace,,No,Request upload from speaker,Do not request upload,Do not request upload,Request upload from speaker,,,Midspace Tutorial
+,,,,,,Q&A,Session Q&A,20 ,,Ed Nutting; Cristal Mojica,support+template1@midspace.app; support+template2@midspace.app,Midspace; Midspace,,No,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+The ultimate second session!,2021/01/01 15:00,60 ,,Benjamin Pierce,support+template@midspace.app,Presentation #1,Presentation,10 ,,Person A,personA@example.org,A1,,Yes,Request upload from speaker,Request upload from speaker,Do not request upload,Do not request upload,,,Topic 1
+,,,,,,Presentation #2,Presentation,10 ,,Person B,personB@example.org,A2,,Yes,Request upload from speaker,Request upload from speaker,Do not request upload,Do not request upload,,,Topic 1; Topic 2
+,,,,,,Presentation #3,Presentation,10 ,,Person C; Person D,personC@example.org; personD@example.org,A3; A4,,Yes,Request upload from speaker,Request upload from speaker,Do not request upload,Do not request upload,,,Topic 1; Topic 3
+,,,,,,Presentation #4,Presentation,10 ,,Person E,personE@example.org,A5,Person F,Yes,Request upload from speaker,Request upload from speaker,Do not request upload,Do not request upload,,,Topic 2
+,,,,,,Q&A,Session Q&A,20 ,,Person A; Person B; Person C; Person E,personA@example.org; personB@example.org; personC@example.org; personE@example.org,A1; A2; A3; A5,,No,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,Topic 1; Q&As
+Keynote,2021/01/01 15:00,60 ,,Cristal Mojica,support+template@midspace.app,Introduction,Other,5 ,,,,,,,,,,,,,
+,,,,,,The awesome keynote title,Keynote,40 ,The keynote's abstract text.,Keynote Speaker Name,keynoteSpeaker@example.org,Keynote Speaker Affiliation,,Yes,Do not request upload,Request upload from speaker,Do not request upload,Request upload from speaker,,,Conference Theme 1
+,,,,,,Q&A,Session Q&A,15 ,,,,,,,,,,,,,
+Paper Session - Scheduled live presentations,2021/01/01 15:00,45 ,Description of the theme of the session.,Ed Nutting,support+template@midspace.app,Welcome,Other,3 ,,,,,,No,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+,,,,,,Paper 1,Paper,10 ,Paper 1's abstract,Author 1,author1@example.org,Author 1 Affiliation,Co-author X,No,Do not request upload,Request upload from speaker,Do not request upload,Do not request upload,,,
+,,,,,,Paper 2,Paper,10 ,Paper 2's abstract,Author 2,author2@example.org,Author 2 Affiliation,Co-author Y; Co-author Z,No,Do not request upload,Request upload from speaker,Do not request upload,Do not request upload,,,
+,,,,,,Paper 3,Paper,10 ,Paper 3's abstract,Author 3,author3@example.org,Author 3 Affiliation,Co-author Q,No,Do not request upload,Request upload from speaker,Do not request upload,Do not request upload,,,
+,,,,,,Q&A,Session Q&A,12 ,,Author 1; Author 2; Author 3,author1@example.org; author2@example.org; author3@example.org,Author 1 Affiliation; Author 2 Affiliation; Author 3 Affiliation,,No,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+Paper Session - Scheduled pre-recorded presentations,2021/01/01 15:00,45 ,Description of the theme of the session.,Cristal Mojica,support+template@midspace.app,Welcome,Other,3 ,,,,,,No,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+,,,,,,Paper 1,Paper,10 ,Paper 1's abstract,Author 1,author1@example.org,Author 1 Affiliation,Co-author X,No,Request upload from speaker,Request upload from speaker,Do not request upload,Do not request upload,,,
+,,,,,,Paper 2,Paper,10 ,Paper 2's abstract,Author 2,author2@example.org,Author 2 Affiliation,Co-author Y; Co-author Z,No,Request upload from speaker,Request upload from speaker,Do not request upload,Do not request upload,,,
+,,,,,,Paper 3,Paper,10 ,Paper 3's abstract,Author 3,author3@example.org,Author 3 Affiliation,Co-author Q,No,Request upload from speaker,Request upload from speaker,Do not request upload,Do not request upload,,,
+,,,,,,Q&A,Session Q&A,12 ,,Author 1; Author 2; Author 3,author1@example.org; author2@example.org; author3@example.org,Author 1 Affiliation; Author 2 Affiliation; Author 3 Affiliation,,No,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+Paper Session - Unscheduled presentations,2021/01/01 15:00,45 ,Description of the theme of the session.,Ed Nutting,support+template@midspace.app,Paper 1,Paper,,Paper 1's abstract,Author 1,author1@example.org,Author 1 Affiliation,Co-author X,No,Do not request upload,Request upload from speaker,Do not request upload,Do not request upload,,,
+,,,,,,Paper 2,Paper,,Paper 2's abstract,Author 2,author2@example.org,Author 2 Affiliation,Co-author Y; Co-author Z,No,Do not request upload,Request upload from speaker,Do not request upload,Do not request upload,,,
+,,,,,,Paper 3,Paper,,Paper 3's abstract,Author 3,author3@example.org,Author 3 Affiliation,Co-author Q,No,Do not request upload,Request upload from speaker,Do not request upload,Do not request upload,,,
+Poster Session,2021/01/01 15:00,60 ,Description of the theme or poster competition.,Cristal Mojica,support+template@midspace.app,Introduction,Other,5 ,Explanation of how the competition works and the session format.,,,,,,,,,,,,
+,,,,,,[Switchover time],,1 ,,,,,,,,,,,,,
+,,,,,,Poster 1,Poster,5 ,Poster 1 abstract,Poster Author 1,poster-author1@example.org,Poster Author 1 Affiliation,,Yes,Request upload from speaker,Do not request upload,Request upload from speaker,Request upload from speaker,Video-chat,,
+,,,,,,[Switchover time],,1 ,,,,,,,,,,,,,
+,,,,,,Poster 2,Poster,5 ,Poster 2 abstract,Poster Author 2,poster-author2@example.org,Poster Author 2 Affiliation,,Yes,Request upload from speaker,Do not request upload,Request upload from speaker,Request upload from speaker,Video-chat,,
+,,,,,,[Switchover time],,1 ,,,,,,,,,,,,,
+,,,,,,Poster 3,Poster,5 ,Poster 3 abstract,Poster Author 3,poster-author3@example.org,Poster Author 3 Affiliation,,Yes,Request upload from speaker,Do not request upload,Request upload from speaker,Request upload from speaker,Video-chat,,
+,,,,,,[Switchover time],,1 ,,,,,,,,,,,,,
+,,,,,,Poster 4,Poster,5 ,Poster 4 abstract,Poster Author 4,poster-author4@example.org,Poster Author 4 Affiliation,,Yes,Request upload from speaker,Do not request upload,Request upload from speaker,Request upload from speaker,Video-chat,,
+,,,,,,Breakout discussion,Other,25 ,Join the discussion room for a poster to chat to the author!,,,,,,,,,,Breakout video-chat,,
+,,,,,,Winners announcement,Other,6 ,Announcement of the winners of the competition,,,,,Yes,,,,,,,
+Poster Exhibition,,,Description of the theme or poster competition.,Cristal Mojica,support+template@midspace.app,Poster 1,Poster,,Poster 1 abstract,Poster Author 1,poster-author1@example.org,Poster Author 1 Affiliation,,Yes,Request upload from speaker,Do not request upload,Request upload from speaker,Request upload from speaker,,,
+,,,,,,Poster 2,Poster,,Poster 2 abstract,Poster Author 2,poster-author2@example.org,Poster Author 2 Affiliation,,Yes,Request upload from speaker,Do not request upload,Request upload from speaker,Request upload from speaker,,,
+,,,,,,Poster 3,Poster,,Poster 3 abstract,Poster Author 3,poster-author3@example.org,Poster Author 3 Affiliation,,Yes,Request upload from speaker,Do not request upload,Request upload from speaker,Request upload from speaker,,,
+,,,,,,Poster 4,Poster,,Poster 4 abstract,Poster Author 4,poster-author4@example.org,Poster Author 4 Affiliation,,Yes,Request upload from speaker,Do not request upload,Request upload from speaker,Request upload from speaker,,,
+Tutorial or Workshop - Unstructured,2021/01/01 15:00,240 ,Description of the theme of the tutorial or workshop,Workhop Organizer 1,support+template@midspace.app,,,,,,,,,,,,,,,,
+Tutorial or Workshop - Partially structured,2021/01/01 15:00,240 ,Description of the theme of the tutorial or workshop,Workhop Organizer 1,support+template@midspace.app,Welcome,Workshop,10 ,,,,,,Yes,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+,,,,,,Presentations,Workshop,30 ,Description of presentations in part 1,Speaker 1; Speaker 2; Speaker 3,speaker1@example.org; speaker2@example.org; speaker3@example.org,,,Yes,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+,,,,,,Discussion,Workshop,60 ,Description of how the discussion will be moderated,,,,,Yes,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+,,,,,,Break,Other,35 ,Social time! (Any specific activities?),,,,,Yes,Do not request upload,Do not request upload,Do not request upload,Do not request upload,Networking,,
+,,,,,,Re-opening,Other,5 ,,,,,,Yes,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+,,,,,,Presentations,Workshop,30 ,Description of presentations in part 2,Speaker 4; Speaker 5; Speaker 6,speaker4@example.org; speaker5@example.org; speaker6@example.org,,,Yes,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+,,,,,,Discussion,Workshop,60 ,Description of how the discussion will be moderated,,,,,Yes,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,
+,,,,,,Closing,Workshop,10 ,,,,,,Yes,Do not request upload,Do not request upload,Do not request upload,Do not request upload,,,

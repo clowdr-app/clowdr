@@ -1,9 +1,11 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { ConferencePrepareJobData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { handleConferencePrepareJobInserted } from "../handlers/prepare";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { ConferencePrepareJobData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 
@@ -12,24 +14,25 @@ router.use(checkEventSecret);
 
 router.post("/inserted", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<ConferencePrepareJobData>>(req.body);
-    } catch (e) {
-        console.error("Received incorrect payload", e);
+        assertType<EventPayload<ConferencePrepareJobData>>(req.body);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
 
-    const params: Payload<ConferencePrepareJobData> = req.body;
-    handleConferencePrepareJobInserted(params)
+    const params: EventPayload<ConferencePrepareJobData> = req.body;
+    handleConferencePrepareJobInserted(req.log, params)
         .then(() => {
-            console.log("Finished handling new ConferencePrepareJob", params.id, params.event.data.new?.id);
+            req.log.info({ id: params.id }, "Finished handling new ConferencePrepareJob");
         })
         .catch((e) => {
-            console.error(
-                "Failure while handling ConferencePrepareJob inserted",
-                params.id,
-                params.event.data.new?.id,
-                e
+            req.log.error(
+                {
+                    id: params.id,
+                    err: e,
+                },
+                "Failure while handling ConferencePrepareJob inserted"
             );
         });
     return res.status(200).json("OK");

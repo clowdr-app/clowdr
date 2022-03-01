@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Alert,
@@ -15,69 +14,26 @@ import {
     Tooltip,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import React, { useCallback, useMemo, useState } from "react";
-import type {
-    UserInfoFragment} from "../../../generated/graphql";
-import {
-    useAgreeToTermsMutation,
-    useSelectCurrentUserQuery,
-    useTermsConfigsQuery,
-} from "../../../generated/graphql";
+import type { UserInfoFragment } from "../../../generated/graphql";
+import { useAgreeToTermsMutation, useSelectCurrentUserQuery, useTermsConfigsQuery } from "../../../generated/graphql";
 import useUserId from "../../Auth/useUserId";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
-import { useRestorableState } from "../../Generic/useRestorableState";
+import FAIcon from "../../Chakra/FAIcon";
+import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import FAIcon from "../../Icons/FAIcon";
+import { useRestorableState } from "../../Hooks/useRestorableState";
 import type { UserInfo } from "./useMaybeCurrentUser";
 import { CurrentUserContext, defaultCurrentUserContext } from "./useMaybeCurrentUser";
 
 gql`
-    fragment RegistrantFields on registrant_Registrant {
-        id
-        userId
-        conferenceId
-        displayName
-        createdAt
-        updatedAt
-        profile {
-            registrantId
-            photoURL_50x50
-        }
-        conference {
-            id
-            name
-            shortName
-            slug
-        }
-        groupRegistrants {
-            id
-            group {
-                id
-                enabled
-                name
-                groupRoles {
-                    id
-                    role {
-                        id
-                        name
-                        rolePermissions {
-                            id
-                            permissionName
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     fragment UserInfo on User {
         id
         email
         acceptedTermsAt
         acceptedPrivacyPolicyAt
-        registrants {
-            ...RegistrantFields
-        }
     }
 
     query SelectCurrentUser($userId: String!) {
@@ -159,26 +115,39 @@ function CurrentUserProvider_IsAuthenticated({
     children: string | JSX.Element | Array<JSX.Element>;
     userId: string;
 }) {
-    const { loading, error, data, refetch } = useSelectCurrentUserQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.User,
+                NoConferenceId: "true",
+            }),
+        []
+    );
+    const [{ fetching: loading, error, data }, refreshSelectCurrentUser] = useSelectCurrentUserQuery({
         variables: {
             userId,
         },
-        nextFetchPolicy: "cache-first",
+        context,
     });
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
+    // TODO: remove this hack once the cache is fixed to immediately reflect result of the `AgreeToTerms` mutation.
+    const forceRefresh = useCallback(() => {
+        refreshSelectCurrentUser({
+            requestPolicy: "network-only",
+        });
+    }, [refreshSelectCurrentUser]);
 
-    const { loading: termsLoading, data: termsData } = useTermsConfigsQuery();
+    const [{ fetching: termsLoading, data: termsData }] = useTermsConfigsQuery();
 
     const value = loading ? undefined : error ? false : data;
     const ctx = useMemo(() => {
         const result: UserInfo = {
             loading,
             user: value ? (value?.User_by_pk as UserInfoFragment) ?? false : value,
-            refetchUser: refetch,
         };
 
         return result;
-    }, [loading, refetch, value]);
+    }, [loading, value]);
 
     const acceptedTermsAt = useMemo(() => ctx.user && Date.parse(ctx.user.acceptedTermsAt), [ctx.user]);
     const acceptedPPAt = useMemo(() => ctx.user && Date.parse(ctx.user.acceptedPrivacyPolicyAt), [ctx.user]);
@@ -190,7 +159,9 @@ function CurrentUserProvider_IsAuthenticated({
     );
 
     if (termsLoading || loading) {
-        return <CenteredSpinner spinnerProps={{ label: "Loading terms configuration" }} />;
+        return (
+            <CenteredSpinner caller="CurrentUserProvider:179" spinnerProps={{ label: "Loading terms configuration" }} />
+        );
     }
 
     if (termsData && termsData.hostOrganisationName) {
@@ -224,6 +195,7 @@ function CurrentUserProvider_IsAuthenticated({
                         termsAcceptance={
                             !acceptedTermsAt ? "never" : termsTimestamp > acceptedTermsAt ? "outdated" : "current"
                         }
+                        forceRefresh={forceRefresh}
                     />
                 );
             }
@@ -301,6 +273,7 @@ function TermsAndPPCompliance({
     userId,
     termsAcceptance,
     ppAcceptance,
+    forceRefresh,
 }: {
     ppURL: string;
     termsURL: string;
@@ -308,19 +281,19 @@ function TermsAndPPCompliance({
     userId: string;
     termsAcceptance: "never" | "current" | "outdated";
     ppAcceptance: "never" | "current" | "outdated";
+    forceRefresh: () => void;
 }): JSX.Element {
     const [termsChecked, setTermsChecked] = useState<boolean>(false);
     const [ppChecked, setPPChecked] = useState<boolean>(false);
-    const [agreeToTerms, agreeToTermsResponse] = useAgreeToTermsMutation();
+    const [agreeToTermsResponse, agreeToTerms] = useAgreeToTermsMutation();
 
-    const agreeAndContinue = useCallback(() => {
-        agreeToTerms({
-            variables: {
-                userId,
-                at: new Date().toISOString(),
-            },
+    const agreeAndContinue = useCallback(async () => {
+        await agreeToTerms({
+            userId,
+            at: new Date().toISOString(),
         });
-    }, [agreeToTerms, userId]);
+        forceRefresh();
+    }, [agreeToTerms, forceRefresh, userId]);
 
     return (
         <Center mt={10}>
@@ -401,7 +374,7 @@ function TermsAndPPCompliance({
                                 colorScheme="purple"
                                 onClick={() => agreeAndContinue()}
                                 isDisabled={!termsChecked || !ppChecked}
-                                isLoading={agreeToTermsResponse.loading}
+                                isLoading={agreeToTermsResponse.fetching}
                             >
                                 <FAIcon iconStyle="s" icon="signature" aria-hidden mr={2} />
                                 Confirm and continue

@@ -1,12 +1,17 @@
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import { gql } from "@urql/core";
+import type {
+    Analytics_AggregateItemTotalViewsQuery,
+    Analytics_AggregateItemTotalViewsQueryVariables,
+} from "../../generated/graphql";
 import {
     Analytics_AggregateItemTotalViewsDocument,
     Analytics_InsertItemTotalViewStatDocument,
 } from "../../generated/graphql";
-import { apolloClient } from "../../graphqlClient";
+import { logger } from "../../lib/logger";
 import { ModelName, onBatchUpdate } from "../../rabbitmq/analytics/batchUpdate";
 
-console.info("Analytics Item computation worker running");
+logger.info("Analytics Item computation worker running");
 
 gql`
     query Analytics_AggregateItemTotalViews($itemId: uuid!) {
@@ -30,26 +35,24 @@ gql`
 `;
 
 async function onContentItemBatchUpdate(itemId: string) {
-    console.log(`Content Item Batch Update: ${itemId}`);
+    logger.info(`Content Item Batch Update: ${itemId}`);
 
-    const response = await apolloClient?.query({
-        query: Analytics_AggregateItemTotalViewsDocument,
-        variables: {
-            itemId,
-        },
-    });
+    const response = await gqlClient
+        ?.query<Analytics_AggregateItemTotalViewsQuery, Analytics_AggregateItemTotalViewsQueryVariables>(
+            Analytics_AggregateItemTotalViewsDocument,
+            {
+                itemId,
+            }
+        )
+        .toPromise();
 
-    if (
-        response?.data.analytics_ContentItemStats_aggregate.aggregate?.sum !== undefined &&
-        response?.data.analytics_ContentItemStats_aggregate.aggregate?.sum !== null
-    ) {
-        await apolloClient?.mutate({
-            mutation: Analytics_InsertItemTotalViewStatDocument,
-            variables: {
+    if (response?.data?.analytics_ContentItemStats_aggregate.aggregate?.sum) {
+        await gqlClient
+            ?.mutation(Analytics_InsertItemTotalViewStatDocument, {
                 itemId,
                 count: response.data.analytics_ContentItemStats_aggregate.aggregate.sum.viewCount ?? 0,
-            },
-        });
+            })
+            .toPromise();
     }
 }
 

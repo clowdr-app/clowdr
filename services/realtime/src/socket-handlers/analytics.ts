@@ -1,7 +1,8 @@
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
 import { is } from "typescript-is";
 import { validate } from "uuid";
-import { redisClientP, redisClientPool } from "../redis";
+import { logger } from "../lib/logger";
 
 export function onConnect(_userId: string, _socketId: string): void {
     // TODO
@@ -16,11 +17,7 @@ type ViewCountInfo = {
     contentType: "Item" | "Element" | "Room.HLSStream";
 };
 
-export function onViewCount(
-    _conferenceSlugs: string[],
-    _userId: string,
-    _socketId: string
-): (info: any) => Promise<void> {
+export function onViewCount(_userId: string, _socketId: string): (info: any) => Promise<void> {
     return async (info) => {
         try {
             assert(is<ViewCountInfo>(info), "Submitted analytics info is invalid. (type)");
@@ -31,8 +28,8 @@ export function onViewCount(
             } finally {
                 redisClientPool.release("socket-handlers/analytics/onViewCount", client);
             }
-        } catch (e) {
-            console.error(e);
+        } catch (error: any) {
+            logger.error({ error }, "On view count error");
         }
     };
 }

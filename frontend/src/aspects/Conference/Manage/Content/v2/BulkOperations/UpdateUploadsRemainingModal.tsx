@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -22,7 +21,9 @@ import {
     NumberInputStepper,
     Text,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useCallback, useMemo, useState } from "react";
+import { gql } from "urql";
 import { useUpdateUploadsRemainingMutation } from "../../../../../../generated/graphql";
 
 gql`
@@ -70,16 +71,23 @@ function ModalInner({
     const elementIds = useMemo(() => elementsByItem.flatMap((x) => x.elementIds), [elementsByItem]);
     const [newValue, setNewValue] = useState<number>(3);
 
-    const [doUpdate, updateResponse] = useUpdateUploadsRemainingMutation();
+    const [updateResponse, doUpdate] = useUpdateUploadsRemainingMutation();
 
     const update = useCallback(async () => {
         try {
-            await doUpdate({
-                variables: {
+            await doUpdate(
+                {
                     elementIds,
                     count: newValue,
                 },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                }
+            );
 
             onClose();
         } catch (e) {
@@ -123,7 +131,7 @@ function ModalInner({
             <ModalFooter>
                 <ButtonGroup spacing={2}>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button colorScheme="purple" isLoading={updateResponse.loading} onClick={update}>
+                    <Button colorScheme="purple" isLoading={updateResponse.fetching} onClick={update}>
                         Update
                     </Button>
                 </ButtonGroup>

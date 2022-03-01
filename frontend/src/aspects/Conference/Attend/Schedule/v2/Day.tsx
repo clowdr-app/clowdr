@@ -1,18 +1,17 @@
-import type { QueryHookOptions } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { Box, Skeleton, Td, Th, Tr, useColorModeValue } from "@chakra-ui/react";
 import IntersectionObserver from "@researchgate/react-intersection-observer";
+import { gql } from "@urql/core";
 import * as luxon from "luxon";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
+import type Urql from "urql";
 import type {
-    ScheduleV2_DayEventsQuery,
     ScheduleV2_DayEventsQueryVariables,
-    ScheduleV2_DayLightweightEventsQuery,
     ScheduleV2_DayLightweightEventsQueryVariables,
     ScheduleV2_RoomFragment,
     ScheduleV2_TagFragment,
-    Schedule_Event_Bool_Exp} from "../../../../../generated/graphql";
+    Schedule_Event_Bool_Exp,
+} from "../../../../../generated/graphql";
 import {
     useScheduleV2_DayEventsQuery,
     useScheduleV2_DayLightweightEventsQuery,
@@ -27,6 +26,7 @@ gql`
         startTime
         endTime
         roomId
+        conferenceId
     }
 
     query ScheduleV2_DayLightweightEvents(
@@ -80,9 +80,9 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
     const dayHeadingBgColor = useColorModeValue("SecondaryActionButton.400", "SecondaryActionButton.500");
 
     const conference = useConference();
-    const lwDayEventsQueryObj: QueryHookOptions<
-        ScheduleV2_DayLightweightEventsQuery,
-        ScheduleV2_DayLightweightEventsQueryVariables
+    const lwDayEventsQueryObj: Omit<
+        Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>,
+        "query"
     > = useMemo(
         () => ({
             variables: {
@@ -95,19 +95,18 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
         }),
         [conference.id, eventFilter, startOfDayTime, isVisible]
     );
-    const lwEventsResponse = useScheduleV2_DayLightweightEventsQuery(lwDayEventsQueryObj);
+    const [lwEventsResponse] = useScheduleV2_DayLightweightEventsQuery(lwDayEventsQueryObj);
 
-    const fullDayEventsQueryObj: QueryHookOptions<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables> =
-        useMemo(
-            () => ({
-                variables: {
-                    eventIds: lwEventsResponse.data?.schedule_Event.map((event) => event.id) ?? [],
-                },
-                skip: !lwEventsResponse.data || !isRendered,
-            }),
-            [lwEventsResponse.data, isRendered]
-        );
-    const fullEventsResponse = useScheduleV2_DayEventsQuery(fullDayEventsQueryObj);
+    const fullDayEventsQueryObj: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, "query"> = useMemo(
+        () => ({
+            variables: {
+                eventIds: lwEventsResponse.data?.schedule_Event.map((event) => event.id) ?? [],
+            },
+            skip: !lwEventsResponse.data || !isRendered,
+        }),
+        [lwEventsResponse.data, isRendered]
+    );
+    const [fullEventsResponse] = useScheduleV2_DayEventsQuery(fullDayEventsQueryObj);
 
     const parsedEvents: ParsedEvent[] = useMemo(
         () =>
@@ -118,17 +117,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
             })) ?? [],
         [lwEventsResponse.data?.schedule_Event]
     );
-    const {
-        sortedEventsByRoom,
-        earliestDT,
-        latestDT,
-        earliestHourDT,
-        earliestDayDT,
-        latestHourDT,
-        latestDayDT,
-        timeMarkers,
-        eventCellDescriptors,
-    } = useMemo<{
+    const { timeMarkers, eventCellDescriptors } = useMemo<{
         sortedEventsByRoom: Record<string, ParsedEvent[]>;
         earliestDT: luxon.DateTime;
         latestDT: luxon.DateTime;
@@ -421,7 +410,6 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                                 verticalAlign="top"
                                 whiteSpace="nowrap"
                                 overflow="hidden"
-                                size="xs"
                                 fontSize="sm"
                                 p="0.6em"
                                 minW="min-content"
@@ -480,6 +468,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                                         </Td>
                                     );
                                 }
+                                return undefined;
                             })}
                         </Tr>
                     );

@@ -8,7 +8,8 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: user
+  - role: conference-organizer
+  - role: subconference-organizer
 - name: createRoomDm
   definition:
     kind: synchronous
@@ -18,6 +19,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
+  - role: attendee
   - role: user
 - name: getGoogleOAuthUrl
   definition:
@@ -28,18 +30,8 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: user
-- name: getProgramPersonAccessToken
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/element/getProgramPersonAccessToken'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: user
-  - role: unauthenticated
+  - role: conference-organizer
+  - role: subconference-organizer
 - name: getSlug
   definition:
     kind: ""
@@ -49,6 +41,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
+  - role: attendee
   - role: unauthenticated
   - role: user
 - name: getUploadAgreement
@@ -60,8 +53,19 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
+  - role: submitter
+  - role: attendee
   - role: unauthenticated
   - role: user
+- name: initialiseSuperUser
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/su/initialise'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: superuser
 - name: invitationConfirmCurrent
   definition:
     kind: synchronous
@@ -71,6 +75,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
+  - role: attendee
   - role: user
 - name: joinEventVonageSession
   definition:
@@ -81,7 +86,11 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: user
+  - role: conference-organizer
+  - role: room-admin
+  - role: room-member
+  - role: subconference-organizer
+  - role: attendee
 - name: joinRoomChimeSession
   definition:
     kind: synchronous
@@ -91,6 +100,11 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
+  - role: conference-organizer
+  - role: room-member
+  - role: room-admin
+  - role: attendee
+  - role: subconference-organizer
   - role: user
 - name: joinRoomVonageSession
   definition:
@@ -101,6 +115,11 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
+  - role: conference-organizer
+  - role: room-member
+  - role: room-admin
+  - role: attendee
+  - role: subconference-organizer
   - role: user
 - name: notifyEventEnded
   definition:
@@ -142,7 +161,8 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: user
+  - role: conference-organizer
+  - role: subconference-organizer
 - name: stopEventBroadcast
   definition:
     kind: synchronous
@@ -152,7 +172,8 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: user
+  - role: conference-organizer
+  - role: subconference-organizer
 - name: submitGoogleOAuthCode
   definition:
     kind: synchronous
@@ -162,7 +183,8 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: user
+  - role: conference-organizer
+  - role: subconference-organizer
 - name: submitUploadableElement
   definition:
     kind: synchronous
@@ -172,8 +194,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: unauthenticated
-  - role: user
+  - role: submitter
 - name: toggleVonageRecordingState
   definition:
     kind: synchronous
@@ -183,7 +204,21 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
+  - role: conference-organizer
+  - role: room-member
+  - role: room-admin
+  - role: attendee
+  - role: subconference-organizer
   - role: user
+- name: transcribeGeneratePresignedUrl
+  definition:
+    kind: ""
+    handler: '{{ACTION_BASE_URL}}/transcribe/generatePresignedUrl'
+    headers:
+    - name: X-Hasura-Event-Secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: attendee
 - name: updateProfilePhoto
   definition:
     kind: synchronous
@@ -193,7 +228,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: user
+  - role: attendee
 - name: updateSubtitles
   definition:
     kind: synchronous
@@ -203,8 +238,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: unauthenticated
-  - role: user
+  - role: submitter
 - name: vapidPublicKey
   definition:
     kind: ""
@@ -214,6 +248,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
+  - role: attendee
   - role: unauthenticated
   - role: user
 custom_types:
@@ -276,4 +311,6 @@ custom_types:
   - name: MatchingPersonOutput
   - name: ToggleVonageRecordingStateOutput
   - name: NotifyEventStarted
+  - name: InitialiseSuperUserOutput
+  - name: TranscribeGeneratePresignedUrlOutput
   scalars: []

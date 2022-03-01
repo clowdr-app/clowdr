@@ -1,8 +1,8 @@
-import type { SimpleGridProps} from "@chakra-ui/react";
+import type { SimpleGridProps } from "@chakra-ui/react";
 import { GridItem, HStack, SimpleGrid, Text } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
-import FAIcon from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
 import useRoomParticipants from "../../../../Room/useRoomParticipants";
 import { useRegistrant } from "../../../RegistrantsContext";
 

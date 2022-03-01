@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import type { TextProps } from "@chakra-ui/react";
 import { Badge, Button, HStack, Text, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import type {
@@ -8,20 +8,22 @@ import type {
     ProgramPersonDataFragment,
     RegistrantDataFragment,
 } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import ChatProfileModalProvider, { useChatProfileModal } from "../../../Chat/Frame/ChatProfileModalProvider";
 import ProfileBox from "../../../Chat/Messages/ProfileBox";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { maybeCompare } from "../../../Utils/maybeSort";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import { useRegistrant } from "../../RegistrantsContext";
 
 gql`
     fragment ProgramPersonData on content_ItemProgramPerson {
         id
+        itemId
         person {
             id
             name
             affiliation
             registrantId
+            conferenceId
         }
         roleName
         priority

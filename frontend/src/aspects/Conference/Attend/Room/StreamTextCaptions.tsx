@@ -3,7 +3,7 @@ import { Box, Button, Flex, Heading, Link, Text, useColorModeValue, useToken } f
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
-import { useRestorableState } from "../../../Generic/useRestorableState";
+import { useRestorableState } from "../../../Hooks/useRestorableState";
 
 export default function StreamTextCaptions({
     streamTextEventId,

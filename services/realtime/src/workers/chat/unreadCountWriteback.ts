@@ -1,15 +1,17 @@
 // Set this up as a CronToGo task
 // CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/chat/unreadCountWriteback.js
 
-import { gql } from "@apollo/client/core";
+import { ReadUpToIndexCache } from "@midspace/caches/readUpToIndex";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
-import {
+import { gql } from "graphql-tag";
+import type {
     Chat_ReadUpToIndex_Insert_Input,
-    InsertReadUpToIndexDocument,
-    RegistrantIdsFromChatsAndUsersDocument,
+    RegistrantIdsFromChatsAndUsersQuery,
+    RegistrantIdsFromChatsAndUsersQueryVariables,
 } from "../../generated/graphql";
-import { apolloClient } from "../../graphqlClient";
-import { getAndClearModified } from "../../lib/cache/readUpToIndex";
+import { InsertReadUpToIndexDocument, RegistrantIdsFromChatsAndUsersDocument } from "../../generated/graphql";
+import { logger } from "../../lib/logger";
 
 gql`
     query RegistrantIdsFromChatsAndUsers($chatIds: [uuid!]!, $userIds: [String!]!) {
@@ -31,32 +33,33 @@ gql`
 
 async function Main(continueExecuting = false) {
     try {
-        assert(apolloClient, "Apollo client needed for read up to index writeback");
+        assert(gqlClient, "GQL client needed for read up to index writeback");
 
-        console.info("Writing back read up to indices");
-        const indicesToWriteBack = await getAndClearModified();
-        const registrantIds = await apolloClient.query({
-            query: RegistrantIdsFromChatsAndUsersDocument,
-            variables: {
-                chatIds: indicesToWriteBack.map((x) => x.chatId),
-                userIds: indicesToWriteBack.map((x) => x.userId),
-            },
-        });
+        logger.info("Writing back read up to indices");
+        const indicesToWriteBack = await new ReadUpToIndexCache(logger).getAndClearModified();
+        const registrantIds = await gqlClient
+            .query<RegistrantIdsFromChatsAndUsersQuery, RegistrantIdsFromChatsAndUsersQueryVariables>(
+                RegistrantIdsFromChatsAndUsersDocument,
+                {
+                    chatIds: indicesToWriteBack.map((x) => x.chatId),
+                    userIds: indicesToWriteBack.map((x) => x.userId),
+                }
+            )
+            .toPromise();
+        assert(registrantIds?.data);
+        const data = registrantIds.data;
 
         // Delay the writeback by 30s so that all the message writeback workers
         // (hopefully) have sufficient time to save their messages into Postgres
         // so we don't get an accidental foreign key violation.
         await new Promise<void>((resolve) =>
             setTimeout(async () => {
-                assert(apolloClient, "Apollo client needed for read up to index writeback");
-                await apolloClient.mutate({
-                    mutation: InsertReadUpToIndexDocument,
-                    variables: {
+                assert(gqlClient, "GQL client needed for read up to index writeback");
+                await gqlClient
+                    .mutation(InsertReadUpToIndexDocument, {
                         objects: indicesToWriteBack
                             .map((x) => {
-                                const registrantId = registrantIds.data.registrant_Registrant.find(
-                                    (y) => y.userId === x.userId
-                                )?.id;
+                                const registrantId = data.registrant_Registrant.find((y) => y.userId === x.userId)?.id;
                                 if (registrantId) {
                                     const r: Chat_ReadUpToIndex_Insert_Input = {
                                         registrantId,
@@ -65,15 +68,16 @@ async function Main(continueExecuting = false) {
                                     };
                                     return r;
                                 } else {
-                                    console.warn(
+                                    logger.warn(
+                                        { userId: x.userId, chatId: x.chatId, messageSId: x.messageSId },
                                         `Unable to find registrant id for user: ${x.userId}. Cannot write back their unread index for ${x.chatId} (Read up to message sId: ${x.messageSId})`
                                     );
                                 }
                                 return undefined;
                             })
                             .filter((x) => !!x) as Chat_ReadUpToIndex_Insert_Input[],
-                    },
-                });
+                    })
+                    .toPromise();
                 resolve();
             }, 30000)
         );
@@ -81,21 +85,22 @@ async function Main(continueExecuting = false) {
         if (!continueExecuting) {
             process.exit(0);
         }
-    } catch (e) {
+    } catch (err: any) {
         if (
-            !e
+            !err
                 .toString()
                 .includes(
                     'Foreign key violation. insert or update on table "ReadUpToIndex" violates foreign key constraint "ReadUpToIndex_messageSId_fkey"'
                 )
         ) {
-            console.error("SEVERE ERROR: Cannot write back read up to indices!", e);
+            logger.error({ err }, "SEVERE ERROR: Cannot write back read up to indices!");
 
             if (!continueExecuting) {
                 process.exit(-1);
             }
         } else {
-            console.warn(
+            logger.warn(
+                { err },
                 "Warning: Ignoring read up to indices write back error (foreign key violation suggests the system attempted to store the read up to index before message has been written back.)"
             );
             if (!continueExecuting) {

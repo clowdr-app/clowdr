@@ -1,6 +1,7 @@
+import { redisClientPool, redlock } from "@midspace/component-clients/redis";
 import type { RedisClient } from "redis";
-import { redisClientPool, redlock } from "../redis";
 import { socketServer } from "../servers/socket-server";
+import { logger } from "./logger";
 import {
     addUserSession,
     presenceChannelName,
@@ -17,7 +18,7 @@ export function enterPresence(
     sessionId: string,
     cb: (err: Error | null) => void
 ): void {
-    // console.info(`${userId} / ${sessionId} entering ${listId}`);
+    // logger.info(`${userId} / ${sessionId} entering ${listId}`);
 
     function internal(redisClient: RedisClient, cb: (err: Error | null) => void) {
         addUserSession(redisClient, listId, userId, sessionId, (err) => {
@@ -34,12 +35,12 @@ export function enterPresence(
                 }
 
                 if (v > 0) {
-                    // console.info(`${userId} / ${sessionId} entered ${listId}`);
+                    // logger.info(`${userId} / ${sessionId} entered ${listId}`);
                     const chan = presenceChannelName(listId);
                     socketServer.in(chan).emit("entered", { listId, userId });
                 }
                 // else {
-                //     console.info(`${userId} / ${sessionId} re-entered ${listId}`);
+                //     logger.info(`${userId} / ${sessionId} re-entered ${listId}`);
                 // }
 
                 cb(null);
@@ -71,7 +72,7 @@ export function exitPresence(
     sessionId: string,
     cb: (err: Error | null) => void
 ): void {
-    // console.info(`${userId} / ${sessionId} exiting ${listId}`);
+    // logger.info(`${userId} / ${sessionId} exiting ${listId}`);
 
     function internal(redisClient: RedisClient, cb: (err: Error | null) => void) {
         const listKey = presenceListKey(listId);
@@ -118,7 +119,7 @@ export function exitPresence(
                                         const [numRemoved] = results;
 
                                         if (numRemoved > 0) {
-                                            // console.info(`${userId} / ${sessionId} left ${listId}`);
+                                            // logger.info(`${userId} / ${sessionId} left ${listId}`);
                                             const chan = presenceChannelName(listId);
                                             socketServer.in(chan).emit("left", { listId, userId });
                                         }
@@ -172,7 +173,7 @@ export function exitAllPresences(
     sessionId: string,
     cb: (err: Error | null) => void
 ): void {
-    console.info(`Begin ${userId} exiting all presences for session ${sessionId}`);
+    logger.info(`Begin ${userId} exiting all presences for session ${sessionId}`);
 
     const listsKey = sessionListsKey(sessionId);
 
@@ -185,7 +186,7 @@ export function exitAllPresences(
         redisClient.SMEMBERS(listsKey, (err, listIds) => {
             listsKeyLock?.unlock((err) => {
                 if (err) {
-                    console.error(`Error unlocking ${listsKey}`, err);
+                    logger.error({ err }, `Error unlocking ${listsKey}`);
                 }
             });
 
@@ -194,7 +195,7 @@ export function exitAllPresences(
                 return;
             }
 
-            console.info(`${userId} exiting all presences for session ${sessionId}:`, listIds);
+            logger.info(`${userId} exiting all presences for session ${sessionId}:`, listIds);
 
             const accumulatedErrors: string[] = [];
             const cleanupFunctionChain = listIds.reduce<() => void>(

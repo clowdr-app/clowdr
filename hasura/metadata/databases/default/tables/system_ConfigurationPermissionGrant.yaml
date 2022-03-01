@@ -1,0 +1,75 @@
+table:
+  name: ConfigurationPermissionGrant
+  schema: system
+object_relationships:
+- name: grantedPermission
+  using:
+    foreign_key_constraint_on: permissionName
+- name: targetConfigurationKey
+  using:
+    foreign_key_constraint_on: configurationKey
+- name: user
+  using:
+    foreign_key_constraint_on: userId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      grantedPermission:
+        superUserGrantTargets:
+          _and:
+          - grantedPermissionName:
+              _eq: INSERT_SU_PERMISSION
+          - userId:
+              _eq: X-Hasura-User-Id
+    columns:
+    - configurationKey
+    - id
+    - permissionName
+    - userId
+  role: superuser
+select_permissions:
+- permission:
+    columns:
+    - configurationKey
+    - permissionName
+    - userId
+    - created_at
+    - updated_at
+    - id
+    filter:
+      _or:
+      - grantedPermission:
+          superUserGrantTargets:
+            _and:
+            - grantedPermissionName:
+                _eq: VIEW_SU_PERMISSION_GRANT
+            - userId:
+                _eq: X-Hasura-User-Id
+      - userId:
+          _eq: X-Hasura-User-Id
+  role: superuser
+update_permissions:
+- permission:
+    check: null
+    columns: []
+    filter:
+      grantedPermission:
+        superUserGrantTargets:
+          _and:
+          - grantedPermissionName:
+              _eq: INSERT_SU_PERMISSION
+          - userId:
+              _eq: X-Hasura-User-Id
+  role: superuser
+delete_permissions:
+- permission:
+    filter:
+      grantedPermission:
+        superUserGrantTargets:
+          _and:
+          - grantedPermissionName:
+              _eq: DELETE_SU_PERMISSION
+          - userId:
+              _eq: X-Hasura-User-Id
+  role: superuser

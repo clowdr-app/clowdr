@@ -1,13 +1,14 @@
-import { gql } from "@apollo/client/core";
+import { authorize } from "@midspace/auth/websocket/authorize";
+import { createRedisClient } from "@midspace/component-clients/redis";
+import { gql } from "graphql-tag";
 import type { SigningKey } from "jwks-rsa";
 import jwksRsa from "jwks-rsa";
 import type { Socket } from "socket.io";
 import socketIO from "socket.io";
 import { createAdapter } from "socket.io-redis";
-import { GetUserConferenceSlugsDocument } from "../generated/graphql";
 import { testJWKs } from "../jwks";
 import { notificationsRoomName } from "../lib/chat";
-import { createRedisClient } from "../redis";
+import { logger } from "../lib/logger";
 import { onConnect as onConnectAnalytics } from "../socket-events/analytics";
 import { onConnect as onConnectChat, onDisconnect as onDisconnectChat } from "../socket-events/chat";
 import { onConnect as onConnectHandRaise } from "../socket-events/handRaise";
@@ -15,8 +16,6 @@ import { onConnect as onConnectPresence } from "../socket-events/presence";
 import { onDisconnect as onDisconnectAnalytics } from "../socket-handlers/analytics";
 import { onDisconnect as onDisconnectHandRaise } from "../socket-handlers/handRaise";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
-import { testMode } from "../testMode";
-import { authorize } from "./authorize";
 import { httpServer } from "./http-server";
 
 // Initialise the websocket server
@@ -67,21 +66,9 @@ socketServer.use(
 );
 
 gql`
-    query GetUserConferenceSlugs($userId: String!) {
-        conference_Conference(
-            where: {
-                groups: {
-                    enabled: { _eq: true }
-                    groupRoles: { role: { rolePermissions: { permissionName: { _eq: CONFERENCE_VIEW } } } }
-                    _or: [
-                        { includeUnauthenticated: { _eq: true } }
-                        { groupRegistrants: { registrant: { userId: { _eq: $userId } } } }
-                    ]
-                }
-            }
-        ) {
+    query GetUserConferenceIds($userId: String!) {
+        conference_Conference(where: { registrants: { userId: { _eq: $userId } } }) {
             id
-            slug
         }
     }
 `;
@@ -91,18 +78,21 @@ socketServer.on("connection", async function (socket: Socket) {
     const socketId = socket.id;
 
     // Validate the token
-    if (!socket.decodedToken["https://hasura.io/jwt/claims"]) {
-        console.error(`Socket ${socketId} attempted to connect with a JWT that was missing the relevant claims.`);
+    if (!socket.decodedToken?.sub) {
+        logger.error(
+            { socketId },
+            `Socket ${socketId} attempted to connect with a JWT that was missing the relevant claims.`
+        );
         socket.disconnect();
         return;
     }
 
-    const userId: string = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
+    const userId: string = socket.decodedToken.sub;
     if (userId) {
-        console.log(`Authorized client connected: ${userId} / ${socketId}`);
+        logger.info({ userId, socketId }, `Authorized client connected: ${userId} / ${socketId}`);
 
         socket.on("disconnect", () => {
-            console.log(`Client disconnected: ${userId} / ${socketId}`);
+            logger.info({ userId, socketId }, `Client disconnected: ${userId} / ${socketId}`);
 
             onDisconnectPresence(socketId, userId);
             onDisconnectChat(socketId, userId);
@@ -110,27 +100,19 @@ socketServer.on("connection", async function (socket: Socket) {
             onDisconnectHandRaise(socketId, userId);
         });
 
-        const conferenceSlugs = await testMode(
-            async (apolloClient) => {
-                const response = await apolloClient.query({
-                    query: GetUserConferenceSlugsDocument,
-                    variables: { userId },
-                });
-                return response.data?.conference_Conference.map((x) => x.slug);
-            },
-            async () => ["test-conference-slug"]
-        );
-
-        onConnectPresence(socket, userId, conferenceSlugs);
-        onConnectChat(socket, userId, conferenceSlugs);
-        onConnectAnalytics(socket, userId, conferenceSlugs);
-        onConnectHandRaise(socket, userId, conferenceSlugs);
+        onConnectPresence(socket, userId);
+        onConnectChat(socket, userId);
+        onConnectAnalytics(socket, userId);
+        onConnectHandRaise(socket, userId);
 
         socket.on("time", (syncPacket: any) => {
             try {
                 socket.emit("time", { ...syncPacket, serverSendTime: Date.now() });
                 if (syncPacket?.clientSendTime && typeof syncPacket.clientSendTime === "number") {
-                    console.log("Client time sync. Time offset=" + (Date.now() - syncPacket.clientSendTime) + "ms");
+                    logger.info(
+                        { timeOffsetMs: Date.now() - syncPacket.clientSendTime },
+                        "Client time sync. Time offset=" + (Date.now() - syncPacket.clientSendTime) + "ms"
+                    );
                 }
             } catch {
                 // Do nothing

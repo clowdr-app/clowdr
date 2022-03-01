@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -23,13 +22,13 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import type {
-    SubmissionsReviewModal_ElementFragment} from "../../../../../../generated/graphql";
-import {
-    useSubmissionsReviewModalDataQuery,
-} from "../../../../../../generated/graphql";
+import type { SubmissionsReviewModal_ElementFragment } from "../../../../../../generated/graphql";
+import { useSubmissionsReviewModalDataQuery } from "../../../../../../generated/graphql";
+import { makeContext } from "../../../../../GQL/make-context";
 import { Element } from "../../../../Attend/Content/Element/Element";
 
 gql`
@@ -45,7 +44,9 @@ gql`
         hasUnsubmittedElements
         itemPeople {
             id
-            person: personWithAccessToken {
+            itemId
+            personId
+            person {
                 id
                 name
                 submissionRequestsSentCount
@@ -61,6 +62,8 @@ gql`
         typeName
         name
         data
+        itemId
+        isHidden
     }
 `;
 
@@ -82,11 +85,19 @@ export function SubmissionsReviewModal({
 }
 
 function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JSX.Element {
-    const itemsResponse = useSubmissionsReviewModalDataQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [itemsResponse] = useSubmissionsReviewModalDataQuery({
         variables: {
             itemIds,
         },
-        fetchPolicy: "no-cache",
+        requestPolicy: "network-only",
+        context,
     });
     const sortedItems = useMemo(
         () => (itemsResponse.data?.content_Item ? R.sortBy((x) => x.title, itemsResponse.data.content_Item) : []),
@@ -204,7 +215,7 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
             <ModalHeader>Review submissions</ModalHeader>
             <ModalCloseButton />
             <ModalBody mb={4}>
-                {itemsResponse.loading ? <Spinner /> : undefined}
+                {itemsResponse.fetching ? <Spinner /> : undefined}
                 <Accordion allowMultiple={false} allowToggle reduceMotion>
                     <AccordionItem>
                         <AccordionButton>

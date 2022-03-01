@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -17,18 +16,20 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { IntermediaryRegistrantData } from "@midspace/shared-types/import/registrant";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import { v4 as uuidv4 } from "uuid";
-import type {
-    Permissions_GroupRegistrant_Insert_Input} from "../../../../../generated/graphql";
+import type { Registrant_GroupRegistrant_Insert_Input } from "../../../../../generated/graphql";
 import {
     useImportRegistrantsMutation,
     useSelectAllGroupsQuery,
     useSelectAllRegistrantsQuery,
 } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
+import { makeContext } from "../../../../GQL/make-context";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { useConference } from "../../../useConference";
 
@@ -36,7 +37,7 @@ gql`
     mutation ImportRegistrants(
         $insertRegistrants: [registrant_Registrant_insert_input!]!
         $insertInvitations: [registrant_Invitation_insert_input!]!
-        $insertGroupRegistrants: [permissions_GroupRegistrant_insert_input!]!
+        $insertGroupRegistrants: [registrant_GroupRegistrant_insert_input!]!
     ) {
         insert_registrant_Registrant(objects: $insertRegistrants) {
             affected_rows
@@ -44,7 +45,7 @@ gql`
         insert_registrant_Invitation(objects: $insertInvitations) {
             affected_rows
         }
-        insert_permissions_GroupRegistrant(objects: $insertGroupRegistrants) {
+        insert_registrant_GroupRegistrant(objects: $insertGroupRegistrants) {
             affected_rows
         }
     }
@@ -70,31 +71,32 @@ export default function ImportPanel({
     const conference = useConference();
     const [hasImported, setHasImported] = useState<boolean>(false);
 
-    const {
-        loading: groupsLoading,
-        data: groupsData,
-        error: groupsError,
-    } = useSelectAllGroupsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [{ fetching: groupsLoading, data: groupsData, error: groupsError }] = useSelectAllGroupsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     useQueryErrorToast(groupsError, false);
 
-    const {
-        loading: registrantsLoading,
-        data: registrantsData,
-        error: registrantsError,
-        refetch: refetchRegistrants,
-    } = useSelectAllRegistrantsQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: registrantsLoading, data: registrantsData, error: registrantsError }, refetchRegistrants] =
+        useSelectAllRegistrantsQuery({
+            requestPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+            context,
+        });
     useQueryErrorToast(registrantsError, false);
 
-    const [importMutation, { loading: importLoading, error: importError, data: importData }] =
+    const [{ fetching: importLoading, error: importError, data: importData }, importMutation] =
         useImportRegistrantsMutation();
     useQueryErrorToast(importError, false);
 
@@ -102,7 +104,7 @@ export default function ImportPanel({
     useEffect(() => {
         if (importData?.insert_registrant_Registrant) {
             toast({
-                title: `Imported ${importData.insert_registrant_Registrant.affected_rows / 2} registrants`,
+                title: `Imported ${importData.insert_registrant_Registrant.affected_rows} registrants. Added registrants to groups.`,
                 status: "success",
                 duration: 3000,
                 position: "bottom",
@@ -115,9 +117,11 @@ export default function ImportPanel({
         return Object.values(inputData).reduce((acc, input) => {
             for (const row of input) {
                 const email = row.email.trim().toLowerCase();
-                const group = groupsData?.permissions_Group.find(
-                    (g) => g.name.trim().toLowerCase() === row.group.trim().toLowerCase()
-                );
+                const group = row.group?.length
+                    ? groupsData?.registrant_Group.find(
+                          (g) => g.name.trim().toLowerCase() === row.group?.trim().toLowerCase()
+                      )
+                    : undefined;
 
                 const existingFinal = acc.find((x) => x.email === email);
                 if (existingFinal) {
@@ -133,11 +137,13 @@ export default function ImportPanel({
                         ) {
                             existingFinal.groups.push(group);
                         }
-                    } else {
+                    } else if (row.group?.length) {
                         if (!existingFinal.missingGroups) {
                             existingFinal.missingGroups = [row.group.trim()];
                         } else if (
-                            !existingFinal.missingGroups.some((x) => x.toLowerCase() === row.group.trim().toLowerCase())
+                            !existingFinal.missingGroups.some(
+                                (x) => x.toLowerCase() === row.group?.trim().toLowerCase()
+                            )
                         ) {
                             existingFinal.missingGroups.push(row.group.trim());
                         }
@@ -156,7 +162,7 @@ export default function ImportPanel({
                                 email,
                                 name: existingOriginal.displayName,
                                 groups: group ? [group] : [],
-                                missingGroups: !group ? [row.group.trim()] : undefined,
+                                missingGroups: !group && row.group ? [row.group.trim()] : undefined,
                             });
                         }
                     } else {
@@ -167,7 +173,7 @@ export default function ImportPanel({
                             email,
                             name,
                             groups: group ? [group] : [],
-                            missingGroups: !group ? [row.group.trim()] : undefined,
+                            missingGroups: !group && row.group ? [row.group.trim()] : undefined,
                         });
                     }
                 }
@@ -175,7 +181,7 @@ export default function ImportPanel({
 
             return acc;
         }, [] as RegistrantFinalData[]);
-    }, [registrantsData?.registrant_Registrant, groupsData?.permissions_Group, inputData]);
+    }, [registrantsData?.registrant_Registrant, groupsData?.registrant_Group, inputData]);
 
     const missingGroups = useMemo<string[]>(
         () => [
@@ -195,13 +201,16 @@ export default function ImportPanel({
         () => Object.values(inputData).reduce((acc, rows) => acc + rows.length, 0),
         [inputData]
     );
-    const totalOutputLength = useMemo(() => finalData?.reduce((acc, x) => acc + x.groups.length, 0) ?? 0, [finalData]);
+    const totalOutputLength = useMemo(
+        () => finalData?.reduce((acc, x) => acc + 1 + x.groups.length, 0) ?? 0,
+        [finalData]
+    );
     const newRegistrantsCount = useMemo(
         () => finalData?.reduce((acc, x) => acc + (x.isNew ? 1 : 0), 0) ?? 0,
         [finalData]
     );
     const existingRegistrantsCount = useMemo(
-        () => finalData?.reduce((acc, x) => acc + (!x.isNew ? 1 : 0), 0) ?? 0,
+        () => finalData?.reduce((acc, x) => acc + (!x.isNew && x.groups.length > 0 ? 1 : 0), 0) ?? 0,
         [finalData]
     );
 
@@ -234,7 +243,7 @@ export default function ImportPanel({
                     isLoading={groupsLoading || importLoading || registrantsLoading}
                     onClick={() => {
                         const newRegistrants = finalData.filter((x) => x.isNew);
-                        const newGroupRegistrants: Permissions_GroupRegistrant_Insert_Input[] = finalData
+                        const newGroupRegistrants: Registrant_GroupRegistrant_Insert_Input[] = finalData
                             .filter((x) => !x.isNew)
                             .flatMap((x) =>
                                 x.groups.map((y) => ({
@@ -243,8 +252,8 @@ export default function ImportPanel({
                                 }))
                             );
 
-                        importMutation({
-                            variables: {
+                        importMutation(
+                            {
                                 insertRegistrants: newRegistrants.map((x) => {
                                     return {
                                         id: x.id,
@@ -263,7 +272,14 @@ export default function ImportPanel({
                                 })),
                                 insertGroupRegistrants: newGroupRegistrants,
                             },
-                        });
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        );
                         setHasImported(true);
                     }}
                 >
@@ -328,7 +344,7 @@ export default function ImportPanel({
                                 {groupsData
                                     ? `Currently available groups are: ${R.sortBy(
                                           (x) => x.name,
-                                          groupsData.permissions_Group
+                                          groupsData.registrant_Group
                                       )
                                           .reduce<string>((acc, x) => `${acc}, ${x.name}`, "")
                                           .substring(2)}`

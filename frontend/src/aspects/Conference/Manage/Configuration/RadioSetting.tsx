@@ -2,7 +2,7 @@ import type { UseRadioProps } from "@chakra-ui/react";
 import { Box, chakra, HStack, useRadio, useRadioGroup } from "@chakra-ui/react";
 import React from "react";
 import type { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
-import { FAIcon } from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
 
 export default function RadioSetting({
     settingName,

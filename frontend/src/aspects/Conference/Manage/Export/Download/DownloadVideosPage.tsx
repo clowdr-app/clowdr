@@ -1,8 +1,7 @@
 import React from "react";
-import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
 import PageNotFound from "../../../../Errors/PageNotFound";
-import { useTitle } from "../../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import { useTitle } from "../../../../Hooks/useTitle";
+import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import { DashboardPage } from "../../DashboardPage";
 import { AllVideoElements } from "./AllVideoElements";
@@ -13,16 +12,13 @@ export function DownloadVideosPage(): JSX.Element {
     const title = useTitle(`Download videos from ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             <VideoDownloadProvider>
                 <DashboardPage title="Download videos">
                     {title}
                     <AllVideoElements />
                 </DashboardPage>
             </VideoDownloadProvider>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

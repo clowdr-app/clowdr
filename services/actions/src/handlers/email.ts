@@ -3,6 +3,7 @@ import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import { compile } from "handlebars";
 import { htmlToText } from "html-to-text";
+import type { P } from "pino";
 import wcmatch from "wildcard-match";
 import type { Email_Insert_Input } from "../generated/graphql";
 import {
@@ -18,6 +19,7 @@ import { apolloClient } from "../graphqlClient";
 import type { EmailTemplateContext } from "../lib/email/emailTemplate";
 import { EmailBuilder, getEmailTemplate } from "../lib/email/emailTemplate";
 import { formatSendingReason } from "../lib/email/sendingReasons";
+import { logger } from "../lib/logger";
 import { callWithRetry } from "../utils";
 
 gql`
@@ -73,6 +75,7 @@ gql`
 export const EMAIL_IDEMPOTENCY_NAMESPACE = "315a82fd-feeb-4aa6-86b5-261252c290d1";
 
 export async function insertEmails(
+    logger: P.Logger,
     emails: Email_Insert_Input[],
     conferenceId: string | undefined,
     jobId: string | undefined
@@ -94,22 +97,22 @@ export async function insertEmails(
     let allowedDomains: string[] = configResponse.data.allowEmailsToDomains?.value;
     if (!allowedDomains) {
         allowedDomains = [];
-        console.error("Error! Allowed domains is misconfigured - value is not defined");
+        logger.error("Error! Allowed domains is misconfigured - value is not defined");
     }
     if (!(allowedDomains instanceof Array)) {
         allowedDomains = [];
-        console.error("Error! Allowed domains is misconfigured - value is not an array");
+        logger.error("Error! Allowed domains is misconfigured - value is not an array");
     }
     if (!allowedDomains.every((x) => typeof x === "string")) {
         allowedDomains = [];
-        console.error("Error! Allowed domains is misconfigured - array elements are not strings");
+        logger.error("Error! Allowed domains is misconfigured - array elements are not strings");
     }
     if (allowedDomains.length === 0) {
-        console.error("Error! Allowed domains is misconfigured - array is empty");
+        logger.error("Error! Allowed domains is misconfigured - array is empty");
     }
     const allowedDomainMatches = allowedDomains.map((x) => wcmatch(x));
 
-    const defaultEmailTemplate = await getEmailTemplate();
+    const defaultEmailTemplate = await getEmailTemplate(logger);
     const emailBuilder = new EmailBuilder(defaultEmailTemplate);
 
     const hostOrganisationName = configResponse.data.hostOrganisationName?.value;
@@ -162,16 +165,19 @@ export async function insertEmails(
     const batchSize = 100;
     const batches = Math.ceil(emailsToInsert.length / batchSize);
 
-    console.log("Queuing emails to send", {
-        totalEmails: emails.length,
-        permittedEmails: emailsToInsert.length,
-        batches: batches,
-        message:
-            emailsToInsert.length < emails.length
-                ? "Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly."
-                : undefined,
-        jobId,
-    });
+    logger.info(
+        {
+            totalEmails: emails.length,
+            permittedEmails: emailsToInsert.length,
+            batches: batches,
+            message:
+                emailsToInsert.length < emails.length
+                    ? "Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly."
+                    : undefined,
+            jobId,
+        },
+        "Queuing emails to send"
+    );
 
     let insertedCount = 0;
 
@@ -184,16 +190,19 @@ export async function insertEmails(
             },
         });
         insertedCount += r.data?.insert_Email?.affected_rows ?? 0;
-        console.log("Queued email batch", {
-            insertedCount: r.data?.insert_Email?.affected_rows,
-            batchSize: batch.length,
-            batchNumber: i + 1,
-            batches,
-            jobId,
-        });
+        logger.info(
+            {
+                insertedCount: r.data?.insert_Email?.affected_rows,
+                batchSize: batch.length,
+                batchNumber: i + 1,
+                batches,
+                jobId,
+            },
+            "Queued email batch"
+        );
     }
 
-    console.log("Finished queuing emails", { jobId, batches, insertedCount });
+    logger.info({ jobId, batches, insertedCount }, "Finished queuing emails");
     return insertedCount;
 }
 
@@ -257,7 +266,7 @@ let sgMailInitialised:
           replyTo: string;
           webhookPublicKey: string;
       } = false;
-export async function initSGMail(): Promise<
+export async function initSGMail(logger: P.Logger): Promise<
     | false
     | {
           apiKey: string;
@@ -272,19 +281,19 @@ export async function initSGMail(): Promise<
                 query: GetSendGridConfigDocument,
             });
             if (!response.data.apiKey) {
-                console.error("Unable to initialise SendGrid email. SendGrid API Key not configured");
+                logger.error("Unable to initialise SendGrid email. SendGrid API Key not configured");
                 return false;
             }
             if (!response.data.senderEmail) {
-                console.error("Unable to initialise SendGrid email. SendGrid Sender not configured");
+                logger.error("Unable to initialise SendGrid email. SendGrid Sender not configured");
                 return false;
             }
             if (!response.data.replyTo) {
-                console.error("Unable to initialise SendGrid email. SendGrid Reply-To not configured");
+                logger.error("Unable to initialise SendGrid email. SendGrid Reply-To not configured");
                 return false;
             }
             if (!response.data.webhookPublicKey) {
-                console.error(
+                logger.error(
                     "Unable to initialise SendGrid email. SendGrid Webhook Verification Public Key not configured"
                 );
                 return false;
@@ -299,16 +308,16 @@ export async function initSGMail(): Promise<
                 replyTo: response.data.replyTo.value,
                 webhookPublicKey: response.data.webhookPublicKey.value,
             };
-        } catch (e) {
-            console.error("Failed to initialise SendGrid mail", e);
+        } catch (e: any) {
+            logger.error({ err: e }, "Failed to initialise SendGrid mail");
         }
     }
 
     return sgMailInitialised;
 }
 
-export async function processEmailsJobQueue(): Promise<void> {
-    const sgConfig = await initSGMail();
+export async function processEmailsJobQueue(logger: P.Logger): Promise<void> {
+    const sgConfig = await initSGMail(logger);
     if (sgConfig) {
         const sender = sgConfig.sender;
         const replyToAddress = sgConfig.replyTo;
@@ -345,7 +354,7 @@ export async function processEmailsJobQueue(): Promise<void> {
                         await callWithRetry(() => sgMail.send(msg));
                     }
                 } catch (e: any) {
-                    console.error(`Could not send email ${email.id}: ${e.toString()}`);
+                    logger.error({ err: e, emailId: email.id }, "Could not send email");
                     return email.id;
                 }
                 return undefined;
@@ -362,10 +371,10 @@ export async function processEmailsJobQueue(): Promise<void> {
                 });
             });
         } catch (e: any) {
-            console.error(`Could not unmark failed emails: ${e.toString()}`);
+            logger.error({ err: e }, "Could not unmark failed emails");
         }
     } else {
-        console.warn(
+        logger.warn(
             "Unable to send email - could not initialise email client. Perhaps a system configuration key is missing?"
         );
     }
@@ -419,8 +428,9 @@ export async function processEmailWebhook(payloads: Record<string, any>[]): Prom
                     throw new Error("Unrecognised webhook event");
             }
             if (status !== "processed" || !completedIds.has(midspaceEmailId)) {
-                console.log(
-                    `Email webhook: Setting email status: { "midspaceEmailId": "${midspaceEmailId}", "status": "${status}", "errorMessage": "${errorMessage}" }`
+                logger.info(
+                    { midspaceEmailId: "${midspaceEmailId}", status: "${status}", errorMessage: "${errorMessage}" },
+                    "Email webhook: Setting email status"
                 );
                 await apolloClient.mutate({
                     mutation: UpdateEmailStatusDocument,

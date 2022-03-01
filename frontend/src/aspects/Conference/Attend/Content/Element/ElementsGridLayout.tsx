@@ -1,9 +1,10 @@
 import { Grid, GridItem } from "@chakra-ui/react";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import React, { useMemo } from "react";
 import type { ElementDataFragment } from "../../../../../generated/graphql";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
-import { maybeCompare } from "../../../../Utils/maybeSort";
+import useIsNarrowView from "../../../../Hooks/useIsNarrowView";
+import useIsVeryNarrowView from "../../../../Hooks/useIsVeryNarrowView";
 import { Element } from "../Element/Element";
 
 export const contentSortOrder = [
@@ -45,24 +46,63 @@ export default function ElementsGridLayout({
     elements: readonly ElementDataFragment[];
     textJustification?: "flex-start" | "center";
 }): JSX.Element {
+    const isNarrowView = useIsNarrowView();
+    const isVeryNarrowView = useIsVeryNarrowView();
+
+    const columns = isVeryNarrowView ? 1 : isNarrowView ? 4 : 12;
+    const divisor = 12 / columns;
     const els = useMemo(() => {
         return [...elements]
             .filter((element) => {
                 const layoutBlob = element.layoutData as LayoutDataBlob | undefined;
                 return (
-                    !layoutBlob?.hidden &&
+                    !element.isHidden &&
                     !(layoutBlob?.contentType === Content_ElementType_Enum.ImageFile && layoutBlob?.isLogo) &&
                     !(layoutBlob?.contentType === Content_ElementType_Enum.ImageUrl && layoutBlob?.isLogo)
                 );
             })
             .sort((x, y) => contentSortOrder.indexOf(x.typeName) - contentSortOrder.indexOf(y.typeName))
-            .sort((x, y) =>
-                maybeCompare(
-                    (x.layoutData as LayoutDataBlob | undefined)?.priority,
-                    (y.layoutData as LayoutDataBlob | undefined)?.priority,
-                    (a, b) => a - b
-                )
-            )
+            .sort((x, y) => {
+                const xLayout = x.layoutData as LayoutDataBlob | undefined;
+                const yLayout = y.layoutData as LayoutDataBlob | undefined;
+                if (xLayout) {
+                    if (yLayout) {
+                        if (xLayout.position) {
+                            if (yLayout.position) {
+                                return (
+                                    xLayout.position.row - yLayout.position.row ||
+                                    xLayout.position.column - yLayout.position.column
+                                );
+                            } else {
+                                return -1;
+                            }
+                        } else {
+                            if (yLayout.position) {
+                                return 1;
+                            }
+                        }
+
+                        if (xLayout.priority !== undefined) {
+                            if (yLayout.priority !== undefined) {
+                                return xLayout.priority - yLayout.priority;
+                            }
+                            return -1;
+                        } else {
+                            if (yLayout.priority !== undefined) {
+                                return 1;
+                            }
+                            return 0;
+                        }
+                    } else {
+                        return -1;
+                    }
+                } else {
+                    if (yLayout) {
+                        return 1;
+                    }
+                    return 0;
+                }
+            })
             .map((element) => {
                 const layoutBlob = element.layoutData as LayoutDataBlob | undefined;
 
@@ -71,7 +111,19 @@ export default function ElementsGridLayout({
                         minW={0}
                         overflowX="auto"
                         key={element.id}
-                        colSpan={!layoutBlob || layoutBlob.wide ? [2] : [2, 2, 1]}
+                        colSpan={Math.max(
+                            1,
+                            Math.round(
+                                !layoutBlob
+                                    ? columns
+                                    : layoutBlob.size
+                                    ? layoutBlob.size.columns / divisor
+                                    : layoutBlob.wide
+                                    ? columns
+                                    : columns / 2
+                            )
+                        )}
+                        rowSpan={!layoutBlob ? 1 : layoutBlob.size ? layoutBlob.size.rows : 1}
                         p={4}
                         display="flex"
                         justifyContent={
@@ -85,10 +137,10 @@ export default function ElementsGridLayout({
                     </GridItem>
                 );
             });
-    }, [elements, textJustification]);
+    }, [columns, divisor, elements, textJustification]);
 
     return (
-        <Grid gridTemplateColumns="50% 50%" ml={0} mr={3} gridColumnGap={5}>
+        <Grid gridTemplateColumns={`repeat(${columns}, 1fr)`} ml={0} mr={3} w="100%">
             {els}
         </Grid>
     );

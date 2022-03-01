@@ -1,7 +1,8 @@
+import { redisClientPool } from "@midspace/component-clients/redis";
 import type { Socket } from "socket.io";
+import { logger } from "../lib/logger";
 import { getVerifiedPageKey, presenceChannelName, presenceListKey } from "../lib/presence";
 import { enterPresence, exitAllPresences, exitPresence } from "../lib/presenceSocketFunctions";
-import { redisClientPool } from "../redis";
 import { socketServer } from "../servers/socket-server";
 
 const ALL_SESSION_USER_IDS_KEY = "Presence.SessionAndUserIds";
@@ -12,7 +13,7 @@ export function invalidateSessions(): void {
             redisClient.SMEMBERS(ALL_SESSION_USER_IDS_KEY, async (err, sessionListsKeys) => {
                 if (err) {
                     redisClientPool.release("socket-handlers/presence/invalidateSessions", redisClient);
-                    console.error("Error invalidating sessions", err);
+                    logger.error("Error invalidating sessions", err);
                     return;
                 }
 
@@ -28,7 +29,7 @@ export function invalidateSessions(): void {
                     const parts = sessionListsKey.split("¬");
                     const sessionId = parts[0];
                     if (!socketIds.has(sessionId)) {
-                        console.log("Found dangling session", sessionListsKey);
+                        logger.info("Found dangling session", sessionListsKey);
                         exitsRequired++;
                     }
                 }
@@ -38,12 +39,12 @@ export function invalidateSessions(): void {
                     const sessionId = parts[0];
                     const userId = parts[1];
                     if (!socketIds.has(sessionId)) {
-                        console.log("Found dangling session", sessionListsKey);
+                        logger.info("Found dangling session", sessionListsKey);
                         try {
                             exitAllPresences(redisClient, userId, sessionId, (err) => {
                                 try {
                                     if (err) {
-                                        console.error(
+                                        logger.error(
                                             `Error exiting all presences of dangling session ${sessionId} / ${userId}`,
                                             err
                                         );
@@ -60,10 +61,10 @@ export function invalidateSessions(): void {
                                     }
                                 }
                             });
-                        } catch (e) {
-                            console.error(
-                                `Error exiting all presences of dangling session ${sessionId} / ${userId}`,
-                                e
+                        } catch (error: any) {
+                            logger.error(
+                                { error },
+                                `Error exiting all presences of dangling session ${sessionId} / ${userId}`
                             );
                         }
                     }
@@ -74,33 +75,27 @@ export function invalidateSessions(): void {
                 }
             });
         });
-    } catch (e) {
-        console.warn("Could not list all sockets to try to exit presences", e);
+    } catch (error: any) {
+        logger.warn({ error }, "Could not list all sockets to try to exit presences");
     }
 }
 
-function getPageKey(confSlugs: string[], path: string): string | undefined {
+function getPageKey(path: string): string | undefined {
+    // TODO: Custom domains?
+    // TODO: Permission to view path?
     if (path.startsWith("/conference/")) {
         const confSlug = path.split("/")[2];
-        if (confSlugs.includes(confSlug)) {
-            return getVerifiedPageKey(confSlug, path);
-        } else {
-            return undefined;
-        }
+        return getVerifiedPageKey(confSlug, path);
     } else {
         return getVerifiedPageKey("/<<NO-CONF>>/", path);
     }
 }
 
-export function onEnterPage(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string
-): (path: string) => Promise<void> {
+export function onEnterPage(userId: string, socketId: string): (path: string) => Promise<void> {
     return async (path) => {
         try {
             if (typeof path === "string") {
-                const pageKey = getPageKey(conferenceSlugs, path);
+                const pageKey = getPageKey(path);
                 if (pageKey) {
                     enterPresence(null, pageKey, userId, socketId, (err) => {
                         if (err) {
@@ -108,24 +103,20 @@ export function onEnterPage(
                         }
                     });
                 } else {
-                    console.info("User is not authorized to enter path", path);
+                    logger.info("User is not authorized to enter path", path);
                 }
             }
-        } catch (e) {
-            console.error(`Error entering presence on socket ${socketId}`, e);
+        } catch (error: any) {
+            logger.error({ error }, `Error entering presence on socket ${socketId}`);
         }
     };
 }
 
-export function onLeavePage(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string
-): (path: string) => Promise<void> {
+export function onLeavePage(userId: string, socketId: string): (path: string) => Promise<void> {
     return async (path) => {
         try {
             if (typeof path === "string") {
-                const pageKey = getPageKey(conferenceSlugs, path);
+                const pageKey = getPageKey(path);
                 if (pageKey) {
                     exitPresence(null, pageKey, userId, socketId, (err) => {
                         if (err) {
@@ -133,28 +124,24 @@ export function onLeavePage(
                         }
                     });
                 } else {
-                    console.info("User is not authorized to exit path", path);
+                    logger.info("User is not authorized to exit path", path);
                 }
             }
-        } catch (e) {
-            console.error(`Error exiting presence on socket ${socketId}`, e);
+        } catch (error: any) {
+            logger.error({ error }, `Error exiting presence on socket ${socketId}`);
         }
     };
 }
 
-export function onObservePage(
-    conferenceSlugs: string[],
-    socketId: string,
-    socket: Socket
-): (path: string) => Promise<void> {
+export function onObservePage(socketId: string, socket: Socket): (path: string) => Promise<void> {
     return async (path) => {
         try {
             if (typeof path === "string") {
-                const listId = getPageKey(conferenceSlugs, path);
+                const listId = getPageKey(path);
                 if (listId) {
                     const listKey = presenceListKey(listId);
                     const chan = presenceChannelName(listId);
-                    // console.log(`${userId} observed ${listId}`);
+                    // logger.info(`${userId} observed ${listId}`);
                     await socket.join(chan);
 
                     const redisClient = await redisClientPool.acquire("socket-handlers/presence/onObservePage");
@@ -165,38 +152,34 @@ export function onObservePage(
                             throw err;
                         }
 
-                        // console.log(`Emitting presences for ${path} to ${userId} / ${socketId}`, userIds);
+                        // logger.info(`Emitting presences for ${path} to ${userId} / ${socketId}`, userIds);
                         socket.emit("presences", { listId, userIds });
                     });
                 } else {
-                    console.info("User is not authorized to observe path", path);
+                    logger.info("User is not authorized to observe path", path);
                 }
             }
-        } catch (e) {
-            console.error(`Error observing presence on socket ${socketId}`, e);
+        } catch (error: any) {
+            logger.error({ error }, `Error observing presence on socket ${socketId}`);
         }
     };
 }
 
-export function onUnobservePage(
-    conferenceSlugs: string[],
-    socketId: string,
-    socket: Socket
-): (path: string) => Promise<void> {
+export function onUnobservePage(socketId: string, socket: Socket): (path: string) => Promise<void> {
     return async (path) => {
         try {
             if (typeof path === "string") {
-                const pageKey = getPageKey(conferenceSlugs, path);
+                const pageKey = getPageKey(path);
                 if (pageKey) {
                     const chan = presenceChannelName(pageKey);
-                    // console.log(`${userId} unobserved ${pageKey}`);
+                    // logger.info(`${userId} unobserved ${pageKey}`);
                     await socket.leave(chan);
                 } else {
-                    console.info("User is not authorized to unobserve path", path);
+                    logger.info("User is not authorized to unobserve path", path);
                 }
             }
-        } catch (e) {
-            console.error(`Error unobserving presence on socket ${socketId}`, e);
+        } catch (error: any) {
+            logger.error({ error }, `Error unobserving presence on socket ${socketId}`);
         }
     };
 }
@@ -213,7 +196,7 @@ export function onConnect(userId: string, socketId: string): void {
             }
         })
         .catch((err) => {
-            console.error(`Error exiting all presences on socket ${socketId}`, err);
+            logger.error({ err }, `Error exiting all presences on socket ${socketId}`);
         });
 }
 
@@ -229,11 +212,11 @@ export function onDisconnect(socketId: string, userId: string): void {
                         throw err;
                     }
                 });
-            } catch (e) {
-                console.error(`Error exiting all presences on socket ${socketId}`, e);
+            } catch (error: any) {
+                logger.error({ error }, `Error exiting all presences on socket ${socketId}`);
             }
         })
         .catch((err) => {
-            console.error(`Error exiting all presences on socket ${socketId}`, err);
+            logger.error({ err }, `Error exiting all presences on socket ${socketId}`);
         });
 }

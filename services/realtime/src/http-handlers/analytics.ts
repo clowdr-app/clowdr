@@ -1,8 +1,9 @@
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import { gql } from "@urql/core";
 import assert from "assert";
 import type { Request, Response } from "express";
 import { Analytics_ListConferencesDocument } from "../generated/graphql";
-import { apolloClient } from "../graphqlClient";
+import { logger } from "../lib/logger";
 import { ModelName, publishBatchUpdate } from "../rabbitmq/analytics/batchUpdate";
 
 gql`
@@ -20,12 +21,11 @@ export async function queueConferenceBatchUpdates(_req: Request, res: Response):
             (process.env.ANALYTICS_BACKDATE_CUTOFF
                 ? parseInt(process.env.ANALYTICS_BACKDATE_CUTOFF, 10)
                 : 7 * 24 * 60 * 60 * 1000);
-        const conferences = await apolloClient?.query({
-            query: Analytics_ListConferencesDocument,
-            variables: {
+        const conferences = await gqlClient
+            ?.query(Analytics_ListConferencesDocument, {
                 cutoff: new Date(cutoff).toISOString(),
-            },
-        });
+            })
+            .toPromise();
         if (conferences) {
             for (const conference of conferences.data.conference_Conference) {
                 await publishBatchUpdate(ModelName.Conference, conference.id);
@@ -33,8 +33,8 @@ export async function queueConferenceBatchUpdates(_req: Request, res: Response):
         }
 
         res.status(200).send("OK");
-    } catch (e) {
-        console.error("Analytics: Queue conference batch updates: Internal error", e);
+    } catch (error: any) {
+        logger.error({ error }, "Analytics: Queue conference batch updates: Internal error");
         res.status(500).json("Internal error");
         return;
     }
@@ -55,8 +55,8 @@ export async function queueSingleConferenceBatchUpdate(req: Request, res: Respon
         await publishBatchUpdate(ModelName.Conference, conferenceId, cutoffDist);
 
         res.status(200).send("OK");
-    } catch (e) {
-        console.error("Analytics: Queue conference batch updates: Internal error", e);
+    } catch (error: any) {
+        logger.error({ error }, "Analytics: Queue conference batch updates: Internal error");
         res.status(500).json("Internal error");
         return;
     }

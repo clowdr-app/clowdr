@@ -1,20 +1,24 @@
 import { datadogLogs } from "@datadog/browser-logs";
 import { datadogRum } from "@datadog/browser-rum";
 
-if (import.meta.env.SNOWPACK_PUBLIC_DD_CLIENT_TOKEN && import.meta.env.SNOWPACK_PUBLIC_DD_SITE) {
+if (
+    typeof import.meta.env.VITE_DD_CLIENT_TOKEN === "string" &&
+    typeof import.meta.env.VITE_DD_SITE === "string" &&
+    typeof import.meta.env.VITE_DD_APPLICATION_ID == "string"
+) {
     console.log("Initialising DataDog for monitoring user experience and debugging.");
 
     datadogLogs.init({
-        clientToken: import.meta.env.SNOWPACK_PUBLIC_DD_CLIENT_TOKEN,
-        site: import.meta.env.SNOWPACK_PUBLIC_DD_SITE,
-        env: import.meta.env.SNOWPACK_PUBLIC_DD_ENV ?? "production",
+        clientToken: import.meta.env.VITE_DD_CLIENT_TOKEN,
+        site: import.meta.env.VITE_DD_SITE,
+        env: (import.meta.env.VITE_DD_ENV as string | undefined) ?? "production",
         service: "midspace-frontend",
-        version: import.meta.env.SNOWPACK_PUBLIC_DD_FRONTEND_VERSION ?? "v1.0.0",
+        version: (import.meta.env.VITE_DD_FRONTEND_VERSION as string | undefined) ?? "v1.0.0",
         forwardErrorsToLogs: true,
         sampleRate: 100,
         useSecureSessionCookie: true,
         useCrossSiteSessionCookie: true,
-        proxyUrl: import.meta.env.SNOWPACK_PUBLIC_DD_PROXY_URL,
+        proxyUrl: import.meta.env.VITE_DD_PROXY_URL as string | undefined,
         beforeSend: (event) => {
             if (event.message.includes("Warning: fragment with name")) {
                 return false;
@@ -39,13 +43,13 @@ if (import.meta.env.SNOWPACK_PUBLIC_DD_CLIENT_TOKEN && import.meta.env.SNOWPACK_
     });
 
     datadogRum.init({
-        applicationId: import.meta.env.SNOWPACK_PUBLIC_DD_APPLICATION_ID,
-        clientToken: import.meta.env.SNOWPACK_PUBLIC_DD_CLIENT_TOKEN,
-        env: import.meta.env.SNOWPACK_PUBLIC_DD_ENV ?? "production",
-        site: import.meta.env.SNOWPACK_PUBLIC_DD_SITE,
+        applicationId: import.meta.env.VITE_DD_APPLICATION_ID,
+        clientToken: import.meta.env.VITE_DD_CLIENT_TOKEN,
+        env: (import.meta.env.VITE_DD_ENV as string | undefined) ?? "production",
+        site: import.meta.env.VITE_DD_SITE,
         service: "midspace-frontend",
-        version: import.meta.env.SNOWPACK_PUBLIC_DD_FRONTEND_VERSION ?? "v1.0.0",
-        proxyUrl: import.meta.env.SNOWPACK_PUBLIC_DD_PROXY_URL,
+        version: (import.meta.env.VITE_DD_FRONTEND_VERSION as string | undefined) ?? "v1.0.0",
+        proxyUrl: import.meta.env.VITE_DD_PROXY_URL as string | undefined,
         sampleRate: 100,
         trackInteractions: true,
         defaultPrivacyLevel: "mask-user-input",

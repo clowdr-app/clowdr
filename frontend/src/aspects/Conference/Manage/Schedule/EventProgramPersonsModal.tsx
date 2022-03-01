@@ -1,5 +1,3 @@
-import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -24,39 +22,43 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import assert from "assert";
-import type { LegacyRef} from "react";
+import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
+import type { LegacyRef } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useClient } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import type {
+    AddEventPeople_SelectProgramPeople_ByRegistrantQuery,
+    AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables,
     EventInfoFragment,
     EventProgramPersonInfoFragment,
     ProgramPersonInfoFragment,
-    Schedule_EventProgramPerson_Insert_Input} from "../../../../generated/graphql";
+    Schedule_EventProgramPerson_Insert_Input,
+} from "../../../../generated/graphql";
 import {
-    EventInfoFragmentDoc,
-    EventProgramPersonInfoFragmentDoc,
+    AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
     useAddEventPeople_InsertEventPeopleMutation,
     useAddEventPeople_InsertProgramPeopleMutation,
-    useAddEventPeople_SelectProgramPeople_ByRegistrantQuery,
     useAddEventPeople_SelectRegistrantsQuery,
     useDeleteEventProgramPersonsMutation,
     useInsertEventProgramPersonMutation,
     useUpdateEventProgramPersonMutation,
 } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
 import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
-    RowSpecification} from "../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
-import FAIcon from "../../../Icons/FAIcon";
-import { maybeCompare } from "../../../Utils/maybeSort";
+import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
+import { makeContext } from "../../../GQL/make-context";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import { addRegistrantsToEvent } from "./BatchAddEventPeople";
 
 interface Props {
@@ -69,6 +71,33 @@ interface Props {
 }
 
 gql`
+    fragment EventInfo on schedule_Event {
+        conferenceId
+        id
+        durationSeconds
+        eventPeople {
+            ...EventProgramPersonInfo
+        }
+        id
+        intendedRoomModeName
+        name
+        roomId
+        startTime
+        endTime
+        itemId
+        exhibitionId
+        shufflePeriodId
+        enableRecording
+        automaticParticipationSurvey
+    }
+
+    fragment EventProgramPersonInfo on schedule_EventProgramPerson {
+        id
+        eventId
+        roleName
+        personId
+    }
+
     mutation InsertEventProgramPerson($newEventProgramPerson: schedule_EventProgramPerson_insert_input!) {
         insert_schedule_EventProgramPerson_one(
             object: $newEventProgramPerson
@@ -86,11 +115,8 @@ gql`
         }
     }
 
-    mutation UpdateEventProgramPerson($id: uuid!, $personId: uuid!, $roleName: schedule_EventProgramPersonRole_enum!) {
-        update_schedule_EventProgramPerson_by_pk(
-            pk_columns: { id: $id }
-            _set: { personId: $personId, roleName: $roleName }
-        ) {
+    mutation UpdateEventProgramPerson($id: uuid!, $roleName: schedule_EventProgramPersonRole_enum!) {
+        update_schedule_EventProgramPerson_by_pk(pk_columns: { id: $id }, _set: { roleName: $roleName }) {
             ...EventProgramPersonInfo
         }
     }
@@ -113,13 +139,18 @@ export function AddEventProgramPerson_RegistrantModal({
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const selectRegistrantsQuery = useAddEventPeople_SelectRegistrantsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         variables: {
             conferenceId: event.conferenceId,
         },
-    });
-    const selectProgramPeople_ByRegistrantQuery = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
-        skip: true,
+        context,
     });
     const registrantOptions = useMemo(
         () =>
@@ -164,6 +195,7 @@ export function AddEventProgramPerson_RegistrantModal({
     const [adding, setAdding] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
+    const client = useClient();
     const add = useCallback(async () => {
         setAdding(true);
         setError(null);
@@ -172,7 +204,25 @@ export function AddEventProgramPerson_RegistrantModal({
             const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = await addRegistrantsToEvent(
                 [selectedRegistrantId],
                 selectRegistrantsQuery,
-                selectProgramPeople_ByRegistrantQuery,
+                (registrantIds) =>
+                    client
+                        .query<
+                            AddEventPeople_SelectProgramPeople_ByRegistrantQuery,
+                            AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables
+                        >(
+                            AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
+                            {
+                                registrantIds,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise(),
                 insertProgramPeople,
                 event.conferenceId,
                 [event],
@@ -190,21 +240,21 @@ export function AddEventProgramPerson_RegistrantModal({
                 isClosable: true,
                 position: "bottom",
             });
-        } catch (e) {
+        } catch (e: any) {
             setError(e.message || e.toString());
             setAdding(false);
         }
     }, [
-        event,
+        selectedRegistrantId,
+        selectRegistrantsQuery,
         insertProgramPeople,
+        event,
+        selectedRole,
         insertEventPeopleQ,
         onClose,
-        selectRegistrantsQuery,
-        selectProgramPeople_ByRegistrantQuery,
-        selectedRegistrantId,
-        selectedRole,
-        toast,
         closeOuter,
+        toast,
+        client,
     ]);
 
     return (
@@ -270,7 +320,7 @@ export function AddEventProgramPerson_RegistrantModal({
                             <Button onClick={onClose}>Cancel</Button>
                             <Button
                                 colorScheme="purple"
-                                isDisabled={selectRegistrantsQuery.loading || selectedRegistrantId === ""}
+                                isDisabled={selectRegistrantsQuery.fetching || selectedRegistrantId === ""}
                                 isLoading={adding}
                                 onClick={add}
                             >
@@ -297,9 +347,9 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
             ));
     }, [programPeople]);
 
-    const [insertEventProgramPerson, insertEventProgramPersonResponse] = useInsertEventProgramPersonMutation();
-    const [updateEventProgramPerson, updateEventProgramPersonResponse] = useUpdateEventProgramPersonMutation();
-    const [deleteEventProgramPersons, deleteEventProgramPersonsResponse] = useDeleteEventProgramPersonsMutation();
+    const [insertEventProgramPersonResponse, insertEventProgramPerson] = useInsertEventProgramPersonMutation();
+    const [updateEventProgramPersonResponse, updateEventProgramPerson] = useUpdateEventProgramPersonMutation();
+    const [deleteEventProgramPersonsResponse, deleteEventProgramPersons] = useDeleteEventProgramPersonsMutation();
 
     const row: RowSpecification<EventProgramPersonInfoFragment> = useMemo(
         () => ({
@@ -487,7 +537,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                 row={row}
                                 columns={columns}
                                 insert={{
-                                    ongoing: insertEventProgramPersonResponse.loading,
+                                    ongoing: insertEventProgramPersonResponse.fetching,
                                     generateDefaults: () => ({
                                         id: uuidv4(),
                                         eventId: event.id,
@@ -495,129 +545,61 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                     }),
                                     makeWhole: (d) => d.personId && (d as EventProgramPersonInfoFragment),
                                     start: async (record) => {
-                                        assert(record.roleName);
-                                        assert(record.personId);
+                                        assert.truthy(record.roleName);
+                                        assert.truthy(record.personId);
                                         const newEventProgramPerson: Schedule_EventProgramPerson_Insert_Input = {
                                             id: uuidv4(),
                                             eventId: event.id,
                                             personId: record.personId,
                                             roleName: record.roleName,
                                         };
-                                        await insertEventProgramPerson({
-                                            variables: {
+                                        await insertEventProgramPerson(
+                                            {
                                                 newEventProgramPerson,
                                             },
-                                            update: (cache, response) => {
-                                                if (response.data?.insert_schedule_EventProgramPerson_one) {
-                                                    const data = response.data.insert_schedule_EventProgramPerson_one;
-                                                    cache.writeFragment({
-                                                        data,
-                                                        fragment: EventProgramPersonInfoFragmentDoc,
-                                                        fragmentName: "EventProgramPersonInfo",
-                                                    });
-
-                                                    const frag = cache.readFragment<EventInfoFragment>({
-                                                        id: cache.identify({
-                                                            __typename: "schedule_Event",
-                                                            id: event.id,
-                                                        }),
-                                                        fragment: EventInfoFragmentDoc,
-                                                        fragmentName: "EventInfo",
-                                                    });
-                                                    if (frag) {
-                                                        cache.writeFragment<EventInfoFragment>({
-                                                            id: cache.identify(frag),
-                                                            data: {
-                                                                ...frag,
-                                                                eventPeople: [...frag.eventPeople, data],
-                                                            },
-                                                            fragment: EventInfoFragmentDoc,
-                                                            fragmentName: "EventInfo",
-                                                        });
-                                                    }
-                                                }
-                                            },
-                                        });
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    },
+                                                },
+                                            }
+                                        );
                                     },
                                 }}
                                 update={{
-                                    ongoing: updateEventProgramPersonResponse.loading,
+                                    ongoing: updateEventProgramPersonResponse.fetching,
                                     start: (record) => {
-                                        updateEventProgramPerson({
-                                            variables: {
+                                        updateEventProgramPerson(
+                                            {
                                                 id: record.id,
                                                 roleName: record.roleName,
-                                                personId: record.personId,
                                             },
-                                            update: (cache, { data: _data }) => {
-                                                if (_data?.update_schedule_EventProgramPerson_by_pk) {
-                                                    const data = _data.update_schedule_EventProgramPerson_by_pk;
-                                                    cache.writeFragment({
-                                                        data,
-                                                        fragment: EventProgramPersonInfoFragmentDoc,
-                                                        fragmentName: "EventProgramPersonInfo",
-                                                    });
-                                                }
-                                            },
-                                        });
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    },
+                                                },
+                                            }
+                                        );
                                     },
                                 }}
                                 delete={{
-                                    ongoing: deleteEventProgramPersonsResponse.loading,
+                                    ongoing: deleteEventProgramPersonsResponse.fetching,
                                     start: (keys) => {
-                                        deleteEventProgramPersons({
-                                            variables: {
+                                        deleteEventProgramPersons(
+                                            {
                                                 deleteEventPeopleIds: keys,
                                             },
-                                            update: (cache, { data: _data }) => {
-                                                if (_data?.delete_schedule_EventProgramPerson) {
-                                                    const datas = _data.delete_schedule_EventProgramPerson;
-                                                    const ids = datas.returning.map((x) => x.id);
-                                                    cache.modify({
-                                                        fields: {
-                                                            schedule_EventProgramPerson(
-                                                                existingRefs: Reference[] = [],
-                                                                { readField }
-                                                            ) {
-                                                                for (const id of ids) {
-                                                                    cache.evict({
-                                                                        id,
-                                                                        fieldName: "EventProgramPersonInfo",
-                                                                        broadcast: true,
-                                                                    });
-                                                                }
-
-                                                                return existingRefs.filter(
-                                                                    (ref) => !ids.includes(readField("id", ref))
-                                                                );
-                                                            },
-                                                        },
-                                                    });
-
-                                                    const frag = cache.readFragment<EventInfoFragment>({
-                                                        id: cache.identify({
-                                                            __typename: "schedule_Event",
-                                                            id: event.id,
-                                                        }),
-                                                        fragment: EventInfoFragmentDoc,
-                                                        fragmentName: "EventInfo",
-                                                    });
-                                                    if (frag) {
-                                                        cache.writeFragment<EventInfoFragment>({
-                                                            id: cache.identify(frag),
-                                                            data: {
-                                                                ...frag,
-                                                                eventPeople: frag.eventPeople.filter(
-                                                                    (x) => !ids.includes(x.id)
-                                                                ),
-                                                            },
-                                                            fragment: EventInfoFragmentDoc,
-                                                            fragmentName: "EventInfo",
-                                                        });
-                                                    }
-                                                }
-                                            },
-                                        });
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    },
+                                                },
+                                            }
+                                        );
                                     },
                                 }}
                                 alert={

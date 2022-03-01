@@ -53,13 +53,6 @@ array_relationships:
       table:
         name: Exhibition
         schema: collection
-- name: groups
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Group
-        schema: permissions
 - name: items
   using:
     foreign_key_constraint_on:
@@ -67,13 +60,6 @@ array_relationships:
       table:
         name: Item
         schema: content
-- name: originatingDatas
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: OriginatingData
-        schema: conference
 - name: programPeople
   using:
     foreign_key_constraint_on:
@@ -81,15 +67,6 @@ array_relationships:
       table:
         name: ProgramPerson
         schema: collection
-- name: publicPermissions
-  using:
-    manual_configuration:
-      column_mapping:
-        slug: slug
-      insertion_order: null
-      remote_table:
-        name: FlatUnauthPermission
-        schema: public
 - name: registrants
   using:
     foreign_key_constraint_on:
@@ -97,13 +74,6 @@ array_relationships:
       table:
         name: Registrant
         schema: registrant
-- name: roles
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Role
-        schema: permissions
 - name: rooms
   using:
     foreign_key_constraint_on:
@@ -118,6 +88,22 @@ array_relationships:
       table:
         name: ShufflePeriod
         schema: room
+- name: sponsorshipTiers
+  using:
+    manual_configuration:
+      column_mapping:
+        id: conferenceId
+      insertion_order: null
+      remote_table:
+        name: Tier
+        schema: sponsor
+- name: subconferences
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Subconference
+        schema: conference
 - name: tags
   using:
     foreign_key_constraint_on:
@@ -125,15 +111,6 @@ array_relationships:
       table:
         name: Tag
         schema: collection
-- name: userPermissions
-  using:
-    manual_configuration:
-      column_mapping:
-        slug: slug
-      insertion_order: null
-      remote_table:
-        name: FlatUserPermission
-        schema: public
 insert_permissions:
 - permission:
     backend_only: false
@@ -142,6 +119,8 @@ insert_permissions:
         usedById:
           _is_null: true
     columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
     - demoCodeId
     - name
     - shortName
@@ -152,32 +131,29 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
+    - announcementsChatId
+    - conferenceVisibilityLevel
     - createdBy
     - created_at
+    - defaultProgramVisibilityLevel
     - id
     - name
     - shortName
     - slug
     - updated_at
     filter:
-      _and:
-      - slug:
-          _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUnauthPermission
-            schema: public
-          _where:
-            _and:
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _eq: CONFERENCE_VIEW
-  role: unauthenticated
+      id:
+        _in: X-Hasura-Conference-Ids
+  role: attendee
 - permission:
     columns:
+    - announcementsChatId
+    - conferenceVisibilityLevel
     - createdBy
     - created_at
+    - defaultProgramVisibilityLevel
+    - demoCodeId
+    - globalInviteCode
     - id
     - name
     - shortName
@@ -185,55 +161,114 @@ select_permissions:
     - updated_at
     filter:
       _or:
+      - id:
+          _in: X-Hasura-Conference-Ids
       - createdBy:
           _eq: X-Hasura-User-Id
-      - registrants:
-          userId:
-            _eq: X-Hasura-User-Id
+  role: conference-organizer
+- permission:
+    columns:
+    - announcementsChatId
+    - conferenceVisibilityLevel
+    - createdBy
+    - created_at
+    - defaultProgramVisibilityLevel
+    - demoCodeId
+    - id
+    - name
+    - shortName
+    - slug
+    - updated_at
+    filter:
+      id:
+        _in: X-Hasura-Conference-Ids
+  role: subconference-organizer
+- permission:
+    columns:
+    - conferenceVisibilityLevel
+    - created_at
+    - defaultProgramVisibilityLevel
+    - id
+    - name
+    - shortName
+    - slug
+    - updated_at
+    filter:
+      _or:
+      - conferenceVisibilityLevel:
+          _eq: PUBLIC
       - _and:
-        - slug:
-            _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUnauthPermission
-              schema: public
-            _where:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_VIEW
+        - globalInviteCode:
+            _is_null: false
+        - globalInviteCode:
+            _eq: X-Hasura-Invite-Code
+  role: unauthenticated
+- permission:
+    columns:
+    - created_at
+    - id
+    - name
+    - shortName
+    - slug
+    - updated_at
+    filter:
+      id:
+        _in: X-Hasura-Conference-Ids
   role: user
 update_permissions:
 - permission:
     check: null
     columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - globalInviteCode
     - name
     - shortName
     - slug
     filter:
       _or:
+      - id:
+          _in: X-Hasura-Conference-Ids
       - createdBy:
           _eq: X-Hasura-User-Id
-      - _and:
-        - slug:
-            _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_NAME
-  role: user
+  role: conference-organizer
 delete_permissions:
 - permission:
     filter:
       createdBy:
         _eq: X-Hasura-User-Id
-  role: user
+  role: conference-organizer
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - conferenceVisibilityLevel
+      - createdBy
+      - shortName
+  headers:
+  - name: X-Hasura-Event-Secret
+    value_from_env: EVENT_SECRET
+  name: Cache_Conference
+  retry_conf:
+    interval_sec: 10
+    num_retries: 3
+    timeout_sec: 10
+  webhook: "{{CACHES_BASE_URL}}/cache/update/conference"
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: X-Hasura-Event-Secret
+    value_from_env: EVENT_SECRET
+  name: Realtime_Conference_Inserted
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{REALTIME_BASE_URL}}/conference/inserted"

@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -22,8 +21,10 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import type {
     MonitorLivestreams_EventFragment,
@@ -34,12 +35,15 @@ import {
     useMonitorLivestreamsQuery,
     useRoomPage_GetRoomChannelStackQuery,
 } from "../../../../generated/graphql";
-import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
-import { useRealTime } from "../../../Generic/useRealTime";
-import FAIcon from "../../../Icons/FAIcon";
+import FAIcon from "../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { makeContext } from "../../../GQL/make-context";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { usePresenceState } from "../../../Realtime/PresenceStateProvider";
-import { HlsPlayer } from "../../Attend/Room/Video/HlsPlayer";
+import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
 import { useConference } from "../../useConference";
+
+const HlsPlayer = React.lazy(() => import("../../Attend/Room/Video/HlsPlayer"));
 
 gql`
     query MonitorLivestreams($conferenceId: uuid!, $now: timestamptz!, $later: timestamptz!) {
@@ -69,7 +73,11 @@ gql`
 
     fragment MonitorLivestreams_PrerecEvent on schedule_Event {
         id
+        conferenceId
         startTime
+        endTime
+        intendedRoomModeName
+        roomId
         room {
             id
             name
@@ -80,10 +88,13 @@ gql`
     fragment MonitorLivestreams_Person on schedule_EventProgramPerson {
         id
         roleName
+        personId
+        eventId
         person {
             id
             name
             affiliation
+            registrantId
             registrant {
                 id
                 userId
@@ -93,14 +104,18 @@ gql`
 
     fragment MonitorLivestreams_Event on schedule_Event {
         id
+        conferenceId
+        intendedRoomModeName
         name
         startTime
         endTime
+        roomId
         room {
             id
             name
             priority
         }
+        itemId
         item {
             id
             title
@@ -111,10 +126,12 @@ gql`
         eventVonageSession {
             id
             sessionId
+            eventId
             participantStreams(where: { stopped_at: { _is_null: true } }) {
                 id
                 registrantId
                 vonageStreamType
+                vonageSessionId
             }
         }
     }
@@ -144,17 +161,26 @@ interface EventStatus {
 
 export default function LivestreamMonitoring(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const now = useRealTime(1000);
     const nowRoundedDown = roundDownToNearest(now, 60 * 1000);
     const nowRoundedUp = roundUpToNearest(now, 60 * 1000);
     const nowStr = useMemo(() => new Date(nowRoundedDown + 3000).toISOString(), [nowRoundedDown]);
     const laterStr = useMemo(() => new Date(roundUpToNearest(now + 20 * 60 * 1000, 60 * 1000)).toISOString(), [now]);
-    const response = useMonitorLivestreamsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [response] = useMonitorLivestreamsQuery({
         variables: {
             conferenceId: conference.id,
             now: nowStr,
             later: laterStr,
         },
+        context,
     });
 
     const shadow = useColorModeValue("md", "light-md");
@@ -323,10 +349,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                                             <Text fontSize="sm" mr="auto">
                                                 <FAIcon iconStyle="s" icon="link" mb={1} fontSize="80%" />
                                                 &nbsp;
-                                                <Link
-                                                    as={ReactLink}
-                                                    to={`/conference/${conference.slug}/room/${room.id}`}
-                                                >
+                                                <Link as={ReactLink} to={`${conferencePath}/room/${room.id}`}>
                                                     {room.name}
                                                 </Link>
                                             </Text>
@@ -459,7 +482,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                 </List>
             </>
         );
-    }, [bgColor, conference.slug, liveEvents, nowRoundedDown, nowRoundedUp, shadow]);
+    }, [bgColor, conferencePath, liveEvents, nowRoundedDown, nowRoundedUp, shadow]);
 
     const secondsToNextRefresh = Math.round((nowRoundedUp - now) / 1000);
 
@@ -507,7 +530,7 @@ export default function LivestreamMonitoring(): JSX.Element {
             </Grid>
             <Divider />
             <Center h="60px">
-                {response.loading ? (
+                {response.fetching ? (
                     <Spinner label="Loading backstage info" size="sm" />
                 ) : (
                     <>
@@ -540,11 +563,19 @@ export default function LivestreamMonitoring(): JSX.Element {
 }
 
 function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
-    const conference = useConference();
-    const roomChannelStackResponse = useRoomPage_GetRoomChannelStackQuery({
+    const { conferencePath } = useAuthParameters();
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [roomChannelStackResponse] = useRoomPage_GetRoomChannelStackQuery({
         variables: {
             roomId: id,
         },
+        context,
     });
 
     const hlsUri = useMemo(() => {
@@ -561,21 +592,24 @@ function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
             <Text p={1} fontSize="sm">
                 <FAIcon iconStyle="s" icon="link" mb={1} fontSize="80%" />
                 &nbsp;
-                <Link as={ReactLink} to={`/conference/${conference.slug}/room/${id}`}>
+                <Link as={ReactLink} to={`${conferencePath}/room/${id}`}>
                     {name}
                 </Link>
             </Text>
-            {hlsUri ? (
-                <HlsPlayer roomId={id} canPlay={true} hlsUri={hlsUri} initialMute={true} expectLivestream={true} />
-            ) : (
-                <Spinner />
-            )}
+            <Suspense fallback={<Spinner />}>
+                {hlsUri ? (
+                    <HlsPlayer roomId={id} canPlay={true} hlsUri={hlsUri} initialMute={true} expectLivestream={true} />
+                ) : (
+                    <Spinner />
+                )}
+            </Suspense>
         </Box>
     );
 }
 
 function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const { hasCopied, onCopy } = useClipboard(event.id);
     const now = useRealTime(60 * 1000);
 
@@ -588,7 +622,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
     const [presences, setPresences] = useState<Set<string>>(new Set());
     useEffect(() => {
         const unobserve = presence.observePage(
-            `/conference/${conference.slug}/room/${event.room.id}`,
+            `${conferencePath}/room/${event.room.id}`,
             conference.slug,
             (newPresences) => {
                 setPresences(new Set(newPresences));
@@ -597,7 +631,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
         return () => {
             unobserve();
         };
-    }, [conference.slug, event.room.id, presence]);
+    }, [conferencePath, conference.slug, event.room.id, presence]);
 
     const itemEl = useMemo(
         () =>
@@ -630,7 +664,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
                             minute: "2-digit",
                         })}{" "}
                         in{" "}
-                        <Link as={ReactLink} to={`/conference/${conference.slug}/room/${event.room.id}`}>
+                        <Link as={ReactLink} to={`${conferencePath}/room/${event.room.id}`}>
                             {event.room.name}
                         </Link>
                     </Text>
@@ -648,7 +682,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
                         {event.item ? (
                             <>
                                 {": "}
-                                <Link as={ReactLink} to={`/conference/${conference.slug}/item/${event.item.id}`}>
+                                <Link as={ReactLink} to={`${conferencePath}/item/${event.item.id}`}>
                                     {event.item.title}
                                 </Link>
                             </>
@@ -821,6 +855,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
                 </VStack>
             ),
         [
+            conferencePath,
             isLive,
             isFuture,
             event.id,
@@ -832,7 +867,6 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
             event.eventPeople,
             startDate,
             endDate,
-            conference.slug,
             onCopy,
             hasCopied,
             presences,

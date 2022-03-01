@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -12,13 +11,15 @@ import {
     Text,
     Textarea,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useCallback, useEffect, useState } from "react";
-import { Permissions_Permission_Enum, useUpsertConferenceThemeMutation } from "../../../../generated/graphql";
+import { gql } from "urql";
+import { useUpsertConferenceThemeMutation } from "../../../../generated/graphql";
 import { useConferenceTheme } from "../../../Chakra/ChakraCustomProvider";
 import defaultTheme from "../../../Chakra/Colors/ComponentMap";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useTitle } from "../../../Hooks/useTitle";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 
 gql`
@@ -76,13 +77,10 @@ export default function ManageShuffle(): JSX.Element {
         };
     }, [applyTheme]);
 
-    const [saveTheme, saveThemeResponse] = useUpsertConferenceThemeMutation();
+    const [saveThemeResponse, saveTheme] = useUpsertConferenceThemeMutation();
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageShuffle]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -126,52 +124,73 @@ export default function ManageShuffle(): JSX.Element {
             <ButtonGroup>
                 <Button
                     colorScheme="DestructiveActionButton"
-                    isDisabled={saveThemeResponse.loading}
+                    isDisabled={saveThemeResponse.fetching}
                     onClick={() => {
                         setValue(JSON.stringify(theme ?? defaultTheme, null, 4));
-                        saveTheme({
-                            variables: {
+                        saveTheme(
+                            {
                                 conferenceId: conference.id,
                                 value: theme ?? defaultTheme,
                             },
-                        });
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        );
                     }}
                 >
                     Reset to original
                 </Button>
                 <Button
                     colorScheme="DestructiveActionButton"
-                    isDisabled={saveThemeResponse.loading}
+                    isDisabled={saveThemeResponse.fetching}
                     onClick={() => {
                         setValue(JSON.stringify(defaultTheme, null, 4));
-                        saveTheme({
-                            variables: {
+                        saveTheme(
+                            {
                                 conferenceId: conference.id,
                                 value: defaultTheme,
                             },
-                        });
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        );
                     }}
                 >
                     Reset to default
                 </Button>
                 <Button
                     colorScheme="ConfirmButton"
-                    isLoading={saveThemeResponse.loading}
+                    isLoading={saveThemeResponse.fetching}
                     onClick={() => {
                         const value = applyTheme();
                         if (value) {
-                            saveTheme({
-                                variables: {
+                            saveTheme(
+                                {
                                     conferenceId: conference.id,
                                     value,
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        },
+                                    },
+                                }
+                            );
                         }
                     }}
                 >
                     Save
                 </Button>
             </ButtonGroup>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

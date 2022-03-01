@@ -1,10 +1,10 @@
 import { Button, chakra, Flex, HStack, Menu, MenuButton, MenuItem, MenuList, Portal } from "@chakra-ui/react";
-import type { ParticipantPlacement } from "@clowdr-app/shared-types/build/vonage";
+import type { ParticipantPlacement } from "@midspace/shared-types/vonage";
 import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
-import FAIcon from "../../../../../Icons/FAIcon";
-import { maybeCompare } from "../../../../../Utils/maybeSort";
-import { useVonageLayout } from "../VonageLayoutProvider";
+import FAIcon from "../../../../../Chakra/FAIcon";
+import { maybeCompare } from "../../../../../Utils/maybeCompare";
+import { useVonageLayout } from "../State/VonageLayoutProvider";
 
 export default function StreamChooser({
     centered,
@@ -16,11 +16,13 @@ export default function StreamChooser({
     isRecordingMode: boolean;
 }): JSX.Element {
     const {
-        availableStreams,
-        layout: { layout },
-        updateLayout,
-        saveLayout,
-        layoutChooser_isOpen,
+        layout: {
+            availableStreams,
+            layout: { layout },
+            updateLayout,
+            saveLayout,
+            layoutChooser_isOpen,
+        },
     } = useVonageLayout();
 
     const changeLayout = useCallback(
@@ -30,7 +32,7 @@ export default function StreamChooser({
                 [positionKey]: !connectionId ? null : streamId ? { streamId } : { connectionId },
             };
             if (connectionId) {
-                for (let idx = 0; idx < 6; idx++) {
+                for (let idx = 1; idx < 7; idx++) {
                     const key = "position" + idx;
                     if (key in newLayout && key !== positionKey) {
                         const placement: ParticipantPlacement = newLayout[key];
@@ -53,7 +55,7 @@ export default function StreamChooser({
             if (!layoutChooser_isOpen) {
                 saveLayout({ layout: newLayout, createdAt: Date.now() });
             } else {
-                updateLayout({ layout: newLayout, createdAt: Date.now() });
+                updateLayout((old) => ({ layout: newLayout, createdAt: old?.createdAt ?? Date.now() }));
             }
         },
         [layout, layoutChooser_isOpen, positionKey, saveLayout, updateLayout]
@@ -101,14 +103,23 @@ export default function StreamChooser({
             right={centered ? 0 : 1}
         >
             <Menu placement="top-end">
-                <MenuButton as={Button} size="xs" colorScheme="gray" opacity={1}>
+                <MenuButton
+                    as={Button}
+                    size="xs"
+                    colorScheme="gray"
+                    opacity={1}
+                    whiteSpace="normal"
+                    h="auto"
+                    minH={0}
+                    py={1}
+                >
                     <HStack spacing={2}>
                         <FAIcon iconStyle="s" icon="sync-alt" />
                         {centered ? <chakra.span>Choose participant</chakra.span> : undefined}
                     </HStack>
                 </MenuButton>
                 <Portal>
-                    <MenuList zIndex={10000}>
+                    <MenuList zIndex={10000} maxH="10em" overflowY="auto">
                         <MenuItem
                             onClick={() => {
                                 changeLayout(null);

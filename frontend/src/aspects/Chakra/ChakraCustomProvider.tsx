@@ -1,5 +1,5 @@
 import { ChakraProvider, extendTheme, PortalManager } from "@chakra-ui/react";
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import React, { useMemo, useState } from "react";
 import { applyComponentColorTheme } from "./Colors/applyComponentColorTheme";
 import componentMap from "./Colors/ComponentMap";
@@ -64,6 +64,19 @@ const colors = extendTheme({
             "800": "#20052E",
             "900": "#0A010E",
         },
+        "dark-purple": {
+            DEFAULT: "#36084E",
+            "50": "#EED5FB",
+            "100": "#D190F3",
+            "200": "#B44BEC",
+            "300": "#9216D4",
+            "400": "#630F8F",
+            "500": "#4C0C6F",
+            "600": "#36084E",
+            "700": "#20052E",
+            "800": "#0A010E",
+            "900": "#000000",
+        },
     },
 }).colors;
 
@@ -85,6 +98,7 @@ const baseThemeExtensions = {
         "light-md": "0 4px 6px -1px rgba(255, 255, 255, 0.1),0 2px 4px -1px rgba(255, 255, 255, 0.04)",
         "bottom-popup-light": "0px -1px 4px 0px rgba(0,0,0,0.25)",
         "bottom-popup-dark": "0px -1px 4px 0px rgba(255,255,255,0.25)",
+        "left-pullout": "2px 0px 5px rgba(0, 0, 0, 0.2)",
     },
     components: {
         Toast: {
@@ -109,7 +123,7 @@ const baseThemeExtensions = {
                 popper: {
                     zIndex: 10,
                     maxW: props.width ? props.width : "xs",
-                    w: "100%",
+                    // w: "100%",
                 },
             }),
         },
@@ -125,8 +139,14 @@ interface ConferenceThemeContext {
 const ConferenceThemeContext = React.createContext<ConferenceThemeContext | undefined>(undefined);
 export function useConferenceTheme(): ConferenceThemeContext {
     const conf = React.useContext(ConferenceThemeContext);
-    assert(conf, "useConferenceTheme: Context not available");
+    assert.truthy(conf, "useConferenceTheme: Context not available");
     return conf;
+}
+
+export function generateDefaultTheme() {
+    return extendTheme(baseThemeExtensions, {
+        colors: applyComponentColorTheme(colors, componentMap),
+    });
 }
 
 export default function ChakraCustomProvider({
@@ -138,15 +158,13 @@ export default function ChakraCustomProvider({
     theme = useMemo(
         () =>
             conferenceComponentMap
-                ? extendTheme<any>(baseThemeExtensions, {
+                ? extendTheme(baseThemeExtensions, {
                       colors: applyComponentColorTheme(
                           applyComponentColorTheme(colors, componentMap),
                           conferenceComponentMap
                       ),
                   })
-                : extendTheme<any>(baseThemeExtensions, {
-                      colors: applyComponentColorTheme(colors, componentMap),
-                  }),
+                : generateDefaultTheme(),
         [conferenceComponentMap]
     );
     const ctx = useMemo(

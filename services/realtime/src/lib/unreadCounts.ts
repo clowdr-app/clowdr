@@ -1,21 +1,18 @@
-import { redisClientP, redisClientPool } from "../redis";
+import { ReadUpToIndexCache } from "@midspace/caches/readUpToIndex";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import { emitter } from "../socket-emitter/socket-emitter";
-import { getReadUpToIndex } from "./cache/readUpToIndex";
 import { generateChatRecentMessagesSetKey, notificationsRoomName } from "./chat";
+import { logger } from "./logger";
 
-export const maxUnreadMessages = 10;
+export const maxUnreadMessages = 30;
 
 export async function sendUnreadCount(chatId: string, userId: string): Promise<void> {
-    const readUpToIndex = await getReadUpToIndex(chatId, userId, {
-        chatId,
-        userId,
-        messageSId: undefined,
-    });
+    const readUpToIndexMessageSId = await new ReadUpToIndexCache(logger).getField(chatId, userId);
     const redisSetKey = generateChatRecentMessagesSetKey(chatId);
     const redisClient = await redisClientPool.acquire("lib/unreadCount/sendUnreadCount");
     try {
-        const rank = readUpToIndex?.messageSId
-            ? await redisClientP.zrevrank(redisClient)(redisSetKey, readUpToIndex.messageSId)
+        const rank = readUpToIndexMessageSId
+            ? await redisClientP.zrevrank(redisClient)(redisSetKey, readUpToIndexMessageSId)
             : await redisClientP.zcard(redisClient)(redisSetKey);
 
         const roomName = notificationsRoomName(userId);

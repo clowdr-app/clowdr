@@ -1,4 +1,4 @@
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Content_ElementType_Enum } from "../../../../../../../generated/graphql";
@@ -17,7 +17,7 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.SponsorBooths,
     ],
     createDefault: (type, conferenceId, itemId) => {
-        assert(
+        assert.truthy(
             type === Content_ElementType_Enum.ContentGroupList ||
                 type === Content_ElementType_Enum.WholeSchedule ||
                 type === Content_ElementType_Enum.LiveProgramRooms ||

@@ -1,8 +1,8 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Box, Button, CircularProgress, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import FAIcon from "../../Icons/FAIcon";
+import FAIcon from "../../Chakra/FAIcon";
 import { useChatConfiguration } from "../Configuration";
 import { useComposeContext } from "./ComposeContext";
 
@@ -31,6 +31,8 @@ export default function SendLockoutButton({
                 return config.answerConfig.sendCooloffPeriodMs;
             case Chat_MessageType_Enum.Poll:
                 return config.pollConfig.sendCooloffPeriodMs;
+            default:
+                return config.messageConfig.sendCooloffPeriodMs;
         }
     }, [
         compose.newMessageType,
@@ -51,7 +53,7 @@ export default function SendLockoutButton({
     // const showCheckMarkFor = 2000;
     const showingCheckMark = false; // showCheckMarkParams.time + showCheckMarkFor > now;
 
-    const showCheckMarkProgress = false; // Math.abs(now - showCheckMarkParams.time) / showCheckMarkFor;
+    // const showCheckMarkProgress = Math.abs(now - showCheckMarkParams.time) / showCheckMarkFor;
     const checkMarkOpacity = 0; // showCheckMarkProgress < 0.5 ? 0.3 + 1.4 * showCheckMarkProgress : 2 * (1 - showCheckMarkProgress);
 
     return (

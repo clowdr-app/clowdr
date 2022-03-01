@@ -38,14 +38,14 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import { formatISO9075 } from "date-fns";
-import type { Dispatch, SetStateAction} from "react";
+import type { Dispatch, SetStateAction } from "react";
 import React, { useCallback, useMemo, useState } from "react";
 import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
+import FAIcon from "../Chakra/FAIcon";
 import { LinkButton } from "../Chakra/LinkButton";
-import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 import useDebouncedState from "./useDebouncedState";
 
@@ -378,7 +378,7 @@ const defaultRenderers: {
                     value={value ?? ""}
                     onChange={(value) => editMode.onChange(value.length === 0 ? null : parseInt(value, 10))}
                     aria-label={editMode.label}
-                    disabled={editMode.isDisabled}
+                    isDisabled={editMode.isDisabled}
                     maxWidth="100%"
                     max={editMode.opts.max}
                     min={editMode.opts.min}
@@ -825,7 +825,7 @@ function CRUDRow<S, T, PK extends keyof S>({
                                           const newVal = convertFromUI(value);
                                           const newItem: S = field.insert(item, newVal);
 
-                                          assert(edit?.mode === "single");
+                                          assert.truthy(edit?.mode === "single");
                                           const p = csud?.cudCallbacks?.update?.(new Map([[primaryKey, newItem]]));
                                           if (p) {
                                               let results: Map<S[PK], UpdateResult>;
@@ -835,7 +835,7 @@ function CRUDRow<S, T, PK extends keyof S>({
                                                   results = await p;
                                                   endEdit(editId);
                                               } else {
-                                                  assert(!(p instanceof Promise));
+                                                  assert.truthy(!(p instanceof Promise));
                                                   results = p;
                                               }
                                               results.forEach((result, key) => {
@@ -914,7 +914,7 @@ function CRUDRow<S, T, PK extends keyof S>({
                                 results = await p;
                                 endEdit(editId);
                             } else {
-                                assert(!(p instanceof Promise));
+                                assert.truthy(!(p instanceof Promise));
                                 results = p;
                             }
 
@@ -1016,7 +1016,7 @@ function CRUDDeleteSelectedButton<T, PK extends keyof T>({
                         results = await p;
                         endEdit(editId);
                     } else {
-                        assert(!(p instanceof Promise));
+                        assert.truthy(!(p instanceof Promise));
                         results = p;
                     }
 
@@ -1180,7 +1180,7 @@ function CRUDCreateButton<T, PK extends keyof T>({
                                     }
                                 });
                             }
-                            assert(cbs.create);
+                            assert.truthy(cbs.create);
                             const tempKey = await cbs.create(newItem);
                             if (tempKey) {
                                 setSelectedKeys(() => {
@@ -1506,8 +1506,8 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
             const itemX = data.get(x[0]);
             const itemY = data.get(y[0]);
 
-            assert(itemX);
-            assert(itemY);
+            assert.truthy(itemX);
+            assert.truthy(itemY);
 
             return primaryKeyField.getRowTitle(itemX).localeCompare(primaryKeyField.getRowTitle(itemY));
         });

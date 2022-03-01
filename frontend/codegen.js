@@ -1,37 +1,34 @@
-require("dotenv").config();
+/* eslint-disable @typescript-eslint/no-var-requires */
+const schema = require.resolve("@midspace/graphql/schema.graphql");
 
 module.exports = {
-    schema: [
-        {
-            "http://localhost:8080/v1/graphql": {
-                headers: {
-                    "X-Hasura-Admin-Secret": process.env.HASURA_ADMIN_SECRET,
-                },
-            },
-        },
-    ],
+    schema: [schema],
+    hooks: {
+        afterAllFileWrite: "prettier --write",
+    },
     documents: [
-        "./src/aspects/**/*.tsx", "./src/aspects/**/*.ts",
-        "./src/types/**/*.tsx", "./src/types/**/*.ts",
-        "./src/*.tsx", "./src/*.ts"
+        "./src/aspects/**/*.tsx",
+        "./src/aspects/**/*.ts",
+        "./src/types/**/*.tsx",
+        "./src/types/**/*.ts",
+        "./src/*.tsx",
+        "./src/*.ts",
     ],
     overwrite: true,
     generates: {
         "./src/generated/graphql.tsx": {
-            plugins: ["typescript", "typescript-operations", "typescript-react-apollo"],
+            plugins: ["typescript", "typescript-operations", "typescript-urql", "typescript-urql-graphcache"],
             config: {
                 skipTypename: false,
                 withHooks: true,
                 withHOC: false,
                 withComponent: false,
+                useTypeImports: true,
                 immutableTypes: true,
                 withResultType: true,
                 preResolveTypes: true,
                 addDocBlocks: true,
             },
-        },
-        "./graphql.schema.json": {
-            plugins: ["introspection"],
         },
     },
 };

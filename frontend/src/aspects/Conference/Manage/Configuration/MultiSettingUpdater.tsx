@@ -1,11 +1,13 @@
-import { gql } from "@apollo/client";
 import { Spinner, useToast } from "@chakra-ui/react";
-import React, { useCallback } from "react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
+import React, { useCallback, useMemo } from "react";
 import type { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
 import {
     useMultiSettingUpdater_DeleteConfigurationsMutation,
     useMultiSettingUpdater_GetConfigurationsQuery,
 } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import { useConference } from "../../useConference";
 
 gql`
@@ -46,24 +48,39 @@ export default function MultiSettingUpdater({
     settingNames: Conference_ConfigurationKey_Enum[];
     children: (props: MultiSettingChildProps) => JSX.Element;
 }): JSX.Element {
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
     const conference = useConference();
-    const setting = useMultiSettingUpdater_GetConfigurationsQuery({
+    const [setting] = useMultiSettingUpdater_GetConfigurationsQuery({
         variables: {
             conferenceId: conference.id,
             keys: settingNames,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
+        context,
     });
-    const [deleteSettings] = useMultiSettingUpdater_DeleteConfigurationsMutation();
+    const [, deleteSettings] = useMultiSettingUpdater_DeleteConfigurationsMutation();
     const toast = useToast();
     const deleteAll = useCallback(async () => {
         try {
-            await deleteSettings({
-                variables: {
+            await deleteSettings(
+                {
                     conferenceId: conference.id,
                     keys: settingNames,
                 },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                }
+            );
             toast({
                 status: "success",
                 title: "Settings cleared",

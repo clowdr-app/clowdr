@@ -1,18 +1,18 @@
-import { gql } from "@apollo/client";
-import type { BoxProps} from "@chakra-ui/react";
+import type { BoxProps } from "@chakra-ui/react";
 import { Box, Button, Heading, HStack, List, ListItem, useId, useIds, useToast } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import type {
-    ManageExport_RegistrantGoogleAccountFragment} from "../../../../../generated/graphql";
+import type { ManageExport_RegistrantGoogleAccountFragment } from "../../../../../generated/graphql";
 import {
     useManageExport_DeleteRegistrantGoogleAccountMutation,
     useManageExport_GetGoogleOAuthUrlMutation,
 } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { useGoogleOAuthRedirectPath } from "../../../../Google/useGoogleOAuthRedirectUrl";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
-import { FAIcon } from "../../../../Icons/FAIcon";
+import QueryWrapper from "../../../../GQL/QueryWrapper";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { YouTubeExportContext } from "./YouTubeExportContext";
 
@@ -31,6 +31,7 @@ gql`
 
     fragment ManageExport_RegistrantGoogleAccount on registrant_GoogleAccount {
         id
+        registrantId
         googleAccountEmail
         youTubeData
     }
@@ -44,14 +45,14 @@ gql`
 export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
     const toast = useToast();
 
-    const [mutation] = useManageExport_GetGoogleOAuthUrlMutation();
+    const [, mutation] = useManageExport_GetGoogleOAuthUrlMutation();
 
     const registrant = useCurrentRegistrant();
 
     const { googleAccounts, selectedGoogleAccountId, setSelectedGoogleAccountId, finished } =
         useContext(YouTubeExportContext);
 
-    const [deleteAccount] = useManageExport_DeleteRegistrantGoogleAccountMutation();
+    const [, deleteAccount] = useManageExport_DeleteRegistrantGoogleAccountMutation();
     const [deleting, setDeleting] = useState<{ [key: string]: boolean }>({});
 
     const history = useHistory();
@@ -60,17 +61,26 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
     const optionIdSuffix = useId();
     const optionIds = useIds(
         optionIdSuffix,
-        ...(googleAccounts.data?.registrant_GoogleAccount?.map((x) => x.id) ?? [])
+        ...(googleAccounts[0].data?.registrant_GoogleAccount?.map((x) => x.id) ?? [])
     );
 
     const disconnectAccount = useCallback(
         async (accountId: string) => {
             setDeleting((x) => R.set(R.lensProp(accountId), true, x));
             try {
-                await deleteAccount({
-                    variables: { registrantGoogleAccountId: accountId },
-                });
-                await googleAccounts.refetch();
+                await deleteAccount(
+                    {
+                        registrantGoogleAccountId: accountId,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
+                await googleAccounts[1]();
                 toast({
                     status: "success",
                     title: "Unlinked YouTube account.",
@@ -89,8 +99,8 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
 
     const addAccount = useCallback(async () => {
         try {
-            const urlResult = await mutation({
-                variables: {
+            const urlResult = await mutation(
+                {
                     registrantId: registrant.id,
                     scopes: [
                         "https://www.googleapis.com/auth/youtube.upload",
@@ -98,7 +108,14 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                         "https://www.googleapis.com/auth/youtube.force-ssl",
                     ],
                 },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                }
+            );
 
             if (!urlResult.data?.getGoogleOAuthUrl) {
                 throw new Error("Could not retrieve Google OAuth URL");
@@ -135,7 +152,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                     Add a YouTube account
                 </Button>
             </HStack>
-            <ApolloQueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={googleAccounts}>
+            <QueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={googleAccounts[0]}>
                 {(accounts: readonly ManageExport_RegistrantGoogleAccountFragment[]) => (
                     <List
                         role="listbox"
@@ -176,7 +193,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                         ))}
                     </List>
                 )}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
             {selectedGoogleAccountId && (
                 <Button
                     display="block"

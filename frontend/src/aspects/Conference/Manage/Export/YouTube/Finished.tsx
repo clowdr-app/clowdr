@@ -1,11 +1,11 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, CloseButton } from "@chakra-ui/react";
 import React, { useContext } from "react";
 import { LinkButton } from "../../../../Chakra/LinkButton";
-import { useConference } from "../../../useConference";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { YouTubeExportContext } from "./YouTubeExportContext";
 
 export function Finished(): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const { finished, reset } = useContext(YouTubeExportContext);
     return finished ? (
         <Alert
@@ -24,7 +24,7 @@ export function Finished(): JSX.Element {
             </AlertTitle>
             <AlertDescription maxWidth="sm">This will take a few minutes.</AlertDescription>
             <LinkButton
-                to={`/conference/${conference.slug}/manage/export/youtube/uploads`}
+                to={`${conferencePath}/manage/export/youtube/uploads`}
                 colorScheme="ConfirmButton"
                 mt={4}
                 size="lg"

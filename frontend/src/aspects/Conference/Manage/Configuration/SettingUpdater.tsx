@@ -1,15 +1,14 @@
-import { gql } from "@apollo/client";
 import { Spinner, useToast } from "@chakra-ui/react";
-import React, { useCallback } from "react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
+import React, { useCallback, useMemo } from "react";
+import type { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
 import {
-    Conference_ConfigurationKey_Enum,
-    SettingUpdater_GetConfigurationDocument,
-    SettingUpdater_GetConfigurationQuery,
-    SettingUpdater_GetConfigurationQueryVariables,
     useSettingUpdater_DeleteConfigurationMutation,
     useSettingUpdater_GetConfigurationQuery,
     useSettingUpdater_SetConfigurationMutation,
 } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import { useConference } from "../../useConference";
 
 gql`
@@ -60,28 +59,43 @@ export default function SettingUpdater<T>({
     defaultValue: T | undefined;
     children: (props: SettingChildProps<T>) => JSX.Element;
 }): JSX.Element {
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
     const conference = useConference();
-    const setting = useSettingUpdater_GetConfigurationQuery({
+    const [setting] = useSettingUpdater_GetConfigurationQuery({
         variables: {
             conferenceId: conference.id,
             key: settingName,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
+        context,
     });
-    const [updateSetting, { loading: isUpdating }] = useSettingUpdater_SetConfigurationMutation();
-    const [deleteSetting] = useSettingUpdater_DeleteConfigurationMutation();
+    const [{ fetching: isUpdating }, updateSetting] = useSettingUpdater_SetConfigurationMutation();
+    const [, deleteSetting] = useSettingUpdater_DeleteConfigurationMutation();
 
     const toast = useToast();
     const onChange = useCallback(
         async (newValue: T | undefined) => {
             try {
                 if (newValue === undefined || (typeof newValue === "string" && !newValue?.trim().length)) {
-                    await deleteSetting({
-                        variables: {
+                    await deleteSetting(
+                        {
                             conferenceId: conference.id,
                             key: settingName,
                         },
-                    });
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                },
+                            },
+                        }
+                    );
                     toast({
                         status: "success",
                         title: "Setting updated",
@@ -90,32 +104,20 @@ export default function SettingUpdater<T>({
                         position: "bottom",
                     });
                 } else {
-                    await updateSetting({
-                        variables: {
+                    await updateSetting(
+                        {
                             conferenceId: conference.id,
                             key: settingName,
                             value: typeof newValue === "string" ? newValue?.trim() : newValue,
                         },
-                        update: (cache, result) => {
-                            if (result.data) {
-                                cache.writeQuery<
-                                    SettingUpdater_GetConfigurationQuery,
-                                    SettingUpdater_GetConfigurationQueryVariables
-                                >({
-                                    query: SettingUpdater_GetConfigurationDocument,
-                                    variables: {
-                                        conferenceId: conference.id,
-                                        key: settingName,
-                                    },
-                                    broadcast: true,
-                                    data: {
-                                        __typename: setting.data?.__typename ?? "query_root",
-                                        conference_Configuration_by_pk: result.data.insert_conference_Configuration_one,
-                                    },
-                                });
-                            }
-                        },
-                    });
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                },
+                            },
+                        }
+                    );
                     toast({
                         status: "success",
                         title: "Setting updated",

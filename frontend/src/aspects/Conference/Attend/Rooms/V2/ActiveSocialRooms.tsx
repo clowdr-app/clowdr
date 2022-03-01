@@ -5,12 +5,22 @@ import { useLiveEvents } from "../../../../LiveEvents/LiveEvents";
 import useRoomParticipants from "../../../../Room/useRoomParticipants";
 import RoomSummary from "./RoomsSummary";
 
-export default function ActiveSocialRooms({ excludeLiveEventRooms }: { excludeLiveEventRooms: boolean }): JSX.Element {
+export default function ActiveSocialRooms({
+    excludeLiveEventRooms,
+    alignLeft,
+}: {
+    excludeLiveEventRooms: boolean;
+    alignLeft?: boolean;
+}): JSX.Element {
     const roomParticipants = useRoomParticipants();
 
     if (roomParticipants) {
         return (
-            <ActiveSocialRoomsInner roomParticipants={roomParticipants} excludeLiveEventRooms={excludeLiveEventRooms} />
+            <ActiveSocialRoomsInner
+                roomParticipants={roomParticipants}
+                excludeLiveEventRooms={excludeLiveEventRooms}
+                alignLeft={alignLeft}
+            />
         );
     } else {
         return <></>;
@@ -20,9 +30,11 @@ export default function ActiveSocialRooms({ excludeLiveEventRooms }: { excludeLi
 function ActiveSocialRoomsInner({
     roomParticipants,
     excludeLiveEventRooms,
+    alignLeft,
 }: {
     roomParticipants: readonly RoomParticipantDetailsFragment[];
     excludeLiveEventRooms: boolean;
+    alignLeft?: boolean;
 }): JSX.Element {
     const { liveEventsByRoom } = useLiveEvents();
 
@@ -35,5 +47,5 @@ function ActiveSocialRoomsInner({
         }
     }, [roomParticipants, excludeLiveEventRooms, liveEventsByRoom]);
 
-    return <RoomSummary rooms={rooms} />;
+    return <RoomSummary rooms={rooms} alignLeft={alignLeft} />;
 }

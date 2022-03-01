@@ -1,13 +1,7 @@
 import { FormControl, FormLabel, Input, useToast } from "@chakra-ui/react";
-import type {
-    LinkBlob,
-    LinkButtonBlob,
-    PaperLinkBlob,
-    VideoLinkBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    ElementBaseType
-} from "@clowdr-app/shared-types/build/content";
-import assert from "assert";
+import { assert } from "@midspace/assert";
+import type { LinkBlob, LinkButtonBlob, PaperLinkBlob, VideoLinkBlob } from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Content_ElementType_Enum } from "../../../../../../../generated/graphql";
@@ -27,7 +21,7 @@ export const LinkElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.VideoLink,
     ],
     createDefault: (type, conferenceId, itemId) => {
-        assert(
+        assert.truthy(
             type === Content_ElementType_Enum.Link ||
                 type === Content_ElementType_Enum.LinkButton ||
                 type === Content_ElementType_Enum.PaperLink ||
@@ -147,7 +141,7 @@ export const LinkElementTemplate: ElementBaseTemplate = {
                                 };
                                 update(newData);
                                 setText(null);
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.error("Error saving link text", e);
                                 toast({
                                     status: "error",
@@ -204,7 +198,7 @@ export const LinkElementTemplate: ElementBaseTemplate = {
                                 };
                                 update(newData);
                                 setUrl(null);
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.error("Error saving link URL", e);
                                 toast({
                                     status: "error",

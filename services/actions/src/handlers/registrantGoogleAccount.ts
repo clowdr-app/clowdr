@@ -1,13 +1,18 @@
 import { gql } from "@apollo/client/core";
-import {
+import type { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { RegistrantGoogleAccountData } from "@midspace/hasura/event-data";
+import type {
     YouTubeChannelDetails,
     YouTubeDataBlob,
     YouTubePlaylistDetails,
-} from "@clowdr-app/shared-types/build/registrantGoogleAccount";
+} from "@midspace/shared-types/registrantGoogleAccount";
 import assert from "assert";
 import { IsNumber, IsString, validateSync } from "class-validator";
-import { OAuth2Client } from "google-auth-library";
-import { google, youtube_v3 } from "googleapis";
+import type { OAuth2Client } from "google-auth-library";
+import type { youtube_v3 } from "googleapis";
+import { google } from "googleapis";
+import type { P } from "pino";
 import * as R from "ramda";
 import {
     RegistrantGoogleAccount_GetRegistrantGoogleAccountDocument,
@@ -15,11 +20,11 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createOAuth2Client } from "../lib/googleAuth";
-import { Payload, RegistrantGoogleAccountData } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 export async function handleRegistrantGoogleAccountDeleted(
-    payload: Payload<RegistrantGoogleAccountData>
+    logger: P.Logger,
+    payload: EventPayload<RegistrantGoogleAccountData>
 ): Promise<void> {
     assert(payload.event.data.old, "Payload must contain old row data");
     const oldRow = payload.event.data.old;
@@ -27,11 +32,11 @@ export async function handleRegistrantGoogleAccountDeleted(
     const accessToken = oldRow.tokenData.access_token;
 
     if (accessToken) {
-        console.log("Revoking credentials for registrant Google account", { googleAccountId: oldRow.id });
+        logger.info({ googleAccountId: oldRow.id }, "Revoking credentials for registrant Google account");
         const oauth2Client = createOAuth2Client();
         oauth2Client.setCredentials(payload.event.data.old.tokenData);
         await callWithRetry(async () => await oauth2Client.revokeCredentials());
-        console.log("Revoked credentials for registrant Google account", { googleAccountId: oldRow.id });
+        logger.info({ googleAccountId: oldRow.id }, "Revoked credentials for registrant Google account");
     }
     return;
 }
@@ -72,12 +77,12 @@ class TokenData {
     access_token: string;
 }
 
-export async function createGoogleOAuthClient(tokenData: unknown): Promise<OAuth2Client> {
+export async function createGoogleOAuthClient(logger: P.Logger, tokenData: unknown): Promise<OAuth2Client> {
     const credentials: TokenData = tokenData as any;
     const errors = validateSync(credentials);
 
     if (errors.length) {
-        console.error("Invalid Google credentials", { errors });
+        logger.error({ errors }, "Invalid Google credentials");
         throw new Error("Invalid Google credentials");
     }
 
@@ -87,7 +92,11 @@ export async function createGoogleOAuthClient(tokenData: unknown): Promise<OAuth
     return client;
 }
 
-export async function handleRefreshYouTubeData(payload: refreshYouTubeDataArgs): Promise<RefreshYouTubeDataOutput> {
+export async function handleRefreshYouTubeData(
+    logger: P.Logger,
+    payload: refreshYouTubeDataArgs
+): Promise<RefreshYouTubeDataOutput> {
+    logger.info({ registrantId: payload.registrantId }, "Refreshing YouTube data");
     const registrantGoogleAccount = await apolloClient.query({
         query: RegistrantGoogleAccount_GetRegistrantGoogleAccountDocument,
         variables: {
@@ -100,11 +109,17 @@ export async function handleRefreshYouTubeData(payload: refreshYouTubeDataArgs):
         !registrantGoogleAccount.data.registrant_GoogleAccount_by_pk?.registrantId ||
         registrantGoogleAccount.data.registrant_GoogleAccount_by_pk.registrantId !== payload.registrantId
     ) {
-        console.error("Could not find matching Google account for registrant", payload.registrantGoogleAccountId);
+        logger.error(
+            { registrantGoogleAccountId: payload.registrantGoogleAccountId },
+            "Could not find matching Google account for registrant"
+        );
         throw new Error("Could not find Google account");
     }
 
-    const client = await createGoogleOAuthClient(registrantGoogleAccount.data.registrant_GoogleAccount_by_pk.tokenData);
+    const client = await createGoogleOAuthClient(
+        logger,
+        registrantGoogleAccount.data.registrant_GoogleAccount_by_pk.tokenData
+    );
 
     const youtubeClient = google.youtube({
         auth: client,

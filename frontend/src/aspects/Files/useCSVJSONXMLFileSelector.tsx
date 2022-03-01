@@ -12,7 +12,7 @@ import {
 import JSZip from "jszip";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import FAIcon from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
 
 function normaliseFileType(name: string, type: string): "CSV" | "JSON" | "XML" | "ZIP" | false {
     name = name.toLowerCase();
@@ -74,9 +74,13 @@ export default function useCSVJSONXMLFileSelector(): {
     acceptedFiles: FileInfo[];
     component: JSX.Element;
 } {
-    const { acceptedFiles: rawAcceptedFiles, fileRejections, getRootProps, getInputProps } = useDropzone({
-        accept:
-            ".csv, .txt, .json, .xml, .CSV, .TXT, .JSON, .XML, .zip, .ZIP, text/plain, text/csv, application/json, text/xml, application/zip",
+    const {
+        acceptedFiles: rawAcceptedFiles,
+        fileRejections,
+        getRootProps,
+        getInputProps,
+    } = useDropzone({
+        accept: ".csv, .txt, .json, .xml, .CSV, .TXT, .JSON, .XML, .zip, .ZIP, text/plain, text/csv, application/json, text/xml, application/zip",
         multiple: true,
     });
 
@@ -235,7 +239,7 @@ export default function useCSVJSONXMLFileSelector(): {
                     </Box>
                     <Text as="aside" p={5}>
                         <Heading as="h4" fontSize="normal" textAlign="left" mb={2}>
-                            Accepted files
+                            Selected files
                         </Heading>
                         {acceptedFileItems}
                         {fileRejectionItems.length > 0 ? (

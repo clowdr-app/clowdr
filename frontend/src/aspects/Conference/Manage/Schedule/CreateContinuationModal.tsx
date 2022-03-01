@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -31,33 +30,42 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import type {
-    ContinuationTo} from "@clowdr-app/shared-types/build/continuation";
-import {
-    ContinuationDefaultFor,
-    ContinuationType,
-    NavigationView,
-} from "@clowdr-app/shared-types/build/continuation";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { ContinuationTo } from "@midspace/shared-types/continuation";
+import { ContinuationDefaultFor, ContinuationType, NavigationView } from "@midspace/shared-types/continuation";
+import { gql } from "@urql/core";
 import { format } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
+import { useClient } from "urql";
 import type {
-    ContinuationsEditor_SelectContinuationsQuery,
-    ContinuationsEditor_SelectContinuationsQueryVariables} from "../../../../generated/graphql";
-import {
-    ContinuationsEditor_ContinuationFragmentDoc,
-    ContinuationsEditor_SelectContinuationsDocument,
-    useContinuationsEditor_InsertMutation,
-    useCreateContinuationModal_EventsQuery,
-    useCreateContinuationModal_ExhibitionsQuery,
-    useCreateContinuationModal_ItemsQuery,
-    useCreateContinuationModal_ProfileQuery,
-    useCreateContinuationModal_RoomsQuery,
-    useCreateContinuationModal_ShufflePeriodsQuery,
-    useCreateContinuationModal_TagsQuery,
+    CreateContinuationModal_EventsQuery,
+    CreateContinuationModal_EventsQueryVariables,
+    CreateContinuationModal_ExhibitionsQuery,
+    CreateContinuationModal_ExhibitionsQueryVariables,
+    CreateContinuationModal_ItemsQuery,
+    CreateContinuationModal_ItemsQueryVariables,
+    CreateContinuationModal_ProfileQuery,
+    CreateContinuationModal_ProfileQueryVariables,
+    CreateContinuationModal_RoomsQuery,
+    CreateContinuationModal_RoomsQueryVariables,
+    CreateContinuationModal_ShufflePeriodsQuery,
+    CreateContinuationModal_ShufflePeriodsQueryVariables,
+    CreateContinuationModal_TagsQuery,
+    CreateContinuationModal_TagsQueryVariables,
 } from "../../../../generated/graphql";
-import FAIcon from "../../../Icons/FAIcon";
+import {
+    CreateContinuationModal_EventsDocument,
+    CreateContinuationModal_ExhibitionsDocument,
+    CreateContinuationModal_ItemsDocument,
+    CreateContinuationModal_ProfileDocument,
+    CreateContinuationModal_RoomsDocument,
+    CreateContinuationModal_ShufflePeriodsDocument,
+    CreateContinuationModal_TagsDocument,
+    useContinuationsEditor_InsertMutation,
+} from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { useConference } from "../../useConference";
 
 function LazySelectFromQuery({
@@ -120,24 +128,29 @@ gql`
         room_Room(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+            conferenceId
         }
     }
 
     query CreateContinuationModal_Events($conferenceId: uuid!) {
         schedule_Event(where: { conferenceId: { _eq: $conferenceId } }) {
             id
+            conferenceId
             name
             startTime
             endTime
             intendedRoomModeName
+            itemId
             item {
                 id
                 title
             }
+            exhibitionId
             exhibition {
                 id
                 name
             }
+            shufflePeriodId
             shufflePeriod {
                 id
                 name
@@ -149,6 +162,7 @@ gql`
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             title
+            conferenceId
         }
     }
 
@@ -156,6 +170,7 @@ gql`
         collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+            conferenceId
         }
     }
 
@@ -163,6 +178,7 @@ gql`
         room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+            conferenceId
         }
     }
 
@@ -170,6 +186,7 @@ gql`
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+            conferenceId
         }
     }
 
@@ -177,6 +194,7 @@ gql`
         registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             displayName
+            conferenceId
         }
     }
 `;
@@ -193,6 +211,7 @@ export default function CreateContinuationModal({
     eventItemId?: string;
 }): JSX.Element {
     const conference = useConference();
+    const client = useClient();
 
     const leastDestructiveRef = useRef<HTMLButtonElement>(null);
     const addButtonRef = useRef<HTMLButtonElement>(null);
@@ -259,9 +278,6 @@ export default function CreateContinuationModal({
             </option>,
             <option key={NavigationView.Exhibitions} value={NavigationView.Exhibitions}>
                 Exhibitions
-            </option>,
-            <option key={NavigationView.Search} value={NavigationView.Search}>
-                Search
             </option>,
             <option key={NavigationView.Schedule} value={NavigationView.Schedule}>
                 Schedule
@@ -399,13 +415,6 @@ export default function CreateContinuationModal({
                                         view: NavigationView.Exhibitions,
                                     });
                                     break;
-                                case NavigationView.Search:
-                                    setTo({
-                                        type: ContinuationType.NavigationView,
-                                        view: NavigationView.Search,
-                                        term: "",
-                                    });
-                                    break;
                                 case NavigationView.Schedule:
                                     setTo({
                                         type: ContinuationType.NavigationView,
@@ -484,41 +493,32 @@ export default function CreateContinuationModal({
             ) : undefined,
         [to]
     );
-    const toSearchInput = useMemo(
-        () =>
-            to.type === ContinuationType.NavigationView && to.view === NavigationView.Search ? (
-                <FormControl>
-                    <FormLabel>Search term (optional)</FormLabel>
-                    <Input
-                        value={to.term}
-                        onChange={(ev) => {
-                            setTo({
-                                type: ContinuationType.NavigationView,
-                                view: NavigationView.Search,
-                                term: ev.target.value,
-                            });
-                        }}
-                    />
-                </FormControl>
-            ) : undefined,
-        [to]
-    );
 
-    const response_Rooms = useCreateContinuationModal_RoomsQuery({
-        skip: true,
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
     const toRoomsSelect = useMemo(
         () => (
             <LazySelectFromQuery
                 fetch={async () => {
-                    const data = await response_Rooms.refetch();
-                    return data.data?.room_Room.map((x) => ({
-                        key: x.id,
-                        value: x.name,
-                    }));
+                    const data = await client
+                        .query<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>(
+                            CreateContinuationModal_RoomsDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
+                    return (
+                        data.data?.room_Room.map((x) => ({
+                            key: x.id,
+                            value: x.name,
+                        })) ?? []
+                    );
                 }}
                 value={to.type === ContinuationType.Room ? to.id : ""}
                 onChange={(id) => {
@@ -531,31 +531,42 @@ export default function CreateContinuationModal({
                 label="Room"
             />
         ),
-        [response_Rooms, to]
+        [client, conference.id, to]
     );
-    const response_Events = useCreateContinuationModal_EventsQuery({
-        skip: true,
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+
     const toEventsSelect = useMemo(
         () => (
             <LazySelectFromQuery
                 fetch={async () => {
-                    const data = await response_Events.refetch();
-                    return data.data?.schedule_Event.map((x) => ({
-                        key: x.id,
-                        value: `${format(new Date(x.startTime), "d MMMM HH:mm")} - ${x.name}${
-                            x.item
-                                ? `: ${x.item.title}`
-                                : x.exhibition
-                                ? `: ${x.exhibition.name}`
-                                : x.shufflePeriod
-                                ? `: ${x.shufflePeriod.name}`
-                                : ""
-                        }`,
-                    }));
+                    const data = await client
+                        .query<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>(
+                            CreateContinuationModal_EventsDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
+                    return (
+                        data.data?.schedule_Event.map((x) => ({
+                            key: x.id,
+                            value: `${format(new Date(x.startTime), "d MMMM HH:mm")} - ${x.name}${
+                                x.item
+                                    ? `: ${x.item.title}`
+                                    : x.exhibition
+                                    ? `: ${x.exhibition.name}`
+                                    : x.shufflePeriod
+                                    ? `: ${x.shufflePeriod.name}`
+                                    : ""
+                            }`,
+                        })) ?? []
+                    );
                 }}
                 value={to.type === ContinuationType.Event ? to.id : ""}
                 onChange={(id) => {
@@ -568,23 +579,33 @@ export default function CreateContinuationModal({
                 label="Event"
             />
         ),
-        [response_Events, to]
+        [client, conference.id, to]
     );
-    const response_Items = useCreateContinuationModal_ItemsQuery({
-        skip: true,
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
     const toItemsSelect = useMemo(
         () => (
             <LazySelectFromQuery
                 fetch={async () => {
-                    const data = await response_Items.refetch();
-                    return data.data?.content_Item.map((x) => ({
-                        key: x.id,
-                        value: x.title,
-                    }));
+                    const data = await client
+                        .query<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>(
+                            CreateContinuationModal_ItemsDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
+                    return (
+                        data.data?.content_Item.map((x) => ({
+                            key: x.id,
+                            value: x.title,
+                        })) ?? []
+                    );
                 }}
                 value={to.type === ContinuationType.Item ? to.id : ""}
                 onChange={(id) => {
@@ -597,22 +618,36 @@ export default function CreateContinuationModal({
                 label="Item"
             />
         ),
-        [response_Items, to]
+        [to, client, conference.id]
     );
     const toAutoItemsSelect = useMemo(
         () => (
             <LazySelectFromQuery
                 fetch={async () => {
-                    const data = await response_Items.refetch();
+                    const data = await client
+                        .query<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>(
+                            CreateContinuationModal_ItemsDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
                     return [
                         {
                             key: "00-match-event",
                             value: "(Match item of event)",
                         },
-                        ...data.data.content_Item.map((x) => ({
+                        ...(data.data?.content_Item.map((x) => ({
                             key: x.id,
                             value: x.title,
-                        })),
+                        })) ?? []),
                     ];
                 }}
                 value={to.type === ContinuationType.AutoDiscussionRoom ? to.id ?? "00-match-event" : ""}
@@ -626,23 +661,37 @@ export default function CreateContinuationModal({
                 label="Item"
             />
         ),
-        [response_Items, to]
+        [to, client, conference.id]
     );
-    const response_Exhibitions = useCreateContinuationModal_ExhibitionsQuery({
-        skip: true,
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+
     const toExhibitionsSelect = useMemo(
         () => (
             <LazySelectFromQuery
                 fetch={async () => {
-                    const data = await response_Exhibitions.refetch();
-                    return data.data?.collection_Exhibition.map((x) => ({
-                        key: x.id,
-                        value: x.name,
-                    }));
+                    const data = await client
+                        .query<
+                            CreateContinuationModal_ExhibitionsQuery,
+                            CreateContinuationModal_ExhibitionsQueryVariables
+                        >(
+                            CreateContinuationModal_ExhibitionsDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
+                    return (
+                        data.data?.collection_Exhibition.map((x) => ({
+                            key: x.id,
+                            value: x.name,
+                        })) ?? []
+                    );
                 }}
                 value={to.type === ContinuationType.Exhibition ? to.id : ""}
                 onChange={(id) => {
@@ -655,23 +704,37 @@ export default function CreateContinuationModal({
                 label="Exhibition"
             />
         ),
-        [response_Exhibitions, to]
+        [to, client, conference.id]
     );
-    const response_ShufflePeriods = useCreateContinuationModal_ShufflePeriodsQuery({
-        skip: true,
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+
     const toShufflePeriodsSelect = useMemo(
         () => (
             <LazySelectFromQuery
                 fetch={async () => {
-                    const data = await response_ShufflePeriods.refetch();
-                    return data.data?.room_ShufflePeriod.map((x) => ({
-                        key: x.id,
-                        value: x.name,
-                    }));
+                    const data = await client
+                        .query<
+                            CreateContinuationModal_ShufflePeriodsQuery,
+                            CreateContinuationModal_ShufflePeriodsQueryVariables
+                        >(
+                            CreateContinuationModal_ShufflePeriodsDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
+                    return (
+                        data.data?.room_ShufflePeriod.map((x) => ({
+                            key: x.id,
+                            value: x.name,
+                        })) ?? []
+                    );
                 }}
                 value={to.type === ContinuationType.ShufflePeriod ? to.id : ""}
                 onChange={(id) => {
@@ -684,23 +747,33 @@ export default function CreateContinuationModal({
                 label="Shuffle period"
             />
         ),
-        [response_ShufflePeriods, to]
+        [to, client, conference.id]
     );
-    const response_Profile = useCreateContinuationModal_ProfileQuery({
-        skip: true,
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
     const toProfileSelect = useMemo(
         () => (
             <LazySelectFromQuery
                 fetch={async () => {
-                    const data = await response_Profile.refetch();
-                    return data.data?.registrant_Registrant.map((x) => ({
-                        key: x.id,
-                        value: x.displayName,
-                    }));
+                    const data = await client
+                        .query<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>(
+                            CreateContinuationModal_ProfileDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
+                    return (
+                        data.data?.registrant_Registrant.map((x) => ({
+                            key: x.id,
+                            value: x.displayName,
+                        })) ?? []
+                    );
                 }}
                 value={to.type === ContinuationType.Profile ? to.id : ""}
                 onChange={(id) => {
@@ -713,29 +786,37 @@ export default function CreateContinuationModal({
                 label="Profile"
             />
         ),
-        [response_Profile, to]
+        [to, client, conference.id]
     );
 
-    const response_Tags = useCreateContinuationModal_TagsQuery({
-        skip: true,
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
     const toTagsSelect = useMemo(
         () => (
             <LazySelectFromQuery
                 fetch={async () => {
-                    const data = await response_Tags.refetch();
+                    const data = await client
+                        .query<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>(
+                            CreateContinuationModal_TagsDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
                     return [
                         {
                             key: "",
                             value: "(None selected)",
                         },
-                        ...data.data?.collection_Tag.map((x) => ({
+                        ...(data.data?.collection_Tag.map((x) => ({
                             key: x.id,
                             value: x.name,
-                        })),
+                        })) ?? []),
                     ];
                 }}
                 value={
@@ -752,7 +833,7 @@ export default function CreateContinuationModal({
                 label="Tag (optional)"
             />
         ),
-        [response_Tags, to]
+        [client, conference.id, to]
     );
 
     const [defaultFor, setDefaultFor] = useState<ContinuationDefaultFor>(ContinuationDefaultFor.None);
@@ -915,8 +996,6 @@ export default function CreateContinuationModal({
                         return to.tagId === "" ? "Chosen tag is invalid" : true;
                     case NavigationView.Exhibitions:
                         return true;
-                    case NavigationView.Search:
-                        return true;
                     case NavigationView.Schedule:
                         return true;
                     case NavigationView.SocialRooms:
@@ -935,44 +1014,7 @@ export default function CreateContinuationModal({
     }, [to]);
     const allValid = toIsValid === true ? (description === "" ? "Please write a label" : true) : toIsValid;
 
-    const [insert, insertResponse] = useContinuationsEditor_InsertMutation({
-        update: (cache, response) => {
-            if (response.data?.insert_schedule_Continuation_one) {
-                const data = response.data?.insert_schedule_Continuation_one;
-                cache.writeFragment({
-                    data,
-                    fragment: ContinuationsEditor_ContinuationFragmentDoc,
-                    fragmentName: "ContinuationsEditor_Continuation",
-                });
-
-                const fromId = "eventId" in from ? from.eventId : "shufflePeriodId" in from ? from.shufflePeriodId : "";
-                const query = cache.readQuery<
-                    ContinuationsEditor_SelectContinuationsQuery,
-                    ContinuationsEditor_SelectContinuationsQueryVariables
-                >({
-                    query: ContinuationsEditor_SelectContinuationsDocument,
-                    variables: {
-                        fromId,
-                    },
-                });
-                if (query) {
-                    cache.writeQuery<
-                        ContinuationsEditor_SelectContinuationsQuery,
-                        ContinuationsEditor_SelectContinuationsQueryVariables
-                    >({
-                        query: ContinuationsEditor_SelectContinuationsDocument,
-                        data: {
-                            ...query,
-                            schedule_Continuation: [...query.schedule_Continuation, data],
-                        },
-                        variables: {
-                            fromId,
-                        },
-                    });
-                }
-            }
-        },
-    });
+    const [insertResponse, insert] = useContinuationsEditor_InsertMutation();
 
     return (
         <>
@@ -1000,7 +1042,6 @@ export default function CreateContinuationModal({
                             {toViewSelect}
                             {toURLInput}
                             {toTextInput}
-                            {toSearchInput}
                             {toRoomsSelect}
                             {toEventsSelect}
                             {toItemsSelect}
@@ -1042,8 +1083,8 @@ export default function CreateContinuationModal({
                                         colorScheme="green"
                                         onClick={async () => {
                                             try {
-                                                await insert({
-                                                    variables: {
+                                                await insert(
+                                                    {
                                                         object: {
                                                             colour,
                                                             defaultFor,
@@ -1058,7 +1099,14 @@ export default function CreateContinuationModal({
                                                             to,
                                                         },
                                                     },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
 
                                                 setDefaultFor(ContinuationDefaultFor.None);
                                                 setDescription("");
@@ -1069,7 +1117,7 @@ export default function CreateContinuationModal({
                                             }
                                         }}
                                         isDisabled={allValid !== true}
-                                        isLoading={insertResponse.loading}
+                                        isLoading={insertResponse.fetching}
                                     >
                                         <FAIcon iconStyle="s" icon="plus" mr={2} />
                                         Add

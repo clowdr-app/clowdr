@@ -8,7 +8,9 @@ object_relationships:
 insert_permissions:
 - permission:
     backend_only: false
-    check: {}
+    check:
+      userId:
+        _eq: X-Hasura-User-Id
     columns:
     - auth
     - endpoint
@@ -19,10 +21,12 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - created_at
+    - auth
     - endpoint
-    - updated_at
+    - p256dh
     - userId
+    - created_at
+    - updated_at
     filter:
       userId:
         _eq: X-Hasura-User-Id
@@ -60,9 +64,9 @@ event_triggers:
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
-  name: PushNotificationSubscriptionChanged
+  name: Cache_PushNotificationSubscription
   retry_conf:
-    interval_sec: 120
-    num_retries: 1
-    timeout_sec: 60
-  webhook: "{{REALTIME_BASE_URL}}/pushNotificationSubscription/changed"
+    interval_sec: 10
+    num_retries: 3
+    timeout_sec: 10
+  webhook: "{{CACHES_BASE_URL}}/cache/update/pushNotificationSubscription"

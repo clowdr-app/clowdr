@@ -1,4 +1,5 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import type { MiddlewareConsumer, NestModule } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { ChannelStackModule } from "../channel-stack/channel-stack.module";
 import { ScheduleModule } from "../schedule/schedule.module";
 import { SnsNotificationMiddleware } from "./sns-notification.middleware";

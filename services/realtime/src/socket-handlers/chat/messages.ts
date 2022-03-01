@@ -1,16 +1,12 @@
 import assert from "assert";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { validate as uuidValidate } from "uuid";
+import { logger } from "../../lib/logger";
 import { action } from "../../rabbitmq/chat/messages";
-import { Action, Message } from "../../types/chat";
+import type { Action, Message } from "../../types/chat";
 
-export function onSend(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    socket: Socket
-): (message: any) => Promise<void> {
+export function onSend(userId: string, socketId: string, socket: Socket): (message: any) => Promise<void> {
     return async (actionData) => {
         if (actionData) {
             try {
@@ -23,17 +19,17 @@ export function onSend(
                     "duplicatedMessageSId invalid"
                 );
 
-                if (await action(actionData, userId, conferenceSlugs)) {
+                if (await action(actionData, userId)) {
                     socket.emit("chat.messages.send.ack", actionData.data.sId);
                 } else {
                     socket.emit("chat.messages.send.nack", actionData.data.sId);
                 }
-            } catch (e) {
-                console.error(`Error processing chat.messages.send (socket: ${socketId})`, e, actionData);
+            } catch (error: any) {
+                logger.error({ error, actionData }, `Error processing chat.messages.send (socket: ${socketId})`);
                 try {
                     socket.emit("chat.messages.send.nack", actionData.sId);
                 } catch (e2) {
-                    console.error(`Error nacking chat.messages.send (socket: ${socketId})`, e, actionData);
+                    logger.error({ error, actionData }, `Error nacking chat.messages.send (socket: ${socketId})`);
                 }
             }
         }

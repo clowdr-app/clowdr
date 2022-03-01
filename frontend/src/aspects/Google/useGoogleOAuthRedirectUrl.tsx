@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useRestorableState } from "../Generic/useRestorableState";
+import { useRestorableState } from "../Hooks/useRestorableState";
 
 export function useGoogleOAuthRedirectPath(): [
     url: string | null,

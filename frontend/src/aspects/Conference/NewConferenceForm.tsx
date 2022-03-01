@@ -1,4 +1,3 @@
-import { gql, useApolloClient } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -10,21 +9,25 @@ import {
     Tooltip,
     useToast,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import type { FieldProps, FormikErrors } from "formik";
 import { Field, Form, Formik } from "formik";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { useClient } from "urql";
+import { validate } from "uuid";
 import type {
     ConferenceTakenQuery,
     ConferenceTakenQueryVariables,
-    Conference_Conference} from "../../generated/graphql";
+    Conference_Conference,
+} from "../../generated/graphql";
 import {
     ConferenceTakenDocument,
     useCreateConferenceMutation,
     useCreateNewConferenceMetaStructureMutation,
 } from "../../generated/graphql";
 import useCurrentUser from "../Users/CurrentUser/useCurrentUser";
-import isValidUUID from "../Utils/isValidUUID";
 
 gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
@@ -38,7 +41,7 @@ gql`
         }
     }
 
-    mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!) {
+    mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!, $userId: String!) {
         insert_conference_Conference(
             objects: [{ name: $name, shortName: $shortName, slug: $slug, demoCodeId: $demoCode }]
         ) {
@@ -48,7 +51,10 @@ gql`
             }
         }
 
-        update_conference_DemoCode(where: { id: { _eq: $demoCode } }, _set: { note: "Code has been used." }) {
+        update_conference_DemoCode(
+            where: { id: { _eq: $demoCode } }
+            _set: { note: "Code has been used.", usedById: $userId }
+        ) {
             affected_rows
         }
     }
@@ -58,7 +64,9 @@ gql`
         $registrantDisplayName: String!
         $userId: String!
         $abstractData: jsonb!
-        $itemListData: jsonb!
+        $exploreProgramData: jsonb!
+        $exploreScheduleData: jsonb!
+        $registerButtonData: jsonb!
     ) {
         insert_registrant_Registrant(
             objects: [
@@ -66,183 +74,11 @@ gql`
                     displayName: $registrantDisplayName
                     userId: $userId
                     conferenceId: $conferenceId
-                    groupRegistrants: {
-                        data: {
-                            group: {
-                                data: {
-                                    conferenceId: $conferenceId
-                                    includeUnauthenticated: false
-                                    name: "Organisers"
-                                    groupRoles: {
-                                        data: {
-                                            role: {
-                                                data: {
-                                                    conferenceId: $conferenceId
-                                                    name: "Organiser"
-                                                    rolePermissions: {
-                                                        data: [
-                                                            { permissionName: CONFERENCE_MANAGE_NAME }
-                                                            { permissionName: CONFERENCE_MANAGE_ATTENDEES }
-                                                            { permissionName: CONFERENCE_MODERATE_ATTENDEES }
-                                                            { permissionName: CONFERENCE_VIEW_ATTENDEES }
-                                                            { permissionName: CONFERENCE_VIEW }
-                                                            { permissionName: CONFERENCE_MANAGE_ROLES }
-                                                            { permissionName: CONFERENCE_MANAGE_GROUPS }
-                                                            { permissionName: CONFERENCE_MANAGE_CONTENT }
-                                                            { permissionName: CONFERENCE_MANAGE_SCHEDULE }
-                                                            { permissionName: CONFERENCE_MANAGE_SHUFFLE }
-                                                        ]
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    conferenceRole: ORGANIZER
                 }
             ]
         ) {
             affected_rows
-        }
-
-        insert_permissions_Group(
-            objects: [
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Registrants"
-                    includeUnauthenticated: false
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Registrant"
-                                        rolePermissions: {
-                                            data: [
-                                                { permissionName: CONFERENCE_VIEW }
-                                                { permissionName: CONFERENCE_VIEW_ATTENDEES }
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Public"
-                    includeUnauthenticated: true
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Public"
-                                        rolePermissions: { data: [{ permissionName: CONFERENCE_VIEW }] }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Registrars"
-                    includeUnauthenticated: false
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Registrar"
-                                        rolePermissions: {
-                                            data: [
-                                                { permissionName: CONFERENCE_MANAGE_ATTENDEES }
-                                                { permissionName: CONFERENCE_VIEW_ATTENDEES }
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Moderators"
-                    includeUnauthenticated: false
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Moderator"
-                                        rolePermissions: {
-                                            data: [
-                                                { permissionName: CONFERENCE_MODERATE_ATTENDEES }
-                                                { permissionName: CONFERENCE_VIEW_ATTENDEES }
-                                                { permissionName: CONFERENCE_VIEW }
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Social Chairs"
-                    includeUnauthenticated: false
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Social Chair"
-                                        rolePermissions: { data: [{ permissionName: CONFERENCE_MANAGE_SHUFFLE }] }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-            ]
-        ) {
-            returning {
-                id
-                conferenceId
-                name
-                enabled
-                groupRoles {
-                    id
-                    roleId
-                    groupId
-                    role {
-                        id
-                        name
-                        conferenceId
-                        rolePermissions {
-                            id
-                            roleId
-                            permissionName
-                        }
-                    }
-                }
-            }
         }
 
         insert_content_Item(
@@ -261,15 +97,31 @@ gql`
                         }
                         {
                             conferenceId: $conferenceId
-                            typeName: CONTENT_GROUP_LIST
-                            data: $itemListData
+                            typeName: EXPLORE_PROGRAM_BUTTON
+                            data: $exploreProgramData
                             isHidden: false
                             layoutData: null
-                            name: "Content group list"
+                            name: "Explore program button"
+                        }
+                        {
+                            conferenceId: $conferenceId
+                            typeName: EXPLORE_SCHEDULE_BUTTON
+                            data: $exploreScheduleData
+                            isHidden: false
+                            layoutData: null
+                            name: "Explore program button"
+                        }
+                        {
+                            conferenceId: $conferenceId
+                            typeName: LINK_BUTTON
+                            data: $registerButtonData
+                            isHidden: false
+                            layoutData: null
+                            name: "Register button"
                         }
                     ]
                 }
-                shortTitle: "Landing"
+                shortTitle: "Welcome Lobby"
                 title: "Landing page"
             }
         ) {
@@ -316,15 +168,15 @@ export function validateShortName(inValue: string | null | undefined): string | 
 
 export default function NewConferenceForm(): JSX.Element {
     const toast = useToast();
-    const apolloClient = useApolloClient();
+    const client = useClient();
     const history = useHistory();
     const { user } = useCurrentUser();
 
-    const [createConferenceMutation] = useCreateConferenceMutation();
-    const [createNewConferenceMetaStructureMutation] = useCreateNewConferenceMetaStructureMutation();
+    const [, createConferenceMutation] = useCreateConferenceMutation();
+    const [, createNewConferenceMetaStructureMutation] = useCreateNewConferenceMetaStructureMutation();
 
     function validateDemoCode(value: string | null | undefined) {
-        if (!!value && isValidUUID(value)) {
+        if (!!value && validate(value)) {
             return undefined;
         } else {
             return "Not a valid access code.";
@@ -350,15 +202,16 @@ export default function NewConferenceForm(): JSX.Element {
                     shortName: normaliseName(_values.new_conf_short_name),
                     slug: generateSlug(normaliseName(_values.new_conf_short_name)),
                     demoCode: _values.new_conf_demo_code,
+                    userId: user.id,
                 };
 
                 let failed: false | string = false;
 
-                const takenResult = await apolloClient.query<ConferenceTakenQuery, ConferenceTakenQueryVariables>({
-                    query: ConferenceTakenDocument,
-                    variables: values,
-                    fetchPolicy: "network-only",
-                });
+                const takenResult = await client
+                    .query<ConferenceTakenQuery, ConferenceTakenQueryVariables>(ConferenceTakenDocument, values, {
+                        requestPolicy: "network-only",
+                    })
+                    .toPromise();
                 try {
                     let ok: boolean | Pick<Conference_Conference, "id" | "name" | "shortName" | "slug"> = false;
                     if (takenResult.error) {
@@ -376,11 +229,15 @@ export default function NewConferenceForm(): JSX.Element {
                     }
 
                     if (ok === true) {
-                        const result = await createConferenceMutation({
-                            variables: values,
+                        const result = await createConferenceMutation(values, {
+                            fetchOptions: {
+                                headers: {
+                                    [AuthHeader.Role]: "user",
+                                },
+                            },
                         });
                         if (
-                            result.errors ||
+                            result.error ||
                             !result.data ||
                             !result.data.insert_conference_Conference ||
                             !result.data.insert_conference_Conference.returning.length
@@ -397,8 +254,8 @@ export default function NewConferenceForm(): JSX.Element {
                             const conferenceId = result.data.insert_conference_Conference.returning[0].id;
                             const now = Date.now();
 
-                            await createNewConferenceMetaStructureMutation({
-                                variables: {
+                            await createNewConferenceMetaStructureMutation(
+                                {
                                     conferenceId,
                                     registrantDisplayName: "Conference Creator",
                                     userId: user.id,
@@ -413,15 +270,37 @@ export default function NewConferenceForm(): JSX.Element {
                                             },
                                         },
                                     ],
-                                    itemListData: [
+                                    exploreProgramData: [
                                         {
                                             createdAt: now,
                                             createdBy: "system",
-                                            data: { type: "CONTENT_GROUP_LIST", baseType: "component" },
+                                            data: { type: "EXPLORE_PROGRAM_BUTTON", baseType: "component" },
+                                        },
+                                    ],
+                                    exploreScheduleData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: { type: "EXPLORE_SCHEDULE_BUTTON", baseType: "component" },
+                                        },
+                                    ],
+                                    registerButtonData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: { type: "LINK_BUTTON", baseType: "link", text: "Register", url: "" },
                                         },
                                     ],
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            [AuthHeader.ConferenceId]: conferenceId,
+                                        },
+                                    },
+                                }
+                            );
 
                             toast({
                                 title: "Conference created",
@@ -447,7 +326,7 @@ export default function NewConferenceForm(): JSX.Element {
                         }
                         actions.setErrors(errors);
                     }
-                } catch (e) {
+                } catch (e: any) {
                     failed = e.toString();
                 }
 
@@ -533,7 +412,7 @@ Please contact our tech support to investigate the issue shown below.`,
                             >
                                 <FormLabel htmlFor="new_conf_demo_code">Access code</FormLabel>
                                 <InputGroup>
-                                    <Input {...field} id="new_conf_demo_code" placeholder="Demo code" />
+                                    <Input {...field} id="new_conf_demo_code" placeholder="Code" />
                                     <InputRightAddon>
                                         <Tooltip label="To create a conference, please contact us at to receive your access code.">
                                             {"What's this?"}

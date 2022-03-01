@@ -54,8 +54,8 @@ function BadgeColourModal({
             <></>
         );
 
-    const previewLightBgColour = useColorModeValue("AppPageV2.pageBackground-light", "AppPageV2.pageBackground-dark");
-    const previewDarkBgColour = useColorModeValue("AppPageV2.pageBackground-dark", "AppPageV2.pageBackground-light");
+    const previewLightBgColour = useColorModeValue("AppPage.pageBackground-light", "AppPage.pageBackground-dark");
+    const previewDarkBgColour = useColorModeValue("AppPage.pageBackground-dark", "AppPage.pageBackground-light");
 
     return (
         <Modal isOpen={!!badge} onClose={onClose} isCentered>

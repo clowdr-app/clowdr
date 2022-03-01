@@ -21,14 +21,14 @@ import ReactPlayer from "react-player";
 import type { ChatReactionDataFragment, RegistrantDataFragment } from "../../../generated/graphql";
 import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
 import ProfileBadge from "../../Badges/ProfileBadge";
+import FAIcon from "../../Chakra/FAIcon";
 import { DownloadButton } from "../../Chakra/LinkButton";
+import { Markdown } from "../../Chakra/Markdown";
 import { useRegistrant } from "../../Conference/RegistrantsContext";
 import useCurrentRegistrant from "../../Conference/useCurrentRegistrant";
 import { useAddEmojiFloat, useEmojiFloat } from "../../Emoji/EmojiFloat";
-import { roundUpToNearest } from "../../Generic/MathUtils";
-import { FAIcon } from "../../Icons/FAIcon";
 import type { Observable } from "../../Observable";
-import { Markdown } from "../../Text/Markdown";
+import { roundUpToNearest } from "../../Utils/MathUtils";
 import type { MessageState } from "../ChatGlobalState";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
@@ -385,7 +385,7 @@ function MessageBody({
         //                 borderRadius={5}
         //                 fontFamily="monospace"
         //                 noOfLines={1}
-        //                 to={`/conference/${conference.slug}/room/${data.room.id}`}
+        //                 to={`${conferencePath}/room/${data.room.id}`}
         //                 fontSize="inherit"
         //                 linkProps={{
         //                     p: 0,
@@ -403,7 +403,7 @@ function MessageBody({
         //                 m={0}
         //                 minH={0}
         //                 h="100%"
-        //                 to={`/conference/${conference.slug}/item/${data.item.id}`}
+        //                 to={`${conferencePath}/item/${data.item.id}`}
         //                 fontSize="inherit"
         //                 linkProps={{
         //                     p: 0,
@@ -431,7 +431,7 @@ function MessageBody({
     if (message.type === Chat_MessageType_Enum.EventStart) {
         const data = message.data as EventStartData;
         return (
-            <Flex w="100%" spacing={0} fontSize={smallFontSize * 1.1} flexDir={"column"} alignItems="center">
+            <Flex w="100%" fontSize={smallFontSize * 1.1} flexDir={"column"} alignItems="center">
                 <Divider my={config.spacing} borderColor="yellow.400" borderBottomWidth="2px" w="100%" height="2px" />
                 <Text fontWeight="bold">
                     Started at{" "}
@@ -600,7 +600,7 @@ function ParticipationSurvey({ message }: { message: MessageState }): JSX.Elemen
                         <Button
                             colorScheme="PrimaryActionButton"
                             size="sm"
-                            loading={submitting}
+                            isLoading={submitting}
                             onClick={async () => {
                                 try {
                                     setSubmitting(true);

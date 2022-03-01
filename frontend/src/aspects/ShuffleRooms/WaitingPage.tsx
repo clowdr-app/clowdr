@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     CircularProgress,
@@ -11,26 +10,32 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Redirect } from "react-router-dom";
+import type { CombinedError } from "urql";
+import { useClient } from "urql";
 import type {
+    MyShuffleQueueEntryQuery,
+    MyShuffleQueueEntryQueryVariables,
     PrefetchShuffleQueueEntryDataFragment,
-    ShufflePeriodDataFragment} from "../../generated/graphql";
+    ShufflePeriodDataFragment,
+} from "../../generated/graphql";
 import {
+    MyShuffleQueueEntryDocument,
     useJoinShuffleQueueMutation,
-    useMyShuffleQueueEntryQuery,
     useShufflePeriodsQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
-import type { ConferenceInfoFragment} from "../Conference/useConference";
 import { useConference } from "../Conference/useConference";
 import useCurrentRegistrant from "../Conference/useCurrentRegistrant";
-import { roundToNearest } from "../Generic/MathUtils";
-import { useRealTime } from "../Generic/useRealTime";
+import { useAuthParameters } from "../GQL/AuthParameters";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
-import { useTitle } from "../Utils/useTitle";
+import { useRealTime } from "../Hooks/useRealTime";
+import { useTitle } from "../Hooks/useTitle";
+import { roundToNearest } from "../Utils/MathUtils";
 
 gql`
     fragment ShufflePeriodData on room_ShufflePeriod {
@@ -57,6 +62,8 @@ gql`
         registrantId
         created_at
         updated_at
+        isExpired
+        shufflePeriodId
         shuffleRoom {
             id
             startedAt
@@ -68,6 +75,7 @@ gql`
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
         id
         isExpired
+        shufflePeriodId
         shuffleRoom {
             id
             roomId
@@ -106,7 +114,6 @@ gql`
 function QueuedShufflePeriodBox({
     period,
     lastEntry,
-    conference,
     isJoining,
     joinShuffleQueue,
     numberOfQueued,
@@ -114,7 +121,6 @@ function QueuedShufflePeriodBox({
 }: {
     period: ShufflePeriodDataFragment;
     lastEntry: PrefetchShuffleQueueEntryDataFragment;
-    conference: ConferenceInfoFragment;
     isJoining: boolean;
     joinShuffleQueue: () => void;
     numberOfQueued: number;
@@ -127,23 +133,32 @@ function QueuedShufflePeriodBox({
 
     const trackColour = useColorModeValue("gray.50", "gray.900");
 
-    const liveEntry = useMyShuffleQueueEntryQuery({
-        skip: true,
-    });
+    const { conferencePath } = useAuthParameters();
+    const client = useClient();
     const [allocatedRoomId, setAllocatedRoomId] = useState<string | null>(null);
     const [isExpired, setIsExpired] = useState<boolean>(false);
-    useQueryErrorToast(liveEntry.error, true, "WaitingPage:useMyShuffleQueueEntryQuery");
+    const [liveEntryError, setLiveEntryError] = useState<CombinedError | null>(null);
+    useQueryErrorToast(liveEntryError, true, "WaitingPage:useMyShuffleQueueEntryQuery");
     useEffect(() => {
-        if (isWaitingForAllocatedRoom && !liveEntry.data?.room_ShuffleQueueEntry_by_pk?.shuffleRoom) {
+        if (isWaitingForAllocatedRoom && !allocatedRoomId) {
             (async () => {
-                const data = await liveEntry.refetch({
-                    id: lastEntry.id,
-                });
-                setAllocatedRoomId(data.data.room_ShuffleQueueEntry_by_pk?.shuffleRoom?.roomId ?? null);
-                setIsExpired(data.data.room_ShuffleQueueEntry_by_pk?.isExpired ?? false);
+                const data = await client
+                    .query<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>(
+                        MyShuffleQueueEntryDocument,
+                        {
+                            id: lastEntry.id,
+                        },
+                        {
+                            requestPolicy: "network-only",
+                        }
+                    )
+                    .toPromise();
+                setLiveEntryError(data.error ?? null);
+                setAllocatedRoomId(data.data?.room_ShuffleQueueEntry_by_pk?.shuffleRoom?.roomId ?? null);
+                setIsExpired(data.data?.room_ShuffleQueueEntry_by_pk?.isExpired ?? false);
             })();
         }
-    }, [isWaitingForAllocatedRoom, lastEntry.id, liveEntry, now5s]);
+    }, [isWaitingForAllocatedRoom, lastEntry.id, allocatedRoomId, client, now5s]);
 
     const timeTextEl =
         startAt < now ? (
@@ -162,7 +177,7 @@ function QueuedShufflePeriodBox({
     }
 
     if (isWaitingForAllocatedRoom && allocatedRoomId && !isJoining) {
-        return <Redirect to={`/conference/${conference.slug}/room/${allocatedRoomId}`} />;
+        return <Redirect to={`${conferencePath}/room/${allocatedRoomId}`} />;
     } else if (lastEntry.shuffleRoom) {
         const intendedEnd =
             period.roomDurationMinutes * 60 * 1000 + new Date(lastEntry.shuffleRoom.startedAt).getTime();
@@ -170,7 +185,7 @@ function QueuedShufflePeriodBox({
             return (
                 <>
                     <LinkButton
-                        to={`/conference/${conference.slug}/room/${lastEntry.shuffleRoom.roomId}`}
+                        to={`${conferencePath}/room/${lastEntry.shuffleRoom.roomId}`}
                         colorScheme="PrimaryActionButton"
                         h="auto"
                         p={4}
@@ -247,9 +262,8 @@ function QueuedShufflePeriodBox({
 export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JSX.Element {
     const now = useRealTime(1000);
     const currentRegistrant = useCurrentRegistrant();
-    const conference = useConference();
 
-    const [joinShuffleQueueMutation, { loading: isJoiningMut, error: joinError }] = useJoinShuffleQueueMutation();
+    const [{ fetching: isJoiningMut, error: joinError }, joinShuffleQueueMutation] = useJoinShuffleQueueMutation();
     useQueryErrorToast(joinError, false, "WaitingPage");
     const [isJoiningOverride, setIsJoiningOverride] = useState<boolean>(false);
     const isJoining = isJoiningOverride || isJoiningMut;
@@ -268,10 +282,8 @@ export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment
     const joinShuffleQueue = useCallback(async () => {
         setIsJoiningOverride(true);
         const r = await joinShuffleQueueMutation({
-            variables: {
-                registrantId: currentRegistrant.id,
-                shufflePeriodId: period.id,
-            },
+            registrantId: currentRegistrant.id,
+            shufflePeriodId: period.id,
         });
         setLastEntry(r.data?.insert_room_ShuffleQueueEntry_one ?? null);
         setTimeout(() => {
@@ -295,7 +307,6 @@ export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment
             return (
                 <QueuedShufflePeriodBox
                     isWaitingForAllocatedRoom={isWaitingForAllocatedRoom}
-                    conference={conference}
                     isJoining={isJoining}
                     joinShuffleQueue={joinShuffleQueue}
                     lastEntry={lastEntry}
@@ -305,7 +316,7 @@ export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment
             );
         }
         return undefined;
-    }, [conference, isJoining, isWaitingForAllocatedRoom, joinShuffleQueue, lastEntry, numberOfQueued, period]);
+    }, [isJoining, isWaitingForAllocatedRoom, joinShuffleQueue, lastEntry, numberOfQueued, period]);
 
     const startAt = useMemo(() => Date.parse(period.startAt), [period.startAt]);
     const endAt = useMemo(() => Date.parse(period.endAt), [period.endAt]);
@@ -364,8 +375,8 @@ export function ShuffleWaiting(): JSX.Element {
         [conference.id, now]
     );
 
-    const periods = useShufflePeriodsQuery({
-        fetchPolicy: "network-only",
+    const [periods] = useShufflePeriodsQuery({
+        requestPolicy: "network-only",
         variables: vars,
     });
 
@@ -391,7 +402,7 @@ export function ShuffleWaiting(): JSX.Element {
 
     return (
         <>
-            {periods.loading && !periods.data ? (
+            {periods.fetching && !periods.data ? (
                 <Spinner label="Loading shuffle room times" />
             ) : (
                 <Grid maxW="800px" gap={4}>

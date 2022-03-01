@@ -84,7 +84,7 @@ export default function DayList({
     );
 
     return (
-        <HStack zIndex={1000}>
+        <HStack zIndex={1000} mb={2} mr={2}>
             {scrollToNow ? (
                 <Button
                     m={0}
@@ -94,12 +94,13 @@ export default function DayList({
                         scrollToNow?.f();
                     }}
                     aria-label="Scroll schedule to now"
+                    size="sm"
                 >
                     Now
                 </Button>
             ) : undefined}
             <Menu>
-                <MenuButton as={Button} colorScheme="PrimaryActionButton" rightIcon={<ChevronDownIcon />}>
+                <MenuButton as={Button} size="sm" colorScheme="PrimaryActionButton" rightIcon={<ChevronDownIcon />}>
                     Jump to day
                 </MenuButton>
                 <MenuList maxH="30vh" overflow="auto">
@@ -108,7 +109,6 @@ export default function DayList({
                             <MenuItem
                                 m={0}
                                 key="today"
-                                size="sm"
                                 onClick={() => {
                                     scrollToEvent(todayFEI[1].event);
                                 }}
@@ -137,7 +137,6 @@ export default function DayList({
                                 ) : undefined}
                                 <MenuItem
                                     m={0}
-                                    size="sm"
                                     onClick={() => {
                                         scrollToEvent(date[1].event);
                                     }}

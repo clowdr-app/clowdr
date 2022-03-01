@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
-import { useRealTime } from "../../../../Generic/useRealTime";
+import { useRealTime } from "../../../../Hooks/useRealTime";
 import { formatRemainingTime } from "../formatRemainingTime";
 
 export function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFragment }): JSX.Element {

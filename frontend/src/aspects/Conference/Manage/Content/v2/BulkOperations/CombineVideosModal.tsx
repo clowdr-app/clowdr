@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -16,18 +15,21 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { CombineVideosJobDataBlob, InputElement } from "@clowdr-app/shared-types/build/combineVideosJob";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { CombineVideosJobDataBlob, InputElement } from "@midspace/shared-types/combineVideosJob";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
+import { gql } from "urql";
 import {
     useCombineVideosModal_CreateCombineVideosJobMutation,
     useCombineVideosModal_GetCombineVideosJobQuery,
     useCombineVideosModal_GetElementsQuery,
 } from "../../../../../../generated/graphql";
-import useCurrentUser from "../../../../../Users/CurrentUser/useCurrentUser";
+import { makeContext } from "../../../../../GQL/make-context";
 import { useConference } from "../../../../useConference";
+import useCurrentRegistrant from "../../../../useCurrentRegistrant";
 
 export function CombineVideosModal({
     isOpen,
@@ -80,6 +82,7 @@ gql`
             message
             jobStatusName
             data
+            conferenceId
         }
     }
 
@@ -112,19 +115,28 @@ function ModalInner({
     const itemIds = useMemo(() => elementsByItem.map((x) => x.itemId), [elementsByItem]);
 
     const conference = useConference();
-    const combineVideosResponse = useCombineVideosModal_GetCombineVideosJobQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [combineVideosResponse] = useCombineVideosModal_GetCombineVideosJobQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
+        context,
     });
 
-    const elementsResponse = useCombineVideosModal_GetElementsQuery({
+    const [elementsResponse] = useCombineVideosModal_GetElementsQuery({
         variables: {
             itemIds,
             elementIds: elementIds_Flat,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
+        context,
     });
 
     const alreadyBeingCombined = useMemo(() => {
@@ -178,10 +190,10 @@ function ModalInner({
         [elementsResponse.data, alreadyBeingCombined]
     );
 
-    const user = useCurrentUser().user;
+    const registrant = useCurrentRegistrant();
     const toast = useToast();
 
-    const [mutate] = useCombineVideosModal_CreateCombineVideosJobMutation();
+    const [, mutate] = useCombineVideosModal_CreateCombineVideosJobMutation();
 
     const onCombine = useCallback(async () => {
         if (returnedElementsByItem) {
@@ -194,20 +206,27 @@ function ModalInner({
                     const data: CombineVideosJobDataBlob = {
                         inputElements: parts,
                     };
-                    const result = await mutate({
-                        variables: {
+                    const result = await mutate(
+                        {
                             conferenceId: conference.id,
-                            createdByRegistrantId: user.registrants[0].id,
+                            createdByRegistrantId: registrant.id,
                             outputName: "Combined video",
                             data,
                         },
-                    });
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                },
+                            },
+                        }
+                    );
 
                     if (!result.data?.insert_job_queues_CombineVideosJob_one) {
                         throw new Error("Failed to create CombineVideosJob");
                     }
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.error("Failed to submit CombineVideosJob", e);
                 toast({
                     status: "error",
@@ -217,14 +236,14 @@ function ModalInner({
             }
             onClose();
         }
-    }, [returnedElementsByItem, onClose, mutate, conference.id, user.registrants, toast]);
+    }, [returnedElementsByItem, onClose, mutate, conference.id, registrant.id, toast]);
 
     return (
         <>
             <ModalBody>
                 <VStack spacing={4}>
-                    {(elementsResponse.loading && !elementsResponse.data) ||
-                    (combineVideosResponse.loading && !combineVideosResponse.data) ? (
+                    {(elementsResponse.fetching && !elementsResponse.data) ||
+                    (combineVideosResponse.fetching && !combineVideosResponse.data) ? (
                         <Spinner label="Loading element information" />
                     ) : undefined}
                     {alreadyBeingCombined && alreadyBeingCombined.length > 0 ? (

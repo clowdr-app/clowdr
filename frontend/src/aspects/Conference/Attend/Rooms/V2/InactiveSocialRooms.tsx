@@ -1,30 +1,22 @@
-import { gql } from "@apollo/client";
 import { Spinner } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import type {
-    RoomParticipantDetailsFragment,
-    SocialRoomFragment} from "../../../../../generated/graphql";
-import {
-    useGetSocialRoomsQuery,
-} from "../../../../../generated/graphql";
+import type { RoomParticipantDetailsFragment, SocialRoomFragment } from "../../../../../generated/graphql";
+import { useGetSocialRoomsQuery } from "../../../../../generated/graphql";
+import { makeContext } from "../../../../GQL/make-context";
 import useRoomParticipants from "../../../../Room/useRoomParticipants";
 import { useConference } from "../../../useConference";
-import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import RoomSummary from "./RoomsSummary";
 
 gql`
-    query GetSocialRooms($conferenceId: uuid!, $registrantId: uuid!) {
+    query GetSocialRooms($conferenceId: uuid!) {
         socialRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-                originatingItemId: { _is_null: true }
-                originatingEventId: { _is_null: true }
-                _or: [
-                    { managementModeName: { _eq: PUBLIC } }
-                    { managementModeName: { _eq: PRIVATE }, roomPeople: { registrantId: { _eq: $registrantId } } }
-                ]
+                itemId: { _is_null: true }
             }
             order_by: { name: asc }
         ) {
@@ -36,19 +28,27 @@ gql`
         id
         name
         priority
+        chatId
+        conferenceId
+        itemId
     }
 `;
 
-export default function InactiveSocialRooms(): JSX.Element {
+export default function InactiveSocialRooms({ alignLeft }: { alignLeft?: boolean }): JSX.Element {
     const conference = useConference();
-    const registrant = useCurrentRegistrant();
-    const result = useGetSocialRoomsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.IncludeRoomIds]: "true",
+            }),
+        []
+    );
+    const [result] = useGetSocialRoomsQuery({
         variables: {
             conferenceId: conference.id,
-            registrantId: registrant.id,
         },
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+        context,
+        requestPolicy: "cache-and-network",
     });
     const roomParticipants = useRoomParticipants();
 
@@ -56,19 +56,27 @@ export default function InactiveSocialRooms(): JSX.Element {
         return <></>;
     }
 
-    if (result.loading && !result?.data) {
+    if (result.fetching && !result?.data) {
         return <Spinner label="Loading rooms" />;
     }
 
-    return <InactiveSocialRoomsInner roomParticipants={roomParticipants} rooms={result.data?.socialRooms ?? []} />;
+    return (
+        <InactiveSocialRoomsInner
+            roomParticipants={roomParticipants}
+            rooms={result.data?.socialRooms ?? []}
+            alignLeft={alignLeft}
+        />
+    );
 }
 
 function InactiveSocialRoomsInner({
     rooms,
     roomParticipants,
+    alignLeft,
 }: {
     rooms: readonly SocialRoomFragment[];
     roomParticipants: readonly RoomParticipantDetailsFragment[];
+    alignLeft?: boolean;
 }): JSX.Element {
     const activeRoomIds = useMemo(() => R.uniq(roomParticipants.map((x) => x.roomId)), [roomParticipants]);
     const sortedRooms = useMemo(
@@ -83,5 +91,5 @@ function InactiveSocialRoomsInner({
         [rooms, activeRoomIds]
     );
 
-    return <RoomSummary rooms={sortedRooms} />;
+    return <RoomSummary rooms={sortedRooms} alignLeft={alignLeft} />;
 }

@@ -8,7 +8,7 @@ import {
 import React, { useEffect, useMemo, useRef } from "react";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import PlaceholderImage from "../PlaceholderImage";
-import { VonageOverlay } from "../Vonage/VonageOverlay";
+import { VonageOverlay } from "../Vonage/Components/Overlays/VonageOverlay";
 
 export function LocalVideo({ participantWidth }: { participantWidth: number }): JSX.Element {
     // const { tileId: contentTileId } = useContentShareState();

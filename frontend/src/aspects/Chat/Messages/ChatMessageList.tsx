@@ -1,7 +1,7 @@
 import type { BoxProps } from "@chakra-ui/react";
 import { Box, Button, Center, Flex, Heading, useColorModeValue, useToken } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import Observer from "@researchgate/react-intersection-observer";
-import assert from "assert";
 import type { RefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
@@ -28,37 +28,37 @@ export function ChatMessageList(props: { isVisible: RefObject<boolean> } & BoxPr
     const setHasReachedEnd = React.useRef<((value: boolean) => void) | null>(null);
 
     const config = useChatConfiguration();
-    assert(config.state, "config.state is null. Chat state is not available in the current context.");
+    assert.truthy(config.state, "config.state is null. Chat state is not available in the current context.");
 
     const chatId = config.state.Id;
     const pageSize = config.messageBatchSize ?? 30;
 
     useEffect(() => {
-        assert(config.state, "config.state is null. Chat state is not available in the current context.");
+        assert.truthy(config.state, "config.state is null. Chat state is not available in the current context.");
         config.state.connect();
 
         return () => {
-            assert(config.state, "config.state is null. Chat state is not available in the current context.");
+            assert.truthy(config.state, "config.state is null. Chat state is not available in the current context.");
             config.state.disconnect();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chatId]);
 
     const fetchMore = useCallback(() => {
-        assert(config.state, "config.state is null. Chat state is not available in the current context.");
+        assert.truthy(config.state, "config.state is null. Chat state is not available in the current context.");
         config.state.loadMoreMessages(pageSize);
     }, [config.state, pageSize]);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {
-        assert(
+        assert.truthy(
             config.state?.IsLoadingMessages !== undefined,
             "config.state is null. Chat state is not available in the current context."
         );
         return config.state.IsLoadingMessages.subscribe(setIsLoading);
     }, [config.state.IsLoadingMessages]);
     useEffect(() => {
-        assert(
+        assert.truthy(
             config.state?.MightHaveMoreMessages !== undefined,
             "config.state is null. Chat state is not available in the current context."
         );
@@ -67,7 +67,7 @@ export function ChatMessageList(props: { isVisible: RefObject<boolean> } & BoxPr
         });
     }, [config.state.MightHaveMoreMessages]);
     useEffect(() => {
-        assert(
+        assert.truthy(
             config.state?.Messages !== undefined,
             "config.state is null. Chat state is not available in the current context."
         );
@@ -143,7 +143,7 @@ function MessageList({
 
     const initMessages = useCallback(
         (messages: MessageState[]) => {
-            assert(config.state, "config.state is null. Chat state is not available in the current context.");
+            assert.truthy(config.state, "config.state is null. Chat state is not available in the current context.");
 
             setHasReachedEnd(false);
             positionObservables.current = new Map();
@@ -177,7 +177,7 @@ function MessageList({
     );
     const insertMessages = useCallback(
         (messages: MessageState[], areNew: boolean) => {
-            assert(config.state, "config.state is null. Chat state is not available in the current context.");
+            assert.truthy(config.state, "config.state is null. Chat state is not available in the current context.");
 
             const newMessageElements: JSX.Element[] = [];
             messages.forEach((msg) => {
@@ -241,7 +241,11 @@ function MessageList({
 
     const topEl = useMemo(() => {
         return isLoading ? (
-            <CenteredSpinner centerProps={{ py: 5, mb: 1 }} spinnerProps={{ label: "Loading messages" }} />
+            <CenteredSpinner
+                centerProps={{ py: 5, mb: 1 }}
+                spinnerProps={{ label: "Loading messages" }}
+                caller="ChatMessageList:237"
+            />
         ) : hasReachedEnd ? (
             <Heading
                 py={5}
@@ -305,7 +309,7 @@ function MessageList({
                         messageElements.current.length > 0
                     ) {
                         const latest = messageElements.current[0].props.message as MessageState;
-                        assert(
+                        assert.truthy(
                             config.state,
                             "config.state is null. Chat state is not available in the current context."
                         );
@@ -321,7 +325,7 @@ function MessageList({
     return (
         <Box {...rest}>
             {messageElements.current === null ? (
-                <CenteredSpinner spinnerProps={{ label: "Loading messages" }} />
+                <CenteredSpinner spinnerProps={{ label: "Loading messages" }} caller="ChatMessageList:321" />
             ) : (
                 <Box
                     w="100%"

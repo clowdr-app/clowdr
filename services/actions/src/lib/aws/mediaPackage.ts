@@ -1,4 +1,5 @@
-import { OriginEndpoint as ClientOriginEndpoint, paginateListOriginEndpoints } from "@aws-sdk/client-mediapackage";
+import type { OriginEndpoint as ClientOriginEndpoint } from "@aws-sdk/client-mediapackage";
+import { paginateListOriginEndpoints } from "@aws-sdk/client-mediapackage";
 import { v4 as uuidv4 } from "uuid";
 import { MediaPackage } from "./awsClient";
 

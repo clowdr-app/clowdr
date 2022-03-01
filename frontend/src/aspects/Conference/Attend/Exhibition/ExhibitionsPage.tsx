@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Grid,
     GridItem,
@@ -11,19 +10,17 @@ import {
     useToken,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
-import type {
-    ExhibitionSummaryFragment,
-    ItemTagDataFragment} from "../../../../generated/graphql";
-import {
-    useSelectAllExhibitionsQuery,
-} from "../../../../generated/graphql";
+import type { ExhibitionSummaryFragment, ItemTagDataFragment } from "../../../../generated/graphql";
+import { useSelectAllExhibitionsQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useTitle } from "../../../Hooks/useTitle";
 import PageCountText from "../../../Realtime/PageCountText";
-import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import { PlainAuthorsList } from "../Content/AuthorList";
 import TagList from "../Content/TagList";
@@ -31,12 +28,17 @@ import TagList from "../Content/TagList";
 gql`
     fragment ExhibitionSummary on collection_Exhibition {
         id
+        conferenceId
+        isHidden
         name
         colour
         priority
         items {
             id
+            exhibitionId
+            itemId
             item {
+                id
                 itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
                     ...ProgramPersonData
                 }
@@ -55,7 +57,7 @@ gql`
 `;
 
 function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment }): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const borderColour = useColorModeValue("Exhibition.tileBorderColor-light", "Exhibition.tileBorderColor-dark");
 
     const { colorMode } = useColorMode();
@@ -99,7 +101,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
     return (
         <GridItem>
             <LinkButton
-                to={`/conference/${conference.slug}/exhibition/${exhibition.id}`}
+                to={`${conferencePath}/exhibition/${exhibition.id}`}
                 w="100%"
                 h="auto"
                 minH="100%"
@@ -150,7 +152,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
                     <Text whiteSpace="normal" mr="auto" fontWeight="bold">
                         {exhibition.name}
                     </Text>
-                    <PageCountText path={`/conference/${conference.slug}/exhibition/${exhibition.id}`} />
+                    <PageCountText path={`${conferencePath}/exhibition/${exhibition.id}`} />
                 </HStack>
                 <PlainAuthorsList people={allAuthors} fontSize="sm" sortByNameOnly />
             </LinkButton>
@@ -160,7 +162,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
 
 export function ExhibitionsGrid(): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useSelectAllExhibitionsQuery({
+    const [exhibitionsResponse] = useSelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -168,10 +170,10 @@ export function ExhibitionsGrid(): JSX.Element {
 
     const exhibitions = useMemo(
         () =>
-            exhibitionsResponse.loading && !exhibitionsResponse.data
+            exhibitionsResponse.fetching && !exhibitionsResponse.data
                 ? undefined
                 : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
-        [exhibitionsResponse.data, exhibitionsResponse.loading]
+        [exhibitionsResponse.data, exhibitionsResponse.fetching]
     );
     const sortedExhibitions = useMemo(
         () =>
@@ -200,7 +202,7 @@ export function ExhibitionsGrid(): JSX.Element {
 
 export default function ExhibitionsPage(): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useSelectAllExhibitionsQuery({
+    const [exhibitionsResponse] = useSelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -208,10 +210,10 @@ export default function ExhibitionsPage(): JSX.Element {
 
     const exhibitions = useMemo(
         () =>
-            exhibitionsResponse.loading && !exhibitionsResponse.data
+            exhibitionsResponse.fetching && !exhibitionsResponse.data
                 ? undefined
                 : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
-        [exhibitionsResponse.data, exhibitionsResponse.loading]
+        [exhibitionsResponse.data, exhibitionsResponse.fetching]
     );
     const sortedExhibitions = useMemo(() => exhibitions?.sort((x, y) => x.priority - y.priority), [exhibitions]);
 
@@ -223,18 +225,18 @@ export default function ExhibitionsPage(): JSX.Element {
             {sortedExhibitions === undefined ? (
                 <CenteredSpinner
                     spinnerProps={{ label: `Loading ${conference.visibleExhibitionsLabel[0]?.value ?? "Exhibitions"}` }}
+                    caller="ExhibitionsPage:228"
                 />
             ) : (
                 <>
-                    <Heading as="h1" id="page-heading" py={6}>
+                    <Heading as="h1" id="page-heading" mt={[2, 2, 4]} px={[2, 2, 4]} alignSelf="flex-start">
                         {conference.visibleExhibitionsLabel[0]?.value ?? "Exhibitions"}
                     </Heading>
                     <Grid
                         templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
-                        gap={4}
+                        gap={[2, 2, 4]}
                         w="100%"
-                        h="auto"
-                        overflow="hidden"
+                        px={[2, 2, 4]}
                     >
                         {sortedExhibitions.map((exhibition) => (
                             <ExhibitionTile key={exhibition.id} exhibition={exhibition} />

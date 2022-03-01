@@ -1,6 +1,7 @@
-import { Socket } from "socket.io";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
+import type { Socket } from "socket.io";
 import { allSocketsAndUserIds, chatListenersKeyName, socketChatsKeyName, socketUserKeyName } from "../lib/chat";
-import { redisClientP, redisClientPool } from "../redis";
+import { logger } from "../lib/logger";
 import { socketServer } from "../servers/socket-server";
 import * as chat from "../socket-handlers/chat/chat";
 import * as chat_messages from "../socket-handlers/chat/messages";
@@ -9,7 +10,7 @@ import * as chat_reactions from "../socket-handlers/chat/reactions";
 import * as chat_subscriptions from "../socket-handlers/chat/subscriptions";
 import { onRequestUnreadCount, onSetReadUpToIndex } from "../socket-handlers/chat/unreadCount";
 
-export function onConnect(socket: Socket, userId: string, conferenceSlugs: string[]): void {
+export function onConnect(socket: Socket, userId: string): void {
     const socketId = socket.id;
     redisClientPool.acquire("socket-events/chat/onConnect").then((redisClient) => {
         try {
@@ -19,32 +20,32 @@ export function onConnect(socket: Socket, userId: string, conferenceSlugs: strin
         }
     });
 
-    socket.on("chat.subscribe", chat.onSubscribe(conferenceSlugs, userId, socketId, socket));
-    socket.on("chat.unsubscribe", chat.onUnsubscribe(conferenceSlugs, userId, socketId, socket));
-    socket.on("chat.messages.send", chat_messages.onSend(conferenceSlugs, userId, socketId, socket));
-    socket.on("chat.reactions.send", chat_reactions.onSend(conferenceSlugs, userId, socketId, socket));
+    socket.on("chat.subscribe", chat.onSubscribe(userId, socketId, socket));
+    socket.on("chat.unsubscribe", chat.onUnsubscribe(userId, socketId, socket));
+    socket.on("chat.messages.send", chat_messages.onSend(userId, socketId, socket));
+    socket.on("chat.reactions.send", chat_reactions.onSend(userId, socketId, socket));
 
     socket.on(
         "chat.subscriptions.changed.on",
-        chat_subscriptions.onListenForSubscriptionsChanged(conferenceSlugs, userId, socketId, socket)
+        chat_subscriptions.onListenForSubscriptionsChanged(userId, socketId, socket)
     );
     socket.on(
         "chat.subscriptions.changed.off",
-        chat_subscriptions.onUnlistenForSubscriptionsChanged(conferenceSlugs, userId, socketId, socket)
+        chat_subscriptions.onUnlistenForSubscriptionsChanged(userId, socketId, socket)
     );
 
-    socket.on("chat.pins.changed.on", chat_pins.onListenForPinsChanged(conferenceSlugs, userId, socketId, socket));
-    socket.on("chat.pins.changed.off", chat_pins.onUnlistenForPinsChanged(conferenceSlugs, userId, socketId, socket));
+    socket.on("chat.pins.changed.on", chat_pins.onListenForPinsChanged(userId, socketId, socket));
+    socket.on("chat.pins.changed.off", chat_pins.onUnlistenForPinsChanged(userId, socketId, socket));
 
-    socket.on("chat.unreadCount.request", onRequestUnreadCount(conferenceSlugs, userId, socketId, socket));
-    socket.on("chat.unreadCount.setReadUpTo", onSetReadUpToIndex(conferenceSlugs, userId, socketId, socket));
+    socket.on("chat.unreadCount.request", onRequestUnreadCount(userId, socketId, socket));
+    socket.on("chat.unreadCount.setReadUpTo", onSetReadUpToIndex(userId, socketId, socket));
 }
 
 export async function onDisconnect(socketId: string, userId: string): Promise<void> {
     try {
         await exitChats(socketId, userId);
-    } catch (e) {
-        console.error(`Error exiting all presences on socket ${socketId}`, e);
+    } catch (error: any) {
+        logger.error({ error }, `Error exiting all presences on socket ${socketId}`);
     }
 }
 
@@ -53,7 +54,7 @@ async function exitChats(socketId: string, userId: string, log = false) {
     try {
         const chatIds = await redisClientP.smembers(redisClient)(socketChatsKeyName(socketId));
         if (log) {
-            console.info(
+            logger.info(
                 `Exiting chats for ${socketId} / ${userId}:${chatIds.reduce(
                     (acc, chatId) => `${acc}
     - ${chatId}`,
@@ -79,7 +80,7 @@ export async function invalidateSessions(): Promise<void> {
         await Promise.all(
             deadSocketInfos.map(async (socketInfo) => exitChats(socketInfo.socketId, socketInfo.userId, true))
         );
-    } catch (e) {
-        console.warn("Could not list all sockets to try to exit chats", e);
+    } catch (error: any) {
+        logger.warn({ error }, "Could not list all sockets to try to exit chats");
     }
 }

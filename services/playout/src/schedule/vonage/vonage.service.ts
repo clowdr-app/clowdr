@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
+import type { Bunyan } from "@eropple/nestjs-bunyan";
+import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import {
     VonageService_CreateEventVonageSessionDocument,

@@ -1,5 +1,4 @@
-import type {
-    BoxProps} from "@chakra-ui/react";
+import type { BoxProps } from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -13,17 +12,16 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
-import assert from "assert";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import { FAIcon } from "../../Icons/FAIcon";
+import FAIcon from "../../Chakra/FAIcon";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
 import type { AnswerMessageData, MessageMediaData } from "../Types/Messages";
 import { MediaType } from "../Types/Messages";
@@ -31,8 +29,9 @@ import { useComposeContext } from "./ComposeContext";
 import { InsertEmojiButton } from "./InsertEmojiButton";
 import { MessageTypeButtons } from "./MessageTypeButtons";
 import { CreatePollOptionsButton } from "./Poll/CreatePollOptionsButton";
-import QuickSendEmote from "./QuickSendEmote";
 import { SendMessageButton } from "./SendMessageButton";
+
+const StatusBar = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.StatusBar })));
 
 export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
     const config = useChatConfiguration();
@@ -163,7 +162,10 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
 
         uppy.use(AwsS3Multipart, {
             limit: 4,
-            companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
+            companionUrl:
+                typeof import.meta.env.VITE_COMPANION_BASE_URL === "string"
+                    ? import.meta.env.VITE_COMPANION_BASE_URL
+                    : "",
         });
         return uppy;
     }, [allowedFileTypes]);
@@ -213,13 +215,11 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
 
                 try {
                     const { bucket, key } = new AmazonS3URI(result.successful[0].uploadURL);
-                    assert(bucket);
-                    assert(key);
+                    assert.truthy(bucket);
+                    assert.truthy(key);
 
                     uppy.reset();
-                    const url = `https://${bucket}.s3-${
-                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                    }.amazonaws.com/${key}`;
+                    const url = `https://${bucket}.s3-${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${key}`;
                     let type: MediaType;
                     switch (finalFiles[0].type) {
                         case "image/bmp":
@@ -307,7 +307,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                         alt: "No alt text provided.",
                     };
                     composeCtx.setFile({ file: finalFiles[0], data: mediaData });
-                } catch (e) {
+                } catch (e: any) {
                     console.error("Failed to submit file", e);
                     toast({
                         status: "error",
@@ -343,7 +343,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
         };
         uppy.on("error", onError);
 
-        const onUploadError = (file: unknown, err: Error) => {
+        const onUploadError = (_file: unknown, err: Error) => {
             console.error("Error while uploading file", { err });
             toast({
                 status: "error",
@@ -373,7 +373,6 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
             borderTopColor={borderColour}
             {...rest}
         >
-            <QuickSendEmote />
             <MessageTypeButtons isDisabled={composeCtx.isSending} w="100%" />
             <Box pos="relative" w="100%" h="10vh" borderTop="1px solid" borderTopColor={borderColourFaded} pt="1px">
                 <Textarea
@@ -393,8 +392,8 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                         composeCtx.setNewMessage(ev.target.value);
                     }}
                     value={composeCtx.newMessage}
-                    min={composeCtx.messageLengthRange.min}
-                    max={composeCtx.messageLengthRange.max}
+                    minLength={composeCtx.messageLengthRange.min}
+                    maxLength={composeCtx.messageLengthRange.max}
                     autoFocus
                     isDisabled={composeCtx.isSending}
                     onKeyDown={(ev) => {
@@ -433,7 +432,9 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 /> */}
             </Box>
             <Flex w="100%" alignItems="stretch" justifyContent="stretch" flexDir="column">
-                <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
+                <Suspense fallback={null}>
+                    <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
+                </Suspense>
             </Flex>
             <Flex w="100%" minH="2.4em" alignItems="center">
                 <input
@@ -454,7 +455,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                                         type: ev.target.files[0].type,
                                     },
                                 });
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.info("Error selecting file for chat media upload", e);
                                 if (e.toString().includes("You can only upload")) {
                                     toast({

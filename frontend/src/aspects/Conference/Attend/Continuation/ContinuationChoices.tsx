@@ -1,26 +1,20 @@
-import { gql } from "@apollo/client";
-import { useToast } from "@chakra-ui/toast";
-import type {
-    ContinuationDefaultFor,
-    ExtendedContinuationTo} from "@clowdr-app/shared-types/build/continuation";
-import {
-    ContinuationType,
-    NavigationView,
-} from "@clowdr-app/shared-types/build/continuation";
+import { useToast } from "@chakra-ui/react";
+import type { ContinuationDefaultFor, ExtendedContinuationTo } from "@midspace/shared-types/continuation";
+import { ContinuationType, NavigationView } from "@midspace/shared-types/continuation";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router";
-import type {
-    ContinuationChoices_ContinuationFragment} from "../../../../generated/graphql";
+import { useHistory } from "react-router-dom";
+import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
 import {
     useContinuationChoices_ContinuationsQuery,
     useContinuationChoices_RoomsQuery,
 } from "../../../../generated/graphql";
-import { useRealTime } from "../../../Generic/useRealTime";
-import { useConference } from "../../useConference";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { useMyBackstagesModal } from "../Profile/MyBackstages";
-import { useLiveProgramRoomsModal } from "../Rooms/V2/LiveProgramRoomsModal";
-import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModal";
+import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModalProvider";
+import { useLiveProgramRooms } from "../Rooms/V2/useLiveProgramRooms";
 import { ProgramModalTab, useScheduleModal } from "../Schedule/ProgramModal";
 import ContinuationActiveChoice from "./ContinuationActiveChoice";
 import ContinuationPassiveChoice from "./ContinuationPassiveChoice";
@@ -34,6 +28,8 @@ gql`
         priority
         colour
         description
+        fromEvent
+        fromShuffleQueue
     }
 
     query ContinuationChoices_Continuations($fromId: uuid!, $nowStart: timestamptz, $nowEnd: timestamptz) {
@@ -57,6 +53,8 @@ gql`
         ) {
             id
             roomId
+            shufflePeriodId
+            startTime
             endTime
         }
     }
@@ -64,8 +62,9 @@ gql`
     query ContinuationChoices_Rooms($ids: [uuid!]!) {
         content_Item(where: { id: { _in: $ids } }) {
             id
-            rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
+            room {
                 id
+                created_at
             }
         }
         schedule_Event(where: { id: { _in: $ids } }) {
@@ -94,7 +93,7 @@ export default function ContinuationChoices({
     const nowStatic_StartStr = useMemo(() => new Date(Date.now() + 60000).toISOString(), []);
     const nowStatic_EndStr = useMemo(() => new Date(Date.now() - 60000).toISOString(), []);
     // ...else this query would change on every render!
-    const response = useContinuationChoices_ContinuationsQuery({
+    const [response] = useContinuationChoices_ContinuationsQuery({
         variables: {
             fromId: "eventId" in from ? from.eventId : from.shufflePeriodId,
             nowStart: nowStatic_StartStr,
@@ -186,7 +185,8 @@ function ContinuationChoices_Inner({
     currentRole: ContinuationDefaultFor;
     currentRoomId: string;
 }): JSX.Element {
-    const roomsResponse = useContinuationChoices_RoomsQuery({
+    const { conferencePath } = useAuthParameters();
+    const [roomsResponse] = useContinuationChoices_RoomsQuery({
         variables: {
             ids: choices.reduce((acc, option) => {
                 const to: ExtendedContinuationTo = option.to;
@@ -266,11 +266,10 @@ function ContinuationChoices_Inner({
 
     const toast = useToast();
     const history = useHistory();
-    const conference = useConference();
     const scheduleModal = useScheduleModal();
     const socialiseModal = useSocialiseModal();
     const myBackstages = useMyBackstagesModal();
-    const liveProgramRooms = useLiveProgramRoomsModal();
+    const liveProgramRooms = useLiveProgramRooms();
     useEffect(() => {
         if (activateChoice && !activatedChoice) {
             const activateChosenOption = () => {
@@ -301,17 +300,17 @@ function ContinuationChoices_Inner({
                                         activateChoice,
                                         activatedChoice,
                                     });
-                                    history.push(`/conference/${conference.slug}/room/${to.id}`);
+                                    history.push(`${conferencePath}/room/${to.id}`);
                                 }
                                 break;
                             case ContinuationType.Event:
-                                if (!roomsResponse.loading) {
+                                if (!roomsResponse.fetching) {
                                     const event = roomsResponse.data?.schedule_Event.find(
                                         (event) => event.id === to.id
                                     );
                                     if (event && event?.roomId) {
                                         if (currentRoomId !== event.roomId) {
-                                            history.push(`/conference/${conference.slug}/room/${event.roomId}`);
+                                            history.push(`${conferencePath}/room/${event.roomId}`);
                                         }
                                     } else {
                                         if (roomsResponse.error) {
@@ -323,7 +322,7 @@ function ContinuationChoices_Inner({
                                 }
                                 break;
                             case ContinuationType.AutoDiscussionRoom:
-                                if (!roomsResponse.loading) {
+                                if (!roomsResponse.fetching) {
                                     console.log("Activate auto room", {
                                         choices,
                                         selectedOptionId,
@@ -332,9 +331,9 @@ function ContinuationChoices_Inner({
                                     });
                                     const toItemId = to.id ?? ("eventId" in from ? from.itemId : null);
                                     const item = roomsResponse.data?.content_Item.find((item) => item.id === toItemId);
-                                    if (item && item.rooms.length > 0) {
-                                        if (currentRoomId !== item.rooms[0].id) {
-                                            history.push(`/conference/${conference.slug}/room/${item.rooms[0].id}`);
+                                    if (item && item.room) {
+                                        if (currentRoomId !== item.room.id) {
+                                            history.push(`${conferencePath}/room/${item.room.id}`);
                                         }
                                     } else {
                                         if (roomsResponse.error) {
@@ -346,19 +345,19 @@ function ContinuationChoices_Inner({
                                 }
                                 break;
                             case ContinuationType.Item:
-                                history.push(`/conference/${conference.slug}/item/${to.id}`);
+                                history.push(`${conferencePath}/item/${to.id}`);
                                 break;
                             case ContinuationType.Exhibition:
-                                history.push(`/conference/${conference.slug}/exhibition/${to.id}`);
+                                history.push(`${conferencePath}/exhibition/${to.id}`);
                                 break;
                             case ContinuationType.ShufflePeriod:
-                                history.push(`/conference/${conference.slug}/shuffle`);
+                                history.push(`${conferencePath}/shuffle`);
                                 break;
                             case ContinuationType.Profile:
-                                history.push(`/conference/${conference.slug}/profile/view/${to.id}`);
+                                history.push(`${conferencePath}/profile/view/${to.id}`);
                                 break;
                             case ContinuationType.OwnProfile:
-                                history.push(`/conference/${conference.slug}/profile`);
+                                history.push(`${conferencePath}/profile`);
                                 break;
                             case ContinuationType.NavigationView:
                                 switch (to.view) {
@@ -376,9 +375,6 @@ function ContinuationChoices_Inner({
                                         break;
                                     case NavigationView.Exhibitions:
                                         scheduleModal.onOpen(undefined, ProgramModalTab.Exhibitions);
-                                        break;
-                                    case NavigationView.Search:
-                                        scheduleModal.onOpen(undefined, ProgramModalTab.Search, to.term);
                                         break;
                                     case NavigationView.Schedule:
                                         scheduleModal.onOpen(undefined, ProgramModalTab.Schedule);
@@ -398,7 +394,9 @@ function ContinuationChoices_Inner({
                                 }
                                 break;
                             case ContinuationType.ConferenceLandingPage:
-                                history.push(`/conference/${conference.slug}`);
+                                if (conferencePath) {
+                                    history.push(conferencePath);
+                                }
                                 break;
                         }
                     } else {
@@ -411,9 +409,9 @@ function ContinuationChoices_Inner({
 
             if ("shufflePeriodId" in from) {
                 if (from.eventRoomId) {
-                    history.push(`/conference/${conference.slug}/room/${from.eventRoomId}`);
+                    history.push(`${conferencePath}/room/${from.eventRoomId}`);
                 } else {
-                    history.push(`/conference/${conference.slug}/shuffle`);
+                    history.push(`${conferencePath}/shuffle`);
                 }
                 setTimeout(() => activateChosenOption(), 200);
             } else {

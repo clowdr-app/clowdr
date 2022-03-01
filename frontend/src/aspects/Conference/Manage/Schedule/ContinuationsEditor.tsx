@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -21,25 +20,23 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
-import type {
-    ContinuationsEditor_ContinuationFragment,
-    ContinuationsEditor_SelectContinuationsQuery,
-    ContinuationsEditor_SelectContinuationsQueryVariables} from "../../../../generated/graphql";
+import type { ContinuationsEditor_ContinuationFragment } from "../../../../generated/graphql";
 import {
-    ContinuationsEditor_ContinuationFragmentDoc,
-    ContinuationsEditor_SelectContinuationsDocument,
     useContinuationsEditor_DeleteMutation,
     useContinuationsEditor_SelectContinuationsQuery,
     useContinuationsEditor_UpdateManyMutation,
     useContinuationsEditor_UpdateMutation,
 } from "../../../../generated/graphql";
-import { useRestorableState } from "../../../Generic/useRestorableState";
+import FAIcon from "../../../Chakra/FAIcon";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import FAIcon from "../../../Icons/FAIcon";
+import { useRestorableState } from "../../../Hooks/useRestorableState";
 import CreateContinuationModal from "./CreateContinuationModal";
 
 gql`
@@ -103,10 +100,18 @@ export default function ContinuationsEditor({
     const shufflePeriodId = "shufflePeriodId" in from ? from.shufflePeriodId : undefined;
     const fromNoun = "eventId" in from ? "an event" : "a shuffle period";
 
-    const response = useContinuationsEditor_SelectContinuationsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [response] = useContinuationsEditor_SelectContinuationsQuery({
         variables: {
             fromId: eventId ?? shufflePeriodId,
         },
+        context,
     });
 
     const [showExplanation, setShowExplanation] = useRestorableState<boolean>(
@@ -127,48 +132,7 @@ export default function ContinuationsEditor({
         [continuations]
     );
 
-    const [updateMany, updateManyResponse] = useContinuationsEditor_UpdateManyMutation({
-        update: (cache, response) => {
-            if (response.data?.update_schedule_Continuation) {
-                const datas = response.data?.update_schedule_Continuation.returning;
-                for (const data of datas) {
-                    cache.writeFragment({
-                        data,
-                        fragment: ContinuationsEditor_ContinuationFragmentDoc,
-                        fragmentName: "ContinuationsEditor_Continuation",
-                    });
-                }
-
-                const fromId = eventId ?? shufflePeriodId;
-                const query = cache.readQuery<
-                    ContinuationsEditor_SelectContinuationsQuery,
-                    ContinuationsEditor_SelectContinuationsQueryVariables
-                >({
-                    query: ContinuationsEditor_SelectContinuationsDocument,
-                    variables: {
-                        fromId,
-                    },
-                });
-                if (query) {
-                    cache.writeQuery<
-                        ContinuationsEditor_SelectContinuationsQuery,
-                        ContinuationsEditor_SelectContinuationsQueryVariables
-                    >({
-                        query: ContinuationsEditor_SelectContinuationsDocument,
-                        data: {
-                            ...query.schedule_Continuation,
-                            schedule_Continuation: query.schedule_Continuation.map(
-                                (x) => datas.find((y) => x.id === y.id) ?? x
-                            ),
-                        },
-                        variables: {
-                            fromId,
-                        },
-                    });
-                }
-            }
-        },
-    });
+    const [updateManyResponse, updateMany] = useContinuationsEditor_UpdateManyMutation();
     useQueryErrorToast(updateManyResponse.error, false, "Update many continuations");
 
     return (
@@ -213,7 +177,7 @@ export default function ContinuationsEditor({
                     <FAIcon iconStyle="s" icon={showExplanation ? "arrow-up" : "info"} mr={2} />
                     {showExplanation ? "Hide explanation" : "Show explanation"}
                 </Button>
-                {response.loading && !response.data ? (
+                {response.fetching && !response.data ? (
                     <Box>
                         <Spinner label="Loading continuations" />
                         Loading continuations
@@ -251,23 +215,37 @@ export default function ContinuationsEditor({
                                         isChecked={isActiveChoice}
                                         onChange={(ev) => {
                                             if (ev.target.checked) {
-                                                updateMany({
-                                                    variables: {
+                                                updateMany(
+                                                    {
                                                         ids: continuations.map((x) => x.id),
                                                         object: {
                                                             isActiveChoice: true,
                                                         },
                                                     },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
                                             } else {
-                                                updateMany({
-                                                    variables: {
+                                                updateMany(
+                                                    {
                                                         ids: continuations.map((x) => x.id),
                                                         object: {
                                                             isActiveChoice: false,
                                                         },
                                                     },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
                                             }
                                         }}
                                     />
@@ -287,7 +265,6 @@ function ContinuationOption({
     previousOption,
     nextOption,
     idx,
-    fromId,
 }: {
     option: ContinuationsEditor_ContinuationFragment;
     previousOption?: ContinuationsEditor_ContinuationFragment;
@@ -295,95 +272,10 @@ function ContinuationOption({
     idx: number;
     fromId: string;
 }): JSX.Element {
-    const [update, updateResponse] = useContinuationsEditor_UpdateMutation({
-        update: (cache, response) => {
-            if (response.data?.update_schedule_Continuation_by_pk) {
-                const data = response.data?.update_schedule_Continuation_by_pk;
-                cache.writeFragment({
-                    data,
-                    fragment: ContinuationsEditor_ContinuationFragmentDoc,
-                    fragmentName: "ContinuationsEditor_Continuation",
-                });
-
-                const query = cache.readQuery<
-                    ContinuationsEditor_SelectContinuationsQuery,
-                    ContinuationsEditor_SelectContinuationsQueryVariables
-                >({
-                    query: ContinuationsEditor_SelectContinuationsDocument,
-                    variables: {
-                        fromId,
-                    },
-                });
-                if (query) {
-                    cache.writeQuery<
-                        ContinuationsEditor_SelectContinuationsQuery,
-                        ContinuationsEditor_SelectContinuationsQueryVariables
-                    >({
-                        query: ContinuationsEditor_SelectContinuationsDocument,
-                        data: {
-                            ...query,
-                            schedule_Continuation: query.schedule_Continuation.map((x) =>
-                                x.id === data.id ? data : x
-                            ),
-                        },
-                        variables: {
-                            fromId,
-                        },
-                    });
-                }
-            }
-        },
-    });
+    const [updateResponse, update] = useContinuationsEditor_UpdateMutation();
     useQueryErrorToast(updateResponse.error, false, "Update continuation");
 
-    const [deleteOp, deleteResponse] = useContinuationsEditor_DeleteMutation({
-        update: (cache, response) => {
-            if (response.data?.delete_schedule_Continuation) {
-                const data = response.data.delete_schedule_Continuation;
-                const deletedIds = data.returning.map((x) => x.id);
-                deletedIds.forEach((x) => {
-                    cache.evict({
-                        id: x.id,
-                        fieldName: "ContinuationsEditor_Continuation",
-                        broadcast: true,
-                    });
-
-                    cache.evict({
-                        id: x.id,
-                        fieldName: "schedule_Continuation",
-                        broadcast: true,
-                    });
-                });
-
-                const query = cache.readQuery<
-                    ContinuationsEditor_SelectContinuationsQuery,
-                    ContinuationsEditor_SelectContinuationsQueryVariables
-                >({
-                    query: ContinuationsEditor_SelectContinuationsDocument,
-                    variables: {
-                        fromId,
-                    },
-                });
-                if (query) {
-                    cache.writeQuery<
-                        ContinuationsEditor_SelectContinuationsQuery,
-                        ContinuationsEditor_SelectContinuationsQueryVariables
-                    >({
-                        query: ContinuationsEditor_SelectContinuationsDocument,
-                        data: {
-                            ...query,
-                            schedule_Continuation: query.schedule_Continuation.filter(
-                                (x) => !deletedIds.includes(x.id)
-                            ),
-                        },
-                        variables: {
-                            fromId,
-                        },
-                    });
-                }
-            }
-        },
-    });
+    const [deleteResponse, deleteOp] = useContinuationsEditor_DeleteMutation();
     useQueryErrorToast(deleteResponse.error, false, "Delete continuation");
 
     const toast = useToast();
@@ -405,23 +297,37 @@ function ContinuationOption({
                         size="xs"
                         isDisabled={!previousOption}
                         onClick={() => {
-                            update({
-                                variables: {
+                            update(
+                                {
                                     id: option.id,
                                     object: {
                                         priority: idx - 1,
                                     },
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        },
+                                    },
+                                }
+                            );
 
-                            update({
-                                variables: {
+                            update(
+                                {
                                     id: previousOption?.id,
                                     object: {
                                         priority: idx,
                                     },
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        },
+                                    },
+                                }
+                            );
                         }}
                     >
                         <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
@@ -430,23 +336,37 @@ function ContinuationOption({
                         size="xs"
                         isDisabled={!nextOption}
                         onClick={() => {
-                            update({
-                                variables: {
+                            update(
+                                {
                                     id: option.id,
                                     object: {
                                         priority: idx + 1,
                                     },
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        },
+                                    },
+                                }
+                            );
 
-                            update({
-                                variables: {
+                            update(
+                                {
                                     id: nextOption?.id,
                                     object: {
                                         priority: idx,
                                     },
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        },
+                                    },
+                                }
+                            );
                         }}
                     >
                         <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
@@ -487,14 +407,21 @@ function ContinuationOption({
                                 onChangeComplete={(c) => {
                                     const cStr = `rgba(${c.rgb.r},${c.rgb.g},${c.rgb.b},1)`;
                                     setLocalColour(cStr);
-                                    update({
-                                        variables: {
+                                    update(
+                                        {
                                             id: option.id,
                                             object: {
                                                 colour: cStr,
                                             },
                                         },
-                                    });
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                },
+                                            },
+                                        }
+                                    );
                                 }}
                             />
                         </Box>
@@ -505,15 +432,22 @@ function ContinuationOption({
                     aria-label="Delete"
                     colorScheme="red"
                     size="xs"
-                    isDisabled={deleteResponse.loading}
+                    isDisabled={deleteResponse.fetching}
                     onClick={async () => {
                         try {
-                            deleteOp({
-                                variables: {
+                            deleteOp(
+                                {
                                     ids: [option.id],
                                 },
-                            });
-                        } catch (e) {
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        },
+                                    },
+                                }
+                            );
+                        } catch (e: any) {
                             toast({
                                 title: "Error deleting continuation",
                                 description: e.message ?? e.toString(),

@@ -1,10 +1,11 @@
-import { Captions, InputCaptions, paginateListPipelines, Pipeline } from "@aws-sdk/client-elastic-transcoder";
+import type { Captions, InputCaptions, Pipeline } from "@aws-sdk/client-elastic-transcoder";
+import { paginateListPipelines } from "@aws-sdk/client-elastic-transcoder";
+import type { AudioDescription, VideoDescription } from "@aws-sdk/client-mediaconvert";
 import {
     AacCodingMode,
     AacRateControlMode,
     AacVbrQuality,
     AudioCodec,
-    AudioDescription,
     AudioSelectorType,
     CaptionDestinationType,
     CaptionSourceType,
@@ -13,13 +14,14 @@ import {
     H264RateControlMode,
     OutputGroupType,
     VideoCodec,
-    VideoDescription,
 } from "@aws-sdk/client-mediaconvert";
-import { AWSJobStatus, TranscodeDetails, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
-import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
+import type { TranscodeDetails, VideoElementBlob } from "@midspace/shared-types/content";
+import { AWSJobStatus } from "@midspace/shared-types/content";
+import { TranscodeMode } from "@midspace/shared-types/sns/mediaconvert";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import path from "path";
+import type { P } from "pino";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
@@ -60,8 +62,12 @@ export const audioDescription: AudioDescription = {
     },
 };
 
-export async function startPreviewTranscode(s3InputUrl: string, elementId: string): Promise<StartTranscodeOutput> {
-    console.log(`Creating preview MediaConvert job for ${s3InputUrl}`);
+export async function startPreviewTranscode(
+    logger: P.Logger,
+    s3InputUrl: string,
+    elementId: string
+): Promise<StartTranscodeOutput> {
+    logger.info({ s3InputUrl, elementId }, "Creating preview MediaConvert job");
 
     assert(MediaConvert, "AWS MediaConvert client is not initialised");
 
@@ -114,7 +120,7 @@ export async function startPreviewTranscode(s3InputUrl: string, elementId: strin
 
     assert(result.Job?.Id && result.Job.CreatedAt, `Failed to create MediaConvert preview job for ${s3InputUrl}`);
 
-    console.log(`Started preview MediaConvert job for ${s3InputUrl} (id: ${result.Job?.Id})`);
+    logger.info({ s3InputUrl, jobId: result.Job?.Id }, "Started preview MediaConvert job");
 
     return {
         jobId: result.Job.Id,
@@ -123,11 +129,12 @@ export async function startPreviewTranscode(s3InputUrl: string, elementId: strin
 }
 
 export async function startElasticBroadcastTranscode(
+    logger: P.Logger,
     s3VideoUrl: string,
     s3CaptionsUrl: string | null,
     videoRenderJobId: string
 ): Promise<StartTranscodeOutput> {
-    console.log(`Create broadcast Elastic Transcoder job for ${s3VideoUrl}`);
+    logger.info({ s3VideoUrl, videoRenderJobId }, "Create broadcast Elastic Transcoder job");
 
     assert(ElasticTranscoder, "AWS Elastic Transcoder client is not initialised");
 
@@ -235,11 +242,12 @@ export async function startElasticBroadcastTranscode(
 }
 
 export async function startBroadcastTranscode(
+    logger: P.Logger,
     s3VideoUrl: string,
     s3CaptionsUrl: string | null,
     videoRenderJobId: string
 ): Promise<StartTranscodeOutput> {
-    console.log(`Creating broadcast MediaConvert job for ${s3VideoUrl}`);
+    logger.info({ s3VideoUrl, videoRenderJobId }, "Creating broadcast MediaConvert job");
 
     assert(MediaConvert, "AWS MediaConvert client is not initialised");
 
@@ -318,7 +326,7 @@ export async function startBroadcastTranscode(
 
     assert(result.Job?.Id && result.Job.CreatedAt, `Failed to create MediaConvert broadcast job for ${s3VideoUrl}`);
 
-    console.log(`Started broadcast MediaConvert job for ${s3VideoUrl} (id: ${result.Job?.Id})`);
+    logger.info({ s3VideoUrl, mediaConvertJobId: result.Job?.Id }, "Started broadcast MediaConvert job");
 
     return {
         jobId: result.Job.Id,
@@ -327,6 +335,7 @@ export async function startBroadcastTranscode(
 }
 
 export async function completePreviewTranscode(
+    logger: P.Logger,
     elementId: string,
     transcodeS3Url: string,
     transcodeJobId: string,
@@ -339,10 +348,11 @@ export async function completePreviewTranscode(
         s3Url: transcodeS3Url,
     };
     const newVersion = await createNewVersionFromPreviewTranscode(elementId, transcodeDetails);
-    await addNewElementVersion(elementId, newVersion);
+    await addNewElementVersion(logger, elementId, newVersion);
 }
 
 export async function failPreviewTranscode(
+    logger: P.Logger,
     elementId: string,
     transcodeJobId: string,
     timestamp: Date,
@@ -359,7 +369,7 @@ export async function failPreviewTranscode(
         !latestVersion.data.transcode ||
         latestVersion.data.transcode.jobId !== transcodeJobId
     ) {
-        console.log("Received notification of transcode failure, but did not record it");
+        logger.info({ elementId, transcodeJobId }, "Received notification of transcode failure, but did not record it");
         return;
     }
 
@@ -382,7 +392,7 @@ export async function failPreviewTranscode(
     });
 
     if (result.errors) {
-        console.error(`Failed to record transcode failure for ${elementId}`, result.errors);
+        logger.error({ elementId, errors: result.errors }, "Failed to record transcode failure");
         throw new Error(`Failed to record transcode failure for ${elementId}`);
     }
 }

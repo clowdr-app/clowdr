@@ -2,6 +2,9 @@ table:
   name: Reaction
   schema: chat
 object_relationships:
+- name: chat
+  using:
+    foreign_key_constraint_on: chatId
 - name: duplicate
   using:
     foreign_key_constraint_on: duplicateSId
@@ -22,42 +25,79 @@ array_relationships:
 select_permissions:
 - permission:
     columns:
-    - chatId
-    - created_at
     - data
-    - duplicateSId
-    - messageSId
-    - sId
-    - senderId
     - symbol
     - type
+    - created_at
     - updated_at
+    - chatId
+    - duplicateSId
+    - messageSId
+    - senderId
+    - sId
     filter:
       message:
         chat:
           _and:
-          - conference:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - userPermissions:
-                  _and:
-                  - user_id:
-                      _eq: X-Hasura-User-Id
-                  - permission_name:
-                      _in:
-                      - CONFERENCE_MANAGE_ATTENDEES
-                      - CONFERENCE_MODERATE_ATTENDEES
-                      - CONFERENCE_VIEW_ATTENDEES
           - _or:
-            - rooms:
-                _or:
-                - managementModeName:
-                    _eq: PUBLIC
-                - roomPeople:
-                    registrant:
-                      userId:
-                        _eq: X-Hasura-User-Id
+            - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+            - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+          - _or:
             - _not:
-                rooms: {}
-  role: user
+                room: {}
+            - room:
+                id:
+                  _in: X-Hasura-Room-Ids
+  role: attendee
+- permission:
+    columns:
+    - type
+    - senderId
+    - symbol
+    - data
+    - created_at
+    - updated_at
+    - sId
+    - messageSId
+    - duplicateSId
+    - chatId
+    filter:
+      chat:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+  role: conference-organizer
+- permission:
+    columns:
+    - type
+    - senderId
+    - symbol
+    - data
+    - created_at
+    - updated_at
+    - sId
+    - messageSId
+    - duplicateSId
+    - chatId
+    filter:
+      chat:
+        _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer

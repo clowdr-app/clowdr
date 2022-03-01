@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import { Interval } from "@nestjs/schedule";
 import { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";

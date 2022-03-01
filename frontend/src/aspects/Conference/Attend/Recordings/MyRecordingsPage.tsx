@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -19,10 +18,11 @@ import {
 } from "@chakra-ui/react";
 import AmazonS3URI from "amazon-s3-uri";
 import React from "react";
+import { gql } from "urql";
 import { useMyRecordingsQuery } from "../../../../generated/graphql";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
-import { useTitle } from "../../../Utils/useTitle";
-import { useConference } from "../../useConference";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useTitle } from "../../../Hooks/useTitle";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 
 gql`
@@ -32,6 +32,7 @@ gql`
             order_by: { recording: { endedAt: desc } }
         ) {
             id
+            registrantId
             recording {
                 id
                 room {
@@ -49,13 +50,13 @@ gql`
 export default function MyRecordingsPage(): JSX.Element {
     const title = useTitle("Recordings");
 
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const registrant = useCurrentRegistrant();
-    const response = useMyRecordingsQuery({
+    const [response] = useMyRecordingsQuery({
         variables: {
             registrantId: registrant.id,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     const bgColor = useColorModeValue(
@@ -73,7 +74,7 @@ export default function MyRecordingsPage(): JSX.Element {
                 <Text>
                     This page lists any recordings of video-chat events or social rooms that you have participated in.
                 </Text>
-                {response.loading && !response.data ? (
+                {response.fetching && !response.data ? (
                     <HStack spacing={2}>
                         <Box>
                             <Spinner />
@@ -148,7 +149,7 @@ export default function MyRecordingsPage(): JSX.Element {
                                                             linkProps={{ m: "3px" }}
                                                             isExternal
                                                             to={`https://${bucket}.s3-${
-                                                                import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                                                                import.meta.env.VITE_AWS_REGION
                                                             }.amazonaws.com/${key}`}
                                                             colorScheme="PrimaryActionButton"
                                                         >
@@ -167,7 +168,7 @@ export default function MyRecordingsPage(): JSX.Element {
                                                     ) : save.recording.room ? (
                                                         <LinkButton
                                                             linkProps={{ m: "3px" }}
-                                                            to={`/conference/${conference.slug}/room/${save.recording.room.id}`}
+                                                            to={`${conferencePath}/room/${save.recording.room.id}`}
                                                             colorScheme="PrimaryActionButton"
                                                         >
                                                             Go to room

@@ -5,7 +5,7 @@ services:
     ports:
       - "6379:6379"
   graphql-engine:
-    image: ${HASURA_DOCKER_IMAGE:-hasura/graphql-engine:v2.0.9.cli-migrations-v3}
+    image: ${HASURA_DOCKER_IMAGE:-hasura/graphql-engine:v2.0.10.cli-migrations-v3}
     ports:
       - "8080:8080"
     depends_on:
@@ -21,16 +21,19 @@ services:
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      AUTH_BASE_URL: ${AUTH_BASE_URL}
       ACTION_BASE_URL: ${ACTION_BASE_URL}
+      CACHES_BASE_URL: ${CACHES_BASE_URL}
       REALTIME_BASE_URL: ${REALTIME_BASE_URL}
       PLAYOUT_BASE_URL: ${PLAYOUT_BASE_URL}
+      IMPORTER_BASE_URL: ${IMPORTER_BASE_URL}
       EVENT_SECRET: ${EVENT_SECRET}
       PRESENCE_FLUSH_SECRET: ${PRESENCE_FLUSH_SECRET}
       PRESENCE_SUMMARY_SECRET: ${PRESENCE_SUMMARY_SECRET}
       HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
       HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
       HASURA_GRAPHQL_AUTH_HOOK: ${HASURA_GRAPHQL_AUTH_HOOK}
-      HASURA_GRAPHQL_AUTH_HOOK_MODE: "POST"
+      HASURA_GRAPHQL_AUTH_HOOK_MODE: GET
   rabbitmq:
     image: rabbitmq:3.8.14-management
     hostname: rabbitmq-1

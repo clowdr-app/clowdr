@@ -49,19 +49,65 @@ array_relationships:
       table:
         name: Registrant
         schema: registrant
+- name: superUserPermissionGrants
+  using:
+    manual_configuration:
+      column_mapping:
+        id: userId
+      insertion_order: null
+      remote_table:
+        name: SuperUserPermissionGrant
+        schema: system
 select_permissions:
 - permission:
     columns:
-    - acceptedPrivacyPolicyAt
-    - acceptedTermsAt
-    - created_at
-    - email
     - id
+    - created_at
     - updated_at
+    - email
+    - acceptedTermsAt
+    - acceptedPrivacyPolicyAt
+    filter:
+      _or:
+      - superUserPermissionGrants:
+          grantedPermission:
+            superUserGrantTargets:
+              _and:
+              - grantedPermissionName:
+                  _eq: VIEW_SU_PERMISSION_GRANT
+              - userId:
+                  _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: SuperUserPermissionGrant
+            schema: system
+          _where:
+            _and:
+            - grantedPermissionName:
+                _in:
+                - VIEW_USERS
+                - DELETE_USERS
+                - EDIT_USER_REGISTRANTS
+                - INSERT_SU_PERMISSION
+            - targetPermissionName:
+                _is_null: true
+            - userId:
+                _eq: X-Hasura-User-Id
+      - superUserPermissionGrants:
+          userId:
+            _eq: X-Hasura-User-Id
+  role: superuser
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - email
+    - acceptedTermsAt
+    - acceptedPrivacyPolicyAt
     filter:
       id:
         _eq: X-Hasura-User-Id
-    limit: 5000
   role: user
 update_permissions:
 - permission:
@@ -69,7 +115,6 @@ update_permissions:
     columns:
     - acceptedPrivacyPolicyAt
     - acceptedTermsAt
-    - email
     filter:
       id:
         _eq: X-Hasura-User-Id
@@ -77,6 +122,33 @@ update_permissions:
 delete_permissions:
 - permission:
     filter:
-      id:
-        _eq: X-Hasura-User-Id
-  role: user
+      _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
+        _where:
+          _and:
+          - grantedPermissionName:
+              _in:
+              - DELETE_USERS
+          - targetPermissionName:
+              _is_null: true
+          - userId:
+              _eq: X-Hasura-User-Id
+  role: superuser
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: X-Hasura-Event-Secret
+    value_from_env: EVENT_SECRET
+  name: Cache_User
+  retry_conf:
+    interval_sec: 10
+    num_retries: 3
+    timeout_sec: 10
+  webhook: "{{CACHES_BASE_URL}}/cache/update/user"

@@ -1,13 +1,12 @@
+import { ReadUpToIndexCache } from "@midspace/caches/readUpToIndex";
 import assert from "assert";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { Room_ManagementMode_Enum } from "../../generated/graphql";
-import { setReadUpToIndex } from "../../lib/cache/readUpToIndex";
+import { logger } from "../../lib/logger";
 import { canSelectChat } from "../../lib/permissions";
 import { sendUnreadCount } from "../../lib/unreadCounts";
 
 export function onRequestUnreadCount(
-    conferenceSlugs: string[],
     userId: string,
     socketId: string,
     _socket: Socket
@@ -17,31 +16,20 @@ export function onRequestUnreadCount(
             try {
                 assert(is<string>(chatId), "Data does not match expected type.");
 
-                if (
-                    await canSelectChat(
-                        userId,
-                        chatId,
-                        conferenceSlugs,
-                        false,
-                        "chat.onSubscribe:test-registrant-id",
-                        "chat.onSubscribe:test-conference-id",
-                        "chat.onSubscribe:test-room-id",
-                        "chat.onSubscribe:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
-                    )
-                ) {
+                if (await canSelectChat(userId, chatId)) {
                     await sendUnreadCount(chatId, userId);
                 }
-            } catch (e) {
-                console.error(`Error processing chat.unreadCount.request (socket: ${socketId}, chatId: ${chatId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.unreadCount.request (socket: ${socketId}, chatId: ${chatId})`
+                );
             }
         }
     };
 }
 
 export function onSetReadUpToIndex(
-    conferenceSlugs: string[],
     userId: string,
     socketId: string,
     _socket: Socket
@@ -52,25 +40,15 @@ export function onSetReadUpToIndex(
                 assert(is<string>(chatId), "Data (0) does not match expected type.");
                 assert(is<string>(messageSId), "Data (1) does not match expected type.");
 
-                if (
-                    await canSelectChat(
-                        userId,
-                        chatId,
-                        conferenceSlugs,
-                        false,
-                        "chat.onSubscribe:test-registrant-id",
-                        "chat.onSubscribe:test-conference-id",
-                        "chat.onSubscribe:test-room-id",
-                        "chat.onSubscribe:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
-                    )
-                ) {
-                    await setReadUpToIndex(chatId, userId, messageSId);
+                if (await canSelectChat(userId, chatId)) {
+                    await new ReadUpToIndexCache(logger).setField(chatId, userId, messageSId);
                     await sendUnreadCount(chatId, userId);
                 }
-            } catch (e) {
-                console.error(`Error processing chat.unreadCount.request (socket: ${socketId}, chatId: ${chatId})`, e);
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.unreadCount.request (socket: ${socketId}, chatId: ${chatId})`
+                );
             }
         }
     };

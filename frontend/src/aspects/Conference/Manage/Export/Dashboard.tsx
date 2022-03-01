@@ -1,7 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
-import { Permissions_Permission_Enum } from "../../../../generated/graphql";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
 import RestrictedDashboardButton from "../RestrictedDashboardButton";
@@ -26,7 +25,7 @@ export function Dashboard(): JSX.Element {
                     icon="youtube"
                     iconStyle="b"
                     description="Export videos to YouTube."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
+                    organizerRole
                     colorScheme="purple"
                 />
                 <RestrictedDashboardButton
@@ -34,7 +33,7 @@ export function Dashboard(): JSX.Element {
                     name="Download videos"
                     icon="download"
                     description="Export videos to your computer."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
+                    organizerRole
                     colorScheme="purple"
                 />
             </Flex>

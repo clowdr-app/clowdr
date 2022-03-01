@@ -14,13 +14,8 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useState } from "react";
-import type {
-    ManageContent_ItemFragment,
-    ManageContent_TagFragment} from "../../../../../../generated/graphql";
-import {
-    Content_ElementType_Enum
-} from "../../../../../../generated/graphql";
-import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermissionGrantsModal";
+import type { ManageContent_ItemFragment, ManageContent_TagFragment } from "../../../../../../generated/graphql";
+import { Content_ElementType_Enum } from "../../../../../../generated/graphql";
 import { AddElementsModal } from "./AddElementsModal";
 import { CombineVideosModal } from "./CombineVideosModal";
 import { SelectElementsModal } from "./SelectElementsModal";
@@ -177,19 +172,6 @@ export function BulkOperationMenu({
                         Content_ElementType_Enum.VideoBroadcast,
                         Content_ElementType_Enum.VideoPrepublish,
                     ],
-                });
-            },
-        },
-        {
-            label: "Manage security",
-            value: "SECURITY",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "SECURITY",
-                    items,
-                    step: "SELECT",
-                    elementsByItem: [],
-                    restrictToTypes: null,
                 });
             },
         },
@@ -371,13 +353,6 @@ export function BulkOperationMenu({
                 }}
                 items={activeOperation?.items ?? []}
             /> */}
-            <EditElementsPermissionGrantsModal
-                isOpen={activeOperation?.operation === "SECURITY" && activeOperation?.step === "ACT"}
-                onClose={() => {
-                    setActiveOperation(null);
-                }}
-                elementIds={R.flatten(activeOperation?.elementsByItem.map((x) => x.elementIds) ?? [])}
-            />
             <CombineVideosModal
                 isOpen={activeOperation?.operation === "COMBINE_VIDEOS" && activeOperation?.step === "ACT"}
                 onClose={() => {

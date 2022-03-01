@@ -16,25 +16,30 @@ insert_permissions:
     backend_only: false
     check:
       _and:
-      - registrant:
-          userId:
-            _eq: X-Hasura-User-Id
-      - conference:
-          _and:
-          - slug:
-              _eq: X-Hasura-Conference-Slug
-          - userPermissions:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_CONTENT
+      - createdByRegistrantId:
+          _in: X-Hasura-Registrant-Ids
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
     columns:
     - conferenceId
     - createdByRegistrantId
     - data
     - outputName
-  role: user
+  role: conference-organizer
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - createdByRegistrantId:
+          _in: X-Hasura-Registrant-Ids
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+    columns:
+    - conferenceId
+    - createdByRegistrantId
+    - data
+    - outputName
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
@@ -48,14 +53,21 @@ select_permissions:
     - outputName
     - updated_at
     filter:
-      conference:
-        _and:
-        - slug:
-            _eq: X-Hasura-Conference-Slug
-        - userPermissions:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - permission_name:
-                _eq: CONFERENCE_MANAGE_CONTENT
-  role: user
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - conferenceId
+    - createdByRegistrantId
+    - created_at
+    - data
+    - id
+    - jobStatusName
+    - message
+    - outputName
+    - updated_at
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: subconference-organizer

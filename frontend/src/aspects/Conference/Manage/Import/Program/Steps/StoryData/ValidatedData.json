@@ -1,0 +1,2047 @@
+[
+    {
+        "fileName": "Sample data - 2022 Import Template.xlsx - Program with no overlaps.csv",
+        "data": {
+            "sessions": [
+                {
+                    "content": {
+                        "title": "My awesome first session!",
+                        "abstract": "",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Ed Nutting",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": []
+                    },
+                    "event": {
+                        "name": "My awesome first session!",
+                        "start": "2022-01-01T13:00:00.000Z",
+                        "duration": 90,
+                        "chairs": [
+                            {
+                                "name": "Ed Nutting",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "interactionMode": null
+                    },
+                    "items": [],
+                    "presentations": [
+                        {
+                            "content": {
+                                "title": "Introduction",
+                                "abstract": "",
+                                "type": "Presentation",
+                                "authors": [],
+                                "chairs": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template1@midspace.app"
+                                    },
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template2@midspace.app"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": true,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Introduction",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template1@midspace.app"
+                                    },
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template2@midspace.app"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Why virtual sessions are great",
+                                "abstract": "",
+                                "type": "Keynote",
+                                "authors": [
+                                    {
+                                        "name": "Crista Lopes"
+                                    }
+                                ],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template1@midspace.app"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": true,
+                                "websiteLinkUpload": false,
+                                "tags": ["Keynotes"]
+                            },
+                            "event": {
+                                "name": "Why virtual sessions are great",
+                                "start": null,
+                                "duration": 60,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template1@midspace.app"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Using Midspace",
+                                "abstract": "",
+                                "type": "Tutorial",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template1@midspace.app"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": true,
+                                "websiteLinkUpload": true,
+                                "tags": ["Midspace Tutorial"]
+                            },
+                            "event": {
+                                "name": "Using Midspace",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template1@midspace.app"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Q&A",
+                                "abstract": "",
+                                "type": "Session Q&A",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template1@midspace.app"
+                                    },
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template2@midspace.app"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Q&A",
+                                "start": null,
+                                "duration": 20,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template1@midspace.app"
+                                    },
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "affiliation": "Midspace",
+                                        "email": "support+template2@midspace.app"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "content": {
+                        "title": "The ultimate second session!",
+                        "abstract": "",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Benjamin Pierce",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": ["Topic 1"]
+                    },
+                    "event": {
+                        "name": "The ultimate second session!",
+                        "start": "2022-01-01T15:00:00.000Z",
+                        "duration": 60,
+                        "chairs": [
+                            {
+                                "name": "Benjamin Pierce",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "interactionMode": null
+                    },
+                    "items": [],
+                    "presentations": [
+                        {
+                            "content": {
+                                "title": "Presentation #1",
+                                "abstract": "",
+                                "type": "Presentation",
+                                "authors": [],
+                                "chairs": [
+                                    {
+                                        "name": "Benjamin Pierce",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [
+                                    {
+                                        "name": "Person A",
+                                        "affiliation": "A1",
+                                        "email": "personA@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": true,
+                                "websiteLinkUpload": false,
+                                "tags": ["Topic 1"]
+                            },
+                            "event": {
+                                "name": "Presentation #1",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [
+                                    {
+                                        "name": "Benjamin Pierce",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [
+                                    {
+                                        "name": "Person A",
+                                        "affiliation": "A1",
+                                        "email": "personA@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Presentation #2",
+                                "abstract": "",
+                                "type": "Presentation",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Person B",
+                                        "affiliation": "A2",
+                                        "email": "personB@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": true,
+                                "websiteLinkUpload": false,
+                                "tags": ["Topic 1", "Topic 2"]
+                            },
+                            "event": {
+                                "name": "Presentation #2",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Person B",
+                                        "affiliation": "A2",
+                                        "email": "personB@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Presentation #3",
+                                "abstract": "",
+                                "type": "Presentation",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Person C",
+                                        "affiliation": "A3",
+                                        "email": "personC@example.org"
+                                    },
+                                    {
+                                        "name": "Person D",
+                                        "affiliation": "A4",
+                                        "email": "personD@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": true,
+                                "websiteLinkUpload": false,
+                                "tags": ["Topic 1", "Topic 3"]
+                            },
+                            "event": {
+                                "name": "Presentation #3",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Person C",
+                                        "affiliation": "A3",
+                                        "email": "personC@example.org"
+                                    },
+                                    {
+                                        "name": "Person D",
+                                        "affiliation": "A4",
+                                        "email": "personD@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Presentation #4",
+                                "abstract": "",
+                                "type": "Presentation",
+                                "authors": [
+                                    {
+                                        "name": "Person F"
+                                    }
+                                ],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Person E",
+                                        "affiliation": "A5",
+                                        "email": "personE@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": true,
+                                "websiteLinkUpload": false,
+                                "tags": ["Topic 2"]
+                            },
+                            "event": {
+                                "name": "Presentation #4",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Person E",
+                                        "affiliation": "A5",
+                                        "email": "personE@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Q&A",
+                                "abstract": "",
+                                "type": "Session Q&A",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Person A",
+                                        "affiliation": "A1",
+                                        "email": "personA@example.org"
+                                    },
+                                    {
+                                        "name": "Person B",
+                                        "affiliation": "A2",
+                                        "email": "personB@example.org"
+                                    },
+                                    {
+                                        "name": "Person C",
+                                        "affiliation": "A3",
+                                        "email": "personC@example.org"
+                                    },
+                                    {
+                                        "name": "Person E",
+                                        "affiliation": "A5",
+                                        "email": "personE@example.org"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": ["Topic 1", "Q&As"]
+                            },
+                            "event": {
+                                "name": "Q&A",
+                                "start": null,
+                                "duration": 20,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Person A",
+                                        "affiliation": "A1",
+                                        "email": "personA@example.org"
+                                    },
+                                    {
+                                        "name": "Person B",
+                                        "affiliation": "A2",
+                                        "email": "personB@example.org"
+                                    },
+                                    {
+                                        "name": "Person C",
+                                        "affiliation": "A3",
+                                        "email": "personC@example.org"
+                                    },
+                                    {
+                                        "name": "Person E",
+                                        "affiliation": "A5",
+                                        "email": "personE@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "content": {
+                        "title": "Keynote",
+                        "abstract": "",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Cristal Mojica",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": []
+                    },
+                    "event": {
+                        "name": "Keynote",
+                        "start": "2022-01-01T16:00:00.000Z",
+                        "duration": 60,
+                        "chairs": [
+                            {
+                                "name": "Cristal Mojica",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "interactionMode": null
+                    },
+                    "items": [],
+                    "presentations": [
+                        {
+                            "content": {
+                                "title": "Introduction",
+                                "abstract": "",
+                                "type": "Other",
+                                "authors": [],
+                                "chairs": [
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Introduction",
+                                "start": null,
+                                "duration": 5,
+                                "chairs": [
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "The awesome keynote title",
+                                "abstract": "The keynote's abstract text.",
+                                "type": "Keynote",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Keynote Speaker Name",
+                                        "affiliation": "Keynote Speaker Affiliation",
+                                        "email": "keynoteSpeaker@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": false,
+                                "websiteLinkUpload": true,
+                                "tags": ["Conference Theme 1"]
+                            },
+                            "event": {
+                                "name": "The awesome keynote title",
+                                "start": null,
+                                "duration": 40,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Keynote Speaker Name",
+                                        "affiliation": "Keynote Speaker Affiliation",
+                                        "email": "keynoteSpeaker@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Q&A",
+                                "abstract": "",
+                                "type": "Session Q&A",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Q&A",
+                                "start": null,
+                                "duration": 15,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "content": {
+                        "title": "Paper Session - Scheduled live presentations",
+                        "abstract": "Description of the theme of the session.",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Ed Nutting",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": []
+                    },
+                    "event": {
+                        "name": "Paper Session - Scheduled live presentations",
+                        "start": "2022-01-01T17:00:00.000Z",
+                        "duration": 45,
+                        "chairs": [
+                            {
+                                "name": "Ed Nutting",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "interactionMode": null
+                    },
+                    "items": [],
+                    "presentations": [
+                        {
+                            "content": {
+                                "title": "Welcome",
+                                "abstract": "",
+                                "type": "Other",
+                                "authors": [],
+                                "chairs": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Welcome",
+                                "start": null,
+                                "duration": 3,
+                                "chairs": [
+                                    {
+                                        "name": "Ed Nutting",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Paper 1",
+                                "abstract": "Paper 1's abstract",
+                                "type": "Paper",
+                                "authors": [
+                                    {
+                                        "name": "Co-author X"
+                                    }
+                                ],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 1",
+                                        "affiliation": "Author 1 Affiliation",
+                                        "email": "author1@example.org"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Paper 1",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 1",
+                                        "affiliation": "Author 1 Affiliation",
+                                        "email": "author1@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Paper 2",
+                                "abstract": "Paper 2's abstract",
+                                "type": "Paper",
+                                "authors": [
+                                    {
+                                        "name": "Co-author Y"
+                                    },
+                                    {
+                                        "name": "Co-author Z"
+                                    }
+                                ],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 2",
+                                        "affiliation": "Author 2 Affiliation",
+                                        "email": "author2@example.org"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Paper 2",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 2",
+                                        "affiliation": "Author 2 Affiliation",
+                                        "email": "author2@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Paper 3",
+                                "abstract": "Paper 3's abstract",
+                                "type": "Paper",
+                                "authors": [
+                                    {
+                                        "name": "Co-author Q"
+                                    }
+                                ],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 3",
+                                        "affiliation": "Author 3 Affiliation",
+                                        "email": "author3@example.org"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Paper 3",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 3",
+                                        "affiliation": "Author 3 Affiliation",
+                                        "email": "author3@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Q&A",
+                                "abstract": "",
+                                "type": "Session Q&A",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 1",
+                                        "affiliation": "Author 1 Affiliation",
+                                        "email": "author1@example.org"
+                                    },
+                                    {
+                                        "name": "Author 2",
+                                        "affiliation": "Author 2 Affiliation",
+                                        "email": "author2@example.org"
+                                    },
+                                    {
+                                        "name": "Author 3",
+                                        "affiliation": "Author 3 Affiliation",
+                                        "email": "author3@example.org"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Q&A",
+                                "start": null,
+                                "duration": 12,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 1",
+                                        "affiliation": "Author 1 Affiliation",
+                                        "email": "author1@example.org"
+                                    },
+                                    {
+                                        "name": "Author 2",
+                                        "affiliation": "Author 2 Affiliation",
+                                        "email": "author2@example.org"
+                                    },
+                                    {
+                                        "name": "Author 3",
+                                        "affiliation": "Author 3 Affiliation",
+                                        "email": "author3@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "content": {
+                        "title": "Paper Session - Scheduled pre-recorded presentations",
+                        "abstract": "Description of the theme of the session.",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Cristal Mojica",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": []
+                    },
+                    "event": {
+                        "name": "Paper Session - Scheduled pre-recorded presentations",
+                        "start": "2022-01-01T18:00:00.000Z",
+                        "duration": 45,
+                        "chairs": [
+                            {
+                                "name": "Cristal Mojica",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "interactionMode": null
+                    },
+                    "items": [],
+                    "presentations": [
+                        {
+                            "content": {
+                                "title": "Welcome",
+                                "abstract": "",
+                                "type": "Other",
+                                "authors": [],
+                                "chairs": [
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Welcome",
+                                "start": null,
+                                "duration": 3,
+                                "chairs": [
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Paper 1",
+                                "abstract": "Paper 1's abstract",
+                                "type": "Paper",
+                                "authors": [
+                                    {
+                                        "name": "Co-author X"
+                                    }
+                                ],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 1",
+                                        "affiliation": "Author 1 Affiliation",
+                                        "email": "author1@example.org"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": true,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Paper 1",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 1",
+                                        "affiliation": "Author 1 Affiliation",
+                                        "email": "author1@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Paper 2",
+                                "abstract": "Paper 2's abstract",
+                                "type": "Paper",
+                                "authors": [
+                                    {
+                                        "name": "Co-author Y"
+                                    },
+                                    {
+                                        "name": "Co-author Z"
+                                    }
+                                ],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 2",
+                                        "affiliation": "Author 2 Affiliation",
+                                        "email": "author2@example.org"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": true,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Paper 2",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 2",
+                                        "affiliation": "Author 2 Affiliation",
+                                        "email": "author2@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Paper 3",
+                                "abstract": "Paper 3's abstract",
+                                "type": "Paper",
+                                "authors": [
+                                    {
+                                        "name": "Co-author Q"
+                                    }
+                                ],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 3",
+                                        "affiliation": "Author 3 Affiliation",
+                                        "email": "author3@example.org"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": true,
+                                "videoUpload": true,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Paper 3",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 3",
+                                        "affiliation": "Author 3 Affiliation",
+                                        "email": "author3@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Q&A",
+                                "abstract": "",
+                                "type": "Session Q&A",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 1",
+                                        "affiliation": "Author 1 Affiliation",
+                                        "email": "author1@example.org"
+                                    },
+                                    {
+                                        "name": "Author 2",
+                                        "affiliation": "Author 2 Affiliation",
+                                        "email": "author2@example.org"
+                                    },
+                                    {
+                                        "name": "Author 3",
+                                        "affiliation": "Author 3 Affiliation",
+                                        "email": "author3@example.org"
+                                    }
+                                ],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Q&A",
+                                "start": null,
+                                "duration": 12,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Author 1",
+                                        "affiliation": "Author 1 Affiliation",
+                                        "email": "author1@example.org"
+                                    },
+                                    {
+                                        "name": "Author 2",
+                                        "affiliation": "Author 2 Affiliation",
+                                        "email": "author2@example.org"
+                                    },
+                                    {
+                                        "name": "Author 3",
+                                        "affiliation": "Author 3 Affiliation",
+                                        "email": "author3@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "content": {
+                        "title": "Paper Session - Unscheduled presentations",
+                        "abstract": "Description of the theme of the session.",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Ed Nutting",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": []
+                    },
+                    "event": {
+                        "name": "Paper Session - Unscheduled presentations",
+                        "start": "2022-01-01T19:00:00.000Z",
+                        "duration": 45,
+                        "chairs": [
+                            {
+                                "name": "Ed Nutting",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "interactionMode": null
+                    },
+                    "items": [
+                        {
+                            "title": "Paper 1",
+                            "abstract": "Paper 1's abstract",
+                            "type": "Paper",
+                            "authors": [
+                                {
+                                    "name": "Co-author X"
+                                }
+                            ],
+                            "chairs": [
+                                {
+                                    "name": "Ed Nutting",
+                                    "email": "support+template@midspace.app"
+                                }
+                            ],
+                            "speakers": [
+                                {
+                                    "name": "Author 1",
+                                    "affiliation": "Author 1 Affiliation",
+                                    "email": "author1@example.org"
+                                }
+                            ],
+                            "editableAbstract": false,
+                            "imageOrPosterUpload": false,
+                            "slidesUpload": true,
+                            "videoUpload": false,
+                            "websiteLinkUpload": false,
+                            "tags": []
+                        },
+                        {
+                            "title": "Paper 2",
+                            "abstract": "Paper 2's abstract",
+                            "type": "Paper",
+                            "authors": [
+                                {
+                                    "name": "Co-author Y"
+                                },
+                                {
+                                    "name": "Co-author Z"
+                                }
+                            ],
+                            "chairs": [],
+                            "speakers": [
+                                {
+                                    "name": "Author 2",
+                                    "affiliation": "Author 2 Affiliation",
+                                    "email": "author2@example.org"
+                                }
+                            ],
+                            "editableAbstract": false,
+                            "imageOrPosterUpload": false,
+                            "slidesUpload": true,
+                            "videoUpload": false,
+                            "websiteLinkUpload": false,
+                            "tags": []
+                        },
+                        {
+                            "title": "Paper 3",
+                            "abstract": "Paper 3's abstract",
+                            "type": "Paper",
+                            "authors": [
+                                {
+                                    "name": "Co-author Q"
+                                }
+                            ],
+                            "chairs": [],
+                            "speakers": [
+                                {
+                                    "name": "Author 3",
+                                    "affiliation": "Author 3 Affiliation",
+                                    "email": "author3@example.org"
+                                }
+                            ],
+                            "editableAbstract": false,
+                            "imageOrPosterUpload": false,
+                            "slidesUpload": true,
+                            "videoUpload": false,
+                            "websiteLinkUpload": false,
+                            "tags": []
+                        }
+                    ],
+                    "presentations": []
+                },
+                {
+                    "content": {
+                        "title": "Poster Session",
+                        "abstract": "Description of the theme or poster competition.",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Cristal Mojica",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": []
+                    },
+                    "event": {
+                        "name": "Poster Session",
+                        "start": "2022-01-01T20:00:00.000Z",
+                        "duration": 60,
+                        "chairs": [
+                            {
+                                "name": "Cristal Mojica",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "interactionMode": null
+                    },
+                    "items": [],
+                    "presentations": [
+                        {
+                            "content": {
+                                "title": "Introduction",
+                                "abstract": "Explanation of how the competition works and the session format.",
+                                "type": "Other",
+                                "authors": [],
+                                "chairs": [
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Introduction",
+                                "start": null,
+                                "duration": 5,
+                                "chairs": [
+                                    {
+                                        "name": "Cristal Mojica",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "[Switchover time]",
+                                "abstract": "",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "[Switchover time]",
+                                "start": null,
+                                "duration": 1,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Poster 1",
+                                "abstract": "Poster 1 abstract",
+                                "type": "Poster",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Poster Author 1",
+                                        "affiliation": "Poster Author 1 Affiliation",
+                                        "email": "poster-author1@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": true,
+                                "slidesUpload": false,
+                                "videoUpload": true,
+                                "websiteLinkUpload": true,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Poster 1",
+                                "start": null,
+                                "duration": 5,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Poster Author 1",
+                                        "affiliation": "Poster Author 1 Affiliation",
+                                        "email": "poster-author1@example.org"
+                                    }
+                                ],
+                                "interactionMode": "video-chat"
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "[Switchover time]",
+                                "abstract": "",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "[Switchover time]",
+                                "start": null,
+                                "duration": 1,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Poster 2",
+                                "abstract": "Poster 2 abstract",
+                                "type": "Poster",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Poster Author 2",
+                                        "affiliation": "Poster Author 2 Affiliation",
+                                        "email": "poster-author2@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": true,
+                                "slidesUpload": false,
+                                "videoUpload": true,
+                                "websiteLinkUpload": true,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Poster 2",
+                                "start": null,
+                                "duration": 5,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Poster Author 2",
+                                        "affiliation": "Poster Author 2 Affiliation",
+                                        "email": "poster-author2@example.org"
+                                    }
+                                ],
+                                "interactionMode": "video-chat"
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "[Switchover time]",
+                                "abstract": "",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "[Switchover time]",
+                                "start": null,
+                                "duration": 1,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Poster 3",
+                                "abstract": "Poster 3 abstract",
+                                "type": "Poster",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Poster Author 3",
+                                        "affiliation": "Poster Author 3 Affiliation",
+                                        "email": "poster-author3@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": true,
+                                "slidesUpload": false,
+                                "videoUpload": true,
+                                "websiteLinkUpload": true,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Poster 3",
+                                "start": null,
+                                "duration": 5,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Poster Author 3",
+                                        "affiliation": "Poster Author 3 Affiliation",
+                                        "email": "poster-author3@example.org"
+                                    }
+                                ],
+                                "interactionMode": "video-chat"
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "[Switchover time]",
+                                "abstract": "",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "[Switchover time]",
+                                "start": null,
+                                "duration": 1,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Poster 4",
+                                "abstract": "Poster 4 abstract",
+                                "type": "Poster",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Poster Author 4",
+                                        "affiliation": "Poster Author 4 Affiliation",
+                                        "email": "poster-author4@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": true,
+                                "slidesUpload": false,
+                                "videoUpload": true,
+                                "websiteLinkUpload": true,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Poster 4",
+                                "start": null,
+                                "duration": 5,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Poster Author 4",
+                                        "affiliation": "Poster Author 4 Affiliation",
+                                        "email": "poster-author4@example.org"
+                                    }
+                                ],
+                                "interactionMode": "video-chat"
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Breakout discussion",
+                                "abstract": "Join the discussion room for a poster to chat to the author!",
+                                "type": "Other",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": false,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Breakout discussion",
+                                "start": null,
+                                "duration": 25,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": "breakout video-chat"
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Winners announcement",
+                                "abstract": "Announcement of the winners of the competition",
+                                "type": "Other",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Winners announcement",
+                                "start": null,
+                                "duration": 6,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "content": {
+                        "title": "Tutorial or Workshop - Unstructured",
+                        "abstract": "Description of the theme of the tutorial or workshop",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Workhop Organizer 1",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": []
+                    },
+                    "event": {
+                        "name": "Tutorial or Workshop - Unstructured",
+                        "start": "2022-01-02T12:00:00.000Z",
+                        "duration": 240,
+                        "chairs": [
+                            {
+                                "name": "Workhop Organizer 1",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "interactionMode": null
+                    },
+                    "items": [],
+                    "presentations": []
+                },
+                {
+                    "content": {
+                        "title": "Tutorial or Workshop - Partially structured",
+                        "abstract": "Description of the theme of the tutorial or workshop",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Workhop Organizer 1",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": []
+                    },
+                    "event": {
+                        "name": "Tutorial or Workshop - Partially structured",
+                        "start": "2022-01-03T12:00:00.000Z",
+                        "duration": 240,
+                        "chairs": [
+                            {
+                                "name": "Workhop Organizer 1",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "interactionMode": null
+                    },
+                    "items": [],
+                    "presentations": [
+                        {
+                            "content": {
+                                "title": "Welcome",
+                                "abstract": "",
+                                "type": "Workshop",
+                                "authors": [],
+                                "chairs": [
+                                    {
+                                        "name": "Workhop Organizer 1",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Welcome",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [
+                                    {
+                                        "name": "Workhop Organizer 1",
+                                        "email": "support+template@midspace.app"
+                                    }
+                                ],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Presentations",
+                                "abstract": "Description of presentations in part 1",
+                                "type": "Workshop",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Speaker 1",
+                                        "affiliation": "",
+                                        "email": "speaker1@example.org"
+                                    },
+                                    {
+                                        "name": "Speaker 2",
+                                        "affiliation": "",
+                                        "email": "speaker2@example.org"
+                                    },
+                                    {
+                                        "name": "Speaker 3",
+                                        "affiliation": "",
+                                        "email": "speaker3@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Presentations",
+                                "start": null,
+                                "duration": 30,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Speaker 1",
+                                        "affiliation": "",
+                                        "email": "speaker1@example.org"
+                                    },
+                                    {
+                                        "name": "Speaker 2",
+                                        "affiliation": "",
+                                        "email": "speaker2@example.org"
+                                    },
+                                    {
+                                        "name": "Speaker 3",
+                                        "affiliation": "",
+                                        "email": "speaker3@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Discussion",
+                                "abstract": "Description of how the discussion will be moderated",
+                                "type": "Workshop",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Discussion",
+                                "start": null,
+                                "duration": 60,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Break",
+                                "abstract": "Social time! (Any specific activities?)",
+                                "type": "Other",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Break",
+                                "start": null,
+                                "duration": 35,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": "networking"
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Re-opening",
+                                "abstract": "",
+                                "type": "Other",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Re-opening",
+                                "start": null,
+                                "duration": 5,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Presentations",
+                                "abstract": "Description of presentations in part 2",
+                                "type": "Workshop",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Speaker 4",
+                                        "affiliation": "",
+                                        "email": "speaker4@example.org"
+                                    },
+                                    {
+                                        "name": "Speaker 5",
+                                        "affiliation": "",
+                                        "email": "speaker5@example.org"
+                                    },
+                                    {
+                                        "name": "Speaker 6",
+                                        "affiliation": "",
+                                        "email": "speaker6@example.org"
+                                    }
+                                ],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Presentations",
+                                "start": null,
+                                "duration": 30,
+                                "chairs": [],
+                                "speakers": [
+                                    {
+                                        "name": "Speaker 4",
+                                        "affiliation": "",
+                                        "email": "speaker4@example.org"
+                                    },
+                                    {
+                                        "name": "Speaker 5",
+                                        "affiliation": "",
+                                        "email": "speaker5@example.org"
+                                    },
+                                    {
+                                        "name": "Speaker 6",
+                                        "affiliation": "",
+                                        "email": "speaker6@example.org"
+                                    }
+                                ],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Discussion",
+                                "abstract": "Description of how the discussion will be moderated",
+                                "type": "Workshop",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Discussion",
+                                "start": null,
+                                "duration": 60,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        },
+                        {
+                            "content": {
+                                "title": "Closing",
+                                "abstract": "",
+                                "type": "Workshop",
+                                "authors": [],
+                                "chairs": [],
+                                "speakers": [],
+                                "editableAbstract": true,
+                                "imageOrPosterUpload": false,
+                                "slidesUpload": false,
+                                "videoUpload": false,
+                                "websiteLinkUpload": false,
+                                "tags": []
+                            },
+                            "event": {
+                                "name": "Closing",
+                                "start": null,
+                                "duration": 10,
+                                "chairs": [],
+                                "speakers": [],
+                                "interactionMode": null
+                            }
+                        }
+                    ]
+                }
+            ],
+            "exhibitions": [
+                {
+                    "content": {
+                        "title": "Poster Exhibition",
+                        "abstract": "Description of the theme or poster competition.",
+                        "type": "Session",
+                        "authors": [],
+                        "chairs": [
+                            {
+                                "name": "Cristal Mojica",
+                                "email": "support+template@midspace.app"
+                            }
+                        ],
+                        "speakers": [],
+                        "editableAbstract": false,
+                        "imageOrPosterUpload": false,
+                        "slidesUpload": false,
+                        "videoUpload": false,
+                        "websiteLinkUpload": false,
+                        "tags": []
+                    },
+                    "items": [
+                        {
+                            "title": "Poster 1",
+                            "abstract": "Poster 1 abstract",
+                            "type": "Poster",
+                            "authors": [],
+                            "chairs": [
+                                {
+                                    "name": "Cristal Mojica",
+                                    "email": "support+template@midspace.app"
+                                }
+                            ],
+                            "speakers": [
+                                {
+                                    "name": "Poster Author 1",
+                                    "affiliation": "Poster Author 1 Affiliation",
+                                    "email": "poster-author1@example.org"
+                                }
+                            ],
+                            "editableAbstract": true,
+                            "imageOrPosterUpload": true,
+                            "slidesUpload": false,
+                            "videoUpload": true,
+                            "websiteLinkUpload": true,
+                            "tags": []
+                        },
+                        {
+                            "title": "Poster 2",
+                            "abstract": "Poster 2 abstract",
+                            "type": "Poster",
+                            "authors": [],
+                            "chairs": [],
+                            "speakers": [
+                                {
+                                    "name": "Poster Author 2",
+                                    "affiliation": "Poster Author 2 Affiliation",
+                                    "email": "poster-author2@example.org"
+                                }
+                            ],
+                            "editableAbstract": true,
+                            "imageOrPosterUpload": true,
+                            "slidesUpload": false,
+                            "videoUpload": true,
+                            "websiteLinkUpload": true,
+                            "tags": []
+                        },
+                        {
+                            "title": "Poster 3",
+                            "abstract": "Poster 3 abstract",
+                            "type": "Poster",
+                            "authors": [],
+                            "chairs": [],
+                            "speakers": [
+                                {
+                                    "name": "Poster Author 3",
+                                    "affiliation": "Poster Author 3 Affiliation",
+                                    "email": "poster-author3@example.org"
+                                }
+                            ],
+                            "editableAbstract": true,
+                            "imageOrPosterUpload": true,
+                            "slidesUpload": false,
+                            "videoUpload": true,
+                            "websiteLinkUpload": true,
+                            "tags": []
+                        },
+                        {
+                            "title": "Poster 4",
+                            "abstract": "Poster 4 abstract",
+                            "type": "Poster",
+                            "authors": [],
+                            "chairs": [],
+                            "speakers": [
+                                {
+                                    "name": "Poster Author 4",
+                                    "affiliation": "Poster Author 4 Affiliation",
+                                    "email": "poster-author4@example.org"
+                                }
+                            ],
+                            "editableAbstract": true,
+                            "imageOrPosterUpload": true,
+                            "slidesUpload": false,
+                            "videoUpload": true,
+                            "websiteLinkUpload": true,
+                            "tags": []
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+]

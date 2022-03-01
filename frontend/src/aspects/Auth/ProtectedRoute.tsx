@@ -1,11 +1,11 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import { Button, Text } from "@chakra-ui/react";
+import { Button, chakra, Link, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { RouteComponentProps, RouteProps } from "react-router-dom";
 import { Redirect, Route } from "react-router-dom";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
+import FAIcon from "../Chakra/FAIcon";
 import GenericErrorPage from "../Errors/GenericErrorPage";
-import { FAIcon } from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 export default function ProtectedRoute({
@@ -35,7 +35,23 @@ export default function ProtectedRoute({
             <GenericErrorPage heading="Sorry, an authentication error occurred…">
                 <>
                     <Text fontSize="xl" lineHeight="revert" fontWeight="light">
-                        User account was not found. Please contact tech support if this problem persists.
+                        User account was not found. Please contact our support team if this problem persists.
+                    </Text>
+                    <Text fontSize="md" lineHeight="revert" fontWeight="light">
+                        <chakra.span fontStyle="italic" mr={1}>
+                            Signed in with Google?
+                        </chakra.span>
+                        <chakra.span>
+                            If you previously had an account with us and have signed in with Google for the first time,
+                            we may need to reconcile your accounts. Please contact our support team at{" "}
+                        </chakra.span>
+                        <Link
+                            wordBreak="keep-all"
+                            whiteSpace="nowrap"
+                            href={`mailto:${import.meta.env.VITE_TECH_SUPPORT_ADDRESS ?? "support@midspace.app"}`}
+                        >
+                            {import.meta.env.VITE_TECH_SUPPORT_ADDRESS ?? "support@midspace.app"}
+                        </Link>
                     </Text>
                     <Button
                         onClick={() => logout({ returnTo })}
@@ -52,14 +68,14 @@ export default function ProtectedRoute({
     }
 
     if (isAuthenticated && !user) {
-        return <CenteredSpinner />;
+        return <CenteredSpinner caller="ProtectedRoute:55" />;
     }
 
     return (
         <Route
             component={withAuthenticationRequired(component, {
                 onRedirecting: function waitRedirecting() {
-                    return <CenteredSpinner />;
+                    return <CenteredSpinner caller="ProtectedRoute:62" />;
                 },
                 returnTo: () => {
                     return redirectTo ?? window.location.href;

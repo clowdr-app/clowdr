@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -18,28 +17,29 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Fragment, useMemo, useState } from "react";
-import type {
-    ManageModeration_ChatFlagFragment} from "../../../../../generated/graphql";
+import type { ManageModeration_ChatFlagFragment } from "../../../../../generated/graphql";
 import {
-    Permissions_Permission_Enum,
     useManageModeration_SelectFlagsQuery,
     useManageModeration_UpdateFlagMutation,
 } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
+import { Markdown } from "../../../../Chakra/Markdown";
 import { MessageState } from "../../../../Chat/ChatGlobalState";
-import type { ChatConfiguration} from "../../../../Chat/Configuration";
+import type { ChatConfiguration } from "../../../../Chat/Configuration";
 import { ChatConfigurationProvider, ChatSpacing } from "../../../../Chat/Configuration";
 import EmojiPickerProvider from "../../../../Chat/EmojiPickerProvider";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
 import MessageBox from "../../../../Chat/Messages/MessageBox";
 import PageNotFound from "../../../../Errors/PageNotFound";
-import { useRestorableState } from "../../../../Generic/useRestorableState";
-import { Markdown } from "../../../../Text/Markdown";
-import { useTitle } from "../../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import { makeContext } from "../../../../GQL/make-context";
+import { useRestorableState } from "../../../../Hooks/useRestorableState";
+import { useTitle } from "../../../../Hooks/useTitle";
+import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 
@@ -69,10 +69,7 @@ export default function ManageModeration(): JSX.Element {
     const title = useTitle(`Moderate chats for ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceModerateAttendees]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole moderatorRole componentIfDenied={<PageNotFound />}>
             <Box w="100%">
                 {title}
                 <Heading mt={4} as="h1" size="xl">
@@ -83,16 +80,24 @@ export default function ManageModeration(): JSX.Element {
                 </Heading>
                 <ModerationList />
             </Box>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }
 
 function ModerationList(): JSX.Element {
     const conference = useConference();
-    const flagsResponse = useManageModeration_SelectFlagsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [flagsResponse] = useManageModeration_SelectFlagsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     const sortedFlags = useMemo(
         () =>
@@ -110,7 +115,9 @@ function ModerationList(): JSX.Element {
 
     return (
         <>
-            {flagsResponse.loading && sortedFlags === undefined ? <CenteredSpinner /> : undefined}
+            {flagsResponse.fetching && sortedFlags === undefined ? (
+                <CenteredSpinner caller="ManageModeration:118" />
+            ) : undefined}
             <ModerationChatConfigurationProvider>
                 <List spacing={8} mt={4} px={2} py={2}>
                     {sortedFlags?.map((flag, idx) =>
@@ -285,7 +292,7 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
     const messageState = useMemo(() => new MessageState(chatState, flag.message), [chatState, flag.message]);
     const registrant = useCurrentRegistrant();
 
-    const [update, updateResponse] = useManageModeration_UpdateFlagMutation();
+    const [updateResponse, update] = useManageModeration_UpdateFlagMutation();
 
     const [newNote, setNewNote] = useState<string>("");
     const [resolution, setResolution] = useState<string>("");
@@ -349,10 +356,10 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                             colorScheme="purple"
                             size="sm"
                             isDisabled={newNote.trim().length === 0}
-                            isLoading={updateResponse.loading}
+                            isLoading={updateResponse.fetching}
                             onClick={() => {
-                                update({
-                                    variables: {
+                                update(
+                                    {
                                         flagId: flag.id,
                                         update: {
                                             notes:
@@ -364,7 +371,14 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                                                 newNote.trim(),
                                         },
                                     },
-                                });
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                [AuthHeader.Role]: "moderator",
+                                            },
+                                        },
+                                    }
+                                );
                             }}
                         >
                             Add note
@@ -389,15 +403,13 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                             colorScheme="purple"
                             size="sm"
                             isDisabled={resolution.trim().length === 0}
-                            isLoading={updateResponse.loading}
+                            isLoading={updateResponse.fetching}
                             onClick={() => {
                                 update({
-                                    variables: {
-                                        flagId: flag.id,
-                                        update: {
-                                            resolution: resolution.trim(),
-                                            resolved_at: new Date().toISOString(),
-                                        },
+                                    flagId: flag.id,
+                                    update: {
+                                        resolution: resolution.trim(),
+                                        resolved_at: new Date().toISOString(),
                                     },
                                 });
                             }}

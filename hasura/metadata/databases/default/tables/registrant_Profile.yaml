@@ -10,58 +10,93 @@ select_permissions:
     columns:
     - affiliation
     - affiliationURL
-    - registrantId
     - badges
     - bio
     - country
+    - created_at
     - github
     - hasBeenEdited
     - photoURL_350x350
     - photoURL_50x50
     - pronouns
+    - registrantId
     - timezoneUTCOffset
     - twitter
+    - updated_at
     - website
     filter:
       registrant:
-        _or:
-        - _and:
-          - userId:
-              _is_null: false
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_VIEW_ATTENDEES
-        - _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_ROLES
-                    - CONFERENCE_MANAGE_GROUPS
-                    - CONFERENCE_MANAGE_ATTENDEES
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: attendee
+- permission:
+    columns:
+    - affiliation
+    - affiliationURL
+    - badges
+    - bio
+    - country
+    - created_at
+    - github
+    - hasBeenEdited
+    - photoURL_350x350
+    - photoURL_50x50
+    - pronouns
+    - registrantId
+    - timezoneUTCOffset
+    - twitter
+    - updated_at
+    - website
+    filter:
+      registrant:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - affiliation
+    - affiliationURL
+    - badges
+    - bio
+    - country
+    - created_at
+    - github
+    - hasBeenEdited
+    - photoURL_350x350
+    - photoURL_50x50
+    - pronouns
+    - registrantId
+    - timezoneUTCOffset
+    - twitter
+    - updated_at
+    - website
+    filter:
+      registrant:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: subconference-organizer
+- permission:
+    columns:
+    - affiliation
+    - affiliationURL
+    - badges
+    - bio
+    - country
+    - created_at
+    - github
+    - hasBeenEdited
+    - photoURL_350x350
+    - photoURL_50x50
+    - pronouns
+    - registrantId
+    - timezoneUTCOffset
+    - twitter
+    - updated_at
+    - website
+    filter:
+      registrant:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
   role: user
 update_permissions:
 - permission:
@@ -79,51 +114,64 @@ update_permissions:
     - twitter
     - website
     filter:
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: attendee
+- permission:
+    check: null
+    columns:
+    - affiliation
+    - affiliationURL
+    - badges
+    - bio
+    - country
+    - github
+    - pronouns
+    - timezoneUTCOffset
+    - twitter
+    - website
+    filter:
       registrant:
-        _or:
-        - userId:
-            _eq: X-Hasura-User-Id
-        - _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_ROLES
-                    - CONFERENCE_MANAGE_GROUPS
-                    - CONFERENCE_MANAGE_ATTENDEES
-  role: user
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    check: null
+    columns:
+    - affiliation
+    - affiliationURL
+    - badges
+    - bio
+    - country
+    - github
+    - hasBeenEdited
+    - pronouns
+    - timezoneUTCOffset
+    - twitter
+    - website
+    filter:
+      registrant:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceMemberships:
+            subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
       registrant:
-        conference:
-          _and:
-          - slug:
-              _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_ROLES
-                    - CONFERENCE_MANAGE_GROUPS
-                    - CONFERENCE_MANAGE_ATTENDEES
-  role: user
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    filter:
+      registrant:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceMemberships:
+            subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer

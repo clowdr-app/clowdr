@@ -1,4 +1,4 @@
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { useChatConfiguration } from "../Configuration";
 import type { MutableQuery } from "../Types/Queries";
@@ -23,7 +23,7 @@ export function ChatPinnedQueryProvider({
     const [isPinned, setIsPinned] = useState<boolean | null>(null);
 
     useEffect(() => {
-        assert(
+        assert.truthy(
             config.state?.IsPinned !== undefined,
             "config.state is null. Chat state is not available in the current context."
         );
@@ -39,7 +39,7 @@ export function ChatPinnedQueryProvider({
     );
 
     const mutate = useCallback(async () => {
-        assert(config.state, "config.state is null. Chat state is not available in the current context.");
+        assert.truthy(config.state, "config.state is null. Chat state is not available in the current context.");
         await config.state.togglePinned();
     }, [config.state]);
 

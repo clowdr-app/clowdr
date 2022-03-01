@@ -1,7 +1,7 @@
 import { chakra, FormControl, FormLabel, Progress, useId } from "@chakra-ui/react";
 import { useLocalAudioInputActivity, useToggleLocalMute } from "amazon-chime-sdk-component-library-react";
 import React, { useCallback, useRef, useState } from "react";
-import usePolling from "../../../../Generic/usePolling";
+import usePolling from "../../../../Hooks/usePolling";
 
 export function MicrophoneActivityPreviewInner({ className }: { className?: string }): JSX.Element {
     const [value, setValue] = useState<number>(0);

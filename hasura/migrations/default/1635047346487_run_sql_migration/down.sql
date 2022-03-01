@@ -1,0 +1,4 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- ALTER TABLE "permissions"."Group" SET SCHEMA "registrant";
+-- ALTER TABLE "permissions"."GroupRegistrant" SET SCHEMA "registrant";

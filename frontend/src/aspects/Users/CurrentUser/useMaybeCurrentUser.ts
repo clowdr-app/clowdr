@@ -12,14 +12,11 @@ export type UserInfo = {
      * `UserInfoFragment` if the user was found.
      */
     user: UserInfoFragment | false | undefined;
-    refetchUser: () => Promise<unknown>;
 };
 
 export const defaultCurrentUserContext: UserInfo = {
     loading: true,
     user: undefined,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    refetchUser: async function (): Promise<void> {},
 };
 
 export const CurrentUserContext = React.createContext<UserInfo>(defaultCurrentUserContext);

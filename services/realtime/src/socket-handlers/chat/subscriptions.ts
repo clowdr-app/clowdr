@@ -1,11 +1,11 @@
+import { UserCache } from "@midspace/caches/user";
 import assert from "assert";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { getRegistrantInfo } from "../../lib/cache/registrantInfo";
 import { generateChatSubscriptionsChangedRoomName } from "../../lib/chat";
+import { logger } from "../../lib/logger";
 
 export function onListenForSubscriptionsChanged(
-    _conferenceSlugs: string[],
     userId: string,
     socketId: string,
     socket: Socket
@@ -15,18 +15,14 @@ export function onListenForSubscriptionsChanged(
             try {
                 assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const registrantInfo = await getRegistrantInfo(registrantId, {
-                    displayName: "chat.onListenForSubscriptionsChanged:test-registrant-id",
-                    userId,
-                });
-
-                if (registrantInfo?.userId === userId) {
+                const registrants = await new UserCache(logger).getField(userId, "registrants");
+                if (registrants?.some((x) => x.id === registrantId)) {
                     socket.join(generateChatSubscriptionsChangedRoomName(registrantId));
                 }
-            } catch (e) {
-                console.error(
-                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`,
-                    e
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`
                 );
             }
         }
@@ -34,7 +30,6 @@ export function onListenForSubscriptionsChanged(
 }
 
 export function onUnlistenForSubscriptionsChanged(
-    _conferenceSlugs: string[],
     userId: string,
     socketId: string,
     socket: Socket
@@ -44,18 +39,14 @@ export function onUnlistenForSubscriptionsChanged(
             try {
                 assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const registrantInfo = await getRegistrantInfo(registrantId, {
-                    displayName: "chat.onListenForSubscriptionsChanged:test-registrant-id",
-                    userId,
-                });
-
-                if (registrantInfo?.userId === userId) {
+                const registrants = await new UserCache(logger).getField(userId, "registrants");
+                if (registrants?.some((x) => x.id === registrantId)) {
                     socket.leave(generateChatSubscriptionsChangedRoomName(registrantId));
                 }
-            } catch (e) {
-                console.error(
-                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`,
-                    e
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`
                 );
             }
         }

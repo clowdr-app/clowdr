@@ -1,0 +1,7 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE VIEW "system"."SuperUserState"
+-- AS SELECT (COUNT(*) > 0)  AS "isInitialised"
+--    FROM "system"."SuperUserPermissionGrant"
+--    WHERE "grantedPermissionName" = 'INSERT_SU_PERMISSION'
+--    AND "targetPermissionName" = 'INSERT_SU_PERMISSION';

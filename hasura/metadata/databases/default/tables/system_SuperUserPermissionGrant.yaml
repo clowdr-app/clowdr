@@ -1,0 +1,83 @@
+table:
+  name: SuperUserPermissionGrant
+  schema: system
+object_relationships:
+- name: grantedPermission
+  using:
+    foreign_key_constraint_on: grantedPermissionName
+- name: targetPermission
+  using:
+    foreign_key_constraint_on: targetPermissionName
+- name: user
+  using:
+    foreign_key_constraint_on: userId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      grantedPermission:
+        superUserGrantTargets:
+          _and:
+          - grantedPermissionName:
+              _eq: INSERT_SU_PERMISSION
+          - userId:
+              _eq: X-Hasura-User-Id
+    columns:
+    - grantedPermissionName
+    - id
+    - targetPermissionName
+    - userId
+  role: superuser
+select_permissions:
+- permission:
+    columns:
+    - grantedPermissionName
+    - targetPermissionName
+    - userId
+    - created_at
+    - updated_at
+    - id
+    filter:
+      _or:
+      - grantedPermission:
+          superUserGrantTargets:
+            _and:
+            - grantedPermissionName:
+                _eq: VIEW_SU_PERMISSION_GRANT
+            - userId:
+                _eq: X-Hasura-User-Id
+      - userId:
+          _eq: X-Hasura-User-Id
+  role: superuser
+update_permissions:
+- permission:
+    check: null
+    columns: []
+    filter:
+      grantedPermission:
+        superUserGrantTargets:
+          _and:
+          - grantedPermissionName:
+              _eq: INSERT_SU_PERMISSION
+          - userId:
+              _eq: X-Hasura-User-Id
+  role: superuser
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - grantedPermission:
+          superUserGrantTargets:
+            _and:
+            - grantedPermissionName:
+                _eq: DELETE_SU_PERMISSION
+            - userId:
+                _eq: X-Hasura-User-Id
+      - _or:
+        - grantedPermissionName:
+            _neq: INSERT_SU_PERMISSION
+        - userId:
+            _neq: X-Hasura-User-Id
+        - targetPermissionName:
+            _neq: INSERT_SU_PERMISSION
+  role: superuser

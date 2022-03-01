@@ -40,7 +40,7 @@ To configure a single profile/instance, follow these steps:
      - `sso_region`: e.g. `eu-west-1`
      - `sso_account_id`: the numeric ID of the AWS account your SSO user has been granted access to.
 
-1. Using these credentials, add a named profile to [`~/.aws/config`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). In this case, we're using the name `sandbox`, but you can choose whatever you like.
+1. Using these credentials, add a named profile to [`~/.aws/config`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). In this case, we're using the name `sandbox`, but you can choose whatever you like. If the directory `~/.aws` does not exist on your machine, you may create it manually and create an extensionless `config` file inside.
 
    - For example:
 
@@ -91,8 +91,7 @@ If you just want to get up and running as quickly as possible, and you do not ca
 ## Setting up local env files
 
 1. `cd` into the `aws` folder
-1. Install npm modules: `npm i`
-1. `cp env.sandbox.example env.sandbox` and fill in environment variable values following the instructions in comments `env.sandbox`. It is recommended to generate a secure random `VONAGE_API_KEY`.
+1. `cp .env.sandbox.example .env.sandbox` and fill in environment variable values following the instructions in comments `.env.sandbox`. It is recommended to generate a secure random `VONAGE_API_KEY`.
 1. Optional Configure additional env files for each instance of Midspace you want to deploy (e.g. personal sandbox, staging, production).
    - The env file must be named `.env.<profile>`, where `<profile>` is the name of an AWS profile that you configured.
    - You can deploy multiple Midspace instances to the same AWS account by setting a different `STACK_PREFIX` in the corresponding env file. This is, however, not recommended.
@@ -100,39 +99,10 @@ If you just want to get up and running as quickly as possible, and you do not ca
 
 ## Deploying the main AWS CloudFormation stacks
 
-**Info:** The stack `<prefix>-main` contains the main infrastructure for the Midspace app (e.g. S3 buckets, permissions for transcode/transcribe etc.). The stack `<prefix>-chime` contains AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane.
+**Info:** The stack `<prefix>-main` contains the main infrastructure for the Midspace app (e.g. S3 buckets, permissions for transcode/transcribe etc.). The stack `<prefix>-chime` contains AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane. The stack `<prefix>-img` contains the infrastructure for serverless resizing of profile images.
 
 1. Run the `AWS -- Deploy stacks` VSCode task to deploy the Midspace infrastructure to your account. You will be asked for the name of the AWS profile you want to deploy to.
-1. Make a note of the various output values. These are required as environment variables when setting up the actions service and other services. They can be viewed later by logging in to AWS CloudFormation, clicking the stack in question, and then clicking the Outputs tab.
-
-## Deploying the image handler
-
-We use the AWS `serverless-image-handler` template for processing uploaded profile images. These are the steps to deploy it:
-
-1. Create a new secret in AWS Secrets Manager: - you can use any secret name and secret key you like.
-   1. Select `Other type of secrets` and `Secret key/value`
-   1. You can use any key you like, perhaps `<prefix>-image-handler`.
-   1. Choose a secure random string for the value and make a note of it.
-   1. Click `Next` and choose any secret name you like that will associate it with this stack and the image handler.
-   1. Click `Next` again, leave automatic rotation disabled, and click `Next` again, and finally `Store`.
-1. In AWS CloudFormation, create a stack:
-   1. Click `Create Stack` -> `With New Resources`
-   1. Select `Template is ready` and `Template Source`: `Amazon S3 URL`. Use this template:
-   1. `https://solutions-reference.s3.amazonaws.com/serverless-image-handler/latest/serverless-image-handler.template`
-1. Choose the Stack name to be something unique, preferably using your `STACK_PREFIX` from i.e. `aws/.env.sandbox` or the relevant environment file.
-1. Set the parameters as follows:
-   - `CorsEnabled`: Yes
-   - `CorsOrigin`: `http://localhost` if running locally, or an appropriate origin.
-   - `SourceBuckets`: the name of your content bucket (i.e. `AWS_CONTENT_BUCKET_ID`. This is visible in the `Outputs` tab for your `<prefix>-main` stack in the CloudFormation console.)
-   - `DeployDemoUI`: No
-   - `LogRetentionPeriod`: 1
-   - `EnableSignature`: Yes
-   - `SecretsManagerSecret`: the name of the secret you created earlier
-   - `SecretsManagerKey`: the key of the secret you created earlier
-   - `EnableDefaultFallbackImage`: No
-   - `AutoWebP`: Yes
-1. Deploy the stack and wait for creation to complete.
-1. Make a note of the `ApiEndpoint` output.
+1. Make a note of the various output values. These are required as environment variables when setting up the actions service and other services. They can be viewed later by logging in to AWS CloudFormation, clicking the stack in question, and then clicking the Outputs tab. Note that your stacks may have been deployed to different AWS regions depending on your configuration. To access the stacks in CloudFormation you will need to change the region in the AWS console, via the menu bar dropdown, to the respective deployment region.
 
 ## Useful commands
 

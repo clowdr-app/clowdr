@@ -1,0 +1,99 @@
+table:
+  name: TierMember
+  schema: sponsor
+object_relationships:
+- name: item
+  using:
+    foreign_key_constraint_on: itemId
+- name: tier
+  using:
+    foreign_key_constraint_on: tierId
+select_permissions:
+- permission:
+    columns:
+    - priority
+    - created_at
+    - updated_at
+    - id
+    - itemId
+    - tierId
+    filter:
+      item:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - _or:
+          - subconferenceId:
+              _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+  role: attendee
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - tierId
+    - itemId
+    - priority
+    filter:
+      item:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - _or:
+          - subconferenceId:
+              _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - priority
+    - created_at
+    - updated_at
+    - id
+    - itemId
+    - tierId
+    filter:
+      item:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - _or:
+          - subconferenceId:
+              _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
+- permission:
+    columns:
+    - priority
+    - created_at
+    - updated_at
+    - id
+    - itemId
+    - tierId
+    filter:
+      item:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - _or:
+          - subconferenceId:
+              _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+  role: unauthenticated

@@ -1,16 +1,18 @@
 import { gql } from "@apollo/client/core";
-import { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
-import { SourceType } from "@clowdr-app/shared-types/build/content/element";
-import { EmailView_SubtitlesGenerated } from "@clowdr-app/shared-types/build/email";
+import type { GetUploadAgreementOutput } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { ElementData } from "@midspace/hasura/event-data";
+import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { AWSJobStatus } from "@midspace/shared-types/content";
+import { SourceType } from "@midspace/shared-types/content/element";
+import type { EmailView_SubtitlesGenerated } from "@midspace/shared-types/email";
 import assert from "assert";
 import { compile } from "handlebars";
+import type { P } from "pino";
 import R from "ramda";
+import type { ElementUpdateNotification_ElementDetailsFragment, Email_Insert_Input } from "../generated/graphql";
 import {
     ElementAddNewVersionDocument,
-    ElementUpdateNotification_ElementDetailsFragment,
-    Email_Insert_Input,
-    FindMatchingProgramPersonForUploaderDocument,
     GetElementDetailsDocument,
     GetUploadAgreementDocument,
 } from "../generated/graphql";
@@ -23,7 +25,6 @@ import {
 import { EmailReason } from "../lib/email/sendingReasons";
 import { startPreviewTranscode } from "../lib/transcode";
 import { startTranscribe } from "../lib/transcribe";
-import { ElementData, Payload } from "../types/hasura/event";
 import { insertEmails } from "./email";
 
 gql`
@@ -34,17 +35,23 @@ gql`
     }
 `;
 
-export async function handleElementUpdated(payload: Payload<ElementData>): Promise<void> {
+export async function handleElementUpdated(logger: P.Logger, payload: EventPayload<ElementData>): Promise<void> {
     const oldRow = payload.event.data.old;
     const newRow = payload.event.data.new;
 
     if (!newRow?.data) {
-        console.error("handleElementUpdated: new content was empty", newRow?.id);
+        logger.error(
+            { oldElementId: oldRow?.id, newElementId: newRow?.id },
+            "handleElementUpdated: new content was empty"
+        );
         return;
     }
 
     if (newRow.data.length === 0) {
-        console.log("handleElementUpdated: content item does not have any versions yet, ignoring", newRow.id);
+        logger.info(
+            { elementId: newRow.id },
+            "handleElementUpdated: content item does not have any versions yet, ignoring"
+        );
         return;
     }
 
@@ -53,7 +60,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
 
     // If new version is not a video or audio file
     if (currentVersion.data.baseType !== "video" && currentVersion.data.baseType !== "audio") {
-        console.log("Content item updated: was not a video or audio file.", newRow.id);
+        logger.info({ elementId: newRow.id }, "Content item updated: was not a video or audio file.");
         return;
     }
 
@@ -71,7 +78,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
             (!currentVersion.data.transcode ||
                 currentVersion.data.transcode.updatedTimestamp < currentVersion.createdAt)
         ) {
-            const transcodeResult = await startPreviewTranscode(currentVersion.data.s3Url, newRow.id);
+            const transcodeResult = await startPreviewTranscode(logger, currentVersion.data.s3Url, newRow.id);
 
             // Update data item with new version
             const newVersion = R.clone(currentVersion);
@@ -95,7 +102,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
 
             assert(mutateResult.data?.update_content_Element_by_pk?.id, "Failed to record transcode initialisation");
         } else {
-            console.log("Content item video URL has not changed.", newRow.id);
+            logger.info({ elementId: newRow.id }, "Content item video URL has not changed.");
         }
     }
 
@@ -115,7 +122,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
                 !currentVersion.data.subtitles["en_US"]?.s3Url) ||
             (!oldVersion && currentVersion.data.transcode?.s3Url && !currentVersion.data.subtitles["en_US"]?.s3Url)
         ) {
-            await startTranscribe(currentVersion.data.transcode.s3Url, newRow.id);
+            await startTranscribe(logger, currentVersion.data.transcode.s3Url, newRow.id);
         }
     } else if (currentVersion.data.baseType === "audio") {
         if (
@@ -126,7 +133,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
                 oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
             (!oldVersion && currentVersion.data.s3Url && !currentVersion.data.subtitles["en_US"]?.s3Url)
         ) {
-            await startTranscribe(currentVersion.data.s3Url, newRow.id);
+            await startTranscribe(logger, currentVersion.data.s3Url, newRow.id);
         }
     }
 
@@ -139,7 +146,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
     ) {
         // Send email if new machine-generated subtitles have been added
         if (currentVersion.createdBy === "system") {
-            await trySendTranscriptionEmail(newRow);
+            await trySendTranscriptionEmail(logger, newRow);
         }
     }
 
@@ -149,7 +156,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
         oldVersion.data.subtitles["en_US"]?.status !== "FAILED" &&
         currentVersion.data.subtitles["en_US"]?.status === "FAILED"
     ) {
-        await trySendTranscriptionFailedEmail(newRow, currentVersion.data.subtitles["en_US"]?.message ?? null);
+        await trySendTranscriptionFailedEmail(logger, newRow, currentVersion.data.subtitles["en_US"]?.message ?? null);
     }
 
     if (currentVersion.data.baseType === "video") {
@@ -160,7 +167,11 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
                 currentVersion.data.transcode?.status === "FAILED") ||
             (!oldVersion && currentVersion.data.transcode?.status === "FAILED")
         ) {
-            await trySendTranscodeFailedEmail(newRow, currentVersion.data.transcode.message ?? "No details available.");
+            await trySendTranscodeFailedEmail(
+                logger,
+                newRow,
+                currentVersion.data.transcode.message ?? "No details available."
+            );
         }
     }
 }
@@ -231,7 +242,7 @@ async function getElementDetails(elementId: string): Promise<{
     };
 }
 
-async function trySendTranscriptionEmail(elementData: ElementData) {
+async function trySendTranscriptionEmail(logger: P.Logger, elementData: ElementData) {
     try {
         const { elementDetails, emailTemplates, submissionNotificationRoles, recordingNotificationsEnabled } =
             await getElementDetails(elementData.id);
@@ -277,14 +288,14 @@ async function trySendTranscriptionEmail(elementData: ElementData) {
                 };
             });
 
-        await insertEmails(emails, elementData.conferenceId, undefined);
+        await insertEmails(logger, emails, elementData.conferenceId, undefined);
     } catch (err) {
-        console.error("Error while sending transcription emails", { elementId: elementData.id, err });
+        logger.error({ elementData, err }, "Error while sending transcription emails");
         return;
     }
 }
 
-async function trySendTranscriptionFailedEmail(elementData: ElementData, message: string | null) {
+async function trySendTranscriptionFailedEmail(logger: P.Logger, elementData: ElementData, message: string | null) {
     const { elementDetails, submissionNotificationRoles, recordingNotificationsEnabled } = await getElementDetails(
         elementData.id
     );
@@ -337,10 +348,10 @@ path            /item/${elementDetails.item.id}/element/${elementData.id}
         });
     }
 
-    await insertEmails(emails, elementDetails.conference.id, undefined);
+    await insertEmails(logger, emails, elementDetails.conference.id, undefined);
 }
 
-async function trySendTranscodeFailedEmail(elementData: ElementData, message: string) {
+async function trySendTranscodeFailedEmail(logger: P.Logger, elementData: ElementData, message: string) {
     const { elementDetails, recordingNotificationsEnabled, submissionNotificationRoles } = await getElementDetails(
         elementData.id
     );
@@ -393,12 +404,12 @@ path            /item/${elementDetails.item.id}/element/${elementData.id}
         });
     }
 
-    await insertEmails(emails, elementData.conferenceId, undefined);
+    await insertEmails(logger, emails, elementData.conferenceId, undefined);
 }
 
 gql`
     query GetUploadAgreement($accessToken: String!) {
-        content_Element(where: { accessToken: { _eq: $accessToken } }) {
+        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
             conference {
                 configurations(where: { key: { _eq: UPLOAD_AGREEMENT } }) {
                     conferenceId
@@ -410,100 +421,24 @@ gql`
     }
 `;
 
-export async function handleGetUploadAgreement(args: getUploadAgreementArgs): Promise<GetUploadAgreementOutput> {
+export async function handleGetUploadAgreement(magicToken: string): Promise<GetUploadAgreementOutput> {
     const result = await apolloClient.query({
         query: GetUploadAgreementDocument,
         variables: {
-            accessToken: args.magicToken,
+            accessToken: magicToken,
         },
     });
 
-    if (result.error) {
-        throw new Error("No item found");
+    const value = result.data.collection_ProgramPerson?.[0]?.conference?.configurations?.[0]?.value;
+    const agreement = {
+        agreementText: value?.text,
+        agreementUrl: value?.url,
+    };
+    if (!agreement.agreementText) {
+        delete agreement.agreementText;
     }
-
-    if (
-        result.data.content_Element.length === 1 &&
-        result.data.content_Element[0].conference.configurations.length === 1
-    ) {
-        const value = result.data.content_Element[0].conference.configurations[0].value;
-        if ("text" in value && "url" in value) {
-            return {
-                agreementText: value.text,
-                agreementUrl: value.url,
-            };
-        } else if ("text" in value) {
-            return {
-                agreementText: value.text,
-            };
-        } else if ("url" in value) {
-            return {
-                agreementUrl: value.url,
-            };
-        }
+    if (!agreement.agreementUrl) {
+        delete agreement.agreementUrl;
     }
-
-    return {};
-}
-
-gql`
-    query FindMatchingProgramPersonForUploader(
-        $elementId: uuid!
-        $elementAccessToken: String!
-        $uploaderEmail: String!
-    ) {
-        content_Element(
-            where: {
-                id: { _eq: $elementId }
-                accessToken: { _eq: $elementAccessToken }
-                uploaders: { email: { _eq: $uploaderEmail } }
-            }
-        ) {
-            id
-            itemId
-            conference {
-                id
-                programPeople(where: { email: { _eq: $uploaderEmail } }) {
-                    id
-                    accessToken
-                    itemPeople {
-                        id
-                        itemId
-                    }
-                }
-            }
-        }
-    }
-`;
-
-export async function handleGetProgramPersonAccessToken(
-    args: getProgramPersonAccessTokenArgs
-): Promise<MatchingPersonOutput> {
-    const response = await apolloClient.query({
-        query: FindMatchingProgramPersonForUploaderDocument,
-        variables: {
-            ...args,
-        },
-    });
-
-    if (response.data.content_Element.length > 0) {
-        const element = response.data.content_Element[0];
-
-        if (element.conference.programPeople.length === 1) {
-            return {
-                accessToken: element.conference.programPeople[0].accessToken,
-            };
-        } else if (element.conference.programPeople.length > 0) {
-            const person = element.conference.programPeople.find((person) =>
-                person.itemPeople.some((itemPerson) => itemPerson.itemId === element.itemId)
-            );
-            if (person) {
-                return {
-                    accessToken: person.accessToken,
-                };
-            }
-        }
-    }
-
-    return {};
+    return agreement;
 }

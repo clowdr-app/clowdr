@@ -1,4 +1,4 @@
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import { AudioElementTemplate } from "./AudioElement";
 import { ComponentElementTemplate } from "./ComponentElement";
 import { FileElementTemplate } from "./FileElement";

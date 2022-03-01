@@ -1,3 +1,6 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { InvitationData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -6,8 +9,6 @@ import {
     handleInvitationInsert_AutomaticSend,
     handleInvitationInsert_AutomaticSendRepeat,
 } from "../handlers/invitation";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
-import type { InvitationData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 
@@ -16,7 +17,7 @@ router.use(checkEventSecret);
 
 router.post("/automatic", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<InvitationData>>(req.body);
+        assertType<EventPayload<InvitationData>>(req.body);
     } catch (e) {
         console.error(`${req.originalUrl}: received incorrect payload`, e);
         res.status(500).json("Unexpected payload");

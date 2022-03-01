@@ -1,13 +1,14 @@
 import { gql } from "@apollo/client/core";
-import { notEmpty } from "@clowdr-app/shared-types/build/utils";
+import { notEmpty } from "@midspace/shared-types/utils";
 import assert from "assert";
 import MarkdownIt from "markdown-it";
+import type { P } from "pino";
 import * as R from "ramda";
 import { v5 as uuidv5 } from "uuid";
+import type { Email_Insert_Input } from "../generated/graphql";
 import {
     CompleteCustomEmailJobsDocument,
     CustomEmail_SelectRegistrantsDocument,
-    Email_Insert_Input,
     SelectUnprocessedCustomEmailJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
@@ -47,6 +48,7 @@ function generateIdempotencyKey(jobId: string, registrantId: string): string {
 }
 
 async function sendCustomEmails(
+    logger: P.Logger,
     registrantIds: string[],
     conferenceId: string,
     userMarkdownBody: string,
@@ -80,7 +82,7 @@ async function sendCustomEmails(
             const email = registrant.user?.email ?? registrant.invitation?.invitedEmailAddress;
 
             if (!email) {
-                console.warn("User has no known email address", { registrantId: registrant.id });
+                logger.warn({ registrantId: registrant.id }, "User has no known email address");
                 return null;
             }
 
@@ -110,7 +112,7 @@ async function sendCustomEmails(
         });
     }
 
-    await insertEmails(emailsToSend, conferenceId, `custom-email:${jobId}`);
+    await insertEmails(logger, emailsToSend, conferenceId, `custom-email:${jobId}`);
 }
 
 gql`
@@ -134,7 +136,7 @@ gql`
     }
 `;
 
-export async function processCustomEmailsJobQueue(): Promise<void> {
+export async function processCustomEmailsJobQueue(logger: P.Logger): Promise<void> {
     const jobs = await apolloClient.query({
         query: SelectUnprocessedCustomEmailJobsDocument,
         variables: {},
@@ -144,10 +146,10 @@ export async function processCustomEmailsJobQueue(): Promise<void> {
     const completedJobIds: string[] = [];
     for (const job of jobs.data.job_queues_CustomEmailJob) {
         try {
-            await sendCustomEmails(job.registrantIds, job.conferenceId, job.markdownBody, job.subject, job.id);
+            await sendCustomEmails(logger, job.registrantIds, job.conferenceId, job.markdownBody, job.subject, job.id);
             completedJobIds.push(job.id);
         } catch (error: any) {
-            console.error("Failed to process send custom email job", { jobId: job.id, error });
+            logger.error({ jobId: job.id, error }, "Failed to process send custom email job");
         }
     }
 

@@ -1,11 +1,11 @@
-import { gql } from "@apollo/client";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
-import type { MinimalEventInfoFragment} from "../../generated/graphql";
+import type { MinimalEventInfoFragment } from "../../generated/graphql";
 import { useGetEventsInNextHourQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
-import { roundDownToNearest, roundUpToNearest } from "../Generic/MathUtils";
-import { useRealTime } from "../Generic/useRealTime";
+import { useRealTime } from "../Hooks/useRealTime";
+import { roundDownToNearest, roundUpToNearest } from "../Utils/MathUtils";
 
 gql`
     query GetEventsInNextHour($conferenceId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
@@ -18,8 +18,10 @@ gql`
 
     fragment MinimalEventInfo on schedule_Event {
         id
+        conferenceId
         startTime
         endTime
+        roomId
         room {
             id
             name
@@ -48,7 +50,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
 
     const nowSlow = useRealTime(refetchEventsInterval);
     // Load events from the nearest N-minute boundary onwards
-    // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
+    // Note: Rounding is necessary to ensure a consistent time string is sent to the Query hook
     //       so re-renders don't cause multiple (very slightly offset) queries to the database in
     //       quick succession.
     // Note: Rounding _down_ is necessary so that any currently ongoing event doesn't accidentally get
@@ -56,7 +58,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
     const nowStr = useMemo(() => new Date(roundDownToNearest(nowSlow, refetchEventsInterval)).toISOString(), [nowSlow]);
     const nowCutoffStr = useMemo(
         // Load events up to 1 hour in the future
-        // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
+        // Note: Rounding is necessary to ensure a consistent time string is sent to the Query hook
         //       so re-renders don't cause spam to the database.
         // Note: Rounding up makes sense as it's the dual of the round down above, but it's not strictly
         //       necessary - any rounding would do.
@@ -64,7 +66,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
         [nowSlow]
     );
 
-    const response = useGetEventsInNextHourQuery({
+    const [response] = useGetEventsInNextHourQuery({
         variables: {
             conferenceId: conference.id,
             now: nowStr,

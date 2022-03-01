@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -25,16 +24,13 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { ElementBaseTypes } from "@midspace/shared-types/content";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
+import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
-import type {
-    Content_Element_Insert_Input,
-    ManageContent_ItemFragment} from "../../../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    useBulkEdit_AddElementsMutation,
-} from "../../../../../../generated/graphql";
+import type { Content_Element_Insert_Input, ManageContent_ItemFragment } from "../../../../../../generated/graphql";
+import { Content_ElementType_Enum, useBulkEdit_AddElementsMutation } from "../../../../../../generated/graphql";
 import { ElementBaseTemplates } from "../Element/Kinds/Templates";
 
 gql`
@@ -104,12 +100,12 @@ function ModalInner({
     const [wide, setWide] = useState<boolean>(true);
     const [priority, setPriority] = useState<number>(100);
 
-    const [insert, insertResponse] = useBulkEdit_AddElementsMutation();
+    const [insertResponse, insert] = useBulkEdit_AddElementsMutation();
 
     const toast = useToast();
     useEffect(() => {
         if (
-            !insertResponse.loading &&
+            !insertResponse.fetching &&
             insertResponse.data?.insert_content_Element &&
             insertResponse.data.insert_content_Element.affected_rows > 0 &&
             !insertResponse.error
@@ -123,7 +119,7 @@ function ModalInner({
             });
             onClose();
         }
-    }, [toast, onClose, insertResponse.loading, insertResponse.data?.insert_content_Element, insertResponse.error]);
+    }, [toast, onClose, insertResponse.fetching, insertResponse.data?.insert_content_Element, insertResponse.error]);
 
     return (
         <>
@@ -227,7 +223,6 @@ function ModalInner({
                                     const layoutData: LayoutDataBlob = {
                                         contentType: elementType as any,
                                         wide,
-                                        hidden,
                                         priority,
                                     };
                                     return {
@@ -242,16 +237,23 @@ function ModalInner({
                                     };
                                 });
 
-                                insert({
-                                    variables: {
+                                insert(
+                                    {
                                         objects,
                                     },
-                                });
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            },
+                                        },
+                                    }
+                                );
                             }
                         }}
                         colorScheme="purple"
                         isDisabled={elementType === "" || name.trim() === ""}
-                        isLoading={insertResponse.loading}
+                        isLoading={insertResponse.fetching}
                     >
                         Add elements
                     </Button>

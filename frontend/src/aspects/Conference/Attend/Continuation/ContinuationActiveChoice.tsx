@@ -12,7 +12,7 @@ import {
     ModalOverlay,
     Text,
 } from "@chakra-ui/react";
-import type { ContinuationDefaultFor } from "@clowdr-app/shared-types/build/continuation";
+import type { ContinuationDefaultFor } from "@midspace/shared-types/continuation";
 import React, { useCallback, useState } from "react";
 import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
 import ContinuationChoiceList from "./ContinuationChoiceList";

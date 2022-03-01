@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -22,14 +21,17 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     useChooseElementByTagModal_GetTagsQuery,
     useChooseElementByTagModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
-import { FAIcon } from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
+import { makeContext } from "../../../../GQL/make-context";
 import { useConference } from "../../../useConference";
 
 gql`
@@ -37,6 +39,7 @@ gql`
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }, order_by: { name: asc }) {
             id
             name
+            conferenceId
         }
     }
 
@@ -51,6 +54,8 @@ gql`
         ) {
             id
             name
+            typeName
+            itemId
             item {
                 id
                 title
@@ -69,10 +74,18 @@ export function ChooseElementByTagModal({
     chooseItems: (elementIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
-    const tagsResult = useChooseElementByTagModal_GetTagsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [tagsResult] = useChooseElementByTagModal_GetTagsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const [tagId, setTagId] = useState<string | null>(null);
@@ -87,17 +100,18 @@ export function ChooseElementByTagModal({
 
     const [searchString, setSearchString] = useState<string | null>(null);
 
-    const elementsResult = useChooseElementByTagModal_GetVideoElementsQuery({
+    const [elementsResult] = useChooseElementByTagModal_GetVideoElementsQuery({
         variables: {
             tagId,
             name: searchString ?? "%%",
         },
+        context,
     });
 
     const elements = useMemo(() => {
         return (
             <Box mt={4}>
-                {elementsResult.loading ? (
+                {elementsResult.fetching ? (
                     <Spinner />
                 ) : elementsResult.error ? (
                     <Text>Could not retrieve list of files.</Text>
@@ -198,7 +212,7 @@ export function ChooseElementByTagModal({
                                     isLoading={isSubmitting}
                                     isDisabled={
                                         !isValid ||
-                                        elementsResult.loading ||
+                                        elementsResult.fetching ||
                                         (elementsResult.data && elementsResult.data.content_Element.length === 0)
                                     }
                                     mt={4}

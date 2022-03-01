@@ -1,0 +1,44 @@
+{
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
+    "compilerOptions": {
+        /* Basic Options */
+        "target": "ES2015",
+        "module": "CommonJS",
+        "outDir": "./build/",
+        "rootDir": "./src/",
+        "removeComments": true,
+        "typeRoots": ["./src/types"],
+
+        /* Strict Type-Checking Options */
+        "strict": true,
+        "strictPropertyInitialization": false,
+
+        /* Additional Checks */
+        "noUnusedLocals": false,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+
+        /* Module Resolution Options */
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+
+        /* Source Map Options */
+        "inlineSourceMap": true,
+
+        /* Experimental Options */
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+
+        /* Advanced Options */
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
+    },
+    "references": [
+        { "path": "../../packages/node/auth/tsconfig.cjs.json" },
+        { "path": "../../packages/node/server-utils/tsconfig.cjs.json" },
+        { "path": "../../packages/node/caches/tsconfig.cjs.json" }
+    ]
+}

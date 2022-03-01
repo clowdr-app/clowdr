@@ -1,9 +1,10 @@
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Inject, Injectable } from "@nestjs/common";
 import OpenTok from "opentok";
 import { promisify } from "util";
 import { VONAGE_MODULE_OPTIONS } from "../../constants";
-import { VonageOptions } from "../vonage.module";
+import type { VonageOptions } from "../vonage.module";
 
 @Injectable()
 export class VonageClientService {

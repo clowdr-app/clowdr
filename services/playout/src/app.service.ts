@@ -1,14 +1,10 @@
 import { RootLogger } from "@eropple/nestjs-bunyan";
-import {
-    HasuraInsertEvent,
-    HasuraUpdateEvent,
-    TrackedHasuraEventHandler,
-    TrackedHasuraScheduledEventHandler,
-} from "@golevelup/nestjs-hasura";
+import type { HasuraInsertEvent, HasuraUpdateEvent } from "@golevelup/nestjs-hasura";
+import { TrackedHasuraEventHandler, TrackedHasuraScheduledEventHandler } from "@golevelup/nestjs-hasura";
 import { Injectable } from "@nestjs/common";
-import * as Bunyan from "bunyan";
+import type * as Bunyan from "bunyan";
 import { ChannelStackSyncService } from "./channel-stack/channel-stack-sync/channel-stack-sync.service";
-import { Room_Mode_Enum } from "./generated/graphql";
+import type { Room_Mode_Enum } from "./generated/graphql";
 import { ImmediateSwitchService } from "./schedule/immediate-switch/immediate-switch.service";
 import { ScheduleSyncService } from "./schedule/schedule-sync/schedule-sync.service";
 
@@ -61,7 +57,6 @@ export class AppService {
         name: "SyncChannelStacks",
         payload: {},
     })
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleSyncChannelStacks(_evt: any): void {
         this.logger.info({ event: "SyncChannelStacks", data: _evt });
         this.channelStackSync
@@ -74,7 +69,6 @@ export class AppService {
         name: "SyncChannels",
         payload: {},
     })
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleSyncChannels(_evt: any): void {
         this.logger.info({ event: "SyncChannels", data: _evt });
         this.scheduleSync
@@ -97,7 +91,6 @@ export interface EventData extends BaseData {
     startTime: string;
     conferenceId: string;
     itemId: string | null;
-    originatingDataId: string | null;
     roomId: string;
 }
 

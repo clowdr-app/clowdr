@@ -7,6 +7,36 @@ select_permissions:
     columns:
     - name
     filter: {}
+  role: attendee
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: conference-organizer
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: room-admin
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: room-member
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: subconference-organizer
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: submitter
+- permission:
+    columns:
+    - name
+    filter: {}
   role: unauthenticated
 - permission:
     columns:

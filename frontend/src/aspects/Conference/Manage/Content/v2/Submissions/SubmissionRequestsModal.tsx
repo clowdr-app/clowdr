@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -27,9 +26,11 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import { isEmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@midspace/shared-types/email";
+import { gql } from "@urql/core";
 import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
@@ -43,9 +44,10 @@ import {
     useInsertSubmissionRequestEmailJobsMutation,
     useSubmissionRequestsModalDataQuery,
 } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
-import ApolloQueryWrapper from "../../../../../GQL/ApolloQueryWrapper";
-import { FAIcon } from "../../../../../Icons/FAIcon";
+import { makeContext } from "../../../../../GQL/make-context";
+import QueryWrapper from "../../../../../GQL/QueryWrapper";
 import { useConference } from "../../../../useConference";
 
 gql`
@@ -86,6 +88,7 @@ gql`
         hasUnsubmittedElements
         itemPeople {
             id
+            itemId
             personId
             roleName
             hasSubmissionRequestBeenSent
@@ -124,15 +127,23 @@ function SendSubmissionRequestsModalLazyInner({
     personIds: string[] | null;
 }): JSX.Element {
     const conference = useConference();
-    const result = useSubmissionRequestsModalDataQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [result] = useSubmissionRequestsModalDataQuery({
         variables: {
             conferenceId: conference.id,
             itemIds,
         },
-        fetchPolicy: "no-cache",
+        requestPolicy: "network-only",
+        context,
     });
     return (
-        <ApolloQueryWrapper queryResult={result} getter={(result) => result}>
+        <QueryWrapper queryResult={result} getter={(result) => result}>
             {({
                 conference_Configuration,
                 content_Item,
@@ -162,7 +173,7 @@ function SendSubmissionRequestsModalLazyInner({
                     />
                 );
             }}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 
@@ -276,7 +287,7 @@ export function SendSubmissionRequestsModalInner({
 
     const toast = useToast();
 
-    const [sendSubmissionRequests] = useInsertSubmissionRequestEmailJobsMutation();
+    const [, sendSubmissionRequests] = useInsertSubmissionRequestEmailJobsMutation();
 
     return (
         <ModalContent>
@@ -289,8 +300,8 @@ export function SendSubmissionRequestsModalInner({
                 }}
                 onSubmit={async (values, actions) => {
                     try {
-                        const result = await sendSubmissionRequests({
-                            variables: {
+                        const result = await sendSubmissionRequests(
+                            {
                                 objs: personIds.map((id) => ({
                                     personId: id,
                                     emailTemplate: {
@@ -299,9 +310,16 @@ export function SendSubmissionRequestsModalInner({
                                     },
                                 })),
                             },
-                        });
-                        if (result?.errors && result.errors.length > 0) {
-                            console.error("Failed to insert SubmissionRequestEmailJob", result.errors);
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        );
+                        if (result?.error) {
+                            console.error("Failed to insert SubmissionRequestEmailJob", result.error);
                             throw new Error("Error submitting query");
                         }
                         actions.resetForm();
@@ -312,7 +330,7 @@ export function SendSubmissionRequestsModalInner({
                             isClosable: true,
                             status: "success",
                         });
-                    } catch (e) {
+                    } catch (e: any) {
                         toast({
                             status: "error",
                             title: "Could not send emails",

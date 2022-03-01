@@ -3,7 +3,6 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        // Start Services in Docker -- Local Development
         {
             "label": "Start Docker Services -- Local Development",
             "type": "shell",
@@ -16,9 +15,6 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            // Use `"-p", "Hasura 3",` as the first arguments to use a different
-            // Docker project name
-            // Keywords: project_name, project-name, container name, container-name
             "args": [
                 "compose",
                 "-f",
@@ -33,13 +29,12 @@
                 "-d"
             ]
         },
-        // Hasura Console -- Local Development
         {
             "label": "Hasura Console -- Local Development",
             "type": "shell",
             "dependsOn": "Start Docker Services -- Local Development",
             "isBackground": true,
-            "command": "npm",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/hasura"
@@ -47,14 +42,13 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "hasura:console-when-ready"]
+            "args": ["console-when-ready"]
         },
-        // Hasura Console -- CI Testing
         {
             "label": "Hasura Console -- CI Testing",
             "type": "shell",
             "isBackground": true,
-            "command": "npm",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/hasura"
@@ -62,14 +56,52 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "hasura:console-when-ready", "--envfile='./.env.ci-test'"]
+            "args": ["console-when-ready", "--envfile='./.env.ci-test'"]
         },
-        // Action service -- Local Development
+        {
+            "label": "All -- GraphQL Codegen",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["codegen", "-r"]
+        },
+        {
+            "label": "Offline -- GraphQL Codegen",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["codegen", "-r", "--filter \"...^@midspace/graphql\""]
+        },
+        {
+            "label": "Single -- GraphQL Codegen",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["codegen", "--filter", "${input:package-name}"]
+        },
         {
             "label": "Actions Service -- Local Development",
             "type": "shell",
             "isBackground": true,
-            "command": "npm",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/services/actions"
@@ -79,7 +111,6 @@
             },
             "args": ["run", "dev"]
         },
-        // Datadog Proxy service -- Local Development
         {
             "label": "DataDog Proxy Service -- Local Development",
             "type": "shell",
@@ -92,9 +123,8 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "dev"]
+            "args": ["dev"]
         },
-        // Action service -- Heroku Local
         {
             "label": "Actions Service -- Heroku Local",
             "type": "shell",
@@ -109,40 +139,39 @@
             },
             "args": ["local", "web"]
         },
-        // Actions service -- GraphQL Codegen
         {
-            "label": "Actions service -- GraphQL Codegen",
+            "label": "Auth Service -- Local Development",
             "type": "shell",
-            "command": "npm",
+            "isBackground": true,
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceFolder}/services/actions"
+                "cwd": "${workspaceFolder}/services/auth"
             },
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "gql-cdg"]
+            "args": ["dev"]
         },
-        // Real-time service -- GraphQL Codegen
         {
-            "label": "Real-time service -- GraphQL Codegen",
+            "label": "Caches Service -- Local Development",
             "type": "shell",
-            "command": "npm",
+            "isBackground": true,
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceFolder}/services/realtime"
+                "cwd": "${workspaceFolder}/services/caches"
             },
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "gql-cdg"]
+            "args": ["dev"]
         },
-        // Real-time service -- Local Development
         {
             "label": "Real-time Service -- Local Development",
             "type": "shell",
             "isBackground": true,
-            "command": "npm",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/services/realtime"
@@ -150,14 +179,13 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "dev"]
+            "args": ["dev"]
         },
-        // Playout service -- Local Development
         {
             "label": "Playout Service -- Local Development",
             "type": "shell",
             "isBackground": true,
-            "command": "npm",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/services/playout"
@@ -165,41 +193,26 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "start:dev"]
+            "args": ["dev"]
         },
-        // Playout service -- GraphQL Codegen
         {
-            "label": "Playout service -- GraphQL Codegen",
+            "label": "Importer Service -- Local Development",
             "type": "shell",
-            "command": "npm",
+            "isBackground": true,
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceFolder}/services/playout"
+                "cwd": "${workspaceFolder}/services/importer"
             },
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "gql-cdg"]
+            "args": ["dev"]
         },
-        // Frontend -- GraphQL Codegen
-        {
-            "label": "Frontend -- GraphQL Codegen",
-            "type": "shell",
-            "command": "npm",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/frontend"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["run", "graphql-codegen"]
-        },
-        // Frontend -- Local Development
         {
             "label": "Frontend -- Local Development",
             "type": "shell",
-            "command": "npm",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/frontend"
@@ -207,36 +220,46 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["start"]
+            "args": ["dev"]
         },
-        // Frontend -- Production Build
         {
             "label": "Frontend -- Production Build",
             "type": "shell",
-            "command": "npm",
-            "args": ["run", "build"],
+            "command": "pnpm",
+            "args": ["build"],
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/frontend"
             },
             "group": "build"
         },
-        // Frontend -- Serve Production Build
         {
             "label": "Frontend -- Serve Production Build",
             "type": "shell",
-            "command": "npx",
-            "args": ["-y", "serve", "-s", "build", "-l", "3000"],
+            "command": "pnpm",
+            "args": ["start"],
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/frontend"
             }
         },
-        // Prettier
+        {
+            "label": "Storybook -- Local Development",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["storybook"]
+        },
         {
             "label": "Prettier: Format code",
             "type": "shell",
-            "command": "npx",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -246,11 +269,10 @@
             },
             "args": ["prettier", "--write", "."]
         },
-        // Ngrok
         {
-            "label": "Ngrok",
+            "label": "All -- Build",
             "type": "shell",
-            "command": "ngrok",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -258,9 +280,34 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["start", "-config", "./ngrok.yml", "--all"]
+            "args": ["build", "-r"]
         },
-        // Packetriot
+        {
+            "label": "All -- Clean",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["clean", "-r"]
+        },
+        {
+            "label": "Single -- Build",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["build", "--filter", "${input:package-name}..."]
+        },
         {
             "label": "Packetriot",
             "type": "shell",
@@ -274,42 +321,64 @@
             },
             "args": ["start", "--config", "pktriot.json"]
         },
-        // Run All -- Local Development
         {
             "label": "Run All -- Local Development",
             "dependsOn": [
                 "Packetriot",
                 "Hasura Console -- Local Development",
+                "Run All -- Local Development -- Subtask, wait for Docker"
+            ],
+            "dependsOrder": "parallel",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All -- Local Development -- Subtask, wait for Docker",
+            "dependsOn": ["Wait for Docker", "Run All -- Local Development -- Subtask, services"],
+            "dependsOrder": "sequence",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All -- Local Development -- Subtask, services",
+            "dependsOn": [
+                "Auth Service -- Local Development",
                 "Actions Service -- Local Development",
+                "Caches Service -- Local Development",
                 "Real-time Service -- Local Development",
                 "Playout Service -- Local Development",
+                "Importer Service -- Local Development",
                 "Frontend -- Local Development"
             ],
             "dependsOrder": "parallel",
             "isBackground": true,
             "problemMatcher": []
         },
-        // Run Minimal -- Local Development
         {
             "label": "Run Minimal -- Local Development",
             "dependsOn": [
                 "Packetriot",
                 "Hasura Console -- Local Development",
-                "Actions Service -- Local Development",
-                "Frontend -- Local Development"
+                "Run Minimal -- Local Development -- Subtask, wait for Docker"
             ],
             "dependsOrder": "parallel",
             "isBackground": true,
             "problemMatcher": []
         },
-        // Generate All - GraphQL Codegen
         {
-            "label": "Generate All -- GraphQL Codegen",
+            "label": "Run Minimal -- Local Development -- Subtask, wait for Docker",
+            "dependsOn": ["Wait for Docker", "Run Minimal -- Local Development -- Subtask, services"],
+            "dependsOrder": "sequence",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Minimal -- Local Development -- Subtask, services",
             "dependsOn": [
-                "Actions service -- GraphQL Codegen",
-                "Real-time service -- GraphQL Codegen",
-                "Playout service -- GraphQL Codegen",
-                "Frontend -- GraphQL Codegen"
+                "Auth Service -- Local Development",
+                "Caches Service -- Local Development",
+                "Actions Service -- Local Development",
+                "Frontend -- Local Development"
             ],
             "dependsOrder": "parallel",
             "isBackground": true,
@@ -319,7 +388,7 @@
             "label": "AWS -- Bootstrap account",
             "detail": "AWS CDK requires the account to be 'bootstrapped' first.",
             "type": "shell",
-            "command": "npm",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/aws",
@@ -331,13 +400,13 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "bootstrap"]
+            "args": ["bootstrap", "--", "--profile", "${input:aws-profile-name}"]
         },
         {
             "label": "AWS -- Deploy stacks",
             "detail": "Deploy all CDK stacks to an AWS account. You will be asked which profile you want to deploy to.",
             "type": "shell",
-            "command": "npm",
+            "command": "pnpm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/aws",
@@ -349,7 +418,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "deploy:all"]
+            "args": ["deploy:all", "--", "--profile", "${input:aws-profile-name}"]
         },
         {
             "label": "AWS -- Open console",
@@ -358,6 +427,74 @@
             "command": "aws-vault",
             "problemMatcher": [],
             "args": ["login", "${input:aws-profile-name}-internal"]
+        },
+        {
+            "label": "Outdated packages",
+            "detail": "Find outdated dependencies in all packages.",
+            "type": "shell",
+            "command": "pnpm",
+            "args": ["dlx", "npm-check-updates", "--deep"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Fix Frontend ESLint errors/warnings",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "args": ["eslint", "--ext", ".tsx", "--ext", ".ts", "--fix", "./frontend/src/aspects"]
+        },
+        {
+            "label": "Generated augmented GQL schema",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/packages/node/urql-hasura-cache-schema-generator"
+            },
+            "args": [
+                "start",
+                "--",
+                "-d",
+                "../../../hasura/metadata",
+                "-o",
+                "../../shared/graphql/src/generated/graphql.augschema.json",
+                "-a",
+                "http://localhost:8080/v1/graphql",
+                "-s",
+                "XXXXX"
+            ]
+        },
+        {
+            "label": "Wait for Docker",
+            "type": "shell",
+            "command": "npx",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "args": ["wait-on", "http-get://localhost:8080/v1/version"]
+        },
+        {
+            "label": "Packages -- Find Mismatches",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "args": [
+                "dlx",
+                "syncpack",
+                "--",
+                "list-mismatches",
+                "--source",
+                "package.json",
+                "--source",
+                "services/*/package.json",
+                "--source",
+                "packages/*/*/package.json",
+                "--source",
+                "frontend/package.json",
+                "--source",
+                "aws/package.json"
+            ]
         }
     ],
     "inputs": [
@@ -372,6 +509,23 @@
             "description": "AWS profile name",
             "default": "sandbox",
             "type": "promptString"
+        },
+        {
+            "id": "package-name",
+            "description": "Package name",
+            "default": "service-actions",
+            "options": [
+                "frontend",
+                "service-actions",
+                "service-playout",
+                "service-realtime",
+                "service-importer",
+                "auth",
+                "caches",
+                "graphql",
+                "hasura"
+            ],
+            "type": "pickString"
         }
     ]
 }

@@ -1,0 +1,71 @@
+table:
+  name: PrepareJob
+  schema: job_queues
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: jobStatus
+  using:
+    foreign_key_constraint_on: jobStatusName
+array_relationships:
+- name: videoRenderJobs
+  using:
+    foreign_key_constraint_on:
+      column: conferencePrepareJobId
+      table:
+        name: VideoRenderJob
+        schema: video
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+    columns:
+    - conferenceId
+  role: conference-organizer
+select_permissions:
+- permission:
+    columns:
+    - jobStatusName
+    - message
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - jobStatusName
+    - conferenceId
+    - message
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: subconference-organizer
+event_triggers:
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: ConferencePrepareJobCreated
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 300
+  webhook: "{{ACTION_BASE_URL}}/conferencePrepareJob/inserted"

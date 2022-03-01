@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -11,10 +10,12 @@ import {
     Spinner,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchRegistrantsLazyQuery, useSelectRegistrantsQuery } from "../../../../generated/graphql";
+import { gql, useClient } from "urql";
+import type { SearchRegistrantsQuery, SearchRegistrantsQueryVariables } from "../../../../generated/graphql";
+import { SearchRegistrantsDocument, useSelectRegistrantsQuery } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import FAIcon from "../../../Icons/FAIcon";
-import { useTitle } from "../../../Utils/useTitle";
+import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import type { Registrant } from "../../useCurrentRegistrant";
 import RegistrantsList from "./RegistrantsList";
@@ -27,21 +28,7 @@ gql`
     }
 
     query SearchRegistrants($conferenceId: uuid!, $search: String!) {
-        registrant_Registrant(
-            where: {
-                _and: [
-                    { conferenceId: { _eq: $conferenceId } }
-                    {
-                        _or: [
-                            { displayName: { _ilike: $search } }
-                            { profile: { _or: [{ affiliation: { _ilike: $search } }, { bio: { _ilike: $search } }] } }
-                            { badges: { name: { _ilike: $search } } }
-                        ]
-                    }
-                ]
-            }
-            order_by: { displayName: asc }
-        ) {
+        registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
             ...RegistrantData
         }
     }
@@ -52,19 +39,12 @@ export function AllRegistrantsList(): JSX.Element {
 
     const conference = useConference();
 
-    const [searchQuery, { loading: loadingSearch, error: errorSearch, data: dataSearch }] =
-        useSearchRegistrantsLazyQuery();
-    useQueryErrorToast(errorSearch, false, "RegistrantListPage.tsx -- search");
-
-    const {
-        loading: loadingRegistrants,
-        error: errorRegistrants,
-        data: dataRegistrants,
-    } = useSelectRegistrantsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingRegistrants, error: errorRegistrants, data: dataRegistrants }] =
+        useSelectRegistrantsQuery({
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorRegistrants, false, "RegistrantListPage.tsx -- registrants");
 
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(true);
@@ -96,35 +76,37 @@ export function AllRegistrantsList(): JSX.Element {
         setIsLoadingMore(false);
     }, [allSearched, loadedCount]);
 
+    const client = useClient();
+    const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
     useEffect(() => {
-        function doSearch() {
-            if ((loadingSearch && !dataSearch) || errorSearch) {
-                return undefined;
-            }
-
-            if (!dataSearch) {
-                return undefined;
-            }
-
-            return dataSearch?.registrant_Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
-        }
-
-        setLoadedCount(30);
-        setAllSearched((oldSearched) => doSearch() ?? oldSearched ?? null);
-        // We need `search` in the sensitivity list because Apollo cache may not
-        // change the data/error/loading state if the result comes straight from
-        // the cache of the last run the search query
-    }, [dataSearch, errorSearch, loadingSearch, search]);
-
-    useEffect(() => {
-        const tId = setTimeout(() => {
+        const tId = setTimeout(async () => {
             if (search.length >= 3) {
-                searchQuery({
-                    variables: {
-                        conferenceId: conference.id,
-                        search: `%${search}%`,
-                    },
-                });
+                const doSearch = async () => {
+                    setLoadingSearch(true);
+                    const { data: dataSearch, error: errorSearch } = await client
+                        .query<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, {
+                            conferenceId: conference.id,
+                            search: `%${search}%`,
+                        })
+                        .toPromise();
+                    setLoadingSearch(false);
+
+                    if (!dataSearch || errorSearch) {
+                        return undefined;
+                    }
+
+                    if (!dataSearch) {
+                        return undefined;
+                    }
+
+                    return dataSearch.registrant_searchRegistrants.filter(
+                        (x) => !!x.profile && !!x.userId
+                    ) as Registrant[];
+                };
+
+                setLoadedCount(30);
+                const results = await doSearch();
+                setAllSearched((oldSearched) => results ?? oldSearched ?? null);
             } else {
                 setAllSearched(null);
             }
@@ -132,7 +114,7 @@ export function AllRegistrantsList(): JSX.Element {
         return () => {
             clearTimeout(tId);
         };
-    }, [conference.id, search, searchQuery]);
+    }, [conference.id, search, client]);
 
     const loadMore = useCallback(() => {
         setIsLoadingMore(true);

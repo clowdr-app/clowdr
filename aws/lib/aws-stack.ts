@@ -14,61 +14,79 @@ export interface AwsStackProps extends cdk.StackProps {
 }
 
 export class AwsStack extends cdk.Stack {
+    public readonly bucket: s3.Bucket;
+    public readonly actionsUser: iam.User;
+
     constructor(scope: cdk.Construct, id: string, props: AwsStackProps) {
         super(scope, id, props);
 
         /* S3 */
-        const bucket = this.createContentS3Bucket();
+        this.bucket = this.createContentS3Bucket();
 
         /* IAM */
 
         // Managed policies
         const transcribeFullAccessPolicy = this.createTranscribeFullAccessPolicy();
+        const transcribeWebsocketStreamingPolicy = this.createTranscribeWebsocketStreamingPolicy();
         const channelStackAdministratorPolicy = this.createChannelStackAdministratorPolicy();
 
         // Service roles
-        const mediaLiveServiceRole = this.createMediaLiveServiceRole(bucket);
-        const mediaPackageServiceRole = this.createMediaPackageServiceRole(bucket);
-        const mediaConvertServiceRole = this.createMediaConvertServiceRole(bucket);
-        const transcribeServiceRole = this.createTranscribeServiceRole(bucket);
-        const elasticTranscoderServiceRole = this.createElasticTranscoderServiceRole(bucket);
+        const mediaLiveServiceRole = this.createMediaLiveServiceRole(this.bucket);
+        const mediaPackageServiceRole = this.createMediaPackageServiceRole(this.bucket);
+        const mediaConvertServiceRole = this.createMediaConvertServiceRole(this.bucket);
+        const transcribeServiceRole = this.createTranscribeServiceRole(this.bucket);
+        const elasticTranscoderServiceRole = this.createElasticTranscoderServiceRole(this.bucket);
 
         // IAM user
-        const actionsUser = new iam.User(this, "ActionsUser", {});
-
-        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess"));
-        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaConvertFullAccess"));
-        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaPackageFullAccess"));
-        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("CloudFrontFullAccess"));
-        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonElasticTranscoder_FullAccess"));
-        actionsUser.addManagedPolicy(transcribeFullAccessPolicy);
-        actionsUser.addManagedPolicy(channelStackAdministratorPolicy);
-
-        const chimeManagerRole = this.createChimeManagerRole(actionsUser);
-
-        const actionsUserAccessKey = new iam.CfnAccessKey(this, "accessKey", {
-            userName: actionsUser.userName,
-        });
-
+        this.actionsUser = new iam.User(this, "ActionsUser", {});
         const vonageUser = new iam.User(this, "VonageUser", {});
+        const publicTranscribeUser = new iam.User(this, "PublicTranscribeUser", {});
 
+        // IAM User Access Keys
+        const actionsUserAccessKey = new iam.CfnAccessKey(this, "accessKey", {
+            userName: this.actionsUser.userName,
+        });
         const vonageUserAccessKey = new iam.CfnAccessKey(this, "VonageUserAccessKey", {
             userName: vonageUser.userName,
         });
+        const publicTranscribeUserAccessKey = new iam.CfnAccessKey(this, "PublicTranscribeUserAccessKey", {
+            userName: publicTranscribeUser.userName,
+        });
+
+        // Attach policies
+        this.actionsUser.addManagedPolicy(
+            iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess")
+        );
+        this.actionsUser.addManagedPolicy(
+            iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaConvertFullAccess")
+        );
+        this.actionsUser.addManagedPolicy(
+            iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaPackageFullAccess")
+        );
+        this.actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("CloudFrontFullAccess"));
+        this.actionsUser.addManagedPolicy(
+            iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonElasticTranscoder_FullAccess")
+        );
+        this.actionsUser.addManagedPolicy(transcribeFullAccessPolicy);
+        this.actionsUser.addManagedPolicy(channelStackAdministratorPolicy);
+
+        publicTranscribeUser.addManagedPolicy(transcribeWebsocketStreamingPolicy);
+
+        const chimeManagerRole = this.createChimeManagerRole(this.actionsUser);
 
         /* S3 */
-        bucket.grantPut(actionsUser);
-        bucket.grantReadWrite(actionsUser);
+        this.bucket.grantPut(this.actionsUser);
+        this.bucket.grantReadWrite(this.actionsUser);
 
-        bucket.grantPut(vonageUser, props.vonageApiKey ? `${props.vonageApiKey}/*` : "*");
-        bucket.grantRead(vonageUser, props.vonageApiKey ? `${props.vonageApiKey}/*` : "*");
+        this.bucket.grantPut(vonageUser, props.vonageApiKey ? `${props.vonageApiKey}/*` : "*");
+        this.bucket.grantRead(vonageUser, props.vonageApiKey ? `${props.vonageApiKey}/*` : "*");
 
         /* Service Roles */
-        mediaLiveServiceRole.grantPassRole(actionsUser);
-        mediaPackageServiceRole.grantPassRole(actionsUser);
-        mediaConvertServiceRole.grantPassRole(actionsUser);
-        transcribeServiceRole.grantPassRole(actionsUser);
-        elasticTranscoderServiceRole.grantPassRole(actionsUser);
+        mediaLiveServiceRole.grantPassRole(this.actionsUser);
+        mediaPackageServiceRole.grantPassRole(this.actionsUser);
+        mediaConvertServiceRole.grantPassRole(this.actionsUser);
+        transcribeServiceRole.grantPassRole(this.actionsUser);
+        elasticTranscoderServiceRole.grantPassRole(this.actionsUser);
 
         /* Notifications and webhooks */
         const cloudFormationNotificationsTopic = this.createCloudFormationNotificationTopic();
@@ -79,7 +97,7 @@ export class AwsStack extends cdk.Stack {
         const elasticTranscoderNotificationsTopic =
             this.createElasticTranscoderNotificationTopic(elasticTranscoderServiceRole);
 
-        this.createAndAddSubscriptionPolicy(actionsUser.node.id, actionsUser, [
+        this.createAndAddSubscriptionPolicy(this.actionsUser.node.id, this.actionsUser, [
             cloudFormationNotificationsTopic,
             mediaConvertNotificationsTopic,
             mediaLiveNotificationsTopic,
@@ -88,7 +106,7 @@ export class AwsStack extends cdk.Stack {
             elasticTranscoderNotificationsTopic,
         ]);
 
-        cloudFormationNotificationsTopic.grantPublish(actionsUser);
+        cloudFormationNotificationsTopic.grantPublish(this.actionsUser);
 
         this.addMediaConvertEventRule(mediaConvertNotificationsTopic, props.stackPrefix);
         this.addMediaLiveEventRule(mediaLiveNotificationsTopic);
@@ -103,13 +121,15 @@ export class AwsStack extends cdk.Stack {
         /* Outputs */
 
         // S3
-        this.createOutput("ContentBucketId", bucket.bucketName);
+        this.createOutput("ContentBucketId", this.bucket.bucketName);
 
         // IAM
         this.createOutput("ActionsUserAccessKeyId", actionsUserAccessKey.ref);
         this.createOutput("ActionsUserSecretAccessKey", actionsUserAccessKey.attrSecretAccessKey);
         this.createOutput("VonageUserAccessKeyId", vonageUserAccessKey.ref);
         this.createOutput("VonageUserSecretAccessKey", vonageUserAccessKey.attrSecretAccessKey);
+        this.createOutput("PublicTranscribeUserAccessKeyId", publicTranscribeUserAccessKey.ref);
+        this.createOutput("PublicTranscribeUserSecretAccessKey", publicTranscribeUserAccessKey.attrSecretAccessKey);
 
         // Service roles
         this.createOutput("ChimeManagerRoleArn", chimeManagerRole.roleArn);
@@ -121,7 +141,7 @@ export class AwsStack extends cdk.Stack {
 
         // SNS topics
         this.createOutput("CloudFormationNotificationsTopicArn", cloudFormationNotificationsTopic.topicArn);
-        this.createOutput("TranscodeNotificationsTopicArn", cloudFormationNotificationsTopic.topicArn);
+        this.createOutput("TranscodeNotificationsTopicArn", mediaConvertNotificationsTopic.topicArn);
         this.createOutput("TranscribeNotificationsTopicArn", transcribeNotificationsTopic.topicArn);
         this.createOutput("ElasticTranscoderNotificationsTopicArn", elasticTranscoderNotificationsTopic.topicArn);
         this.createOutput("MediaLiveNotificationsTopicArn", mediaLiveNotificationsTopic.topicArn);
@@ -173,6 +193,22 @@ export class AwsStack extends cdk.Stack {
             statements: [
                 new iam.PolicyStatement({
                     actions: ["transcribe:*"],
+                    effect: iam.Effect.ALLOW,
+                    resources: ["*"],
+                }),
+            ],
+        });
+    }
+
+    /**
+     * @returns a policy that grants websocket streaming to Amazon Transcribe.
+     */
+    private createTranscribeWebsocketStreamingPolicy(): iam.IManagedPolicy {
+        return new iam.ManagedPolicy(this, "TranscribeWebsocketStreaming", {
+            description: "Websocket streaming access for all Amazon Transcribe resources.",
+            statements: [
+                new iam.PolicyStatement({
+                    actions: ["transcribe:StartStreamTranscriptionWebSocket"],
                     effect: iam.Effect.ALLOW,
                     resources: ["*"],
                 }),

@@ -1,8 +1,8 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Button, Image, useToast } from "@chakra-ui/react";
 import React from "react";
 import type { RegistrantDataFragment } from "../../../generated/graphql";
-import FAIcon from "../../Icons/FAIcon";
+import FAIcon from "../../Chakra/FAIcon";
 import { useChatProfileModal } from "../Frame/ChatProfileModalProvider";
 
 export default function ProfilePictureBox({

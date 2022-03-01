@@ -1,9 +1,8 @@
 import { Box, ButtonGroup, Container, Flex, FormControl, Heading, Text } from "@chakra-ui/react";
 import React from "react";
-import LoginButton from "../../Auth/Buttons/LoginButton";
-import SignupButton from "../../Auth/Buttons/SignUpButton";
+import { LoginButton, SignupButton } from "../../Auth";
 import { ExternalLinkButton } from "../../Chakra/LinkButton";
-import { useTitle } from "../../Utils/useTitle";
+import { useTitle } from "../../Hooks/useTitle";
 
 export default function NewUserLandingPage({ conferenceName }: { conferenceName?: string }): JSX.Element {
     const title = useTitle(conferenceName ?? "");

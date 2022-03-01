@@ -2,46 +2,93 @@ table:
   name: ContentItemStats
   schema: analytics
 object_relationships:
-- name: contentGroup
+- name: item
   using:
     foreign_key_constraint_on: itemId
 select_permissions:
 - permission:
     columns:
+    - viewCount
     - created_at
+    - updated_at
     - id
     - itemId
-    - updated_at
-    - viewCount
     filter:
-      contentGroup:
+      item:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
         - _or:
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_VIEW
-                    - CONFERENCE_MANAGE_CONTENT
-          - _exists:
-              _table:
-                name: FlatUnauthPermission
-                schema: public
-              _where:
-                _and:
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_VIEW
-  role: user
+          - subconferenceId:
+              _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - _or:
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+              - visibilityLevel:
+                  _in:
+                  - PUBLIC
+                  - EXTERNAL
+  role: attendee
+- permission:
+    columns:
+    - viewCount
+    - created_at
+    - updated_at
+    - id
+    - itemId
+    filter:
+      item:
+        _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - itemId
+    - viewCount
+    - id
+    - created_at
+    - updated_at
+    filter:
+      item:
+        _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
+- permission:
+    columns:
+    - viewCount
+    - created_at
+    - updated_at
+    - id
+    - itemId
+    filter:
+      item:
+        _and:
+        - _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - _or:
+            - subconferenceId:
+                _is_null: true
+            - _and:
+              - subconferenceId:
+                  _is_null: false
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+        - visibilityLevel:
+            _in:
+            - PUBLIC_ONLY
+            - PUBLIC
+  role: unauthenticated

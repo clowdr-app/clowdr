@@ -1,11 +1,18 @@
 // Set this up as a CronToGo task
 // CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/analytics/viewCountWriteback.js
 
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
+import { gql } from "graphql-tag";
+import type {
+    InsertViewCountsMutation,
+    InsertViewCountsMutationVariables,
+    SelectViewCountsQuery,
+    SelectViewCountsQueryVariables,
+} from "../../generated/graphql";
 import { InsertViewCountsDocument, SelectViewCountsDocument } from "../../generated/graphql";
-import { apolloClient } from "../../graphqlClient";
-import { redisClientP, redisClientPool } from "../../redis";
+import { logger } from "../../lib/logger";
 
 gql`
     query SelectViewCounts($cutoff: timestamptz!, $itemIds: [uuid!]!, $elementIds: [uuid!]!, $roomIds: [uuid!]!) {
@@ -54,9 +61,9 @@ gql`
 
 async function Main(continueExecuting = false) {
     try {
-        assert(apolloClient, "Apollo client needed for analytics view count writeback");
+        assert(gqlClient, "GraphQL client needed for analytics view count writeback");
 
-        console.info("Writing back analytics view counts");
+        logger.info("Writing back analytics view counts");
 
         const itemResults: {
             identifier: string;
@@ -138,7 +145,7 @@ async function Main(continueExecuting = false) {
             redisClientPool.release("workers/analytics/viewCountWriteback/Main", client);
             clientReleased = true;
 
-            //         console.info(`View counts to write back:
+            //         logger.info(`View counts to write back:
             //     Item: ${JSON.stringify(itemResults, null, 2)}
 
             //     Element: ${JSON.stringify(elementResults, null, 2)}
@@ -149,50 +156,49 @@ async function Main(continueExecuting = false) {
             const itemIds = itemResults.map((x) => x.identifier);
             const elementIds = elementResults.map((x) => x.identifier);
             const roomIds = roomHLSResults.map((x) => x.identifier);
-            const existingCounts = await apolloClient.query({
-                query: SelectViewCountsDocument,
-                variables: {
+            const existingCounts = await gqlClient
+                .query<SelectViewCountsQuery, SelectViewCountsQueryVariables>(SelectViewCountsDocument, {
                     itemIds,
                     elementIds,
                     roomIds,
                     cutoff: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-                },
-            });
-            await apolloClient.mutate({
-                mutation: InsertViewCountsDocument,
-                variables: {
-                    itemStats: itemResults.map((result) => {
-                        const existing = existingCounts.data.analytics_ContentItemStats.find(
-                            (x) => x.itemId === result.identifier
-                        );
-                        return {
-                            id: existing?.id,
-                            itemId: result.identifier,
-                            viewCount: (existing?.viewCount ?? 0) + result.count,
-                        };
-                    }),
-                    elementStats: elementResults.map((result) => {
-                        const existing = existingCounts.data.analytics_ContentElementStats.find(
-                            (x) => x.elementId === result.identifier
-                        );
-                        return {
-                            id: existing?.id,
-                            elementId: result.identifier,
-                            viewCount: (existing?.viewCount ?? 0) + result.count,
-                        };
-                    }),
-                    roomStats: roomHLSResults.map((result) => {
-                        const existing = existingCounts.data.analytics_RoomStats.find(
-                            (x) => x.roomId === result.identifier
-                        );
-                        return {
-                            id: existing?.id,
-                            roomId: result.identifier,
-                            hlsViewCount: (existing?.hlsViewCount ?? 0) + result.count,
-                        };
-                    }),
-                },
-            });
+                })
+                .toPromise();
+            if (existingCounts.data) {
+                const data = existingCounts.data;
+                await gqlClient
+                    .mutation<InsertViewCountsMutation, InsertViewCountsMutationVariables>(InsertViewCountsDocument, {
+                        itemStats: itemResults.map((result) => {
+                            const existing = data.analytics_ContentItemStats.find(
+                                (x) => x.itemId === result.identifier
+                            );
+                            return {
+                                id: existing?.id,
+                                itemId: result.identifier,
+                                viewCount: (existing?.viewCount ?? 0) + result.count,
+                            };
+                        }),
+                        elementStats: elementResults.map((result) => {
+                            const existing = data.analytics_ContentElementStats.find(
+                                (x) => x.elementId === result.identifier
+                            );
+                            return {
+                                id: existing?.id,
+                                elementId: result.identifier,
+                                viewCount: (existing?.viewCount ?? 0) + result.count,
+                            };
+                        }),
+                        roomStats: roomHLSResults.map((result) => {
+                            const existing = data.analytics_RoomStats.find((x) => x.roomId === result.identifier);
+                            return {
+                                id: existing?.id,
+                                roomId: result.identifier,
+                                hlsViewCount: (existing?.hlsViewCount ?? 0) + result.count,
+                            };
+                        }),
+                    })
+                    .toPromise();
+            }
         } finally {
             if (!clientReleased) {
                 redisClientPool.release("workers/analytics/viewCountWriteback/Main", client);
@@ -202,8 +208,8 @@ async function Main(continueExecuting = false) {
         if (!continueExecuting) {
             process.exit(0);
         }
-    } catch (e) {
-        console.error("SEVERE ERROR: Cannot write back analytics view counts!", e);
+    } catch (error: any) {
+        logger.error({ error }, "SEVERE ERROR: Cannot write back analytics view counts!");
 
         if (!continueExecuting) {
             process.exit(-1);

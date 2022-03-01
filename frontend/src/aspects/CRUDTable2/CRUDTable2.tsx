@@ -42,21 +42,11 @@ import {
     useToken,
     VStack,
 } from "@chakra-ui/react";
-import type {
-    LegacyRef,
-    MutableRefObject,
-    ReactNode,
-    ReactNodeArray} from "react";
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
+import type { LegacyRef, MutableRefObject, ReactNode, ReactNodeArray } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
-import { useRestorableState } from "../Generic/useRestorableState";
-import FAIcon from "../Icons/FAIcon";
+import FAIcon from "../Chakra/FAIcon";
+import { useRestorableState } from "../Hooks/useRestorableState";
 
 export type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
 
@@ -243,7 +233,6 @@ const CRUDCell = React.forwardRef(function CRUDCell(
             contents
         ) : (
             <Td
-                size="sm"
                 padding={1}
                 minW="max-content"
                 style={{ backgroundColor: backgroundColor ? backgroundColorToken : undefined }}
@@ -386,7 +375,7 @@ function CRUDRow<T>({
     const selectEl = useMemo(() => {
         const canSelect = row.canSelect?.(record) ?? true;
         return onSelectChange && (getIsSelectedRef || setIsSelectedRef) ? (
-            <Td size="sm" padding={1}>
+            <Td padding={1}>
                 <Tooltip label={canSelect !== true ? canSelect : undefined}>
                     <Center w="100%" h="100%" padding={0}>
                         <Checkbox
@@ -408,7 +397,7 @@ function CRUDRow<T>({
     const editEl = useMemo(
         () =>
             onSecondaryEdit ? (
-                <Td size="sm" padding={1}>
+                <Td padding={1}>
                     <Center w="100%" h="100%" padding={0}>
                         <Tooltip label={warning ?? "Edit hidden fields"}>
                             <Button
@@ -438,7 +427,7 @@ function CRUDRow<T>({
     const deleteEl = useMemo(() => {
         const canDelete = row.canDelete?.(record) ?? true;
         return onDelete ? (
-            <Td size="sm" padding={1}>
+            <Td padding={1}>
                 <Tooltip label={canDelete !== true ? canDelete : undefined}>
                     <Center w="100%" h="100%" padding={0}>
                         <Button
@@ -475,7 +464,6 @@ function CRUDRow<T>({
 
     return (
         <Tr
-            size="sm"
             onBlur={(ev) => {
                 onBlur(localRecord, ev.relatedTarget as Element);
             }}
@@ -851,7 +839,7 @@ function RenderedCRUDTable<T>({
         () =>
             data === null ? (
                 <Tr>
-                    <Td colSpan={9} size="sm">
+                    <Td colSpan={9}>
                         <Center m={2}>
                             <Text>No data</Text>
                         </Center>
@@ -865,10 +853,11 @@ function RenderedCRUDTable<T>({
         () =>
             data === false ? (
                 <Tr>
-                    <Td colSpan={9} size="sm">
+                    <Td colSpan={9}>
                         <CenteredSpinner
                             centerProps={{ m: 2, h: "auto" }}
                             spinnerProps={{ label: "Loading schedule data" }}
+                            caller="CRUDTable2:862"
                         />
                     </Td>
                 </Tr>
@@ -892,7 +881,7 @@ function RenderedCRUDTable<T>({
             <Center flexDir="column">
                 Filtered to {filteredDataLength} out of {fullDataLength} ({selectedKeys.size} selected)
             </Center>
-            <chakra.div maxWidth="100%" width="auto" overflow="auto">
+            <chakra.div maxWidth="100%" minHeight="10em" width="auto" overflow="auto">
                 <Table bgColor={bgColour} size="sm" variant="striped" pt={1} colorScheme="gray" width="max-content">
                     <Thead borderBottom="2px solid" borderBottomColor={headerBottomColour}>
                         <Tr>
@@ -1325,7 +1314,7 @@ export default function CRUDTable<T>({
                     if (existing) {
                         dependentColumns.forEach((column) => {
                             const newVal = column.get(record);
-                            foundDifference ||= existing[column.id] !== newVal;
+                            foundDifference = foundDifference || existing[column.id] !== newVal;
                             existing[column.id] = newVal;
                         });
                     } else {

@@ -1,11 +1,20 @@
 import { gql } from "@apollo/client/core";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { Content_ElementType_Enum, ElementBaseType } from "@clowdr-app/shared-types/build/content";
-import type { SourceBlob } from "@clowdr-app/shared-types/build/content/element";
-import { SourceType } from "@clowdr-app/shared-types/build/content/element";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import type {
+    joinEventVonageSessionArgs,
+    JoinEventVonageSessionOutput,
+    joinRoomVonageSessionArgs,
+    JoinRoomVonageSessionOutput,
+    toggleVonageRecordingStateArgs,
+    ToggleVonageRecordingStateOutput,
+} from "@midspace/hasura/action-types";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
+import type { SourceBlob } from "@midspace/shared-types/content/element";
+import { SourceType } from "@midspace/shared-types/content/element";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
+import type { P } from "pino";
 import { validate as validateUUID } from "uuid";
 import {
     AddVonageRoomRecordingToUserListDocument,
@@ -14,7 +23,7 @@ import {
     FindRoomByVonageSessionIdDocument,
     GetEventForArchiveDocument,
     InsertVonageArchiveElementDocument,
-    Permissions_Permission_Enum,
+    Registrant_RegistrantRole_Enum,
     Room_Mode_Enum,
     SaveVonageRoomRecordingDocument,
     Schedule_EventProgramPersonRole_Enum,
@@ -22,8 +31,9 @@ import {
     Vonage_GetEventDetailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { getRegistrantWithPermissions } from "../lib/authorisation";
-import { canUserJoinRoom, getRoomConferenceId, getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
+import { getRegistrantDetails } from "../lib/authorisation";
+import { BadRequestError, ForbiddenError, NotFoundError, ServerError } from "../lib/errors";
+import { getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
 import {
     addAndRemoveRoomParticipants,
     addAndRemoveVonageParticipantStreams,
@@ -71,40 +81,46 @@ gql`
     }
 `;
 
-export async function handleVonageSessionMonitoringWebhook(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
+export async function handleVonageSessionMonitoringWebhook(
+    logger: P.Logger,
+    payload: SessionMonitoringWebhookReqBody
+): Promise<boolean> {
     let success = true;
 
     try {
         if (payload.event === "connectionCreated" || payload.event === "streamCreated") {
-            success &&= await startBroadcastIfOngoingEvent(payload);
+            success &&= await startBroadcastIfOngoingEvent(logger, payload);
         }
-    } catch (e) {
-        console.error("Error while starting broadcast if ongoing event", e);
+    } catch (e: any) {
+        logger.error({ err: e, sessionId: payload.sessionId }, "Error while starting broadcast if ongoing event");
         success = false;
     }
 
     try {
         if (payload.event === "connectionCreated" || payload.event === "streamCreated") {
-            success &&= await startArchiveIfOngoingEvent(payload);
+            success &&= await startArchiveIfOngoingEvent(logger, payload);
         } else if (payload.event === "connectionDestroyed") {
-            success &&= await stopArchiveIfNoOngoingEvent(payload);
+            success &&= await stopArchiveIfNoOngoingEvent(logger, payload);
         }
-    } catch (e) {
-        console.error("Error while starting or stopping archive of any ongoing event", e);
+    } catch (e: any) {
+        logger.error(
+            { err: e, sessionId: payload.sessionId },
+            "Error while starting or stopping archive of any ongoing event"
+        );
         success = false;
     }
 
     try {
-        success &&= await addAndRemoveRoomParticipants(payload);
-    } catch (e) {
-        console.error("Error while adding/removing room participants", e);
+        success &&= await addAndRemoveRoomParticipants(logger, payload);
+    } catch (e: any) {
+        logger.error({ err: e, sessionId: payload.sessionId }, "Error while adding/removing room participants");
         success = false;
     }
 
     try {
-        success &&= await addAndRemoveVonageParticipantStreams(payload);
-    } catch (e) {
-        console.error("Error while adding/removing event participant streams", e);
+        success &&= await addAndRemoveVonageParticipantStreams(logger, payload);
+    } catch (e: any) {
+        logger.error({ err: e, sessionId: payload.sessionId }, "Error while adding/removing event participant streams");
         success = false;
     }
 
@@ -119,6 +135,7 @@ gql`
             startTime
             durationSeconds
             conferenceId
+            subconferenceId
             item {
                 id
                 elements_aggregate {
@@ -173,8 +190,11 @@ gql`
     }
 `;
 
-export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonitoringWebhookReqBody): Promise<boolean> {
-    // console.log("Vonage archive monitoring webhook payload", roomId, eventId, payload);
+export async function handleVonageArchiveMonitoringWebhook(
+    logger: P.Logger,
+    payload: ArchiveMonitoringWebhookReqBody
+): Promise<boolean> {
+    // logger.info("Vonage archive monitoring webhook payload", roomId, eventId, payload);
     const nameParts = payload.name.split("/");
     const roomId = nameParts[0];
     const eventId = nameParts[1];
@@ -190,7 +210,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
 
             const endedAt = new Date(payload.createdAt + 1000 * payload.duration).toISOString();
 
-            console.info("Vonage archive uploaded", { sessionId: payload.sessionId, endedAt, s3Url });
+            logger.info({ sessionId: payload.sessionId, endedAt, s3Url }, "Vonage archive uploaded");
 
             // Always try to save the recording into our Vonage Room Recording table
             // (This is also what enables users to access the list of recordings they've participated in)
@@ -203,16 +223,28 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
             });
 
             if (response.data.video_VonageRoomRecording.length > 0) {
-                const recording = response.data.video_VonageRoomRecording[0];
+                const recording0 = response.data.video_VonageRoomRecording[0];
                 await apolloClient.mutate({
                     mutation: SaveVonageRoomRecordingDocument,
                     variables: {
-                        id: recording.id,
+                        id: recording0.id,
                         endedAt,
                         uploadedAt: new Date().toISOString(),
                         s3Url,
                     },
                 });
+
+                for (const recording of response.data.video_VonageRoomRecording.slice(1)) {
+                    await apolloClient.mutate({
+                        mutation: SaveVonageRoomRecordingDocument,
+                        variables: {
+                            id: recording.id,
+                            endedAt,
+                            uploadedAt: null,
+                            s3Url: null,
+                        },
+                    });
+                }
             }
 
             // Try to save the recording into a content item too?
@@ -229,24 +261,30 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                 });
 
                 if (!eventResponse.data?.schedule_Event_by_pk) {
-                    console.error("Could not find event for Vonage archive", {
-                        roomId,
-                        eventId,
-                        sessionId: payload.sessionId,
-                        archiveId: payload.id,
-                    });
+                    logger.error(
+                        {
+                            roomId,
+                            eventId,
+                            sessionId: payload.sessionId,
+                            archiveId: payload.id,
+                        },
+                        "Could not find event for Vonage archive"
+                    );
                     return false;
                 }
 
                 const event = eventResponse.data.schedule_Event_by_pk;
 
                 if (!event.item) {
-                    console.log("Nowhere to store event Vonage archive", {
-                        roomId,
-                        eventId,
-                        sessionId: payload.sessionId,
-                        archiveId: payload.id,
-                    });
+                    logger.info(
+                        {
+                            roomId,
+                            eventId,
+                            sessionId: payload.sessionId,
+                            archiveId: payload.id,
+                        },
+                        "Nowhere to store event Vonage archive"
+                    );
                     return true;
                 }
 
@@ -271,7 +309,6 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                 ];
                 const layoutData: LayoutDataBlob = {
                     contentType: Content_ElementType_Enum.VideoFile,
-                    hidden: false,
                     wide: true,
                     priority: event.item.elements_aggregate.aggregate?.count ?? 0,
                 };
@@ -283,6 +320,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                         variables: {
                             object: {
                                 conferenceId: event.conferenceId,
+                                subconferenceId: event.subconferenceId,
                                 data,
                                 source,
                                 isHidden: false,
@@ -294,14 +332,17 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                             },
                         },
                     });
-                } catch (e) {
-                    console.error("Failed to store event Vonage archive", {
-                        roomId,
-                        eventId,
-                        sessionId: payload.sessionId,
-                        archiveId: payload.id,
-                        error: e,
-                    });
+                } catch (e: any) {
+                    logger.error(
+                        {
+                            roomId,
+                            eventId,
+                            sessionId: payload.sessionId,
+                            archiveId: payload.id,
+                            error: e,
+                        },
+                        "Failed to store event Vonage archive"
+                    );
                     return false;
                 }
             }
@@ -310,9 +351,9 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
         const endedAt = new Date(payload.createdAt + 1000 * payload.duration).toISOString();
 
         if (payload.status === "failed") {
-            console.error("Vonage archive failed", payload);
+            logger.error({ payload }, "Vonage archive failed");
         } else {
-            console.info("Vonage archive stopped", { sessionId: payload.sessionId, endedAt });
+            logger.info({ sessionId: payload.sessionId, endedAt }, "Vonage archive stopped");
         }
 
         if (payload.duration > 0) {
@@ -325,16 +366,17 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
             });
 
             if (response.data.video_VonageRoomRecording.length > 0) {
-                const recording = response.data.video_VonageRoomRecording[0];
-                await apolloClient.mutate({
-                    mutation: SaveVonageRoomRecordingDocument,
-                    variables: {
-                        id: recording.id,
-                        endedAt,
-                        uploadedAt: null,
-                        s3Url: null,
-                    },
-                });
+                for (const recording of response.data.video_VonageRoomRecording) {
+                    await apolloClient.mutate({
+                        mutation: SaveVonageRoomRecordingDocument,
+                        variables: {
+                            id: recording.id,
+                            endedAt,
+                            uploadedAt: null,
+                            s3Url: null,
+                        },
+                    });
+                }
             }
         }
 
@@ -348,7 +390,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
 }
 
 gql`
-    query Vonage_GetEventDetails($eventId: uuid!, $userId: String!) {
+    query Vonage_GetEventDetails($eventId: uuid!, $registrantId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             conferenceId
             id
@@ -362,51 +404,43 @@ gql`
                 id
                 publicVonageSessionId
             }
-            eventPeople(where: { person: { registrant: { userId: { _eq: $userId } } } }) {
+            eventPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
                 id
                 roleName
             }
-            conference {
-                id
-                registrants(where: { userId: { _eq: $userId } }) {
-                    ...GetRegistrant_Registrant
-                    groupRegistrants {
-                        id
-                        group {
-                            id
-                            groupRoles {
-                                id
-                                role {
-                                    id
-                                    rolePermissions {
-                                        id
-                                        permissionName
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        }
+        registrant_Registrant_by_pk(id: $registrantId) {
+            ...GetRegistrant_Registrant
         }
     }
 `;
 
 export async function handleJoinEvent(
+    logger: P.Logger,
     payload: joinEventVonageSessionArgs,
-    userId: string
+    userId: string,
+    allowedRegistrantIds: string[]
 ): Promise<JoinEventVonageSessionOutput> {
+    if (!allowedRegistrantIds.includes(payload.registrantId)) {
+        throw new ForbiddenError("Forbidden to join event room", {
+            privateMessage: "Registrant is not in list of allowed registrants",
+            privateErrorData: {
+                registrantId: payload.registrantId,
+                allowedRegistrantIds,
+            },
+        });
+    }
+
     const result = await apolloClient.query({
         query: Vonage_GetEventDetailsDocument,
         variables: {
             eventId: payload.eventId,
-            userId,
+            registrantId: payload.registrantId,
         },
     });
 
-    if (!result.data || !result.data.schedule_Event_by_pk || result.error) {
-        console.error("Could not retrieve event information", payload.eventId);
-        return {};
+    if (!result.data?.schedule_Event_by_pk) {
+        throw new NotFoundError("Event not found", { privateErrorData: { eventId: payload.eventId } });
     }
 
     const vonageSessionId =
@@ -416,38 +450,32 @@ export async function handleJoinEvent(
             ? result.data.schedule_Event_by_pk.eventVonageSession?.sessionId
             : result.data.schedule_Event_by_pk.room.publicVonageSessionId;
     if (!vonageSessionId) {
-        console.error("Could not retrieve Vonage session associated with event", payload.eventId);
-        return {};
+        throw new NotFoundError("Vonage session not found", { privateErrorData: { eventId: payload.eventId } });
     }
 
-    if (!result.data.schedule_Event_by_pk.conference.registrants.length) {
-        console.error(
-            "User does not have registrant at conference, refusing event join token",
-            userId,
-            payload.eventId
-        );
-        return {};
+    if (result.data.registrant_Registrant_by_pk?.conferenceId !== result.data.schedule_Event_by_pk.conferenceId) {
+        throw new BadRequestError("Invalid request", {
+            privateMessage: "Registrant is not for same conference as event",
+            privateErrorData: { eventId: payload.eventId, registrantId: payload.registrantId },
+        });
     }
 
-    const registrant = result.data.schedule_Event_by_pk.conference.registrants[0];
+    const registrant = result.data.registrant_Registrant_by_pk;
+
+    if (!registrant) {
+        throw new NotFoundError("Registrant not found", {
+            privateErrorData: { registrantId: payload.registrantId },
+        });
+    }
+
     const isPresenterOrChairOrConferenceOrganizerOrConferenceModerator =
         result.data.schedule_Event_by_pk.eventPeople.some(
             (eventPerson) =>
                 eventPerson.roleName === Schedule_EventProgramPersonRole_Enum.Presenter ||
                 eventPerson.roleName === Schedule_EventProgramPersonRole_Enum.Chair
         ) ||
-        result.data.schedule_Event_by_pk.conference.registrants[0].groupRegistrants.some((groupRegistrant) =>
-            groupRegistrant.group.groupRoles.some((groupRole) =>
-                groupRole.role.rolePermissions.some(
-                    (rolePermission) =>
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageAttendees ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageGroups ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageRoles ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageSchedule ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceModerateAttendees
-                )
-            )
-        );
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
     const connectionData: CustomConnectionData = {
         registrantId: registrant.id,
         userId,
@@ -464,22 +492,27 @@ export async function handleJoinEvent(
             vonageSessionId,
             registrant.id
         ).catch((error) => {
-            console.error("Error adding Vonage recording to user's list", { userId, payload, error });
+            logger.error({ userId, payload, err: error }, "Error adding Vonage recording to user's list");
         });
 
         return { accessToken, isRecorded: !!recordingId || result.data.schedule_Event_by_pk.enableRecording };
-    } catch (e) {
-        console.error("Failure while generating event Vonage session token", payload.eventId, vonageSessionId, e);
+    } catch (err: unknown) {
+        throw new ServerError("Server error", {
+            privateMessage: "Failed to generate Vonage token",
+            privateErrorData: {
+                eventId: payload.eventId,
+                registrantId: payload.registrantId,
+            },
+            originalError: err instanceof Error ? err : undefined,
+        });
     }
-
-    return {};
 }
 
 gql`
     query VonageJoinRoom_GetInfo($roomId: uuid!, $registrantId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             id
-            originatingItem {
+            item {
                 id
                 itemPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
                     id
@@ -492,29 +525,56 @@ gql`
 `;
 
 export async function handleJoinRoom(
+    logger: P.Logger,
     payload: joinRoomVonageSessionArgs,
+    allowedRegistrantIds: string[],
+    allowedRoomIds: string[],
     userId: string
 ): Promise<JoinRoomVonageSessionOutput> {
-    const roomConferenceId = await getRoomConferenceId(payload.roomId);
-    const registrant = await getRegistrantWithPermissions(userId, roomConferenceId);
-    const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId, roomConferenceId);
-
-    if (!canJoinRoom) {
-        console.warn("User tried to join a Vonage room, but was not permitted", { payload, userId });
-        throw new Error("User is not permitted to join this room");
+    // Assumption: list of registrants will never include a registrant that does not have access
+    // to a room in the list of rooms.
+    if (!allowedRegistrantIds.includes(payload.registrantId)) {
+        throw new ForbiddenError("Forbidden to join room", {
+            privateMessage: "Registrant is not in list of allowed registrants",
+            privateErrorData: {
+                registrantId: payload.registrantId,
+                allowedRegistrantIds,
+            },
+        });
     }
 
-    const maybeVonageMeetingId = await getRoomVonageSession(payload.roomId);
+    if (!allowedRoomIds.includes(payload.roomId)) {
+        throw new ForbiddenError("Forbiddent to join room", {
+            privateMessage: "Room is not in list of allowed rooms",
+            privateErrorData: {
+                roomId: payload.roomId,
+                allowedRoomIds,
+            },
+        });
+    }
 
-    if (!maybeVonageMeetingId) {
-        console.error("Could not get Vonage meeting id", { payload, userId, registrantId: registrant.id });
-        return {
-            message: "Could not find meeting",
-        };
+    const sessionId = await getRoomVonageSession(payload.roomId);
+
+    if (!sessionId) {
+        throw new NotFoundError("Could not find Vonage session", {
+            privateErrorData: {
+                roomId: payload.roomId,
+            },
+        });
+    }
+
+    const registrant = await getRegistrantDetails(payload.registrantId);
+
+    if (!registrant) {
+        throw new NotFoundError("Registrant not found", {
+            privateErrorData: {
+                registrantId: payload.registrantId,
+            },
+        });
     }
 
     const connectionData: CustomConnectionData = {
-        registrantId: registrant.id,
+        registrantId: payload.registrantId,
         userId,
     };
 
@@ -526,14 +586,15 @@ export async function handleJoinRoom(
         },
     });
     if (!roomInfo.data?.room_Room_by_pk) {
-        console.warn("User tried to join a Vonage room, but the system could not retrieve the room information.", {
+        logger.error("User tried to join a Vonage room, but the system could not retrieve the room information.", {
             payload,
             userId,
         });
         throw new Error("Failed to fetch room information");
     }
+
     const isPresenterOrChairOrConferenceOrganizerOrConferenceModerator =
-        !!roomInfo.data.room_Room_by_pk.originatingItem?.itemPeople.some(
+        !!roomInfo.data.room_Room_by_pk.item?.itemPeople.some(
             (person) =>
                 person.roleName.toUpperCase() === "AUTHOR" ||
                 person.roleName.toUpperCase() === "PRESENTER" ||
@@ -541,34 +602,26 @@ export async function handleJoinRoom(
                 person.roleName.toUpperCase() === "SESSION ORGANIZER" ||
                 person.roleName.toUpperCase() === "ORGANIZER"
         ) ||
-        registrant.groupRegistrants.some((groupRegistrant) =>
-            groupRegistrant.group.groupRoles.some((groupRole) =>
-                groupRole.role.rolePermissions.some(
-                    (rolePermission) =>
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageAttendees ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageGroups ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageRoles ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageSchedule ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceModerateAttendees
-                )
-            )
-        );
-
-    const accessToken = Vonage.vonage.generateToken(maybeVonageMeetingId, {
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
+    const accessToken = Vonage.vonage.generateToken(sessionId, {
         data: JSON.stringify(connectionData),
         role: isPresenterOrChairOrConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
     });
 
-    const recordingId = await addRegistrantToVonageRecording(payload.roomId, maybeVonageMeetingId, registrant.id).catch(
+    const recordingId = await addRegistrantToVonageRecording(payload.roomId, sessionId, registrant.id).catch(
         (error) => {
-            console.error("Error adding Vonage recording to user's list", { userId, payload, error });
+            logger.error(
+                { registrantId: registrant.id, payload, error },
+                "Error adding Vonage recording to registrant's list"
+            );
         }
     );
 
     return {
         accessToken,
-        sessionId: maybeVonageMeetingId,
-        isRecorded: !!recordingId,
+        sessionId,
+        isRecorded: Boolean(recordingId),
     };
 }
 
@@ -627,28 +680,7 @@ gql`
                 }
             }
             conference {
-                registrants(
-                    where: {
-                        userId: { _eq: $userId }
-                        groupRegistrants: {
-                            group: {
-                                groupRoles: {
-                                    role: {
-                                        rolePermissions: {
-                                            permissionName: {
-                                                _in: [
-                                                    CONFERENCE_MANAGE_SCHEDULE
-                                                    CONFERENCE_MODERATE_ATTENDEES
-                                                    CONFERENCE_VIEW_ATTENDEES
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                ) {
+                registrants(where: { userId: { _eq: $userId } }) {
                     id
                 }
             }
@@ -657,6 +689,7 @@ gql`
 `;
 
 export async function handleToggleVonageRecordingState(
+    logger: P.Logger,
     args: toggleVonageRecordingStateArgs,
     userId: string
 ): Promise<ToggleVonageRecordingStateOutput> {
@@ -703,9 +736,9 @@ export async function handleToggleVonageRecordingState(
 
         const eventId = room.events[0]?.id;
         if (!ongoingArchive) {
-            await startVonageArchive(room.id, eventId, args.vonageSessionId, registrantId);
+            await startVonageArchive(logger, room.id, eventId, args.vonageSessionId, registrantId);
         } else {
-            await stopRoomVonageArchiving(room.id, eventId, true);
+            await stopRoomVonageArchiving(logger, room.id, eventId, true);
         }
 
         return {

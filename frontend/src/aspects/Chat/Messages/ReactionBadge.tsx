@@ -1,4 +1,4 @@
-import type { BadgeProps} from "@chakra-ui/react";
+import type { BadgeProps } from "@chakra-ui/react";
 import { Badge, Text, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";

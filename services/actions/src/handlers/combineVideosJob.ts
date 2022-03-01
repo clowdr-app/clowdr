@@ -1,23 +1,20 @@
 import { gql } from "@apollo/client/core";
+import type { Input } from "@aws-sdk/client-mediaconvert";
 import {
     AudioSelectorType,
     CaptionDestinationType,
     CaptionSourceType,
     ContainerType,
     EmbeddedConvert608To708,
-    Input,
     LanguageCode,
     OutputGroupType,
 } from "@aws-sdk/client-mediaconvert";
-import {
-    AWSJobStatus,
-    Content_ElementType_Enum,
-    ElementBaseType,
-    ElementDataBlob,
-} from "@clowdr-app/shared-types/build/content";
-import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
-import { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
+import type { CombineVideosJobDataBlob } from "@midspace/shared-types/combineVideosJob";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { AWSJobStatus, Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
+import { TranscodeMode } from "@midspace/shared-types/sns/mediaconvert";
 import assert from "assert";
+import type { P } from "pino";
 import * as R from "ramda";
 import { assertType } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
@@ -28,8 +25,8 @@ import {
     CombineVideosJob_GetElementsDocument,
     CombineVideosJob_GetJobsDocument,
     CombineVideosJob_StartJobDocument,
+    Job_Queues_JobStatus_Enum,
     MediaConvert_GetCombineVideosJobDocument,
-    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { MediaConvert } from "../lib/aws/awsClient";
@@ -60,25 +57,24 @@ gql`
     }
 `;
 
-export async function processCombineVideosJobQueue(): Promise<void> {
+export async function processCombineVideosJobQueue(logger: P.Logger): Promise<void> {
     const jobsResponse = await apolloClient.query({
         query: CombineVideosJob_GetJobsDocument,
     });
 
     jobsResponse.data.job_queues_CombineVideosJob.forEach(async (row) => {
-        if (row.jobStatusName !== Video_JobStatus_Enum.New) {
+        if (row.jobStatusName !== Job_Queues_JobStatus_Enum.New) {
             if (Date.now() - Date.parse(row.created_at) > 6 * 60 * 60 * 1000) {
-                console.error(
+                logger.error(
                     "Error: CombineVideosJob timed out after 6 hours (failing the job to avoid queue starvation)"
                 );
-                await failCombineVideosJob(row.id, "Timed out after 6 hours");
+                await failCombineVideosJob(logger, row.id, "Timed out after 6 hours");
             }
             return;
         }
 
         try {
-            assertType<CombineVideosJobDataBlob>(row.data);
-            const data: CombineVideosJobDataBlob = row.data;
+            const data = assertType<CombineVideosJobDataBlob>(row.data);
 
             const result = await apolloClient.query({
                 query: CombineVideosJob_GetElementsDocument,
@@ -91,7 +87,10 @@ export async function processCombineVideosJobQueue(): Promise<void> {
             const itemIds = R.uniq(result.data.content_Element.map((item) => item.itemId));
 
             if (itemIds.length > 1 || itemIds.length === 0) {
-                console.error("Can only combine content items from exactly one content group", row.id, itemIds);
+                logger.error(
+                    { jobId: row.id, itemIds },
+                    "Can only combine content items from exactly one content group"
+                );
                 throw new Error("Can only combine content items from exactly one content group");
             }
 
@@ -198,12 +197,15 @@ export async function processCombineVideosJobQueue(): Promise<void> {
                 `Failed to create MediaConvert job for CombineVideosJob, ${row.id}`
             );
 
-            await startCombineVideosJob(row.id, mediaConvertJobResult.Job.Id);
+            await startCombineVideosJob(logger, row.id, mediaConvertJobResult.Job.Id);
 
-            console.log("Started CombineVideosJob MediaConvert job", row.id, mediaConvertJobResult.Job.Id);
-        } catch (e) {
-            console.error("Error while handling process CombineVideosJob", e);
-            await failCombineVideosJob(row.id, e.message);
+            logger.info(
+                { combineVideosJobId: row.id, mediaConvertJobId: mediaConvertJobResult.Job.Id },
+                "Started CombineVideosJob MediaConvert job"
+            );
+        } catch (e: any) {
+            logger.error({ err: e }, "Error while handling process CombineVideosJob");
+            await failCombineVideosJob(logger, row.id, e.message);
         }
     });
 }
@@ -219,8 +221,12 @@ gql`
     }
 `;
 
-export async function failCombineVideosJob(combineVideosJobId: string, message: string): Promise<void> {
-    console.log("Recording CombineVideosJob as failed", combineVideosJobId, message);
+export async function failCombineVideosJob(
+    logger: P.Logger,
+    combineVideosJobId: string,
+    message: string
+): Promise<void> {
+    logger.info({ combineVideosJobId, message }, "Recording CombineVideosJob as failed");
     await callWithRetry(
         async () =>
             await apolloClient.mutate({
@@ -244,8 +250,8 @@ gql`
     }
 `;
 
-async function startCombineVideosJob(combineVideosJobId: string, mediaConvertJobId: string) {
-    console.log("Recording CombineVideosJob as started", combineVideosJobId, mediaConvertJobId);
+async function startCombineVideosJob(logger: P.Logger, combineVideosJobId: string, mediaConvertJobId: string) {
+    logger.info({ combineVideosJobId, mediaConvertJobId }, "Recording CombineVideosJob as started");
     await callWithRetry(
         async () =>
             await apolloClient.mutate({
@@ -268,15 +274,25 @@ gql`
         }
     }
 
-    query MediaConvert_GetCombineVideosJob($combineVideosJobId: uuid!) {
+    query MediaConvert_GetCombineVideosJob($combineVideosJobId: uuid!, $itemId: uuid!) {
         job_queues_CombineVideosJob_by_pk(id: $combineVideosJobId) {
             id
             conferenceId
             outputName
         }
+        content_Item_by_pk(id: $itemId) {
+            id
+            subconferenceId
+        }
     }
 
-    mutation CombineVideosJob_CreateElement($data: jsonb!, $name: String!, $itemId: uuid!, $conferenceId: uuid!) {
+    mutation CombineVideosJob_CreateElement(
+        $data: jsonb!
+        $name: String!
+        $itemId: uuid!
+        $conferenceId: uuid!
+        $subconferenceId: uuid!
+    ) {
         insert_content_Element_one(
             object: {
                 data: $data
@@ -285,6 +301,7 @@ gql`
                 typeName: VIDEO_FILE
                 itemId: $itemId
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
             }
         ) {
             id
@@ -293,12 +310,13 @@ gql`
 `;
 
 export async function completeCombineVideosJob(
+    logger: P.Logger,
     combineVideosJobId: string,
     transcodeS3Url: string,
     subtitleS3Url: string,
     itemId: string
 ): Promise<void> {
-    console.log("Recording CombineVideosJob as completed", combineVideosJobId);
+    logger.info({ combineVideosJobId }, "Recording CombineVideosJob as completed");
 
     try {
         const combineVideosJobResult = await callWithRetry(
@@ -307,12 +325,13 @@ export async function completeCombineVideosJob(
                     query: MediaConvert_GetCombineVideosJobDocument,
                     variables: {
                         combineVideosJobId,
+                        itemId,
                     },
                 })
         );
 
         if (!combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk) {
-            console.error("Could not find related CombineVideosJob", combineVideosJobId);
+            logger.error({ combineVideosJobId }, "Could not find related CombineVideosJob");
             throw new Error("Could not find related CombineVideosJob");
         }
 
@@ -353,6 +372,7 @@ export async function completeCombineVideosJob(
                     mutation: CombineVideosJob_CreateElementDocument,
                     variables: {
                         conferenceId: combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk?.conferenceId,
+                        subconferenceId: combineVideosJobResult.data.content_Item_by_pk?.subconferenceId ?? null,
                         itemId,
                         data,
                         name:
@@ -371,7 +391,7 @@ export async function completeCombineVideosJob(
                     },
                 })
         );
-    } catch (e) {
-        await failCombineVideosJob(combineVideosJobId, e.message);
+    } catch (e: any) {
+        await failCombineVideosJob(logger, combineVideosJobId, e.message);
     }
 }

@@ -5,7 +5,8 @@ import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import type { ItemEventFragment, ItemRoomEventFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useRealTime } from "../../../Generic/useRealTime";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { useConference } from "../../useConference";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import StarEventButton from "../Schedule/StarEventButton";
@@ -19,12 +20,12 @@ export function EventsTable({
     events: readonly (ItemEventFragment | ItemRoomEventFragment)[];
     includeRoom: boolean;
 }): JSX.Element {
-    const conference = useConference();
     const maybeRegistrant = useMaybeCurrentRegistrant();
+    const { conferencePath } = useAuthParameters();
     return (
         <VStack spacing={2} alignItems="flex-start">
             {roomId ? (
-                <LinkButton colorScheme="SecondaryActionButton" to={`/conference/${conference.slug}/room/${roomId}`}>
+                <LinkButton colorScheme="SecondaryActionButton" to={`${conferencePath}/room/${roomId}`}>
                     Go to room
                 </LinkButton>
             ) : undefined}
@@ -62,6 +63,7 @@ function Event({
     includeRoom: boolean;
 }): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const now = useRealTime(60000);
 
@@ -117,7 +119,7 @@ function Event({
                 "room" in itemEvent && itemEvent.room ? (
                     <Td>
                         <LinkButton
-                            to={`/conference/${conference.slug}/room/${itemEvent.roomId}`}
+                            to={`${conferencePath}/room/${itemEvent.roomId}`}
                             aria-label={`Go to room: ${itemEvent.room?.name ?? "private room"}`}
                             whiteSpace="normal"
                             variant="outline"
@@ -140,7 +142,7 @@ function Event({
                     <Td>
                         {itemEvent.item.id !== "" ? (
                             <LinkButton
-                                to={`/conference/${conference.slug}/item/${itemEvent.item.id}`}
+                                to={`${conferencePath}/item/${itemEvent.item.id}`}
                                 aria-label={`Go to item: ${itemEvent.item.title}`}
                                 whiteSpace="normal"
                                 variant="outline"
@@ -160,7 +162,7 @@ function Event({
                                     {conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"} at this event.
                                 </Text>
                                 <LinkButton
-                                    to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
+                                    to={`${conferencePath}/exhibition/${itemEvent.exhibitionId}`}
                                     aria-label={`Go to ${conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}`}
                                     whiteSpace="normal"
                                     variant="outline"
@@ -183,7 +185,7 @@ function Event({
                 ) : "exhibitionId" in itemEvent && itemEvent.exhibitionId ? (
                     <Td>
                         <LinkButton
-                            to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
+                            to={`${conferencePath}/exhibition/${itemEvent.exhibitionId}`}
                             aria-label={`Go to ${conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}`}
                             whiteSpace="normal"
                             variant="outline"

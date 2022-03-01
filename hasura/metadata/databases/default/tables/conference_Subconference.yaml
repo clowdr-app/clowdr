@@ -1,0 +1,164 @@
+table:
+  name: Subconference
+  schema: conference
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+array_relationships:
+- name: sponsorshipTiers
+  using:
+    manual_configuration:
+      column_mapping:
+        id: subconferenceId
+      insertion_order: null
+      remote_table:
+        name: Tier
+        schema: sponsor
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - name
+    - shortName
+    - conferenceId
+    - slug
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+  role: conference-organizer
+select_permissions:
+- permission:
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - id:
+          _in: X-Hasura-Subconference-Ids
+      - conferenceVisibilityLevel:
+          _in:
+          - PUBLIC
+          - EXTERNAL
+  role: attendee
+- permission:
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - id:
+          _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
+- permission:
+    columns:
+    - conferenceId
+    - conferenceVisibilityLevel
+    - created_at
+    - defaultProgramVisibilityLevel
+    - id
+    - name
+    - shortName
+    - slug
+    - updated_at
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - id:
+          _in: X-Hasura-Subconference-Ids
+      - conferenceVisibilityLevel:
+          _in:
+          - PUBLIC
+  role: unauthenticated
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    check: null
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - id:
+          _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
+delete_permissions:
+- permission:
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - conferenceVisibilityLevel
+  headers:
+  - name: X-Hasura-Event-Secret
+    value_from_env: EVENT_SECRET
+  name: Cache_Subconference
+  retry_conf:
+    interval_sec: 10
+    num_retries: 3
+    timeout_sec: 10
+  webhook: "{{CACHES_BASE_URL}}/cache/update/subconference"

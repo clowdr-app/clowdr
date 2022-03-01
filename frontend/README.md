@@ -11,13 +11,10 @@ React web app that forms the main Midspace frontend.
 ## Setting up
 
 1. `cd frontend`
-1. Install npm packages: `npm i`
 1. `cp .env.example .env`
 1. Configure your `.env` file according to the [Frontend
    Configuration](#frontend-configuration) section below.
-1. Run the VSCode task `Frontend -- GraphQL Codegen`.
-1. Build and test the system locally (see [Local Development](#local-development)
-   below).
+1. Return to the main README for steps to generate GraphQL client code and start your local working copy.
 1. **Production**: If using Netlify, then:
    - Once you have set up Hasura Cloud, create a Netlify account and
      follow the steps below.
@@ -39,12 +36,11 @@ components](@chakra-ui/theme-tools).
 
 After writing, modifying or delete a GraphQL query in the frontend, you will
 need to regenerate the GraphQL code. You can do this using the VSCode Task
-`Frontend -- GraphQL Codegen`.
+`Single -- GraphQL Codegen` and selecting `frontend` (Hasura must be running).
 
 ## Local Development
 
-See root README _Local Development_ instructions for local development for
-which tasks to run.
+Refer to the comments in the `vite.config.ts` file regarding server configuration. For local development, you will likely need to comment out the first set of the `hmr` configuration options and uncomment the second set of the `hmr` configuration options.
 
 If the environment configuration changes, or for example, the `package.json`
 commands change, then you will need to restart tasks for this frontend.
@@ -84,15 +80,14 @@ libraries that we use for writing better tests:
 
 ## Production builds
 
-- Install `serve` tool system-wide for testing production builds: `npm i -g serve`
 - Use the VSCode (build) task: `Frontend -- Production Build`
 - Use the VSCode task: `Frontend -- Serve Production Build`
 
 Alternatively:
 
-1. To build: `frontend> npm run build` Builds a static copy of the frontend to
+1. To build: `frontend> pnpm build` Builds a static copy of the frontend to
    the `build/` folder using snowpack & webpack.
-1. To test: `frontend> serve -s build` Serves the static build locally for
+1. To test: `frontend> pnpx serve -s build` Serves the static build locally for
    checking.
 
 ## Deployment to Netlify
@@ -101,43 +96,32 @@ The frontend can easily be deployed using Netlify:
 
 1. Connect to GitHub, select the relevant repo and branch
 1. Leave the base directory blank
-1. Build command: `cd shared && npm ci && cd ../frontend && npm ci && npm run build`
+1. Build command: `cd ../frontend && pnpm build`
 1. Publish directory: `frontend/build`
 1. Environment variables: As below
-
-## Developer Notes
-
-### react-transcript-editor
-
-Because JavaScript monorepos are hard, we currently resort to building a single-file ESM version of [@bbc/react-transcript-editor](https://www.npmjs.com/package/@bbc/react-transcript-editor) and vendoring (i.e. copy-pasting) it into the `src/` directory of this project.
-
-A fork of the transcript editor is included as a Git submodule of this repository. There are a couple of key changes:
-
-- A custom Rollup configuration that bundles the `TranscriptEditor` component as an ES module
-- The docx support is commented out (because it doubles the bundle size)
-
-If you need to build a new version, run `npm run build:transcript-editor` and copy the resulting `output/TranscriptEditor.js` file into the frontend.
 
 ## Frontend Configuration
 
 **_Note:_** Snowpack (the build tool we use) will only include environment
-variables in the build which start with `SNOWPACK_PUBLIC_`.
+variables in the build which start with `VITE_`.
 
 **_Note:_** Pay attention to the _Netlify?_ column when configuring Netlify. _No_ means 'do not add to Netlify'; _Yes_ means 'add to Netlify'; _Only_ means 'only add in Netlify, not locally'.
 
-| Env Var                                      | Value                                                                                | Netlify? |
-| -------------------------------------------- | ------------------------------------------------------------------------------------ | -------- |
-| HASURA_ADMIN_SECRET                          | Admin secret (used only for GraphQL Codegen)                                         | No       |
-| _GraphQL_                                    |                                                                                      |          |
-| SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                                            | Yes      |
-| SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not.                             | Yes      |
-| _Auth0_                                      |                                                                                      |          |
-| SNOWPACK_PUBLIC_AUTH_DOMAIN                  | <auth0-domain> e.g. `something.eu.auth0.com`                                         | Yes      |
-| SNOWPACK_PUBLIC_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application                                      | Yes      |
-| _AWS_                                        |                                                                                      |          |
-| SNOWPACK_PUBLIC_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |
-| NPM_VERSION                                  | `7.3` (only required in Netlify)                                                     | Only     |
-| NODE_VERSION                                 | `15.4` (only required in Netlify)                                                    | Only     |
-| _Vonage Video API_                           |                                                                                      |
-| SNOWPACK_PUBLIC_OPENTOK_API_KEY              | API key for the Vonage Video API project                                             |          |
-| SNOWPACK_PRESENCE_SERVICE_URL                | URL to the presence service.                                                         |
+| Env Var                           | Value                                                                                | Netlify? |
+| --------------------------------- | ------------------------------------------------------------------------------------ | -------- |
+| HASURA_ADMIN_SECRET               | Admin secret (used only for GraphQL Codegen)                                         | No       |
+| _GraphQL_                         |                                                                                      |          |
+| VITE_GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                                            | Yes      |
+| VITE_GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not.                             | Yes      |
+| _Auth0_                           |                                                                                      |          |
+| VITE_AUTH_DOMAIN                  | <auth0-domain> e.g. `something.eu.auth0.com`                                         | Yes      |
+| VITE_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application                                      | Yes      |
+| _AWS_                             |                                                                                      |          |
+| VITE_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |
+| NPM_VERSION                       | `7.3` (only required in Netlify)                                                     | Only     |
+| NODE_VERSION                      | `17.4` (only required in Netlify)                                                    | Only     |
+| _Vonage Video API_                |                                                                                      |
+| VITE_OPENTOK_API_KEY              | API key for the Vonage Video API project                                             |          |
+| VITE_PRESENCE_SERVICE_URL         | URL to the presence service.                                                         |          |
+| _Other_                           |                                                                                      |          |
+| VITE_TECH_SUPPORT_ADDRESS         | Email address for contacting tech support                                            | Yes      |

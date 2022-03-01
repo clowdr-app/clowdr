@@ -1,10 +1,15 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
+import type { GetUploadAgreementOutput, submitElementArgs, updateSubtitlesArgs } from "@midspace/hasura/action-types";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { ElementData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
-import { assertType } from "typescript-is";
-import { handleElementUpdated, handleGetProgramPersonAccessToken, handleGetUploadAgreement } from "../handlers/content";
+import type { NextFunction, Request, Response } from "express";
+import express from "express";
+import { assertType, TypeGuardError } from "typescript-is";
+import { handleElementUpdated, handleGetUploadAgreement } from "../handlers/content";
 import { handleElementSubmitted, handleUpdateSubtitles } from "../handlers/upload";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { ElementData, Payload } from "../types/hasura/event";
+import { BadRequestError, UnexpectedServerError } from "../lib/errors";
 
 export const router = express.Router();
 
@@ -13,16 +18,16 @@ router.use(checkEventSecret);
 
 router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<ElementData>>(req.body);
-    } catch (e) {
-        console.error("Received incorrect payload", e);
+        assertType<EventPayload<ElementData>>(req.body);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
-        await handleElementUpdated(req.body);
-    } catch (e) {
-        console.error("Failure while handling element updated", e);
+        await handleElementUpdated(req.log, req.body);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Failure while handling element updated");
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -33,8 +38,8 @@ router.post("/submit", json(), async (req: Request, res: Response) => {
     const params = req.body.input;
     try {
         assertType<submitElementArgs>(params);
-    } catch (e) {
-        console.error(`${req.originalUrl}: invalid request`, params);
+    } catch (e: any) {
+        req.log.error({ params }, "Invalid request");
         return res.status(200).json({
             success: false,
             message: "Invalid request",
@@ -42,11 +47,11 @@ router.post("/submit", json(), async (req: Request, res: Response) => {
     }
 
     try {
-        console.log(`${req.originalUrl}: content item submitted`);
-        const result = await handleElementSubmitted(params);
+        req.log.info("Content item submitted");
+        const result = await handleElementSubmitted(req.log, params);
         return res.status(200).json(result);
-    } catch (e) {
-        console.error(`${req.originalUrl}: failed to submit content item`, e);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Failed to submit content item");
         return res.status(200).json({
             success: false,
             message: "Failed to submit content item",
@@ -54,14 +59,14 @@ router.post("/submit", json(), async (req: Request, res: Response) => {
     }
 });
 
-router.post("/updateSubtitles", json(), async (req: Request, res: Response) => {
+router.post("/updateSubtitles", json({ limit: 2 ** 20 }), async (req: Request, res: Response) => {
     try {
         const params = req.body.input;
         assertType<updateSubtitlesArgs>(params);
-        const result = await handleUpdateSubtitles(params);
+        const result = await handleUpdateSubtitles(req.log, params);
         return res.status(200).json(result);
-    } catch (e) {
-        console.error(`${req.originalUrl}: invalid request:`, req.body, e);
+    } catch (e: any) {
+        req.log.error({ body: req.body, err: e }, "Invalid request");
         return res.status(200).json({
             success: false,
             message: "Invalid request",
@@ -69,42 +74,23 @@ router.post("/updateSubtitles", json(), async (req: Request, res: Response) => {
     }
 });
 
-router.post("/getUploadAgreement", json(), async (req: Request, res: Response<GetUploadAgreementOutput | string>) => {
-    const params = req.body.input;
-    try {
-        assertType<getUploadAgreementArgs>(params);
-    } catch (e) {
-        console.error(`${req.path}: Invalid request:`, req.body.input);
-        return res.status(500).json("Invalid request");
-    }
-
-    try {
-        const result = await handleGetUploadAgreement(params);
-        return res.status(200).json(result);
-    } catch (e) {
-        console.error(`${req.path}: Failed to retrieve agreement text`, e);
-        return res.status(500).json("Failed to retrieve agreement text");
-    }
-});
-
 router.post(
-    "/getProgramPersonAccessToken",
+    "/getUploadAgreement",
     json(),
-    async (req: Request, res: Response<MatchingPersonOutput | string>) => {
-        const params = req.body.input;
+    parseSessionVariables,
+    async (req: Request, res: Response<GetUploadAgreementOutput | string>, next: NextFunction) => {
         try {
-            assertType<getProgramPersonAccessTokenArgs>(params);
-        } catch (e) {
-            console.error(`${req.path}: Invalid request:`, req.body.input);
-            return res.status(500).json("Invalid request");
-        }
-
-        try {
-            const result = await handleGetProgramPersonAccessToken(params);
-            return res.status(200).json(result);
-        } catch (e) {
-            console.error(`${req.path}: Failed to get program person access token`, e);
-            return res.status(500).json("Failed to process finding a match");
+            const magicToken = assertType<string>(req.magicToken);
+            const result = await handleGetUploadAgreement(magicToken);
+            res.status(200).json(result);
+        } catch (err: unknown) {
+            if (err instanceof TypeGuardError) {
+                next(new BadRequestError("Invalid request", { originalError: err }));
+            } else if (err instanceof Error) {
+                next(err);
+            } else {
+                next(new UnexpectedServerError("Server error", undefined, err));
+            }
         }
     }
 );

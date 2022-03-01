@@ -1,7 +1,6 @@
-import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Button,
-    ButtonGroup,
     Code,
     Drawer,
     DrawerBody,
@@ -10,27 +9,22 @@ import {
     DrawerHeader,
     DrawerOverlay,
     HStack,
-    Link,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
     Text,
     useClipboard,
     VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import React, { useMemo } from "react";
 import type {
     ManageContent_ElementFragment,
-    ManageContent_ItemSecondaryFragment} from "../../../../../../generated/graphql";
-import {
-    Content_ItemType_Enum,
-    useManageContent_SelectItemQuery,
+    ManageContent_ItemSecondaryFragment,
 } from "../../../../../../generated/graphql";
+import { Content_ItemType_Enum, useManageContent_SelectItemQuery } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
-import ApolloQueryWrapper from "../../../../../GQL/ApolloQueryWrapper";
-import { FAIcon } from "../../../../../Icons/FAIcon";
-import { useConference } from "../../../../useConference";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
+import { makeContext } from "../../../../../GQL/make-context";
+import QueryWrapper from "../../../../../GQL/QueryWrapper";
 import { EditElements } from "../Element/EditElements";
 import { AddContentMenu } from "./AddContentMenu";
 import { CreateRoomButton } from "./CreateRoomButton";
@@ -108,21 +102,27 @@ function SecondaryEditorInner({
     itemType: Content_ItemType_Enum;
     openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 }): JSX.Element {
-    const conference = useConference();
-    const itemResponse = useManageContent_SelectItemQuery({
+    const { conferencePath } = useAuthParameters();
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [itemResponse, refetchItem] = useManageContent_SelectItemQuery({
         variables: {
             itemId,
         },
-        fetchPolicy: "network-only",
+        context,
     });
-    const [defaultOpenSecurityForId, setDefaultOpenSecurityForId] = useState<string | null>(null);
 
     return (
         <VStack w="100%" alignItems="flex-start">
             <HStack flexWrap="wrap" justifyContent="flex-start" w="100%" gridRowGap={2}>
                 <LinkButton
                     size="sm"
-                    to={`/conference/${conference.slug}/item/${itemId}`}
+                    to={`${conferencePath}/item/${itemId}`}
                     isExternal
                     aria-label="View item"
                     title="View item"
@@ -133,10 +133,10 @@ function SecondaryEditorInner({
                 </LinkButton>
                 {itemResponse.data?.content_Item_by_pk ? (
                     <>
-                        {itemResponse.data.content_Item_by_pk.rooms.length === 1 ? (
+                        {itemResponse.data.content_Item_by_pk.room ? (
                             <LinkButton
                                 size="sm"
-                                to={`/conference/${conference.slug}/room/${itemResponse.data.content_Item_by_pk.rooms[0].id}`}
+                                to={`${conferencePath}/room/${itemResponse.data.content_Item_by_pk.room.id}`}
                                 isExternal
                                 aria-label={
                                     itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
@@ -156,35 +156,11 @@ function SecondaryEditorInner({
                                 &nbsp;
                                 <ExternalLinkIcon />
                             </LinkButton>
-                        ) : itemResponse.data.content_Item_by_pk.rooms.length >= 1 ? (
-                            <Menu size="sm">
-                                <MenuButton as={Button} rightIcon={<ChevronDownIcon />} size="sm">
-                                    View discussion rooms
-                                </MenuButton>
-                                <MenuList>
-                                    {itemResponse.data.content_Item_by_pk.rooms.map((room, idx) => (
-                                        <MenuItem key={room.id}>
-                                            <Link
-                                                size="sm"
-                                                href={`/conference/${conference.slug}/room/${room.id}`}
-                                                isExternal
-                                                aria-label="View discussion room"
-                                                title="View discussion room"
-                                                textDecoration="none"
-                                            >
-                                                {idx}. {room.name}
-                                                &nbsp;
-                                                <ExternalLinkIcon />
-                                            </Link>
-                                        </MenuItem>
-                                    ))}
-                                </MenuList>
-                            </Menu>
                         ) : (
                             <CreateRoomButton
                                 size="sm"
                                 itemId={itemId}
-                                refetch={() => itemResponse.refetch()}
+                                refetch={() => refetchItem()}
                                 buttonText={
                                     itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
                                         ? "Create booth"
@@ -195,7 +171,7 @@ function SecondaryEditorInner({
                     </>
                 ) : undefined}
             </HStack>
-            <ApolloQueryWrapper
+            <QueryWrapper
                 getter={(result) => ({
                     rooms: [],
                     ...result.content_Item_by_pk,
@@ -210,26 +186,19 @@ function SecondaryEditorInner({
                 ) => (
                     <EditElements
                         itemId={itemId}
-                        refetchElements={() => {
-                            itemResponse.refetch();
-                        }}
-                        defaultOpenSecurityForId={defaultOpenSecurityForId ?? undefined}
                         itemType={itemType}
                         openSendSubmissionRequests={openSendSubmissionRequests}
                         {...result}
                     />
                 )}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
             {itemResponse.data?.content_Item_by_pk ? (
-                <ButtonGroup>
-                    <AddContentMenu
-                        itemId={itemId}
-                        onCreate={(newId) => {
-                            setDefaultOpenSecurityForId(newId);
-                            itemResponse.refetch();
-                        }}
-                    />
-                </ButtonGroup>
+                <AddContentMenu
+                    itemId={itemId}
+                    onCreate={() => {
+                        refetchItem();
+                    }}
+                />
             ) : undefined}
         </VStack>
     );

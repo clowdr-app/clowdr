@@ -1,12 +1,15 @@
-import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject, split } from "@apollo/client/core";
+import type { NormalizedCacheObject } from "@apollo/client/core";
+import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client/core";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
-import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { OnModuleInit } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import fetch from "cross-fetch";
 import WebSocket from "ws";
 import { HASURA_MODULE_OPTIONS } from "../../constants";
-import { HasuraDataModuleOptions } from "../hasura-data.module";
+import type { HasuraDataModuleOptions } from "../hasura-data.module";
 
 @Injectable()
 export class GraphQlService implements OnModuleInit {

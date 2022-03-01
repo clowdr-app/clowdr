@@ -1,26 +1,20 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { ButtonGroup, Link, Text } from "@chakra-ui/react";
-import React, { useMemo } from "react";
-import { Link as ReactLink, Route, Switch, useLocation } from "react-router-dom";
-import LoginButton from "../Auth/Buttons/LoginButton";
+import React from "react";
+import { Link as ReactLink, Route, Switch } from "react-router-dom";
+import { LoginButton } from "../Auth";
+import FAIcon from "../Chakra/FAIcon";
 import { ExternalLinkButton, LinkButton } from "../Chakra/LinkButton";
 import { useMaybeConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
-import { FAIcon } from "../Icons/FAIcon";
+import { useAuthParameters } from "../GQL/AuthParameters";
+import { useTitle } from "../Hooks/useTitle";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import { useTitle } from "../Utils/useTitle";
 import GenericErrorPage from "./GenericErrorPage";
 
 export default function PageNotFound(): JSX.Element {
     const title = useTitle("Page not found");
-    const location = useLocation();
-    const conferenceSlug = useMemo(() => {
-        const matches = location.pathname.match(/^\/conference\/([^/]+)/);
-        if (matches && matches.length > 1) {
-            return matches[1];
-        }
-        return undefined;
-    }, [location.pathname]);
+    const { conferencePath } = useAuthParameters();
     const maybeCurrentUser = useMaybeCurrentUser();
     const loggedIn = !!maybeCurrentUser?.user;
     const maybeConference = useMaybeConference();
@@ -40,12 +34,14 @@ export default function PageNotFound(): JSX.Element {
                 {maybeConference && registered ? (
                     <>
                         <Switch>
-                            <Route path={`/conference/${maybeConference.slug}/room/`}>
-                                <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                                    You need to be a member of this room to access it. Please ask the room&apos;s owner
-                                    or your conference organiser to add you to the room.
-                                </Text>
-                            </Route>
+                            {maybeConference ? (
+                                <Route path={`${conferencePath}/room/`}>
+                                    <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
+                                        You need to be a member of this room to access it. Please ask the room&apos;s
+                                        owner or your conference organiser to add you to the room.
+                                    </Text>
+                                </Route>
+                            ) : undefined}
                             <Route path="/">
                                 <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
                                     You are logged in and registered for this conference but you cannot access this
@@ -55,7 +51,7 @@ export default function PageNotFound(): JSX.Element {
                             </Route>
                         </Switch>
                     </>
-                ) : conferenceSlug && loggedIn ? (
+                ) : maybeConference && loggedIn ? (
                     <>
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
                             You are logged into Midspace but you will need an invitation code to access the full
@@ -107,7 +103,7 @@ export default function PageNotFound(): JSX.Element {
                     ) : undefined}
                     {!loggedIn ? <LoginButton size="md" /> : undefined}
                     <LinkButton
-                        to={maybeConference ? `/conference/${maybeConference.slug}/` : "/"}
+                        to={maybeConference && conferencePath ? conferencePath : "/"}
                         colorScheme={
                             (!registered && maybeConference?.registrationURL.length) ||
                             maybeConference?.supportAddress.length

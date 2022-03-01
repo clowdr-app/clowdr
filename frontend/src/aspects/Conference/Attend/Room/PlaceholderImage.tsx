@@ -1,7 +1,7 @@
 import { Box, Image } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { backgroundImage } from "../../../Vonage/resources";
 import { useRegistrant } from "../../RegistrantsContext";
+import { backgroundImage } from "./Vonage/resources";
 
 export default function PlaceholderImage({
     connectionData,

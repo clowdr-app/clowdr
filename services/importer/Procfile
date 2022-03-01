@@ -1,0 +1,2 @@
+web: node services/importer/build/web-server.js
+tasksWorker: node services/importer/build/workers/tasks.js

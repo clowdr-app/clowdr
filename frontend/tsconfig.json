@@ -1,34 +1,47 @@
 {
-    "include": [
-        "src/**/*.d.ts",
-        "src/**/*.ts",
-        "src/**/*.tsx",
-        "types",
-        "node_modules/@types",
-        "public/js/ServiceWorker.ts"
-    ],
+    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.json", "public/js/ServiceWorker.ts"],
     "exclude": ["./build"],
     "compilerOptions": {
-        "module": "esnext",
+        /* Basic Options */
         "target": "ES2020",
-        "moduleResolution": "node",
+        "module": "ESNext",
         "lib": ["DOM", "ES2019"],
         "jsx": "preserve",
         "baseUrl": "./",
-        /* paths - If you configure Snowpack import aliases, add them here. */
-        "paths": {},
-        /* noEmit - Snowpack builds (emits) files, not tsc. */
         "noEmit": true,
-        /* Additional Options */
+        "typeRoots": ["types", "node_modules/@types"],
+
+        /* Strict Type-Checking Options */
         "strict": true,
-        "skipLibCheck": true,
+
+        /* Additional Checks */
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "importsNotUsedAsValues": "error",
+
+        /* Module Resolution Options */
+        "moduleResolution": "node",
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
-        "allowSyntheticDefaultImports": true,
-        "importsNotUsedAsValues": "error",
         "isolatedModules": true,
-        "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }],
+        "allowSyntheticDefaultImports": true,
+
+        /* Source Map Options */
+
+        /* Experimental Options */
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
-    }
+
+        /* Advanced Options */
+        "skipLibCheck": true,
+        "emitDecoratorMetadata": true,
+        "composite": true
+    },
+    "references": [
+        { "path": "../packages/shared/assert/tsconfig.esm.json" },
+        { "path": "../packages/shared/graphql/tsconfig.esm.json" },
+        { "path": "../packages/shared/shared-types/tsconfig.esm.json" },
+        { "path": "../packages/shared/urql-hasura-cache-generic-resolver/tsconfig.esm.json" }
+    ]
 }

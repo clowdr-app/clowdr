@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -13,15 +12,18 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import React, { useCallback, useMemo, useState } from "react";
+import { gql } from "urql";
 import {
+    Job_Queues_JobStatus_Enum,
     useDeleteRoomRtmpOutputMutation,
     useGetRoomRtmpOutputQuery,
     useInsertRoomRtmpOutputMutation,
     useUpdateRoomRtmpOutputMutation,
-    Video_JobStatus_Enum,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import { makeContext } from "../../../GQL/make-context";
 
 gql`
     query GetRoomRtmpOutput($roomId: uuid!) {
@@ -33,9 +35,11 @@ gql`
                 updated_at
                 url
                 streamKey
+                roomId
             }
-            channelStack: channelStackWithStreamKey {
+            channelStack {
                 id
+                roomId
                 rtmpOutputUri
                 rtmpOutputStreamKey
                 updateJobs: channelStackUpdateJobs(where: { jobStatusName: { _in: [NEW, IN_PROGRESS] } }) {
@@ -44,12 +48,14 @@ gql`
                     updated_at
                     jobStatusName
                     message
+                    channelStackId
                 }
                 mediaLiveChannelStatus {
                     id
                     createdAt
                     updatedAt
                     state
+                    channelStackId
                 }
             }
         }
@@ -85,15 +91,24 @@ gql`
 `;
 
 export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string }): JSX.Element {
-    const rtmpOutputResponse = useGetRoomRtmpOutputQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.RoomId]: roomId,
+            }),
+        [roomId]
+    );
+    const [rtmpOutputResponse, refetchRtmpOutputResponse] = useGetRoomRtmpOutputQuery({
         variables: {
             roomId,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
+        context,
     });
-    const [doInsert, insertResponse] = useInsertRoomRtmpOutputMutation();
-    const [doUpdate, updateResponse] = useUpdateRoomRtmpOutputMutation();
-    const [doDelete, deleteResponse] = useDeleteRoomRtmpOutputMutation();
+    const [insertResponse, doInsert] = useInsertRoomRtmpOutputMutation();
+    const [updateResponse, doUpdate] = useUpdateRoomRtmpOutputMutation();
+    const [deleteResponse, doDelete] = useDeleteRoomRtmpOutputMutation();
 
     const [url, setUrl] = useState<string | null>(null);
     const [key, setKey] = useState<string | null>(null);
@@ -107,8 +122,8 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
     const channelStatus = channelStack?.mediaLiveChannelStatus;
     const updateJobs = channelStack?.updateJobs[0];
     const isUpdating =
-        updateJobs?.jobStatusName === Video_JobStatus_Enum.New ||
-        updateJobs?.jobStatusName === Video_JobStatus_Enum.InProgress;
+        updateJobs?.jobStatusName === Job_Queues_JobStatus_Enum.New ||
+        updateJobs?.jobStatusName === Job_Queues_JobStatus_Enum.InProgress;
 
     const doSave = useCallback(
         async (url: string, key: string) => {
@@ -121,37 +136,58 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                     if (url !== null && key !== null) {
                         if (rtmpOutput) {
                             if (url === "" || key === "") {
-                                await doDelete({
-                                    variables: {
+                                await doDelete(
+                                    {
                                         id: rtmpOutput.id,
                                     },
-                                });
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            },
+                                        },
+                                    }
+                                );
                             } else {
-                                await doUpdate({
-                                    variables: {
+                                await doUpdate(
+                                    {
                                         id: rtmpOutput.id,
                                         url,
                                         key,
                                     },
-                                });
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            },
+                                        },
+                                    }
+                                );
                             }
                         } else if (url !== "" && key !== "") {
-                            await doInsert({
-                                variables: {
+                            await doInsert(
+                                {
                                     roomId,
                                     url,
                                     key,
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        },
+                                    },
+                                }
+                            );
                         }
 
-                        await rtmpOutputResponse.refetch();
+                        await refetchRtmpOutputResponse();
                     }
                 }
 
                 setUrl(null);
                 setKey(null);
-            } catch (e) {
+            } catch (e: any) {
                 toast({
                     status: "error",
                     title: "Error saving RTMP Output configuration",
@@ -166,7 +202,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
             channelStack,
             channelStatus?.state,
             rtmpOutput,
-            rtmpOutputResponse,
+            refetchRtmpOutputResponse,
             doDelete,
             doUpdate,
             doInsert,
@@ -175,8 +211,8 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
         ]
     );
 
-    return rtmpOutputResponse.loading && !rtmpOutputResponse.data ? (
-        <CenteredSpinner />
+    return rtmpOutputResponse.fetching && !rtmpOutputResponse.data ? (
+        <CenteredSpinner caller="ExternalRtmpBroadcastEditor:214" />
     ) : (
         <VStack spacing={4} justifyContent="flex-start" alignItems="flex-start">
             <Text>
@@ -293,10 +329,10 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                 }
                             }}
                             isLoading={
-                                rtmpOutputResponse.loading ||
-                                insertResponse.loading ||
-                                updateResponse.loading ||
-                                deleteResponse.loading
+                                rtmpOutputResponse.fetching ||
+                                insertResponse.fetching ||
+                                updateResponse.fetching ||
+                                deleteResponse.fetching
                             }
                             isDisabled={(url === null && key === null) || isUpdating}
                         >

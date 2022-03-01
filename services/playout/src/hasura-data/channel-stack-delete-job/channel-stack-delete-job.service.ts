@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client/core";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
+import type { Bunyan } from "@eropple/nestjs-bunyan";
+import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import { sub } from "date-fns";
+import type { Job_Queues_JobStatus_Enum } from "../../generated/graphql";
 import {
     ChannelStackSync_GetChannelStackDeleteJobsDocument,
     ChannelStackSync_GetStuckChannelStackDeleteJobsDocument,
     ChannelStack_CompleteChannelStackDeleteJobDocument,
-    Video_JobStatus_Enum,
 } from "../../generated/graphql";
 import { GraphQlService } from "../graphql/graphql.service";
 
@@ -66,13 +67,13 @@ export class ChannelStackDeleteJobService {
     }
     public async setStatusChannelStackDeleteJob(
         cloudFormationStackArn: string,
-        status: Video_JobStatus_Enum,
+        status: Job_Queues_JobStatus_Enum,
         message: string | null
     ): Promise<void> {
         gql`
             mutation ChannelStack_CompleteChannelStackDeleteJob(
                 $cloudFormationStackArn: String!
-                $status: video_JobStatus_enum!
+                $status: job_queues_JobStatus_enum!
                 $message: String
             ) {
                 update_job_queues_ChannelStackDeleteJob(

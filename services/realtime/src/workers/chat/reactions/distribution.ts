@@ -1,9 +1,10 @@
 import { generateChatRoomName } from "../../../lib/chat";
+import { logger } from "../../../lib/logger";
 import { onDistributionReaction } from "../../../rabbitmq/chat/reactions";
 import { emitter } from "../../../socket-emitter/socket-emitter";
-import { Action, Reaction } from "../../../types/chat";
+import type { Action, Reaction } from "../../../types/chat";
 
-console.info("Chat reactions distribution worker running");
+logger.info("Chat reactions distribution worker running");
 
 async function onReaction(action: Action<Reaction>) {
     const eventName =

@@ -1,6 +1,6 @@
 import { AspectRatio, Button, Center, Image, Text, Tooltip, useColorModeValue, VStack } from "@chakra-ui/react";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
-import { isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { isElementDataBlob } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -8,8 +8,7 @@ import { useHistory } from "react-router-dom";
 import type { SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
 import { defaultOutline_AsBoxShadow } from "../../../../Chakra/Outline";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { useConference } from "../../../useConference";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import RoomPresenceGrid from "./RoomPresenceGrid";
 
 function getLogoUrlFromData(data: any): string | null {
@@ -22,7 +21,7 @@ function getLogoUrlFromData(data: any): string | null {
         } else if (latestData?.type === Content_ElementType_Enum.ImageFile) {
             try {
                 const { bucket, key } = new AmazonS3URI(latestData.s3Url);
-                return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+                return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
             } catch {
                 return null;
             }
@@ -32,8 +31,14 @@ function getLogoUrlFromData(data: any): string | null {
     return null;
 }
 
-export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_ItemFragment }): JSX.Element {
-    const conference = useConference();
+export default function SponsorTile({
+    sponsor,
+    showLogo = true,
+}: {
+    sponsor: SponsorBoothsList_ItemFragment;
+    showLogo?: boolean;
+}): JSX.Element {
+    const { conferencePath } = useAuthParameters();
 
     const shadow = useColorModeValue("md", "light-md");
     const history = useHistory();
@@ -56,18 +61,18 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
             m="3px"
             overflow="hidden"
             onClick={() => {
-                if (sponsor.rooms.length > 0) {
-                    history.push(`/conference/${conference.slug}/room/${sponsor.rooms[0].id}`);
+                if (sponsor.room) {
+                    history.push(`${conferencePath}/room/${sponsor.room.id}`);
                 } else {
-                    history.push(`/conference/${conference.slug}/item/${sponsor.id}`);
+                    history.push(`${conferencePath}/item/${sponsor.id}`);
                 }
             }}
             onKeyUp={(ev) => {
                 if (ev.key === "Enter") {
-                    if (sponsor.rooms.length > 0) {
-                        history.push(`/conference/${conference.slug}/room/${sponsor.rooms[0].id}`);
+                    if (sponsor.room) {
+                        history.push(`${conferencePath}/room/${sponsor.room.id}`);
                     } else {
-                        history.push(`/conference/${conference.slug}/item/${sponsor.id}`);
+                        history.push(`${conferencePath}/item/${sponsor.id}`);
                     }
                 }
             }}
@@ -87,7 +92,7 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
             tabIndex={0}
         >
             <Tooltip label={sponsor.title}>
-                {logoUrl ? (
+                {logoUrl && showLogo ? (
                     <Image src={logoUrl} alt={sponsor.title} p={5} maxW="100%" maxH="100%" objectFit="contain" />
                 ) : (
                     <AspectRatio ratio={16 / 9} w="100%">
@@ -99,8 +104,8 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
                     </AspectRatio>
                 )}
             </Tooltip>
-            <FAIcon iconStyle="s" icon="star" color="gold" pos="absolute" top={0} left={2} fontSize="xl" />
-            {sponsor.rooms.length > 0 ? <RoomPresenceGrid roomId={sponsor.rooms[0].id} noGapFill /> : undefined}
+            {/* <FAIcon iconStyle="s" icon="star" color="gold" pos="absolute" top={0} left={2} fontSize="xl" /> */}
+            {sponsor.room ? <RoomPresenceGrid roomId={sponsor.room.id} noGapFill /> : undefined}
         </Button>
     );
 }

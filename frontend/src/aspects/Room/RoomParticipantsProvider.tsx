@@ -1,9 +1,10 @@
-import { gql } from "@apollo/client";
-import type { PropsWithChildren} from "react";
-import React, { useContext } from "react";
+import { gql } from "@urql/core";
+import type { PropsWithChildren } from "react";
+import React, { useContext, useEffect } from "react";
 import { useGetAllRoomParticipantsQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
+import usePolling from "../Hooks/usePolling";
 import { EnableRoomParticipantsPollingContext } from "./EnableRoomParticipantsPollingContext";
 import { RoomParticipantsContext } from "./useRoomParticipants";
 
@@ -25,13 +26,20 @@ gql`
 function ParticipantsProvider_Polling({ children }: PropsWithChildren<Record<string, unknown>>): JSX.Element {
     const conference = useConference();
     const { paused } = useContext(EnableRoomParticipantsPollingContext);
-    const { loading, error, data } = useGetAllRoomParticipantsQuery({
+    const [{ fetching: loading, error, data }, refetchGetAllRoomParticipantsQuery] = useGetAllRoomParticipantsQuery({
         variables: {
             conferenceId: conference.id,
         },
-        pollInterval: paused ? 0 : 60000,
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
+    const { start, stop } = usePolling(refetchGetAllRoomParticipantsQuery, 60000, paused);
+    useEffect(() => {
+        if (paused) {
+            stop();
+        } else {
+            start();
+        }
+    }, [paused, start, stop]);
 
     const value = loading ? undefined : error ? false : data?.room_Participant ?? false;
 

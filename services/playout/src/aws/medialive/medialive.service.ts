@@ -1,25 +1,28 @@
-import {
-    BatchUpdateScheduleCommand,
+import type {
     ChannelState,
     ChannelSummary,
-    DescribeChannelCommand,
     DescribeChannelResponse,
     EncoderSettings,
-    MediaLive,
     OutputDestination,
+    ScheduleAction,
+} from "@aws-sdk/client-medialive";
+import {
+    BatchUpdateScheduleCommand,
+    DescribeChannelCommand,
+    MediaLive,
     paginateDescribeSchedule,
     paginateListChannels,
-    ScheduleAction,
     StartChannelCommand,
     StopChannelCommand,
     UpdateChannelCommand,
 } from "@aws-sdk/client-medialive";
-import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { Credentials as NewSdkCredentials } from "@aws-sdk/types";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Inject, Injectable } from "@nestjs/common";
-import { DescribeScheduleRequest } from "aws-sdk/clients/medialive";
+import type { DescribeScheduleRequest } from "aws-sdk/clients/medialive";
 import { AWS_MODULE_OPTIONS } from "../../constants";
-import { AwsModuleOptions } from "../aws.module";
+import type { AwsModuleOptions } from "../aws.module";
 
 @Injectable()
 export class MediaLiveService {

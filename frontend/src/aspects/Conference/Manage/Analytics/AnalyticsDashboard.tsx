@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -27,24 +26,30 @@ import {
     UnorderedList,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import Papa from "papaparse";
 import React, { useCallback, useMemo } from "react";
-import { Permissions_Permission_Enum, useConferenceStatsQuery } from "../../../../generated/graphql";
+import { gql } from "urql";
+import { useConferenceStatsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { makeContext } from "../../../GQL/make-context";
+import { useTitle } from "../../../Hooks/useTitle";
+import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 
 gql`
     query ConferenceStats($id: uuid!) {
         conference_Conference_by_pk(id: $id) {
+            id
             completedRegistrationsStat {
                 count
+                id
             }
             items(where: { stats: {} }) {
                 id
                 title
+                conferenceId
                 stats(order_by: [{ updated_at: asc }]) {
                     id
                     itemId
@@ -54,6 +59,8 @@ gql`
                 elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_PREPUBLISH, VIDEO_FILE] }, stats: {} }) {
                     id
                     name
+                    typeName
+                    itemId
                     stats(order_by: [{ updated_at: asc }]) {
                         id
                         elementId
@@ -65,6 +72,7 @@ gql`
             rooms(where: { _or: [{ managementModeName: { _eq: PUBLIC } }, { events: {} }] }) {
                 id
                 name
+                managementModeName
                 presenceCounts(order_by: [{ created_at: asc }]) {
                     created_at
                     count
@@ -72,14 +80,18 @@ gql`
                 stats(order_by: [{ created_at: asc }]) {
                     created_at
                     hlsViewCount
+                    roomId
                 }
                 events(order_by: [{ startTime: asc }, { endTime: asc }]) {
                     id
                     name
+                    roomId
+                    itemId
                     item {
                         id
                         title
                     }
+                    exhibitionId
                     exhibition {
                         id
                         name
@@ -134,10 +146,18 @@ function JSDateToExcelDate(inDate: Date) {
 
 export default function AnalyticsDashboard(): JSX.Element {
     const conference = useConference();
-    const statsResponse = useConferenceStatsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [statsResponse] = useConferenceStatsQuery({
         variables: {
             id: conference.id,
         },
+        context,
     });
 
     const title = useTitle(`Analytics for ${conference.shortName}`);
@@ -299,11 +319,8 @@ export default function AnalyticsDashboard(): JSX.Element {
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - Video Analytics.csv`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(csvData, fileName);
-                    } else {
-                        csvURL = window.URL.createObjectURL(csvData);
-                    }
+
+                    csvURL = window.URL.createObjectURL(csvData);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = csvURL ?? "";
@@ -322,11 +339,8 @@ export default function AnalyticsDashboard(): JSX.Element {
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - Video Analytics.json`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(jsonData, fileName);
-                    } else {
-                        jsonURL = window.URL.createObjectURL(jsonData);
-                    }
+
+                    jsonURL = window.URL.createObjectURL(jsonData);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = jsonURL ?? "";
@@ -509,11 +523,8 @@ export default function AnalyticsDashboard(): JSX.Element {
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - Room Analytics - ${kind.field}.csv`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(csvData, fileName);
-                    } else {
-                        csvURL = window.URL.createObjectURL(csvData);
-                    }
+
+                    csvURL = window.URL.createObjectURL(csvData);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = csvURL ?? "";
@@ -532,11 +543,8 @@ export default function AnalyticsDashboard(): JSX.Element {
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - Room Analytics.json`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(jsonData, fileName);
-                    } else {
-                        jsonURL = window.URL.createObjectURL(jsonData);
-                    }
+
+                    jsonURL = window.URL.createObjectURL(jsonData);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = jsonURL ?? "";
@@ -549,10 +557,7 @@ export default function AnalyticsDashboard(): JSX.Element {
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="4xl">
                 Manage {conference.shortName}
@@ -591,7 +596,7 @@ export default function AnalyticsDashboard(): JSX.Element {
             {popularVideosByPlaybacks?.length ? (
                 <VStack alignItems="flex-start">
                     <Text fontWeight="bold">The top 5 most popular videos are:</Text>
-                    <Table spacingX="40px" spacingY="20px" overflowX="auto">
+                    <Table cellSpacing="20px" overflowX="auto">
                         <Thead>
                             <Tr>
                                 <Th>Item</Th>
@@ -798,6 +803,6 @@ export default function AnalyticsDashboard(): JSX.Element {
                     </MenuList>
                 </Menu>
             </HStack>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

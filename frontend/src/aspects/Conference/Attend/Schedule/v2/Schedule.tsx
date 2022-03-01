@@ -1,16 +1,14 @@
-import { gql } from "@apollo/client";
 import { Box, Table, Text, Th, Tr, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as luxon from "luxon";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
 import type {
     ScheduleV2_RoomFragment,
     ScheduleV2_TagFragment,
-    Schedule_Event_Bool_Exp} from "../../../../../generated/graphql";
-import {
-    useScheduleV2_RoomsQuery,
-    useScheduleV2_TagsQuery,
+    Schedule_Event_Bool_Exp,
 } from "../../../../../generated/graphql";
+import { useScheduleV2_RoomsQuery, useScheduleV2_TagsQuery } from "../../../../../generated/graphql";
 import { useConference } from "../../../useConference";
 import Day from "./Day";
 
@@ -20,6 +18,7 @@ gql`
         name
         # colour
         priority
+        conferenceId
     }
 
     query ScheduleV2_Rooms($conferenceId: uuid!) {
@@ -33,6 +32,7 @@ gql`
         name
         colour
         priority
+        conferenceId
     }
 
     query ScheduleV2_Tags($conferenceId: uuid!) {
@@ -91,7 +91,7 @@ export default function Schedule({
         }),
         [conference.id]
     );
-    const tagsResponse = useScheduleV2_TagsQuery(tagsQueryObj);
+    const [tagsResponse] = useScheduleV2_TagsQuery(tagsQueryObj);
     const sortedTags = useMemo<ScheduleV2_TagFragment[]>(
         () =>
             tagsResponse.data?.collection_Tag
@@ -111,7 +111,7 @@ export default function Schedule({
         }),
         [conference.id]
     );
-    const roomsResponse = useScheduleV2_RoomsQuery(roomsQueryObj);
+    const [roomsResponse] = useScheduleV2_RoomsQuery(roomsQueryObj);
 
     const sortedRooms = useMemo<ScheduleV2_RoomFragment[]>(
         () =>
@@ -124,7 +124,7 @@ export default function Schedule({
         [roomsResponse.data?.room_Room]
     );
 
-    const { dayRefs, dayEls } = useMemo(() => {
+    const { dayEls } = useMemo(() => {
         const dayRefsResult: React.Ref<HTMLTableRowElement>[] = [];
         const dayElsResult: JSX.Element[] = [];
 

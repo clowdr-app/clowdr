@@ -1,21 +1,25 @@
 import { gql } from "@apollo/client/core";
-import { Content_ElementType_Enum, ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { SourceBlob, SourceType } from "@clowdr-app/shared-types/build/content/element";
+import type { EventPayload } from "@midspace/hasura/event";
+import type { MediaPackageHarvestJob } from "@midspace/hasura/event-data";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
+import type { SourceBlob } from "@midspace/shared-types/content/element";
+import { SourceType } from "@midspace/shared-types/content/element";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
+import type { P } from "pino";
 import {
     CreateMediaPackageHarvestJobDocument,
     FailMediaPackageHarvestJobDocument,
+    Job_Queues_JobStatus_Enum,
     Recording_CompleteMediaPackageHarvestJobDocument,
     Recording_GetEventDocument,
     Recording_GetMediaPackageHarvestJobDocument,
     Recording_IgnoreMediaPackageHarvestJobDocument,
     StartMediaPackageHarvestJobDocument,
-    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createHarvestJob } from "../lib/aws/mediaPackage";
-import { MediaPackageHarvestJob, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`
@@ -44,17 +48,20 @@ gql`
     }
 `;
 
-export async function handleMediaPackageHarvestJobUpdated(payload: Payload<MediaPackageHarvestJob>): Promise<void> {
+export async function handleMediaPackageHarvestJobUpdated(
+    logger: P.Logger,
+    payload: EventPayload<MediaPackageHarvestJob>
+): Promise<void> {
     assert(payload.event.data.new, "Expected new MediaPackageHarvestJob data");
 
     const newRow = payload.event.data.new;
 
-    if (newRow.jobStatusName === Video_JobStatus_Enum.New) {
+    if (newRow.jobStatusName === Job_Queues_JobStatus_Enum.New) {
         if (
             !payload.event.data.old ||
-            (payload.event.data.old && payload.event.data.old.jobStatusName !== Video_JobStatus_Enum.New)
+            (payload.event.data.old && payload.event.data.old.jobStatusName !== Job_Queues_JobStatus_Enum.New)
         ) {
-            console.log("Creating new MediaPackage harvest job", newRow.id, newRow.eventId);
+            logger.info({ jobId: newRow.id, eventId: newRow.eventId }, "Creating new MediaPackage harvest job");
             const eventResult = await apolloClient.query({
                 query: Recording_GetEventDocument,
                 variables: {
@@ -83,7 +90,12 @@ export async function handleMediaPackageHarvestJobUpdated(payload: Payload<Media
                     awsJobId: harvestJobId,
                 },
             });
-            console.log("Started MediaPackage harvest job", harvestJobId, newRow.eventId);
+            logger.info(
+                { harvestJobId, eventId: newRow.eventId },
+                "Started MediaPackage harvest job",
+                harvestJobId,
+                newRow.eventId
+            );
         }
     }
 }
@@ -98,8 +110,12 @@ gql`
     }
 `;
 
-export async function createMediaPackageHarvestJob(eventId: string, conferenceId: string): Promise<void> {
-    console.log("Creating MediaPackage harvest job", eventId);
+export async function createMediaPackageHarvestJob(
+    logger: P.Logger,
+    eventId: string,
+    conferenceId: string
+): Promise<void> {
+    logger.info({ eventId }, "Creating MediaPackage harvest job");
 
     await apolloClient.mutate({
         mutation: CreateMediaPackageHarvestJobDocument,
@@ -118,6 +134,7 @@ gql`
                 item {
                     id
                     title
+                    subconferenceId
                 }
                 id
                 name
@@ -131,11 +148,12 @@ gql`
     mutation Recording_CompleteMediaPackageHarvestJob(
         $id: uuid!
         $message: String!
-        $data: jsonb = ""
+        $data: jsonb!
         $source: jsonb = null
-        $itemId: uuid = ""
-        $conferenceId: uuid = ""
-        $name: String = ""
+        $itemId: uuid!
+        $conferenceId: uuid!
+        $subconferenceId: uuid = null
+        $name: String!
     ) {
         update_job_queues_MediaPackageHarvestJob_by_pk(
             pk_columns: { id: $id }
@@ -148,6 +166,7 @@ gql`
                 data: $data
                 itemId: $itemId
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
                 typeName: VIDEO_FILE
                 name: $name
                 source: $source
@@ -159,11 +178,12 @@ gql`
 `;
 
 export async function completeMediaPackageHarvestJob(
+    logger: P.Logger,
     awsHarvestJobId: string,
     bucketName: string,
     manifestKey: string
 ): Promise<void> {
-    console.log("AWS harvest job completed", awsHarvestJobId);
+    logger.info({ awsHarvestJobId }, "AWS harvest job completed");
 
     const result = await callWithRetry(
         async () =>
@@ -176,9 +196,11 @@ export async function completeMediaPackageHarvestJob(
     );
 
     if (!result.data.job_queues_MediaPackageHarvestJob.length) {
-        console.error(
-            "Could not find MediaPackageHarvestJob entry associated with this MediaPackage Harvest Job",
-            awsHarvestJobId
+        logger.error(
+            {
+                awsHarvestJobId,
+            },
+            "Could not find MediaPackageHarvestJob entry associated with this MediaPackage Harvest Job"
         );
         return;
     }
@@ -186,8 +208,11 @@ export async function completeMediaPackageHarvestJob(
     const job = result.data.job_queues_MediaPackageHarvestJob[0];
 
     if (!job.event.item) {
-        console.warn("No ContentGroup associated with harvested event, skipping.", awsHarvestJobId, job.event.id);
-        await ignoreMediaPackageHarvestJob(job.id, bucketName, manifestKey);
+        logger.warn(
+            { awsHarvestJobId, eventId: job.event.id },
+            "No ContentGroup associated with harvested event, skipping."
+        );
+        await ignoreMediaPackageHarvestJob(logger, job.id, bucketName, manifestKey);
         return;
     }
 
@@ -211,7 +236,7 @@ export async function completeMediaPackageHarvestJob(
         durationSeconds: job.event.durationSeconds,
     };
 
-    console.log("Completing MediaPackage harvest job", job.event.id, job.id);
+    logger.info({ eventId: job.event.id, jobId: job.id }, "Completing MediaPackage harvest job");
     const startTime = formatRFC7231(Date.parse(job.event.startTime));
     await callWithRetry(
         async () =>
@@ -221,6 +246,7 @@ export async function completeMediaPackageHarvestJob(
                     id: job.id,
                     message: `Completed successfully. Bucket name: ${bucketName}; manifest key: ${manifestKey}`,
                     conferenceId: job.conferenceId,
+                    subconferenceId: job.event.item?.subconferenceId ?? null,
                     itemId: job.event.item?.id,
                     data,
                     source,
@@ -241,8 +267,13 @@ gql`
     }
 `;
 
-export async function ignoreMediaPackageHarvestJob(id: string, bucketName: string, manifestKey: string): Promise<void> {
-    console.log("Ignoring result of MediaPackage harvest job", id);
+export async function ignoreMediaPackageHarvestJob(
+    logger: P.Logger,
+    id: string,
+    bucketName: string,
+    manifestKey: string
+): Promise<void> {
+    logger.info({ jobId: id }, "Ignoring result of MediaPackage harvest job");
     await callWithRetry(
         async () =>
             await apolloClient.mutate({
@@ -266,8 +297,12 @@ gql`
     }
 `;
 
-export async function failMediaPackageHarvestJob(awsHarvestJobId: string, message: string): Promise<void> {
-    console.log("Recording failure of MediaPackage harvest job", awsHarvestJobId, message);
+export async function failMediaPackageHarvestJob(
+    logger: P.Logger,
+    awsHarvestJobId: string,
+    message: string
+): Promise<void> {
+    logger.info({ awsHarvestJobId, message }, "Recording failure of MediaPackage harvest job");
     await callWithRetry(
         async () =>
             await apolloClient.mutate({

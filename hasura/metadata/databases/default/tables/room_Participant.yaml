@@ -18,51 +18,112 @@ object_relationships:
     foreign_key_constraint_on: roomId
 select_permissions:
 - permission:
-    allow_aggregations: true
     columns:
-    - registrantId
     - conferenceId
     - created_at
     - id
+    - registrantId
     - roomId
+    - subconferenceId
     - updated_at
     filter:
       _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - _or:
+        - subconferenceId:
+            _is_null: true
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+      - roomId:
+          _in: X-Hasura-Room-Ids
+  role: attendee
+- permission:
+    columns:
+    - chimeRegistrantId
+    - vonageConnectionId
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    - registrantId
+    - roomId
+    - subconferenceId
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - chimeRegistrantId
+    - vonageConnectionId
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    - registrantId
+    - roomId
+    - subconferenceId
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - _or:
+        - subconferenceId:
+            _is_null: true
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+      - roomId:
+          _in: X-Hasura-Room-Ids
+  role: room-admin
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - id
+    - registrantId
+    - roomId
+    - subconferenceId
+    - updated_at
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - _or:
+        - subconferenceId:
+            _is_null: true
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+      - roomId:
+          _in: X-Hasura-Room-Ids
+  role: room-member
+- permission:
+    columns:
+    - id
+    - roomId
+    - registrantId
+    - created_at
+    - updated_at
+    - conferenceId
+    - vonageConnectionId
+    - chimeRegistrantId
+    - subconferenceId
+    filter:
+      _or:
       - _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _or:
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_SCHEDULE
-                    - CONFERENCE_VIEW_ATTENDEES
-          - _exists:
-              _table:
-                name: FlatUnauthPermission
-                schema: public
-              _where:
-                _and:
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_VIEW_ATTENDEES
-      - room:
-          _or:
-          - managementModeName:
-              _eq: PUBLIC
-          - roomPeople:
-              registrant:
-                userId:
-                  _eq: X-Hasura-User-Id
-  role: user
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer

@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -15,16 +14,18 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import assert from "assert";
-import React, { useEffect } from "react";
+import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import React, { useEffect, useMemo } from "react";
 import { Redirect, useHistory } from "react-router-dom";
+import { gql } from "urql";
 import { useInvitation_ConfirmCurrentMutation, useSelectInvitationForAcceptQuery } from "../../generated/graphql";
-import LoginButton from "../Auth/Buttons/LoginButton";
-import SignupButton from "../Auth/Buttons/SignUpButton";
-import FAIcon from "../Icons/FAIcon";
+import { LoginButton, SignupButton } from "../Auth";
+import FAIcon from "../Chakra/FAIcon";
+import { makeContext } from "../GQL/make-context";
+import { useTitle } from "../Hooks/useTitle";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { setCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
-import { useTitle } from "../Utils/useTitle";
 
 interface Props {
     inviteCode?: string;
@@ -53,14 +54,17 @@ const Spinner = () => (
 );
 
 function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: string }): JSX.Element {
-    const [confirmCurrentMutation, { loading, error, data }] = useInvitation_ConfirmCurrentMutation();
+    const [{ fetching: loading, error, data }, confirmCurrentMutation] = useInvitation_ConfirmCurrentMutation();
 
     useEffect(() => {
-        confirmCurrentMutation({
-            variables: {
+        confirmCurrentMutation(
+            {
                 inviteCode,
             },
-        });
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.User,
+            })
+        );
     }, [confirmCurrentMutation, inviteCode]);
 
     const history = useHistory();
@@ -72,8 +76,10 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
 
     useEffect(() => {
         if (errorMsg === "true" || errorMsg.includes("same user") || duplicateRegistrantError) {
-            assert(data?.invitationConfirmCurrent?.confSlug);
-            history.push(`/conference/${data?.invitationConfirmCurrent?.confSlug}`);
+            assert.truthy(data?.invitationConfirmCurrent?.confSlug);
+            new Promise((r) => setTimeout(r, 5000)).then(() => {
+                history.push(`/conference/${data?.invitationConfirmCurrent?.confSlug}`);
+            });
         }
     }, [data?.invitationConfirmCurrent?.confSlug, duplicateRegistrantError, errorMsg, history]);
 
@@ -145,17 +151,19 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
     const title = useTitle("Accept invitation");
     const { user, loading } = useMaybeCurrentUser();
 
-    const { loading: inviteLoading, data: inviteData } = useSelectInvitationForAcceptQuery({
-        context: {
-            headers: {
-                "SEND-WITHOUT-AUTH": true,
-                "x-hasura-invite-code": inviteCode,
-            },
-        },
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.InviteCode]: inviteCode ?? "",
+            }),
+        [inviteCode]
+    );
+    const [{ fetching: inviteLoading, data: inviteData }] = useSelectInvitationForAcceptQuery({
+        context,
         variables: {
             inviteCode,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     if (loading) {

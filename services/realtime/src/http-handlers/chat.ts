@@ -1,15 +1,15 @@
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
+import { gql } from "graphql-tag";
 import { assertType } from "typescript-is";
+import type { FlagInserted_GetModeratorsQuery, FlagInserted_GetModeratorsQueryVariables } from "../generated/graphql";
 import { FlagInserted_GetModeratorsDocument } from "../generated/graphql";
-import { apolloClient } from "../graphqlClient";
-import { deletePin, insertPin } from "../lib/cache/pin";
-import { deleteSubscription, insertSubscription } from "../lib/cache/subscription";
 import { generateChatPinsChangedRoomName, generateChatSubscriptionsChangedRoomName } from "../lib/chat";
+import { logger } from "../lib/logger";
 import { sendNotifications } from "../lib/notifications";
 import { emitter } from "../socket-emitter/socket-emitter";
-import { Flag, Payload, Pin, Subscription } from "../types/hasura";
+import type { Flag, Payload, Pin, Subscription } from "../types/hasura";
 
 export async function subscriptionChanged(req: Request, res: Response, _next?: NextFunction): Promise<void> {
     try {
@@ -21,18 +21,16 @@ export async function subscriptionChanged(req: Request, res: Response, _next?: N
         assert(sub, "Missing data");
 
         if (data.event.op === "INSERT" || data.event.op === "MANUAL") {
-            await insertSubscription(sub.chatId, sub.registrantId);
             emitter.in(generateChatSubscriptionsChangedRoomName(sub.registrantId)).emit("chat.subscribed", sub.chatId);
         } else if (data.event.op === "DELETE") {
-            await deleteSubscription(sub.chatId, sub.registrantId);
             emitter
                 .in(generateChatSubscriptionsChangedRoomName(sub.registrantId))
                 .emit("chat.unsubscribed", sub.chatId);
         }
 
         res.status(200).send("OK");
-    } catch (e) {
-        console.error("Chat subscription changed: Received incorrect payload", e);
+    } catch (error: any) {
+        logger.error({ error }, "Chat subscription changed: Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -48,16 +46,14 @@ export async function pinChanged(req: Request, res: Response, _next?: NextFuncti
         assert(sub, "Missing data");
 
         if (data.event.op === "INSERT" || data.event.op === "MANUAL") {
-            await insertPin(sub.chatId, sub.registrantId);
             emitter.in(generateChatPinsChangedRoomName(sub.registrantId)).emit("chat.pinned", sub.chatId);
         } else if (data.event.op === "DELETE") {
-            await deletePin(sub.chatId, sub.registrantId);
             emitter.in(generateChatPinsChangedRoomName(sub.registrantId)).emit("chat.unpinned", sub.chatId);
         }
 
         res.status(200).send("OK");
-    } catch (e) {
-        console.error("Chat pin changed: Received incorrect payload", e);
+    } catch (error: any) {
+        logger.error({ error }, "Chat pin changed: Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -69,20 +65,7 @@ gql`
             chat {
                 conference {
                     slug
-                    registrants(
-                        where: {
-                            groupRegistrants: {
-                                group: {
-                                    enabled: { _eq: true }
-                                    groupRoles: {
-                                        role: {
-                                            rolePermissions: { permissionName: { _eq: CONFERENCE_MODERATE_ATTENDEES } }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    ) {
+                    registrants(where: { conferenceRole: { _eq: MODERATOR } }) {
                         id
                         userId
                     }
@@ -101,12 +84,14 @@ export async function flagInserted(req: Request, res: Response, _next?: NextFunc
         const newFlag: Flag = data.event.data.new;
 
         const messageSId = newFlag.messageSId;
-        const response = await apolloClient?.query({
-            query: FlagInserted_GetModeratorsDocument,
-            variables: {
-                messageSId,
-            },
-        });
+        const response = await gqlClient
+            ?.query<FlagInserted_GetModeratorsQuery, FlagInserted_GetModeratorsQueryVariables>(
+                FlagInserted_GetModeratorsDocument,
+                {
+                    messageSId,
+                }
+            )
+            .toPromise();
         assert(response?.data, "List of moderators could not be retrieved.");
         if (response.data.chat_Message.length) {
             const message = response.data.chat_Message[0];
@@ -121,8 +106,8 @@ export async function flagInserted(req: Request, res: Response, _next?: NextFunc
         }
 
         res.status(200).send("OK");
-    } catch (e) {
-        console.error("Chat flag inserted: Received incorrect payload", e);
+    } catch (error: any) {
+        logger.error({ error }, "Chat flag inserted: Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }

@@ -1,0 +1,4 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- ALTER TABLE "job_queues"."ImportJob"
+-- DROP CONSTRAINT "ImportJob_conferenceId_subconferenceId_status_key";

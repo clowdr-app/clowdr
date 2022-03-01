@@ -8,7 +8,7 @@ declare module "amazon-s3-uri" {
      *  const uri = 'https://bucket.s3-aws-region.amazonaws.com/key'
      *  const { region, bucket, key } = new AmazonS3URI(uri)
      * } catch (err) {
-     *  console.warn(`${uri} is not a valid S3 uri`) // should not happen because `uri` is valid in that example
+     *  logger.warn(`${uri} is not a valid S3 uri`) // should not happen because `uri` is valid in that example
      * }
      * @example <caption>functional interface: it automatically returns an AmazonS3URI instance</caption>
      *  const { region, bucket, key } = AmazonS3URI(uri)
@@ -26,7 +26,7 @@ declare module "amazon-s3-uri" {
          *  const uri = 'https://bucket.s3-aws-region.amazonaws.com/key'
          *  const { region, bucket, key } = new AmazonS3URI(uri)
          * } catch (err) {
-         *  console.warn(`${uri} is not a valid S3 uri`) // should not happen because `uri` is valid in that example
+         *  logger.warn(`${uri} is not a valid S3 uri`) // should not happen because `uri` is valid in that example
          * }
          * @example <caption>functional interface: it automatically returns an AmazonS3URI instance</caption>
          *  const { region, bucket, key } = AmazonS3URI(uri)

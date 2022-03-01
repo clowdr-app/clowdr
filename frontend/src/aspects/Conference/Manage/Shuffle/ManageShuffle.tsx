@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -10,12 +9,16 @@ import {
     Spinner,
     Text,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
-import { Permissions_Permission_Enum, useManageShufflePeriods_SelectAllQuery } from "../../../../generated/graphql";
+import { gql } from "urql";
+import { useManageShufflePeriods_SelectAllQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { useRealTime } from "../../../Generic/useRealTime";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { makeContext } from "../../../GQL/make-context";
+import usePolling from "../../../Hooks/usePolling";
+import { useRealTime } from "../../../Hooks/useRealTime";
+import { useTitle } from "../../../Hooks/useTitle";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import CreateQueueModal from "./CreateQueueModal";
 import ShuffleQueueTile from "./ShuffleQueueTile";
@@ -23,6 +26,7 @@ import ShuffleQueueTile from "./ShuffleQueueTile";
 gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
         id
+        conferenceId
         created_at
         updated_at
         conferenceId
@@ -65,14 +69,21 @@ export default function ManageShuffle(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage shuffle queues at ${conference.shortName}`);
 
-    const shufflePeriodsQ = useManageShufflePeriods_SelectAllQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [shufflePeriodsQ, refetchShufflePeriodsQ] = useManageShufflePeriods_SelectAllQuery({
         variables: {
             conferenceId: conference.id,
         },
-        pollInterval: 60000,
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+        requestPolicy: "cache-and-network",
+        context,
     });
+    usePolling(refetchShufflePeriodsQ, 60000);
 
     const now = useRealTime(60000);
     const pastQueues = useMemo(
@@ -92,10 +103,7 @@ export default function ManageShuffle(): JSX.Element {
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageShuffle]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -112,7 +120,7 @@ export default function ManageShuffle(): JSX.Element {
                 </Alert>
             ) : undefined}
             {!shufflePeriodsQ.error ? (
-                shufflePeriodsQ.loading && !shufflePeriodsQ.data ? (
+                shufflePeriodsQ.fetching && !shufflePeriodsQ.data ? (
                     <Spinner label="Loading shuffle queues" />
                 ) : (
                     <>
@@ -159,6 +167,6 @@ export default function ManageShuffle(): JSX.Element {
                     </>
                 )
             ) : undefined}
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

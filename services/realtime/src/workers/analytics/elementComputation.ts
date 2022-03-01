@@ -1,12 +1,17 @@
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import { gql } from "@urql/core";
+import type {
+    Analytics_AggregateElementTotalViewsQuery,
+    Analytics_AggregateElementTotalViewsQueryVariables,
+} from "../../generated/graphql";
 import {
     Analytics_AggregateElementTotalViewsDocument,
     Analytics_InsertElementTotalViewStatDocument,
 } from "../../generated/graphql";
-import { apolloClient } from "../../graphqlClient";
+import { logger } from "../../lib/logger";
 import { ModelName, onBatchUpdate } from "../../rabbitmq/analytics/batchUpdate";
 
-console.info("Analytics Element computation worker running");
+logger.info("Analytics Element computation worker running");
 
 gql`
     query Analytics_AggregateElementTotalViews($elementId: uuid!) {
@@ -30,26 +35,24 @@ gql`
 `;
 
 async function onContentElementBatchUpdate(elementId: string) {
-    console.log(`Content Element Batch Update: ${elementId}`);
+    logger.info(`Content Element Batch Update: ${elementId}`);
 
-    const response = await apolloClient?.query({
-        query: Analytics_AggregateElementTotalViewsDocument,
-        variables: {
-            elementId,
-        },
-    });
+    const response = await gqlClient
+        ?.query<Analytics_AggregateElementTotalViewsQuery, Analytics_AggregateElementTotalViewsQueryVariables>(
+            Analytics_AggregateElementTotalViewsDocument,
+            {
+                elementId,
+            }
+        )
+        .toPromise();
 
-    if (
-        response?.data.analytics_ContentElementStats_aggregate.aggregate?.sum !== undefined &&
-        response?.data.analytics_ContentElementStats_aggregate.aggregate?.sum !== null
-    ) {
-        await apolloClient?.mutate({
-            mutation: Analytics_InsertElementTotalViewStatDocument,
-            variables: {
+    if (response?.data?.analytics_ContentElementStats_aggregate.aggregate?.sum) {
+        await gqlClient
+            ?.mutation(Analytics_InsertElementTotalViewStatDocument, {
                 elementId,
                 count: response.data.analytics_ContentElementStats_aggregate.aggregate.sum.viewCount ?? 0,
-            },
-        });
+            })
+            .toPromise();
     }
 }
 

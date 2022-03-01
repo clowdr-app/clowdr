@@ -1,24 +1,29 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Button, useToast } from "@chakra-ui/react";
 import type { EventAttributes } from "ics";
 import ics from "ics";
 import React from "react";
-import FAIcon from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { useConference } from "../../../useConference";
 import type { TimelineEvent } from "./DayList";
 
-export default function DownloadCalendarButton({
-    events,
-    calendarName,
-    ...props
-}: {
+type Props = {
     events: () => ReadonlyArray<TimelineEvent>;
     calendarName: string;
-} & ButtonProps): JSX.Element {
+} & ButtonProps;
+
+const DownloadCalendarButton = React.forwardRef<HTMLButtonElement, Props>(function DownloadCalendarButton(
+    { events, calendarName, ...props }: Props,
+    ref
+): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const toast = useToast();
     return (
         <Button
+            ref={ref}
+            size="sm"
             aria-label="Download calendar file"
             colorScheme="PrimaryActionButton"
             {...props}
@@ -29,8 +34,8 @@ export default function DownloadCalendarButton({
                     return {
                         uid: event.id + "@" + window.location.hostname,
                         title: event.item ? `${event.item.title} (${event.name})` : event.name,
-                        url: `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
-                        location: `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
+                        url: `${window.location.origin}${conferencePath}/room/${event.roomId}`,
+                        location: `${window.location.origin}${conferencePath}/room/${event.roomId}`,
                         start: [
                             startTime.getUTCFullYear(),
                             startTime.getUTCMonth() + 1,
@@ -81,11 +86,8 @@ export default function DownloadCalendarButton({
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - ${conference.shortName} - ${calendarName}.ics`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(dataBlob, fileName);
-                    } else {
-                        fileURL = window.URL.createObjectURL(dataBlob);
-                    }
+
+                    fileURL = window.URL.createObjectURL(dataBlob);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = fileURL ?? "";
@@ -98,4 +100,6 @@ export default function DownloadCalendarButton({
             Download calendar
         </Button>
     );
-}
+});
+
+export default DownloadCalendarButton;

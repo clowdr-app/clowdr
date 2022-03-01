@@ -1,21 +1,18 @@
-import { gql } from "@apollo/client";
 import { Box, Flex, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React from "react";
 import { Redirect } from "react-router-dom";
 import type {
     ItemElements_ItemDataFragment,
     ItemEventFragment,
-    ItemPage_ItemRoomsFragment} from "../../../../generated/graphql";
-import {
-    Content_ItemType_Enum,
-    Permissions_Permission_Enum,
-    useGetItemQuery,
+    ItemPage_ItemRoomsFragment,
 } from "../../../../generated/graphql";
+import { Content_ItemType_Enum, useGetItemQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../../useConference";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import QueryWrapper from "../../../GQL/QueryWrapper";
+import { useTitle } from "../../../Hooks/useTitle";
+import RequireRole from "../../RequireRole";
 import { ItemElements } from "./ItemElements";
 import { ItemEvents } from "./ItemEvents";
 import { ItemLive } from "./ItemLive";
@@ -28,6 +25,7 @@ gql`
             ...ItemPage_ItemRooms
             descriptionOfExhibitions {
                 id
+                descriptiveItemId
             }
         }
         schedule_Event(
@@ -38,8 +36,9 @@ gql`
     }
 
     fragment ItemPage_ItemRooms on content_Item {
-        rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
+        room {
             id
+            created_at
         }
     }
 
@@ -56,25 +55,23 @@ gql`
         endTime
         name
         intendedRoomModeName
+        itemId
     }
 `;
 
 export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
-    const result = useGetItemQuery({
+    const [result] = useGetItemQuery({
         variables: {
             itemId,
         },
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
     const title = useTitle(result.data?.content_Item_by_pk?.title ?? "Unknown content item");
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
-            permissions={[Permissions_Permission_Enum.ConferenceView]}
-        >
-            <ApolloQueryWrapper
+        <RequireRole componentIfDenied={<PageNotFound />} attendeeRole>
+            <QueryWrapper
                 queryResult={result}
                 getter={(data) =>
                     ({
@@ -95,18 +92,16 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
 
                     if (itemData.descriptionOfExhibitions.length === 1) {
                         return (
-                            <Redirect
-                                to={`/conference/${conference.slug}/exhibition/${itemData.descriptionOfExhibitions[0].id}`}
-                            />
+                            <Redirect to={`${conferencePath}/exhibition/${itemData.descriptionOfExhibitions[0].id}`} />
                         );
                     }
 
-                    if (itemData.typeName === Content_ItemType_Enum.Sponsor && itemData.rooms.length > 0) {
-                        return <Redirect to={`/conference/${conference.slug}/room/${itemData.rooms[0].id}`} />;
+                    if (itemData.typeName === Content_ItemType_Enum.Sponsor && itemData.room) {
+                        return <Redirect to={`${conferencePath}/room/${itemData.room.id}`} />;
                     }
 
-                    if (itemData.typeName === Content_ItemType_Enum.LandingPage) {
-                        return <Redirect to={`/conference/${conference.slug}`} />;
+                    if (itemData.typeName === Content_ItemType_Enum.LandingPage && conferencePath) {
+                        return <Redirect to={conferencePath} />;
                     }
 
                     return (
@@ -126,18 +121,17 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                     gridColumnGap={5}
                                     flexWrap={stackColumns ? "wrap" : "nowrap"}
                                     maxW="100%"
+                                    pb={[2, 2, 4]}
                                 >
                                     <Box maxW="100%" textAlign="center" flexGrow={1}>
                                         <Box>
                                             <ItemVideos itemData={itemData} />
                                         </Box>
-                                        <Box maxW="100%">
+                                        <Box maxW="100%" px={4}>
                                             <ItemElements itemData={itemData}>
-                                                <RequireAtLeastOnePermissionWrapper
-                                                    permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}
-                                                >
+                                                <RequireRole attendeeRole>
                                                     <ItemLive itemData={itemData} />
-                                                </RequireAtLeastOnePermissionWrapper>
+                                                </RequireRole>
                                             </ItemElements>
                                             <ItemEvents events={itemData.events} itemId={itemId} />
                                         </Box>
@@ -147,7 +141,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                         </HStack>
                     );
                 }}
-            </ApolloQueryWrapper>
-        </RequireAtLeastOnePermissionWrapper>
+            </QueryWrapper>
+        </RequireRole>
     );
 }

@@ -1,16 +1,12 @@
 import assert from "assert";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { validate as uuidValidate } from "uuid";
+import { logger } from "../../lib/logger";
 import { action } from "../../rabbitmq/chat/reactions";
-import { Action, Reaction } from "../../types/chat";
+import type { Action, Reaction } from "../../types/chat";
 
-export function onSend(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    _socket: Socket
-): (reaction: any) => Promise<void> {
+export function onSend(userId: string, socketId: string, _socket: Socket): (reaction: any) => Promise<void> {
     return async (actionData) => {
         if (actionData) {
             try {
@@ -24,9 +20,9 @@ export function onSend(
                     "duplicatedMessageSId invalid"
                 );
 
-                await action(actionData, userId, conferenceSlugs);
-            } catch (e) {
-                console.error(`Error processing chat.reactions.send (socket: ${socketId})`, e, actionData);
+                await action(actionData, userId);
+            } catch (error: any) {
+                logger.error({ error, actionData }, `Error processing chat.reactions.send (socket: ${socketId})`);
             }
         }
     };

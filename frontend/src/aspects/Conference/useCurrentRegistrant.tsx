@@ -1,7 +1,7 @@
-import assert from "assert";
-import type { ReactNode, ReactNodeArray} from "react";
+import { assert } from "@midspace/assert";
+import type { ReactNode, ReactNodeArray } from "react";
 import React, { useMemo } from "react";
-import type { Maybe } from "../../generated/graphql";
+import type { Maybe, Registrant_RegistrantRole_Enum } from "../../generated/graphql";
 import type { BadgeData } from "../Badges/ProfileBadge";
 import { useConference } from "./useConference";
 
@@ -28,6 +28,7 @@ export type Registrant = {
     readonly userId?: Maybe<string>;
     readonly displayName: string;
     readonly profile: Profile;
+    readonly conferenceRole: Registrant_RegistrantRole_Enum;
 };
 
 export type RegistrantContextT = Registrant;
@@ -36,7 +37,7 @@ const CurrentRegistrantContext = React.createContext<RegistrantContextT | undefi
 
 export default function useCurrentRegistrant(): RegistrantContextT {
     const ctx = React.useContext(CurrentRegistrantContext);
-    assert(ctx, "useCurrentRegistrant: Context not available");
+    assert.truthy(ctx, "useCurrentRegistrant: Context not available");
     return ctx;
 }
 
@@ -51,9 +52,6 @@ export function CurrentRegistrantProvider({ children }: { children: ReactNode | 
         if (!("registrants" in conference)) {
             return undefined;
         }
-        // Annoyingly, GraphQL CodeGen mistakenly types `conference.registrants`
-        // as a single object rather than an array. Arguably, it is correct, on
-        // the basis of the primary key. But Hasura still returns it as an array.
         return conference.registrants.length > 0 ? (conference.registrants[0] as Registrant) : undefined;
     }, [conference]);
 

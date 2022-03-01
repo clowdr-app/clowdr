@@ -1,0 +1,55 @@
+{
+    "name": "@midspace/hasura",
+    "version": "0.0.0",
+    "scripts": {
+        "build": "pnpm build:cjs && pnpm build:esm",
+        "build:cjs": "tsc --build tsconfig.cjs.json",
+        "build:esm": "tsc --build tsconfig.esm.json",
+        "clean": "rimraf build",
+        "prepare": "ts-patch install -s",
+        "codegen": "graphql-codegen --config codegen.js"
+    },
+    "author": "Clowdr CIC",
+    "license": "AGPL-3.0-or-later",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/clowdr-app/clowdr.git",
+        "directory": "packages/hasura"
+    },
+    "bugs": {
+        "url": "https://github.com/clowdr-app/clowdr/issues"
+    },
+    "homepage": "https://github.com/clowdr-app/clowdr#readme",
+    "dependencies": {
+        "@midspace/graphql": "workspace:*",
+        "@midspace/shared-types": "workspace:*",
+        "cpy-cli": "^3.1.1",
+        "google-auth-library": "^7.11.0",
+        "ts-patch": "^2.0.1"
+    },
+    "devDependencies": {
+        "@graphql-codegen/cli": "^2.5.0",
+        "@graphql-codegen/introspection": "^2.1.1",
+        "@graphql-codegen/plugin-helpers": "^2.4.0",
+        "@graphql-codegen/typescript": "^2.4.3",
+        "@graphql-typed-document-node/core": "^3.1.1",
+        "graphql": "^15.7.2"
+    },
+    "engines": {
+        "node": ">=17.x"
+    },
+    "exports": {
+        "./*": {
+            "import": "./build/esm/*.js",
+            "require": "./build/cjs/*.js"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            "*": [
+                "build/cjs/*",
+                "build/esm/*"
+            ]
+        }
+    }
+}

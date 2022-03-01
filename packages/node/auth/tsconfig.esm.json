@@ -1,0 +1,15 @@
+{
+    "extends": "../../tsconfig.esm.base.json",
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
+    "compilerOptions": {
+        "outDir": "./build/esm",
+        "rootDir": "./src/",
+        "composite": true
+    },
+    "references": [
+        { "path": "../component-clients/tsconfig.esm.json" },
+        { "path": "../caches/tsconfig.esm.json" },
+        { "path": "../../shared/shared-types/tsconfig.esm.json" }
+    ]
+}

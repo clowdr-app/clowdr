@@ -13,40 +13,48 @@ object_relationships:
 - name: element
   using:
     foreign_key_constraint_on: elementId
-- name: uploadYouTubeVideoJob
-  using:
-    foreign_key_constraint_on: uploadYouTubeVideoJobId
 select_permissions:
 - permission:
     columns:
-    - conferenceId
-    - elementId
-    - created_at
     - id
+    - created_at
     - updated_at
     - videoId
-    - videoPrivacyStatus
     - videoStatus
     - videoTitle
+    - elementId
+    - conferenceId
+    - videoPrivacyStatus
+    - uploadYouTubeVideoJobId
+    - subconferenceId
     filter:
-      _and:
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _eq: CONFERENCE_MANAGE_CONTENT
-      - element:
-          conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-  role: user
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+  role: conference-organizer
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - videoId
+    - videoStatus
+    - videoTitle
+    - elementId
+    - conferenceId
+    - videoPrivacyStatus
+    - uploadYouTubeVideoJobId
+    - subconferenceId
+    filter:
+      _or:
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer

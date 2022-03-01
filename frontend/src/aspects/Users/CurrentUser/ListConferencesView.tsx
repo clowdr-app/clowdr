@@ -1,26 +1,18 @@
 import { LinkIcon } from "@chakra-ui/icons";
-import {
-    chakra,
-    ComponentWithAs,
-    Heading,
-    Icon,
-    IconProps,
-    List,
-    ListItem,
-    Text,
-    useColorModeValue,
-    VStack,
-} from "@chakra-ui/react";
+import type { ComponentWithAs, IconProps } from "@chakra-ui/react";
+import { chakra, Heading, Icon, List, ListItem, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import type { RegistrantFieldsFragment } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
-import { useTitle } from "../../Utils/useTitle";
+import { useTitle } from "../../Hooks/useTitle";
 import useCurrentUser from "./useCurrentUser";
+import useCurrentUserRegistrants from "./useCurrentUserRegistrants";
 
 export default function ListConferencesView(): JSX.Element {
     const title = useTitle("My Conferences");
 
     const { user } = useCurrentUser();
+    const registrants = useCurrentUserRegistrants();
     const boxBg = useColorModeValue("gray.200", "gray.700");
 
     const renderConferenceList = (
@@ -42,6 +34,7 @@ export default function ListConferencesView(): JSX.Element {
             <>
                 <List spacing={2} display="flex" flexDir="column" alignItems="stretch">
                     {[...registrants]
+                        .filter((x) => Boolean(x.conference))
                         .sort((x, y) => x.conference.shortName.localeCompare(y.conference.shortName))
                         .map((registrant) => {
                             return (
@@ -100,7 +93,7 @@ export default function ListConferencesView(): JSX.Element {
                 </Text>
                 {renderConferenceList(
                     LinkIcon,
-                    user.registrants,
+                    registrants,
                     <LinkButton to="/join" colorScheme="pink" marginRight={0} mt={5}>
                         Use invite code
                     </LinkButton>,

@@ -1,10 +1,13 @@
-import { gql } from "@apollo/client";
-import { Box, Button, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { Box, Button, HStack, Spinner, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import React, { Suspense, useEffect, useState } from "react";
+import { gql } from "urql";
+import { useContextSelector } from "use-context-selector";
 import { useEnableBackstageStreamPreviewQuery } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
-import { HlsPlayer } from "../../Video/HlsPlayer";
 import { VideoAspectWrapper } from "../../Video/VideoAspectWrapper";
+import { BackstageContext } from "../BackstageContext";
+
+const HlsPlayer = React.lazy(() => import("../../Video/HlsPlayer"));
 
 gql`
     query EnableBackstageStreamPreview($conferenceId: uuid!) {
@@ -16,19 +19,15 @@ gql`
     }
 `;
 
-export default function StreamPreview({
-    hlsUri,
-    isLive,
-    isLiveOnAir,
-}: {
-    hlsUri: string | undefined;
-    isLive: boolean;
-    isLiveOnAir: boolean;
-}): JSX.Element {
+export default function StreamPreview(): JSX.Element {
+    const hlsUri = useContextSelector(BackstageContext, (state) => state.hlsUri);
+    const isLive = useContextSelector(BackstageContext, (state) => state.live);
+    const isLiveOnAir = useContextSelector(BackstageContext, (state) => state.liveOnAir);
+
     const bgColor = useColorModeValue("gray.100", "gray.800");
-    const [enabled, setEnabled] = useState<boolean>(true);
+    const [enabled, setEnabled] = useState<boolean>(false);
     const conference = useConference();
-    const configResponse = useEnableBackstageStreamPreviewQuery({
+    const [configResponse] = useEnableBackstageStreamPreviewQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -48,28 +47,22 @@ export default function StreamPreview({
     }
 
     return hlsUri && (isLive || delayCompleted) && enabled ? (
-        <Box
-            pos="relative"
-            spacing={1}
-            minW="300px"
-            maxW="calc(9vh / 16vh)"
-            w="20vw"
-            border="1px solid #999"
-            bgColor={bgColor}
-        >
+        <Box pos="relative" minW="300px" maxW="calc(9vh / 16vh)" w="20vw" border="1px solid #999" bgColor={bgColor}>
             <Box pos="relative" w="100%" maxH="240px" overflow="hidden" zIndex={1}>
-                <VideoAspectWrapper>
-                    {(onAspectRatioChange) => (
-                        <HlsPlayer
-                            canPlay={isLive}
-                            hlsUri={hlsUri}
-                            onAspectRatioChange={onAspectRatioChange}
-                            expectLivestream={isLive}
-                            forceMute={isLiveOnAir}
-                            initialMute={true}
-                        />
-                    )}
-                </VideoAspectWrapper>
+                <Suspense fallback={<Spinner />}>
+                    <VideoAspectWrapper>
+                        {(onAspectRatioChange) => (
+                            <HlsPlayer
+                                canPlay={isLive}
+                                hlsUri={hlsUri}
+                                onAspectRatioChange={onAspectRatioChange}
+                                expectLivestream={isLive}
+                                forceMute={isLiveOnAir}
+                                initialMute={true}
+                            />
+                        )}
+                    </VideoAspectWrapper>
+                </Suspense>
             </Box>
             <VStack
                 pos="absolute"
@@ -109,7 +102,13 @@ export default function StreamPreview({
     ) : hlsUri && (!enabled || !delayCompleted) ? (
         <Button
             colorScheme="PrimaryActionButton"
-            size="md"
+            size="sm"
+            h="auto"
+            maxH="auto"
+            whiteSpace="normal"
+            flexShrink={1}
+            p={3}
+            w="min-content"
             onClick={() => {
                 setEnabled(true);
                 setDelayCompleted(true);

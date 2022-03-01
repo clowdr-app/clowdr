@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import { ImmediateSwitch_CompleteDocument, ImmediateSwitch_FailDocument } from "../../generated/graphql";
 import { GraphQlService } from "../graphql/graphql.service";

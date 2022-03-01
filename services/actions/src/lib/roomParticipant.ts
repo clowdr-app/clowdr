@@ -1,5 +1,8 @@
 import { gql } from "@apollo/client/core";
-import { VonageSessionLayoutData, VonageSessionLayoutType } from "../../../../shared/build/vonage";
+import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
+import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
+import type { P } from "pino";
+import type { RoomParticipantFragment } from "../generated/graphql";
 import {
     CountRoomParticipantsDocument,
     CreateRoomParticipantDocument,
@@ -7,7 +10,6 @@ import {
     GetRoomParticipantDetailsDocument,
     InsertVonageSessionLayoutDocument,
     RemoveRoomParticipantDocument,
-    RoomParticipantFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { kickRegistrantFromRoom } from "./vonage/vonageTools";
@@ -36,6 +38,7 @@ gql`
 `;
 
 export async function addRoomParticipant(
+    logger: P.Logger,
     roomId: string,
     conferenceId: string,
     identifier: { vonageConnectionId: string } | { chimeRegistrantId: string },
@@ -61,12 +64,15 @@ export async function addRoomParticipant(
     } catch (err) {
         if ("vonageConnectionId" in identifier) {
             // If there is already a row for this room, kick the previous connection before recording the new one
-            console.info("Registrant is already in the Vonage room, kicking from previous session", {
-                roomId,
-                registrantId,
-                conferenceId,
-            });
-            await kickRegistrantFromRoom(roomId, registrantId);
+            logger.info(
+                {
+                    roomId,
+                    registrantId,
+                    conferenceId,
+                },
+                "Registrant is already in the Vonage room, kicking from previous session"
+            );
+            await kickRegistrantFromRoom(logger, roomId, registrantId);
 
             await apolloClient.mutate({
                 mutation: CreateRoomParticipantDocument,
@@ -80,11 +86,14 @@ export async function addRoomParticipant(
                 },
             });
         } else {
-            console.info("Registrant is already in the Chime room, ignoring", {
-                roomId,
-                registrantId,
-                conferenceId,
-            });
+            logger.info(
+                {
+                    roomId,
+                    registrantId,
+                    conferenceId,
+                },
+                "Registrant is already in the Chime room, ignoring"
+            );
         }
     }
 }
@@ -93,9 +102,7 @@ gql`
     mutation RemoveRoomParticipant(
         $registrantId: uuid!
         $conferenceId: uuid!
-        $roomId: uuid!
-        $vonageConnectionId: String
-        $chimeRegistrantId: String
+        $roomId: uuid! # $vonageConnectionId: String # $chimeRegistrantId: String
     ) {
         delete_room_Participant(
             where: {
@@ -124,6 +131,7 @@ gql`
 `;
 
 export async function removeRoomParticipant(
+    logger: P.Logger,
     roomId: string,
     conferenceId: string,
     registrantId: string,
@@ -143,7 +151,7 @@ export async function removeRoomParticipant(
             !removeResult.data?.delete_room_Participant?.affected_rows ||
             removeResult.data.delete_room_Participant.affected_rows === 0
         ) {
-            console.warn("Could not find participant to remove for room", { roomId, registrantId });
+            logger.warn({ roomId, registrantId }, "Could not find participant to remove for room");
         } else if (vonageSessionId) {
             const response = await apolloClient.query({
                 query: CountRoomParticipantsDocument,
@@ -168,7 +176,7 @@ export async function removeRoomParticipant(
             }
         }
     } catch (err) {
-        console.error("Failed to remove RoomParticipant record", { roomId, conferenceId, registrantId, err });
+        logger.error({ roomId, conferenceId, registrantId, err }, "Failed to remove RoomParticipant record");
         throw new Error("Failed to remove RoomParticipant record");
     }
 }

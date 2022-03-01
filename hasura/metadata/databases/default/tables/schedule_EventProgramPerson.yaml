@@ -22,206 +22,157 @@ insert_permissions:
     check:
       _and:
       - event:
-          conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-      - _or:
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_SCHEDULE
-        - _and:
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_VIEW_ATTENDEES
-          - event:
-              eventPeople:
-                _and:
-                - person:
-                    registrant:
-                      userId:
-                        _eq: X-Hasura-User-Id
-                - eventPersonRole:
-                    name:
-                      _in:
-                      - CHAIR
-                      - PRESENTER
+          _and:
+          - subconferenceId:
+              _is_null: true
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+      - person:
+          _and:
+          - subconferenceId:
+              _is_null: true
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
     columns:
     - eventId
     - id
     - personId
     - roleName
-  role: user
+  role: conference-organizer
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - event:
+          _and:
+          - subconferenceId:
+              _is_null: false
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+      - person:
+          _and:
+          - subconferenceId:
+              _is_null: false
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+    columns:
+    - eventId
+    - id
+    - personId
+    - roleName
+  role: subconference-organizer
 select_permissions:
 - permission:
     columns:
+    - roleName
+    - created_at
+    - updated_at
     - eventId
     - id
     - personId
-    - roleName
     filter:
-      _and:
-      - event:
-          conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUnauthPermission
-            schema: public
-          _where:
-            _and:
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _eq: CONFERENCE_VIEW
-  role: unauthenticated
+      person:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+  role: attendee
 - permission:
     columns:
-    - eventId
     - id
-    - personId
+    - eventId
     - roleName
+    - created_at
+    - updated_at
+    - personId
     filter:
-      _and:
-      - event:
-          conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _in:
-                - CONFERENCE_VIEW
-                - CONFERENCE_MANAGE_SCHEDULE
-  role: user
+      event:
+        _or:
+        - _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+  role: conference-organizer
+- permission:
+    columns:
+    - id
+    - eventId
+    - roleName
+    - created_at
+    - updated_at
+    - personId
+    filter:
+      event:
+        _or:
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
 update_permissions:
 - permission:
     check: null
     columns:
-    - personId
     - roleName
     filter:
-      _and:
-      - event:
-          conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-      - _or:
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_SCHEDULE
+      event:
+        _or:
         - _and:
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_VIEW_ATTENDEES
-          - event:
-              eventPeople:
-                _and:
-                - person:
-                    registrant:
-                      userId:
-                        _eq: X-Hasura-User-Id
-                - eventPersonRole:
-                    name:
-                      _in:
-                      - CHAIR
-                      - PRESENTER
-  role: user
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+  role: conference-organizer
+- permission:
+    check: null
+    columns:
+    - roleName
+    filter:
+      event:
+        _or:
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
 delete_permissions:
 - permission:
     filter:
-      _and:
-      - event:
-          conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-      - _or:
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_SCHEDULE
+      person:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+  role: attendee
+- permission:
+    filter:
+      event:
+        _or:
         - _and:
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_VIEW_ATTENDEES
-          - event:
-              eventPeople:
-                _and:
-                - person:
-                    registrant:
-                      userId:
-                        _eq: X-Hasura-User-Id
-                - eventPersonRole:
-                    name:
-                      _in:
-                      - CHAIR
-                      - PRESENTER
-        - person:
-            registrant:
-              userId:
-                _eq: X-Hasura-User-Id
-  role: user
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+  role: conference-organizer
+- permission:
+    filter:
+      event:
+        _or:
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+  role: subconference-organizer
 event_triggers:
 - definition:
     delete:

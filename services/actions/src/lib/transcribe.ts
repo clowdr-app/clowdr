@@ -1,9 +1,11 @@
 import { gql } from "@apollo/client/core";
 import { LanguageCode } from "@aws-sdk/client-transcribe";
-import { AudioElementBlob, AWSJobStatus, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
+import type { AudioElementBlob, VideoElementBlob } from "@midspace/shared-types/content";
+import { AWSJobStatus } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import path from "path";
+import type { P } from "pino";
 import R from "ramda";
 import { assertType, is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
@@ -16,7 +18,8 @@ import { apolloClient } from "../graphqlClient";
 import { S3, Transcribe } from "./aws/awsClient";
 import { getS3TextObject } from "./aws/s3";
 import { getLatestVersion } from "./element";
-import { AmazonTranscribeOutput, convertJsonToSrt } from "./subtitleConvert";
+import type { AmazonTranscribeOutput } from "./subtitleConvert";
+import { convertJsonToSrt } from "./subtitleConvert";
 
 gql`
     mutation CreateTranscriptionJob(
@@ -58,7 +61,7 @@ function replaceExtension(key: string, extension: string): string {
     });
 }
 
-export async function completeTranscriptionJob(awsTranscribeJobName: string): Promise<void> {
+export async function completeTranscriptionJob(logger: P.Logger, awsTranscribeJobName: string): Promise<void> {
     // Find our stored record of this transcription job
     const transcriptionJobResult = await apolloClient.query({
         query: GetTranscriptionJobDocument,
@@ -121,12 +124,15 @@ export async function completeTranscriptionJob(awsTranscribeJobName: string): Pr
     });
 
     if (transcriptionJobResult.errors) {
-        console.error(`Failed to record completed transcription for ${job.elementId}`, transcriptionJobResult.errors);
+        logger.error(
+            { elementId: job.elementId, errors: transcriptionJobResult.errors },
+            "Failed to record completed transcription"
+        );
         throw new Error(`Failed to record completed transcription for ${job.elementId}`);
     }
 }
 
-export async function failTranscriptionJob(awsTranscribeJobName: string): Promise<void> {
+export async function failTranscriptionJob(logger: P.Logger, awsTranscribeJobName: string): Promise<void> {
     // Find our stored record of this transcription job
     const transcriptionJobResult = await apolloClient.query({
         query: GetTranscriptionJobDocument,
@@ -170,22 +176,25 @@ export async function failTranscriptionJob(awsTranscribeJobName: string): Promis
     });
 
     if (transcriptionJobResult.errors) {
-        console.error(`Failed to record failure of transcribe for ${job.elementId}`, transcriptionJobResult.errors);
+        logger.error(
+            { elementId: job.elementId, errors: transcriptionJobResult.errors },
+            "Failed to record failure of transcribe"
+        );
         throw new Error(`Failed to record failure of transcribe for ${job.elementId}`);
     }
 }
 
-export async function startTranscribe(transcodeS3Url: string, elementId: string): Promise<void> {
-    console.log(`Starting transcribe for ${transcodeS3Url}`);
+export async function startTranscribe(logger: P.Logger, transcodeS3Url: string, elementId: string): Promise<void> {
+    logger.info({ transcodeS3Url, elementId }, "Starting transcribe");
     const { bucket, key } = AmazonS3URI(transcodeS3Url);
 
     if (bucket !== process.env.AWS_CONTENT_BUCKET_ID) {
-        console.error("Unexpected S3 bucket", bucket);
+        logger.error({ bucket, elementId }, "Unexpected S3 bucket");
         throw new Error(`Unexpected S3 bucket: ${bucket}`);
     }
 
     if (!key) {
-        console.error("Could not parse S3 URL:", transcodeS3Url);
+        logger.error({ transcodeS3Url, elementId }, "Could not parse S3 URL");
         throw new Error(`Could not parse S3 URL: ${transcodeS3Url}`);
     }
 
@@ -218,5 +227,5 @@ export async function startTranscribe(transcodeS3Url: string, elementId: string)
         },
     });
 
-    console.log(`Started transcribe for ${transcodeS3Url}`);
+    logger.info({ transcodeS3Url, elementId }, "Started transcribe");
 }

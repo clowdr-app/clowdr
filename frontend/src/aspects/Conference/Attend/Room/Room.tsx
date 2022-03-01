@@ -1,52 +1,62 @@
-import { gql, useApolloClient } from "@apollo/client";
+import { ArrowDownIcon } from "@chakra-ui/icons";
 import {
     AspectRatio,
     Box,
     Button,
     Center,
+    chakra,
+    Flex,
+    Heading,
     HStack,
+    Spacer,
     Spinner,
     Text,
     useColorModeValue,
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob, ZoomBlob } from "@midspace/shared-types/content";
+import { gql } from "@urql/core";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
-    Room_EventSummaryFragmentDoc,
-    Room_ManagementMode_Enum,
+    Registrant_RegistrantRole_Enum,
     Room_Mode_Enum,
+    Room_PersonRole_Enum,
     Schedule_EventProgramPersonRole_Enum,
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
+import { AppLayoutContext } from "../../../App/AppLayoutContext";
+import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import FAIcon from "../../../Chakra/FAIcon";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
-import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
-import { useRealTime } from "../../../Generic/useRealTime";
-import { FAIcon } from "../../../Icons/FAIcon";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
-import { useUXChoice, UXChoice } from "../../../UXChoice/UXChoice";
+import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
+import { useEvent } from "../../../Utils/useEvent";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import JoinZoomButton from "./JoinZoomButton";
+import { RoomMembersButton } from "./Members/RoomMembersButton";
 import { RoomContent } from "./RoomContent";
 import RoomContinuationChoices from "./RoomContinuationChoices";
-import { RoomControlBar } from "./RoomControlBar";
 import RoomTimeAlert from "./RoomTimeAlert";
-import { Backstages } from "./Stream/Backstages";
+import { RoomTitle } from "./RoomTitle";
 import { UpcomingBackstageBanner } from "./Stream/UpcomingBackstage";
 import { useHLSUri } from "./Stream/useHLSUri";
 import StreamTextCaptions from "./StreamTextCaptions";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
-import { HlsPlayer } from "./Video/HlsPlayer";
-import { HlsPlayerV1 } from "./Video/HlsPlayerV1";
 import { VideoAspectWrapper } from "./Video/VideoAspectWrapper";
-import { VideoPlayer } from "./Video/VideoPlayer";
 import { VideoChatRoom } from "./VideoChat/VideoChatRoom";
+import { useVonageGlobalState } from "./Vonage/State/VonageGlobalStateProvider";
+import { RecordingControlReason } from "./Vonage/State/VonageRoomProvider";
+
+const Backstages = React.lazy(() => import("./Stream/Backstages"));
+const VideoPlayer = React.lazy(() => import("./Video/VideoPlayerEventPlayer"));
+const HlsPlayer = React.lazy(() => import("./Video/HlsPlayer"));
 
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
@@ -57,6 +67,7 @@ gql`
 
     fragment Room_EventSummary on schedule_Event {
         id
+        roomId
         conferenceId
         startTime
         name
@@ -78,6 +89,8 @@ gql`
             ) {
                 id
                 name
+                typeName
+                itemId
             }
             zoomItems: elements(where: { typeName: { _eq: ZOOM } }, limit: 1) {
                 id
@@ -88,6 +101,7 @@ gql`
         }
         eventPeople {
             id
+            personId
             person {
                 id
                 name
@@ -106,18 +120,15 @@ gql`
 `;
 
 export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
-    const {
-        data: defaultVideoRoomBackendData,
-        refetch: refetchDefaultVideoRoomBackend,
-        loading: defaultvideoRoomBackendLoading,
-    } = useRoom_GetDefaultVideoRoomBackendQuery({
-        fetchPolicy: "network-only",
+    const [
+        { data: defaultVideoRoomBackendData, fetching: defaultvideoRoomBackendLoading },
+        refetchDefaultVideoRoomBackend,
+    ] = useRoom_GetDefaultVideoRoomBackendQuery({
+        requestPolicy: "network-only",
     });
 
     useEffect(() => {
-        refetchDefaultVideoRoomBackend()?.catch((e) =>
-            console.error("Could not refetch default video room backend", e)
-        );
+        refetchDefaultVideoRoomBackend();
     }, [refetchDefaultVideoRoomBackend, roomDetails.id]);
 
     const defaultVideoBackend: "CHIME" | "VONAGE" | undefined = defaultvideoRoomBackendLoading
@@ -137,7 +148,7 @@ function Room({
 }): JSX.Element {
     const now = useRealTime(refetchEventsInterval);
     // Load events from the nearest N-minute boundary onwards
-    // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
+    // Note: Rounding is necessary to ensure a consistent time string is sent to the Query hook
     //       so re-renders don't cause multiple (very slightly offset) queries to the database in
     //       quick succession.
     // Note: Rounding _down_ is necessary so that any currently ongoing event doesn't accidentally get
@@ -146,7 +157,7 @@ function Room({
     const nowStr = useMemo(() => new Date(roundDownToNearest(now, refetchEventsInterval)).toISOString(), [now]);
     const nowCutoffStr = useMemo(
         // Load events up to 1 hour in the future
-        // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
+        // Note: Rounding is necessary to ensure a consistent time string is sent to the Query hook
         //       so re-renders don't cause spam to the database.
         // Note: Rounding up makes sense as it's the dual of the round down above, but it's not strictly
         //       necessary - any rounding would do.
@@ -154,9 +165,8 @@ function Room({
         [now]
     );
 
-    const { loading: loadingEvents, data } = useRoom_GetEventsQuery({
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+    const [{ fetching: loadingEvents, data }, refetchRoomEvents] = useRoom_GetEventsQuery({
+        requestPolicy: "cache-and-network",
         variables: {
             roomId: roomDetails.id,
             now: nowStr,
@@ -177,10 +187,11 @@ function Room({
                 <RoomInner
                     roomDetails={roomDetails}
                     roomEvents={cachedRoomEvents}
+                    refetchRoomEvents={refetchRoomEvents}
                     defaultVideoBackend={defaultVideoBackend}
                 />
             ) : undefined,
-        [cachedRoomEvents, defaultVideoBackend, roomDetails]
+        [cachedRoomEvents, defaultVideoBackend, roomDetails, refetchRoomEvents]
     );
 
     return (
@@ -194,14 +205,15 @@ function Room({
 function RoomInner({
     roomDetails,
     roomEvents,
+    refetchRoomEvents,
     defaultVideoBackend,
 }: {
     roomDetails: RoomPage_RoomDetailsFragment;
     roomEvents: readonly Room_EventSummaryFragment[];
+    refetchRoomEvents: () => void;
     defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
 }): JSX.Element {
     const currentRegistrant = useCurrentRegistrant();
-    const { choice } = useUXChoice();
 
     const now5s = useRealTime(5000);
     const now30s = useRealTime(30000);
@@ -275,13 +287,13 @@ function RoomInner({
                     nextRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Zoom ||
                     zoomEventStartsAt - now30s > 10 * 60 * 1000)) ||
             currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat ||
-            (!currentRoomEvent && roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor),
+            (!currentRoomEvent && roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor),
         [
             currentRoomEvent,
             nextRoomEvent,
             now30s,
             roomDetails.isProgramRoom,
-            roomDetails.originatingItem?.typeName,
+            roomDetails.item?.typeName,
             zoomEventStartsAt,
         ]
     );
@@ -371,12 +383,35 @@ function RoomInner({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent?.id]);
 
+    const { mainPaneHeight, mainPaneWidth } = useContext(AppLayoutContext);
+
+    const scrollRef = useRef<HTMLDivElement>(null);
     const controlBarEl = useMemo(
-        () =>
-            roomDetails.managementModeName !== Room_ManagementMode_Enum.Public ? (
-                <RoomControlBar roomDetails={roomDetails} />
-            ) : undefined,
-        [roomDetails]
+        () => (
+            <HStack justifyContent="space-between" alignItems="center" flexWrap="wrap" gridRowGap={2} py={2} px={4}>
+                <RoomTitle roomDetails={roomDetails} />
+                {showBackstage ? (
+                    <Heading as="h2" size="md">
+                        Backstages
+                    </Heading>
+                ) : undefined}
+                {(roomDetails.item || currentRoomEvent || nextRoomEvent) && !showBackstage ? (
+                    <Button
+                        rightIcon={<ArrowDownIcon />}
+                        variant="link"
+                        size="sm"
+                        onClick={() => scrollRef?.current?.scrollIntoView(true)}
+                    >
+                        Scroll to content
+                    </Button>
+                ) : undefined}
+                <Spacer />
+                <Flex flex="1" justifyContent="flex-end">
+                    <RoomMembersButton roomDetails={roomDetails} />
+                </Flex>
+            </HStack>
+        ),
+        [currentRoomEvent, nextRoomEvent, roomDetails, showBackstage]
     );
 
     const roomEventsForCurrentRegistrant = useMemo(
@@ -389,7 +424,6 @@ function RoomInner({
     const [backstageSelectedEventId, setBackstageSelectedEventId] = useState<string | null>(null);
 
     const raiseHand = useRaiseHandState();
-    const apolloClient = useApolloClient();
     const currentUser = useCurrentUser().user;
     useEffect(() => {
         if (currentRegistrant.userId) {
@@ -461,38 +495,7 @@ function RoomInner({
             ? raiseHand.observe(currentRoomEvent.id, (update) => {
                   if ("userId" in update && update.userId === currentUser.id && update.wasAccepted) {
                       setTimeout(() => {
-                          // alert("Auto revealing backstage room");
-                          const fragmentId = apolloClient.cache.identify({
-                              __typename: "schedule_Event",
-                              id: currentRoomEvent.id,
-                          });
-                          const eventFragment = apolloClient.cache.readFragment<Room_EventSummaryFragment>({
-                              fragment: Room_EventSummaryFragmentDoc,
-                              id: fragmentId,
-                              fragmentName: "Room_EventSummary",
-                          });
-                          if (eventFragment) {
-                              apolloClient.cache.writeFragment({
-                                  fragment: Room_EventSummaryFragmentDoc,
-                                  id: fragmentId,
-                                  fragmentName: "Room_EventSummary",
-                                  data: {
-                                      ...eventFragment,
-                                      eventPeople: !eventFragment.eventPeople.some(
-                                          (x) => x.id === update.eventPerson.id
-                                      )
-                                          ? [
-                                                ...eventFragment.eventPeople,
-                                                {
-                                                    id: update.eventPerson.id,
-                                                    roleName: update.eventPerson.roleName,
-                                                    person: update.eventPerson.person,
-                                                },
-                                            ]
-                                          : eventFragment.eventPeople,
-                                  },
-                              });
-                          }
+                          refetchRoomEvents();
                           setWatchStreamForEventId(null);
                           setBackstageSelectedEventId(currentRoomEvent.id);
                       }, 150);
@@ -505,7 +508,7 @@ function RoomInner({
         return () => {
             unobserve();
         };
-    }, [apolloClient.cache, currentRoomEvent?.id, currentUser.id, raiseHand]);
+    }, [refetchRoomEvents, currentRoomEvent?.id, currentUser.id, raiseHand]);
 
     const onLeaveBackstage = useCallback(() => {
         const isParticipantOfCurrentEvent =
@@ -532,19 +535,21 @@ function RoomInner({
 
     const backStageEl = useMemo(
         () => (
-            <Backstages
-                showBackstage={showBackstage}
-                roomName={roomDetails.name}
-                roomEvents={roomEventsForCurrentRegistrant}
-                currentRoomEventId={currentRoomEvent?.id}
-                nextRoomEventId={nextRoomEvent?.id}
-                selectedEventId={backstageSelectedEventId}
-                setWatchStreamForEventId={setWatchStreamForEventId}
-                onEventSelected={setBackstageSelectedEventId}
-                roomChatId={roomDetails.chatId}
-                onLeave={onLeaveBackstage}
-                hlsUri={hlsUri ?? undefined}
-            />
+            <Suspense fallback={<Spinner />}>
+                <Backstages
+                    showBackstage={showBackstage}
+                    roomName={roomDetails.name}
+                    roomEvents={roomEventsForCurrentRegistrant}
+                    currentRoomEventId={currentRoomEvent?.id}
+                    nextRoomEventId={nextRoomEvent?.id}
+                    selectedEventId={backstageSelectedEventId}
+                    setWatchStreamForEventId={setWatchStreamForEventId}
+                    onEventSelected={setBackstageSelectedEventId}
+                    roomChatId={roomDetails.chatId}
+                    onLeave={onLeaveBackstage}
+                    hlsUri={hlsUri ?? undefined}
+                />
+            </Suspense>
         ),
         [
             showBackstage,
@@ -560,19 +565,20 @@ function RoomInner({
     );
 
     const contentEl = useMemo(
-        () => (
-            <RoomContent
-                currentRoomEvent={currentRoomEvent}
-                nextRoomEvent={nextRoomEvent}
-                roomDetails={roomDetails}
-                onChooseVideo={(id) => {
-                    setSelectedVideoElementId(id);
-                    videoPlayerRef?.current?.focus();
-                    videoPlayerRef?.current?.scrollIntoView();
-                }}
-                currentlySelectedVideoElementId={selectedVideoElementId ?? undefined}
-            />
-        ),
+        () =>
+            roomDetails.item || currentRoomEvent || nextRoomEvent ? (
+                <RoomContent
+                    currentRoomEvent={currentRoomEvent}
+                    nextRoomEvent={nextRoomEvent}
+                    roomDetails={roomDetails}
+                    onChooseVideo={(id) => {
+                        setSelectedVideoElementId(id);
+                        videoPlayerRef?.current?.focus();
+                        videoPlayerRef?.current?.scrollIntoView();
+                    }}
+                    currentlySelectedVideoElementId={selectedVideoElementId ?? undefined}
+                />
+            ) : undefined,
         [currentRoomEvent, nextRoomEvent, roomDetails, selectedVideoElementId]
     );
 
@@ -639,7 +645,9 @@ function RoomInner({
             currentEventIsVideoPlayer || (selectedVideoElementId && !currentRoomEvent) ? (
                 <Box pos="relative" ref={videoPlayerRef}>
                     {selectedVideoElementId ? (
-                        <VideoPlayer elementId={selectedVideoElementId} />
+                        <Suspense fallback={<CenteredSpinner caller="Room.tsx:644" />}>
+                            <VideoPlayer elementId={selectedVideoElementId} />
+                        </Suspense>
                     ) : (
                         <Center>
                             <AspectRatio
@@ -661,26 +669,18 @@ function RoomInner({
                 </Box>
             ) : shouldShowLivePlayer && hlsUri ? (
                 <Box pos="relative">
-                    <VideoAspectWrapper>
+                    <VideoAspectWrapper maxHeight={mainPaneHeight} maxWidth={mainPaneWidth}>
                         {(onAspectRatioChange) => (
-                            <>
-                                {choice === UXChoice.V1 ? (
-                                    <HlsPlayerV1
-                                        roomId={roomDetails.id}
-                                        canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
-                                        hlsUri={hlsUri}
-                                    />
-                                ) : (
-                                    <HlsPlayer
-                                        roomId={roomDetails.id}
-                                        canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
-                                        hlsUri={hlsUri}
-                                        onAspectRatioChange={onAspectRatioChange}
-                                        expectLivestream={secondsUntilBroadcastEvent < 10}
-                                    />
-                                )}
+                            <Suspense fallback={<Spinner />}>
+                                <HlsPlayer
+                                    roomId={roomDetails.id}
+                                    canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
+                                    hlsUri={hlsUri}
+                                    onAspectRatioChange={onAspectRatioChange}
+                                    expectLivestream={secondsUntilBroadcastEvent < 10}
+                                />
                                 <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
-                            </>
+                            </Suspense>
                         )}
                     </VideoAspectWrapper>
                 </Box>
@@ -697,17 +697,70 @@ function RoomInner({
         roomDetails.chatId,
         roomDetails.id,
         hlsUri,
-        choice,
+        mainPaneHeight,
+        mainPaneWidth,
         secondsUntilBroadcastEvent,
     ]);
 
+    const canControlRecordingAs = useMemo(() => {
+        const reasons: Set<RecordingControlReason> = new Set();
+        if (currentRegistrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) {
+            reasons.add(RecordingControlReason.ConferenceOrganizer);
+        }
+        if (
+            roomDetails.roomMemberships.some((membership) => membership.personRoleName === Room_PersonRole_Enum.Admin)
+        ) {
+            reasons.add(RecordingControlReason.RoomAdmin);
+        }
+        if (currentRoomEvent) {
+            if (
+                currentRoomEvent.eventPeople.some(
+                    (person) =>
+                        person.person?.registrantId === currentRegistrant.id &&
+                        person.roleName !== Schedule_EventProgramPersonRole_Enum.Participant
+                )
+            ) {
+                reasons.add(RecordingControlReason.EventPerson);
+            }
+        } else if (
+            roomDetails.item?.selfPeople.some(
+                (itemPerson) =>
+                    itemPerson.roleName.toUpperCase() === "AUTHOR" ||
+                    itemPerson.roleName.toUpperCase() === "PRESENTER" ||
+                    itemPerson.roleName.toUpperCase() === "CHAIR" ||
+                    itemPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
+                    itemPerson.roleName.toUpperCase() === "ORGANIZER"
+            )
+        ) {
+            reasons.add(RecordingControlReason.ItemPerson);
+        }
+        return reasons;
+    }, [
+        currentRegistrant.conferenceRole,
+        currentRegistrant.id,
+        currentRoomEvent,
+        roomDetails.item?.selfPeople,
+        roomDetails.roomMemberships,
+    ]);
+
+    const vonage = useVonageGlobalState();
+    const [connected, setConnected] = useState<boolean>(vonage.IsConnected.value);
+    useEvent(vonage, "session-connected", setConnected);
+
     return (
         <>
-            <HStack width="100%" flexWrap="wrap" alignItems="stretch" pr={2}>
-                <VStack textAlign="left" flexGrow={2.5} alignItems="stretch" flexBasis={0} minW="100%" maxW="100%">
+            <VStack alignItems="stretch" flexGrow={1} w="100%" spacing={0}>
+                <Flex
+                    flexGrow={2.5}
+                    flexDir="column"
+                    textAlign="left"
+                    alignItems="stretch"
+                    minW="100%"
+                    maxW="100%"
+                    transition="height 1s ease"
+                    h={showDefaultVideoChatRoom && !showBackstage && connected ? mainPaneHeight : "undefined"}
+                >
                     {controlBarEl}
-
-                    {showBackstage ? backStageEl : undefined}
 
                     {!showBackstage ? (
                         <>
@@ -722,14 +775,14 @@ function RoomInner({
                               zoomEventStartsAt - now5s < 10 * 60 * 1000 ? (
                                 <JoinZoomButton zoomUrl={maybeZoomUrl} startTime={zoomEventStartsAt} />
                             ) : undefined}
-                        </>
-                    ) : undefined}
 
-                    {playerEl}
-
-                    {!showBackstage ? (
-                        <>
-                            <Box bgColor={bgColour}>
+                            <Box
+                                // flexDirection="column"
+                                // justifyContent="center"
+                                bgColor={bgColour}
+                                zIndex={2}
+                                flexGrow={1}
+                            >
                                 <VideoChatRoom
                                     defaultVideoBackendName={defaultVideoBackend}
                                     roomDetails={roomDetails}
@@ -742,40 +795,25 @@ function RoomInner({
                                             : undefined)
                                     }
                                     eventIsFuture={!currentRoomEvent}
-                                    isPresenterOrChairOrOrganizer={
-                                        !!roomDetails.selfAdminPerson?.length ||
-                                        (currentRoomEvent
-                                            ? currentRoomEvent.eventPeople.some(
-                                                  (person) =>
-                                                      person.person?.registrantId === currentRegistrant.id &&
-                                                      person.roleName !==
-                                                          Schedule_EventProgramPersonRole_Enum.Participant
-                                              )
-                                            : nextRoomEvent &&
-                                              nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat
-                                            ? nextRoomEvent.eventPeople.some(
-                                                  (person) =>
-                                                      person.person?.registrantId === currentRegistrant.id &&
-                                                      person.roleName !==
-                                                          Schedule_EventProgramPersonRole_Enum.Participant
-                                              )
-                                            : !!roomDetails.originatingItem?.selfPeople.some(
-                                                  (itemPerson) =>
-                                                      itemPerson.roleName.toUpperCase() === "AUTHOR" ||
-                                                      itemPerson.roleName.toUpperCase() === "PRESENTER" ||
-                                                      itemPerson.roleName.toUpperCase() === "CHAIR" ||
-                                                      itemPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
-                                                      itemPerson.roleName.toUpperCase() === "ORGANIZER"
-                                              ))
-                                    }
+                                    canControlRecordingAs={canControlRecordingAs}
                                 />
                             </Box>
-                            <StreamTextCaptions streamTextEventId={currentRoomEvent?.streamTextEventId} />
-                            {contentEl}
                         </>
-                    ) : undefined}
-                </VStack>
-            </HStack>
+                    ) : (
+                        backStageEl
+                    )}
+                </Flex>
+
+                {playerEl}
+
+                {!showBackstage ? (
+                    <>
+                        <chakra.div ref={scrollRef} />
+                        <StreamTextCaptions streamTextEventId={currentRoomEvent?.streamTextEventId} />
+                        {contentEl}
+                    </>
+                ) : undefined}
+            </VStack>
 
             <RoomContinuationChoices
                 currentRoomEvent={currentRoomEvent}

@@ -1,5 +1,5 @@
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import type { Content_ElementType_Enum, ManageContent_ElementFragment } from "../../../../../../../generated/graphql";
 
 export type ElementDescriptor = Omit<ManageContent_ElementFragment, "data" | "layoutData"> & {

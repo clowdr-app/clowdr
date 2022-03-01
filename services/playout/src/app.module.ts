@@ -1,6 +1,7 @@
 import { LoggingModule } from "@eropple/nestjs-bunyan";
 import { HasuraModule } from "@golevelup/nestjs-hasura";
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
+import type { MiddlewareConsumer, NestModule } from "@nestjs/common";
+import { Module, RequestMethod } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ScheduleModule as NestScheduleModule } from "@nestjs/schedule";
 import assert from "assert";
@@ -16,7 +17,8 @@ import { ROOT_LOGGER } from "./logger";
 import { ScheduleModule } from "./schedule/schedule.module";
 import { SnsModule } from "./sns/sns.module";
 import { TextBodyMiddleware } from "./text-body.middleware";
-import { VonageModule, VonageOptions } from "./vonage/vonage.module";
+import type { VonageOptions } from "./vonage/vonage.module";
+import { VonageModule } from "./vonage/vonage.module";
 
 @Module({
     imports: [

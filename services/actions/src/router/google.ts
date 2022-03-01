@@ -1,12 +1,19 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type {
+    getGoogleOAuthUrlArgs,
+    GetGoogleOAuthUrlOutput,
+    submitGoogleOAuthCodeArgs,
+    SubmitGoogleOAuthCodeOutput,
+} from "@midspace/hasura/action-types";
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import {
     handleGetGoogleOAuthUrl,
     handleSubmitGoogleOAuthToken,
     handleUploadYouTubeVideoJobQueue,
 } from "../handlers/google";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 
 export const router = express.Router();
 
@@ -17,16 +24,16 @@ router.post("/getOAuthUrl", json(), async (req: Request, res: Response<GetGoogle
     const params = req.body.input;
     try {
         assertType<getGoogleOAuthUrlArgs>(params);
-    } catch (e) {
-        console.error(`${req.path}: Invalid request:`, req.body.input);
+    } catch (e: any) {
+        req.log.error({ input: req.body.input }, "Invalid request");
         return res.status(500).json("Invalid request");
     }
 
     try {
         const result = await handleGetGoogleOAuthUrl(params);
         return res.status(200).json(result);
-    } catch (e) {
-        console.error(`${req.path}: Failed to get Google OAuth URL`, e);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Failed to get Google OAuth URL");
         return res.status(500).json("Failed to get Google OAuth URL");
     }
 });
@@ -35,25 +42,29 @@ router.post("/submitOAuthCode", json(), async (req: Request, res: Response<Submi
     const params: submitGoogleOAuthCodeArgs = req.body.input;
     try {
         assertType<submitGoogleOAuthCodeArgs>(params);
-    } catch (e) {
-        console.error(`${req.path}: Invalid request:`, req.body.input);
+    } catch (e: any) {
+        req.log.error({ input: req.body.input }, "Invalid request");
         return res.status(500).json("Invalid request");
     }
 
     try {
-        const result = await handleSubmitGoogleOAuthToken(params, req.body.session_variables["x-hasura-user-id"]);
+        const result = await handleSubmitGoogleOAuthToken(
+            req.log,
+            params,
+            req.body.session_variables["x-hasura-user-id"]
+        );
         return res.status(200).json(result);
-    } catch (e) {
-        console.error(`${req.path}: Failed to submit Google OAuth token`, e);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Failed to submit Google OAuth token");
         return res.status(500).json("Failed to submit Google OAuth token");
     }
 });
 
-router.post("/processUploadYouTubeVideoQueue", json(), async (_req: Request, res: Response) => {
+router.post("/processUploadYouTubeVideoQueue", json(), async (req: Request, res: Response) => {
     try {
-        await handleUploadYouTubeVideoJobQueue();
-    } catch (e) {
-        console.error("Failure while processing UploadYouTubeVideoJob queue", e);
+        await handleUploadYouTubeVideoJobQueue(req.log);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Failure while processing UploadYouTubeVideoJob queue");
         res.status(500).json("Failure while processing UploadYouTubeVideoJob queue");
         return;
     }

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { useRealTime } from "../../../../Generic/useRealTime";
+import { useRealTime } from "../../../../Hooks/useRealTime";
 import useTimelineParameters from "./useTimelineParameters";
 
 export default function NowMarker({

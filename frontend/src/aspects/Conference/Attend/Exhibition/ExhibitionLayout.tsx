@@ -10,8 +10,8 @@ import {
     useColorModeValue,
     useToken,
 } from "@chakra-ui/react";
-import type { ElementBlob, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import type { ElementBlob, ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import type {
@@ -21,12 +21,12 @@ import type {
 } from "../../../../generated/graphql";
 import { Content_ElementType_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import FAIcon from "../../../Chakra/FAIcon";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
-import { useRealTime } from "../../../Generic/useRealTime";
-import { FAIcon } from "../../../Icons/FAIcon";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useRealTime } from "../../../Hooks/useRealTime";
 import PageCountText from "../../../Realtime/PageCountText";
-import { maybeCompare } from "../../../Utils/maybeSort";
-import { useConference } from "../../useConference";
+import { maybeCompare } from "../../../Utils/maybeCompare";
 import { AuthorList } from "../Content/AuthorList";
 import { Element } from "../Content/Element/Element";
 import TagList from "../Content/TagList";
@@ -40,8 +40,7 @@ function ItemTile({
     exhibitionColour: string;
     hideLiveViewButton: boolean;
 }): JSX.Element {
-    const conference = useConference();
-
+    const { conferencePath } = useAuthParameters();
     const { colorMode } = useColorMode();
     const baseBgColour =
         colorMode === "light" ? "Exhibition.defaultBackgroundColor-light" : "Exhibition.defaultBackgroundColor-dark";
@@ -148,11 +147,9 @@ function ItemTile({
         );
         return liveEvents.length > 0 ? liveEvents[0] : undefined;
     }, [item.events, now]);
-    const liveRoomUrl = liveEvent ? `/conference/${conference.slug}/room/${liveEvent.roomId}` : undefined;
+    const liveRoomUrl = liveEvent ? `${conferencePath}/room/${liveEvent.roomId}` : undefined;
 
-    const discussionRoomUrl = item.discussionRoom?.length
-        ? `/conference/${conference.slug}/room/${item.discussionRoom[0].id}`
-        : undefined;
+    const discussionRoomUrl = item.discussionRoom ? `${conferencePath}/room/${item.discussionRoom.id}` : undefined;
     const zoomInfo = useMemo(() => {
         if (discussionRoomUrl) {
             return undefined;
@@ -172,11 +169,12 @@ function ItemTile({
                 }
                 return false;
             }
+            return false;
         });
         return element ? { name: element.name, url: element.data[element.data.length - 1].data.url } : undefined;
     }, [discussionRoomUrl, item.elements]);
 
-    const itemUrl = `/conference/${conference.slug}/item/${item.id}`;
+    const itemUrl = `${conferencePath}/item/${item.id}`;
 
     const shadow = useColorModeValue("md", "light-md");
     return (
@@ -193,7 +191,7 @@ function ItemTile({
             <HStack spacing={2}>
                 <Heading as="h2" fontSize="lg" textAlign="left" mb={4}>
                     <chakra.span mr={4}>{item.title}</chakra.span>
-                    <PageCountText path={`/conference/${conference.slug}/item/${item.id}`} />
+                    <PageCountText path={`${conferencePath}/item/${item.id}`} />
                 </Heading>
                 {liveRoomUrl && !hideLiveViewButton ? (
                     <LinkButton
@@ -297,14 +295,14 @@ export function ExhibitionLayoutWrapper({
     exhibitionId: string;
     hideLiveViewButton?: boolean;
 }): JSX.Element {
-    const exhibitionResponse = useSelectExhibitionQuery({
+    const [exhibitionResponse] = useSelectExhibitionQuery({
         variables: {
             id: exhibitionId,
         },
     });
 
-    return exhibitionResponse.loading && !exhibitionResponse.data ? (
-        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
+    return exhibitionResponse.fetching && !exhibitionResponse.data ? (
+        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} caller="ExhibitionLayout:307" />
     ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
         <ExhibitionLayout
             exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}

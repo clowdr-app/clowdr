@@ -1,25 +1,32 @@
-import { ApolloError, FetchResult, gql } from "@apollo/client/core";
-import { ConsumeMessage } from "amqplib";
-import {
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import { redlock } from "@midspace/component-clients/redis";
+import { CombinedError } from "@urql/core";
+import type { ConsumeMessage } from "amqplib";
+import { gql } from "graphql-tag";
+import type {
     Chat_Reaction_Insert_Input,
-    DeleteChatReactionsDocument,
     DeleteChatReactionsMutation,
-    InsertChatReactionsDocument,
+    DeleteChatReactionsMutationVariables,
     InsertChatReactionsMutation,
-    UpdateChatReactionDocument,
+    InsertChatReactionsMutationVariables,
     UpdateChatReactionMutation,
+    UpdateChatReactionMutationVariables,
 } from "../../../generated/graphql";
+import {
+    DeleteChatReactionsDocument,
+    InsertChatReactionsDocument,
+    UpdateChatReactionDocument,
+} from "../../../generated/graphql";
+import { logger } from "../../../lib/logger";
 import { ReactionWritebackIntervalMs, ReactionWritebackQueueSize } from "../../../rabbitmq/chat/params";
 import {
     onWritebackReaction,
     onWritebackReactionsComplete,
     onWritebackReactionsFail,
 } from "../../../rabbitmq/chat/reactions";
-import { redlock } from "../../../redis";
-import { testMode } from "../../../testMode";
-import { Action, Reaction } from "../../../types/chat";
+import type { Action, Reaction } from "../../../types/chat";
 
-console.info("Chat reactions writeback worker running");
+logger.info("Chat reactions writeback worker running");
 
 type UnackedReactionInfo = {
     rabbitMQMsg: ConsumeMessage;
@@ -28,18 +35,6 @@ type UnackedReactionInfo = {
 
 type Delayed<T> = T & {
     delayUntil: number;
-};
-
-type InsertChatReactionsResponse = FetchResult<InsertChatReactionsMutation, Record<string, any>, Record<string, any>>;
-type UpdateChatReactionResponse = FetchResult<UpdateChatReactionMutation, Record<string, any>, Record<string, any>>;
-type DeleteChatReactionsResponse = FetchResult<DeleteChatReactionsMutation, Record<string, any>, Record<string, any>>;
-
-type InsertChatReactionResponse_Individual = FetchResult<
-    InsertChatReactionsMutation,
-    Record<string, any>,
-    Record<string, any>
-> & {
-    sId: string;
 };
 
 // Note: We cannot assume that inserts, updates and deletes will be processed in
@@ -96,30 +91,15 @@ async function processInsertQueue() {
     }
 
     try {
-        const response = await testMode<InsertChatReactionsResponse>(
-            async (apolloClient) => {
-                return apolloClient.mutate({
-                    mutation: InsertChatReactionsDocument,
-                    variables: {
-                        objects: insertObjects,
-                    },
-                });
-            },
-            async () => {
-                return {
-                    data: {
-                        insert_chat_Reaction: {
-                            returning: insertObjects.map((x, id) => ({
-                                id,
-                                sId: x.sId,
-                            })),
-                        },
-                    },
-                };
-            }
-        );
-        if (response.errors) {
-            throw response.errors;
+        const response = await gqlClient
+            ?.mutation<InsertChatReactionsMutation, InsertChatReactionsMutationVariables>(InsertChatReactionsDocument, {
+                objects: insertObjects,
+            })
+            .toPromise();
+        if (!response) {
+            throw new Error("No response / no gqlClient");
+        } else if (response.error) {
+            throw response.error;
         }
 
         const results = insertQueue.map((original) => ({
@@ -134,33 +114,33 @@ async function processInsertQueue() {
 
         try {
             onWritebackReactionsComplete(acks);
-        } catch (e) {
-            console.error(
-                "Error acknowleding to RabbitMQ chat reactions that were successfully written into the DB",
-                e
+        } catch (error: any) {
+            logger.error(
+                { error },
+                "Error acknowleding to RabbitMQ chat reactions that were successfully written into the DB"
             );
         }
 
         if (nacks.length > 0) {
-            console.error(
+            logger.error(
                 "Somehow Hasura returned a partial insert failure when writing back chat reactions?!",
                 nacks.length + " failures"
             );
             try {
                 onWritebackReactionsFail(nacks);
-            } catch (e) {
-                console.error(
-                    "Error not-acknowleding to RabbitMQ chat reactions that could not be written into the DB",
-                    e
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    "Error not-acknowleding to RabbitMQ chat reactions that could not be written into the DB"
                 );
             }
         }
-    } catch (e) {
+    } catch (error: any) {
         let wasNetworkError: boolean;
-        if (e instanceof ApolloError) {
-            if (e.networkError) {
+        if (error instanceof CombinedError) {
+            if (error.networkError) {
                 wasNetworkError = true;
-            } else if (e.graphQLErrors) {
+            } else if (error.graphQLErrors) {
                 wasNetworkError = false;
             } else {
                 wasNetworkError = false;
@@ -170,49 +150,34 @@ async function processInsertQueue() {
         }
 
         if (wasNetworkError) {
-            console.error("Writeback of chat reactions failed due to network error", e);
+            logger.error({ error }, "Writeback of chat reactions failed due to network error");
             insertQueue = [];
             onWritebackReactionsFail(insertQueue.map((x) => x.rabbitMQMsg));
         } else {
             const responses = await Promise.all(
-                insertObjects.map((obj, index) =>
-                    testMode<InsertChatReactionResponse_Individual>(
-                        async (apolloClient) => {
-                            try {
-                                const resp = await apolloClient.mutate({
-                                    mutation: InsertChatReactionsDocument,
-                                    variables: {
-                                        objects: [obj],
-                                    },
-                                });
-                                if (resp.errors) {
-                                    throw resp.errors;
+                insertObjects.map(async (obj) => {
+                    try {
+                        const resp = await gqlClient
+                            ?.mutation<InsertChatReactionsMutation, InsertChatReactionsMutationVariables>(
+                                InsertChatReactionsDocument,
+                                {
+                                    objects: [obj],
                                 }
-                                return { ...resp, sId: obj.sId };
-                            } catch (e) {
-                                return {
-                                    sId: obj.sId,
-                                    errors: [e],
-                                };
-                            }
-                        },
-                        async () => {
-                            return {
-                                sId: obj.sId,
-                                data: {
-                                    insert_chat_Reaction: {
-                                        returning: [
-                                            {
-                                                id: index,
-                                                sId: obj.sId,
-                                            },
-                                        ],
-                                    },
-                                },
-                            };
+                            )
+                            .toPromise();
+                        if (!resp) {
+                            throw new Error("No response / no gqlClient");
+                        } else if (resp.error) {
+                            throw resp.error;
                         }
-                    )
-                )
+                        return { ...resp, sId: obj.sId };
+                    } catch (error: any) {
+                        return {
+                            sId: obj.sId,
+                            errors: [error],
+                        };
+                    }
+                })
             );
 
             const results = insertQueue.map((original) => ({
@@ -227,30 +192,30 @@ async function processInsertQueue() {
 
             try {
                 onWritebackReactionsComplete(acks.map((x) => x.rabbitMQMsg));
-            } catch (e) {
-                console.error(
-                    "Error acknowleding to RabbitMQ chat reactions that were successfully written into the DB\n" +
-                        JSON.stringify(e, null, 2)
+            } catch (error: any) {
+                logger.error(
+                    { error },
+                    "Error acknowleding to RabbitMQ chat reactions that were successfully written into the DB"
                 );
             }
 
             if (nacks.length > 0) {
-                console.error(
+                logger.error(
                     "Failed to write back some individual chat reactions into the database",
                     nacks.length + " failures"
                 );
                 nacks.forEach((x) =>
-                    console.error("Individual chat reaction writeback failure\n" + JSON.stringify(x.response, null, 2))
+                    logger.error({ response: x.response }, "Individual chat reaction writeback failure")
                 );
                 // TODO: Send email to system alerts address
                 try {
                     // At this point, we just have to give up on them. We've logged the failure and
                     // it's time to drop these from the queue lest we end up in infinite re-attempts
                     onWritebackReactionsComplete(nacks.map((x) => x.rabbitMQMsg));
-                } catch (e) {
-                    console.error(
-                        "Error not-acknowleding to RabbitMQ chat reactions that could not be written into the DB\n" +
-                            JSON.stringify(e, null, 2)
+                } catch (error: any) {
+                    logger.error(
+                        { error },
+                        "Error not-acknowleding to RabbitMQ chat reactions that could not be written into the DB"
                     );
                 }
             }
@@ -302,32 +267,17 @@ async function processUpdateQueue() {
 
     for (const updateAction of processNow) {
         try {
-            const response = await testMode<UpdateChatReactionResponse>(
-                async (apolloClient) => {
-                    return apolloClient.mutate({
-                        mutation: UpdateChatReactionDocument,
-                        variables: {
-                            reactionId: updateAction.actionRct.sId,
-                            object: updateAction.actionRct,
-                        },
-                    });
-                },
-                async () => {
-                    return {
-                        data: {
-                            update_chat_Reaction: {
-                                returning: [
-                                    {
-                                        sId: updateAction.actionRct.sId,
-                                    },
-                                ],
-                            },
-                        },
-                    };
-                }
-            );
+            const response = await gqlClient
+                ?.mutation<UpdateChatReactionMutation, UpdateChatReactionMutationVariables>(
+                    UpdateChatReactionDocument,
+                    {
+                        reactionId: updateAction.actionRct.sId,
+                        object: updateAction.actionRct,
+                    }
+                )
+                .toPromise();
 
-            if (response.data?.update_chat_Reaction?.returning?.some((x) => x.sId === updateAction.actionRct.sId)) {
+            if (response?.data?.update_chat_Reaction?.returning?.some((x) => x.sId === updateAction.actionRct.sId)) {
                 completed.push(updateAction);
             } else {
                 if (updateAction.delayUntil === -1) {
@@ -336,20 +286,20 @@ async function processUpdateQueue() {
                     failedSecond.push(updateAction);
                 }
             }
-        } catch (e) {
-            console.error(`Error processing chat reaction update: ${JSON.stringify(e, null, 2)}`);
+        } catch (error: any) {
+            logger.error({ error }, "Error processing chat reaction update: ");
         }
     }
 
     try {
         await onWritebackReactionsComplete(completed.map((x) => x.rabbitMQMsg));
-    } catch (e) {
-        console.error(`Error ack'ing completed chat reaction updates: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error ack'ing completed chat reaction updates: ");
     }
     try {
         await onWritebackReactionsComplete(failedSecond.map((x) => x.rabbitMQMsg));
-    } catch (e) {
-        console.error(`Error ack'ing second-failure chat reaction updates: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error ack'ing second-failure chat reaction updates: ");
     }
 
     updateQueue = [
@@ -372,60 +322,45 @@ async function processDeleteQueue() {
 
     try {
         if (processNow.length > 0) {
-            const response = await testMode<DeleteChatReactionsResponse>(
-                async (apolloClient) => {
-                    return apolloClient.mutate({
-                        mutation: DeleteChatReactionsDocument,
-                        variables: {
-                            reactionIds: processNow.map((x) => x.actionRct.sId),
-                        },
-                    });
-                },
-                async () => {
-                    return {
-                        data: {
-                            delete_chat_Reaction: {
-                                returning: [
-                                    {
-                                        sId: processNow.map((x) => x.actionRct.sId),
-                                    },
-                                ],
-                            },
-                        },
-                    };
-                }
-            );
+            const response = await gqlClient
+                ?.mutation<DeleteChatReactionsMutation, DeleteChatReactionsMutationVariables>(
+                    DeleteChatReactionsDocument,
+                    {
+                        reactionIds: processNow.map((x) => x.actionRct.sId),
+                    }
+                )
+                .toPromise();
 
             completed = processNow.filter(
                 (deleteAction) =>
-                    !!response.data?.delete_chat_Reaction?.returning?.some((x) => x.sId === deleteAction.actionRct.sId)
+                    !!response?.data?.delete_chat_Reaction?.returning?.some((x) => x.sId === deleteAction.actionRct.sId)
             );
             failedFirst = processNow.filter(
                 (deleteAction) =>
-                    !response.data?.delete_chat_Reaction?.returning?.some(
+                    !response?.data?.delete_chat_Reaction?.returning?.some(
                         (x) => x.sId === deleteAction.actionRct.sId
                     ) && deleteAction.delayUntil === -1
             );
             failedSecond = processNow.filter(
                 (deleteAction) =>
-                    !response.data?.delete_chat_Reaction?.returning?.some(
+                    !response?.data?.delete_chat_Reaction?.returning?.some(
                         (x) => x.sId === deleteAction.actionRct.sId
                     ) && deleteAction.delayUntil !== -1
             );
         }
-    } catch (e) {
-        console.error(`Error processing chat reaction delete: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error processing chat reaction delete: ");
     }
 
     try {
         await onWritebackReactionsComplete(completed.map((x) => x.rabbitMQMsg));
-    } catch (e) {
-        console.error(`Error ack'ing completed chat reaction deletes: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error ack'ing completed chat reaction deletes: ");
     }
     try {
         await onWritebackReactionsComplete(failedSecond.map((x) => x.rabbitMQMsg));
-    } catch (e) {
-        console.error(`Error ack'ing second-failure chat reaction deletes: ${JSON.stringify(e, null, 2)}`);
+    } catch (error: any) {
+        logger.error({ error }, "Error ack'ing second-failure chat reaction deletes: ");
     }
 
     deleteQueue = [
@@ -449,7 +384,7 @@ async function processQueues(proceedWithPartial: boolean) {
         const lease = await redlock.acquire(queuesLockKey, 180000);
         lastProcessQueuesTime = Date.now();
         try {
-            console.info(`Writing back reactions:
+            logger.info(`Writing back reactions:
     * Total queue size: ${totalQueueSize}
     * Proceed with partial: ${proceedWithPartial}
 
@@ -460,8 +395,8 @@ async function processQueues(proceedWithPartial: boolean) {
             await processInsertQueue();
             await processUpdateQueue();
             await processDeleteQueue();
-        } catch (e) {
-            console.error("Error writing back queues (some reactions may now be stuck!)", e);
+        } catch (error: any) {
+            logger.error({ error }, "Error writing back queues (some reactions may now be stuck!)");
         } finally {
             await lease.unlock();
         }
@@ -469,7 +404,7 @@ async function processQueues(proceedWithPartial: boolean) {
 }
 
 async function onReaction(rabbitMQMsg: ConsumeMessage, action: Action<Reaction>) {
-    // console.info("Reaction for writeback", reaction);
+    // logger.info("Reaction for writeback", reaction);
 
     let ok = false;
     try {
@@ -493,8 +428,8 @@ async function onReaction(rabbitMQMsg: ConsumeMessage, action: Action<Reaction>)
         } finally {
             await lease.unlock();
         }
-    } catch (e) {
-        console.error("Erroring process chat reaction: writeback.onReaction", e);
+    } catch (error: any) {
+        logger.error({ error }, "Erroring process chat reaction: writeback.onReaction");
 
         await onWritebackReactionsFail([rabbitMQMsg]);
     }

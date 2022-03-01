@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
+import { redisClientPool } from "@midspace/component-clients/redis";
+import type { NextFunction, Request, Response } from "express";
 import { promisify } from "util";
 import { presenceListKey } from "../lib/presence";
-import { redisClientPool } from "../redis";
 
 export async function summary(req: Request, res: Response, _next?: NextFunction): Promise<void> {
     if (process.env.SECRET_FOR_SUMMARY) {
@@ -57,8 +57,8 @@ export async function summary(req: Request, res: Response, _next?: NextFunction)
                             {}
                         ),
                     });
-                } catch (e) {
-                    res.status(500).send(e);
+                } catch (error: any) {
+                    res.status(500).send(error);
                 }
             } finally {
                 redisClientPool.release("http-handlers/summary/summary", redisClient);

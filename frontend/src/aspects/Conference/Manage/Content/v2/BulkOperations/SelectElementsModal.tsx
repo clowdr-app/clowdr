@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -24,15 +23,16 @@ import {
     UnorderedList,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
+import { makeContext } from "../../../../../../aspects/GQL/make-context";
 import type {
     ManageContent_ItemFragment,
     SelectElements_ElementFragment,
-    SelectElements_ItemFragment} from "../../../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    useSEoUm_InfosQuery,
+    SelectElements_ItemFragment,
 } from "../../../../../../generated/graphql";
+import { Content_ElementType_Enum, useSEoUm_InfosQuery } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
 
 gql`
@@ -108,11 +108,19 @@ function ModalInner({
     restrictToTypes: Content_ElementType_Enum[] | null;
 }): JSX.Element {
     const itemIds = useMemo(() => items.map((x) => x.id), [items]);
-    const infos = useSEoUm_InfosQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [infos] = useSEoUm_InfosQuery({
         variables: {
             itemIds,
         },
-        fetchPolicy: "no-cache",
+        requestPolicy: "network-only",
+        context,
     });
 
     const contentTypeOptions: { label: string; value: Content_ElementType_Enum }[] = useMemo(
@@ -283,7 +291,7 @@ function ModalInner({
     return (
         <>
             <ModalBody>
-                {infos.loading && !infos.data ? <Spinner label="Loading elements" /> : undefined}
+                {infos.fetching && !infos.data ? <Spinner label="Loading elements" /> : undefined}
                 {infos.data ? (
                     <HStack flexWrap="wrap" alignItems="stretch" justifyContent="space-between">
                         <VStack spacing={4} flex="1 1 48%" minW={400} mb={10}>

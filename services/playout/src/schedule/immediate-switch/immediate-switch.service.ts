@@ -1,6 +1,8 @@
-import { FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
-import { ImmediateSwitchData } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { ScheduleAction } from "@aws-sdk/client-medialive";
+import { FollowPoint } from "@aws-sdk/client-medialive";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
+import { ImmediateSwitchData } from "@midspace/shared-types/video/immediateSwitchData";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { sub } from "date-fns";

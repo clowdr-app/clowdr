@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { StackStatus } from "@aws-sdk/client-cloudformation";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import { add, sub } from "date-fns";
 import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";

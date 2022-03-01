@@ -1,0 +1,59 @@
+{
+    "name": "@midspace/graphql",
+    "version": "0.0.0",
+    "scripts": {
+        "build": "pnpm build:cjs && pnpm build:esm",
+        "build:cjs": "tsc --build tsconfig.cjs.json",
+        "build:esm": "tsc --build tsconfig.esm.json",
+        "clean": "rimraf build",
+        "prepare": "ts-patch install -s",
+        "codegen": "graphql-codegen --config codegen.js"
+    },
+    "author": "Clowdr CIC",
+    "license": "AGPL-3.0-or-later",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/clowdr-app/clowdr.git",
+        "directory": "packages/graphql"
+    },
+    "bugs": {
+        "url": "https://github.com/clowdr-app/clowdr/issues"
+    },
+    "homepage": "https://github.com/clowdr-app/clowdr#readme",
+    "dependencies": {
+        "ts-patch": "^2.0.1"
+    },
+    "devDependencies": {
+        "@graphql-codegen/cli": "^2.5.0",
+        "@graphql-codegen/introspection": "^2.1.1",
+        "@graphql-codegen/plugin-helpers": "^2.4.0",
+        "@graphql-codegen/schema-ast": "^2.4.1",
+        "@graphql-codegen/typescript": "^2.4.3",
+        "@graphql-typed-document-node/core": "^3.1.1",
+        "graphql": "^15.7.2"
+    },
+    "engines": {
+        "node": ">=17.x"
+    },
+    "exports": {
+        "./schema.graphql": "./schema/schema.graphql",
+        "./graphql.schema.json": "./build/cjs/graphql.schema.json",
+        "./graphql.augschema.json": "./build/cjs/graphql.augschema.json",
+        "./*": {
+            "import": "./build/esm/*.js",
+            "require": "./build/cjs/*.js"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            "*": [
+                "build/cjs/*",
+                "build/esm/*"
+            ]
+        }
+    },
+    "files": [
+        "dist",
+        "schema"
+    ]
+}

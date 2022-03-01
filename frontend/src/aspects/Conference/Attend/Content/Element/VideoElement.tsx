@@ -11,19 +11,17 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import type { AudioElementBlob, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
-import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
-import AmazonS3URI from "amazon-s3-uri";
+import type { AudioElementBlob, VideoElementBlob } from "@midspace/shared-types/content";
 import type Hls from "hls.js";
 import type { HlsConfig } from "hls.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useAsync } from "react-async-hook";
 import type { Config } from "react-player";
 import ReactPlayer from "react-player";
 import type { TrackProps } from "react-player/file";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
-import { FAIcon } from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
+import { useMediaElementUrls } from "./useMediaElement";
 
 export function VideoElement({
     elementId,
@@ -41,65 +39,20 @@ export function VideoElement({
     onPlay?: () => void;
     onPause?: () => void;
     onFinish?: () => void;
+    onSeek?: () => void;
 }): JSX.Element {
-    const { url: videoURL, isHLS } = useMemo(() => {
-        let s3Url = "transcode" in elementData ? elementData.transcode?.s3Url : undefined;
-
-        if (!s3Url && elementData.s3Url) {
-            s3Url = elementData.s3Url;
-        }
-
-        if (!s3Url) {
-            return { url: undefined, isHLS: false };
-        }
-        const { bucket, key } = new AmazonS3URI(s3Url);
-
-        return {
-            url:
-                key && bucket
-                    ? `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`
-                    : undefined,
-            isHLS: !!key?.endsWith(".m3u8"),
-        };
-    }, [elementData]);
-
-    const {
-        result: subtitlesUrl,
-        loading,
-        error,
-    } = useAsync(async () => {
-        if (!elementData.subtitles["en_US"] || !elementData.subtitles["en_US"].s3Url?.length) {
-            return undefined;
-        } else {
-            try {
-                const { bucket, key } = new AmazonS3URI(elementData.subtitles["en_US"].s3Url);
-                const s3Url = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
-
-                const response = await fetch(s3Url);
-
-                if (!response.ok) {
-                    throw new Error(`Could not retrieve subtitles file: ${response.status}`);
-                }
-
-                const blob = await response.blob();
-
-                return await new WebVTTConverter(blob).getURL();
-            } catch (e) {
-                console.error("Failure while parsing subtitle location", e);
-            }
-        }
-    }, [elementData.subtitles["en_US"]]);
+    const { video, subtitles } = useMediaElementUrls(elementData);
 
     const config = useMemo<Config | null>(() => {
-        if (loading) {
+        if (subtitles.loading) {
             return null;
         }
 
         const tracks: TrackProps[] = [];
-        if (!error && subtitlesUrl) {
+        if (!subtitles.error && subtitles.url) {
             const track: TrackProps = {
                 kind: "subtitles",
-                src: subtitlesUrl,
+                src: subtitles.url,
                 srcLang: "en",
                 default: false,
                 label: "English",
@@ -115,14 +68,14 @@ export function VideoElement({
         return {
             file: {
                 tracks,
-                hlsVersion: "1.0.4",
+                hlsVersion: "1.1.3",
                 hlsOptions,
                 attributes: {
                     preload: "metadata",
                 },
             },
         };
-    }, [error, loading, subtitlesUrl]);
+    }, [subtitles.error, subtitles.loading, subtitles.url]);
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const playerRef = useRef<ReactPlayer | null>(null);
@@ -130,11 +83,11 @@ export function VideoElement({
 
     const innerPlayer = useMemo(
         () =>
-            !videoURL || !config ? undefined : (
+            !video.url || !config ? undefined : (
                 <ReactPlayer
-                    url={videoURL}
-                    controls={true}
+                    url={video.url}
                     width="100%"
+                    controls={true}
                     height="auto"
                     onEnded={() => {
                         setIsPlaying(false);
@@ -166,13 +119,13 @@ export function VideoElement({
                     playbackRate={playbackRate}
                 />
             ),
-        [videoURL, config, playbackRate, onPause, onPlay, onFinish]
+        [video.url, config, playbackRate, onPause, onPlay, onFinish]
     );
 
     const player = useMemo(() => {
         // Only render the player once both the video URL and the subtitles config are available
         // react-player memoizes internally and only re-renders if the url or key props change.
-        return !videoURL || !config ? undefined : (
+        return !video.url || !config ? undefined : (
             <VStack w="min(100%, 90vh * (16 / 9))" maxW="800px" alignItems="center" spacing={0}>
                 {aspectRatio ? (
                     <AspectRatio ratio={16 / 9} w="min(100%, 90vh * (16 / 9))" maxW="800px" maxH="90vh" p={2}>
@@ -181,13 +134,13 @@ export function VideoElement({
                 ) : (
                     innerPlayer
                 )}
-                {!isHLS ? (
+                {!video.isHls ? (
                     <Flex borderBottomRadius="2xl" p={1} justifyContent="flex-end" w="100%">
                         <Menu>
                             <MenuButton as={Button} size="xs">
                                 Speed <FAIcon iconStyle="s" icon="chevron-down" />
                             </MenuButton>
-                            <MenuList size="xs" spacing="compact">
+                            <MenuList>
                                 <MenuOptionGroup
                                     onChange={(value) => {
                                         const v = parseFloat(value as string);
@@ -213,7 +166,7 @@ export function VideoElement({
                 ) : undefined}
             </VStack>
         );
-    }, [videoURL, config, isHLS, playbackRate, setPlaybackRate, innerPlayer]);
+    }, [video.url, video.isHls, config, aspectRatio, innerPlayer, playbackRate]);
 
     useEffect(() => {
         if (playerRef.current) {
@@ -231,7 +184,7 @@ export function VideoElement({
                     {title}
                 </Heading>
             ) : undefined}
-            {!videoURL && !loading ? (
+            {!video.url && !subtitles.loading ? (
                 <Text mb={2}>
                     {elementData.type === Content_ElementType_Enum.AudioFile ? "Audio" : "Video"} not yet uploaded.
                 </Text>

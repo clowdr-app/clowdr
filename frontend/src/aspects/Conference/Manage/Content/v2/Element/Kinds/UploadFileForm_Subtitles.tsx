@@ -5,10 +5,12 @@ import {
     Heading,
     List,
     ListItem,
+    Spinner,
     Text,
     UnorderedList,
     useToast,
 } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import type {
     AudioFileBlob,
     VideoBroadcastBlob,
@@ -17,28 +19,27 @@ import type {
     VideoFillerBlob,
     VideoPrepublishBlob,
     VideoSponsorsFillerBlob,
-    VideoTitlesBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    AWSJobStatus,
-    ElementBaseType
-} from "@clowdr-app/shared-types/build/content";
+    VideoTitlesBlob,
+} from "@midspace/shared-types/content";
+import { AWSJobStatus, ElementBaseType } from "@midspace/shared-types/content";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
-import assert from "assert";
 import { Form, Formik } from "formik";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import type { SrtValidationError } from "srt-validator";
 import srtValidator from "srt-validator";
-import FAIcon from "../../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../../Chakra/FAIcon";
 import UnsavedChangesWarning from "../../../../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { ElementDescriptor } from "./Types";
+
+const DragDrop = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.DragDrop })));
+const StatusBar = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.StatusBar })));
 
 export default function UploadFileForm_Subtitles({
     item,
@@ -85,7 +86,10 @@ export default function UploadFileForm_Subtitles({
 
         uppy?.use(AwsS3Multipart, {
             limit: 4,
-            companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
+            companionUrl:
+                typeof import.meta.env.VITE_COMPANION_BASE_URL === "string"
+                    ? import.meta.env.VITE_COMPANION_BASE_URL
+                    : "",
         });
         return uppy;
     }, [item.id]);
@@ -110,12 +114,6 @@ export default function UploadFileForm_Subtitles({
     useEffect(() => {
         uppy?.on("file-added", updateFiles);
         uppy?.on("file-removed", updateFiles);
-        uppy?.on("upload-success", () => {
-            toast({
-                status: "success",
-                description: "All files uploaded.",
-            });
-        });
     }, [toast, updateFiles, uppy]);
 
     const latestVersionData = useMemo<
@@ -148,7 +146,7 @@ export default function UploadFileForm_Subtitles({
     }, [item.data]);
 
     return latestVersionData ? (
-        <>
+        <Suspense fallback={<Spinner />}>
             <Formik
                 initialValues={{}}
                 onSubmit={async (_values) => {
@@ -180,8 +178,8 @@ export default function UploadFileForm_Subtitles({
 
                     try {
                         const { bucket, key } = new AmazonS3URI(result.successful[0].uploadURL);
-                        assert(bucket);
-                        assert(key);
+                        assert.truthy(bucket);
+                        assert.truthy(key);
 
                         toast({
                             status: "success",
@@ -220,7 +218,7 @@ export default function UploadFileForm_Subtitles({
                                 ],
                             });
                         }
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failed to submit item", e);
                         toast({
                             status: "error",
@@ -276,7 +274,7 @@ export default function UploadFileForm_Subtitles({
                     </>
                 )}
             </Formik>
-        </>
+        </Suspense>
     ) : (
         <></>
     );

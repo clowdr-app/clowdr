@@ -1,4 +1,3 @@
-import type { FetchResult, MutationFunctionOptions } from "@apollo/client";
 import {
     chakra,
     Flex,
@@ -13,11 +12,8 @@ import {
     NumberInputStepper,
 } from "@chakra-ui/react";
 import React from "react";
-import type {
-    ManageContent_UpdateElementMutation,
-    ManageContent_UpdateElementMutationVariables,
-} from "../../../../../../generated/graphql";
-import { FAIcon } from "../../../../../Icons/FAIcon";
+import type { ManageContent_UpdateElementMutationVariables } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
 
 export function EditUploadsRemaining({
     elementId,
@@ -28,12 +24,7 @@ export function EditUploadsRemaining({
     elementId: string;
     uploadsRemaining: number | null;
     isUpdatingUploadable: boolean;
-    updateUploadableElement: (
-        options?: MutationFunctionOptions<
-            ManageContent_UpdateElementMutation,
-            ManageContent_UpdateElementMutationVariables
-        >
-    ) => Promise<FetchResult<ManageContent_UpdateElementMutation>>;
+    updateUploadableElement: (vars: ManageContent_UpdateElementMutationVariables) => Promise<unknown>;
 }): JSX.Element {
     return (
         <>
@@ -56,11 +47,9 @@ export function EditUploadsRemaining({
                                 const newVal = Math.max(valAsNum, 0);
                                 if (newVal !== uploadsRemaining) {
                                     updateUploadableElement({
-                                        variables: {
-                                            elementId,
-                                            element: {
-                                                uploadsRemaining: newVal,
-                                            },
+                                        elementId,
+                                        element: {
+                                            uploadsRemaining: newVal,
                                         },
                                     });
                                 }

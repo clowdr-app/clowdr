@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -25,18 +24,13 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import { formatRelative } from "date-fns";
 import React, { useEffect, useMemo } from "react";
-import type {
-    ManageShufflePeriods_SelectAllQuery,
-    ManageShufflePeriods_SelectAllQueryVariables,
-    ManageShufflePeriods_ShufflePeriodFragment} from "../../../../generated/graphql";
-import {
-    ManageShufflePeriods_SelectAllDocument,
-    useDeleteShufflePeriodMutation,
-} from "../../../../generated/graphql";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { useConference } from "../../useConference";
+import type { ManageShufflePeriods_ShufflePeriodFragment } from "../../../../generated/graphql";
+import { useDeleteShufflePeriodMutation } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import ContinuationsEditor from "../Schedule/ContinuationsEditor";
 import ConfigureQueueModal from "./ConfigureQueueModal";
 
@@ -82,50 +76,7 @@ export default function ShuffleQueueTile({
     startLabel?: string;
     endLabel?: string;
 }): JSX.Element {
-    const conference = useConference();
-
-    const [deletePeriod, deletePeriodResponse] = useDeleteShufflePeriodMutation({
-        variables: {
-            id: queue.id,
-        },
-        update: (cache, result) => {
-            if (result.data?.delete_room_ShufflePeriod_by_pk?.id) {
-                cache.evict({
-                    id: cache.identify({
-                        __typename: "room_ShufflePeriod",
-                        id: result.data?.delete_room_ShufflePeriod_by_pk?.id,
-                    }),
-                });
-
-                const q = cache.readQuery<
-                    ManageShufflePeriods_SelectAllQuery,
-                    ManageShufflePeriods_SelectAllQueryVariables
-                >({
-                    query: ManageShufflePeriods_SelectAllDocument,
-                    variables: {
-                        conferenceId: conference.id,
-                    },
-                });
-
-                if (q) {
-                    cache.writeQuery<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>(
-                        {
-                            query: ManageShufflePeriods_SelectAllDocument,
-                            data: {
-                                ...q,
-                                room_ShufflePeriod: q.room_ShufflePeriod.filter(
-                                    (x) => x.id !== result.data?.delete_room_ShufflePeriod_by_pk?.id
-                                ),
-                            },
-                            variables: {
-                                conferenceId: conference.id,
-                            },
-                        }
-                    );
-                }
-            }
-        },
-    });
+    const [deletePeriodResponse, deletePeriod] = useDeleteShufflePeriodMutation();
 
     const toast = useToast();
     useEffect(() => {
@@ -181,12 +132,23 @@ export default function ShuffleQueueTile({
                         <ConfigureQueueModal initialQueue={queue} />
                         <Tooltip label="Delete">
                             <Button
-                                isLoading={deletePeriodResponse.loading}
+                                isLoading={deletePeriodResponse.fetching}
                                 size="xs"
                                 aria-label="Delete"
                                 colorScheme="red"
                                 onClick={() => {
-                                    deletePeriod();
+                                    deletePeriod(
+                                        {
+                                            id: queue.id,
+                                        },
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                },
+                                            },
+                                        }
+                                    );
                                 }}
                             >
                                 <FAIcon iconStyle="s" icon="trash-alt" />

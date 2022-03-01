@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Heading,
     HStack,
     Image,
@@ -15,22 +14,20 @@ import {
     Spacer,
     Spinner,
     Text,
-    useToast,
     VStack,
 } from "@chakra-ui/react";
-import React, { useCallback } from "react";
-import { useCreateDmMutation } from "../../../../generated/graphql";
+import React from "react";
 import BadgeList from "../../../Badges/BadgeList";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useMaybeGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
-import FAIcon from "../../../Icons/FAIcon";
+import { Markdown } from "../../../Chakra/Markdown";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import PronounList from "../../../Pronouns/PronounList";
-import { Markdown } from "../../../Text/Markdown";
-import { useConference } from "../../useConference";
-import type { Registrant} from "../../useCurrentRegistrant";
+import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "../Profile/RegistrantExtraInfo";
 import RegistrantItems from "../Profile/RegistrantItems";
+import CreateDMButton from "./CreateDMButton";
 
 export default function ProfileModal({
     registrant,
@@ -41,45 +38,8 @@ export default function ProfileModal({
     isOpen: boolean;
     onClose: () => void;
 }): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const mCurrentRegistrant = useMaybeCurrentRegistrant();
-    const mChatState = useMaybeGlobalChatState();
-
-    const [createDmMutation, { loading: creatingDM }] = useCreateDmMutation();
-    const toast = useToast();
-    const createDM = useCallback(async () => {
-        if (registrant && mChatState?.openChatInSidebar) {
-            try {
-                const result = await createDmMutation({
-                    variables: {
-                        registrantIds: [registrant.id],
-                        conferenceId: conference.id,
-                    },
-                });
-                if (result.errors || !result.data?.createRoomDm) {
-                    console.error("Failed to create DM", result.errors);
-                    throw new Error("Failed to create DM");
-                } else {
-                    if (result.data.createRoomDm.message !== "DM already exists") {
-                        toast({
-                            title: result.data.createRoomDm.message ?? "Created new DM",
-                            status: "success",
-                        });
-                    }
-
-                    mChatState.openChatInSidebar(result.data.createRoomDm.chatId);
-
-                    onClose();
-                }
-            } catch (e) {
-                toast({
-                    title: "Could not create DM",
-                    status: "error",
-                });
-                console.error("Could not create DM", e);
-            }
-        }
-    }, [registrant, mChatState, createDmMutation, conference.id, onClose, toast]);
 
     return (
         <Portal>
@@ -143,17 +103,10 @@ export default function ProfileModal({
                                         {mCurrentRegistrant &&
                                         mCurrentRegistrant?.id !== registrant.id &&
                                         registrant.userId ? (
-                                            <Button
-                                                onClick={createDM}
-                                                isLoading={creatingDM}
-                                                colorScheme="PrimaryActionButton"
-                                                size="sm"
-                                            >
-                                                <FAIcon icon="comment" iconStyle="s" mr={3} /> Chat
-                                            </Button>
+                                            <CreateDMButton registrantId={registrant.id} onCreate={onClose} />
                                         ) : undefined}
                                         <LinkButton
-                                            to={`/conference/${conference.slug}/profile/view/${registrant.id}`}
+                                            to={`${conferencePath}/profile/view/${registrant.id}`}
                                             size="sm"
                                             variant="outline"
                                             colorScheme="SecondaryActionButton"

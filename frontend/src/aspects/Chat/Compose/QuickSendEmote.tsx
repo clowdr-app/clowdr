@@ -1,35 +1,27 @@
 import type { ButtonProps } from "@chakra-ui/react";
-import { Button, HStack, Tooltip } from "@chakra-ui/react";
-import assert from "assert";
+import { Button, HStack } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import { useRealTime } from "../../Generic/useRealTime";
-import { useChatConfiguration } from "../Configuration";
-import { useSendMessageQueries } from "./SendMessageQueries";
+import { useRealTime } from "../../Hooks/useRealTime";
+import type { ChatState } from "../ChatGlobalState";
 
-export default function QuickSendEmote(): JSX.Element {
-    const config = useChatConfiguration();
-    const sendQueries = useSendMessageQueries();
+export default function QuickSendEmote({ chat }: { chat: ChatState }): JSX.Element {
     const lastSendAt = useRef<number>(0);
-    const rateLimitMs = 5000;
+    const rateLimitMs = 2000;
 
     const send = useCallback(
         (emoji: string) => {
             try {
-                assert(
-                    config.state?.Id !== undefined,
-                    "config.state is null. Chat state is not available in the current context."
-                );
                 if (Date.now() > lastSendAt.current + rateLimitMs) {
                     lastSendAt.current = Date.now();
-                    sendQueries.send(config.state.Id, Chat_MessageType_Enum.Emote, emoji, {}, false);
+                    chat.send(chat.Id, Chat_MessageType_Enum.Emote, emoji, {}, false);
                 }
             } catch (e) {
                 console.error(`${new Date().toLocaleString()}: Failed to send message`, e);
             }
         },
-        [config.state?.Id, sendQueries]
+        [chat]
     );
 
     const now = useRealTime(1000);
@@ -37,20 +29,18 @@ export default function QuickSendEmote(): JSX.Element {
 
     const el = useMemo(
         () => (
-            <Tooltip label="Send an emote">
-                <HStack spacing="3px" overflowX="auto" w="100%" justifyContent="center" alignItems="center">
-                    <QuickSendEmojiButton send={send} emoji="👏" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="👋" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="👍" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="❔" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="✔" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="❌" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="😃" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="🤣" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="😢" isDisabled={disable} />
-                    <QuickSendEmojiButton send={send} emoji="<3" isDisabled={disable} />
-                </HStack>
-            </Tooltip>
+            <HStack spacing="3px" justifyContent="center" alignItems="center">
+                <QuickSendEmojiButton send={send} emoji="👏" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="👋" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="👍" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="❔" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="✔" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="❌" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="😃" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="🤣" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="😢" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="<3" isDisabled={disable} />
+            </HStack>
         ),
         [send, disable]
     );

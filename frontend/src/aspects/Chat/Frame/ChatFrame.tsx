@@ -1,4 +1,4 @@
-import type { BoxProps} from "@chakra-ui/react";
+import type { BoxProps } from "@chakra-ui/react";
 import { Box, VStack } from "@chakra-ui/react";
 import type { RefObject } from "react";
 import React from "react";
@@ -12,7 +12,11 @@ import { ChatMessageList } from "../Messages/ChatMessageList";
 import ReceiveMessageQueriesProvider from "../Messages/ReceiveMessageQueries";
 import ChatProfileModalProvider from "./ChatProfileModalProvider";
 
-export function ChatFrame({ isVisible, ...rest }: { isVisible: RefObject<boolean> } & BoxProps): JSX.Element {
+export function ChatFrame({
+    isVisible,
+    noHeader,
+    ...rest
+}: { isVisible: RefObject<boolean>; noHeader?: boolean } & BoxProps): JSX.Element {
     const config = useChatConfiguration();
     const setAnsweringQuestionSIdRef = React.useRef<{
         f: (sIds: string[] | null) => void;
@@ -25,7 +29,7 @@ export function ChatFrame({ isVisible, ...rest }: { isVisible: RefObject<boolean
     });
 
     return (
-        <Box h="100%" w="100%" pos="relative" m={0} p={0} {...rest}>
+        <Box h="100%" w="100%" pos="relative" overflow="hidden" display="flex" flexDir="column" m={0} p={0} {...rest}>
             <VStack
                 minH="100%"
                 h="100%"
@@ -37,7 +41,7 @@ export function ChatFrame({ isVisible, ...rest }: { isVisible: RefObject<boolean
                 fontSize={config.fontSizeRange.value + "px" ?? "1rem"}
             >
                 <EmojiPickerProvider>
-                    <ChatHeading role="region" aria-label="Chat controls" flex="0 0 auto" />
+                    {!noHeader ? <ChatHeading role="region" aria-label="Chat controls" flex="0 0 auto" /> : undefined}
                     {/* <ChatSelector flex="0 0 auto" /> */}
                     <ChatProfileModalProvider>
                         <ReceiveMessageQueriesProvider setAnsweringQuestionSId={setAnsweringQuestionSIdRef}>
@@ -48,8 +52,18 @@ export function ChatFrame({ isVisible, ...rest }: { isVisible: RefObject<boolean
                                 flex="0 1 100%"
                                 pos="relative"
                                 overflow="hidden"
+                                display="flex"
+                                flexDir="column"
                             >
-                                <ChatMessageList pos="relative" h="100%" zIndex={1} isVisible={isVisible} />
+                                <ChatMessageList
+                                    overflow="hidden"
+                                    display="flex"
+                                    flexDir="column"
+                                    pos="relative"
+                                    h="100%"
+                                    zIndex={1}
+                                    isVisible={isVisible}
+                                />
                             </Box>
                         </ReceiveMessageQueriesProvider>
                     </ChatProfileModalProvider>

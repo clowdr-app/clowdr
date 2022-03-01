@@ -1,20 +1,18 @@
 import { AspectRatio, Box, Button, Container, Divider, HStack, Image, Link } from "@chakra-ui/react";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, isElementDataBlob } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
 import type { ElementDataFragment } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { ExternalLinkButton } from "../../../../Chakra/LinkButton";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { Markdown } from "../../../../Text/Markdown";
+import { Markdown } from "../../../../Chakra/Markdown";
 import ActiveSocialRooms from "../../Rooms/V2/ActiveSocialRooms";
 import LiveProgramRooms from "../../Rooms/V2/LiveProgramRooms";
 import SponsorBooths from "../../Rooms/V2/SponsorBooths";
 import { ProgramModalTab, useScheduleModal } from "../../Schedule/ProgramModal";
-import Schedule from "../../Schedule/v1/Schedule";
-import ItemList from "../ItemList";
 import { VideoElement } from "./VideoElement";
 
 export function Element({ element }: { element: ElementDataFragment }): JSX.Element {
@@ -42,10 +40,6 @@ function ElementInner({
         const latestVersion = R.last(blob);
 
         switch (type) {
-            case Content_ElementType_Enum.ContentGroupList:
-                return <ItemList pt="3ex" />;
-            case Content_ElementType_Enum.WholeSchedule:
-                return <Schedule />;
             case Content_ElementType_Enum.LiveProgramRooms:
                 return <LiveProgramRooms />;
             case Content_ElementType_Enum.ActiveSocialRooms:
@@ -54,6 +48,7 @@ function ElementInner({
                 return <Divider />;
             case Content_ElementType_Enum.SponsorBooths:
                 return <SponsorBooths />;
+            case Content_ElementType_Enum.ContentGroupList:
             case Content_ElementType_Enum.ExploreProgramButton:
                 return (
                     <Button
@@ -64,6 +59,7 @@ function ElementInner({
                         Browse content
                     </Button>
                 );
+            case Content_ElementType_Enum.WholeSchedule:
             case Content_ElementType_Enum.ExploreScheduleButton:
                 return (
                     <Button
@@ -156,9 +152,7 @@ function ElementInner({
                     return (
                         <Box>
                             <Image
-                                src={`https://${bucket}.s3-${
-                                    import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                                }.amazonaws.com/${key}`}
+                                src={`https://${bucket}.s3-${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${key}`}
                                 alt={
                                     latestVersion.data.altText?.length
                                         ? latestVersion.data.altText
@@ -223,9 +217,7 @@ function ElementInner({
                     if (!bucket || !key) {
                         throw new Error("Missing S3 URI component");
                     }
-                    const url = `https://s3.${
-                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                    }.amazonaws.com/${bucket}/${key}`;
+                    const url = `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
                     return (
                         <ExternalLinkButton to={url} isExternal={true} colorScheme="PrimaryActionButton">
                             Open {name}
@@ -247,9 +239,7 @@ function ElementInner({
                     if (!bucket || !key) {
                         throw new Error("Missing S3 URI component");
                     }
-                    const url = `https://s3.${
-                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                    }.amazonaws.com/${bucket}/${key}`;
+                    const url = `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
                     if (
                         key.endsWith(".jpg") ||
                         key.endsWith(".gif") ||

@@ -1,4 +1,5 @@
-import { DynamicModule, FactoryProvider, Global, Module, ModuleMetadata } from "@nestjs/common";
+import type { DynamicModule, FactoryProvider, ModuleMetadata } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { HASURA_MODULE_OPTIONS } from "../constants";
 import { ChannelStackCreateJobService } from "./channel-stack-create-job/channel-stack-create-job.service";
 import { ChannelStackDeleteJobService } from "./channel-stack-delete-job/channel-stack-delete-job.service";

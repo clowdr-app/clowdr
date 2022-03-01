@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -26,18 +25,21 @@ import {
     Tr,
     useColorModeValue,
     useDisclosure,
+    VStack,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
 import type { MyBackstages_EventFragment } from "../../../../generated/graphql";
 import { useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useRealTime } from "../../../Generic/useRealTime";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { Markdown } from "../../../Text/Markdown";
-import { useTitle } from "../../../Utils/useTitle";
+import { Markdown } from "../../../Chakra/Markdown";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useRealTime } from "../../../Hooks/useRealTime";
+import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 
@@ -45,6 +47,7 @@ gql`
     fragment MyBackstages_Event on schedule_Event {
         id
         conferenceId
+        itemId
         item {
             id
             title
@@ -52,6 +55,7 @@ gql`
         endTime
         intendedRoomModeName
         name
+        roomId
         room {
             id
             name
@@ -74,13 +78,14 @@ gql`
 
 function MyBackstages(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const registrant = useCurrentRegistrant();
 
-    const myBackstagesResponse = useRegistrantEventsWithBackstagesQuery({
+    const [myBackstagesResponse] = useRegistrantEventsWithBackstagesQuery({
         variables: {
             registrantId: registrant.id,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     const now = useRealTime(30000);
@@ -143,8 +148,8 @@ function MyBackstages(): JSX.Element {
                 Backstages are only available for live-stream events. If you are presenting at a video-chat event, you
                 can go directly to your room at the start time. You will not see any backstages in this list.
             </Text>
-            {myBackstagesResponse.loading && !eventsGroupedByDay ? (
-                <CenteredSpinner spinnerProps={{ label: "Loading backstages" }} />
+            {myBackstagesResponse.fetching && !eventsGroupedByDay ? (
+                <CenteredSpinner spinnerProps={{ label: "Loading backstages" }} caller="MyBackstages:151" />
             ) : undefined}
             {eventsTodayAndFuture ? (
                 <>
@@ -213,7 +218,7 @@ function MyBackstages(): JSX.Element {
                                                                     <Td maxW="10em">
                                                                         {isLive || isNow ? (
                                                                             <LinkButton
-                                                                                to={`/conference/${conference.slug}/room/${x.room?.id}`}
+                                                                                to={`${conferencePath}/room/${x.room?.id}`}
                                                                                 overflowWrap="normal"
                                                                                 maxW="100%"
                                                                                 height="auto"
@@ -271,7 +276,7 @@ function MyBackstages(): JSX.Element {
                                                                     <Td maxW="15em">
                                                                         {x.room ? (
                                                                             <Link
-                                                                                href={`/conference/${conference.slug}/room/${x.room.id}`}
+                                                                                href={`${conferencePath}/room/${x.room.id}`}
                                                                             >
                                                                                 <FAIcon
                                                                                     icon="link"
@@ -390,15 +395,15 @@ export default function MyBackstagesPage(): JSX.Element {
     const registrant = useCurrentRegistrant();
 
     return (
-        <>
+        <VStack alignItems="flex-start" spacing={4} p={[2, 2, 4]}>
             {title}
-            <Heading as="h1" id="page-heading">
+            <Heading as="h1" id="page-heading" textAlign="left">
                 My Backstages
             </Heading>
-            <Heading as="h2" fontSize="lg" fontStyle="italic">
+            <Heading as="h2" fontSize="lg" fontStyle="italic" textAlign="left">
                 ({registrant.displayName})
             </Heading>
             <MyBackstages />
-        </>
+        </VStack>
     );
 }

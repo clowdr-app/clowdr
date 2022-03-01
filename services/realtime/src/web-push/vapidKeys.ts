@@ -1,8 +1,10 @@
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
-import { generateVAPIDKeys, setVapidDetails, VapidKeys } from "web-push";
+import { gql } from "graphql-tag";
+import type { VapidKeys } from "web-push";
+import { generateVAPIDKeys, setVapidDetails } from "web-push";
+import type { SetVapidKeysMutation, SetVapidKeysMutationVariables } from "../generated/graphql";
 import { SetVapidKeysDocument, VapidKeysDocument } from "../generated/graphql";
-import { testMode } from "../testMode";
 
 gql`
     query VAPIDKeys {
@@ -30,34 +32,24 @@ let cachedVAPIDKeys: VapidKeys | null = null;
 
 export async function getVAPIDKeys(): Promise<VapidKeys> {
     if (!cachedVAPIDKeys) {
-        cachedVAPIDKeys = await testMode(
-            async (apolloClient) => {
-                // Check for existing keys
-                const response = await apolloClient.query({
-                    query: VapidKeysDocument,
-                });
-                if (response.data.publicKey && response.data.privateKey) {
-                    return {
-                        publicKey: response.data.publicKey.value,
-                        privateKey: response.data.privateKey.value,
-                    };
-                } else {
-                    const newKeys = generateVAPIDKeys();
+        cachedVAPIDKeys = await (async () => {
+            // Check for existing keys
+            const response = await gqlClient?.query(VapidKeysDocument).toPromise();
+            if (response?.data.publicKey && response?.data.privateKey) {
+                return {
+                    publicKey: response.data.publicKey.value,
+                    privateKey: response.data.privateKey.value,
+                };
+            } else {
+                const newKeys = generateVAPIDKeys();
 
-                    await apolloClient.mutate({
-                        mutation: SetVapidKeysDocument,
-                        variables: newKeys,
-                    });
+                await gqlClient
+                    ?.mutation<SetVapidKeysMutation, SetVapidKeysMutationVariables>(SetVapidKeysDocument, newKeys)
+                    .toPromise();
 
-                    return newKeys;
-                }
-            },
-            // Note: Generating new vapid keys will invalidate any existing subscriptions
-            //       so doing this in a real browser under test mode is likely to just
-            //       be tedious - I wouldn't bother. Just don't use this feature of the
-            //       realtime service in-browser when in test mode :)
-            async () => cachedVAPIDKeys ?? generateVAPIDKeys()
-        );
+                return newKeys;
+            }
+        })();
 
         assert(process.env.HOST_PUBLIC_URL, "Missing env var HOST_PUBLIC_URL");
         setVapidDetails(process.env.HOST_PUBLIC_URL, cachedVAPIDKeys.publicKey, cachedVAPIDKeys.privateKey);

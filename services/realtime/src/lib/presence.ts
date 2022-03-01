@@ -1,6 +1,7 @@
+import { redlock } from "@midspace/component-clients/redis";
 import crypto from "crypto";
 import type { RedisClient } from "redis";
-import { redlock } from "../redis";
+import { logger } from "./logger";
 
 /**
  * A Presence List contains the user ids present for that list.
@@ -51,12 +52,12 @@ export function addUserSession(
             function unlock() {
                 listsKeyLock?.unlock((err) => {
                     if (err) {
-                        console.error(`Error unlocking ${listsKey}`, err);
+                        logger.error({ err }, `Error unlocking ${listsKey}`);
                     }
                 });
                 sessionsKeyLock?.unlock((err) => {
                     if (err) {
-                        console.error(`Error unlocking ${sessionsKey}`, err);
+                        logger.error({ err }, `Error unlocking ${sessionsKey}`);
                     }
                 });
             }
@@ -103,12 +104,12 @@ export function removeUserSession(
             function unlock() {
                 listsKeyLock?.unlock((err) => {
                     if (err) {
-                        console.error(`Error unlocking ${listsKey}`, err);
+                        logger.error({ err }, `Error unlocking ${listsKey}`);
                     }
                 });
                 sessionsKeyLock?.unlock((err) => {
                     if (err) {
-                        console.error(`Error unlocking ${sessionsKey}`, err);
+                        logger.error({ err }, `Error unlocking ${sessionsKey}`);
                     }
                 });
             }

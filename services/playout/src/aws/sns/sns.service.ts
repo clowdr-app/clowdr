@@ -1,11 +1,12 @@
 import { SNS } from "@aws-sdk/client-sns";
-import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { Credentials as NewSdkCredentials } from "@aws-sdk/types";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Inject } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import assert from "assert";
 import { AWS_MODULE_OPTIONS } from "../../constants";
-import { AwsModuleOptions } from "../aws.module";
+import type { AwsModuleOptions } from "../aws.module";
 
 export class SnsService {
     private readonly logger: Bunyan;

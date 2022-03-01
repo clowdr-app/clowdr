@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -24,23 +23,27 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
     ElementBaseType,
     isElementDataBlob,
-} from "@clowdr-app/shared-types/build/content";
+} from "@midspace/shared-types/content";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import type { PropsWithChildren } from "react";
 import React, { Fragment, useMemo } from "react";
-import { Permissions_Permission_Enum, Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
+import { Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { roundDownToNearest } from "../../../Generic/MathUtils";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { makeContext } from "../../../GQL/make-context";
+import { useTitle } from "../../../Hooks/useTitle";
+import { roundDownToNearest } from "../../../Utils/MathUtils";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 
 gql`
@@ -65,7 +68,7 @@ gql`
             itemPeople(where: { person: { registrantId: { _is_null: true } } }) {
                 id
                 roleName
-                person: personWithAccessToken {
+                person {
                     id
                     name
                     affiliation
@@ -74,7 +77,7 @@ gql`
             }
         }
 
-        requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPersonWithAccessToken(
+        requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 eventPeople: {
@@ -89,7 +92,7 @@ gql`
             email
         }
 
-        requiredProgramPeopleNotRegistered: collection_ProgramPersonWithAccessToken(
+        requiredProgramPeopleNotRegistered: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 eventPeople: {
@@ -302,7 +305,7 @@ gql`
                 endTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [EXHIBITION, NONE] }
-                exhibition: { items: { item: { _not: { rooms: {} } } } }
+                exhibition: { items: { item: { _not: { room: {} } } } }
             }
         ) {
             id
@@ -316,7 +319,7 @@ gql`
             exhibition {
                 id
                 name
-                items(where: { item: { _not: { rooms: {} } } }) {
+                items(where: { item: { _not: { room: {} } } }) {
                     id
                     item {
                         id
@@ -428,11 +431,19 @@ export default function ChecklistPage(): JSX.Element {
     const title = useTitle(`Pre-conference checklist at ${conference.shortName}`);
 
     const now = useMemo(() => new Date().toISOString(), []);
-    const checklistResponse = usePreshowChecklistQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [checklistResponse] = usePreshowChecklistQuery({
         variables: {
             now,
             conferenceId: conference.id,
         },
+        context,
     });
 
     const emptyTags = useMemo(() => {
@@ -1286,10 +1297,7 @@ export default function ChecklistPage(): JSX.Element {
     });
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -1297,7 +1305,7 @@ export default function ChecklistPage(): JSX.Element {
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Pre-conference Checklist
             </Heading>
-            {checklistResponse.loading && !checklistResponse.data ? <Spinner label="Loading checks" /> : undefined}
+            {checklistResponse.fetching && !checklistResponse.data ? <Spinner label="Loading checks" /> : undefined}
             {checklistResponse.data ? (
                 <Accordion allowToggle maxW={800}>
                     <Grid alignItems="stretch" rowGap={2} columnGap={4} templateColumns="auto auto">
@@ -1424,7 +1432,7 @@ export default function ChecklistPage(): JSX.Element {
                     </Grid>
                 </Accordion>
             ) : undefined}
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }
 
@@ -1537,7 +1545,7 @@ function ChecklistItem({
         url: string;
     };
 }>): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     return (
         <AccordionItem flex="1">
@@ -1561,7 +1569,7 @@ function ChecklistItem({
                     <AccordionPanel>
                         <VStack spacing={3} alignItems="flex-start">
                             <Text>{description}</Text>
-                            <LinkButton isExternal size="md" to={`/conference/${conference.slug}/manage/${actionURL}`}>
+                            <LinkButton isExternal size="md" to={`${conferencePath}/manage/${actionURL}`}>
                                 <FAIcon iconStyle="s" icon="link" mr={2} />
                                 <chakra.span>{actionTitle}</chakra.span>
                                 <ExternalLinkIcon ml={2} />

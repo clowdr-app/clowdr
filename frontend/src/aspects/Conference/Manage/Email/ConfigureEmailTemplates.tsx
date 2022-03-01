@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -17,27 +16,21 @@ import {
     Textarea,
     VStack,
 } from "@chakra-ui/react";
-import type {
-    EmailTemplate_BaseConfig} from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import {
-    isEmailTemplate_BaseConfig,
-} from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import type {
-    EmailTemplate_Defaults} from "@clowdr-app/shared-types/build/email";
-import {
-    EMAIL_TEMPLATE_SUBMISSION_REQUEST,
-    EMAIL_TEMPLATE_SUBTITLES_GENERATED,
-} from "@clowdr-app/shared-types/build/email";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import type { EmailTemplate_Defaults } from "@midspace/shared-types/email";
+import { EMAIL_TEMPLATE_SUBMISSION_REQUEST, EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@midspace/shared-types/email";
+import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type {
-    ConfigureEmailTemplates_ConferenceConfigurationFragment} from "../../../../generated/graphql";
+import type { ConfigureEmailTemplates_ConferenceConfigurationFragment } from "../../../../generated/graphql";
 import {
     Conference_ConfigurationKey_Enum,
-    ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc,
     useConfigureEmailTemplates_GetConferenceConfigurationsQuery,
     useConfigureEmailTemplates_UpdateConferenceConfigurationMutation,
 } from "../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import { makeContext } from "../../../GQL/make-context";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { useConference } from "../../useConference";
 
 gql`
@@ -72,21 +65,26 @@ gql`
 export function ConfigureEmailTemplates(): JSX.Element {
     const conference = useConference();
 
-    const conferenceConfigurationResult = useConfigureEmailTemplates_GetConferenceConfigurationsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [conferenceConfigurationResult] = useConfigureEmailTemplates_GetConferenceConfigurationsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     return (
-        <ApolloQueryWrapper
-            getter={(result) => result.conference_Configuration}
-            queryResult={conferenceConfigurationResult}
-        >
+        <QueryWrapper getter={(result) => result.conference_Configuration} queryResult={conferenceConfigurationResult}>
             {(conferenceConfigurations: readonly ConfigureEmailTemplates_ConferenceConfigurationFragment[]) => (
                 <ConfigureEmailTemplatesInner conferenceConfigurations={conferenceConfigurations} />
             )}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 
@@ -119,33 +117,25 @@ export function ConfigureEmailTemplatesInner({
         return conferenceConfiguration.value as unknown as EmailTemplate_BaseConfig;
     }, [conferenceConfigurations]);
 
-    const [updateConferenceConfiguration, updateConferenceConfigurationResponse] =
+    const [updateConferenceConfigurationResponse, updateConferenceConfiguration] =
         useConfigureEmailTemplates_UpdateConferenceConfigurationMutation();
 
     const update = useCallback(
         (key: Conference_ConfigurationKey_Enum) => (newValue: EmailTemplate_BaseConfig) => {
-            updateConferenceConfiguration({
-                variables: {
+            updateConferenceConfiguration(
+                {
                     conferenceId: conference.id,
                     key,
                     value: newValue,
                 },
-                update: (cache, { data: _data }) => {
-                    if (_data?.insert_conference_Configuration_one) {
-                        const item: ConfigureEmailTemplates_ConferenceConfigurationFragment = {
-                            conferenceId: conference.id,
-                            key,
-                            __typename: "conference_Configuration",
-                            value: newValue,
-                        };
-                        cache.writeFragment({
-                            data: item,
-                            fragment: ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc,
-                            fragmentName: "ConfigureEmailTemplates_ConferenceConfiguration",
-                        });
-                    }
-                },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                }
+            );
         },
         [conference.id, updateConferenceConfiguration]
     );
@@ -153,7 +143,7 @@ export function ConfigureEmailTemplatesInner({
     return (
         <>
             <Box minH="3ex" py={4}>
-                {updateConferenceConfigurationResponse.loading ? (
+                {updateConferenceConfigurationResponse.fetching ? (
                     <HStack spacing={2}>
                         <Text>Saving</Text> <Spinner />
                     </HStack>

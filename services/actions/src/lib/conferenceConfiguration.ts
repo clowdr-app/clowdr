@@ -1,14 +1,14 @@
 import { gql } from "@apollo/client/core";
-import { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import { EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@clowdr-app/shared-types/build/email";
+import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@midspace/shared-types/email";
 import { is } from "typescript-is";
-import {
+import type {
     Conference_ConfigurationKey_Enum,
     Configuration_EmailTemplateSubtitlesGeneratedFragment,
     Configuration_RecordingEmailNotificationsEnabledFragment,
     Configuration_SubmissionNotificationRolesFragment,
-    GetConfigurationValueDocument,
 } from "../generated/graphql";
+import { GetConfigurationValueDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
 gql`

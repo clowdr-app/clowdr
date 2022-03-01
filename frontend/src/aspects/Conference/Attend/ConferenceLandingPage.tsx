@@ -1,25 +1,21 @@
-import { gql } from "@apollo/client";
 import { Box, Heading, Spinner, useColorModeValue } from "@chakra-ui/react";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
-import {
-    Content_ElementType_Enum,
-    Permissions_Permission_Enum,
-    useConferenceLandingPageItemQuery,
-} from "../../../generated/graphql";
+import { gql } from "urql";
+import { Content_ElementType_Enum, useConferenceLandingPageItemQuery } from "../../../generated/graphql";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
+import { useTitle } from "../../Hooks/useTitle";
+import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import ElementsGridLayout from "./Content/Element/ElementsGridLayout";
 
 gql`
     query ConferenceLandingPageItem($conferenceId: uuid!) {
         content_Item(where: { _and: [{ conferenceId: { _eq: $conferenceId } }, { typeName: { _eq: LANDING_PAGE } }] }) {
-            ...ItemElements_ItemData
+            ...ItemElements_JustElementData
         }
     }
 `;
@@ -29,7 +25,7 @@ function ConferenceLandingPageInner(): JSX.Element {
 
     const title = useTitle(conference.name);
 
-    const { error, data } = useConferenceLandingPageItemQuery({
+    const [{ error, data }] = useConferenceLandingPageItemQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -89,7 +85,7 @@ function ConferenceLandingPageInner(): JSX.Element {
     }
 
     return (
-        <Box w="100%" mx={[2, 2, 4]} bgColor={bgColor} pb="40px" minH="100vh">
+        <Box w="100%" mx={[2, 2, 4]} bgColor={bgColor} pb="40px" minH="100%">
             {title}
             {!hasAbstract ? (
                 <Heading as="h1" id="page-heading" mt={2}>
@@ -103,14 +99,8 @@ function ConferenceLandingPageInner(): JSX.Element {
 
 export default function ConferenceLandingPage(): JSX.Element {
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permissions_Permission_Enum.ConferenceView,
-                Permissions_Permission_Enum.ConferenceManageContent,
-            ]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole attendeeRole componentIfDenied={<PageNotFound />}>
             <ConferenceLandingPageInner />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

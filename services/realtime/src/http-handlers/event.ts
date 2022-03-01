@@ -1,13 +1,15 @@
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
+import { gql } from "@urql/core";
 import type { NextFunction, Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { promisify } from "util";
 import { v4 as uuidv4 } from "uuid";
+import type { GetEventQuery, GetEventQueryVariables } from "../generated/graphql";
 import { Chat_MessageType_Enum, GetEventDocument } from "../generated/graphql";
-import { apolloClient } from "../graphqlClient";
 import { generateEventHandsRaisedKeyName } from "../lib/handRaise";
+import { logger } from "../lib/logger";
 import { publishAction } from "../rabbitmq/chat/messages";
-import { redisClientP, redisClientPool } from "../redis";
 import type { Action, EventEndedNotification, EventStartedNotification } from "../types/hasura";
 
 gql`
@@ -38,14 +40,13 @@ export async function eventStarted(req: Request, res: Response, _next?: NextFunc
 
         const data: Action<EventStartedNotification> = req.body;
 
-        const eventResponse = await apolloClient?.query({
-            query: GetEventDocument,
-            variables: {
+        const eventResponse = await gqlClient
+            ?.query<GetEventQuery, GetEventQueryVariables>(GetEventDocument, {
                 id: data.input.eventId,
-            },
-        });
+            })
+            .toPromise();
 
-        if (eventResponse?.data.schedule_Event_by_pk) {
+        if (eventResponse?.data?.schedule_Event_by_pk) {
             const event = eventResponse?.data.schedule_Event_by_pk;
             if (event.room.chatId) {
                 const systemId =
@@ -110,7 +111,7 @@ export async function eventStarted(req: Request, res: Response, _next?: NextFunc
 
         res.status(200).send({ ok: true });
     } catch (e) {
-        console.error("Event started: Received incorrect payload", e);
+        logger.error("Event started: Received incorrect payload", e);
         res.status(500).json({ ok: false });
         return;
     }
@@ -130,14 +131,13 @@ export async function eventEnded(req: Request, res: Response, _next?: NextFuncti
             redisClientPool.release("http-handlers/event/eventEnded", redisClient);
         }
 
-        const eventResponse = await apolloClient?.query({
-            query: GetEventDocument,
-            variables: {
+        const eventResponse = await gqlClient
+            ?.query<GetEventQuery, GetEventQueryVariables>(GetEventDocument, {
                 id: data.input.eventId,
-            },
-        });
+            })
+            .toPromise();
 
-        if (eventResponse?.data.schedule_Event_by_pk) {
+        if (eventResponse?.data?.schedule_Event_by_pk) {
             const event = eventResponse?.data.schedule_Event_by_pk;
             if (event.automaticParticipationSurvey && event.room.chatId) {
                 const systemId =
@@ -206,8 +206,8 @@ export async function eventEnded(req: Request, res: Response, _next?: NextFuncti
         }
 
         res.status(200).send({ ok: true });
-    } catch (e) {
-        console.error("Event ended: Received incorrect payload", e);
+    } catch (error: any) {
+        logger.error({ error }, "Event ended: Received incorrect payload");
         res.status(500).json({ ok: false });
         return;
     }

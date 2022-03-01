@@ -19,24 +19,119 @@ object_relationships:
 - name: usedBy
   using:
     foreign_key_constraint_on: usedById
-select_permissions:
+insert_permissions:
 - permission:
+    backend_only: false
+    check:
+      _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: CREATE_CONFERENCE_DEMO_CODE
+          - userId:
+              _eq: X-Hasura-User-Id
+          - targetPermissionName:
+              _is_null: true
     columns:
     - id
     - note
     - usedById
+  role: superuser
+select_permissions:
+- permission:
+    columns:
+    - note
+    - usedById
+    - created_at
+    - updated_at
+    - id
     filter:
       usedById:
         _eq: X-Hasura-User-Id
+  role: conference-organizer
+- permission:
+    columns:
+    - note
+    - usedById
+    - created_at
+    - updated_at
+    - id
+    filter:
+      _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: LIST_CONFERENCE_DEMO_CODES
+          - userId:
+              _eq: X-Hasura-User-Id
+          - targetPermissionName:
+              _is_null: true
+  role: superuser
+- permission:
+    columns:
+    - id
+    - usedById
+    filter:
+      usedById:
+        _is_null: true
   role: user
 update_permissions:
 - permission:
-    check: {}
+    check: null
     columns:
     - note
     filter:
       usedById:
         _is_null: true
-    set:
-      usedById: x-hasura-User-Id
+  role: conference-organizer
+- permission:
+    check: null
+    columns:
+    - id
+    - note
+    - usedById
+    filter:
+      _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: CREATE_CONFERENCE_DEMO_CODE
+          - userId:
+              _eq: X-Hasura-User-Id
+          - targetPermissionName:
+              _is_null: true
+  role: superuser
+- permission:
+    check: null
+    columns:
+    - note
+    - usedById
+    filter:
+      usedById:
+        _is_null: true
   role: user
+delete_permissions:
+- permission:
+    filter:
+      _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: CREATE_CONFERENCE_DEMO_CODE
+          - userId:
+              _eq: X-Hasura-User-Id
+          - targetPermissionName:
+              _is_null: true
+  role: superuser

@@ -1,37 +1,25 @@
-import type { ApolloError } from "@apollo/client";
-import { Box, useToast } from "@chakra-ui/react";
+import { Box, Tooltip, useToast } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import FAIcon from "../Icons/FAIcon";
-import { useApolloCustomContext } from "./ApolloCustomProvider";
+import type { CombinedError } from "urql";
+import FAIcon from "../Chakra/FAIcon";
+import { useUrqlContext } from "./UrqlProvider";
 
 // let shownJWTIssuedAtFutureReloadWarning = false;
 let errorToastId: string | number | undefined = undefined;
 
 export default function useQueryErrorToast(
-    error: string | false | ApolloError | undefined,
+    error: string | false | CombinedError | undefined | null,
     reconnectOnError: boolean,
     queryName?: string
 ): void {
     const toast = useToast();
-    const ctx = useApolloCustomContext();
+    const ctx = useUrqlContext();
 
     useEffect(() => {
         let tId: number | undefined;
         if (error) {
             const message = typeof error === "string" ? error : error.message;
             if (message.includes("JWTIssuedAtFuture")) {
-                // if (!shownJWTIssuedAtFutureReloadWarning) {
-                //     shownJWTIssuedAtFutureReloadWarning = true;
-                //     toast({
-                //         position: "top",
-                //         status: "warning",
-                //         isClosable: false,
-                //         title: "Need to refresh",
-                //         duration: 5000,
-                //         description: "We just need to refresh for a moment to finalise your login…",
-                //     });
-                //     ctx.reconnect();
-                // }
                 console.error(
                     "Oh not this again... Hasura's clock is out of sync with the rest of the world. Lookup JWT Leeway in the Hasura docs."
                 );
@@ -48,7 +36,9 @@ export default function useQueryErrorToast(
                     render: function QueryError(_props): JSX.Element {
                         return (
                             <Box w="100%" textAlign="right">
-                                <FAIcon color="red.500" opacity={0.8} iconStyle="s" icon="heartbeat" />
+                                <Tooltip label="Attempting to reconnect to server, please wait.">
+                                    <FAIcon color="red.500" opacity={0.8} iconStyle="s" icon="heartbeat" />
+                                </Tooltip>
                             </Box>
                         );
                     },

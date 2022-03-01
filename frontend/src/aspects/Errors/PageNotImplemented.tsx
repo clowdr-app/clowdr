@@ -1,7 +1,7 @@
 import { Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { LinkButton } from "../Chakra/LinkButton";
-import { useTitle } from "../Utils/useTitle";
+import { useTitle } from "../Hooks/useTitle";
 import GenericErrorPage from "./GenericErrorPage";
 
 export default function PageNotImplemented(): JSX.Element {

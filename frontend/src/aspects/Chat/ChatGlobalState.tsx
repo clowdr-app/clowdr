@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
-import type { ApolloClient } from "@apollo/client";
-import { ApolloError, gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import type { RenderProps } from "@chakra-ui/react";
 import { Box, Button, ButtonGroup, CloseButton, createStandaloneToast, Heading, VStack } from "@chakra-ui/react";
 import { datadogLogs } from "@datadog/browser-logs";
-import assert from "assert";
+import { assert } from "@midspace/assert";
+import { AuthHeader } from "@midspace/shared-types/auth";
+import type { Client } from "@urql/core";
+import { CombinedError, gql } from "@urql/core";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import React from "react";
@@ -16,6 +17,8 @@ import type {
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
     InitialChatState_ChatFragment,
+    InsertChatFlagMutation,
+    InsertChatFlagMutationVariables,
     Maybe,
     PinChatMutation,
     PinChatMutationVariables,
@@ -47,12 +50,12 @@ import {
     UnsubscribeChatDocument,
 } from "../../generated/graphql";
 import { theme } from "../Chakra/ChakraCustomProvider";
+import { Markdown } from "../Chakra/Markdown";
 import type { Registrant } from "../Conference/useCurrentRegistrant";
 import type { Observer } from "../Observable";
 import { Observable } from "../Observable";
 import { realtimeService } from "../Realtime/RealtimeService";
 import type { Action, Message, Notification, Reaction } from "../Realtime/RealtimeServiceCommonTypes";
-import { Markdown } from "../Text/Markdown";
 import type { AnswerMessageData, AnswerReactionData, MessageData } from "./Types/Messages";
 
 gql`
@@ -66,21 +69,20 @@ gql`
 
     fragment InitialChatState_Chat on chat_Chat {
         id
-        items {
+        item {
             id
             title
             shortTitle
         }
-        nonDMRoom: rooms(where: { managementModeName: { _neq: DM } }) {
+        room {
             id
             name
             priority
             managementModeName
-        }
-        DMRoom: rooms(where: { managementModeName: { _eq: DM } }) {
-            id
-            name
-            roomPeople {
+            # For DMs, we know there will only be 2 members, so we can limit the
+            # impact of loading members when it's not a DM room by limiting the
+            # number that are fetched
+            roomMemberships(limit: 2) {
                 id
                 registrant {
                     id
@@ -92,6 +94,7 @@ gql`
         enableAutoSubscribe
         enableMandatoryPin
         enableMandatorySubscribe
+        restrictToAdmins
         pins(where: { registrantId: { _eq: $registrantId } }) {
             registrantId
             chatId
@@ -232,7 +235,6 @@ gql`
     }
 `;
 
-// CHAT_TODO: Message and reaction flagging / moderation
 gql`
     fragment ChatFlagData on chat_Flag {
         discussionChatId
@@ -353,7 +355,7 @@ export class MessageState {
                 senderId: this.globalState.registrant.id,
             };
             const socket = this.globalState.socket;
-            assert(socket, "Not connected to chat service.");
+            assert.truthy(socket, "Not connected to chat service.");
             const action: Action<Reaction> = {
                 op: "INSERT",
                 data: fullRct,
@@ -368,9 +370,9 @@ export class MessageState {
     public async deleteReaction(reactionSId: string): Promise<void> {
         try {
             const rct = this.reactions.find((x) => x.sId === reactionSId);
-            assert(rct, "Reaction not found");
+            assert.truthy(rct, "Reaction not found");
             const socket = this.globalState.socket;
-            assert(socket, "Not connected to chat service.");
+            assert.truthy(socket, "Not connected to chat service.");
             const action: Action<Reaction> = {
                 op: "DELETE",
                 data: rct,
@@ -416,15 +418,25 @@ export class MessageState {
     }
 
     public async report(type: Chat_FlagType_Enum, reason: string): Promise<void> {
-        await this.globalState.apolloClient.mutate({
-            mutation: InsertChatFlagDocument,
-            variables: {
-                messageSId: this.sId,
-                registrantId: this.globalState.registrant.id,
-                type,
-                reason,
-            },
-        });
+        await this.globalState.client
+            .mutation<InsertChatFlagMutation, InsertChatFlagMutationVariables>(
+                InsertChatFlagDocument,
+                {
+                    messageSId: this.sId,
+                    registrantId: this.globalState.registrant.id,
+                    type,
+                    reason,
+                },
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: "attendee",
+                            [AuthHeader.IncludeRoomIds]: "true",
+                        },
+                    },
+                }
+            )
+            .toPromise();
     }
 
     public async delete(): Promise<void> {
@@ -462,14 +474,16 @@ export class ChatState {
         private readonly initialState: InitialChatState_ChatFragment
     ) {
         this.name =
-            (initialState.items.length > 0
-                ? initialState.items[0].shortTitle ?? initialState.items[0].title
-                : initialState.nonDMRoom.length > 0
-                ? initialState.nonDMRoom[0].name
-                : initialState.DMRoom.length > 0
-                ? initialState.DMRoom[0].roomPeople.find((x) => x?.registrant?.id !== globalState.registrant.id)
-                      ?.registrant?.displayName
-                : undefined) ?? "<No name available>";
+            (initialState.item
+                ? initialState.item.shortTitle ?? initialState.item.title
+                : initialState.room
+                ? initialState.room.managementModeName !== Room_ManagementMode_Enum.Dm
+                    ? initialState.room.name
+                    : initialState.room.managementModeName === Room_ManagementMode_Enum.Dm
+                    ? initialState.room.roomMemberships.find((x) => x?.registrant?.id !== globalState.registrant.id)
+                          ?.registrant?.displayName
+                    : undefined
+                : undefined) ?? "<Name removed>";
 
         this.isPinned = initialState.pins.length > 0;
         this.isSubscribed = initialState.subscriptions.length > 0;
@@ -504,21 +518,26 @@ export class ChatState {
     public get IsPrivate(): boolean {
         return (
             this.IsDM ||
-            (this.initialState.nonDMRoom.length > 0 &&
-                this.initialState.nonDMRoom[0].managementModeName !== Room_ManagementMode_Enum.Public)
+            Boolean(
+                this.initialState.room && this.initialState.room.managementModeName !== Room_ManagementMode_Enum.Public
+            )
         );
     }
 
+    public get IsRestrictedToAdmins(): boolean {
+        return this.initialState.restrictToAdmins;
+    }
+
     public get DMRoomId(): string | undefined {
-        if (this.initialState.DMRoom.length > 0) {
-            return this.initialState.DMRoom[0].id;
+        if (this.initialState.room?.managementModeName === Room_ManagementMode_Enum.Dm) {
+            return this.initialState.room.id;
         }
         return undefined;
     }
 
     public get NonDMRoomId(): string | undefined {
-        if (this.initialState.nonDMRoom.length > 0) {
-            return this.initialState.nonDMRoom[0].id;
+        if (this.initialState.room?.managementModeName !== Room_ManagementMode_Enum.Dm) {
+            return this.initialState.room?.id;
         }
         return undefined;
     }
@@ -550,13 +569,29 @@ export class ChatState {
             if (isPind) {
                 if (!this.EnableMandatoryPin) {
                     try {
-                        await this.globalState.apolloClient.mutate<UnpinChatMutation, UnpinChatMutationVariables>({
-                            mutation: UnpinChatDocument,
-                            variables: {
-                                registrantId: this.globalState.registrant.id,
-                                chatId: this.Id,
-                            },
-                        });
+                        await this.globalState.client
+                            .mutation<UnpinChatMutation, UnpinChatMutationVariables>(
+                                UnpinChatDocument,
+                                {
+                                    registrantId: this.globalState.registrant.id,
+                                    chatId: this.Id,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers:
+                                            this.DMRoomId || this.NonDMRoomId
+                                                ? {
+                                                      [AuthHeader.Role]: "attendee",
+                                                      [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                                  }
+                                                : {
+                                                      [AuthHeader.Role]: "attendee",
+                                                      [AuthHeader.IncludeRoomIds]: "true",
+                                                  },
+                                    },
+                                }
+                            )
+                            .toPromise();
                     } catch (e) {
                         this.isPinned = isPind;
                         throw e;
@@ -564,16 +599,29 @@ export class ChatState {
                 }
             } else {
                 try {
-                    const result = await this.globalState.apolloClient.mutate<
-                        PinChatMutation,
-                        PinChatMutationVariables
-                    >({
-                        mutation: PinChatDocument,
-                        variables: {
-                            registrantId: this.globalState.registrant.id,
-                            chatId: this.Id,
-                        },
-                    });
+                    const result = await this.globalState.client
+                        .mutation<PinChatMutation, PinChatMutationVariables>(
+                            PinChatDocument,
+                            {
+                                registrantId: this.globalState.registrant.id,
+                                chatId: this.Id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers:
+                                        this.DMRoomId || this.NonDMRoomId
+                                            ? {
+                                                  [AuthHeader.Role]: "attendee",
+                                                  [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                              }
+                                            : {
+                                                  [AuthHeader.Role]: "attendee",
+                                                  [AuthHeader.IncludeRoomIds]: "true",
+                                              },
+                                },
+                            }
+                        )
+                        .toPromise();
                     this.isPinned = !!result.data?.insert_chat_Pin && !!result.data.insert_chat_Pin.returning;
                     if (this.latestReadUpToMessageSId) {
                         this.globalState.socket?.emit(
@@ -583,7 +631,7 @@ export class ChatState {
                         );
                     }
                 } catch (e) {
-                    if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                    if (!(e instanceof CombinedError) || !e.message.includes("uniqueness violation")) {
                         this.isPinned = isPind;
                         throw e;
                     } else {
@@ -630,16 +678,29 @@ export class ChatState {
             if (isSubd) {
                 if (!this.EnableMandatorySubscribe) {
                     try {
-                        await this.globalState.apolloClient.mutate<
-                            UnsubscribeChatMutation,
-                            UnsubscribeChatMutationVariables
-                        >({
-                            mutation: UnsubscribeChatDocument,
-                            variables: {
-                                registrantId: this.globalState.registrant.id,
-                                chatId: this.Id,
-                            },
-                        });
+                        await this.globalState.client
+                            .mutation<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(
+                                UnsubscribeChatDocument,
+                                {
+                                    registrantId: this.globalState.registrant.id,
+                                    chatId: this.Id,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers:
+                                            this.DMRoomId || this.NonDMRoomId
+                                                ? {
+                                                      [AuthHeader.Role]: "attendee",
+                                                      [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                                  }
+                                                : {
+                                                      [AuthHeader.Role]: "attendee",
+                                                      [AuthHeader.IncludeRoomIds]: "true",
+                                                  },
+                                    },
+                                }
+                            )
+                            .toPromise();
                     } catch (e) {
                         this.isSubscribed = isSubd;
                         throw e;
@@ -647,20 +708,33 @@ export class ChatState {
                 }
             } else {
                 try {
-                    const result = await this.globalState.apolloClient.mutate<
-                        SubscribeChatMutation,
-                        SubscribeChatMutationVariables
-                    >({
-                        mutation: SubscribeChatDocument,
-                        variables: {
-                            registrantId: this.globalState.registrant.id,
-                            chatId: this.Id,
-                        },
-                    });
+                    const result = await this.globalState.client
+                        .mutation<SubscribeChatMutation, SubscribeChatMutationVariables>(
+                            SubscribeChatDocument,
+                            {
+                                registrantId: this.globalState.registrant.id,
+                                chatId: this.Id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers:
+                                        this.DMRoomId || this.NonDMRoomId
+                                            ? {
+                                                  [AuthHeader.Role]: "attendee",
+                                                  [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                              }
+                                            : {
+                                                  [AuthHeader.Role]: "attendee",
+                                                  [AuthHeader.IncludeRoomIds]: "true",
+                                              },
+                                },
+                            }
+                        )
+                        .toPromise();
                     this.isSubscribed =
                         !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
                 } catch (e) {
-                    if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                    if (!(e instanceof CombinedError) || !e.message.includes("uniqueness violation")) {
                         this.isSubscribed = isSubd;
                         throw e;
                     } else {
@@ -730,18 +804,40 @@ export class ChatState {
 
         try {
             if (startAtIndex !== -1) {
-                const result = await this.globalState.apolloClient.query<
-                    SelectMessagesPageQuery,
-                    SelectMessagesPageQueryVariables
-                >({
-                    query: SelectMessagesPageDocument,
-                    variables: {
-                        chatId: this.Id,
-                        maxCount: pageSize,
-                        startAtIndex: startAtIndex,
-                    },
-                    fetchPolicy: startAtIndex === Math.pow(2, 31) - 1 ? "network-only" : undefined,
-                });
+                const result = await this.globalState.client
+                    .query<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(
+                        SelectMessagesPageDocument,
+                        {
+                            chatId: this.Id,
+                            maxCount: pageSize,
+                            startAtIndex: startAtIndex,
+                        },
+                        {
+                            requestPolicy: startAtIndex === Math.pow(2, 31) - 1 ? "network-only" : undefined,
+                            fetchOptions: {
+                                headers:
+                                    this.DMRoomId || this.NonDMRoomId
+                                        ? {
+                                              [AuthHeader.Role]: "attendee",
+                                              [AuthHeader.RoomId]: this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                          }
+                                        : {
+                                              [AuthHeader.Role]: "attendee",
+                                              [AuthHeader.IncludeRoomIds]: "true",
+                                          },
+                            },
+                        }
+                    )
+                    .toPromise();
+
+                if (result.error) {
+                    throw result.error;
+                }
+
+                if (!result.data) {
+                    throw new Error("Data was undefined.");
+                }
+
                 if (result.data.chat_Message.length > 0) {
                     result.data.chat_Message.forEach((msg) => {
                         const existing = this.messages.get(msg.sId);
@@ -912,7 +1008,7 @@ export class ChatState {
                 });
 
                 if (this.unreadCountFixedToZero <= 0) {
-                    if (this.unreadCount !== "10+") {
+                    if (this.unreadCount !== "30+") {
                         const existingCount = this.unreadCount === "" ? 0 : parseInt(this.unreadCount, 10);
                         const addedCount = newMessageStates.filter(
                             (x) =>
@@ -920,8 +1016,8 @@ export class ChatState {
                                 x.type !== Chat_MessageType_Enum.Emote
                         ).length;
                         const newCount = existingCount + addedCount;
-                        if (newCount >= 10) {
-                            this.unreadCount = "10+";
+                        if (newCount >= 30) {
+                            this.unreadCount = "30+";
                         } else if (newCount === 0) {
                             this.unreadCount = "";
                         } else {
@@ -1016,7 +1112,7 @@ export class ChatState {
         this.isSendingObs.publish(this.isSending);
         try {
             const socket = this.globalState.socket;
-            assert(socket, "Not connected to chat service.");
+            assert.truthy(socket, "Not connected to chat service.");
             const sId = uuidv4();
             const newMsg: Message = {
                 sId,
@@ -1033,8 +1129,7 @@ export class ChatState {
                 op: "INSERT",
                 data: newMsg,
             };
-            socket.emit("chat.messages.send", action);
-            const ackdSId = await new Promise<string>((resolve, reject) => {
+            const ackdSIdP = new Promise<string>((resolve, reject) => {
                 const tId = setTimeout(() => {
                     this.ackSendMessage = undefined;
                     this.nackSendMessage = undefined;
@@ -1051,7 +1146,9 @@ export class ChatState {
                     }
                 };
             });
-            assert(
+            socket.emit("chat.messages.send", action);
+            const ackdSId = await ackdSIdP;
+            assert.truthy(
                 ackdSId === sId,
                 `Message failed to send - ack received for wrong message: (ackd) ${ackdSId} !== ${sId} (expected)`
             );
@@ -1185,6 +1282,7 @@ export class ChatState {
 
 export class GlobalChatState {
     public openChatInSidebar: ((chatId: string) => void) | null = null;
+    public openAnnouncements: (() => void) | null = null;
     public showSidebar: (() => void) | null = null;
 
     public socket: SocketIOClient.Socket | null = null;
@@ -1195,9 +1293,10 @@ export class GlobalChatState {
             slug: string;
             name: string;
             shortName: string;
+            announcementsChatId?: string;
         },
         public readonly registrant: Registrant,
-        public readonly apolloClient: ApolloClient<unknown>
+        public readonly client: Client
     ) {}
 
     private chatStates: Map<string, ChatState> | undefined;
@@ -1221,6 +1320,7 @@ export class GlobalChatState {
                 observer(chat);
                 return true;
             }
+            return;
         });
 
         if (!this.chatStates?.has(chatId)) {
@@ -1264,7 +1364,11 @@ export class GlobalChatState {
                             // console.info("Notification", notification);
 
                             const openChatInSidebar = this.openChatInSidebar;
+                            const openAnnouncements = this.openAnnouncements;
                             const showSidebar = this.showSidebar;
+
+                            const isAnnouncement =
+                                notification.chatId && this.conference.announcementsChatId === notification.chatId;
 
                             const notificationId = this.toast({
                                 position: "top-right",
@@ -1290,9 +1394,9 @@ export class GlobalChatState {
                                                 onClick={props.onClose}
                                             />
                                             <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
-                                                {notification.title}
+                                                {isAnnouncement ? "Announcement" : notification.title}
                                             </Heading>
-                                            {notification.subtitle ? (
+                                            {!isAnnouncement && notification.subtitle ? (
                                                 <Heading
                                                     textAlign="left"
                                                     as="h3"
@@ -1307,35 +1411,47 @@ export class GlobalChatState {
                                             <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
                                                 <Markdown restrictHeadingSize>{notification.description}</Markdown>
                                             </Box>
-                                            <ButtonGroup isAttached>
-                                                {openChatInSidebar && notification.chatId ? (
-                                                    <Button
-                                                        colorScheme="PrimaryActionButton"
-                                                        onClick={() => {
-                                                            props.onClose();
-                                                            if (notification.chatId) {
-                                                                openChatInSidebar?.(notification.chatId);
-                                                                showSidebar?.();
-                                                            }
-                                                        }}
-                                                    >
-                                                        Go to chat
-                                                    </Button>
-                                                ) : undefined}
-                                                {notification.linkURL ? (
-                                                    <Button
-                                                        colorScheme="SecondaryActionButton"
-                                                        onClick={() => {
-                                                            props.onClose();
-                                                            if (notification.linkURL) {
-                                                                window.open(notification.linkURL, "_blank");
-                                                            }
-                                                        }}
-                                                    >
-                                                        <ExternalLinkIcon />
-                                                    </Button>
-                                                ) : undefined}
-                                            </ButtonGroup>
+                                            {isAnnouncement ? (
+                                                <Button
+                                                    colorScheme="PrimaryActionButton"
+                                                    onClick={() => {
+                                                        props.onClose();
+                                                        openAnnouncements?.();
+                                                    }}
+                                                >
+                                                    Read more
+                                                </Button>
+                                            ) : (
+                                                <ButtonGroup isAttached>
+                                                    {openChatInSidebar && notification.chatId ? (
+                                                        <Button
+                                                            colorScheme="PrimaryActionButton"
+                                                            onClick={() => {
+                                                                props.onClose();
+                                                                if (notification.chatId) {
+                                                                    openChatInSidebar?.(notification.chatId);
+                                                                    showSidebar?.();
+                                                                }
+                                                            }}
+                                                        >
+                                                            Open chat
+                                                        </Button>
+                                                    ) : undefined}
+                                                    {notification.linkURL ? (
+                                                        <Button
+                                                            colorScheme="SecondaryActionButton"
+                                                            onClick={() => {
+                                                                props.onClose();
+                                                                if (notification.linkURL) {
+                                                                    window.open(notification.linkURL, "_blank");
+                                                                }
+                                                            }}
+                                                        >
+                                                            <ExternalLinkIcon />
+                                                        </Button>
+                                                    ) : undefined}
+                                                </ButtonGroup>
+                                            )}
                                         </VStack>
                                     );
                                 },
@@ -1371,25 +1487,42 @@ export class GlobalChatState {
                                 existing.setIsPinned_NoMutation(true);
                             } else {
                                 try {
-                                    const newlyPinSubChats = await this.apolloClient.query<
-                                        SelectInitialChatStatesQuery,
-                                        SelectInitialChatStatesQueryVariables
-                                    >({
-                                        query: SelectInitialChatStatesDocument,
-                                        variables: {
-                                            registrantId: this.registrant.id,
-                                            chatIds: [chatId],
-                                        },
-                                        fetchPolicy: "network-only",
-                                    });
+                                    const newlyPinSubChats = await this.client
+                                        .query<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>(
+                                            SelectInitialChatStatesDocument,
+                                            {
+                                                registrantId: this.registrant.id,
+                                                chatIds: [chatId],
+                                            },
+                                            {
+                                                requestPolicy: "network-only",
+                                                fetchOptions: {
+                                                    headers: {
+                                                        [AuthHeader.Role]: "attendee",
+                                                        [AuthHeader.IncludeRoomIds]: "true",
+                                                    },
+                                                },
+                                            }
+                                        )
+                                        .toPromise();
+
+                                    if (newlyPinSubChats.error) {
+                                        throw newlyPinSubChats.error;
+                                    }
+
+                                    if (!newlyPinSubChats.data) {
+                                        throw new Error("Data was undefined.");
+                                    }
 
                                     const release = await this.mutex.acquire();
                                     try {
                                         this.chatStates = this.chatStates ?? new Map();
                                         for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
-                                            const newState = new ChatState(this, pinSubChat);
-                                            setTimeout(() => newState.requestUnreadCount(), Math.random() * 2000);
-                                            this.chatStates.set(pinSubChat.id, newState);
+                                            if (!this.chatStates?.has(pinSubChat.id)) {
+                                                const newState = new ChatState(this, pinSubChat);
+                                                setTimeout(() => newState.requestUnreadCount(), Math.random() * 2000);
+                                                this.chatStates.set(pinSubChat.id, newState);
+                                            }
                                         }
                                         this.chatStatesObs.publish(this.chatStates);
                                     } finally {
@@ -1480,15 +1613,30 @@ export class GlobalChatState {
                         }
                     );
 
-                    const initialData = await this.apolloClient.query<
-                        InitialChatStateQuery,
-                        InitialChatStateQueryVariables
-                    >({
-                        query: InitialChatStateDocument,
-                        variables: {
-                            registrantId: this.registrant.id,
-                        },
-                    });
+                    const initialData = await this.client
+                        .query<InitialChatStateQuery, InitialChatStateQueryVariables>(
+                            InitialChatStateDocument,
+                            {
+                                registrantId: this.registrant.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: "attendee",
+                                        [AuthHeader.IncludeRoomIds]: "true",
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
+
+                    if (initialData.error) {
+                        throw initialData.error;
+                    }
+
+                    if (!initialData.data) {
+                        throw new Error("Data was undefined.");
+                    }
 
                     datadogLogs.logger.info("Initial chat data obtained");
 
@@ -1497,7 +1645,7 @@ export class GlobalChatState {
                     }
                     await Promise.all(
                         initialData.data.chat_Pin.map(async (item) => {
-                            if (item.chat) {
+                            if (item.chat && !this.chatStates?.has(item.chatId)) {
                                 const newState = new ChatState(this, item.chat);
                                 setTimeout(() => newState.requestUnreadCount(), Math.random() * 2000);
                                 this.chatStates?.set(item.chat.id, newState);
@@ -1578,17 +1726,32 @@ export class GlobalChatState {
 
             try {
                 if (!this.chatStates?.has(chatId)) {
-                    const result = await this.apolloClient.query<
-                        SelectInitialChatStateQuery,
-                        SelectInitialChatStateQueryVariables
-                    >({
-                        query: SelectInitialChatStateDocument,
-                        variables: {
-                            chatId,
-                            registrantId: this.registrant.id,
-                        },
-                        fetchPolicy: "network-only",
-                    });
+                    const result = await this.client
+                        .query<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>(
+                            SelectInitialChatStateDocument,
+                            {
+                                chatId,
+                                registrantId: this.registrant.id,
+                            },
+                            {
+                                requestPolicy: "network-only",
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: "attendee",
+                                        [AuthHeader.IncludeRoomIds]: "true",
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
+
+                    if (result.error) {
+                        throw result.error;
+                    }
+
+                    if (!result.data) {
+                        throw new Error("Data was undefined.");
+                    }
 
                     if (result.data.chat_Chat_by_pk) {
                         if (!this.chatStates) {
@@ -1663,7 +1826,7 @@ export class GlobalChatState {
 
     public async deleteMessage(msg: MessageState): Promise<void> {
         const socket = this.socket;
-        assert(socket, "Not connected to chat service.");
+        assert.truthy(socket, "Not connected to chat service.");
         const action: Action<Message> = {
             op: "DELETE",
             data: {

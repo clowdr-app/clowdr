@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Badge,
@@ -7,6 +6,7 @@ import {
     Center,
     chakra,
     Divider,
+    Flex,
     Heading,
     HStack,
     Image,
@@ -15,37 +15,51 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Redirect } from "react-router-dom";
-import { Permissions_Permission_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
+import { gql } from "urql";
+import { Registrant_RegistrantRole_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
+import { Markdown } from "../../../Chakra/Markdown";
 import PageFailedToLoad from "../../../Errors/PageFailedToLoad";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import FAIcon from "../../../Icons/FAIcon";
+import { useTitle } from "../../../Hooks/useTitle";
 import PronounList from "../../../Pronouns/PronounList";
-import { Markdown } from "../../../Text/Markdown";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
-import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
-import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
-import type { Registrant} from "../../useCurrentRegistrant";
+import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import CreateDMButton from "../Registrant/CreateDMButton";
 import RegistrantExtraInfo from "./RegistrantExtraInfo";
 import RegistrantItems from "./RegistrantItems";
 
 gql`
     query ProfilePage_Items($registrantId: uuid!) {
         content_Item(where: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
-            ...SearchPanel_Item
+            ...ProfilePage_Item
+        }
+    }
+
+    fragment ProfilePage_Item on content_Item {
+        id
+        title
+        conferenceId
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
+            ...ProgramPersonData
+        }
+        itemTags {
+            ...ItemTagData
         }
     }
 `;
 
 function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.Element {
     const conference = useConference();
-    const activePermissions = useConferenceCurrentUserActivePermissions();
+    const { conferencePath } = useAuthParameters();
     const maybeCurrentUser = useMaybeCurrentUser();
+    const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
 
     const title = useTitle(`${registrant.displayName} at ${conference.shortName}`);
 
@@ -54,17 +68,14 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
             {title}
             <VStack spacing={0} maxW={1100} w="100%" m={2}>
                 {(maybeCurrentUser.user && registrant.userId === maybeCurrentUser.user.id) ||
-                [
-                    Permissions_Permission_Enum.ConferenceManageAttendees,
-                    Permissions_Permission_Enum.ConferenceManageGroups,
-                    Permissions_Permission_Enum.ConferenceManageRoles,
-                ].some((permission) => activePermissions.has(permission)) ? (
+                maybeCurrentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+                maybeCurrentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Moderator ? (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="EditProfilePage-ContinueButton">
+                        <LinkButton to={conferencePath ?? "/"} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
-                            to={`/conference/${conference.slug}/profile/edit${
+                            to={`${conferencePath}/profile/edit${
                                 maybeCurrentUser.user && registrant.userId === maybeCurrentUser.user.id
                                     ? ""
                                     : `/${registrant.id}`
@@ -110,9 +121,19 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                         spacing={4}
                         flex="1 1 50%"
                     >
-                        <Heading as="h1" id="page-heading">
-                            {registrant.displayName}
-                        </Heading>
+                        <Flex w="100%">
+                            <Heading
+                                as="h1"
+                                id="page-heading"
+                                mr="auto"
+                                textAlign="left"
+                                whiteSpace="normal"
+                                wordBreak="break-word"
+                            >
+                                {registrant.displayName}
+                            </Heading>
+                            <CreateDMButton ml={4} registrantId={registrant.id} />
+                        </Flex>
                         {registrant.profile.pronouns ? (
                             <Box>
                                 <PronounList pronouns={registrant.profile.pronouns} />
@@ -180,7 +201,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
 
 function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: string }): JSX.Element {
     const conference = useConference();
-    const { loading, error, data } = useRegistrantByIdQuery({
+    const [{ fetching: loading, error, data }] = useRegistrantByIdQuery({
         variables: {
             registrantId,
             conferenceId: conference.id,
@@ -224,25 +245,7 @@ function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: strin
 }
 
 export default function ViewProfilePage({ registrantId }: { registrantId?: string }): JSX.Element {
-    const conference = useConference();
-    const activePermissions = useConferenceCurrentUserActivePermissions();
     const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
-    const maybeCurrentUser = useMaybeCurrentUser();
-
-    if (
-        (!maybeCurrentUser.user ||
-            !maybeCurrentRegistrant ||
-            maybeCurrentRegistrant.userId !== maybeCurrentUser.user.id ||
-            maybeCurrentRegistrant?.id !== registrantId) &&
-        ![
-            Permissions_Permission_Enum.ConferenceViewAttendees,
-            Permissions_Permission_Enum.ConferenceManageAttendees,
-            Permissions_Permission_Enum.ConferenceManageGroups,
-            Permissions_Permission_Enum.ConferenceManageRoles,
-        ].some((permission) => activePermissions.has(permission))
-    ) {
-        return <Redirect to={`/conference/${conference.slug}`} />;
-    }
 
     if (registrantId) {
         return <ViewProfilePage_FetchRegistrant registrantId={registrantId} />;

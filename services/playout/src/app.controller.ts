@@ -1,6 +1,6 @@
 import { Logger } from "@eropple/nestjs-bunyan";
 import { Controller, Get } from "@nestjs/common";
-import * as Bunyan from "bunyan";
+import type * as Bunyan from "bunyan";
 import { AppService } from "./app.service";
 
 @Controller()

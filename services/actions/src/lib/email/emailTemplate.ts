@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { compile } from "handlebars";
+import type { P } from "pino";
 import { is } from "typescript-is";
 import { GetEmailTemplatesDocument } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
@@ -35,7 +36,7 @@ interface EmailTemplate {
     body: string;
 }
 
-export async function getEmailTemplate(): Promise<EmailTemplate> {
+export async function getEmailTemplate(logger: P.Logger): Promise<EmailTemplate> {
     const result = await apolloClient.query({
         query: GetEmailTemplatesDocument,
     });
@@ -46,7 +47,7 @@ export async function getEmailTemplate(): Promise<EmailTemplate> {
                 return result.data.emailTemplates.value.default;
             }
         } else {
-            console.warn("Invalid default email template in configuration");
+            logger.warn("Invalid default email template in configuration");
         }
     }
     return fallbackTemplates;

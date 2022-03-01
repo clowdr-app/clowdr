@@ -32,13 +32,7 @@ export function AddRemoveExhibitionsModal({
     );
 }
 
-function ModalInner({
-    onClose,
-    items,
-}: {
-    onClose: () => void;
-    items: readonly ManageContent_ItemFragment[];
-}): JSX.Element {
+function ModalInner({ onClose }: { onClose: () => void; items: readonly ManageContent_ItemFragment[] }): JSX.Element {
     return (
         <>
             <ModalBody>Coming soon</ModalBody>

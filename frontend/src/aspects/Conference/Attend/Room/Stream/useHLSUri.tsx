@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRoomPage_GetRoomChannelStackQuery } from "../../../../../generated/graphql";
-import { useRealTime } from "../../../../Generic/useRealTime";
+import usePolling from "../../../../Hooks/usePolling";
+import { useRealTime } from "../../../../Hooks/useRealTime";
 
 export function useHLSUri(roomId: string, broadcastEventStartsAt: number): string | null {
     const now5s = useRealTime(30000);
@@ -8,14 +9,22 @@ export function useHLSUri(roomId: string, broadcastEventStartsAt: number): strin
 
     const [refetchChannelStackInterval, setRefetchChannelStackInterval] = useState<number>(2 * 60 * 1000);
     const [skipGetChannelStack, setSkipGetChannelStack] = useState<boolean>(true);
-    const roomChannelStackResponse = useRoomPage_GetRoomChannelStackQuery({
+    const [roomChannelStackResponse, refetchChannelStack] = useRoomPage_GetRoomChannelStackQuery({
         variables: {
             roomId,
         },
-        fetchPolicy: "network-only",
-        pollInterval: refetchChannelStackInterval,
-        skip: skipGetChannelStack,
+        requestPolicy: "network-only",
+        pause: skipGetChannelStack,
     });
+    const { start, stop } = usePolling(refetchChannelStack, refetchChannelStackInterval, skipGetChannelStack);
+    useEffect(() => {
+        if (skipGetChannelStack) {
+            stop();
+        } else {
+            start();
+        }
+    }, [skipGetChannelStack, start, stop]);
+
     useEffect(() => {
         if (skipGetChannelStack && secondsUntilBroadcastEvent < 5 * 60 * 1000) {
             setSkipGetChannelStack(false);

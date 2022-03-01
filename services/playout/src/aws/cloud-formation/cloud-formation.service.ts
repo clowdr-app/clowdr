@@ -1,11 +1,12 @@
-import { CloudFormation, StackStatus } from "@aws-sdk/client-cloudformation";
-import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
+import type { StackStatus } from "@aws-sdk/client-cloudformation";
+import { CloudFormation } from "@aws-sdk/client-cloudformation";
+import type { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Inject, Injectable } from "@nestjs/common";
-import * as Bunyan from "bunyan";
+import type * as Bunyan from "bunyan";
 import * as R from "ramda";
 import { AWS_MODULE_OPTIONS } from "../../constants";
-import { AwsModuleOptions } from "../aws.module";
+import type { AwsModuleOptions } from "../aws.module";
 
 @Injectable()
 export class CloudFormationService {

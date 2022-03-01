@@ -1,5 +1,3 @@
-import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import {
     AccordionButton,
     AccordionIcon,
@@ -23,17 +21,16 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
-import React, { useCallback, useRef, useState } from "react";
-import type {
-    ManageContent_ElementFragment} from "../../../../../../generated/graphql";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
+import { gql } from "@urql/core";
+import React, { useRef, useState } from "react";
+import type { ManageContent_ElementFragment } from "../../../../../../generated/graphql";
 import {
-    ManageContent_ElementFragmentDoc,
     useManageContent_DeleteElementMutation,
     useManageContent_UpdateElementMutation,
 } from "../../../../../../generated/graphql";
-import { FAIcon } from "../../../../../Icons/FAIcon";
-import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermissionGrantsModal";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { EditElementInner } from "./EditElementInner";
 
 gql`
@@ -55,59 +52,16 @@ export function EditElement({
     idx,
     previousElement,
     nextElement,
-    refetchElements,
-    defaultOpenSecurity,
     openSendSubmissionRequests,
 }: {
     element: ManageContent_ElementFragment | ManageContent_ElementFragment;
     idx: number;
     previousElement?: ManageContent_ElementFragment | ManageContent_ElementFragment;
     nextElement?: ManageContent_ElementFragment | ManageContent_ElementFragment;
-    refetchElements: () => void;
-    defaultOpenSecurity: boolean;
     openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
-    const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
-        update: (cache, response) => {
-            if (response.data?.update_content_Element_by_pk) {
-                const data = response.data.update_content_Element_by_pk;
-                cache.modify({
-                    fields: {
-                        content_Element(existingRefs: Reference[] = [], { readField }) {
-                            const newRef = cache.writeFragment({
-                                data,
-                                fragment: ManageContent_ElementFragmentDoc,
-                                fragmentName: "ManageContent_Element",
-                            });
-                            if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                return existingRefs;
-                            }
-                            return [...existingRefs, newRef];
-                        },
-                    },
-                });
-            }
-        },
-    });
-    const [deleteElement, deleteElementResponse] = useManageContent_DeleteElementMutation({
-        update: (cache, { data: _data }) => {
-            if (_data?.delete_content_Element_by_pk) {
-                const data = _data.delete_content_Element_by_pk;
-                cache.modify({
-                    fields: {
-                        content_Element(existingRefs: Reference[] = [], { readField }) {
-                            cache.evict({
-                                id: data.id,
-                                fieldName: "ManageContent_ElementFragment",
-                                broadcast: true,
-                            });
-                            return existingRefs.filter((ref) => data.id !== readField("id", ref));
-                        },
-                    },
-                });
-            }
-        },
-    });
+    const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation();
+    const [deleteElementResponse, deleteElement] = useManageContent_DeleteElementMutation();
 
     const toast = useToast();
 
@@ -120,18 +74,6 @@ export function EditElement({
         onClose: confirmDelete_OnClose,
     } = useDisclosure();
     const cancelRef = useRef<HTMLButtonElement>(null);
-
-    const {
-        isOpen: editPGs_IsOpen,
-        onOpen: editPGs_OnOpen,
-        onClose: editPGs_OnClose,
-    } = useDisclosure({
-        defaultIsOpen: defaultOpenSecurity,
-    });
-    const editPGs_OnCloseFull = useCallback(() => {
-        refetchElements();
-        editPGs_OnClose();
-    }, [editPGs_OnClose, refetchElements]);
 
     const bgColor = useColorModeValue("gray.100", "gray.800");
     return (
@@ -163,41 +105,55 @@ export function EditElement({
                                                     const layoutDataA: LayoutDataBlob = {
                                                         contentType: element.typeName,
                                                         wide: false,
-                                                        hidden: false,
                                                         ...element.layoutData,
                                                         priority: idx - 1,
                                                     };
-                                                    updateElement({
-                                                        variables: {
+                                                    updateElement(
+                                                        {
                                                             elementId: element.id,
                                                             element: {
                                                                 layoutData: layoutDataA,
                                                             },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                },
+                                                            },
+                                                        }
+                                                    );
 
                                                     const layoutDataB: LayoutDataBlob = {
                                                         contentType: previousElement.typeName,
                                                         wide: false,
-                                                        hidden: false,
                                                         ...previousElement.layoutData,
                                                         priority: idx,
                                                     };
-                                                    updateElement({
-                                                        variables: {
+                                                    updateElement(
+                                                        {
                                                             elementId: previousElement.id,
                                                             element: {
                                                                 layoutData: layoutDataB,
                                                             },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                },
+                                                            },
+                                                        }
+                                                    );
                                                 }
                                             }}
                                             onKeyUp={(ev) => {
                                                 ev.stopPropagation();
                                             }}
                                             aria-label="Move item up"
-                                            isLoading={updateElementResponse.loading}
+                                            isLoading={updateElementResponse.fetching}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
                                         </Button>
@@ -213,41 +169,55 @@ export function EditElement({
                                                     const layoutDataA: LayoutDataBlob = {
                                                         contentType: element.typeName,
                                                         wide: false,
-                                                        hidden: false,
                                                         ...element.layoutData,
                                                         priority: idx + 1,
                                                     };
-                                                    updateElement({
-                                                        variables: {
+                                                    updateElement(
+                                                        {
                                                             elementId: element.id,
                                                             element: {
                                                                 layoutData: layoutDataA,
                                                             },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                },
+                                                            },
+                                                        }
+                                                    );
 
                                                     const layoutDataB: LayoutDataBlob = {
                                                         contentType: nextElement.typeName,
                                                         wide: false,
-                                                        hidden: false,
                                                         ...nextElement.layoutData,
                                                         priority: idx,
                                                     };
-                                                    updateElement({
-                                                        variables: {
+                                                    updateElement(
+                                                        {
                                                             elementId: nextElement.id,
                                                             element: {
                                                                 layoutData: layoutDataB,
                                                             },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                },
+                                                            },
+                                                        }
+                                                    );
                                                 }
                                             }}
                                             onKeyUp={(ev) => {
                                                 ev.stopPropagation();
                                             }}
                                             aria-label="Move item down"
-                                            isLoading={updateElementResponse.loading}
+                                            isLoading={updateElementResponse.fetching}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
                                         </Button>
@@ -269,24 +239,24 @@ export function EditElement({
                                     }
                                     mr={4}
                                     size="xs"
-                                    isLoading={updateElementResponse.loading}
+                                    isLoading={updateElementResponse.fetching}
                                     onClick={(ev) => {
                                         ev.stopPropagation();
 
                                         const isHidden = !element.isHidden;
-                                        updateElement({
-                                            variables: {
+                                        updateElement(
+                                            {
                                                 elementId: element.id,
                                                 element: { isHidden },
                                             },
-                                            optimisticResponse: {
-                                                update_content_Element_by_pk: {
-                                                    ...element,
-                                                    isHidden,
-                                                    __typename: "content_Element",
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    },
                                                 },
-                                            },
-                                        });
+                                            }
+                                        );
                                     }}
                                     onKeyUp={(ev) => {
                                         ev.stopPropagation();
@@ -324,19 +294,27 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Save element name"
                                                 mx={2}
-                                                isLoading={updateElementResponse.loading}
+                                                isLoading={updateElementResponse.fetching}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(false);
 
-                                                    updateElement({
-                                                        variables: {
+                                                    updateElement(
+                                                        {
                                                             elementId: element.id,
                                                             element: {
                                                                 name: newName,
                                                             },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    [AuthHeader.Role]:
+                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                },
+                                                            },
+                                                        }
+                                                    );
                                                 }}
                                                 onKeyUp={(ev) => {
                                                     ev.stopPropagation();
@@ -351,7 +329,7 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Discard name changes"
                                                 mx={2}
-                                                isLoading={updateElementResponse.loading}
+                                                isLoading={updateElementResponse.fetching}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(false);
@@ -381,7 +359,7 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Edit element name"
                                                 mx={2}
-                                                isLoading={updateElementResponse.loading}
+                                                isLoading={updateElementResponse.fetching}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(true);
@@ -396,6 +374,7 @@ export function EditElement({
                                     </>
                                 )}
                             </HStack>
+                            {/* TODO: Do we want to re-introduce per-element visibility controls?
                             <Tooltip label="Manage element security">
                                 <IconButton
                                     ml="auto"
@@ -411,7 +390,7 @@ export function EditElement({
                                         ev.stopPropagation();
                                     }}
                                 />
-                            </Tooltip>
+                            </Tooltip> */}
                             <Tooltip label="Delete element">
                                 <IconButton
                                     ref={cancelRef}
@@ -426,8 +405,8 @@ export function EditElement({
                                     onKeyUp={(ev) => {
                                         ev.stopPropagation();
                                     }}
-                                    isLoading={deleteElementResponse.loading}
-                                    ml={2}
+                                    isLoading={deleteElementResponse.fetching}
+                                    ml="auto"
                                 />
                             </Tooltip>
                             <AccordionIcon ml={2} />
@@ -465,11 +444,18 @@ export function EditElement({
                                 colorScheme="red"
                                 onClick={async () => {
                                     try {
-                                        await deleteElement({
-                                            variables: {
+                                        await deleteElement(
+                                            {
                                                 elementId: element.id,
                                             },
-                                        });
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    },
+                                                },
+                                            }
+                                        );
                                         confirmDelete_OnClose();
                                     } catch (e) {
                                         toast({
@@ -486,11 +472,6 @@ export function EditElement({
                     </AlertDialogContent>
                 </AlertDialogOverlay>
             </AlertDialog>
-            <EditElementsPermissionGrantsModal
-                isOpen={editPGs_IsOpen}
-                onClose={editPGs_OnCloseFull}
-                elementIds={[element.id]}
-            />
         </>
     );
 }

@@ -1,8 +1,16 @@
-import { gql } from "@apollo/client";
+import { AuthHeader } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { RegistrantDataFragment} from "../../generated/graphql";
-import { useRegistrantsByIdQuery, useRegistrantsByUserIdQuery } from "../../generated/graphql";
-import usePolling from "../Generic/usePolling";
+import { useClient } from "urql";
+import type {
+    RegistrantDataFragment,
+    RegistrantsByIdQuery,
+    RegistrantsByIdQueryVariables,
+    RegistrantsByUserIdQuery,
+    RegistrantsByUserIdQueryVariables,
+} from "../../generated/graphql";
+import { RegistrantsByIdDocument, RegistrantsByUserIdDocument } from "../../generated/graphql";
+import usePolling from "../Hooks/usePolling";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useConference } from "./useConference";
 
@@ -145,13 +153,7 @@ export default function RegistrantsContextProvider({
     const [checkInterval, setCheckInterval] = useState<number>(1000);
     const conference = useConference();
     const currentUser = useMaybeCurrentUser();
-    const registrantsByIdQ = useRegistrantsByIdQuery({
-        skip: true,
-    });
-    const registrantsByUserIdQ = useRegistrantsByUserIdQuery({
-        skip: true,
-    });
-
+    const client = useClient();
     const registrants = React.useRef<Map<string, RegistrantCacheEntry>>(new Map());
     const usersToRegistrantIds = React.useRef<Map<string, string>>(new Map());
     const subscriptions = React.useRef<Map<number, Subscription>>(new Map());
@@ -223,28 +225,42 @@ export default function RegistrantsContextProvider({
                         (x) => x !== undefined && x !== null && x !== ""
                     );
                     if (filteredIds.length > 0) {
-                        const datas = await registrantsByIdQ.refetch({
-                            registrantIds: filteredIds,
-                            conferenceId: conference.id,
-                        });
-
-                        if (
-                            filteredIds.length !== datas.data.registrant_Registrant.length &&
-                            datas.data.registrant_Registrant.length === 0
-                        ) {
-                            // We didn't get any of the ids back - probably deleted or some permissions issue.
-                            // In which case we want to avoid endless refetching.
-                            for (const subId of requiredRegistrant_SubIds) {
-                                subscriptions.current.delete(subId);
-                            }
-                        } else {
-                            now = Date.now();
-                            datas.data.registrant_Registrant.forEach((registrant) => {
-                                if (registrant.userId) {
-                                    usersToRegistrantIds.current.set(registrant.userId, registrant.id);
+                        const datas = await client
+                            .query<RegistrantsByIdQuery, RegistrantsByIdQueryVariables>(
+                                RegistrantsByIdDocument,
+                                {
+                                    registrantIds: filteredIds,
+                                    conferenceId: conference.id,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: "attendee",
+                                        },
+                                    },
                                 }
-                                registrants.current.set(registrant.id, { registrant, fetchedAt: now });
-                            });
+                            )
+                            .toPromise();
+
+                        if (datas.data) {
+                            if (
+                                filteredIds.length !== datas.data.registrant_Registrant.length &&
+                                datas.data.registrant_Registrant.length === 0
+                            ) {
+                                // We didn't get any of the ids back - probably deleted or some permissions issue.
+                                // In which case we want to avoid endless refetching.
+                                for (const subId of requiredRegistrant_SubIds) {
+                                    subscriptions.current.delete(subId);
+                                }
+                            } else {
+                                now = Date.now();
+                                datas.data.registrant_Registrant.forEach((registrant) => {
+                                    if (registrant.userId) {
+                                        usersToRegistrantIds.current.set(registrant.userId, registrant.id);
+                                    }
+                                    registrants.current.set(registrant.id, { registrant, fetchedAt: now });
+                                });
+                            }
                         }
                     }
                 }
@@ -254,28 +270,42 @@ export default function RegistrantsContextProvider({
                         (x) => x !== undefined && x !== null && x !== ""
                     );
                     if (filteredIds.length > 0) {
-                        const datas = await registrantsByUserIdQ.refetch({
-                            userIds: filteredIds,
-                            conferenceId: conference.id,
-                        });
-
-                        if (
-                            filteredIds.length !== datas.data.registrant_Registrant.length &&
-                            datas.data.registrant_Registrant.length === 0
-                        ) {
-                            // We didn't get any of the ids back - probably deleted or some permissions issue.
-                            // In which case we want to avoid endless refetching.
-                            for (const subId of requiredUser_SubIds) {
-                                subscriptions.current.delete(subId);
-                            }
-                        } else {
-                            now = Date.now();
-                            datas.data.registrant_Registrant.forEach((registrant) => {
-                                if (registrant.userId) {
-                                    usersToRegistrantIds.current.set(registrant.userId, registrant.id);
+                        const datas = await client
+                            .query<RegistrantsByUserIdQuery, RegistrantsByUserIdQueryVariables>(
+                                RegistrantsByUserIdDocument,
+                                {
+                                    userIds: filteredIds,
+                                    conferenceId: conference.id,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            [AuthHeader.Role]: "attendee",
+                                        },
+                                    },
                                 }
-                                registrants.current.set(registrant.id, { registrant, fetchedAt: now });
-                            });
+                            )
+                            .toPromise();
+
+                        if (datas.data) {
+                            if (
+                                filteredIds.length !== datas.data.registrant_Registrant.length &&
+                                datas.data.registrant_Registrant.length === 0
+                            ) {
+                                // We didn't get any of the ids back - probably deleted or some permissions issue.
+                                // In which case we want to avoid endless refetching.
+                                for (const subId of requiredUser_SubIds) {
+                                    subscriptions.current.delete(subId);
+                                }
+                            } else {
+                                now = Date.now();
+                                datas.data.registrant_Registrant.forEach((registrant) => {
+                                    if (registrant.userId) {
+                                        usersToRegistrantIds.current.set(registrant.userId, registrant.id);
+                                    }
+                                    registrants.current.set(registrant.id, { registrant, fetchedAt: now });
+                                });
+                            }
                         }
                     }
                 }
@@ -313,7 +343,7 @@ export default function RegistrantsContextProvider({
         return () => {
             clearInterval(tId);
         };
-    }, [registrantsByIdQ, registrantsByUserIdQ, checkInterval, conference.id, fullRefetchInterval, currentUser]);
+    }, [client, checkInterval, conference.id, fullRefetchInterval, currentUser]);
 
     const ctx = useMemo(
         () => ({

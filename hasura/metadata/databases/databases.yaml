@@ -8,8 +8,8 @@
       pool_settings:
         connection_lifetime: 600
         idle_timeout: 180
-        max_connections: 225
-        retries: 3
+        max_connections: 80
+        retries: 0
       use_prepared_statements: true
   tables: "!include default/tables/tables.yaml"
   functions: "!include default/functions/functions.yaml"

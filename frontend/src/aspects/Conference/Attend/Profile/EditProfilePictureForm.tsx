@@ -1,19 +1,20 @@
-import { gql } from "@apollo/client";
-import { Box, Button, Flex, FormControl, FormHelperText, Image, Text, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormHelperText, Image, Spinner, Text, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
+import { gql } from "@urql/core";
 import { Form, Formik } from "formik";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type { ProfileDataFragment } from "../../../../generated/graphql";
-import { ProfileDataFragmentDoc, useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
-import FAIcon from "../../../Icons/FAIcon";
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { RegistrantContextT } from "../../useCurrentRegistrant";
+
+const DragDrop = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.DragDrop })));
+const StatusBar = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.StatusBar })));
 
 gql`
     mutation SubmitProfilePhoto($registrantId: uuid!, $s3URL: String!) {
@@ -34,7 +35,7 @@ export default function EditProfilePitureForm({
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<UppyFile[]>([]);
-    const [submitProfilePhoto] = useSubmitProfilePhotoMutation();
+    const [, submitProfilePhoto] = useSubmitProfilePhotoMutation();
     const allowedFileTypes = useMemo(() => ["image/*", ".jpg", ".jpeg", ".png", ".gif", ".webp"], []);
     const uppy = useMemo(() => {
         const uppy = new Uppy({
@@ -53,7 +54,10 @@ export default function EditProfilePitureForm({
 
         uppy?.use(AwsS3Multipart, {
             limit: 4,
-            companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
+            companionUrl:
+                typeof import.meta.env.VITE_COMPANION_BASE_URL === "string"
+                    ? import.meta.env.VITE_COMPANION_BASE_URL
+                    : "",
         });
         return uppy;
     }, [allowedFileTypes, registrant.id]);
@@ -95,7 +99,7 @@ export default function EditProfilePitureForm({
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     return (
-        <>
+        <Suspense fallback={<Spinner />}>
             <Formik
                 initialValues={{}}
                 onSubmit={async (_values) => {
@@ -130,44 +134,11 @@ export default function EditProfilePitureForm({
                     try {
                         const s3URL = result.successful[0].uploadURL;
                         const submitResult = await submitProfilePhoto({
-                            variables: {
-                                s3URL,
-                                registrantId: registrant.id,
-                            },
-                            update: (cache, result) => {
-                                if (result.data?.updateProfilePhoto) {
-                                    const data = result.data.updateProfilePhoto;
-
-                                    const id = cache.identify({
-                                        __typename: "registrant_Profile",
-                                        registrantId: registrant.id,
-                                    });
-
-                                    const frag = cache.readFragment<ProfileDataFragment>({
-                                        fragment: ProfileDataFragmentDoc,
-                                        fragmentName: "ProfileData",
-                                        id,
-                                    });
-
-                                    if (frag) {
-                                        cache.writeFragment({
-                                            id,
-                                            data: {
-                                                ...frag,
-                                                photoURL_350x350: data.photoURL_350x350 ?? "",
-                                                photoURL_50x50: data.photoURL_50x50 ?? "",
-                                                hasBeenEdited: true,
-                                            },
-                                            fragment: ProfileDataFragmentDoc,
-                                            fragmentName: "ProfileData",
-                                            broadcast: true,
-                                        });
-                                    }
-                                }
-                            },
+                            s3URL,
+                            registrantId: registrant.id,
                         });
 
-                        if (submitResult.errors || !submitResult.data?.updateProfilePhoto?.ok) {
+                        if (submitResult.error || !submitResult.data?.updateProfilePhoto?.ok) {
                             throw new Error("Upload failed.");
                         }
 
@@ -277,36 +248,8 @@ export default function EditProfilePitureForm({
                                                 (async () => {
                                                     try {
                                                         await submitProfilePhoto({
-                                                            variables: {
-                                                                s3URL: "",
-                                                                registrantId: registrant.id,
-                                                            },
-                                                            update: (cache) => {
-                                                                const id = cache.identify({
-                                                                    __typename: "registrant_Profile",
-                                                                    registrantId: registrant.id,
-                                                                });
-
-                                                                const frag = cache.readFragment<ProfileDataFragment>({
-                                                                    fragment: ProfileDataFragmentDoc,
-                                                                    fragmentName: "ProfileData",
-                                                                    id,
-                                                                });
-
-                                                                if (frag) {
-                                                                    cache.writeFragment({
-                                                                        id,
-                                                                        data: {
-                                                                            ...frag,
-                                                                            photoURL_350x350: "",
-                                                                            photoURL_50x50: "",
-                                                                        },
-                                                                        fragment: ProfileDataFragmentDoc,
-                                                                        fragmentName: "ProfileData",
-                                                                        broadcast: true,
-                                                                    });
-                                                                }
-                                                            },
+                                                            s3URL: "",
+                                                            registrantId: registrant.id,
                                                         });
                                                     } finally {
                                                         setIsDeleting(false);
@@ -338,6 +281,6 @@ export default function EditProfilePitureForm({
                     </>
                 )}
             </Formik>
-        </>
+        </Suspense>
     );
 }

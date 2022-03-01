@@ -1,9 +1,9 @@
+import { downlink, uplink } from "@midspace/component-clients/rabbitmq";
 import type { Channel, ConsumeMessage } from "amqplib";
 import { Mutex } from "async-mutex";
 import { is } from "typescript-is";
-import { Room_ManagementMode_Enum } from "../../generated/graphql";
+import { logger } from "../../lib/logger";
 import { canIUDReaction } from "../../lib/permissions";
-import { downlink, uplink } from "../../rabbitmq";
 import type { Action, Reaction } from "../../types/chat";
 import { ReactionDistributionQueueSize, ReactionWritebackQueueSize } from "./params";
 
@@ -89,7 +89,7 @@ async function writebackDownChannel() {
     return channel;
 }
 
-export async function action(action: Action<Reaction>, userId: string, confSlugs: string[]): Promise<boolean> {
+export async function action(action: Action<Reaction>, userId: string): Promise<boolean> {
     // I invite the reader of this code to consider whether this is really secure or not
     // My (@ednutting) reasoning is as follows:
     //  An attacker can choose any input values they like - including mismatching the target message's chatId from the
@@ -106,21 +106,7 @@ export async function action(action: Action<Reaction>, userId: string, confSlugs
     //      - An attacker could use mismatched chatIds to DOS our reactions writeback. We could scale the number of
     //        writeback processes; block the associated user (and invalidate their JWTs); auto-rate-limit a user with
     //        a tighter limit for failed requests. (TODO)
-    if (
-        await canIUDReaction(
-            userId,
-            action.data.chatId,
-            confSlugs,
-            action.data.senderId ?? undefined,
-            false,
-            "reactions.send:test-registrant-id",
-            "reactions.send:test-registrant-displayName",
-            "reactions.send:test-room-id",
-            "reactions.send:test-room-name",
-            Room_ManagementMode_Enum.Public,
-            []
-        )
-    ) {
+    if (await canIUDReaction(userId, action.data.chatId)) {
         if (action.op === "INSERT") {
             if ("id" in action.data) {
                 delete (action.data as any).id;
@@ -153,14 +139,14 @@ export async function onDistributionReaction(handler: (reaction: Action<Reaction
                 if (is<Action<Reaction>>(reaction)) {
                     handler(reaction);
                 } else {
-                    console.warn(
+                    logger.warn(
                         "Invalid chat reaction received. Data does not match type. (Distribution queue)",
                         reaction
                     );
                 }
             }
-        } catch (e) {
-            console.error("Error processing chat reaction for distribution", e);
+        } catch (error: any) {
+            logger.error({ error }, "Error processing chat reaction for distribution");
         }
     });
 }
@@ -178,7 +164,7 @@ export async function onWritebackReaction(
                 if (is<Action<Reaction>>(reaction)) {
                     handler(rabbitMQMsg, reaction);
                 } else {
-                    console.warn(
+                    logger.warn(
                         "Invalid chat reaction received. Data does not match type. (Writeback queue)",
                         reaction
                     );
@@ -186,8 +172,8 @@ export async function onWritebackReaction(
                     channel.ack(rabbitMQMsg);
                 }
             }
-        } catch (e) {
-            console.error("Error processing chat reaction for writeback", e);
+        } catch (error: any) {
+            logger.error({ error }, "Error processing chat reaction for writeback");
         }
     });
 }

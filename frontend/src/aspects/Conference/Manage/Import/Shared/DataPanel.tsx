@@ -12,11 +12,11 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import FAIcon from "../../../../Chakra/FAIcon";
 import useCSVJSONXMLFileSelector from "../../../../Files/useCSVJSONXMLFileSelector";
 import useCSVJSONXMLImportOptions from "../../../../Files/useCSVJSONXMLImportOptions";
 import type { ParsedData, ParserResult } from "../../../../Files/useCSVJSONXMLParser";
 import useCSVJSONXMLParse from "../../../../Files/useCSVJSONXMLParser";
-import FAIcon from "../../../../Icons/FAIcon";
 
 function parser(data: any): ParserResult<any[]> {
     // Researchr XML
@@ -43,9 +43,8 @@ export default function DataPanel({
     onData?: (data: ParsedData<any[]>[] | undefined) => void;
 }): JSX.Element {
     const { acceptedFiles, component: fileImporterEl } = useCSVJSONXMLFileSelector();
-    const { importOptions, replaceImportOptions, openOptionsButton, optionsComponent } = useCSVJSONXMLImportOptions(
-        acceptedFiles
-    );
+    const { importOptions, replaceImportOptions, openOptionsButton, optionsComponent } =
+        useCSVJSONXMLImportOptions(acceptedFiles);
     const { data } = useCSVJSONXMLParse(importOptions, parser);
 
     useEffect(() => {

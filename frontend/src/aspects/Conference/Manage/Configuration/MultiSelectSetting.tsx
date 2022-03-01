@@ -17,7 +17,7 @@ export default function MultiSelectSetting({
     isUpdating?: boolean;
     options: readonly { label: string; value: string }[];
 }): JSX.Element {
-    const value_ = useMemo(() => options.filter((x) => value.includes(x.value)), [value]);
+    const value_ = useMemo(() => options.filter((x) => value.includes(x.value)), [options, value]);
 
     return (
         <MultiSelect

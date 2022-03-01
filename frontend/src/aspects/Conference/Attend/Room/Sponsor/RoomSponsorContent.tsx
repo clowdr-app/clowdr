@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
-import { Divider, Spinner } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import { useRoomSponsorContent_GetElementsQuery } from "../../../../../generated/graphql";
 import ElementsGridLayout from "../../Content/Element/ElementsGridLayout";
 
@@ -13,6 +13,7 @@ gql`
 
     fragment RoomSponsorContent_ItemData on content_Item {
         id
+        typeName
         elements {
             ...RoomSponsorContent_ElementData
         }
@@ -25,11 +26,12 @@ gql`
         typeName
         data
         layoutData
+        itemId
     }
 `;
 
 export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element {
-    const { data, error, loading } = useRoomSponsorContent_GetElementsQuery({
+    const [{ data, error, fetching: loading }] = useRoomSponsorContent_GetElementsQuery({
         variables: {
             itemId,
         },
@@ -41,7 +43,6 @@ export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element 
 
     return (
         <>
-            <Divider mb={6} />
             {loading ? <Spinner /> : error ? <>An error occurred loading in data.</> : undefined}
             <ElementsGridLayout elements={elements} />
         </>

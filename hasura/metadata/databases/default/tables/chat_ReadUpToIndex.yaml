@@ -11,12 +11,11 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
-    - registrantId
     - chatId
-    - messageSId
+    - registrantId
     - updated_at
+    - messageSId
     filter:
-      registrant:
-        userId:
-          _eq: X-Hasura-User-Id
-  role: user
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: attendee

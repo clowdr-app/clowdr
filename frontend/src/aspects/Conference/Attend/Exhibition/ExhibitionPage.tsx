@@ -1,16 +1,16 @@
-import { gql } from "@apollo/client";
 import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useMemo } from "react";
 import type { ExhibitionWithContentFragment, ItemEventFragment } from "../../../../generated/graphql";
-import { Permissions_Permission_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
+import { useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
-import { FAIcon } from "../../../Icons/FAIcon";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useTitle } from "../../../Hooks/useTitle";
 import PageCountText from "../../../Realtime/PageCountText";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../../useConference";
+import RequireRole from "../../RequireRole";
 import { EventsTable } from "../Content/EventsTable";
 import { ItemElements } from "../Content/ItemElements";
 import ExhibitionLayout from "./ExhibitionLayout";
@@ -47,6 +47,7 @@ gql`
             startTime
             endTime
             roomId
+            itemId
         }
         itemPeople(where: { roleName: { _neq: "REVIEWER" } }, order_by: { priority: asc }) {
             ...ProgramPersonData
@@ -54,12 +55,9 @@ gql`
         itemTags {
             ...ItemTagData
         }
-        discussionRoom: rooms(
-            where: { originatingEventId: { _is_null: true } }
-            limit: 1
-            order_by: { created_at: asc }
-        ) {
+        discussionRoom: room {
             id
+            created_at
         }
     }
 
@@ -104,15 +102,15 @@ function ExhibitionPageInner({
     events: readonly ItemEventFragment[];
 }): JSX.Element {
     const title = useTitle(exhibition.name);
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     const descriptiveItemDiscussionRoom = useMemo(
-        () => exhibition.descriptiveItem?.rooms[0],
-        [exhibition.descriptiveItem?.rooms]
+        () => exhibition.descriptiveItem?.room,
+        [exhibition.descriptiveItem?.room]
     );
 
     return (
-        <VStack spacing={4} alignItems="flex-start" mt={4} w="100%">
+        <VStack spacing={4} alignItems="flex-start" pb={[2, 2, 4]} px={[2, 2, 4]} w="100%">
             {title}
             <Heading as="h1" id="page-heading" pt={2} w="100%" textAlign="left">
                 <Circle size="0.7em" bg={exhibition.colour} display="inline-block" verticalAlign="middle" mr="0.4em" />
@@ -124,13 +122,11 @@ function ExhibitionPageInner({
             <VStack alignItems="flex-start" w="100%">
                 {exhibition.descriptiveItem && exhibition.descriptiveItem.elements.length ? (
                     <ItemElements itemData={exhibition.descriptiveItem} dontFilterOutVideos={true} noHeading={true}>
-                        <RequireAtLeastOnePermissionWrapper
-                            permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}
-                        >
+                        <RequireRole attendeeRole>
                             {descriptiveItemDiscussionRoom ? (
                                 <LinkButton
                                     width="100%"
-                                    to={`/conference/${conference.slug}/room/${descriptiveItemDiscussionRoom.id}`}
+                                    to={`${conferencePath}/room/${descriptiveItemDiscussionRoom.id}`}
                                     size="lg"
                                     colorScheme="PrimaryActionButton"
                                     height="auto"
@@ -152,12 +148,12 @@ function ExhibitionPageInner({
                                             </chakra.span>
                                         </Text>
                                         <PageCountText
-                                            path={`/conference/${conference.slug}/room/${descriptiveItemDiscussionRoom.id}`}
+                                            path={`${conferencePath}/room/${descriptiveItemDiscussionRoom.id}`}
                                         />
                                     </VStack>
                                 </LinkButton>
                             ) : undefined}
-                        </RequireAtLeastOnePermissionWrapper>
+                        </RequireRole>
                     </ItemElements>
                 ) : undefined}
                 {events.length > 0 ? (
@@ -176,20 +172,26 @@ function ExhibitionPageInner({
 }
 
 export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string }): JSX.Element {
-    const exhibitionResponse = useSelectExhibitionQuery({
+    const [exhibitionResponse] = useSelectExhibitionQuery({
         variables: {
             id: exhibitionId,
         },
     });
 
-    return exhibitionResponse.loading && !exhibitionResponse.data ? (
-        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
-    ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
-        <ExhibitionPageInner
-            exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}
-            events={exhibitionResponse.data.schedule_Event}
-        />
-    ) : (
-        <PageNotFound />
+    return (
+        <>
+            {!exhibitionResponse.data?.collection_Exhibition_by_pk ? (
+                exhibitionResponse.fetching || exhibitionResponse.stale ? (
+                    <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} caller="ExhibitionPage:187" />
+                ) : (
+                    <PageNotFound />
+                )
+            ) : (
+                <ExhibitionPageInner
+                    exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}
+                    events={exhibitionResponse.data?.schedule_Event ?? []}
+                />
+            )}
+        </>
     );
 }

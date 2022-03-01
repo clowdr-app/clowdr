@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -21,13 +20,21 @@ import {
     NumberInputStepper,
     VStack,
 } from "@chakra-ui/react";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import React, { useCallback, useState } from "react";
-import { useUpdateLayoutMutation } from "../../../../../../generated/graphql";
+import { gql } from "urql";
+import { useUpdateIsHiddenMutation, useUpdateLayoutMutation } from "../../../../../../generated/graphql";
 
 gql`
     mutation UpdateLayout($elementIds: [uuid!]!, $layoutData: jsonb!) {
         update_content_Element(where: { id: { _in: $elementIds } }, _append: { layoutData: $layoutData }) {
+            affected_rows
+        }
+    }
+
+    mutation UpdateIsHidden($elementIds: [uuid!]!, $isHidden: Boolean!) {
+        update_content_Element(where: { id: { _in: $elementIds } }, _set: { isHidden: $isHidden }) {
             affected_rows
         }
     }
@@ -71,13 +78,26 @@ function ModalInner({
     const [wide, setWide] = useState<boolean | null>(null);
     const [priority, setPriority] = useState<string | null>(null);
 
-    const [doUpdate, updateResponse] = useUpdateLayoutMutation();
+    const [updateResponse, doUpdate] = useUpdateLayoutMutation();
+    const [updateIsHiddenResponse, doUpdateIsHidden] = useUpdateIsHiddenMutation();
 
     const update = useCallback(async () => {
         try {
             const layoutData: Partial<LayoutDataBlob> = {};
             if (hidden !== null) {
-                layoutData.hidden = hidden;
+                await doUpdateIsHidden(
+                    {
+                        elementIds: elementsByItem.flatMap((x) => x.elementIds),
+                        isHidden: hidden,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
             }
             if (wide !== null) {
                 layoutData.wide = wide;
@@ -85,18 +105,25 @@ function ModalInner({
             if (priority !== null && priority.trim() !== "") {
                 layoutData.priority = parseInt(priority, 10);
             }
-            await doUpdate({
-                variables: {
+            await doUpdate(
+                {
                     elementIds: elementsByItem.flatMap((x) => x.elementIds),
                     layoutData,
                 },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                }
+            );
 
             onClose();
         } catch (e) {
             console.error("Failed to element layouts", e);
         }
-    }, [hidden, wide, priority, doUpdate, elementsByItem, onClose]);
+    }, [hidden, wide, priority, doUpdate, elementsByItem, onClose, doUpdateIsHidden]);
 
     return (
         <>
@@ -177,7 +204,7 @@ function ModalInner({
                     <Button onClick={onClose}>Cancel</Button>
                     <Button
                         colorScheme="purple"
-                        isLoading={updateResponse.loading}
+                        isLoading={updateResponse.fetching || updateIsHiddenResponse.fetching}
                         onClick={update}
                         isDisabled={(!priority || priority.trim() === "") && wide === null && hidden === null}
                     >

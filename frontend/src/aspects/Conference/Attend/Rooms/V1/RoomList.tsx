@@ -14,13 +14,13 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type { RoomListRoomDetailsFragment} from "../../../../../generated/graphql";
+import type { RoomListRoomDetailsFragment } from "../../../../../generated/graphql";
 import { Room_ManagementMode_Enum } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import { LinkButton } from "../../../../Chakra/LinkButton";
-import FAIcon from "../../../../Icons/FAIcon";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import PageCountText from "../../../../Realtime/PageCountText";
 import useRoomParticipants from "../../../../Room/useRoomParticipants";
-import { useConference } from "../../../useConference";
 import { Participants } from "./RoomParticipants";
 
 interface Props {
@@ -33,7 +33,7 @@ interface Props {
 }
 
 export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, children }: Props): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const roomParticipants = useRoomParticipants();
 
     const [search, setSearch] = useState<string>("");
@@ -77,12 +77,12 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                             >
                                 {room.name}
                             </Text>
-                            <PageCountText path={`/conference/${conference.slug}/room/${room.id}`} />
+                            <PageCountText path={`${conferencePath}/room/${room.id}`} />
                         </Center>
                         <Participants
                             roomId={room.id}
                             highlightPeople={
-                                room.originatingItem?.itemPeople.map((x) => ({
+                                room.item?.itemPeople.map((x) => ({
                                     registrantId: x.person.registrantId,
                                     role: x.roleName,
                                 })) ?? []
@@ -111,12 +111,12 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                                 {room.name}
                             </Text>
                             <Spacer />
-                            <PageCountText path={`/conference/${conference.slug}/room/${room.id}`} />
+                            <PageCountText path={`${conferencePath}/room/${room.id}`} />
                         </HStack>
                         <Participants
                             roomId={room.id}
                             highlightPeople={
-                                room.originatingItem?.itemPeople.map((x) => ({
+                                room.item?.itemPeople.map((x) => ({
                                     registrantId: x.person.registrantId,
                                     role: x.roleName,
                                 })) ?? []
@@ -126,7 +126,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                 );
             }
         },
-        [conference.slug, layout.type]
+        [conferencePath, layout.type]
     );
 
     const roomElements = useMemo(
@@ -139,7 +139,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                 el: (
                     <LinkButton
                         key={room.id}
-                        to={`/conference/${conference.slug}/room/${room.id}`}
+                        to={`${conferencePath}/room/${room.id}`}
                         p={1}
                         alignItems="center"
                         justifyContent="center"
@@ -154,7 +154,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                     </LinkButton>
                 ),
             })),
-        [conference.slug, limit, onClick, sortedRooms, toButtonContents]
+        [conferencePath, limit, onClick, sortedRooms, toButtonContents]
     );
 
     const s = search.toLowerCase();

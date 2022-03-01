@@ -1,0 +1,33 @@
+table:
+  name: SuperUserPermission
+  schema: system
+is_enum: true
+array_relationships:
+- name: superUserGrantTargets
+  using:
+    foreign_key_constraint_on:
+      column: targetPermissionName
+      table:
+        name: SuperUserPermissionGrant
+        schema: system
+- name: superUserGrants
+  using:
+    foreign_key_constraint_on:
+      column: grantedPermissionName
+      table:
+        name: SuperUserPermissionGrant
+        schema: system
+- name: systemConfigurationGrants
+  using:
+    foreign_key_constraint_on:
+      column: permissionName
+      table:
+        name: ConfigurationPermissionGrant
+        schema: system
+select_permissions:
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: user

@@ -1,17 +1,18 @@
-import type { ApolloClient} from "@apollo/client";
-import { gql } from "@apollo/client";
-import assert from "assert";
+import { assert } from "@midspace/assert";
+import type { Client } from "@urql/core";
+import { gql } from "@urql/core";
 import type {
     DeletePushNotificationSubscriptionMutation,
     DeletePushNotificationSubscriptionMutationVariables,
     GetVapidPublicKeyQuery,
     GetVapidPublicKeyQueryVariables,
     UpsertPushNotificationSubscriptionMutation,
-    UpsertPushNotificationSubscriptionMutationVariables} from "../../generated/graphql";
+    UpsertPushNotificationSubscriptionMutationVariables,
+} from "../../generated/graphql";
 import {
     DeletePushNotificationSubscriptionDocument,
     GetVapidPublicKeyDocument,
-    UpsertPushNotificationSubscriptionDocument
+    UpsertPushNotificationSubscriptionDocument,
 } from "../../generated/graphql";
 
 gql`
@@ -134,14 +135,14 @@ class PushNotificationsState {
                 );
                 this.pushSubscription = "Service workers not available (perhaps you're in private browsing mode?)";
             }
-        } catch (e) {
+        } catch (e: any) {
             this.pushSubscription = `Unexpected error: ${e.toString()}`;
         }
     }
 
     // Subscribe and unsubscribe inspired by https://serviceworke.rs/push-subscription-management_index_doc.html
 
-    async subscribe(apolloClient: ApolloClient<unknown>): Promise<void> {
+    async subscribe(client: Client): Promise<void> {
         try {
             this.pushSubscription = undefined;
 
@@ -157,12 +158,9 @@ class PushNotificationsState {
                 }
 
                 try {
-                    const keyResponse = await apolloClient.query<
-                        GetVapidPublicKeyQuery,
-                        GetVapidPublicKeyQueryVariables
-                    >({
-                        query: GetVapidPublicKeyDocument,
-                    });
+                    const keyResponse = await client
+                        .query<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>(GetVapidPublicKeyDocument)
+                        .toPromise();
 
                     if (keyResponse.data?.vapidPublicKey?.key) {
                         console.info("Push notifications: Attempting to subscribe...");
@@ -171,34 +169,39 @@ class PushNotificationsState {
                                 userVisibleOnly: true,
                                 applicationServerKey: urlB64ToUint8Array(keyResponse.data.vapidPublicKey.key),
                             });
-                            assert(this.pushSubscription, "Push subscription was not defined.");
+                            assert.truthy(this.pushSubscription, "Push subscription was not defined.");
                             console.info("Push notifications: Subscribed. Saving to server...");
 
                             try {
                                 const subJSON = this.pushSubscription.toJSON();
-                                assert(subJSON.endpoint, "Subscription JSON did not have an endpoint");
-                                assert(subJSON.keys, "Subscription JSON did not have any keys");
-                                assert(subJSON.keys.auth, "Subscription JSON keys did not have auth information");
-                                assert(subJSON.keys.p256dh, "Subscription JSON keys did not have p256dh information");
+                                assert.truthy(subJSON.endpoint, "Subscription JSON did not have an endpoint");
+                                assert.truthy(subJSON.keys, "Subscription JSON did not have any keys");
+                                assert.truthy(
+                                    subJSON.keys.auth,
+                                    "Subscription JSON keys did not have auth information"
+                                );
+                                assert.truthy(
+                                    subJSON.keys.p256dh,
+                                    "Subscription JSON keys did not have p256dh information"
+                                );
 
-                                await apolloClient.mutate<
-                                    UpsertPushNotificationSubscriptionMutation,
-                                    UpsertPushNotificationSubscriptionMutationVariables
-                                >({
-                                    mutation: UpsertPushNotificationSubscriptionDocument,
-                                    variables: {
+                                await client
+                                    .mutation<
+                                        UpsertPushNotificationSubscriptionMutation,
+                                        UpsertPushNotificationSubscriptionMutationVariables
+                                    >(UpsertPushNotificationSubscriptionDocument, {
                                         object: {
                                             auth: subJSON.keys.auth,
                                             endpoint: subJSON.endpoint,
                                             p256dh: subJSON.keys.p256dh,
                                         },
-                                    },
-                                });
-                            } catch (e) {
+                                    })
+                                    .toPromise();
+                            } catch (e: any) {
                                 console.error("Error saving subscription information to the server", e);
                                 this.pushSubscription = `Could not save subscription to the server!\n${e.toString()}`;
                             }
-                        } catch (e) {
+                        } catch (e: any) {
                             console.error("Browser denied the push subscription", e);
                             this.pushSubscription = `Browser denied the push subscription!\n${e.toString()}`;
                         }
@@ -206,7 +209,7 @@ class PushNotificationsState {
                         console.warn("Push notifications: Server responded with blank key.");
                         this.pushSubscription = "Server responded with blank key.";
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error("Push notifications: Error fetching VAPID public key.", e);
                     this.pushSubscription = `Could not obtain VAPID public key!\n${e.toString()}`;
                 }
@@ -216,12 +219,12 @@ class PushNotificationsState {
                 );
                 this.pushSubscription = "Service workers not available (perhaps you're in private browsing mode?)";
             }
-        } catch (e) {
+        } catch (e: any) {
             this.pushSubscription = `Unexpected error: ${e.toString()}`;
         }
     }
 
-    async unsubscribe(apolloClient: ApolloClient<unknown>): Promise<void> {
+    async unsubscribe(client: Client): Promise<void> {
         try {
             this.pushSubscription = undefined;
 
@@ -243,16 +246,15 @@ class PushNotificationsState {
                     console.info("Push notifications: Unsubscribed. Deleting from server...");
 
                     try {
-                        await apolloClient.mutate<
-                            DeletePushNotificationSubscriptionMutation,
-                            DeletePushNotificationSubscriptionMutationVariables
-                        >({
-                            mutation: DeletePushNotificationSubscriptionDocument,
-                            variables: {
+                        await client
+                            .mutation<
+                                DeletePushNotificationSubscriptionMutation,
+                                DeletePushNotificationSubscriptionMutationVariables
+                            >(DeletePushNotificationSubscriptionDocument, {
                                 endpoint: sub.endpoint,
-                            },
-                        });
-                    } catch (e) {
+                            })
+                            .toPromise();
+                    } catch (e: any) {
                         console.error("Error deleting subscription information from the server", e);
                         this.pushSubscription = `Could not delete subscription from the server!\n${e.toString()}`;
                     }
@@ -263,7 +265,7 @@ class PushNotificationsState {
                 );
                 this.pushSubscription = "Service workers not available (perhaps you're in private browsing mode?)";
             }
-        } catch (e) {
+        } catch (e: any) {
             this.pushSubscription = `Unexpected error: ${e.toString()}`;
         }
     }

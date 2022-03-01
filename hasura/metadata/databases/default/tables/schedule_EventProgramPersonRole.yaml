@@ -13,8 +13,44 @@ array_relationships:
 select_permissions:
 - permission:
     columns:
-    - name
     - description
+    - name
+    filter: {}
+  role: attendee
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: conference-organizer
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: room-admin
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: room-member
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: subconference-organizer
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: submitter
+- permission:
+    columns:
+    - description
+    - name
     filter: {}
   role: unauthenticated
 - permission:

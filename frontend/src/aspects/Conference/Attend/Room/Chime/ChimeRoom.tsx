@@ -97,7 +97,7 @@ function ChimeRoomInner({
             await meetingManager.join(meetingData);
             await toggleVideo();
             console.log("Initialized meeting");
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to join Chime room", { err: e });
             toast({ title: "Failed to get join room", status: "error", description: e.message });
         }

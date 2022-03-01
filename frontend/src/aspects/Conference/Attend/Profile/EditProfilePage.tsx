@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { EditIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Alert,
@@ -28,6 +27,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { gql } from "urql";
 import {
     useRegistrantByIdQuery,
     useRegistrantInvitedEmailAddressQuery,
@@ -38,10 +38,11 @@ import BadgeInput from "../../../Badges/BadgeInput";
 import type { BadgeData } from "../../../Badges/ProfileBadge";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useTitle } from "../../../Hooks/useTitle";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import PronounInput from "../../../Pronouns/PronounInput";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
-import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import type { Profile, RegistrantContextT } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
@@ -101,6 +102,7 @@ gql`
     query RegistrantInvitedEmailAddress($registrantId: uuid!) {
         registrant_Invitation(where: { registrantId: { _eq: $registrantId } }) {
             id
+            registrantId
             invitedEmailAddress
         }
     }
@@ -120,6 +122,7 @@ gql`
 
 function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const currentUser = useCurrentUser();
 
     const [editingRegistrant, setEditingRegistrant] = useState<RegistrantContextT>(registrant);
@@ -127,11 +130,11 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
     const isDirty = useMemo(() => !deepProfileIsEqual(registrant, editingRegistrant), [registrant, editingRegistrant]);
     const displayNameIsDirty = editingRegistrant.displayName !== registrant.displayName;
 
-    const [updateProfile, { loading: loadingUpdateAttendeProfile, error: errorUpdateProfile }] =
+    const [{ fetching: loadingUpdateAttendeProfile, error: errorUpdateProfile }, updateProfile] =
         useUpdateProfileMutation();
     const [
+        { fetching: loadingUpdateAttendeDisplayName, error: errorUpdateRegistrantDisplayName },
         updateRegistrantDisplayName,
-        { loading: loadingUpdateAttendeDisplayName, error: errorUpdateRegistrantDisplayName },
     ] = useUpdateRegistrantDisplayNameMutation();
 
     const toast = useToast();
@@ -180,21 +183,19 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 (async () => {
                     try {
                         await updateProfile({
-                            variables: {
-                                registrantId: registrant.id,
-                                profile: {
-                                    affiliation: editingRegistrant.profile.affiliation,
-                                    affiliationURL: editingRegistrant.profile.affiliationURL,
-                                    country: editingRegistrant.profile.country,
-                                    timezoneUTCOffset: editingRegistrant.profile.timezoneUTCOffset,
-                                    bio: editingRegistrant.profile.bio,
-                                    website: editingRegistrant.profile.website,
-                                    github: editingRegistrant.profile.github,
-                                    twitter: editingRegistrant.profile.twitter,
-                                    badges: editingRegistrant.profile.badges,
-                                    pronouns: editingRegistrant.profile.pronouns,
-                                    hasBeenEdited: true,
-                                },
+                            registrantId: registrant.id,
+                            profile: {
+                                affiliation: editingRegistrant.profile.affiliation,
+                                affiliationURL: editingRegistrant.profile.affiliationURL,
+                                country: editingRegistrant.profile.country,
+                                timezoneUTCOffset: editingRegistrant.profile.timezoneUTCOffset,
+                                bio: editingRegistrant.profile.bio,
+                                website: editingRegistrant.profile.website,
+                                github: editingRegistrant.profile.github,
+                                twitter: editingRegistrant.profile.twitter,
+                                badges: editingRegistrant.profile.badges,
+                                pronouns: editingRegistrant.profile.pronouns,
+                                hasBeenEdited: true,
                             },
                         });
                     } catch (e) {
@@ -392,10 +393,8 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
         if (editingRegistrant.displayName !== registrant.displayName && !isEditingName) {
             (async () => {
                 await updateRegistrantDisplayName({
-                    variables: {
-                        registrantId: registrant.id,
-                        name: editingRegistrant.displayName,
-                    },
+                    registrantId: registrant.id,
+                    name: editingRegistrant.displayName,
                 });
                 toast({
                     title: "Name saved",
@@ -411,7 +410,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
         currentUser.user.id === registrant.userId ? "Edit your profile" : `Edit ${registrant.displayName}`
     );
 
-    const invitation = useRegistrantInvitedEmailAddressQuery({
+    const [invitation] = useRegistrantInvitedEmailAddressQuery({
         variables: {
             registrantId: registrant.id,
         },
@@ -435,14 +434,14 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     </Alert>
                 ) : (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="PrimaryActionButton">
+                        <LinkButton to={conferencePath ?? "/"} colorScheme="PrimaryActionButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
                             to={
                                 registrant.userId === currentUser.user.id
-                                    ? `/conference/${conference.slug}/profile/view`
-                                    : `/conference/${conference.slug}/profile/view/${registrant.id}`
+                                    ? `${conferencePath}/profile/view`
+                                    : `${conferencePath}/profile/view/${registrant.id}`
                             }
                             colorScheme="PrimaryActionButton"
                         >
@@ -491,7 +490,9 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     <Alert status="error">
                         <AlertIcon />
                         <AlertTitle mr={2}>Error saving changes</AlertTitle>
-                        <AlertDescription>{errorUpdateProfile || errorUpdateRegistrantDisplayName}</AlertDescription>
+                        <AlertDescription>
+                            {errorUpdateProfile?.message ?? errorUpdateRegistrantDisplayName?.message}
+                        </AlertDescription>
                     </Alert>
                 ) : undefined}
                 <EditProfilePitureForm registrant={registrant} />
@@ -546,14 +547,14 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 {githubField}
                 {registrant.profile.hasBeenEdited ? (
                     <ButtonGroup variant="solid">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="EditProfilePage-ContinueButton">
+                        <LinkButton to={conferencePath ?? "/"} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
                             to={
                                 registrant.userId === currentUser.user.id
-                                    ? `/conference/${conference.slug}/profile/view`
-                                    : `/conference/${conference.slug}/profile/view/${registrant.id}`
+                                    ? `${conferencePath}/profile/view`
+                                    : `${conferencePath}/profile/view/${registrant.id}`
                             }
                             colorScheme="SecondaryActionButton"
                         >
@@ -577,7 +578,7 @@ function EditCurrentProfilePage(): JSX.Element {
 
 function EditProfilePage_FetchWrapper({ registrantId }: { registrantId: string }): JSX.Element {
     const conference = useConference();
-    const { loading, error, data } = useRegistrantByIdQuery({
+    const [{ fetching: loading, error, data }] = useRegistrantByIdQuery({
         variables: {
             conferenceId: conference.id,
             registrantId,

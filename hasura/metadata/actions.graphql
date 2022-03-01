@@ -20,23 +20,17 @@ type Mutation {
 }
 
 type Query {
-  getProgramPersonAccessToken (
-    elementId: uuid!
-    uploaderEmail: String!
-    elementAccessToken: String!
-  ): MatchingPersonOutput!
-}
-
-type Query {
   getSlug (
     url: String!
   ): GetSlugOutput!
 }
 
 type Query {
-  getUploadAgreement (
-    magicToken: String!
-  ): GetUploadAgreementOutput
+  getUploadAgreement: GetUploadAgreementOutput
+}
+
+type Mutation {
+  initialiseSuperUser: InitialiseSuperUserOutput
 }
 
 type Mutation {
@@ -47,18 +41,21 @@ type Mutation {
 
 type Mutation {
   joinEventVonageSession (
+    registrantId: uuid!
     eventId: uuid!
   ): JoinEventVonageSessionOutput
 }
 
 type Mutation {
   joinRoomChimeSession (
+    registrantId: uuid!
     roomId: uuid!
   ): JoinRoomChimeSessionOutput
 }
 
 type Mutation {
   joinRoomVonageSession (
+    registrantId: uuid!
     roomId: uuid!
   ): JoinRoomVonageSessionOutput
 }
@@ -107,6 +104,7 @@ type Mutation {
   submitUploadableElement (
     data: jsonb!
     magicToken: String!
+    elementId: uuid!
   ): SubmitUploadableElementOutput
 }
 
@@ -115,6 +113,13 @@ type Mutation {
     recordingActive: Boolean!
     vonageSessionId: String!
   ): ToggleVonageRecordingStateOutput
+}
+
+type Query {
+  transcribeGeneratePresignedUrl(
+    languageCode: String!
+    sampleRate: String!
+  ): TranscribeGeneratePresignedUrlOutput!
 }
 
 type Mutation {
@@ -308,6 +313,7 @@ type NotifyEventEnded {
 
 type GetSlugOutput {
   slug : String
+  url: String
 }
 
 type MatchingPersonOutput {
@@ -321,5 +327,14 @@ type ToggleVonageRecordingStateOutput {
 
 type NotifyEventStarted {
   ok : Boolean!
+}
+
+type InitialiseSuperUserOutput {
+  success: Boolean!
+  error: String
+}
+
+type TranscribeGeneratePresignedUrlOutput {
+  url: String!
 }
 

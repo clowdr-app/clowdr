@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -25,20 +24,13 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
-import type {
-    ManageShufflePeriods_SelectAllQuery,
-    ManageShufflePeriods_SelectAllQueryVariables,
-    ManageShufflePeriods_ShufflePeriodFragment} from "../../../../generated/graphql";
-import {
-    ManageShufflePeriods_SelectAllDocument,
-    ManageShufflePeriods_ShufflePeriodFragmentDoc,
-    Room_ShuffleAlgorithm_Enum,
-    useUpdateShufflePeriodMutation,
-} from "../../../../generated/graphql";
+import type { ManageShufflePeriods_ShufflePeriodFragment } from "../../../../generated/graphql";
+import { Room_ShuffleAlgorithm_Enum, useUpdateShufflePeriodMutation } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { useConference } from "../../useConference";
 
 gql`
     mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {
@@ -66,77 +58,8 @@ export default function ConfigureQueueModal({
     initialQueue: ManageShufflePeriods_ShufflePeriodFragment;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const conference = useConference();
 
-    const [update, updateResponse] = useUpdateShufflePeriodMutation({
-        update: (cache, result) => {
-            if (result.data?.update_room_ShufflePeriod_by_pk) {
-                const data = result.data.update_room_ShufflePeriod_by_pk;
-                const existingData = cache.readFragment<ManageShufflePeriods_ShufflePeriodFragment>({
-                    fragment: ManageShufflePeriods_ShufflePeriodFragmentDoc,
-                    fragmentName: "ManageShufflePeriods_ShufflePeriod",
-                    id: cache.identify({
-                        __typename: "room_ShufflePeriod",
-                        id: data.id,
-                    }),
-                });
-                const newData: ManageShufflePeriods_ShufflePeriodFragment = {
-                    ...existingData,
-                    ...data,
-                    __typename: "room_ShufflePeriod",
-                    completedEntries: existingData?.completedEntries ?? {
-                        aggregate: {
-                            count: 0,
-                        },
-                    },
-                    ongoingEntries: existingData?.ongoingEntries ?? {
-                        aggregate: {
-                            count: 0,
-                        },
-                    },
-                    waitingEntries: existingData?.waitingEntries ?? {
-                        aggregate: {
-                            count: 0,
-                        },
-                    },
-                };
-                cache.writeFragment<ManageShufflePeriods_ShufflePeriodFragment>({
-                    data: newData,
-                    fragment: ManageShufflePeriods_ShufflePeriodFragmentDoc,
-                    fragmentName: "ManageShufflePeriods_ShufflePeriod",
-                    broadcast: true,
-                });
-
-                const q = cache.readQuery<
-                    ManageShufflePeriods_SelectAllQuery,
-                    ManageShufflePeriods_SelectAllQueryVariables
-                >({
-                    query: ManageShufflePeriods_SelectAllDocument,
-                    variables: {
-                        conferenceId: conference.id,
-                    },
-                });
-
-                if (q) {
-                    cache.writeQuery<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>(
-                        {
-                            query: ManageShufflePeriods_SelectAllDocument,
-                            data: {
-                                ...q,
-                                room_ShufflePeriod: [
-                                    ...q.room_ShufflePeriod.filter((x) => x.id !== newData.id),
-                                    newData,
-                                ],
-                            },
-                            variables: {
-                                conferenceId: conference.id,
-                            },
-                        }
-                    );
-                }
-            }
-        },
-    });
+    const [updateResponse, update] = useUpdateShufflePeriodMutation();
 
     const [name, setName] = useState<string>(initialQueue.name);
     const [algorithm, setAlgorithm] = useState<Room_ShuffleAlgorithm_Enum>(initialQueue.algorithm);
@@ -207,8 +130,8 @@ export default function ConfigureQueueModal({
     const toast = useToast();
     const onUpdate = useCallback(async () => {
         try {
-            await update({
-                variables: {
+            await update(
+                {
                     id: initialQueue.id,
                     object: {
                         name,
@@ -221,10 +144,17 @@ export default function ConfigureQueueModal({
                         waitRoomMaxDurationSeconds: maxWait,
                     },
                 },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                }
+            );
 
             onClose();
-        } catch (e) {
+        } catch (e: any) {
             toast({
                 description: e.message ?? e.toString(),
                 duration: 12000,
@@ -266,7 +196,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>Name</FormLabel>
                                 <Input
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     min={1}
                                     value={name}
                                     onChange={(ev) => setName(ev.target.value)}
@@ -278,7 +208,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>Automation</FormLabel>
                                 <Select
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     value={algorithm}
                                     onChange={(ev) =>
                                         setAlgorithm(ev.target.selectedOptions[0].value as Room_ShuffleAlgorithm_Enum)
@@ -301,7 +231,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>Start at</FormLabel>
                                 <DateTimePicker
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     value={startAt}
                                     onChange={onStartAtChange}
                                 />
@@ -313,7 +243,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>End at</FormLabel>
                                 <DateTimePicker
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     value={endAt}
                                     onChange={onEndAtChange}
                                 />
@@ -325,7 +255,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>Room duration in minutes</FormLabel>
                                 <NumberInput
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     min={2}
                                     max={2 * 60}
                                     value={roomDurationMinutes}
@@ -349,7 +279,7 @@ export default function ConfigureQueueModal({
                                     <FormControl>
                                         <FormLabel>Target registrants per room</FormLabel>
                                         <NumberInput
-                                            isDisabled={updateResponse.loading}
+                                            isDisabled={updateResponse.fetching}
                                             min={2}
                                             value={targetRegistrants}
                                             onChange={onTargetRegistrantsChange}
@@ -367,7 +297,7 @@ export default function ConfigureQueueModal({
                                     <FormControl>
                                         <FormLabel>Maximum registrants per room</FormLabel>
                                         <NumberInput
-                                            isDisabled={updateResponse.loading}
+                                            isDisabled={updateResponse.fetching}
                                             min={2}
                                             value={maxRegistrants}
                                             onChange={onMaxRegistrantsChange}
@@ -385,7 +315,7 @@ export default function ConfigureQueueModal({
                                     <FormControl>
                                         <FormLabel>Maximum wait time in seconds</FormLabel>
                                         <NumberInput
-                                            isDisabled={updateResponse.loading}
+                                            isDisabled={updateResponse.fetching}
                                             min={60}
                                             max={300}
                                             value={maxWait}
@@ -410,14 +340,14 @@ export default function ConfigureQueueModal({
                     </ModalBody>
                     <ModalFooter>
                         <ButtonGroup>
-                            <Button isDisabled={updateResponse.loading} onClick={onClose}>
+                            <Button isDisabled={updateResponse.fetching} onClick={onClose}>
                                 Cancel
                             </Button>
                             <Tooltip label={name.length === 0 ? "Name is required" : undefined}>
                                 <Box>
                                     <Button
-                                        isLoading={updateResponse.loading}
-                                        isDisabled={updateResponse.loading || name.length === 0}
+                                        isLoading={updateResponse.fetching}
+                                        isDisabled={updateResponse.fetching || name.length === 0}
                                         onClick={onUpdate}
                                         colorScheme="purple"
                                     >

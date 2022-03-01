@@ -1,4 +1,4 @@
-import type { AlertProps} from "@chakra-ui/react";
+import type { AlertProps } from "@chakra-ui/react";
 import { Alert, AlertDescription, AlertIcon, Button, chakra, CloseButton } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -7,7 +7,7 @@ import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "videojs-contrib-quality-levels";
 import hlsQualitySelector from "videojs-hls-quality-selector";
-import { useRestorableState, useSessionState } from "../../../../Generic/useRestorableState";
+import { useRestorableState, useSessionState } from "../../../../Hooks/useRestorableState";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
 import "./hls-player.css";
 import { HlsPlayerError } from "./HlsPlayerError";
@@ -307,7 +307,7 @@ export function HlsPlayerInner({
     );
 }
 
-export function HlsPlayer(props: HlsPlayerProps): JSX.Element {
+export default function HlsPlayer(props: HlsPlayerProps): JSX.Element {
     return (
         <ErrorBoundary FallbackComponent={HlsPlayerError}>
             <HlsPlayerInner {...props} />

@@ -1,84 +1,68 @@
 /* eslint-disable no-inner-declarations */
-import type {
-    ParticipantPlacement,
-    VonageSessionLayoutData} from "@clowdr-app/shared-types/build/vonage";
-import {
-    VonageSessionLayoutType,
-} from "@clowdr-app/shared-types/build/vonage";
+import type { ParticipantPlacement, VonageSessionLayoutData } from "@midspace/shared-types/vonage";
+import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
 import * as R from "ramda";
 import { useMemo } from "react";
-import type { Viewport, VisualLayout} from "./LayoutTypes";
+import type { Viewport, VisualLayout } from "./LayoutTypes";
 import { VisualLayoutType } from "./LayoutTypes";
 
-export default function useVisualLayout(
-    layout: VonageSessionLayoutData,
-    isRecordingMode: boolean,
-    viewports: Viewport[]
-): VisualLayout {
+export default function useVisualLayout(layout: VonageSessionLayoutData, viewports: Viewport[]): VisualLayout {
     const result = useMemo<VisualLayout>(() => {
         let result: VisualLayout | undefined;
 
         switch (layout.type) {
             case VonageSessionLayoutType.BestFit: {
-                if (isRecordingMode) {
-                    if (viewports.some((vp) => vp.type === "screen")) {
-                        const screenshareViewport = R.sortBy(
-                            (x) => x.joinedAt,
-                            viewports.filter((vp) => vp.type === "screen" && vp.streamId)
-                        )[0];
-                        const priorityViewports = R.sortWith(
-                            [
-                                (x, y) => {
-                                    // Based on the Vonage stream prioritization rules
-                                    if (screenshareViewport) {
-                                        const xIsPreferred =
-                                            (screenshareViewport.streamId &&
-                                                !!x.associatedIds?.includes(screenshareViewport.streamId)) ||
-                                            !!x.associatedIds?.includes(screenshareViewport.connectionId);
-                                        const yIsPreferred =
-                                            (screenshareViewport.streamId &&
-                                                !!y.associatedIds?.includes(screenshareViewport.streamId)) ||
-                                            !!y.associatedIds?.includes(screenshareViewport.connectionId);
-                                        if (xIsPreferred) {
-                                            return yIsPreferred ? 0 : -1;
-                                        } else {
-                                            return yIsPreferred ? 1 : 0;
-                                        }
+                if (viewports.some((vp) => vp.type === "screen")) {
+                    const screenshareViewport = R.sortBy(
+                        (x) => x.joinedAt,
+                        viewports.filter((vp) => vp.type === "screen" && vp.streamId)
+                    )[0];
+                    const priorityViewports = R.sortWith(
+                        [
+                            (x, y) => {
+                                // Based on the Vonage stream prioritization rules
+                                if (screenshareViewport) {
+                                    const xIsPreferred =
+                                        (screenshareViewport.streamId &&
+                                            !!x.associatedIds?.includes(screenshareViewport.streamId)) ||
+                                        !!x.associatedIds?.includes(screenshareViewport.connectionId);
+                                    const yIsPreferred =
+                                        (screenshareViewport.streamId &&
+                                            !!y.associatedIds?.includes(screenshareViewport.streamId)) ||
+                                        !!y.associatedIds?.includes(screenshareViewport.connectionId);
+                                    if (xIsPreferred) {
+                                        return yIsPreferred ? 0 : -1;
+                                    } else {
+                                        return yIsPreferred ? 1 : 0;
                                     }
-                                    return 0;
-                                },
-                                (x, y) => (x.streamId && y.streamId ? 0 : x.streamId ? -1 : y.streamId ? 1 : 0),
-                                (x, y) => x.joinedAt - y.joinedAt,
-                            ],
-                            viewports.filter((vp) => vp.type !== "screen" && vp.streamId)
-                        ).slice(0, 5);
-                        result = {
-                            type:
-                                layout.screenShareType === "horizontalPresentation"
-                                    ? VisualLayoutType.BestFit_Screenshare_HorizontalSplit
-                                    : VisualLayoutType.BestFit_Screenshare_VerticalSplit,
-                            screenshareViewport,
-                            viewports: priorityViewports,
-                            overflowViewports: viewports.filter(
-                                (vp) => vp !== screenshareViewport && !priorityViewports.includes(vp)
-                            ),
-                        };
-                    } else {
-                        const priorityViewports = R.sortBy(
-                            (x) => x.joinedAt,
-                            viewports.filter((x) => x.streamId)
-                        ).slice(0, 16);
-                        result = {
-                            type: VisualLayoutType.BestFit_NoScreenshare,
-                            viewports: priorityViewports,
-                            overflowViewports: viewports.filter((vp) => !priorityViewports.includes(vp)),
-                        };
-                    }
+                                }
+                                return 0;
+                            },
+                            (x, y) => (x.streamId && y.streamId ? 0 : x.streamId ? -1 : y.streamId ? 1 : 0),
+                            (x, y) => x.joinedAt - y.joinedAt,
+                        ],
+                        viewports.filter((vp) => vp.type !== "screen" && vp.streamId)
+                    ).slice(0, 5);
+                    result = {
+                        type:
+                            layout.screenShareType === "horizontalPresentation"
+                                ? VisualLayoutType.BestFit_Screenshare_HorizontalSplit
+                                : VisualLayoutType.BestFit_Screenshare_VerticalSplit,
+                        screenshareViewport,
+                        viewports: priorityViewports,
+                        overflowViewports: viewports.filter(
+                            (vp) => vp !== screenshareViewport && !priorityViewports.includes(vp)
+                        ),
+                    };
                 } else {
+                    const priorityViewports = R.sortBy(
+                        (x) => x.joinedAt,
+                        viewports.filter((x) => x.streamId)
+                    ).slice(0, 16);
                     result = {
                         type: VisualLayoutType.BestFit_NoScreenshare,
-                        viewports: [],
-                        overflowViewports: viewports,
+                        viewports: priorityViewports,
+                        overflowViewports: viewports.filter((vp) => !priorityViewports.includes(vp)),
                     };
                 }
                 break;
@@ -187,7 +171,7 @@ export default function useVisualLayout(
             }
             case VonageSessionLayoutType.Fitted4: {
                 let largeAreaViewport: Viewport | undefined;
-                const sideAreaViewports: Viewport[] = [];
+                const sideAreaViewports: (Viewport | undefined)[] = [];
                 if (layout.position1) {
                     if ("streamId" in layout.position1) {
                         const streamId = layout.position1.streamId;
@@ -219,7 +203,11 @@ export default function useVisualLayout(
                             !sideAreaViewports.includes(tempViewport)
                         ) {
                             sideAreaViewports.push(tempViewport);
+                        } else {
+                            sideAreaViewports.push(undefined);
                         }
+                    } else {
+                        sideAreaViewports.push(undefined);
                     }
                 }
 
@@ -242,7 +230,7 @@ export default function useVisualLayout(
             case VonageSessionLayoutType.DualScreen: {
                 let largeAreaViewport1: Viewport | undefined;
                 let largeAreaViewport2: Viewport | undefined;
-                const sideAreaViewports: Viewport[] = [];
+                const sideAreaViewports: (Viewport | undefined)[] = [];
                 if (layout.position1) {
                     if ("streamId" in layout.position1) {
                         const streamId = layout.position1.streamId;
@@ -286,7 +274,11 @@ export default function useVisualLayout(
                             !sideAreaViewports.includes(tempViewport)
                         ) {
                             sideAreaViewports.push(tempViewport);
+                        } else {
+                            sideAreaViewports.push(undefined);
                         }
+                    } else {
+                        sideAreaViewports.push(undefined);
                     }
                 }
 
@@ -325,7 +317,7 @@ export default function useVisualLayout(
         );
 
         return result;
-    }, [layout, viewports, isRecordingMode]);
+    }, [layout, viewports]);
 
     return result;
 }

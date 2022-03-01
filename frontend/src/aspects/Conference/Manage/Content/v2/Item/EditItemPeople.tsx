@@ -1,5 +1,3 @@
-import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -26,29 +24,39 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
-import type {
-    ManageContent_ItemProgramPersonFragment} from "../../../../../../generated/graphql";
+import type { ManageContent_ItemProgramPersonFragment } from "../../../../../../generated/graphql";
 import {
-    ManageContent_ItemProgramPersonFragmentDoc,
     useManageContent_DeleteItemProgramPersonMutation,
     useManageContent_InsertItemProgramPersonMutation,
     useManageContent_SelectItemPeopleQuery,
     useManageContent_SelectProgramPeopleQuery,
     useManageContent_UpdateItemProgramPersonMutation,
 } from "../../../../../../generated/graphql";
+import FAIcon from "../../../../../Chakra/FAIcon";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
-import { FAIcon } from "../../../../../Icons/FAIcon";
-import { maybeCompare } from "../../../../../Utils/maybeSort";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
+import { makeContext } from "../../../../../GQL/make-context";
+import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { useConference } from "../../../../useConference";
 
 export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element {
-    const conference = useConference();
-    const itemPeopleResponse = useManageContent_SelectItemPeopleQuery({
+    const { conferencePath } = useAuthParameters();
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [itemPeopleResponse] = useManageContent_SelectItemPeopleQuery({
         variables: {
             itemId,
         },
+        context,
     });
     const itemPeople = itemPeopleResponse.data?.content_ItemProgramPerson;
     const itemPeopleIds = useMemo(() => itemPeople?.map((x) => x.id), [itemPeople]);
@@ -66,7 +74,7 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
             </Text>
             <ButtonGroup>
                 {itemPeopleIds ? <AddItemPerson itemId={itemId} existingPeopleIds={itemPeopleIds} /> : undefined}
-                <LinkButton size="sm" to={`/conference/${conference.slug}/manage/people`}>
+                <LinkButton size="sm" to={`${conferencePath}/manage/people`}>
                     <Tooltip label="Link opens in the same tab">
                         <>
                             <FAIcon iconStyle="s" icon="link" mr={2} />
@@ -75,7 +83,7 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
                     </Tooltip>
                 </LinkButton>
             </ButtonGroup>
-            {itemPeopleResponse.loading && !itemPeople ? <Spinner label="Loading people" /> : undefined}
+            {itemPeopleResponse.fetching && !itemPeople ? <Spinner label="Loading people" /> : undefined}
             {itemPeople ? <ItemPersonsList itemPeople={itemPeople} /> : undefined}
         </VStack>
     );
@@ -83,26 +91,19 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
 
 gql`
     query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ManageContent_ProgramPerson
         }
     }
 
     mutation ManageContent_InsertItemProgramPerson(
-        $conferenceId: uuid!
         $personId: uuid!
         $roleName: String!
         $priority: Int!
         $itemId: uuid!
     ) {
         insert_content_ItemProgramPerson_one(
-            object: {
-                conferenceId: $conferenceId
-                personId: $personId
-                itemId: $itemId
-                priority: $priority
-                roleName: $roleName
-            }
+            object: { personId: $personId, itemId: $itemId, priority: $priority, roleName: $roleName }
         ) {
             ...ManageContent_ItemProgramPerson
         }
@@ -134,21 +135,29 @@ function AddItemPersonBody({
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
-    const peopleResponse = useManageContent_SelectProgramPeopleQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [peopleResponse] = useManageContent_SelectProgramPeopleQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
     const [selectedRole, setSelectedRole] = useState<string>("AUTHOR");
-    const [insertItemPerson, insertItemPersonResponse] = useManageContent_InsertItemProgramPersonMutation();
+    const [insertItemPersonResponse, insertItemPerson] = useManageContent_InsertItemProgramPersonMutation();
 
     const sortedPeople = useMemo(
         () =>
-            peopleResponse.data?.collection_ProgramPersonWithAccessToken
+            peopleResponse.data?.collection_ProgramPerson
                 .filter((person) => !existingPeopleIds.includes(person.id))
                 .sort((x, y) => maybeCompare(x.name, y.name, (a, b) => a.localeCompare(b))),
-        [existingPeopleIds, peopleResponse.data?.collection_ProgramPersonWithAccessToken]
+        [existingPeopleIds, peopleResponse.data?.collection_ProgramPerson]
     );
 
     const toast = useToast();
@@ -157,7 +166,7 @@ function AddItemPersonBody({
             <PopoverHeader>Link program person</PopoverHeader>
             <PopoverBody>
                 <VStack spacing={2}>
-                    {peopleResponse.loading && !sortedPeople ? <Spinner label="Loading program people" /> : undefined}
+                    {peopleResponse.fetching && !sortedPeople ? <Spinner label="Loading program people" /> : undefined}
                     {sortedPeople ? (
                         <FormControl>
                             <FormLabel>Person</FormLabel>
@@ -197,38 +206,27 @@ function AddItemPersonBody({
                         size="sm"
                         colorScheme="purple"
                         isDisabled={!selectedPersonId}
-                        isLoading={insertItemPersonResponse.loading}
+                        isLoading={insertItemPersonResponse.fetching}
                         onClick={async () => {
                             try {
-                                await insertItemPerson({
-                                    variables: {
-                                        conferenceId: conference.id,
+                                await insertItemPerson(
+                                    {
                                         itemId,
                                         personId: selectedPersonId,
                                         roleName: selectedRole,
                                         priority: existingPeopleIds.length,
                                     },
-                                    update: (cache, response) => {
-                                        if (response.data) {
-                                            const data = response.data.insert_content_ItemProgramPerson_one;
-                                            cache.modify({
-                                                fields: {
-                                                    content_ItemProgramPerson(existingRefs: Reference[] = []) {
-                                                        const newRef = cache.writeFragment({
-                                                            data,
-                                                            fragment: ManageContent_ItemProgramPersonFragmentDoc,
-                                                            fragmentName: "ManageContent_ItemProgramPerson",
-                                                        });
-                                                        return [...existingRefs, newRef];
-                                                    },
-                                                },
-                                            });
-                                        }
-                                    },
-                                });
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            },
+                                        },
+                                    }
+                                );
 
                                 onClose();
-                            } catch (e) {
+                            } catch (e: any) {
                                 toast({
                                     title: "Error linking person",
                                     description: e.message ?? e.toString(),
@@ -307,9 +305,9 @@ function ItemPersonsList({
         [itemPeople]
     );
     const toast = useToast();
-    const [updateItemProgramPerson, updateItemProgramPersonResponse] =
+    const [updateItemProgramPersonResponse, updateItemProgramPerson] =
         useManageContent_UpdateItemProgramPersonMutation();
-    const [deleteItemPerson, deleteItemPersonResponse] = useManageContent_DeleteItemProgramPersonMutation();
+    const [deleteItemPersonResponse, deleteItemPerson] = useManageContent_DeleteItemProgramPersonMutation();
 
     return sortedReps.length > 0 ? (
         <>
@@ -328,81 +326,35 @@ function ItemPersonsList({
                                             onClick={() => {
                                                 const previousItemProgramPerson = sortedReps[idx - 1];
 
-                                                updateItemProgramPerson({
-                                                    variables: {
+                                                updateItemProgramPerson(
+                                                    {
                                                         itemPersonId: itemProgramPerson.id,
                                                         priority: idx - 1,
                                                         roleName: itemProgramPerson.roleName,
                                                     },
-                                                    update: (cache, { data: _data }) => {
-                                                        if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                            const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                            cache.modify({
-                                                                fields: {
-                                                                    content_ItemProgramPerson(
-                                                                        existingRefs: Reference[] = [],
-                                                                        { readField }
-                                                                    ) {
-                                                                        const newRef = cache.writeFragment({
-                                                                            data,
-                                                                            fragment:
-                                                                                ManageContent_ItemProgramPersonFragmentDoc,
-                                                                            fragmentName:
-                                                                                "ManageContent_ItemProgramPerson",
-                                                                        });
-                                                                        if (
-                                                                            existingRefs.some(
-                                                                                (ref) =>
-                                                                                    readField("id", ref) === data.id
-                                                                            )
-                                                                        ) {
-                                                                            return existingRefs;
-                                                                        }
-                                                                        return [...existingRefs, newRef];
-                                                                    },
-                                                                },
-                                                            });
-                                                        }
-                                                    },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
 
-                                                updateItemProgramPerson({
-                                                    variables: {
+                                                updateItemProgramPerson(
+                                                    {
                                                         itemPersonId: previousItemProgramPerson.id,
                                                         priority: idx,
                                                         roleName: previousItemProgramPerson.roleName,
                                                     },
-                                                    update: (cache, { data: _data }) => {
-                                                        if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                            const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                            cache.modify({
-                                                                fields: {
-                                                                    content_ItemProgramPerson(
-                                                                        existingRefs: Reference[] = [],
-                                                                        { readField }
-                                                                    ) {
-                                                                        const newRef = cache.writeFragment({
-                                                                            data,
-                                                                            fragment:
-                                                                                ManageContent_ItemProgramPersonFragmentDoc,
-                                                                            fragmentName:
-                                                                                "ManageContent_ItemProgramPerson",
-                                                                        });
-                                                                        if (
-                                                                            existingRefs.some(
-                                                                                (ref) =>
-                                                                                    readField("id", ref) === data.id
-                                                                            )
-                                                                        ) {
-                                                                            return existingRefs;
-                                                                        }
-                                                                        return [...existingRefs, newRef];
-                                                                    },
-                                                                },
-                                                            });
-                                                        }
-                                                    },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
                                             }}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
@@ -417,81 +369,35 @@ function ItemPersonsList({
                                             onClick={() => {
                                                 const previousItemProgramPerson = sortedReps[idx + 1];
 
-                                                updateItemProgramPerson({
-                                                    variables: {
+                                                updateItemProgramPerson(
+                                                    {
                                                         itemPersonId: itemProgramPerson.id,
                                                         priority: idx + 1,
                                                         roleName: itemProgramPerson.roleName,
                                                     },
-                                                    update: (cache, { data: _data }) => {
-                                                        if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                            const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                            cache.modify({
-                                                                fields: {
-                                                                    content_ItemProgramPerson(
-                                                                        existingRefs: Reference[] = [],
-                                                                        { readField }
-                                                                    ) {
-                                                                        const newRef = cache.writeFragment({
-                                                                            data,
-                                                                            fragment:
-                                                                                ManageContent_ItemProgramPersonFragmentDoc,
-                                                                            fragmentName:
-                                                                                "ManageContent_ItemProgramPerson",
-                                                                        });
-                                                                        if (
-                                                                            existingRefs.some(
-                                                                                (ref) =>
-                                                                                    readField("id", ref) === data.id
-                                                                            )
-                                                                        ) {
-                                                                            return existingRefs;
-                                                                        }
-                                                                        return [...existingRefs, newRef];
-                                                                    },
-                                                                },
-                                                            });
-                                                        }
-                                                    },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
 
-                                                updateItemProgramPerson({
-                                                    variables: {
+                                                updateItemProgramPerson(
+                                                    {
                                                         itemPersonId: previousItemProgramPerson.id,
                                                         priority: idx,
                                                         roleName: previousItemProgramPerson.roleName,
                                                     },
-                                                    update: (cache, { data: _data }) => {
-                                                        if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                            const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                            cache.modify({
-                                                                fields: {
-                                                                    content_ItemProgramPerson(
-                                                                        existingRefs: Reference[] = [],
-                                                                        { readField }
-                                                                    ) {
-                                                                        const newRef = cache.writeFragment({
-                                                                            data,
-                                                                            fragment:
-                                                                                ManageContent_ItemProgramPersonFragmentDoc,
-                                                                            fragmentName:
-                                                                                "ManageContent_ItemProgramPerson",
-                                                                        });
-                                                                        if (
-                                                                            existingRefs.some(
-                                                                                (ref) =>
-                                                                                    readField("id", ref) === data.id
-                                                                            )
-                                                                        ) {
-                                                                            return existingRefs;
-                                                                        }
-                                                                        return [...existingRefs, newRef];
-                                                                    },
-                                                                },
-                                                            });
-                                                        }
-                                                    },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
                                             }}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
@@ -533,43 +439,22 @@ function ItemPersonsList({
                                     size="xs"
                                     value={itemProgramPerson.roleName}
                                     w="auto"
-                                    isDisabled={updateItemProgramPersonResponse.loading}
+                                    isDisabled={updateItemProgramPersonResponse.fetching}
                                     onChange={(ev) => {
-                                        updateItemProgramPerson({
-                                            variables: {
+                                        updateItemProgramPerson(
+                                            {
                                                 itemPersonId: itemProgramPerson.id,
                                                 priority: itemProgramPerson.priority ?? idx,
                                                 roleName: ev.target.value,
                                             },
-                                            update: (cache, { data: _data }) => {
-                                                if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                    const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                    cache.modify({
-                                                        fields: {
-                                                            content_ItemProgramPerson(
-                                                                existingRefs: Reference[] = [],
-                                                                { readField }
-                                                            ) {
-                                                                const newRef = cache.writeFragment({
-                                                                    data,
-                                                                    fragment:
-                                                                        ManageContent_ItemProgramPersonFragmentDoc,
-                                                                    fragmentName: "ManageContent_ItemProgramPerson",
-                                                                });
-                                                                if (
-                                                                    existingRefs.some(
-                                                                        (ref) => readField("id", ref) === data.id
-                                                                    )
-                                                                ) {
-                                                                    return existingRefs;
-                                                                }
-                                                                return [...existingRefs, newRef];
-                                                            },
-                                                        },
-                                                    });
-                                                }
-                                            },
-                                        });
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    },
+                                                },
+                                            }
+                                        );
                                     }}
                                     minW={"5em"}
                                 >
@@ -585,38 +470,22 @@ function ItemPersonsList({
                                     aria-label="Delete"
                                     colorScheme="red"
                                     size="xs"
-                                    isDisabled={deleteItemPersonResponse.loading}
+                                    isDisabled={deleteItemPersonResponse.fetching}
                                     onClick={async () => {
                                         try {
-                                            deleteItemPerson({
-                                                variables: {
+                                            deleteItemPerson(
+                                                {
                                                     itemPersonId: itemProgramPerson.id,
                                                 },
-                                                update: (cache, response) => {
-                                                    if (response.data?.delete_content_ItemProgramPerson_by_pk) {
-                                                        const deletedId =
-                                                            response.data.delete_content_ItemProgramPerson_by_pk.id;
-                                                        cache.modify({
-                                                            fields: {
-                                                                content_ItemProgramPerson(
-                                                                    existingRefs: Reference[] = [],
-                                                                    { readField }
-                                                                ) {
-                                                                    cache.evict({
-                                                                        id: deletedId,
-                                                                        fieldName: "ManageContent_ItemProgramPerson",
-                                                                        broadcast: true,
-                                                                    });
-                                                                    return existingRefs.filter(
-                                                                        (ref) => readField("id", ref) !== deletedId
-                                                                    );
-                                                                },
-                                                            },
-                                                        });
-                                                    }
-                                                },
-                                            });
-                                        } catch (e) {
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        },
+                                                    },
+                                                }
+                                            );
+                                        } catch (e: any) {
                                             toast({
                                                 title: "Error unlinking person",
                                                 description: e.message ?? e.toString(),

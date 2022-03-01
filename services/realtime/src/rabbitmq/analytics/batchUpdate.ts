@@ -1,6 +1,7 @@
+import { downlink, uplink } from "@midspace/component-clients/rabbitmq";
 import type { Channel } from "amqplib";
 import { Mutex } from "async-mutex";
-import { downlink, uplink } from "../../rabbitmq";
+import { logger } from "../../lib/logger";
 
 export enum ModelName {
     Conference = "conference",
@@ -87,8 +88,8 @@ export async function onBatchUpdate(
                     channel.ack(rabbitMQMsg);
                 }
             }
-        } catch (e) {
-            console.error(`Error processing ${modelName} analytics batch update`, e);
+        } catch (error: any) {
+            logger.error({ error }, `Error processing ${modelName} analytics batch update`);
         }
     });
 }

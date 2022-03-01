@@ -4,7 +4,4 @@ frontend/snowpack/
 services/actions/src/types/
 services/playout/src/generated/
 
-slate-transcript-editor/
-frontend/src/TranscriptEditor.js
-
 services/playout/codegen.js

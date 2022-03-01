@@ -16,20 +16,24 @@ self.addEventListener("push", function (event) {
     if (event.data) {
         const notification = event.data.json();
 
-        event.waitUntil(self.registration.showNotification(notification.title + (notification.subtitle ? " " + notification.subtitle : ""), {
-            body: notification.description,
-            icon: "favicon.png",
-            lang: "en",
-            badge: "favicon.png",
-            data: notification
-        }));
+        event.waitUntil(
+            self.registration.showNotification(
+                notification.title + (notification.subtitle ? " " + notification.subtitle : ""),
+                {
+                    body: notification.description,
+                    icon: "favicon.png",
+                    lang: "en",
+                    badge: "favicon.png",
+                    data: notification,
+                }
+            )
+        );
     }
 });
 
 self.addEventListener("notificationclick", function (event) {
     event.waitUntil(
         self.clients.matchAll().then(function (clientList) {
-
             if (clientList.length > 0) {
                 return clientList[0].focus();
             }
@@ -42,7 +46,6 @@ self.addEventListener("notificationclick", function (event) {
         })
     );
 });
-
 
 // CHAT_TODO: How the heck do we handle this...? We don't have the user's id here,
 //            nor any convenient way of creating an apollo client (or even importing
@@ -65,4 +68,3 @@ self.addEventListener("notificationclick", function (event) {
 //             })
 //     );
 // });
-

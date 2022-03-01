@@ -14,6 +14,8 @@ If you want to contribute to Midspace, please read our [contribution guidelines]
 | hasura            | The Hasura GraphQL configuration, actions and seed data.             | [Hasura Readme](hasura/README.md)                      |
 | services          | Micro-services                                                       |                                                        |
 | services/actions  | A service that handles most Hasura actions.                          | [Actions service readme](services/actions/README.md)   |
+| services/auth     |                                                                      | [Auth service readme](services/auth/README.md)         |
+| services/caches   |                                                                      | [Caches service readme](services/caches/README.md)     |
 | services/realtime | A service that handles realtime interactions like chat and presence. | [Realtime service readme](services/realtime/README.md) |
 | services/playout  | A service that controls video broadcast pipelines.                   | [Playout service readme](services/playout/README.md)   |
 
@@ -41,11 +43,14 @@ marked **Production** as well.
    - We also recommend you install the "recommended extensions" listed in the
      `.vscode/extensions` folder. VSCode may offer to install them automatically.
    - If using Windows:
+     1. Note that you may encounter issues setting up a development environment that are specific to Windows, in which case README pull requests are welcome!
      1. Install [Git command line](https://git-scm.com/download/win) if you haven't already.
      1. Open or restart VSCode, and open a terminal with menu Terminal -> New Terminal
      1. Next to the big + sign in the right side of the terminal header, there's a dropdown with tooltip "Launch Profile...". Click it and select Git Bash.
-1. [Node.js 16](https://nodejs.org/en/) (and NPM 7.8 or later)
+1. [Node.js 17](https://nodejs.org/en/)
+1. [pnpm 16.30 or later](https://pnpm.io/installation)
 1. [Docker Desktop](https://docs.docker.com/compose/cli-command/#installing-compose-v2) - Midspace uses Docker Compose, now included in the Docker CLI.
+1. [Hasura CLI](https://hasura.io/docs/latest/graphql/core/hasura-cli/install-hasura-cli.html#install-hasura-cli)
 1. **Full Setup:** [AWS CLI](https://aws.amazon.com/cli/) and [awsvault](https://github.com/99designs/aws-vault)
 1. **Production:** [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) if you will be deploying Midspace publicly.
 
@@ -58,6 +63,14 @@ The Hasura GraphQL engine will be configured with an arbitrary admin secret valu
 
 Several other setup steps require an arbitrarily selected secret value shared between services, and this method may be used for generating those values as well.
 
+## Install Packages
+
+Install all node packages (pnpm descends into subdirectories and creates all necessary `node_modules` directories):
+
+```
+pnpm i
+```
+
 ## Cloud Services
 
 Midspace relies on various cloud services, which will need to be configured for local development as well.
@@ -66,55 +79,70 @@ Midspace relies on various cloud services, which will need to be configured for 
 1. [Set up user authentication](docs/auth-setup.md)
 1. **Full Setup:** [Set up AWS account and Deploy AWS CloudFormation Stacks](aws/README.md)
 1. [Set up video chat service](docs/video-service-setup.md)
-1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account.
+1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and an API key for it.
    1. Take note of the API key when creating the account; you will not be able to view it later without updating it to a new value.
    1. Also set up [Signed Event Webhook Requests](https://docs.sendgrid.com/for-developers/tracking-events/getting-started-event-webhook-security-features#the-signed-event-webhook) and generate a verification key pair. You will need the public key, but you can come back to the Sendgrid mail settings page &rarr; Signed Event Webhook Requests modal to view it later.
 
 ## Setting Up Local Working Copy
 
-1. Clone this repository
-1. Initialise and update submodules:
-   ```
-         git submodule init
-         git submodule update
-   ```
-1. Build `slate-transcript-editor` as follows:
-   1. `cd slate-transcript-editor`
-   1. Run `npm install`
-   1. Run `npm run build:component`
-   1. You should see the `dist` folder created.
-   1. You will not need to do this again (hopefully)
-1. Install top-level and shared npm packages:
-   ```
-   npm i
-   cd shared
-     npm i
-     cd ..
-   ```
 1. Follow the Hasura setup: [Midspace Hasura ReadMe](hasura/README.md#Setting-up)
 1. Follow the Actions Service setup: [Midspace Actions Service
    ReadMe](services/actions/README.md#Setting-up)
+1. Follow the Auth Service setup: [Midspace Auth Service
+   ReadMe](services/auth/README.md#Setting-up)
+1. Follow the Caches Service setup: [Midspace Caches Service
+   ReadMe](services/caches/README.md#Setting-up)
 1. Follow the Playout Service setup: [Midspace Playout Service
    ReadMe](services/playout/README.md#Setting-up)
 1. Follow the Realtime Service setup: [Midspace Realtime Service
    ReadMe](services/realtime/README.md#Setting-up)
 1. Follow the Frontend setup: [Midspace Frontend
    ReadMe](frontend/README.md#Setting-up)
+1. Generate all GraphQL client code
+   1. `cd packages/shared/graphql`
+   1. `cp .env.example .env`
+   1. Set environment variable values in `.env` as per other parts of Midspace,
+      likely just `HASURA_ADMIN_SECRET`.
+   1. Run the VSCode task `All -- GraphQL Codegen`. If there are errors, check
+      that `.env` files have been populated in all relevant subdirectories as
+      described in previous steps.
+   1. **Fixup currently required after running GraphQL Codegen:** Some changes are made to the file `frontend/src/generate/graphql.tsx` that need to be undone:
+      1. Restore this line at the beginning of the file:
+         `import { useQuery } from "@midspace/urql-hasura-cache-generic-resolver/useQuery";`
+      1. Revert all instances of `Urql.useQuery<` back to `useQuery<`.
 
-## Local Development
+### Starting your local working copy
 
 Once you have finished setup, it's easy to run the entire environment with a single VSCode task: "Run All -- Local Development". This task starts PacketRiot tunnels as well as all Midspace services.
+
+## Final Steps
+
+1. Once the system is up and running, open the app in your browser, log in,
+   then navigate to `https://<your-domain>/su` and follow the instructions to
+   set up a superuser.
+   - In a production environment, we recommend using separate
+     infrequently-accessed accounts for superusers, to reduce the risk and
+     impact of security breaches.
+   - In a production environment, we recommend using separate accounts for
+     the various privileges available to superusers. For example, keep
+     accounts with the ability to create conference codes separate from
+     those able to modify the set of superusers.
+1. If running this software in a production environment, you will need to use
+   the superuser configuration pages to initialise the System Configuration.
+   - Fill out values for all available keys.
+   - Refer to the `description` field of each key (in `system.ConfigurationKey`)
+     for expected values.
 
 If you alter environment config, Docker Compose config, etc., then all tasks must be restarted. Tasks can be killed in VSCode using Ctrl+C or by closing the terminal window they are running in. To kill Docker containers, you will need to manually terminate the container (e.g. by pressing the stop button in Docker Desktop)
 
 ## Create a conference
 
-When you log into Midspace for the first time, there will be no conferences listed. You will need a demo code to create a conference, and this cannot yet be done through the Midspace UI. To create a demo code:
+When you log into Clowdr for the first time, there will be no conferences listed. You will need a demo code to create a conference, and this cannot yet be done through the Clowdr UI. To create a demo code:
 
 1. Go to the _Data_ tab in the Hasura console.
 2. Open the _conference > DemoCode_ table.
 3. Open the _Insert Row_ tab. Ensure that `id` is set to _Default_ and click _Save_. There is no need to enter any values manually.
-4. A demo code has now been created. Open the _Browse Rows_ tab and find the new row in the table.
+4. A code has now been created. Open the _Browse Rows_ tab and find the new row in the table.
 5. Copy the `id` column of the new row. This is your demo code - you can use it to create a conference in the Midspace UI.
 
 ### Modifying the default security settings

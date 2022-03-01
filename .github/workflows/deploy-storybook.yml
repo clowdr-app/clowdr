@@ -1,0 +1,43 @@
+on:
+  push:
+    branches:
+      - main
+      - next/subconferences
+
+jobs:
+  deploy-storybook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "17"
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 6.30.x
+          run_install: |
+            - args: [--filter=@midspace/frontend...]
+
+      - name: Build dependencies
+        run: pnpm build --filter @midspace/frontend^...
+
+      - name: Build Storybook
+        run: pnpm build-storybook
+        working-directory: ./frontend
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/storybook-static

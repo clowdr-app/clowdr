@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -13,13 +12,16 @@ import {
     ModalOverlay,
     Select,
 } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     useChooseElementModal_GetItemsQuery,
     useChooseElementModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
+import { makeContext } from "../../../../GQL/make-context";
 import { useConference } from "../../../useConference";
 
 gql`
@@ -27,6 +29,7 @@ gql`
         content_Item(where: { conferenceId: { _eq: $conferenceId } }, order_by: { title: asc }) {
             id
             title
+            conferenceId
         }
     }
 
@@ -37,6 +40,8 @@ gql`
         ) {
             id
             name
+            typeName
+            itemId
         }
     }
 `;
@@ -51,10 +56,18 @@ export function ChooseElementModal({
     chooseItem: (elementId: string) => void;
 }): JSX.Element {
     const conference = useConference();
-    const itemsResult = useChooseElementModal_GetItemsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [itemsResult] = useChooseElementModal_GetItemsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const [itemId, setItemId] = useState<string | null>(null);
@@ -67,10 +80,11 @@ export function ChooseElementModal({
         ));
     }, [itemsResult.data?.content_Item]);
 
-    const elementsResult = useChooseElementModal_GetVideoElementsQuery({
+    const [elementsResult] = useChooseElementModal_GetVideoElementsQuery({
         variables: {
             itemId,
         },
+        context,
     });
 
     const elementOptions = useMemo(() => {

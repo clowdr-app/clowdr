@@ -1,0 +1,24 @@
+projects:
+  frontend:
+    schema: ./packages/shared/graphql/schema/schema.graphql
+    documents:
+      - ./frontend/src/**/*.tsx
+      - ./frontend/src/**/*.ts
+  auth:
+    schema: ./packages/shared/graphql/schema/schema.graphql
+    documents: ./packages/node/auth/src/**/*.ts
+  caches:
+    schema: ./packages/shared/graphql/schema/schema.graphql
+    documents: ./packages/node/caches/src/**/*.ts
+  hasura:
+    schema: ./packages/shared/graphql/schema/schema.graphql
+    documents: ./packages/shared/hasura/src/**/*.ts
+  service-actions:
+    schema: ./packages/shared/graphql/schema/schema.graphql
+    documents: ./services/actions/src/**/*.ts
+  service-playout:
+    schema: ./packages/shared/graphql/schema/schema.graphql
+    documents: ./services/playout/src/**/*.ts
+  service-realtime:
+    schema: ./packages/shared/graphql/schema/schema.graphql
+    documents: ./services/realtime/src/**/*.ts

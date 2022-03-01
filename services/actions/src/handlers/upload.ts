@@ -1,35 +1,38 @@
 import { gql } from "@apollo/client/core";
-import {
-    EmailTemplate_BaseConfig,
-    isEmailTemplate_BaseConfig,
-} from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import {
+import type {
+    submitElementArgs,
+    SubmitElementOutput,
+    SubmitUpdatedSubtitlesOutput,
+    updateSubtitlesArgs,
+} from "@midspace/hasura/action-types";
+import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import type {
     AudioElementBlob,
-    AWSJobStatus,
-    Content_ElementType_Enum,
-    ElementBaseType,
     ElementBlob,
     ElementVersionData,
     VideoElementBlob,
-} from "@clowdr-app/shared-types/build/content";
-import { EmailView_SubmissionRequest, EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
+} from "@midspace/shared-types/content";
+import { AWSJobStatus, Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
+import type { EmailView_SubmissionRequest } from "@midspace/shared-types/email";
+import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@midspace/shared-types/email";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { compile } from "handlebars";
+import type { P } from "pino";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
+import type { Email_Insert_Input, UploadableElementFieldsFragment } from "../generated/graphql";
 import {
     CompleteSubmissionRequestEmailJobsDocument,
     Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
-    Email_Insert_Input,
     GetUploadersDocument,
     InsertSubmissionRequestEmailsDocument,
     SelectUnprocessedSubmissionRequestEmailJobsDocument,
     SetUploadableElementUploadsRemainingDocument,
     UploadableElementDocument,
-    UploadableElementFieldsFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
@@ -39,44 +42,30 @@ import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
 gql`
     query UploadableElement($accessToken: String!) {
-        content_Element(where: { accessToken: { _eq: $accessToken } }) {
+        content_Element(where: { item: { itemPeople: { person: { accessToken: { _eq: $accessToken } } } } }) {
             ...UploadableElementFields
-            conference {
-                configurations(where: { key: { _eq: UPLOAD_CUTOFF_TIMESTAMP } }) {
-                    conferenceId
-                    key
-                    value
-                }
+        }
+        conference_Conference(where: { programPeople: { accessToken: { _eq: $accessToken } } }) {
+            id
+            name
+            configurations(where: { key: { _eq: UPLOAD_CUTOFF_TIMESTAMP } }) {
+                conferenceId
+                key
+                value
             }
         }
-    }
-
-    fragment UploadableElementPermissionGrantFields on content_ElementPermissionGrant {
-        id
-        permissionSetId
-        groupId
-        entityId
-        conferenceSlug
     }
 
     fragment UploadableElementFields on content_Element {
         id
         typeName
-        accessToken
         name
         uploadsRemaining
         isHidden
         data
-        conference {
-            id
-            name
-        }
         item {
             id
             title
-        }
-        permissionGrants {
-            ...UploadableElementPermissionGrantFields
         }
     }
 `;
@@ -100,7 +89,7 @@ async function checkS3Url(
             Bucket: bucket,
             Key: key,
         });
-    } catch (e) {
+    } catch (e: any) {
         return {
             result: "error",
             message: "Could not retrieve object from S3",
@@ -219,12 +208,16 @@ async function createBlob(
     }
 }
 
-interface ItemByToken {
-    uploadableElement: UploadableElementFieldsFragment;
+interface ElementsByToken {
+    elements: readonly UploadableElementFieldsFragment[];
+    conference: {
+        id: string;
+        name: string;
+    };
     uploadCutoffTimestamp?: Date;
 }
 
-async function getItemByToken(magicToken: string): Promise<ItemByToken | { error: string }> {
+async function getElementsByToken(magicToken: string): Promise<ElementsByToken | { error: string }> {
     if (!magicToken) {
         return {
             error: "Access token not provided.",
@@ -238,19 +231,22 @@ async function getItemByToken(magicToken: string): Promise<ItemByToken | { error
         },
     });
 
-    if (response.data.content_Element.length !== 1) {
+    if (response.data.content_Element.length === 0) {
         return {
-            error: "Could not find an element that matched the request.",
+            error: "Could not find any elements that matched the request.",
         };
     }
 
-    const element = response.data.content_Element[0];
+    const result: ElementsByToken = {
+        elements: response.data.content_Element,
+        conference: response.data.conference_Conference[0],
+    };
 
-    const result: ItemByToken = { uploadableElement: element };
-
-    if (element.conference.configurations.length === 1) {
+    if (response.data.conference_Conference[0].configurations.length === 1) {
         // UPLOAD_CUTOFF_TIMESTAMP is specified in epoch milliseconds
-        result.uploadCutoffTimestamp = new Date(parseInt(element.conference.configurations[0].value));
+        result.uploadCutoffTimestamp = new Date(
+            parseInt(response.data.conference_Conference[0].configurations[0].value)
+        );
     }
 
     return result;
@@ -282,6 +278,7 @@ gql`
 `;
 
 async function sendSubmittedEmail(
+    logger: P.Logger,
     elementId: string,
     uploadableElementName: string,
     itemTitle: string,
@@ -344,20 +341,28 @@ async function sendSubmittedEmail(
             });
         }
 
-        await insertEmails(emails, uploaders.data.content_Element_by_pk.conferenceId, undefined);
+        await insertEmails(logger, emails, uploaders.data.content_Element_by_pk.conferenceId, undefined);
     }
 }
 
-export async function handleElementSubmitted(args: submitElementArgs): Promise<SubmitElementOutput> {
-    const itemByToken = await getItemByToken(args.magicToken);
-    if ("error" in itemByToken) {
+export async function handleElementSubmitted(logger: P.Logger, args: submitElementArgs): Promise<SubmitElementOutput> {
+    const elementsByToken = await getElementsByToken(args.magicToken);
+    if ("error" in elementsByToken) {
+        logger.info({ magicToken: args.magicToken }, "Magic token");
         return {
             success: false,
-            message: itemByToken.error,
+            message: elementsByToken.error,
         };
     }
 
-    const uploadableElement = itemByToken.uploadableElement;
+    const uploadableElement = elementsByToken.elements.find((x) => x.id === args.elementId);
+
+    if (!uploadableElement) {
+        return {
+            message: "No matching content element",
+            success: false,
+        };
+    }
 
     if (uploadableElement.uploadsRemaining === 0) {
         return {
@@ -366,7 +371,7 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
         };
     }
 
-    if (itemByToken.uploadCutoffTimestamp && itemByToken.uploadCutoffTimestamp < new Date()) {
+    if (elementsByToken.uploadCutoffTimestamp && elementsByToken.uploadCutoffTimestamp < new Date()) {
         return {
             success: false,
             message: "Submission deadline has passed",
@@ -411,13 +416,14 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
                 },
             });
             await sendSubmittedEmail(
+                logger,
                 uploadableElement.id,
                 uploadableElement.name,
                 uploadableElement.item.title,
-                uploadableElement.conference.name
+                elementsByToken.conference.name
             );
-        } catch (e) {
-            console.error("Failed to save new version of content item", e);
+        } catch (e: any) {
+            logger.error({ err: e }, "Failed to save new version of content item");
             return {
                 success: false,
                 message: "Failed to save new version of content item",
@@ -449,20 +455,23 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
     };
 }
 
-export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<SubmitUpdatedSubtitlesOutput> {
-    const itemByToken = await getItemByToken(args.magicToken);
-    if ("error" in itemByToken) {
+export async function handleUpdateSubtitles(
+    logger: P.Logger,
+    args: updateSubtitlesArgs
+): Promise<SubmitUpdatedSubtitlesOutput> {
+    const elementsByToken = await getElementsByToken(args.magicToken);
+    if ("error" in elementsByToken) {
         return {
             success: false,
-            message: itemByToken.error,
+            message: elementsByToken.error,
         };
     }
 
-    const uploadableElement = itemByToken.uploadableElement;
+    const uploadableElement = elementsByToken.elements.find((x) => x.id === args.elementId);
 
     if (!uploadableElement) {
         return {
-            message: "No matching content item",
+            message: "No matching content element",
             success: false,
         };
     }
@@ -471,7 +480,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
 
     if (!latestVersion) {
         return {
-            message: "No existing content item data",
+            message: "No existing content element data",
             success: false,
         };
     }
@@ -481,7 +490,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
     newVersion.createdBy = "user";
     assert(
         is<VideoElementBlob>(newVersion.data) || is<AudioElementBlob>(newVersion.data),
-        "Content item is not a video or audio file."
+        "Content element is not a video or audio file."
     );
 
     const bucket = process.env.AWS_CONTENT_BUCKET_ID;
@@ -493,8 +502,8 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
             Key: key,
             Body: args.subtitleText,
         });
-    } catch (e) {
-        console.error("Failed to upload new subtitles", e);
+    } catch (e: any) {
+        logger.error({ err: e }, "Failed to upload new subtitles");
         return {
             message: "Failed to upload new subtitles",
             success: false,
@@ -518,10 +527,10 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
                 newVersion,
             },
         });
-    } catch (e) {
-        console.error("Failed to save new content item version", e);
+    } catch (e: any) {
+        logger.error({ err: e }, "Failed to save new content element version");
         return {
-            message: "Failed to save new content item version",
+            message: "Failed to save new content element version",
             success: false,
         };
     }
@@ -533,108 +542,18 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
 }
 
 gql`
-    fragment UploaderParts on content_Uploader {
-        id
-        conference {
-            id
-            name
-            shortName
-        }
-        email
-        emailsSentCount
-        name
-        element {
-            ...UploadableElementFields
-        }
-    }
-
-    mutation InsertSubmissionRequestEmails($uploaderIds: [uuid!]!, $personIds: [uuid!]!) {
-        update_content_Uploader(where: { id: { _in: $uploaderIds } }, _inc: { emailsSentCount: 1 }) {
-            affected_rows
-        }
+    mutation InsertSubmissionRequestEmails($personIds: [uuid!]!) {
         update_collection_ProgramPerson(where: { id: { _in: $personIds } }, _inc: { submissionRequestsSentCount: 1 }) {
             affected_rows
         }
     }
 `;
 
-function generateContentTypeFriendlyName(type: Content_ElementType_Enum) {
-    switch (type) {
-        case Content_ElementType_Enum.Abstract:
-            return "Abstract";
-        case Content_ElementType_Enum.ContentGroupList:
-            return "Content group list";
-        case Content_ElementType_Enum.ImageFile:
-            return "Image file";
-        case Content_ElementType_Enum.ImageUrl:
-            return "Image URL";
-        case Content_ElementType_Enum.Link:
-            return "Link";
-        case Content_ElementType_Enum.LinkButton:
-            return "Link button";
-        case Content_ElementType_Enum.PaperFile:
-            return "Paper file";
-        case Content_ElementType_Enum.PaperLink:
-            return "Paper link";
-        case Content_ElementType_Enum.PaperUrl:
-            return "Paper URL";
-        case Content_ElementType_Enum.PosterFile:
-            return "Poster file";
-        case Content_ElementType_Enum.PosterUrl:
-            return "Poster URL";
-        case Content_ElementType_Enum.Text:
-            return "Text";
-        case Content_ElementType_Enum.VideoBroadcast:
-            return "Video for broadcast";
-        case Content_ElementType_Enum.VideoCountdown:
-            return "Video countdown";
-        case Content_ElementType_Enum.VideoFile:
-            return "Video file";
-        case Content_ElementType_Enum.VideoFiller:
-            return "Filler video";
-        case Content_ElementType_Enum.VideoLink:
-            return "Link to video";
-        case Content_ElementType_Enum.VideoPrepublish:
-            return "Video for pre-publication";
-        case Content_ElementType_Enum.VideoSponsorsFiller:
-            return "Sponsors filler video";
-        case Content_ElementType_Enum.VideoTitles:
-            return "Pre-roll titles video";
-        case Content_ElementType_Enum.VideoUrl:
-            return "Video URL";
-        case Content_ElementType_Enum.WholeSchedule:
-            return "Whole schedule";
-        case Content_ElementType_Enum.Zoom:
-            return "Zoom";
-        case Content_ElementType_Enum.ActiveSocialRooms:
-            return "Active social rooms";
-        case Content_ElementType_Enum.LiveProgramRooms:
-            return "Live program rooms";
-        case Content_ElementType_Enum.Divider:
-            return "Divider";
-        case Content_ElementType_Enum.SponsorBooths:
-            return "Sponsor booths";
-        case Content_ElementType_Enum.ExploreProgramButton:
-            return "Explore program button";
-        case Content_ElementType_Enum.ExploreScheduleButton:
-            return "Explore schedule button";
-        case Content_ElementType_Enum.AudioFile:
-            return "Audio file";
-        case Content_ElementType_Enum.AudioLink:
-            return "Audio link";
-        case Content_ElementType_Enum.AudioUrl:
-            return "Audio URL";
-    }
-}
-
 gql`
     query SelectUnprocessedSubmissionRequestEmailJobs {
         job_queues_SubmissionRequestEmailJob(where: { processed: { _eq: false } }) {
             id
             emailTemplate
-            uploader {
-                ...UploaderParts
-            }
             person {
                 id
                 name
@@ -673,7 +592,7 @@ function generateIdempotencyKey(jobId: string): string {
     return uuidv5(`invite-email,${jobId}`, EMAIL_IDEMPOTENCY_NAMESPACE);
 }
 
-export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
+export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): Promise<void> {
     const jobsToProcess = await apolloClient.mutate({
         mutation: SelectUnprocessedSubmissionRequestEmailJobsDocument,
         variables: {},
@@ -685,56 +604,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
         let result: SubmissionRequestEmail | undefined;
         let conferenceId: string | undefined;
 
-        if (job.uploader) {
-            const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.element.typeName);
-            const uploadLink = `{{frontendHost}}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
-            const context: EmailView_SubmissionRequest = {
-                uploader: {
-                    name: job.uploader.name,
-                },
-                file: {
-                    name: job.uploader.element.name,
-                    typeName: contentTypeFriendlyName,
-                },
-                conference: {
-                    name: job.uploader.conference.name,
-                    shortName: job.uploader.conference.shortName,
-                },
-                item: {
-                    title: job.uploader.element.item.title,
-                },
-                uploadLink,
-            };
-
-            const emailTemplate: EmailTemplate_BaseConfig | null = isEmailTemplate_BaseConfig(job.emailTemplate)
-                ? job.emailTemplate
-                : await getConferenceConfiguration<EmailTemplate_BaseConfig>(
-                      job.uploader.conference.id,
-                      Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
-                  );
-
-            const bodyTemplate = compile(
-                emailTemplate?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate
-            );
-            const subjectTemplate = compile(
-                emailTemplate?.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate
-            );
-
-            const htmlBody = bodyTemplate(context);
-            const subject = subjectTemplate(context);
-
-            const newEmail: Email_Insert_Input = {
-                recipientName: job.uploader.name,
-                emailAddress: job.uploader.email,
-                htmlContents: htmlBody,
-                reason: "upload-request",
-                subject,
-                idempotencyKey: generateIdempotencyKey(job.id),
-            };
-            conferenceId = job.uploader.conference.id;
-
-            result = { email: newEmail, uploaderId: job.uploader.id, jobId: job.id };
-        } else if (job.person) {
+        if (job.person) {
             const uploadLink = `{{frontendHost}}/submissions/${job.person.accessToken}`;
 
             const context: EmailView_SubmissionRequest = {
@@ -792,21 +662,20 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
         try {
             const emailsToInsert = emailsRecords.map((x) => x.email).filter(isNotUndefined);
             if (emailsToInsert.length > 0) {
-                await insertEmails(emailsToInsert, conferenceId, undefined);
+                await insertEmails(logger, emailsToInsert, conferenceId, undefined);
             }
 
             await apolloClient.mutate({
                 mutation: InsertSubmissionRequestEmailsDocument,
                 variables: {
-                    uploaderIds: emailsRecords
-                        .map((x) => ("uploaderId" in x ? x.uploaderId : undefined))
-                        .filter(isNotUndefined),
+                    // uploaderIds: emailsRecords
+                    //     .map((x) => ("uploaderId" in x ? x.uploaderId : undefined))
+                    //     .filter(isNotUndefined),
                     personIds: emailsRecords
                         .map((x) => ("personId" in x ? x.personId : undefined))
                         .filter(isNotUndefined),
                 },
             });
-
             await apolloClient.mutate({
                 mutation: CompleteSubmissionRequestEmailJobsDocument,
                 variables: {
@@ -814,11 +683,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                 },
             });
         } catch (error: any) {
-            console.error("Could not process submission request jobs", {
-                jobIds: emailsRecords.map((x) => x.jobId),
-                conferenceId,
-                error,
-            });
+            logger.error({ jobIds: emailsRecords.map((x) => x.jobId), error }, "Could not process jobs");
         }
     });
 }

@@ -1,10 +1,10 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { assertIsElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { assertIsElementDataBlob } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import type { ItemElements_ItemDataFragment } from "../../../../generated/graphql";
 import { Content_ElementType_Enum } from "../../../../generated/graphql";
-import usePolling from "../../../Generic/usePolling";
+import usePolling from "../../../Hooks/usePolling";
 import { VideoElement } from "./Element/VideoElement";
 
 export function ItemVideos({ itemData }: { itemData: ItemElements_ItemDataFragment }): JSX.Element {
@@ -79,7 +79,7 @@ export function ItemVideos({ itemData }: { itemData: ItemElements_ItemDataFragme
             justifyContent={["flex-start", "flex-start", "center"]}
             alignItems="center"
             background="gray.900"
-            borderRadius={5}
+            borderRadius={0}
             pb={5}
             flexDir={["column", "column", "row"]}
         >

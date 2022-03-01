@@ -1,10 +1,10 @@
-import type { StackProps} from "@chakra-ui/react";
+import type { StackProps } from "@chakra-ui/react";
 import { HStack, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import type { ItemExhibitionDataFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useConference } from "../../useConference";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 
 export default function ExhibitionNameList({
     exhibitions,
@@ -24,7 +24,7 @@ export default function ExhibitionNameList({
 }
 
 function ExhibitionButton({ exhibition }: { exhibition: { id: any; name: string; colour: string } }): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const borderColour = useColorModeValue(
         "ItemExhibitionLinkButton.borderColor-light",
         "ItemExhibitionLinkButton.borderColor-dark"
@@ -67,7 +67,7 @@ function ExhibitionButton({ exhibition }: { exhibition: { id: any; name: string;
     const shadow = useColorModeValue("md", "light-md");
     return (
         <LinkButton
-            to={`/conference/${conference.slug}/exhibition/${exhibition.id}`}
+            to={`${conferencePath}/exhibition/${exhibition.id}`}
             w="auto"
             h="auto"
             fontSize="sm"

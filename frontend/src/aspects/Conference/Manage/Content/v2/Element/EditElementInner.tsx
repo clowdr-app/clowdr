@@ -1,13 +1,10 @@
-import type { Reference } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Divider, Text } from "@chakra-ui/react";
-import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { ElementBaseTypes } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
-import type {
-    ManageContent_ElementFragment} from "../../../../../../generated/graphql";
-import {
-    ManageContent_ElementFragmentDoc,
-    useManageContent_UpdateElementMutation,
-} from "../../../../../../generated/graphql";
+import type { ManageContent_ElementFragment } from "../../../../../../generated/graphql";
+import { useManageContent_UpdateElementMutation } from "../../../../../../generated/graphql";
+import { makeContext } from "../../../../../GQL/make-context";
 import { EditUploadsRemaining } from "./EditUploadsRemaining";
 import { ElementBaseTemplates } from "./Kinds/Templates";
 import type { ContentDescriptor } from "./Kinds/Types";
@@ -17,28 +14,14 @@ export function EditElementInner(props: {
     element: ManageContent_ElementFragment;
     openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
-    const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
-        update: (cache, { data: _data }) => {
-            if (_data?.update_content_Element_by_pk) {
-                const data = _data.update_content_Element_by_pk;
-                cache.modify({
-                    fields: {
-                        content_Element(existingRefs: Reference[] = [], { readField }) {
-                            const newRef = cache.writeFragment({
-                                data,
-                                fragment: ManageContent_ElementFragmentDoc,
-                                fragmentName: "ManageContent_Element",
-                            });
-                            if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                return existingRefs;
-                            }
-                            return [...existingRefs, newRef];
-                        },
-                    },
-                });
-            }
-        },
-    });
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation();
 
     const itemType = props.element.typeName;
     const baseType = ElementBaseTypes[itemType];
@@ -62,25 +45,19 @@ export function EditElementInner(props: {
                         typeName: updated.typeName,
                         uploadsRemaining: updated.uploadsRemaining,
                     };
-                    updateElement({
-                        variables: {
+                    updateElement(
+                        {
                             elementId: updated.id,
                             element: updatedItem,
                         },
-                        optimisticResponse: {
-                            update_content_Element_by_pk: {
-                                ...updated,
-                                ...updatedItem,
-                                __typename: "content_Element",
-                            },
-                        },
-                    });
+                        context
+                    );
                 }}
             />
         ) : (
             <Text>Cannot edit {itemType} items.</Text>
         );
-    }, [descriptors, itemTemplate, itemType, updateElement]);
+    }, [context, descriptors, itemTemplate, itemType, updateElement]);
 
     const readableTypeName = useMemo(
         () =>
@@ -103,8 +80,8 @@ export function EditElementInner(props: {
             <EditUploadsRemaining
                 elementId={props.element.id}
                 uploadsRemaining={props.element.uploadsRemaining ?? null}
-                updateUploadableElement={updateElement}
-                isUpdatingUploadable={updateElementResponse.loading}
+                updateUploadableElement={(data) => updateElement(data, context)}
+                isUpdatingUploadable={updateElementResponse.fetching}
             />
             <Divider my={2} />
             {editor}
@@ -117,23 +94,16 @@ export function EditElementInner(props: {
                             ...props.element,
                             layoutData,
                         };
-                        updateElement({
-                            variables: {
+                        updateElement(
+                            {
                                 elementId: newState.id,
                                 element: {
                                     data: newState.data,
                                     layoutData: newState.layoutData,
                                 },
                             },
-                            optimisticResponse: {
-                                update_content_Element_by_pk: {
-                                    ...props.element,
-                                    data: newState.data,
-                                    layoutData: newState.layoutData,
-                                    __typename: "content_Element",
-                                },
-                            },
-                        });
+                            context
+                        );
                     }
                 }}
             />

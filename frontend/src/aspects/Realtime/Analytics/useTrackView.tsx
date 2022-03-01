@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import usePolling from "../../Generic/usePolling";
+import usePolling from "../../Hooks/usePolling";
 import { useRealtimeService } from "../RealtimeServiceProvider";
 
 export default function useTrackView(

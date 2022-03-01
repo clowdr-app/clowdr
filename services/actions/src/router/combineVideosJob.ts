@@ -1,7 +1,8 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { processCombineVideosJobQueue } from "../handlers/combineVideosJob";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 
 export const router = express.Router();
 
@@ -9,13 +10,13 @@ export const router = express.Router();
 router.use(checkEventSecret);
 
 router.post("/process", json(), async (req: Request, res: Response) => {
-    console.log(`${req.originalUrl}: processing combine videos job queue`);
-    processCombineVideosJobQueue()
+    req.log.info("Processing combine videos job queue");
+    processCombineVideosJobQueue(req.log)
         .then(() => {
-            console.log("Finished processing CombineVideosJob queue");
+            req.log.info("Finished processing CombineVideosJob queue");
         })
         .catch((e) => {
-            console.error("Failure processing CombineVideosJob queue", e);
+            req.log.error({ err: e }, "Failure processing CombineVideosJob queue");
         });
     return res.status(200).json("OK");
 });

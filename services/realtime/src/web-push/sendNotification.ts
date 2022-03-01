@@ -1,9 +1,14 @@
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
+import { gql } from "graphql-tag";
 import webPush from "web-push";
+import type {
+    DeletePushNotificationSubscriptionMutation,
+    DeletePushNotificationSubscriptionMutationVariables,
+} from "../generated/graphql";
 import { DeletePushNotificationSubscriptionDocument } from "../generated/graphql";
-import { apolloClient } from "../graphqlClient";
-import { Notification } from "../types/chat";
+import { logger } from "../lib/logger";
+import type { Notification } from "../types/chat";
 import { getVAPIDKeys } from "./vapidKeys";
 
 gql`
@@ -27,17 +32,25 @@ export async function sendNotification(
                 subject: process.env.HOST_PUBLIC_URL,
             },
         });
-    } catch (e) {
-        console.warn("ERROR in sending Notification, endpoint removed " + subscription.endpoint, subscription, e);
-        try {
-            await apolloClient?.mutate({
-                mutation: DeletePushNotificationSubscriptionDocument,
-                variables: {
-                    endpoint: subscription.endpoint,
-                },
+    } catch (error: any) {
+        if (!(error.toString().includes("unsubscribed") || error.toString().includes("expired"))) {
+            logger.warn("ERROR in sending Notification.\nRemoving the endpoint record: " + subscription.endpoint, {
+                subscription,
+                error,
             });
-        } catch (e) {
-            console.error("Unable to delete push notification subscription from the database", e);
+        }
+
+        try {
+            await gqlClient
+                ?.mutation<
+                    DeletePushNotificationSubscriptionMutation,
+                    DeletePushNotificationSubscriptionMutationVariables
+                >(DeletePushNotificationSubscriptionDocument, {
+                    endpoint: subscription.endpoint,
+                })
+                .toPromise();
+        } catch (error: any) {
+            logger.error({ error }, "Unable to delete push notification subscription from the database");
         }
     }
 }

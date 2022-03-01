@@ -1,8 +1,10 @@
-import { gql } from "@apollo/client";
 import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
     Box,
     Button,
-    Center,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -20,11 +22,14 @@ import {
     Tr,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import React, { useCallback, useMemo, useState } from "react";
 import ReactPlayer from "react-player";
+import { gql } from "urql";
 import { useGetChannelStacksQuery } from "../../../../generated/graphql";
+import FAIcon from "../../../Chakra/FAIcon";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import FAIcon from "../../../Icons/FAIcon";
 
 gql`
     query GetChannelStacks($conferenceId: uuid!) {
@@ -33,15 +38,27 @@ gql`
                 cloudFrontDomain
                 endpointUri
                 id
+                roomId
             }
             name
             id
+            conferenceId
         }
     }
 `;
 
 export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const { data, loading, error, refetch } = useGetChannelStacksQuery({ variables: { conferenceId } });
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [{ data, fetching: loading, error }, refetch] = useGetChannelStacksQuery({
+        variables: { conferenceId },
+        context,
+    });
     useQueryErrorToast(error, false);
 
     const toStreamingEndpoint = useCallback((endpointUri: string, cloudFrontDomain: string): string => {
@@ -53,18 +70,23 @@ export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.
     const [streamUri, setStreamUri] = useState<string | null>(null);
     const streamDisclosure = useDisclosure();
 
-    return loading && !data ? (
-        <Spinner />
-    ) : error ? (
-        <>Error while loading list of rooms.</>
-    ) : (
+    return (
         <>
-            <Center>
-                <Button aria-label="Refresh rooms" onClick={() => refetch()} size="sm">
-                    <FAIcon icon="sync" iconStyle="s" />
-                </Button>
-            </Center>
-            <Table variant="simple" w="auto">
+            {loading ? <Spinner /> : undefined}
+            {error ? (
+                <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>Failed to load data</AlertTitle>
+                    <AlertDescription>
+                        {error.name}: {error.message}
+                    </AlertDescription>
+                </Alert>
+            ) : undefined}
+
+            <Button aria-label="Refresh rooms" onClick={() => refetch()} size="sm">
+                <FAIcon icon="sync" iconStyle="s" />
+            </Button>
+            <Table variant="simple" w="100%">
                 <TableCaption>Rooms that are set up for broadcast</TableCaption>
                 <Thead>
                     <Tr>

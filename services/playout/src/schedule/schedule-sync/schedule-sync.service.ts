@@ -1,11 +1,13 @@
-import { ChannelState, FollowPoint, InputTimecodeSource, ScheduleAction } from "@aws-sdk/client-medialive";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { ScheduleAction } from "@aws-sdk/client-medialive";
+import { ChannelState, FollowPoint, InputTimecodeSource } from "@aws-sdk/client-medialive";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { add } from "date-fns";
 import * as R from "ramda";
 import { v4 as uuidv4 } from "uuid";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Room_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
-import { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
+import type { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
 import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
 import { ContentElementDataService } from "../../hasura-data/content/content-element.service";
 import {
@@ -112,7 +114,7 @@ export class ScheduleSyncService {
                     "Conference does not have a filler video, skipping"
                 );
             } else {
-                await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], fillerVideoScheduleActions());
+                await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
             }
         };
 

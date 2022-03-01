@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -20,45 +19,57 @@ import type {
     FillerImmediateSwitchData,
     RtmpPushImmediateSwitchData,
     VideoImmediateSwitchData,
-} from "@clowdr-app/shared-types/build/video/immediateSwitchData";
-import type { FieldProps} from "formik";
+} from "@midspace/shared-types/video/immediateSwitchData";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useRef, useState } from "react";
+import { gql, useClient } from "urql";
+import { useContextSelector } from "use-context-selector";
 import { validate } from "uuid";
 import type {
-    RoomEventDetailsFragment} from "../../../../../../generated/graphql";
+    LiveIndicator_GetLatestQuery,
+    LiveIndicator_GetLatestQueryVariables,
+} from "../../../../../../generated/graphql";
 import {
+    LiveIndicator_GetLatestDocument,
     useImmediateSwitch_CreateMutation,
     useImmediateSwitch_GetElementsQuery,
-    useLiveIndicator_GetLatestQuery,
 } from "../../../../../../generated/graphql";
-import { useRealTime } from "../../../../../Generic/useRealTime";
-import FAIcon from "../../../../../Icons/FAIcon";
+import FAIcon from "../../../../../Chakra/FAIcon";
+import { useRealTime } from "../../../../../Hooks/useRealTime";
 import { useConference } from "../../../../useConference";
+import { BackstageContext } from "../BackstageContext";
 
 gql`
     query ImmediateSwitch_GetElements($eventId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             id
+            itemId
             item {
                 id
                 title
                 elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
                     id
                     name
+                    itemId
+                    typeName
                 }
             }
+            exhibitionId
             exhibition {
                 id
                 items {
                     id
+                    itemId
                     item {
                         id
                         title
                         elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
                             id
                             name
+                            itemId
+                            typeName
                         }
                     }
                 }
@@ -73,8 +84,9 @@ gql`
     }
 `;
 
-export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
+export function ImmediateSwitch(): JSX.Element {
     const toast = useToast();
+    const event = useContextSelector(BackstageContext, (state) => state.event);
 
     const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
@@ -83,16 +95,13 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
     const live = offsetNow >= startTime && offsetNow <= endTime;
     const secondsUntilOffAir = (endTime - offsetNow) / 1000;
 
-    const { data: elementsData } = useImmediateSwitch_GetElementsQuery({
+    const [{ data: elementsData }] = useImmediateSwitch_GetElementsQuery({
         variables: {
             eventId: event.id,
         },
     });
 
-    const [createImmediateSwitch] = useImmediateSwitch_CreateMutation();
-    const liveIndicatorLatest = useLiveIndicator_GetLatestQuery({
-        skip: true,
-    });
+    const [, createImmediateSwitch] = useImmediateSwitch_CreateMutation();
 
     const [lastSwitched, setLastSwitched] = useState<number>(0);
     const enableSwitchButton = now - lastSwitched > 5000;
@@ -135,6 +144,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const client = useClient();
     const performSwitch = useCallback(
         async (choice: string) => {
             switch (choice) {
@@ -144,15 +154,18 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                             kind: "filler",
                         };
                         await createImmediateSwitch({
-                            variables: {
-                                data,
-                                eventId: event.id,
-                                conferenceId: conference.id,
-                            },
-                        });
-                        await liveIndicatorLatest.refetch({
+                            data,
                             eventId: event.id,
+                            conferenceId: conference.id,
                         });
+                        await client
+                            .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
+                                LiveIndicator_GetLatestDocument,
+                                {
+                                    eventId: event.id,
+                                }
+                            )
+                            .toPromise();
                     } catch (err: any) {
                         toast({
                             status: "error",
@@ -169,12 +182,18 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                             kind: "rtmp_push",
                         };
                         await createImmediateSwitch({
-                            variables: {
-                                data,
-                                eventId: event.id,
-                                conferenceId: conference.id,
-                            },
+                            data,
+                            eventId: event.id,
+                            conferenceId: conference.id,
                         });
+                        await client
+                            .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
+                                LiveIndicator_GetLatestDocument,
+                                {
+                                    eventId: event.id,
+                                }
+                            )
+                            .toPromise();
                     } catch (err: any) {
                         toast({
                             status: "error",
@@ -201,12 +220,18 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                             elementId: choice,
                         };
                         await createImmediateSwitch({
-                            variables: {
-                                data,
-                                eventId: event.id,
-                                conferenceId: conference.id,
-                            },
+                            data,
+                            eventId: event.id,
+                            conferenceId: conference.id,
                         });
+                        await client
+                            .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
+                                LiveIndicator_GetLatestDocument,
+                                {
+                                    eventId: event.id,
+                                }
+                            )
+                            .toPromise();
                     } catch (err: any) {
                         toast({
                             status: "error",
@@ -220,7 +245,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
             }
             setLastSwitched(now);
         },
-        [conference.id, createImmediateSwitch, event.id, liveIndicatorLatest, now, toast]
+        [conference.id, createImmediateSwitch, event.id, client, now, toast]
     );
 
     const cancelRef = useRef<HTMLButtonElement>(null);

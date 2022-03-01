@@ -1,5 +1,3 @@
-import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -26,16 +24,18 @@ import {
     useColorMode,
     useDisclosure,
 } from "@chakra-ui/react";
-import type { LegacyRef} from "react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
+import type { LegacyRef } from "react";
 import React, { useCallback, useMemo, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
 import { v4 as uuidv4 } from "uuid";
 import type {
     Collection_Exhibition_Set_Input,
-    ManageContent_ExhibitionFragment} from "../../../../../../generated/graphql";
+    ManageContent_ExhibitionFragment,
+} from "../../../../../../generated/graphql";
 import {
-    ManageContent_ExhibitionFragmentDoc,
     useManageContent_DeleteExhibitionsMutation,
     useManageContent_InsertExhibitionMutation,
     useManageContent_SelectAllExhibitionsQuery,
@@ -50,11 +50,11 @@ import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
-    RowSpecification} from "../../../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../../../../CRUDTable2/CRUDTable2";
-import { maybeCompare } from "../../../../../Utils/maybeSort";
+import CRUDTable, { SortDirection } from "../../../../../CRUDTable2/CRUDTable2";
+import { makeContext } from "../../../../../GQL/make-context";
+import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { useConference } from "../../../../useConference";
 import { SecondaryEditor } from "./ExhibitionSecondaryEditor";
 
@@ -107,10 +107,18 @@ export default function ManageExhibitionsModal({ onClose: onCloseCb }: { onClose
 
 function ManageExhibitionsModalBody(): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useManageContent_SelectAllExhibitionsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [exhibitionsResponse] = useManageContent_SelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const row: RowSpecification<ManageContent_ExhibitionFragment> = useMemo(
@@ -244,7 +252,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     return isInCreate ? (
                         <FormLabel>Colour</FormLabel>
                     ) : (
-                        <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                        <Text fontSize="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
                             Colour
                         </Text>
                     );
@@ -370,7 +378,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
         [data, onSecondaryPanelClose, onSecondaryPanelOpen]
     );
 
-    const [insertExhibition, insertExhibitionResponse] = useManageContent_InsertExhibitionMutation();
+    const [insertExhibitionResponse, insertExhibition] = useManageContent_InsertExhibitionMutation();
     const insert:
         | {
               generateDefaults: () => Partial<ManageContent_ExhibitionFragment>;
@@ -382,7 +390,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: insertExhibitionResponse.loading,
+            ongoing: insertExhibitionResponse.fetching,
             generateDefaults: () =>
                 ({
                     id: uuidv4(),
@@ -394,8 +402,8 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 } as ManageContent_ExhibitionFragment),
             makeWhole: (d) => d as ManageContent_ExhibitionFragment,
             start: (record) => {
-                insertExhibition({
-                    variables: {
+                insertExhibition(
+                    {
                         exhibition: {
                             conferenceId: record.conferenceId,
                             id: record.id,
@@ -405,33 +413,20 @@ function ManageExhibitionsModalBody(): JSX.Element {
                             isHidden: record.isHidden,
                         },
                     },
-                    update: (cache, response) => {
-                        if (response.data?.insert_collection_Exhibition_one) {
-                            const data = response.data?.insert_collection_Exhibition_one;
-                            cache.modify({
-                                fields: {
-                                    collection_Exhibition(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_ExhibitionFragmentDoc,
-                                            fragmentName: "ManageContent_Exhibition",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
-                    },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
             },
         }),
-        [conference.id, data?.length, insertExhibition, insertExhibitionResponse.loading]
+        [conference.id, data?.length, insertExhibition, insertExhibitionResponse.fetching]
     );
 
-    const [updateExhibition, updateExhibitionResponse] = useManageContent_UpdateExhibitionMutation();
+    const [updateExhibitionResponse, updateExhibition] = useManageContent_UpdateExhibitionMutation();
     const update:
         | {
               start: (record: ManageContent_ExhibitionFragment) => void;
@@ -439,7 +434,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: updateExhibitionResponse.loading,
+            ongoing: updateExhibitionResponse.fetching,
             start: (record) => {
                 const exhibitionUpdateInput: Collection_Exhibition_Set_Input = {
                     name: record.name,
@@ -447,41 +442,25 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     priority: record.priority,
                     isHidden: record.isHidden,
                 };
-                updateExhibition({
-                    variables: {
+                updateExhibition(
+                    {
                         id: record.id,
                         update: exhibitionUpdateInput,
                     },
-                    optimisticResponse: {
-                        update_collection_Exhibition_by_pk: record,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.update_collection_Exhibition_by_pk) {
-                            const data = _data.update_collection_Exhibition_by_pk;
-                            cache.modify({
-                                fields: {
-                                    collection_Exhibition(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_ExhibitionFragmentDoc,
-                                            fragmentName: "ManageContent_Exhibition",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
-                    },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
             },
         }),
-        [updateExhibition, updateExhibitionResponse.loading]
+        [updateExhibition, updateExhibitionResponse.fetching]
     );
 
-    const [deleteExhibitions, deleteExhibitionsResponse] = useManageContent_DeleteExhibitionsMutation();
+    const [deleteExhibitionsResponse, deleteExhibitions] = useManageContent_DeleteExhibitionsMutation();
     const deleteProps:
         | {
               start: (keys: string[]) => void;
@@ -489,64 +468,39 @@ function ManageExhibitionsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: deleteExhibitionsResponse.loading,
+            ongoing: deleteExhibitionsResponse.fetching,
             start: (keys) => {
-                deleteExhibitions({
-                    variables: {
+                deleteExhibitions(
+                    {
                         ids: keys,
                     },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.delete_collection_Exhibition) {
-                            const data = _data.delete_collection_Exhibition;
-                            const deletedIds = data.returning.map((x) => x.id);
-                            deletedIds.forEach((x) => {
-                                cache.evict({
-                                    id: x.id,
-                                    fieldName: "ManageContent_Exhibition",
-                                    broadcast: true,
-                                });
-                            });
-                        }
-                    },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
             },
         }),
-        [deleteExhibitions, deleteExhibitionsResponse.loading]
+        [deleteExhibitions, deleteExhibitionsResponse.fetching]
     );
 
     const updateDescriptiveItemId = useCallback(
         (itemId: string | null) => {
             if (editingId) {
-                updateExhibition({
-                    variables: {
+                updateExhibition(
+                    {
                         id: editingId,
                         update: {
                             descriptiveItemId: itemId,
                         },
                     },
-                    update: (cache, { data: _data }) => {
-                        setEditingDescriptiveItemId(itemId);
-
-                        if (_data?.update_collection_Exhibition_by_pk) {
-                            const data = _data.update_collection_Exhibition_by_pk;
-                            cache.modify({
-                                fields: {
-                                    collection_Exhibition(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_ExhibitionFragmentDoc,
-                                            fragmentName: "ManageContent_Exhibition",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
-                    },
-                });
+                    makeContext({
+                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                    })
+                );
             }
         },
         [editingId, updateExhibition]
@@ -554,13 +508,13 @@ function ManageExhibitionsModalBody(): JSX.Element {
 
     return (
         <>
-            {exhibitionsResponse.loading && !exhibitionsResponse.data ? (
+            {exhibitionsResponse.fetching && !exhibitionsResponse.data ? (
                 <Spinner label="Loading exhibitions" />
             ) : undefined}
             <CRUDTable<ManageContent_ExhibitionFragment>
                 columns={columns}
                 row={row}
-                data={!exhibitionsResponse.loading && (exhibitionsResponse.data?.collection_Exhibition ? data : null)}
+                data={!exhibitionsResponse.fetching && (exhibitionsResponse.data?.collection_Exhibition ? data : null)}
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={
                     insertExhibitionResponse.error || updateExhibitionResponse.error || deleteExhibitionsResponse.error

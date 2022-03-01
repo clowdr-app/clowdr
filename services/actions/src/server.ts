@@ -1,14 +1,20 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
+import type { invitationConfirmCurrentArgs } from "@midspace/hasura/action-types";
+import { requestId } from "@midspace/server-utils/middlewares/request-id";
 import assert from "assert";
 import { json } from "body-parser";
 import cors from "cors";
 import type { Request, Response } from "express";
 import express from "express";
-import type { AuthenticatedRequest } from "./checkScopes";
+import type { P } from "pino";
+import pino from "pino";
+import pinoHttp from "pino-http";
+import { is } from "typescript-is";
 import { invitationConfirmCurrentHandler } from "./handlers/invitation";
 import { initialiseAwsClient } from "./lib/aws/awsClient";
-import { checkEventSecret } from "./middlewares/checkEventSecret";
-import { checkJwt } from "./middlewares/checkJwt";
-import { checkUserScopes } from "./middlewares/checkScopes";
+import { logger } from "./lib/logger";
+import { errorHandler } from "./middlewares/error-handler";
 import { router as amazonTranscribeRouter } from "./router/amazonTranscribe";
 import { router as analyticsRouter } from "./router/analytics";
 import { router as chatRouter } from "./router/chat";
@@ -22,7 +28,6 @@ import { router as elementRouter } from "./router/element";
 import { router as emailRouter } from "./router/email";
 import { router as eventRouter } from "./router/event";
 import { router as googleRouter } from "./router/google";
-import { router as hasuraRouter } from "./router/hasura";
 import { router as invitationRouter } from "./router/invitation";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaPackageRouter } from "./router/mediaPackage";
@@ -32,9 +37,12 @@ import { router as queuesRouter } from "./router/queues";
 import { router as registrantGoogleAccountRouter } from "./router/registrantGoogleAccount";
 import { router as roomRouter } from "./router/room";
 import { router as shuffleRoomsRouter } from "./router/shuffleRooms";
+import { router as superuserRouter } from "./router/superuser";
+import { router as transcribeRouter } from "./router/transcribe";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
 import { router as vonageSessionLayoutRouter } from "./router/vonageSessionLayout";
+import { router as vonageVideoPlaybackCommand } from "./router/vonageVideoPlaybackCommand";
 
 if (process.env.NODE_ENV !== "test") {
     assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN environment variable not provided.");
@@ -49,6 +57,30 @@ assert(
 assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
 
 export const app: express.Application = express();
+
+app.use(requestId());
+
+app.use(
+    pinoHttp({
+        logger: logger as any, // 7.0-compatible @types not yet released for pino-http
+        autoLogging: process.env.LOG_LEVEL === "trace" ? true : false,
+        genReqId: (req) => req.id,
+        serializers: {
+            req: pino.stdSerializers.wrapRequestSerializer((r) => {
+                const headers = { ...r.headers };
+                delete headers["authorization"];
+                delete headers["x-hasura-admin-secret"];
+                delete headers["x-hasura-event-secret"];
+                const s = {
+                    ...r,
+                    headers,
+                };
+                return s;
+            }),
+        },
+        useLevel: is<P.Level>(process.env.LOG_LEVEL) ? process.env.LOG_LEVEL : "info",
+    })
+);
 
 app.use(
     cors({
@@ -72,6 +104,7 @@ app.use("/videoRenderJob", videoRenderJobRouter);
 app.use("/event", eventRouter);
 app.use("/room", roomRouter);
 app.use("/vonageSessionLayout", vonageSessionLayoutRouter);
+app.use("/vonageVideoPlaybackCommand", vonageVideoPlaybackCommand);
 app.use("/mediaPackageHarvestJob", mediaPackageHarvestJobRouter);
 app.use("/combineVideosJob", combineVideosJobRouter);
 app.use("/registrantGoogleAccount", registrantGoogleAccountRouter);
@@ -84,9 +117,11 @@ app.use("/queues", queuesRouter);
 app.use("/email", emailRouter);
 app.use("/analytics", analyticsRouter);
 
-app.use("/hasura", hasuraRouter);
+app.use("/su", superuserRouter);
+
 app.use("/conference", conferenceRouter);
 app.use("/invitation", invitationRouter);
+app.use("/transcribe", transcribeRouter);
 
 app.get("/", function (_req, res) {
     res.send("Midspace");
@@ -96,25 +131,26 @@ app.use(checkEventSecret);
 
 const jsonParser = json();
 
-app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {
-    const req = _req as AuthenticatedRequest;
+app.post("/invitation/confirm/current", jsonParser, checkJwt, async (req: Request, res: Response) => {
     const params: invitationConfirmCurrentArgs = req.body.input;
-    console.log("Invitation/confirm/current", params);
+    req.log.info({ params }, "Invitation/confirm/current");
     try {
-        const result = await invitationConfirmCurrentHandler(params, req.userId);
+        const result = await invitationConfirmCurrentHandler(req.log, params, (req as any).user.sub);
         return res.json(result);
-    } catch (e) {
-        console.error("Failure while processing /invitation/confirm/current", e);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Failure while processing /invitation/confirm/current");
         res.status(500).json("Failure");
         return;
     }
 });
 
+app.use(errorHandler);
+
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {
-    console.log(`App is listening on port ${portNumber}!`);
-    console.log("Initialising AWS client");
-    initialiseAwsClient().then(() => {
-        console.log("Initialised AWS client");
+    logger.info({ port: portNumber }, "Actions service is listening");
+    logger.info("Initialising AWS client");
+    initialiseAwsClient(logger).then(() => {
+        logger.info("Initialised AWS client");
     });
 });

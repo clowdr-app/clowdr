@@ -1,40 +1,36 @@
-import { gql } from "@apollo/client";
 import { VStack } from "@chakra-ui/react";
-import assert from "assert";
-import React from "react";
-import { AppError } from "../../AppError";
+import { assert } from "@midspace/assert";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { RequestPolicy } from "@urql/core";
+import { gql } from "@urql/core";
+import React, { useEffect, useMemo, useState } from "react";
 import type { AuthdConferenceInfoFragment, PublicConferenceInfoFragment } from "../../generated/graphql";
-import { useConferenceBySlug_WithoutUserQuery, useConferenceBySlug_WithUserQuery } from "../../generated/graphql";
+import { useConferenceById_WithoutUserQuery, useConferenceById_WithUserQuery } from "../../generated/graphql";
+import { AppError } from "../App";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import PageNotFound from "../Errors/PageNotFound";
+import { makeContext } from "../GQL/make-context";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
-    query ConferenceBySlug_WithUser($slug: String!, $userId: String!) {
-        conference_Conference(where: { slug: { _eq: $slug } }) {
+    query ConferenceById_WithUser($id: uuid!, $userId: String!) {
+        conference_Conference_by_pk(id: $id) {
             ...PublicConferenceInfo
             ...AuthdConferenceInfo
         }
     }
 
-    query ConferenceBySlug_WithoutUser($slug: String!) {
-        conference_Conference(where: { slug: { _eq: $slug } }) {
+    query ConferenceById_WithoutUser($id: uuid!) {
+        conference_Conference_by_pk(id: $id) {
             ...PublicConferenceInfo
         }
     }
 
     fragment AuthdConferenceInfo on conference_Conference {
+        announcementsChatId
+
         registrants(where: { userId: { _eq: $userId } }) {
             ...RegistrantData
-
-            groupRegistrants {
-                group {
-                    ...GroupData
-                }
-                id
-                groupId
-                registrantId
-            }
         }
 
         myBackstagesNotice: configurations(where: { key: { _eq: MY_BACKSTAGES_NOTICE } }) {
@@ -49,7 +45,6 @@ gql`
         name
         shortName
         slug
-        createdBy
 
         supportAddress: configurations(where: { key: { _eq: SUPPORT_ADDRESS } }) {
             conferenceId
@@ -111,33 +106,6 @@ gql`
             key
             value
         }
-
-        publicGroups: groups(where: { enabled: { _eq: true }, includeUnauthenticated: { _eq: true } }) {
-            ...GroupData
-        }
-    }
-
-    fragment GroupData on permissions_Group {
-        groupRoles {
-            role {
-                rolePermissions {
-                    permissionName
-                    id
-                    roleId
-                }
-                id
-                name
-                conferenceId
-            }
-            id
-            roleId
-            groupId
-        }
-        enabled
-        id
-        includeUnauthenticated
-        name
-        conferenceId
     }
 
     fragment ProfileData on registrant_Profile {
@@ -162,6 +130,7 @@ gql`
         userId
         conferenceId
         displayName
+        conferenceRole
         profile {
             ...ProfileData
         }
@@ -176,7 +145,7 @@ const ConferenceContext = React.createContext<ConferenceInfoFragment | undefined
 
 export function useConference(): ConferenceInfoFragment {
     const conf = React.useContext(ConferenceContext);
-    assert(conf, "useConference: Context not available");
+    assert.truthy(conf, "useConference: Context not available");
     return conf;
 }
 
@@ -185,20 +154,35 @@ export function useMaybeConference(): ConferenceInfoFragment | undefined {
 }
 
 function ConferenceProvider_WithoutUser({
-    confSlug,
     children,
+    conferenceId,
 }: {
-    confSlug: string;
     children: string | JSX.Element | JSX.Element[];
+    conferenceId: string;
 }): JSX.Element {
-    const { loading, error, data } = useConferenceBySlug_WithoutUserQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.Unauthenticated,
+            }),
+        []
+    );
+    const [requestPolicy, setRequestPolicy] = useState<RequestPolicy | undefined>(undefined);
+    const [{ fetching: loading, error, data, stale }] = useConferenceById_WithoutUserQuery({
         variables: {
-            slug: confSlug,
+            id: conferenceId,
         },
+        context,
+        requestPolicy,
     });
+    useEffect(() => {
+        if (!data?.conference_Conference_by_pk) {
+            setRequestPolicy("cache-and-network");
+        }
+    }, [data?.conference_Conference_by_pk]);
 
-    if (loading && !data) {
-        return <CenteredSpinner />;
+    if ((loading || stale) && !data?.conference_Conference_by_pk) {
+        return <CenteredSpinner caller="useConference:175" />;
     }
 
     if (error) {
@@ -209,7 +193,7 @@ function ConferenceProvider_WithoutUser({
         );
     }
 
-    if (!data || data.conference_Conference.length === 0) {
+    if (!data?.conference_Conference_by_pk) {
         return (
             <VStack>
                 <PageNotFound />
@@ -217,27 +201,42 @@ function ConferenceProvider_WithoutUser({
         );
     }
 
-    return <ConferenceContext.Provider value={data.conference_Conference[0]}>{children}</ConferenceContext.Provider>;
+    return <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children}</ConferenceContext.Provider>;
 }
 
 function ConferenceProvider_WithUser({
-    confSlug,
     children,
     userId,
+    conferenceId,
 }: {
-    confSlug: string;
     children: string | JSX.Element | JSX.Element[];
     userId: string;
+    conferenceId: string;
 }): JSX.Element {
-    const { loading, error, data } = useConferenceBySlug_WithUserQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.Attendee,
+            }),
+        []
+    );
+    const [requestPolicy, setRequestPolicy] = useState<RequestPolicy | undefined>(undefined);
+    const [{ fetching: loading, error, data, stale }] = useConferenceById_WithUserQuery({
         variables: {
-            slug: confSlug,
+            id: conferenceId,
             userId,
         },
+        context,
+        requestPolicy,
     });
+    useEffect(() => {
+        if (!data?.conference_Conference_by_pk) {
+            setRequestPolicy("cache-and-network");
+        }
+    }, [data?.conference_Conference_by_pk]);
 
-    if (loading && !data) {
-        return <CenteredSpinner />;
+    if ((loading || stale) && !data?.conference_Conference_by_pk) {
+        return <CenteredSpinner caller="useConference:222" />;
     }
 
     if (error) {
@@ -253,7 +252,7 @@ function ConferenceProvider_WithUser({
         );
     }
 
-    if (!data || data.conference_Conference.length === 0) {
+    if (!data?.conference_Conference_by_pk) {
         return (
             <VStack>
                 <PageNotFound />
@@ -261,29 +260,29 @@ function ConferenceProvider_WithUser({
         );
     }
 
-    return <ConferenceContext.Provider value={data.conference_Conference[0]}>{children}</ConferenceContext.Provider>;
+    return <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children}</ConferenceContext.Provider>;
 }
 
 export default function ConferenceProvider({
-    confSlug,
     children,
+    conferenceId,
 }: {
-    confSlug: string;
     children: string | JSX.Element | JSX.Element[];
+    conferenceId: string;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
 
     if (user.loading) {
-        return <CenteredSpinner />;
+        return <CenteredSpinner caller="useConference:259" />;
     }
 
     if (user.user) {
         return (
-            <ConferenceProvider_WithUser userId={user.user.id} confSlug={confSlug}>
+            <ConferenceProvider_WithUser userId={user.user.id} conferenceId={conferenceId}>
                 {children}
             </ConferenceProvider_WithUser>
         );
     } else {
-        return <ConferenceProvider_WithoutUser confSlug={confSlug}>{children}</ConferenceProvider_WithoutUser>;
+        return <ConferenceProvider_WithoutUser conferenceId={conferenceId}>{children}</ConferenceProvider_WithoutUser>;
     }
 }

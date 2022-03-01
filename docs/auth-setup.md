@@ -33,7 +33,7 @@ considered for merging._**
    http://localhost:3000/auth0/email-verification/result,
    https://<frontendSubdomain>.<PacketRiotDomain>/auth0/,
    https://<frontendSubdomain>.<PacketRiotDomain>/auth0/logged-in,
-   https://<frontendSubdomain>.<PacketRiotDomain>/auth0/email-verification/result,
+   https://<frontendSubdomain>.<PacketRiotDomain>/auth0/email-verification/result
    ```
    (Note that, for production, the first URL _must_ be the `auth0` address; see [the auth0 documentation on Email Templates / RedirectURLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
    **Full Setup**: If you have set up Netlify, you can optionally include your Netlify app url(s) in the Allowed Callback URLs (at the end). Netlify is a platform for hosting static websites. It takes our latest React site from git, builds it and deploys it to a CDN automatically. It's not required for most users - you could host the static part of the app wherever you want. For the local development case, you're just using a server on your local machine and maybe exposing it through a tunnel.
@@ -51,7 +51,7 @@ considered for merging._**
    http://localhost:3000/auth0/logged-out,
    http://localhost:3000/auth0/email-verification/required/no-redirect,
    https://<frontendSubdomain>.<PacketRiotDomain>/auth0/logged-out,
-   https://<frontendSubdomain>.<PacketRiotDomain>/auth0/email-verification/required/no-redirect,
+   https://<frontendSubdomain>.<PacketRiotDomain>/auth0/email-verification/required/no-redirect
    ```
    **Full Setup**: If using netlify, add these:
    ```
@@ -68,6 +68,7 @@ considered for merging._**
    https://<netlify-subdomain>.netlify.app
    ```
 1. **Don't forget to `Save changes`**
+1. Go to the application's Connections tab and ensure the Database and Social options are toggled on.
 
 ## 3. Create API
 
@@ -112,45 +113,6 @@ Midspace uses Auth0 rules to handle user registration and interface with Hasura.
    }
    ```
    (If you see a warning like `Heads up! If you are trying to access a service behind a firewall...` you can ignore it.)
-1. Create another new _Rule_
-   - Select `Empty rule`
-   - `Name` it something like `Force Verified Email Before Login`
-   - Replace the `Script` with the code below
-   - Don't forget to `Save changes`
-     This rule prevents users from logging in before they have verified their account.
-   ```js
-   function emailVerified(user, context, callback) {
-     if (!user.email_verified) {
-       return callback(new UnauthorizedError("Please verify your email before logging in."));
-     } else {
-       return callback(null, user, context);
-     }
-   }
-   ```
-1. Create another new _Rule_
-
-   - Select `Empty rule`
-   - `Name` it something like `Hasura JWT`
-   - Replace the `Script` with the code below
-   - Don't forget to `Save changes`
-     This rule upgrades the access token to give it relevant roles which are then
-     recognised by Midspace's Hasura instance.
-
-   ```js
-   function (user, context, callback) {
-        const namespace = configuration.HASURA_NAMESPACE;
-        console.log(`Upgrading access token for ${user.user_id}`);
-        context.accessToken[namespace] =
-        {
-            'x-hasura-default-role': 'user',
-            'x-hasura-allowed-roles': ['user', 'unauthenticated'],
-            'x-hasura-user-id': user.user_id,
-        };
-
-        callback(null, user, context);
-   }
-   ```
-
 1. Create another new _Rule_
 
    - Select `Empty rule`
@@ -265,7 +227,6 @@ Under _Settings_ on the `Rules` page, add the following key-value pairs:
 
 | Key                 | Value                                                     | Notes                                                                                                              |
 | ------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| HASURA_NAMESPACE    | `https://hasura.io/jwt/claims`                            | For Hasura, this value must always be this URL.                                                                    |
 | HASURA_ADMIN_SECRET | The Hasura Admin Secret                                   | This must match the HASURA_ADMIN_SECRET specified in the actions service and Hasura env.                           |
 | HASURA_URL          | `https://<hasuraSubdomain>.<PacketRiotDomain>/v1/graphql` | The public URL for the Hasura GraphQL API. E.g. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
 

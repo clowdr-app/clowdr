@@ -1,17 +1,19 @@
-import { gql } from "@apollo/client";
 import { Button, ButtonGroup, List, ListItem, Spinner } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
     ElementBaseType,
-    ElementDataBlob,
     isElementDataBlob,
-} from "@clowdr-app/shared-types/build/content";
+} from "@midspace/shared-types/content";
+import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useCallback, useContext, useMemo } from "react";
 import { useDownloadVideos_GetAllVideosQuery } from "../../../../../generated/graphql";
-import { FAIcon } from "../../../../Icons/FAIcon";
+import FAIcon from "../../../../Chakra/FAIcon";
+import { makeContext } from "../../../../GQL/make-context";
 import { useConference } from "../../../useConference";
 import { VideoDownloadContext } from "./VideoDownloadContext";
 import { VideoDownloadLink } from "./VideoDownloadLink";
@@ -20,11 +22,13 @@ gql`
     query DownloadVideos_GetAllVideos($conferenceId: uuid!) {
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             id
+            conferenceId
             elements(where: { typeName: { _in: [TEXT, VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] } }) {
                 name
                 id
                 data
                 typeName
+                itemId
             }
             typeName
             title
@@ -50,7 +54,7 @@ function toS3Url(s3Url: string): string | undefined {
     try {
         const { bucket, key } = new AmazonS3URI(s3Url);
 
-        return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+        return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
     } catch (err) {
         return undefined;
     }
@@ -59,10 +63,18 @@ function toS3Url(s3Url: string): string | undefined {
 export function AllVideoElements(): JSX.Element {
     const conference = useConference();
     const { reset } = useContext(VideoDownloadContext);
-    const result = useDownloadVideos_GetAllVideosQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [result] = useDownloadVideos_GetAllVideosQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const videoElements = useMemo(
@@ -151,11 +163,11 @@ export function AllVideoElements(): JSX.Element {
 
         link.dispatchEvent(evt);
         link.remove();
-    }, [extractVideoUrl, videoElements]);
+    }, [extractCaptionUrls, extractVideoUrl, videoElements]);
 
     return (
         <>
-            {result.loading && <Spinner />}
+            {result.fetching && <Spinner />}
             {result.data ? (
                 <ButtonGroup mb={4}>
                     <Button

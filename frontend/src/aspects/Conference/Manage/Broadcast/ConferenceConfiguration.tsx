@@ -1,15 +1,16 @@
-import { gql } from "@apollo/client";
 import { Alert, AlertIcon, AlertTitle, Box, Heading } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
-import type {
-    ConferenceConfiguration_ConferenceConfigurationsFragment} from "../../../../generated/graphql";
+import type { ConferenceConfiguration_ConferenceConfigurationsFragment } from "../../../../generated/graphql";
 import {
     Conference_ConfigurationKey_Enum,
     useConferenceConfiguration_GetConferenceConfigurationsQuery,
 } from "../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import { makeContext } from "../../../GQL/make-context";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 
 gql`
     query ConferenceConfiguration_GetConferenceConfigurations($conferenceId: uuid!) {
@@ -23,35 +24,25 @@ gql`
         key
         value
     }
-
-    mutation conference_Configuration_UpdateConferenceConfigurations(
-        $conferenceId: uuid!
-        $key: conference_ConfigurationKey_enum!
-        $value: jsonb!
-    ) {
-        update_conference_Configuration_by_pk(
-            pk_columns: { conferenceId: $conferenceId, key: $key }
-            _set: { value: $value }
-        ) {
-            conferenceId
-            key
-            value
-        }
-    }
 `;
 
 export function Configuration({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const conferenceConfigurationsResult = useConferenceConfiguration_GetConferenceConfigurationsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [conferenceConfigurationsResult] = useConferenceConfiguration_GetConferenceConfigurationsQuery({
         variables: {
             conferenceId,
         },
+        context,
     });
 
     return (
-        <ApolloQueryWrapper
-            queryResult={conferenceConfigurationsResult}
-            getter={(result) => result.conference_Configuration}
-        >
+        <QueryWrapper queryResult={conferenceConfigurationsResult} getter={(result) => result.conference_Configuration}>
             {(configurations: readonly ConferenceConfiguration_ConferenceConfigurationsFragment[]) => (
                 <FillerVideoConfiguration
                     fillerVideos={
@@ -63,7 +54,7 @@ export function Configuration({ conferenceId }: { conferenceId: string }): JSX.E
                     }}
                 />
             )}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 
@@ -79,7 +70,7 @@ function FillerVideoConfiguration({
                 return null;
             }
             const { bucket, key } = new AmazonS3URI(fillerVideos[0]);
-            return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+            return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
         } catch {
             return null;
         }

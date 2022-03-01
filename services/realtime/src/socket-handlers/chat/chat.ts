@@ -1,36 +1,18 @@
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { chatListenersKeyName, generateChatRoomName, socketChatsKeyName } from "../../lib/chat";
+import { logger } from "../../lib/logger";
 import { canSelectChat } from "../../lib/permissions";
-import { redisClientP, redisClientPool } from "../../redis";
 
-export function onSubscribe(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    socket: Socket
-): (chatId: any) => Promise<void> {
+export function onSubscribe(userId: string, socketId: string, socket: Socket): (chatId: any) => Promise<void> {
     return async (chatId) => {
         if (chatId) {
             try {
                 assert(is<string>(chatId), "Data does not match expected type.");
 
-                if (
-                    await canSelectChat(
-                        userId,
-                        chatId,
-                        conferenceSlugs,
-                        false,
-                        "chat.onSubscribe:test-registrant-id",
-                        "chat.onSubscribe:test-conference-id",
-                        "chat.onSubscribe:test-room-id",
-                        "chat.onSubscribe:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
-                    )
-                ) {
+                if (await canSelectChat(userId, chatId)) {
                     const client = await redisClientPool.acquire("socket-handlers/chat/chat/onSubscribe");
                     try {
                         // Always call join - a websocket re-establishing its connection to chat needs to rejoin the session
@@ -44,38 +26,20 @@ export function onSubscribe(
                         redisClientPool.release("socket-handlers/chat/chat/onSubscribe", client);
                     }
                 }
-            } catch (e) {
-                console.error(`Error processing chat.subscribe (socket: ${socketId}, chatId: ${chatId})`, e);
+            } catch (error: any) {
+                logger.error({ error }, `Error processing chat.subscribe (socket: ${socketId}, chatId: ${chatId})`);
             }
         }
     };
 }
 
-export function onUnsubscribe(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    socket: Socket
-): (chatId: any) => Promise<void> {
+export function onUnsubscribe(userId: string, socketId: string, socket: Socket): (chatId: any) => Promise<void> {
     return async (chatId) => {
         if (chatId) {
             try {
                 assert(is<string>(chatId), "Data does not match expected type.");
 
-                if (
-                    await canSelectChat(
-                        userId,
-                        chatId,
-                        conferenceSlugs,
-                        false,
-                        "chat.onSubscribe:test-registrant-id",
-                        "chat.onSubscribe:test-conference-id",
-                        "chat.onSubscribe:test-room-id",
-                        "chat.onSubscribe:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
-                    )
-                ) {
+                if (await canSelectChat(userId, chatId)) {
                     socket.leave(generateChatRoomName(chatId));
                     const client = await redisClientPool.acquire("socket-handlers/chat/chat/onUnsubscribe");
                     try {
@@ -85,8 +49,8 @@ export function onUnsubscribe(
                         redisClientPool.release("socket-handlers/chat/chat/onUnsubscribe", client);
                     }
                 }
-            } catch (e) {
-                console.error(`Error processing chat.unsubscribe (socket: ${socketId}, chatId: ${chatId})`, e);
+            } catch (error: any) {
+                logger.error({ error }, `Error processing chat.unsubscribe (socket: ${socketId}, chatId: ${chatId})`);
             }
         }
     };

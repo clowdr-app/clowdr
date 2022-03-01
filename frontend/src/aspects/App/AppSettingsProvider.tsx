@@ -32,7 +32,7 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode | 
     const appSettings = useMemo(() => {
         const defaultSettings = R.clone(defaultAppSettings);
         defaultSettings.developer.allowOngoingEventCreation =
-            import.meta.env.SNOWPACK_PUBLIC_DEVELOPER_ALLOW_ONGOING_EVENT_CREATION === "true";
+            import.meta.env.VITE_DEVELOPER_ALLOW_ONGOING_EVENT_CREATION === "true";
         return defaultSettings;
     }, []);
 

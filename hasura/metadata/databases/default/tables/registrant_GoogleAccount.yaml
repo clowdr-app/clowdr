@@ -16,56 +16,60 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
-    - registrantId
     - conferenceId
     - created_at
     - googleAccountEmail
     - id
+    - registrantId
     - updated_at
     - youTubeData
     filter:
-      _and:
-      - registrant:
-          userId:
-            _eq: X-Hasura-User-Id
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - permission_name:
-                _eq: CONFERENCE_MANAGE_CONTENT
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - user_id:
-                _eq: X-Hasura-User-Id
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: conference-organizer
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - googleAccountEmail
+    - id
+    - registrantId
+    - updated_at
+    - youTubeData
+    filter:
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: subconference-organizer
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - googleAccountEmail
+    - id
+    - registrantId
+    - updated_at
+    - youTubeData
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
   role: user
 delete_permissions:
 - permission:
     filter:
-      _and:
-      - registrant:
-          userId:
-            _eq: X-Hasura-User-Id
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - permission_name:
-                _eq: CONFERENCE_MANAGE_CONTENT
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - user_id:
-                _eq: X-Hasura-User-Id
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: conference-organizer
+- permission:
+    filter:
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: subconference-organizer
+- permission:
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
   role: user
 event_triggers:
 - definition:
@@ -78,6 +82,6 @@ event_triggers:
   name: RegistrantGoogleAccountDeleted
   retry_conf:
     interval_sec: 10
-    num_retries: 10
-    timeout_sec: 600
+    num_retries: 0
+    timeout_sec: 60
   webhook: "{{ACTION_BASE_URL}}/registrantGoogleAccount/deleted"

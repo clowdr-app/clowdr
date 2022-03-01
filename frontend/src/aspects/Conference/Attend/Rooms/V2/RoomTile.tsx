@@ -1,10 +1,12 @@
-import { gql } from "@apollo/client";
 import { AspectRatio, Box, Button, Center, Heading, Spinner, useColorModeValue, VStack } from "@chakra-ui/react";
-import React from "react";
+import { AuthHeader } from "@midspace/shared-types/auth";
+import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";
+import { gql } from "urql";
 import { Room_ManagementMode_Enum, useRoomTile_GetRoomQuery } from "../../../../../generated/graphql";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { useConference } from "../../../useConference";
+import FAIcon from "../../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
+import { makeContext } from "../../../../GQL/make-context";
 import EventHighlight from "./EventHighlight";
 import RoomPresenceGrid from "./RoomPresenceGrid";
 
@@ -19,7 +21,8 @@ gql`
         id
         name
         managementModeName
-        originatingItem {
+        itemId
+        item {
             id
             title
         }
@@ -30,14 +33,17 @@ gql`
 
     fragment RoomTile_Event on schedule_Event {
         id
+        roomId
         name
         intendedRoomModeName
         startTime
         endTime
+        exhibitionId
         exhibition {
             id
             name
         }
+        itemId
         item {
             id
             title
@@ -46,17 +52,25 @@ gql`
 `;
 
 export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?: string }): JSX.Element {
-    const conference = useConference();
-    const response = useRoomTile_GetRoomQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.RoomId]: roomId,
+            }),
+        [roomId]
+    );
+    const [response] = useRoomTile_GetRoomQuery({
         variables: {
             roomId,
             eventId,
             withEvent: !!eventId,
         },
+        context,
     });
     const shadow = useColorModeValue("md", "light-md");
     const bgColour = useColorModeValue("gray.100", "gray.800");
     const history = useHistory();
+    const { conferencePath } = useAuthParameters();
     return (
         <Button
             as={VStack}
@@ -73,7 +87,7 @@ export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?
             py={0}
             overflow="hidden"
             onClick={() => {
-                history.push(`/conference/${conference.slug}/room/${roomId}`);
+                history.push(`${conferencePath}/room/${roomId}`);
             }}
             pos="relative"
         >
@@ -90,7 +104,7 @@ export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?
                         <Box></Box>
                     )}
                     <Heading px={4} as="h2" fontSize="lg" textAlign="left" w="100%" whiteSpace="normal">
-                        {response.data.room_Room_by_pk.originatingItem?.title ?? response.data.room_Room_by_pk.name}
+                        {response.data.room_Room_by_pk.item?.title ?? response.data.room_Room_by_pk.name}
                     </Heading>
                     <RoomPresenceGrid roomId={roomId} />
                 </>

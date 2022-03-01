@@ -74,7 +74,7 @@ export interface VizLayout_Fitted4 {
     type: VisualLayoutType.Fitted4_Left | VisualLayoutType.Fitted4_Bottom;
     largeAreaViewport?: Viewport;
     /** Minimum length 0. Maximum length 4. */
-    sideAreaViewports: Viewport[];
+    sideAreaViewports: (Viewport | undefined)[];
 }
 
 export interface VizLayout_DualScreen {
@@ -83,5 +83,5 @@ export interface VizLayout_DualScreen {
     largeAreaViewport1?: Viewport;
     largeAreaViewport2?: Viewport;
     /** Minimum length 0. Maximum length 4. */
-    sideAreaViewports: Viewport[];
+    sideAreaViewports: (Viewport | undefined)[];
 }

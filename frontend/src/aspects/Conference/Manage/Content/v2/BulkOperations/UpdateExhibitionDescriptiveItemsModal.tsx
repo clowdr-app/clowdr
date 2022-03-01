@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -11,14 +10,16 @@ import {
     ModalOverlay,
     Text,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { gql } from "@urql/core";
 import React, { useCallback, useMemo, useState } from "react";
-import type {
-    ManageContent_ItemFragment} from "../../../../../../generated/graphql";
+import type { ManageContent_ItemFragment } from "../../../../../../generated/graphql";
 import {
     useUpdateExhibitionDescriptiveItemMutation,
     useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery,
 } from "../../../../../../generated/graphql";
 import CenteredSpinner from "../../../../../Chakra/CenteredSpinner";
+import { makeContext } from "../../../../../GQL/make-context";
 import { useConference } from "../../../../useConference";
 
 gql`
@@ -26,6 +27,8 @@ gql`
         collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, descriptiveItemId: { _is_null: true } }) {
             id
             name
+            conferenceId
+            descriptiveItemId
         }
     }
 
@@ -66,13 +69,21 @@ function ModalInner({
     items: readonly ManageContent_ItemFragment[];
 }): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [exhibitionsResponse] = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "no-cache",
+        requestPolicy: "network-only",
+        context,
     });
-    const [doUpdate, updateResponse] = useUpdateExhibitionDescriptiveItemMutation();
+    const [updateResponse, doUpdate] = useUpdateExhibitionDescriptiveItemMutation();
     const [updatedCount, setUpdatedCount] = useState<number>(0);
 
     const exhibitionMatches = useMemo(() => {
@@ -102,12 +113,19 @@ function ModalInner({
             setUpdatedCount(0);
 
             for (const match of exhibitionMatches) {
-                await doUpdate({
-                    variables: {
+                await doUpdate(
+                    {
                         id: match.id,
                         descriptiveItemId: match.itemId,
                     },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
 
                 setUpdatedCount((count) => count + 1);
             }
@@ -125,7 +143,9 @@ function ModalInner({
                     This will set the descriptive item of any exhibition that currently lacks a descriptive item and
                     where a corresponding content exists with a title matching the exhibition name.
                 </Text>
-                {exhibitionsResponse.loading ? <CenteredSpinner /> : undefined}
+                {exhibitionsResponse.fetching ? (
+                    <CenteredSpinner caller="UpdateExhibitionDescriptiveItemsModal:146" />
+                ) : undefined}
                 <Text mt={4}>{exhibitionMatches.length} new matches found.</Text>
                 {updatedCount > 0 ? <Text mt={4}>{updatedCount} updated.</Text> : undefined}
             </ModalBody>
@@ -135,7 +155,7 @@ function ModalInner({
                     <Button
                         colorScheme="purple"
                         isDisabled={exhibitionMatches.length === 0}
-                        isLoading={updateResponse.loading}
+                        isLoading={updateResponse.fetching}
                         onClick={update}
                     >
                         Update

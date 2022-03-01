@@ -1,240 +1,259 @@
-import { Flex, Heading, useColorModeValue } from "@chakra-ui/react";
-import React from "react";
-import { Permissions_Permission_Enum } from "../../../generated/graphql";
-import { useTitle } from "../../Utils/useTitle";
+import { chakra, Flex, Heading, HStack, Link, Spacer, Text, VStack } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import React, { useMemo } from "react";
+import { Link as ReactLink } from "react-router-dom";
+import { gql } from "urql";
+import { useConferenceTechSupportAddressQuery } from "../../../generated/graphql";
+import { useAuthParameters } from "../../GQL/AuthParameters";
+import { makeContext } from "../../GQL/make-context";
+import { useTitle } from "../../Hooks/useTitle";
+import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 
+gql`
+    query ConferenceTechSupportAddress($conferenceId: uuid!) {
+        conference_Configuration_by_pk(conferenceId: $conferenceId, key: TECH_SUPPORT_ADDRESS) {
+            conferenceId
+            key
+            value
+        }
+    }
+`;
+
 export default function ManagerLandingPage(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage ${conference.shortName}`);
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+            }),
+        []
+    );
+    const [techSupportAddressResponse] = useConferenceTechSupportAddressQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+        context,
+    });
+    const techSupportAddress =
+        techSupportAddressResponse.data?.conference_Configuration_by_pk?.value ??
+        import.meta.env.VITE_TECH_SUPPORT_ADDRESS ??
+        "support@midspace.app";
 
-    const green = useColorModeValue("purple.500", "purple.200");
-    const red = useColorModeValue("pink.500", "pink.200");
-
-    const greenHover = useColorModeValue("purple.600", "purple.300");
-    const redHover = useColorModeValue("pink.600", "pink.300");
-
-    const greenFocus = useColorModeValue("purple.700", "purple.400");
-    const redFocus = useColorModeValue("pink.700", "pink.400");
     return (
         <>
             {title}
-            <Heading as="h1" id="page-heading" mt={4}>
-                Manage {conference.shortName}
-            </Heading>
-            <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-                gridGap={["0.3rem", "0.3rem", "1rem"]}
-                alignItems="stretch"
-                justifyContent="center"
-                maxW={1100}
+            <VStack
+                w="100%"
+                alignItems="flex-start"
+                px={[4, 4, 8]}
+                pb={[4, 4, 8]}
+                spacing={8}
+                maxW="calc(902px + (2 * var(--chakra-space-8)))"
             >
-                <RestrictedDashboardButton
-                    to="import"
-                    name="Import"
-                    icon="download"
-                    description="Import your content, schedule and registrants."
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageContent,
-                        Permissions_Permission_Enum.ConferenceManageSchedule,
-                    ]}
-                    colorScheme="purple"
-                />
-                <RestrictedDashboardButton
-                    to="export"
-                    name="Export"
-                    icon="upload"
-                    description="Export your conference data (events, public chats, analytics, etc)."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-                    colorScheme="purple"
-                />
-                <RestrictedDashboardButton
-                    to="content"
-                    name="Content"
-                    icon="align-left"
-                    description="Manage your program content: papers, posters, keynotes, etc."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-                    colorScheme="purple"
-                />
-                <RestrictedDashboardButton
-                    to="rooms"
-                    name="Rooms"
-                    icon="coffee"
-                    description="Manage and prioritise rooms."
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage rooms permission
-                    ]}
-                    colorScheme="purple"
-                />
-                <RestrictedDashboardButton
-                    to="schedule"
-                    name="Schedule"
-                    icon="calendar"
-                    description="Manage your program schedule: your events."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-                    colorScheme="purple"
-                />
-                <RestrictedDashboardButton
-                    to="people"
-                    name="Program People"
-                    icon="people-arrows"
-                    description="Manage people listed in your program (authors, speakers, etc) and their links to registrants."
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageContent,
-                        Permissions_Permission_Enum.ConferenceManageSchedule,
-                    ]}
-                    colorScheme="purple"
-                    bgGradient={`linear(${green} 20%, ${red} 80%)`}
-                    _hover={{
-                        bgGradient: `linear(${greenHover} 20%, ${redHover} 80%)`,
-                    }}
-                    _focus={{
-                        bgGradient: `linear(${greenFocus} 20%, ${redFocus} 80%)`,
-                    }}
-                    _active={{
-                        bgGradient: `linear(${greenFocus} 20%, ${redFocus} 80%)`,
-                    }}
-                />
-                {/* <RestrictedDashboardButton
-                    to="roles"
-                    name="Permissions"
-                    icon="lock"
-                    description="Manage sets of permissions that can be assigned to groups."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageRoles]}
-                    colorScheme="pink"
-                /> */}
-                <RestrictedDashboardButton
-                    to="content"
-                    name={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
-                    icon="star"
-                    description={`Manage your ${
-                        conference.sponsorsLabel?.[0]?.value ?? "sponsors"
-                    }, their booths and representatives.`}
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage sponsors permission
-                    ]}
-                    colorScheme="purple"
-                />
-                <RestrictedDashboardButton
-                    to="groups"
-                    name="Groups"
-                    icon="user-cog"
-                    description="Manage groups of registrants."
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageRoles,
-                        Permissions_Permission_Enum.ConferenceManageGroups,
-                    ]}
-                    colorScheme="pink"
-                />
-                <RestrictedDashboardButton
-                    to="registrants"
-                    name="Registrants"
-                    icon="users"
-                    description="Manage who can log in and access your conference, e.g. registrants, presenters and speakers."
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageRoles,
-                        Permissions_Permission_Enum.ConferenceManageGroups,
-                        Permissions_Permission_Enum.ConferenceManageAttendees,
-                    ]}
-                    colorScheme="pink"
-                />
-                {/* <RestrictedDashboardButton
-                    to="chats"
-                    name="Chats"
-                    icon="comments"
-                    description="Manage and moderate conversations."
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage chats permission
-                    ]}
-                    colorScheme="purple"
-                /> */}
-                <RestrictedDashboardButton
-                    to="shuffle"
-                    name="Shuffle"
-                    icon="random"
-                    description="Manage randomised, time-limited networking, aka. shuffle periods."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageShuffle]}
-                    colorScheme="purple"
-                />
-                <RestrictedDashboardButton
-                    to="chats/moderation"
-                    name="Chat Moderation"
-                    icon="comments"
-                    description="Moderate conversations."
-                    permissions={[Permissions_Permission_Enum.ConferenceModerateAttendees]}
-                    colorScheme="purple"
-                />
-                <RestrictedDashboardButton
-                    to="theme"
-                    name="Theme"
-                    icon="palette"
-                    description="Customise the theme for attendees."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-                    colorScheme="orange"
-                />
-                <RestrictedDashboardButton
-                    to="email"
-                    name="Email"
-                    icon="envelope-open-text"
-                    description="Manage templates for submission requests, invitations, etc."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-                    colorScheme="gray"
-                />
-                <RestrictedDashboardButton
-                    to="details"
-                    name="Details"
-                    icon="signature"
-                    description="Manage name, short name and url."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageName]}
-                    colorScheme="gray"
-                />
-                <RestrictedDashboardButton
-                    to="settings"
-                    name="Settings"
-                    icon="cog"
-                    description="Manage global configuration of your conference."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageName]}
-                    colorScheme="gray"
-                />
+                <Heading as="h1" id="page-heading" mt={4} textAlign="left" w="100%" fontSize="4xl">
+                    Manage {conference.shortName}
+                </Heading>
+                <Text>
+                    <chakra.span fontWeight="bold">Need help?</chakra.span> Contact our support team at:&nbsp;
+                    <Link wordBreak="keep-all" whiteSpace="nowrap" href={`mailto:${techSupportAddress}`}>
+                        {techSupportAddress}
+                    </Link>
+                </Text>
+                <HStack w="100%" alignItems="flex-end">
+                    <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
+                        Program
+                    </Heading>
+                    <Spacer w="auto" />
+                    <RequireRole organizerRole={true}>
+                        <Link as={ReactLink} to={`${conferencePath}/manage/checklist`} fontSize="lg">
+                            Checklist
+                        </Link>
+                    </RequireRole>
+                </HStack>
+                <Flex
+                    flexWrap="wrap"
+                    alignItems="stretch"
+                    justifyContent="flex-start"
+                    w="100%"
+                    gridRowGap="1em"
+                    gridColumnGap="1em"
+                >
+                    <RestrictedDashboardButton
+                        to="content"
+                        name="Content"
+                        icon="align-left"
+                        description="Manage your program content: papers, posters, keynotes, etc."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="schedule"
+                        name="Schedule"
+                        icon="calendar"
+                        description="Manage your program schedule: your events."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="people"
+                        name="Program People"
+                        icon="people-arrows"
+                        description="Manage people listed in your program (authors, speakers, etc) and their links to registrants."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="content"
+                        name={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
+                        icon="star"
+                        description={`Manage your ${
+                            conference.sponsorsLabel?.[0]?.value ?? "sponsors"
+                        }, their booths and representatives.`}
+                        organizerRole
+                    />
+                </Flex>
+                <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
+                    Data
+                </Heading>
+                <Flex
+                    flexWrap="wrap"
+                    alignItems="stretch"
+                    justifyContent="flex-start"
+                    w="100%"
+                    gridRowGap="1em"
+                    gridColumnGap="1em"
+                >
+                    <RestrictedDashboardButton
+                        to="import"
+                        name="Import"
+                        icon="download"
+                        description="Import your content, schedule and registrants."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="export"
+                        name="Export"
+                        icon="upload"
+                        description="Export your conference data (events, public chats, analytics, etc)."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="analytics"
+                        name="Analytics"
+                        icon="chart-line"
+                        description="View activity at your conference."
+                        organizerRole
+                    />
+                </Flex>
+                <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
+                    Social
+                </Heading>
+                <Flex
+                    flexWrap="wrap"
+                    alignItems="stretch"
+                    justifyContent="flex-start"
+                    w="100%"
+                    gridRowGap="1em"
+                    gridColumnGap="1em"
+                >
+                    <RestrictedDashboardButton
+                        to="rooms"
+                        name="Rooms"
+                        icon="coffee"
+                        description="Manage and prioritise rooms."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="shuffle"
+                        name="Shuffle"
+                        icon="random"
+                        description="Manage randomised, time-limited networking, aka. shuffle periods."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="chats/moderation"
+                        name="Chat Moderation"
+                        icon="comments"
+                        description="Moderate conversations."
+                        moderatorRole
+                    />
+                </Flex>
+                <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
+                    Registration
+                </Heading>
+                <Flex
+                    flexWrap="wrap"
+                    alignItems="stretch"
+                    justifyContent="flex-start"
+                    w="100%"
+                    gridRowGap="1em"
+                    gridColumnGap="1em"
+                >
+                    <RestrictedDashboardButton
+                        to="groups"
+                        name="Groups"
+                        icon="user-cog"
+                        description="Manage groups of registrants."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="registrants"
+                        name="Registrants"
+                        icon="users"
+                        description="Manage who can log in and access your conference, e.g. registrants, presenters and speakers."
+                        organizerRole
+                    />
+                </Flex>
+                <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
+                    Customize
+                </Heading>
+                <Flex
+                    flexWrap="wrap"
+                    alignItems="stretch"
+                    justifyContent="flex-start"
+                    w="100%"
+                    gridRowGap="1em"
+                    gridColumnGap="1em"
+                >
+                    <RestrictedDashboardButton
+                        to="theme"
+                        name="Theme"
+                        icon="palette"
+                        description="Customise the theme for attendees."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="email"
+                        name="Email"
+                        icon="envelope-open-text"
+                        description="Manage templates for submission requests, invitations, etc."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
+                        to="settings"
+                        name="Settings"
+                        icon="cog"
+                        description="Manage global configuration of your conference."
+                        organizerRole
+                    />
+                </Flex>
                 {/* <RestrictedDashboardButton
                     to="broadcasts"
                     name="Broadcasts"
                     icon="video"
                     description="Manage your livestreams and broadcasts, including post-conference archiving."
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage broadcasts permission
-                    ]}
+                    organizerRole
                     colorScheme="gray"
                 /> */}
-                <RestrictedDashboardButton
-                    to="checklist"
-                    name="Checklist"
-                    icon="check-circle"
-                    description="Run the automatic checker to see if you're ready for the start of your conference."
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageContent,
-                        Permissions_Permission_Enum.ConferenceManageSchedule,
-                    ]}
-                    colorScheme="green"
-                />
-                <RestrictedDashboardButton
-                    to="analytics"
-                    name="Analytics"
-                    icon="chart-line"
-                    description="View activity at your conference."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-                    colorScheme="green"
-                />
-                {/* 
+            </VStack>
+            {/* 
                 <RestrictedDashboardButton
                     to="support"
                     name="Support"
                     icon="question-circle"
                     description="Learn about how to use Midspace's management tools and best practices."
                 /> */}
-            </Flex>
         </>
     );
 }

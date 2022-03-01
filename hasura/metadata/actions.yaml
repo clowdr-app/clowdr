@@ -219,6 +219,8 @@ actions:
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
+  permissions:
+  - role: conference-organizer
 - name: updateProfilePhoto
   definition:
     kind: synchronous

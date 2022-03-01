@@ -66,7 +66,7 @@ event_triggers:
     value_from_env: EVENT_SECRET
   name: Cache_PushNotificationSubscription
   retry_conf:
-    interval_sec: 120
-    num_retries: 1
-    timeout_sec: 60
+    interval_sec: 10
+    num_retries: 3
+    timeout_sec: 10
   webhook: "{{CACHES_BASE_URL}}/cache/update/pushNotificationSubscription"

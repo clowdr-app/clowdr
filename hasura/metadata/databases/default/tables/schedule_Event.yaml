@@ -327,17 +327,17 @@ event_triggers:
       columns: "*"
     update:
       columns:
-      - subconferenceId
       - conferenceId
       - roomId
+      - subconferenceId
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
   name: Cache_Event
   retry_conf:
     interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
+    num_retries: 3
+    timeout_sec: 10
   webhook: "{{CACHES_BASE_URL}}/cache/update/event"
 - definition:
     enable_manual: true

@@ -159,6 +159,6 @@ event_triggers:
   name: Cache_Subconference
   retry_conf:
     interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
+    num_retries: 3
+    timeout_sec: 10
   webhook: "{{CACHES_BASE_URL}}/cache/update/subconference"

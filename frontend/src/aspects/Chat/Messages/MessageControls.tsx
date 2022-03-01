@@ -73,6 +73,10 @@ export default function MessageControls({
                 return false;
             case Chat_MessageType_Enum.Question:
                 return config.permissions.canEditQuestion;
+            case Chat_MessageType_Enum.EventStart:
+                return false;
+            case Chat_MessageType_Enum.ParticipationSurvey:
+                return false;
         }
     }, [
         config.permissions.canEditAnswer,
@@ -99,6 +103,10 @@ export default function MessageControls({
                 return false;
             case Chat_MessageType_Enum.Question:
                 return config.permissions.canDeleteQuestion;
+            case Chat_MessageType_Enum.EventStart:
+                return false;
+            case Chat_MessageType_Enum.ParticipationSurvey:
+                return false;
         }
     }, [
         config.permissions.canDeleteAnswer,

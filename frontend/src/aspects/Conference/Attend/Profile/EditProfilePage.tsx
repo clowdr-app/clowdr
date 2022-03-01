@@ -421,7 +421,9 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
             {title}
             <VStack maxW={450} spacing={6} m={2}>
                 <UnsavedChangesWarning hasUnsavedChanges={isDirty || displayNameIsDirty} />
-                {registrant.userId === currentUser.user.id && !registrant.profile.hasBeenEdited ? (
+                {registrant.userId === currentUser.user.id &&
+                !registrant.profile.hasBeenEdited &&
+                !registrant.profile.photoURL_350x350 ? (
                     <Alert status="warning" variant="top-accent" flexWrap="wrap">
                         <AlertIcon />
                         <AlertTitle>Please make an edit</AlertTitle>

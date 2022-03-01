@@ -9,6 +9,8 @@ import type {
 } from "@midspace/hasura/action-types";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
+import type { SourceBlob } from "@midspace/shared-types/content/element";
+import { SourceType } from "@midspace/shared-types/content/element";
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
@@ -131,6 +133,7 @@ gql`
             id
             name
             startTime
+            durationSeconds
             conferenceId
             subconferenceId
             item {
@@ -285,6 +288,13 @@ export async function handleVonageArchiveMonitoringWebhook(
                     return true;
                 }
 
+                const source: SourceBlob = {
+                    source: SourceType.EventRecording,
+                    eventId: eventId,
+                    startTimeMillis: Date.parse(event.startTime),
+                    durationSeconds: event.durationSeconds,
+                };
+
                 const data: ElementDataBlob = [
                     {
                         createdAt: Date.now(),
@@ -312,6 +322,7 @@ export async function handleVonageArchiveMonitoringWebhook(
                                 conferenceId: event.conferenceId,
                                 subconferenceId: event.subconferenceId,
                                 data,
+                                source,
                                 isHidden: false,
                                 itemId: event.item.id,
                                 layoutData,
@@ -575,7 +586,7 @@ export async function handleJoinRoom(
         },
     });
     if (!roomInfo.data?.room_Room_by_pk) {
-        console.warn("User tried to join a Vonage room, but the system could not retrieve the room information.", {
+        logger.error("User tried to join a Vonage room, but the system could not retrieve the room information.", {
             payload,
             userId,
         });

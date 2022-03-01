@@ -667,6 +667,11 @@ export type NotifyEventEnded = {
     readonly ok: Scalars["Boolean"];
 };
 
+export type NotifyEventStarted = {
+    readonly __typename?: "NotifyEventStarted";
+    readonly ok: Scalars["Boolean"];
+};
+
 export type PresenceFlushOutput = {
     readonly __typename?: "PresenceFlushOutput";
     readonly ok?: Maybe<Scalars["String"]>;
@@ -4298,7 +4303,9 @@ export enum Chat_MessageType_Enum {
     Answer = "ANSWER",
     DuplicationMarker = "DUPLICATION_MARKER",
     Emote = "EMOTE",
+    EventStart = "EVENT_START",
     Message = "MESSAGE",
+    ParticipationSurvey = "PARTICIPATION_SURVEY",
     Poll = "POLL",
     PollResults = "POLL_RESULTS",
     Question = "QUESTION",
@@ -5060,6 +5067,8 @@ export enum Chat_ReactionType_Enum {
     Answer = "ANSWER",
     /** A plain emoji reaction */
     Emoji = "EMOJI",
+    /** Responding to an event participation survey. */
+    EventParticipation = "EVENT_PARTICIPATION",
     /** A vote in a poll */
     PollChoice = "POLL_CHOICE",
     /** Stop accepting new responses to the poll */
@@ -7647,6 +7656,8 @@ export enum Conference_ConfigurationKey_Enum {
     EnableBackstageStreamPreview = "ENABLE_BACKSTAGE_STREAM_PREVIEW",
     /** Boolean. Whether to enable the External RTMP Broadcast feature. */
     EnableExternalRtmpBroadcast = "ENABLE_EXTERNAL_RTMP_BROADCAST",
+    /** Boolean. Whether to enable external RTMP input feature. */
+    EnableExternalRtmpInput = "ENABLE_EXTERNAL_RTMP_INPUT",
     /** Whether to enable email notifications for recordings (default: true). */
     EnableRecordingSubtitleEmailNotifications = "ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS",
     /** Boolean. Hide the exhibition people from the event boxes in the schedule. */
@@ -11088,11 +11099,19 @@ export type Job_Queues_ChannelStackUpdateJob = {
     readonly jobStatusName: Job_Queues_JobStatus_Enum;
     readonly mediaLiveChannelId: Scalars["String"];
     readonly message?: Maybe<Scalars["String"]>;
+    readonly newRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly newRtmpBInputId?: Maybe<Scalars["String"]>;
     readonly newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     readonly newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    readonly newRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly newRtmpRoomInputId?: Maybe<Scalars["String"]>;
+    readonly oldRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly oldRtmpBInputId?: Maybe<Scalars["String"]>;
     readonly oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     readonly oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     readonly oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputId?: Maybe<Scalars["String"]>;
     readonly updated_at: Scalars["timestamptz"];
 };
 
@@ -11144,11 +11163,19 @@ export type Job_Queues_ChannelStackUpdateJob_Bool_Exp = {
     readonly jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum_Comparison_Exp>;
     readonly mediaLiveChannelId?: InputMaybe<String_Comparison_Exp>;
     readonly message?: InputMaybe<String_Comparison_Exp>;
+    readonly newRtmpBInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    readonly newRtmpBInputId?: InputMaybe<String_Comparison_Exp>;
     readonly newRtmpOutputStreamKey?: InputMaybe<String_Comparison_Exp>;
     readonly newRtmpOutputUri?: InputMaybe<String_Comparison_Exp>;
+    readonly newRtmpRoomInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    readonly newRtmpRoomInputId?: InputMaybe<String_Comparison_Exp>;
+    readonly oldRtmpBInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    readonly oldRtmpBInputId?: InputMaybe<String_Comparison_Exp>;
     readonly oldRtmpOutputDestinationId?: InputMaybe<String_Comparison_Exp>;
     readonly oldRtmpOutputStreamKey?: InputMaybe<String_Comparison_Exp>;
     readonly oldRtmpOutputUri?: InputMaybe<String_Comparison_Exp>;
+    readonly oldRtmpRoomInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    readonly oldRtmpRoomInputId?: InputMaybe<String_Comparison_Exp>;
     readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -11168,11 +11195,19 @@ export type Job_Queues_ChannelStackUpdateJob_Insert_Input = {
     readonly jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     readonly mediaLiveChannelId?: InputMaybe<Scalars["String"]>;
     readonly message?: InputMaybe<Scalars["String"]>;
+    readonly newRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly newRtmpBInputId?: InputMaybe<Scalars["String"]>;
     readonly newRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     readonly newRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    readonly newRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly newRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
+    readonly oldRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly oldRtmpBInputId?: InputMaybe<Scalars["String"]>;
     readonly oldRtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     readonly oldRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     readonly oldRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -11185,11 +11220,19 @@ export type Job_Queues_ChannelStackUpdateJob_Max_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly mediaLiveChannelId?: Maybe<Scalars["String"]>;
     readonly message?: Maybe<Scalars["String"]>;
+    readonly newRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly newRtmpBInputId?: Maybe<Scalars["String"]>;
     readonly newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     readonly newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    readonly newRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly newRtmpRoomInputId?: Maybe<Scalars["String"]>;
+    readonly oldRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly oldRtmpBInputId?: Maybe<Scalars["String"]>;
     readonly oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     readonly oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     readonly oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputId?: Maybe<Scalars["String"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -11201,11 +11244,19 @@ export type Job_Queues_ChannelStackUpdateJob_Max_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly mediaLiveChannelId?: InputMaybe<Order_By>;
     readonly message?: InputMaybe<Order_By>;
+    readonly newRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    readonly newRtmpBInputId?: InputMaybe<Order_By>;
     readonly newRtmpOutputStreamKey?: InputMaybe<Order_By>;
     readonly newRtmpOutputUri?: InputMaybe<Order_By>;
+    readonly newRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    readonly newRtmpRoomInputId?: InputMaybe<Order_By>;
+    readonly oldRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    readonly oldRtmpBInputId?: InputMaybe<Order_By>;
     readonly oldRtmpOutputDestinationId?: InputMaybe<Order_By>;
     readonly oldRtmpOutputStreamKey?: InputMaybe<Order_By>;
     readonly oldRtmpOutputUri?: InputMaybe<Order_By>;
+    readonly oldRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    readonly oldRtmpRoomInputId?: InputMaybe<Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
 };
 
@@ -11218,11 +11269,19 @@ export type Job_Queues_ChannelStackUpdateJob_Min_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly mediaLiveChannelId?: Maybe<Scalars["String"]>;
     readonly message?: Maybe<Scalars["String"]>;
+    readonly newRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly newRtmpBInputId?: Maybe<Scalars["String"]>;
     readonly newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     readonly newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    readonly newRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly newRtmpRoomInputId?: Maybe<Scalars["String"]>;
+    readonly oldRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly oldRtmpBInputId?: Maybe<Scalars["String"]>;
     readonly oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     readonly oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     readonly oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputId?: Maybe<Scalars["String"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -11234,11 +11293,19 @@ export type Job_Queues_ChannelStackUpdateJob_Min_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly mediaLiveChannelId?: InputMaybe<Order_By>;
     readonly message?: InputMaybe<Order_By>;
+    readonly newRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    readonly newRtmpBInputId?: InputMaybe<Order_By>;
     readonly newRtmpOutputStreamKey?: InputMaybe<Order_By>;
     readonly newRtmpOutputUri?: InputMaybe<Order_By>;
+    readonly newRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    readonly newRtmpRoomInputId?: InputMaybe<Order_By>;
+    readonly oldRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    readonly oldRtmpBInputId?: InputMaybe<Order_By>;
     readonly oldRtmpOutputDestinationId?: InputMaybe<Order_By>;
     readonly oldRtmpOutputStreamKey?: InputMaybe<Order_By>;
     readonly oldRtmpOutputUri?: InputMaybe<Order_By>;
+    readonly oldRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    readonly oldRtmpRoomInputId?: InputMaybe<Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
 };
 
@@ -11268,11 +11335,19 @@ export type Job_Queues_ChannelStackUpdateJob_Order_By = {
     readonly jobStatusName?: InputMaybe<Order_By>;
     readonly mediaLiveChannelId?: InputMaybe<Order_By>;
     readonly message?: InputMaybe<Order_By>;
+    readonly newRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    readonly newRtmpBInputId?: InputMaybe<Order_By>;
     readonly newRtmpOutputStreamKey?: InputMaybe<Order_By>;
     readonly newRtmpOutputUri?: InputMaybe<Order_By>;
+    readonly newRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    readonly newRtmpRoomInputId?: InputMaybe<Order_By>;
+    readonly oldRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    readonly oldRtmpBInputId?: InputMaybe<Order_By>;
     readonly oldRtmpOutputDestinationId?: InputMaybe<Order_By>;
     readonly oldRtmpOutputStreamKey?: InputMaybe<Order_By>;
     readonly oldRtmpOutputUri?: InputMaybe<Order_By>;
+    readonly oldRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    readonly oldRtmpRoomInputId?: InputMaybe<Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
 };
 
@@ -11298,15 +11373,31 @@ export enum Job_Queues_ChannelStackUpdateJob_Select_Column {
     /** column name */
     Message = "message",
     /** column name */
+    NewRtmpBInputAttachmentName = "newRtmpBInputAttachmentName",
+    /** column name */
+    NewRtmpBInputId = "newRtmpBInputId",
+    /** column name */
     NewRtmpOutputStreamKey = "newRtmpOutputStreamKey",
     /** column name */
     NewRtmpOutputUri = "newRtmpOutputUri",
+    /** column name */
+    NewRtmpRoomInputAttachmentName = "newRtmpRoomInputAttachmentName",
+    /** column name */
+    NewRtmpRoomInputId = "newRtmpRoomInputId",
+    /** column name */
+    OldRtmpBInputAttachmentName = "oldRtmpBInputAttachmentName",
+    /** column name */
+    OldRtmpBInputId = "oldRtmpBInputId",
     /** column name */
     OldRtmpOutputDestinationId = "oldRtmpOutputDestinationId",
     /** column name */
     OldRtmpOutputStreamKey = "oldRtmpOutputStreamKey",
     /** column name */
     OldRtmpOutputUri = "oldRtmpOutputUri",
+    /** column name */
+    OldRtmpRoomInputAttachmentName = "oldRtmpRoomInputAttachmentName",
+    /** column name */
+    OldRtmpRoomInputId = "oldRtmpRoomInputId",
     /** column name */
     UpdatedAt = "updated_at",
 }
@@ -11320,11 +11411,19 @@ export type Job_Queues_ChannelStackUpdateJob_Set_Input = {
     readonly jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     readonly mediaLiveChannelId?: InputMaybe<Scalars["String"]>;
     readonly message?: InputMaybe<Scalars["String"]>;
+    readonly newRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly newRtmpBInputId?: InputMaybe<Scalars["String"]>;
     readonly newRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     readonly newRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    readonly newRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly newRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
+    readonly oldRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly oldRtmpBInputId?: InputMaybe<Scalars["String"]>;
     readonly oldRtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     readonly oldRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     readonly oldRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly oldRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -11345,15 +11444,31 @@ export enum Job_Queues_ChannelStackUpdateJob_Update_Column {
     /** column name */
     Message = "message",
     /** column name */
+    NewRtmpBInputAttachmentName = "newRtmpBInputAttachmentName",
+    /** column name */
+    NewRtmpBInputId = "newRtmpBInputId",
+    /** column name */
     NewRtmpOutputStreamKey = "newRtmpOutputStreamKey",
     /** column name */
     NewRtmpOutputUri = "newRtmpOutputUri",
+    /** column name */
+    NewRtmpRoomInputAttachmentName = "newRtmpRoomInputAttachmentName",
+    /** column name */
+    NewRtmpRoomInputId = "newRtmpRoomInputId",
+    /** column name */
+    OldRtmpBInputAttachmentName = "oldRtmpBInputAttachmentName",
+    /** column name */
+    OldRtmpBInputId = "oldRtmpBInputId",
     /** column name */
     OldRtmpOutputDestinationId = "oldRtmpOutputDestinationId",
     /** column name */
     OldRtmpOutputStreamKey = "oldRtmpOutputStreamKey",
     /** column name */
     OldRtmpOutputUri = "oldRtmpOutputUri",
+    /** column name */
+    OldRtmpRoomInputAttachmentName = "oldRtmpRoomInputAttachmentName",
+    /** column name */
+    OldRtmpRoomInputId = "oldRtmpRoomInputId",
     /** column name */
     UpdatedAt = "updated_at",
 }
@@ -14197,6 +14312,8 @@ export type Mutation_Root = {
     readonly delete_schedule_Continuation?: Maybe<Schedule_Continuation_Mutation_Response>;
     /** delete single row from the table: "schedule.Continuation" */
     readonly delete_schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
+    /** delete data from the table: "schedule.CurrentEvents" */
+    readonly delete_schedule_CurrentEvents?: Maybe<Schedule_CurrentEvents_Mutation_Response>;
     /** delete data from the table: "schedule.Event" */
     readonly delete_schedule_Event?: Maybe<Schedule_Event_Mutation_Response>;
     /** delete data from the table: "schedule.EventProgramPerson" */
@@ -14591,6 +14708,10 @@ export type Mutation_Root = {
     readonly insert_schedule_Continuation?: Maybe<Schedule_Continuation_Mutation_Response>;
     /** insert a single row into the table: "schedule.Continuation" */
     readonly insert_schedule_Continuation_one?: Maybe<Schedule_Continuation>;
+    /** insert data into the table: "schedule.CurrentEvents" */
+    readonly insert_schedule_CurrentEvents?: Maybe<Schedule_CurrentEvents_Mutation_Response>;
+    /** insert a single row into the table: "schedule.CurrentEvents" */
+    readonly insert_schedule_CurrentEvents_one?: Maybe<Schedule_CurrentEvents>;
     /** insert data into the table: "schedule.Event" */
     readonly insert_schedule_Event?: Maybe<Schedule_Event_Mutation_Response>;
     /** insert data into the table: "schedule.EventProgramPerson" */
@@ -14696,6 +14817,7 @@ export type Mutation_Root = {
     readonly joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
     readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
     readonly notifyEventEnded: NotifyEventEnded;
+    readonly notifyEventStarted: NotifyEventStarted;
     readonly presence_Flush: PresenceFlushOutput;
     readonly refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
     readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
@@ -14996,6 +15118,8 @@ export type Mutation_Root = {
     readonly update_schedule_Continuation?: Maybe<Schedule_Continuation_Mutation_Response>;
     /** update single row of the table: "schedule.Continuation" */
     readonly update_schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
+    /** update data of the table: "schedule.CurrentEvents" */
+    readonly update_schedule_CurrentEvents?: Maybe<Schedule_CurrentEvents_Mutation_Response>;
     /** update data of the table: "schedule.Event" */
     readonly update_schedule_Event?: Maybe<Schedule_Event_Mutation_Response>;
     /** update data of the table: "schedule.EventProgramPerson" */
@@ -15842,6 +15966,11 @@ export type Mutation_RootDelete_Schedule_ContinuationArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Schedule_Continuation_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_CurrentEventsArgs = {
+    where: Schedule_CurrentEvents_Bool_Exp;
 };
 
 /** mutation root */
@@ -16977,6 +17106,16 @@ export type Mutation_RootInsert_Schedule_Continuation_OneArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Schedule_CurrentEventsArgs = {
+    objects: ReadonlyArray<Schedule_CurrentEvents_Insert_Input>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_CurrentEvents_OneArgs = {
+    object: Schedule_CurrentEvents_Insert_Input;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Schedule_EventArgs = {
     objects: ReadonlyArray<Schedule_Event_Insert_Input>;
     on_conflict?: InputMaybe<Schedule_Event_On_Conflict>;
@@ -17301,6 +17440,11 @@ export type Mutation_RootJoinRoomVonageSessionArgs = {
 
 /** mutation root */
 export type Mutation_RootNotifyEventEndedArgs = {
+    eventId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootNotifyEventStartedArgs = {
     eventId: Scalars["uuid"];
 };
 
@@ -18432,6 +18576,13 @@ export type Mutation_RootUpdate_Schedule_Continuation_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Schedule_CurrentEventsArgs = {
+    _inc?: InputMaybe<Schedule_CurrentEvents_Inc_Input>;
+    _set?: InputMaybe<Schedule_CurrentEvents_Set_Input>;
+    where: Schedule_CurrentEvents_Bool_Exp;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Schedule_EventArgs = {
     _inc?: InputMaybe<Schedule_Event_Inc_Input>;
     _set?: InputMaybe<Schedule_Event_Set_Input>;
@@ -19304,6 +19455,10 @@ export type Query_Root = {
     readonly schedule_Continuation_aggregate: Schedule_Continuation_Aggregate;
     /** fetch data from the table: "schedule.Continuation" using primary key columns */
     readonly schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
+    /** fetch data from the table: "schedule.CurrentEvents" */
+    readonly schedule_CurrentEvents: ReadonlyArray<Schedule_CurrentEvents>;
+    /** fetch aggregated fields from the table: "schedule.CurrentEvents" */
+    readonly schedule_CurrentEvents_aggregate: Schedule_CurrentEvents_Aggregate;
     /** fetch data from the table: "schedule.Event" */
     readonly schedule_Event: ReadonlyArray<Schedule_Event>;
     /** fetch data from the table: "schedule.EventProgramPerson" */
@@ -21054,6 +21209,22 @@ export type Query_RootSchedule_Continuation_AggregateArgs = {
 
 export type Query_RootSchedule_Continuation_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootSchedule_CurrentEventsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Order_By>>;
+    where?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
+};
+
+export type Query_RootSchedule_CurrentEvents_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Order_By>>;
+    where?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
 };
 
 export type Query_RootSchedule_EventArgs = {
@@ -25179,6 +25350,10 @@ export type Room_Room = {
     readonly conference: Conference_Conference;
     readonly conferenceId: Scalars["uuid"];
     readonly created_at: Scalars["timestamptz"];
+    /** An array relationship */
+    readonly currentEvents: ReadonlyArray<Schedule_CurrentEvents>;
+    /** An aggregate relationship */
+    readonly currentEvents_aggregate: Schedule_CurrentEvents_Aggregate;
     /** An object relationship */
     readonly currentMode: Room_Mode;
     readonly currentModeName: Room_Mode_Enum;
@@ -25252,6 +25427,24 @@ export type Room_RoomChannelStackCreateJobs_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Order_By>>;
     where?: InputMaybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+/** columns and relationships of "room.Room" */
+export type Room_RoomCurrentEventsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Order_By>>;
+    where?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
+};
+
+/** columns and relationships of "room.Room" */
+export type Room_RoomCurrentEvents_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Order_By>>;
+    where?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
 };
 
 /** columns and relationships of "room.Room" */
@@ -25838,6 +26031,7 @@ export type Room_Room_Bool_Exp = {
     readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
     readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly currentEvents?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
     readonly currentMode?: InputMaybe<Room_Mode_Bool_Exp>;
     readonly currentModeName?: InputMaybe<Room_Mode_Enum_Comparison_Exp>;
     readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
@@ -25893,6 +26087,7 @@ export type Room_Room_Insert_Input = {
     readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly currentEvents?: InputMaybe<Schedule_CurrentEvents_Arr_Rel_Insert_Input>;
     readonly currentMode?: InputMaybe<Room_Mode_Obj_Rel_Insert_Input>;
     readonly currentModeName?: InputMaybe<Room_Mode_Enum>;
     readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
@@ -26020,6 +26215,7 @@ export type Room_Room_Order_By = {
     readonly conference?: InputMaybe<Conference_Conference_Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
+    readonly currentEvents_aggregate?: InputMaybe<Schedule_CurrentEvents_Aggregate_Order_By>;
     readonly currentMode?: InputMaybe<Room_Mode_Order_By>;
     readonly currentModeName?: InputMaybe<Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
@@ -28037,9 +28233,431 @@ export type Schedule_Continuation_Variance_Order_By = {
     readonly priority?: InputMaybe<Order_By>;
 };
 
+/** columns and relationships of "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents = {
+    readonly __typename?: "schedule_CurrentEvents";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly durationSeconds?: Maybe<Scalars["Int"]>;
+    readonly enableRecording?: Maybe<Scalars["Boolean"]>;
+    readonly endTime?: Maybe<Scalars["timestamptz"]>;
+    /** An array relationship */
+    readonly eventPeople: ReadonlyArray<Schedule_EventProgramPerson>;
+    /** An aggregate relationship */
+    readonly eventPeople_aggregate: Schedule_EventProgramPerson_Aggregate;
+    readonly exhibitionId?: Maybe<Scalars["uuid"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly intendedRoomModeName?: Maybe<Scalars["String"]>;
+    readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    readonly room?: Maybe<Room_Room>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
+    readonly startTime?: Maybe<Scalars["timestamptz"]>;
+    readonly streamTextEventId?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly timings_updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly visibilityLevel?: Maybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "schedule.CurrentEvents" */
+export type Schedule_CurrentEventsEventPeopleArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_EventProgramPerson_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_EventProgramPerson_Order_By>>;
+    where?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.CurrentEvents" */
+export type Schedule_CurrentEventsEventPeople_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_EventProgramPerson_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_EventProgramPerson_Order_By>>;
+    where?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
+};
+
+/** aggregated selection of "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Aggregate = {
+    readonly __typename?: "schedule_CurrentEvents_aggregate";
+    readonly aggregate?: Maybe<Schedule_CurrentEvents_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Schedule_CurrentEvents>;
+};
+
+/** aggregate fields of "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Aggregate_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_aggregate_fields";
+    readonly avg?: Maybe<Schedule_CurrentEvents_Avg_Fields>;
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Schedule_CurrentEvents_Max_Fields>;
+    readonly min?: Maybe<Schedule_CurrentEvents_Min_Fields>;
+    readonly stddev?: Maybe<Schedule_CurrentEvents_Stddev_Fields>;
+    readonly stddev_pop?: Maybe<Schedule_CurrentEvents_Stddev_Pop_Fields>;
+    readonly stddev_samp?: Maybe<Schedule_CurrentEvents_Stddev_Samp_Fields>;
+    readonly sum?: Maybe<Schedule_CurrentEvents_Sum_Fields>;
+    readonly var_pop?: Maybe<Schedule_CurrentEvents_Var_Pop_Fields>;
+    readonly var_samp?: Maybe<Schedule_CurrentEvents_Var_Samp_Fields>;
+    readonly variance?: Maybe<Schedule_CurrentEvents_Variance_Fields>;
+};
+
+/** aggregate fields of "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Aggregate_Order_By = {
+    readonly avg?: InputMaybe<Schedule_CurrentEvents_Avg_Order_By>;
+    readonly count?: InputMaybe<Order_By>;
+    readonly max?: InputMaybe<Schedule_CurrentEvents_Max_Order_By>;
+    readonly min?: InputMaybe<Schedule_CurrentEvents_Min_Order_By>;
+    readonly stddev?: InputMaybe<Schedule_CurrentEvents_Stddev_Order_By>;
+    readonly stddev_pop?: InputMaybe<Schedule_CurrentEvents_Stddev_Pop_Order_By>;
+    readonly stddev_samp?: InputMaybe<Schedule_CurrentEvents_Stddev_Samp_Order_By>;
+    readonly sum?: InputMaybe<Schedule_CurrentEvents_Sum_Order_By>;
+    readonly var_pop?: InputMaybe<Schedule_CurrentEvents_Var_Pop_Order_By>;
+    readonly var_samp?: InputMaybe<Schedule_CurrentEvents_Var_Samp_Order_By>;
+    readonly variance?: InputMaybe<Schedule_CurrentEvents_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Arr_Rel_Insert_Input = {
+    readonly data: ReadonlyArray<Schedule_CurrentEvents_Insert_Input>;
+};
+
+/** aggregate avg on columns */
+export type Schedule_CurrentEvents_Avg_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_avg_fields";
+    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Avg_Order_By = {
+    readonly durationSeconds?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "schedule.CurrentEvents". All fields are combined with a logical 'AND'. */
+export type Schedule_CurrentEvents_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Bool_Exp>>;
+    readonly _not?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Bool_Exp>>;
+    readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly durationSeconds?: InputMaybe<Int_Comparison_Exp>;
+    readonly enableRecording?: InputMaybe<Boolean_Comparison_Exp>;
+    readonly endTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
+    readonly exhibitionId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly intendedRoomModeName?: InputMaybe<String_Comparison_Exp>;
+    readonly itemId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly name?: InputMaybe<String_Comparison_Exp>;
+    readonly room?: InputMaybe<Room_Room_Bool_Exp>;
+    readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly startTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly streamTextEventId?: InputMaybe<String_Comparison_Exp>;
+    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly timings_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly visibilityLevel?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** input type for incrementing numeric columns in table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Inc_Input = {
+    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Insert_Input = {
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
+    readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
+    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
+    readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly intendedRoomModeName?: InputMaybe<Scalars["String"]>;
+    readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+    readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
+    readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
+    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly timings_updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly visibilityLevel?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Schedule_CurrentEvents_Max_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_max_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly durationSeconds?: Maybe<Scalars["Int"]>;
+    readonly endTime?: Maybe<Scalars["timestamptz"]>;
+    readonly exhibitionId?: Maybe<Scalars["uuid"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly intendedRoomModeName?: Maybe<Scalars["String"]>;
+    readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
+    readonly startTime?: Maybe<Scalars["timestamptz"]>;
+    readonly streamTextEventId?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly timings_updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly visibilityLevel?: Maybe<Scalars["String"]>;
+};
+
+/** order by max() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Max_Order_By = {
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly durationSeconds?: InputMaybe<Order_By>;
+    readonly endTime?: InputMaybe<Order_By>;
+    readonly exhibitionId?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly intendedRoomModeName?: InputMaybe<Order_By>;
+    readonly itemId?: InputMaybe<Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+    readonly roomId?: InputMaybe<Order_By>;
+    readonly shufflePeriodId?: InputMaybe<Order_By>;
+    readonly startTime?: InputMaybe<Order_By>;
+    readonly streamTextEventId?: InputMaybe<Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
+    readonly timings_updated_at?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+    readonly visibilityLevel?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Schedule_CurrentEvents_Min_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_min_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly durationSeconds?: Maybe<Scalars["Int"]>;
+    readonly endTime?: Maybe<Scalars["timestamptz"]>;
+    readonly exhibitionId?: Maybe<Scalars["uuid"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly intendedRoomModeName?: Maybe<Scalars["String"]>;
+    readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
+    readonly startTime?: Maybe<Scalars["timestamptz"]>;
+    readonly streamTextEventId?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
+    readonly timings_updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+    readonly visibilityLevel?: Maybe<Scalars["String"]>;
+};
+
+/** order by min() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Min_Order_By = {
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly durationSeconds?: InputMaybe<Order_By>;
+    readonly endTime?: InputMaybe<Order_By>;
+    readonly exhibitionId?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly intendedRoomModeName?: InputMaybe<Order_By>;
+    readonly itemId?: InputMaybe<Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+    readonly roomId?: InputMaybe<Order_By>;
+    readonly shufflePeriodId?: InputMaybe<Order_By>;
+    readonly startTime?: InputMaybe<Order_By>;
+    readonly streamTextEventId?: InputMaybe<Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
+    readonly timings_updated_at?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+    readonly visibilityLevel?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Mutation_Response = {
+    readonly __typename?: "schedule_CurrentEvents_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Schedule_CurrentEvents>;
+};
+
+/** Ordering options when selecting data from "schedule.CurrentEvents". */
+export type Schedule_CurrentEvents_Order_By = {
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly durationSeconds?: InputMaybe<Order_By>;
+    readonly enableRecording?: InputMaybe<Order_By>;
+    readonly endTime?: InputMaybe<Order_By>;
+    readonly eventPeople_aggregate?: InputMaybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
+    readonly exhibitionId?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly intendedRoomModeName?: InputMaybe<Order_By>;
+    readonly itemId?: InputMaybe<Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+    readonly room?: InputMaybe<Room_Room_Order_By>;
+    readonly roomId?: InputMaybe<Order_By>;
+    readonly shufflePeriodId?: InputMaybe<Order_By>;
+    readonly startTime?: InputMaybe<Order_By>;
+    readonly streamTextEventId?: InputMaybe<Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
+    readonly timings_updated_at?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+    readonly visibilityLevel?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "schedule.CurrentEvents" */
+export enum Schedule_CurrentEvents_Select_Column {
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    DurationSeconds = "durationSeconds",
+    /** column name */
+    EnableRecording = "enableRecording",
+    /** column name */
+    EndTime = "endTime",
+    /** column name */
+    ExhibitionId = "exhibitionId",
+    /** column name */
+    Id = "id",
+    /** column name */
+    IntendedRoomModeName = "intendedRoomModeName",
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    Name = "name",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
+    /** column name */
+    StartTime = "startTime",
+    /** column name */
+    StreamTextEventId = "streamTextEventId",
+    /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
+    TimingsUpdatedAt = "timings_updated_at",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    VisibilityLevel = "visibilityLevel",
+}
+
+/** input type for updating data in table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Set_Input = {
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
+    readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
+    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly intendedRoomModeName?: InputMaybe<Scalars["String"]>;
+    readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+    readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
+    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly timings_updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly visibilityLevel?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregate stddev on columns */
+export type Schedule_CurrentEvents_Stddev_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_stddev_fields";
+    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Stddev_Order_By = {
+    readonly durationSeconds?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Schedule_CurrentEvents_Stddev_Pop_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_stddev_pop_fields";
+    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Stddev_Pop_Order_By = {
+    readonly durationSeconds?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Schedule_CurrentEvents_Stddev_Samp_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_stddev_samp_fields";
+    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Stddev_Samp_Order_By = {
+    readonly durationSeconds?: InputMaybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Schedule_CurrentEvents_Sum_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_sum_fields";
+    readonly durationSeconds?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Sum_Order_By = {
+    readonly durationSeconds?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Schedule_CurrentEvents_Var_Pop_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_var_pop_fields";
+    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Var_Pop_Order_By = {
+    readonly durationSeconds?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Schedule_CurrentEvents_Var_Samp_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_var_samp_fields";
+    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Var_Samp_Order_By = {
+    readonly durationSeconds?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Schedule_CurrentEvents_Variance_Fields = {
+    readonly __typename?: "schedule_CurrentEvents_variance_fields";
+    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "schedule.CurrentEvents" */
+export type Schedule_CurrentEvents_Variance_Order_By = {
+    readonly durationSeconds?: InputMaybe<Order_By>;
+};
+
 /** columns and relationships of "schedule.Event" */
 export type Schedule_Event = {
     readonly __typename?: "schedule_Event";
+    readonly automaticParticipationSurvey: Scalars["Boolean"];
     /** An object relationship */
     readonly conference: Conference_Conference;
     readonly conferenceId: Scalars["uuid"];
@@ -28552,6 +29170,7 @@ export type Schedule_Event_Bool_Exp = {
     readonly _and?: InputMaybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
     readonly _not?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly _or?: InputMaybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
+    readonly automaticParticipationSurvey?: InputMaybe<Boolean_Comparison_Exp>;
     readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
     readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly continuations?: InputMaybe<Schedule_Continuation_Bool_Exp>;
@@ -28595,6 +29214,7 @@ export type Schedule_Event_Inc_Input = {
 
 /** input type for inserting data into table "schedule.Event" */
 export type Schedule_Event_Insert_Input = {
+    readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly continuations?: InputMaybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
@@ -28727,6 +29347,7 @@ export type Schedule_Event_On_Conflict = {
 
 /** Ordering options when selecting data from "schedule.Event". */
 export type Schedule_Event_Order_By = {
+    readonly automaticParticipationSurvey?: InputMaybe<Order_By>;
     readonly conference?: InputMaybe<Conference_Conference_Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly continuations_aggregate?: InputMaybe<Schedule_Continuation_Aggregate_Order_By>;
@@ -28764,6 +29385,8 @@ export type Schedule_Event_Pk_Columns_Input = {
 
 /** select columns of table "schedule.Event" */
 export enum Schedule_Event_Select_Column {
+    /** column name */
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -28804,6 +29427,7 @@ export enum Schedule_Event_Select_Column {
 
 /** input type for updating data in table "schedule.Event" */
 export type Schedule_Event_Set_Input = {
+    readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
@@ -28870,6 +29494,8 @@ export type Schedule_Event_Sum_Order_By = {
 
 /** update columns of table "schedule.Event" */
 export enum Schedule_Event_Update_Column {
+    /** column name */
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -30394,6 +31020,10 @@ export type Subscription_Root = {
     readonly schedule_Continuation_aggregate: Schedule_Continuation_Aggregate;
     /** fetch data from the table: "schedule.Continuation" using primary key columns */
     readonly schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
+    /** fetch data from the table: "schedule.CurrentEvents" */
+    readonly schedule_CurrentEvents: ReadonlyArray<Schedule_CurrentEvents>;
+    /** fetch aggregated fields from the table: "schedule.CurrentEvents" */
+    readonly schedule_CurrentEvents_aggregate: Schedule_CurrentEvents_Aggregate;
     /** fetch data from the table: "schedule.Event" */
     readonly schedule_Event: ReadonlyArray<Schedule_Event>;
     /** fetch data from the table: "schedule.EventProgramPerson" */
@@ -32140,6 +32770,22 @@ export type Subscription_RootSchedule_Continuation_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Subscription_RootSchedule_CurrentEventsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Order_By>>;
+    where?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_CurrentEvents_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Order_By>>;
+    where?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
+};
+
 export type Subscription_RootSchedule_EventArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -33785,6 +34431,8 @@ export type Video_ChannelStack = {
     readonly rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     readonly rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     readonly rtmpOutputUri?: Maybe<Scalars["String"]>;
+    readonly rtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly rtmpRoomInputId?: Maybe<Scalars["String"]>;
     readonly updatedAt: Scalars["timestamptz"];
 };
 
@@ -33860,6 +34508,8 @@ export type Video_ChannelStack_Bool_Exp = {
     readonly rtmpOutputDestinationId?: InputMaybe<String_Comparison_Exp>;
     readonly rtmpOutputStreamKey?: InputMaybe<String_Comparison_Exp>;
     readonly rtmpOutputUri?: InputMaybe<String_Comparison_Exp>;
+    readonly rtmpRoomInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    readonly rtmpRoomInputId?: InputMaybe<String_Comparison_Exp>;
     readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -33901,6 +34551,8 @@ export type Video_ChannelStack_Insert_Input = {
     readonly rtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     readonly rtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     readonly rtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    readonly rtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly rtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -33930,6 +34582,8 @@ export type Video_ChannelStack_Max_Fields = {
     readonly rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     readonly rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     readonly rtmpOutputUri?: Maybe<Scalars["String"]>;
+    readonly rtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly rtmpRoomInputId?: Maybe<Scalars["String"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -33959,6 +34613,8 @@ export type Video_ChannelStack_Min_Fields = {
     readonly rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     readonly rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     readonly rtmpOutputUri?: Maybe<Scalars["String"]>;
+    readonly rtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    readonly rtmpRoomInputId?: Maybe<Scalars["String"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -34015,6 +34671,8 @@ export type Video_ChannelStack_Order_By = {
     readonly rtmpOutputDestinationId?: InputMaybe<Order_By>;
     readonly rtmpOutputStreamKey?: InputMaybe<Order_By>;
     readonly rtmpOutputUri?: InputMaybe<Order_By>;
+    readonly rtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    readonly rtmpRoomInputId?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
 };
 
@@ -34072,6 +34730,10 @@ export enum Video_ChannelStack_Select_Column {
     /** column name */
     RtmpOutputUri = "rtmpOutputUri",
     /** column name */
+    RtmpRoomInputAttachmentName = "rtmpRoomInputAttachmentName",
+    /** column name */
+    RtmpRoomInputId = "rtmpRoomInputId",
+    /** column name */
     UpdatedAt = "updatedAt",
 }
 
@@ -34100,6 +34762,8 @@ export type Video_ChannelStack_Set_Input = {
     readonly rtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     readonly rtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     readonly rtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    readonly rtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    readonly rtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -34151,6 +34815,10 @@ export enum Video_ChannelStack_Update_Column {
     RtmpOutputStreamKey = "rtmpOutputStreamKey",
     /** column name */
     RtmpOutputUri = "rtmpOutputUri",
+    /** column name */
+    RtmpRoomInputAttachmentName = "rtmpRoomInputAttachmentName",
+    /** column name */
+    RtmpRoomInputId = "rtmpRoomInputId",
     /** column name */
     UpdatedAt = "updatedAt",
 }
@@ -35258,6 +35926,8 @@ export enum Video_RtmpInput_Enum {
     RtmpA = "RTMP_A",
     /** The B RTMP input. */
     RtmpB = "RTMP_B",
+    /** Use the room's RTMP input if one is available. */
+    RtmpRoom = "RTMP_ROOM",
 }
 
 /** Boolean expression to compare columns of type "video_RtmpInput_enum". All fields are combined with logical 'AND'. */
@@ -44705,6 +45375,7 @@ export type EventInfoFragment = {
     readonly exhibitionId?: any | null;
     readonly shufflePeriodId?: any | null;
     readonly enableRecording: boolean;
+    readonly automaticParticipationSurvey: boolean;
     readonly eventPeople: ReadonlyArray<{
         readonly __typename?: "schedule_EventProgramPerson";
         readonly id: any;
@@ -44921,6 +45592,7 @@ export type SelectWholeScheduleQuery = {
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
         readonly enableRecording: boolean;
+        readonly automaticParticipationSurvey: boolean;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
@@ -45037,6 +45709,7 @@ export type InsertEventInfoMutationVariables = Exact<{
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
     insertContinuation: Scalars["Boolean"];
     enableRecording: Scalars["Boolean"];
+    automaticParticipationSurvey: Scalars["Boolean"];
 }>;
 
 export type InsertEventInfoMutation = {
@@ -45055,6 +45728,7 @@ export type InsertEventInfoMutation = {
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
         readonly enableRecording: boolean;
+        readonly automaticParticipationSurvey: boolean;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
@@ -45080,6 +45754,7 @@ export type UpdateEventInfoMutationVariables = Exact<{
     exhibitionId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
     enableRecording: Scalars["Boolean"];
+    automaticParticipationSurvey: Scalars["Boolean"];
 }>;
 
 export type UpdateEventInfoMutation = {
@@ -45098,6 +45773,7 @@ export type UpdateEventInfoMutation = {
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
         readonly enableRecording: boolean;
+        readonly automaticParticipationSurvey: boolean;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
@@ -47893,7 +48569,7 @@ export const MonitorLivestreams_EventFragmentDoc = gql`
             id
             sessionId
             eventId
-            participantStreams {
+            participantStreams(where: { stopped_at: { _is_null: true } }) {
                 id
                 registrantId
                 vonageStreamType
@@ -48450,6 +49126,7 @@ export const EventInfoFragmentDoc = gql`
         exhibitionId
         shufflePeriodId
         enableRecording
+        automaticParticipationSurvey
     }
     ${EventProgramPersonInfoFragmentDoc}
 `;
@@ -53289,6 +53966,7 @@ export const InsertEventInfoDocument = gql`
         $shufflePeriodId: uuid = null
         $insertContinuation: Boolean!
         $enableRecording: Boolean!
+        $automaticParticipationSurvey: Boolean!
     ) {
         insert_schedule_Event_one(
             object: {
@@ -53303,6 +53981,7 @@ export const InsertEventInfoDocument = gql`
                 exhibitionId: $exhibitionId
                 shufflePeriodId: $shufflePeriodId
                 enableRecording: $enableRecording
+                automaticParticipationSurvey: $automaticParticipationSurvey
             }
         ) {
             ...EventInfo
@@ -53339,6 +54018,7 @@ export const UpdateEventInfoDocument = gql`
         $exhibitionId: uuid = null
         $shufflePeriodId: uuid = null
         $enableRecording: Boolean!
+        $automaticParticipationSurvey: Boolean!
     ) {
         update_schedule_Event_by_pk(
             pk_columns: { id: $eventId }
@@ -53352,6 +54032,7 @@ export const UpdateEventInfoDocument = gql`
                 exhibitionId: $exhibitionId
                 shufflePeriodId: $shufflePeriodId
                 enableRecording: $enableRecording
+                automaticParticipationSurvey: $automaticParticipationSurvey
             }
         ) {
             ...EventInfo
@@ -54448,6 +55129,7 @@ export type GraphCacheKeysConfig = {
     JoinRoomChimeSessionOutput?: (data: WithTypename<JoinRoomChimeSessionOutput>) => null | string;
     JoinRoomVonageSessionOutput?: (data: WithTypename<JoinRoomVonageSessionOutput>) => null | string;
     NotifyEventEnded?: (data: WithTypename<NotifyEventEnded>) => null | string;
+    NotifyEventStarted?: (data: WithTypename<NotifyEventStarted>) => null | string;
     PresenceFlushOutput?: (data: WithTypename<PresenceFlushOutput>) => null | string;
     PresenceSummaryOutput?: (data: WithTypename<PresenceSummaryOutput>) => null | string;
     PushNotificationSubscription?: (data: WithTypename<PushNotificationSubscription>) => null | string;
@@ -55579,6 +56261,34 @@ export type GraphCacheKeysConfig = {
     ) => null | string;
     schedule_Continuation_variance_fields?: (
         data: WithTypename<Schedule_Continuation_Variance_Fields>
+    ) => null | string;
+    schedule_CurrentEvents?: (data: WithTypename<Schedule_CurrentEvents>) => null | string;
+    schedule_CurrentEvents_aggregate?: (data: WithTypename<Schedule_CurrentEvents_Aggregate>) => null | string;
+    schedule_CurrentEvents_aggregate_fields?: (
+        data: WithTypename<Schedule_CurrentEvents_Aggregate_Fields>
+    ) => null | string;
+    schedule_CurrentEvents_avg_fields?: (data: WithTypename<Schedule_CurrentEvents_Avg_Fields>) => null | string;
+    schedule_CurrentEvents_max_fields?: (data: WithTypename<Schedule_CurrentEvents_Max_Fields>) => null | string;
+    schedule_CurrentEvents_min_fields?: (data: WithTypename<Schedule_CurrentEvents_Min_Fields>) => null | string;
+    schedule_CurrentEvents_mutation_response?: (
+        data: WithTypename<Schedule_CurrentEvents_Mutation_Response>
+    ) => null | string;
+    schedule_CurrentEvents_stddev_fields?: (data: WithTypename<Schedule_CurrentEvents_Stddev_Fields>) => null | string;
+    schedule_CurrentEvents_stddev_pop_fields?: (
+        data: WithTypename<Schedule_CurrentEvents_Stddev_Pop_Fields>
+    ) => null | string;
+    schedule_CurrentEvents_stddev_samp_fields?: (
+        data: WithTypename<Schedule_CurrentEvents_Stddev_Samp_Fields>
+    ) => null | string;
+    schedule_CurrentEvents_sum_fields?: (data: WithTypename<Schedule_CurrentEvents_Sum_Fields>) => null | string;
+    schedule_CurrentEvents_var_pop_fields?: (
+        data: WithTypename<Schedule_CurrentEvents_Var_Pop_Fields>
+    ) => null | string;
+    schedule_CurrentEvents_var_samp_fields?: (
+        data: WithTypename<Schedule_CurrentEvents_Var_Samp_Fields>
+    ) => null | string;
+    schedule_CurrentEvents_variance_fields?: (
+        data: WithTypename<Schedule_CurrentEvents_Variance_Fields>
     ) => null | string;
     schedule_Event?: (data: WithTypename<Schedule_Event>) => null | string;
     schedule_EventProgramPerson?: (data: WithTypename<Schedule_EventProgramPerson>) => null | string;
@@ -57104,6 +57814,16 @@ export type GraphCacheResolvers = {
             Query_RootSchedule_Continuation_By_PkArgs,
             WithTypename<Schedule_Continuation> | string
         >;
+        schedule_CurrentEvents?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSchedule_CurrentEventsArgs,
+            Array<WithTypename<Schedule_CurrentEvents> | string>
+        >;
+        schedule_CurrentEvents_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSchedule_CurrentEvents_AggregateArgs,
+            WithTypename<Schedule_CurrentEvents_Aggregate> | string
+        >;
         schedule_Event?: GraphCacheResolver<
             WithTypename<Query_Root>,
             Query_RootSchedule_EventArgs,
@@ -58003,6 +58723,9 @@ export type GraphCacheResolvers = {
     };
     NotifyEventEnded?: {
         ok?: GraphCacheResolver<WithTypename<NotifyEventEnded>, Record<string, never>, Scalars["Boolean"] | string>;
+    };
+    NotifyEventStarted?: {
+        ok?: GraphCacheResolver<WithTypename<NotifyEventStarted>, Record<string, never>, Scalars["Boolean"] | string>;
     };
     PresenceFlushOutput?: {
         ok?: GraphCacheResolver<WithTypename<PresenceFlushOutput>, Record<string, never>, Scalars["String"] | string>;
@@ -64943,12 +65666,42 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        newRtmpBInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        newRtmpBInputId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         newRtmpOutputStreamKey?: GraphCacheResolver<
             WithTypename<Job_Queues_ChannelStackUpdateJob>,
             Record<string, never>,
             Scalars["String"] | string
         >;
         newRtmpOutputUri?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        newRtmpRoomInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        newRtmpRoomInputId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpBInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpBInputId?: GraphCacheResolver<
             WithTypename<Job_Queues_ChannelStackUpdateJob>,
             Record<string, never>,
             Scalars["String"] | string
@@ -64964,6 +65717,16 @@ export type GraphCacheResolvers = {
             Scalars["String"] | string
         >;
         oldRtmpOutputUri?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpRoomInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpRoomInputId?: GraphCacheResolver<
             WithTypename<Job_Queues_ChannelStackUpdateJob>,
             Record<string, never>,
             Scalars["String"] | string
@@ -65034,12 +65797,42 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        newRtmpBInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        newRtmpBInputId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         newRtmpOutputStreamKey?: GraphCacheResolver<
             WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
             Record<string, never>,
             Scalars["String"] | string
         >;
         newRtmpOutputUri?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        newRtmpRoomInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        newRtmpRoomInputId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpBInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpBInputId?: GraphCacheResolver<
             WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
             Record<string, never>,
             Scalars["String"] | string
@@ -65055,6 +65848,16 @@ export type GraphCacheResolvers = {
             Scalars["String"] | string
         >;
         oldRtmpOutputUri?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpRoomInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpRoomInputId?: GraphCacheResolver<
             WithTypename<Job_Queues_ChannelStackUpdateJob_Max_Fields>,
             Record<string, never>,
             Scalars["String"] | string
@@ -65096,12 +65899,42 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        newRtmpBInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        newRtmpBInputId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         newRtmpOutputStreamKey?: GraphCacheResolver<
             WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
         >;
         newRtmpOutputUri?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        newRtmpRoomInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        newRtmpRoomInputId?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpBInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpBInputId?: GraphCacheResolver<
             WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
@@ -65117,6 +65950,16 @@ export type GraphCacheResolvers = {
             Scalars["String"] | string
         >;
         oldRtmpOutputUri?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpRoomInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        oldRtmpRoomInputId?: GraphCacheResolver<
             WithTypename<Job_Queues_ChannelStackUpdateJob_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
@@ -69769,6 +70612,16 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["timestamptz"] | string
         >;
+        currentEvents?: GraphCacheResolver<
+            WithTypename<Room_Room>,
+            Room_RoomCurrentEventsArgs,
+            Array<WithTypename<Schedule_CurrentEvents> | string>
+        >;
+        currentEvents_aggregate?: GraphCacheResolver<
+            WithTypename<Room_Room>,
+            Room_RoomCurrentEvents_AggregateArgs,
+            WithTypename<Schedule_CurrentEvents_Aggregate> | string
+        >;
         currentMode?: GraphCacheResolver<
             WithTypename<Room_Room>,
             Record<string, never>,
@@ -71906,7 +72759,426 @@ export type GraphCacheResolvers = {
             Scalars["Float"] | string
         >;
     };
+    schedule_CurrentEvents?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        enableRecording?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["Boolean"] | string
+        >;
+        endTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        eventPeople?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Schedule_CurrentEventsEventPeopleArgs,
+            Array<WithTypename<Schedule_EventProgramPerson> | string>
+        >;
+        eventPeople_aggregate?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Schedule_CurrentEventsEventPeople_AggregateArgs,
+            WithTypename<Schedule_EventProgramPerson_Aggregate> | string
+        >;
+        exhibitionId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        id?: GraphCacheResolver<WithTypename<Schedule_CurrentEvents>, Record<string, never>, Scalars["uuid"] | string>;
+        intendedRoomModeName?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        itemId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        name?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        room?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            WithTypename<Room_Room> | string
+        >;
+        roomId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        shufflePeriodId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        startTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        streamTextEventId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        timings_updated_at?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        visibilityLevel?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    schedule_CurrentEvents_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Schedule_CurrentEvents> | string>
+        >;
+    };
+    schedule_CurrentEvents_aggregate_fields?: {
+        avg?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Avg_Fields> | string
+        >;
+        count?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Schedule_CurrentEvents_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Min_Fields> | string
+        >;
+        stddev?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Stddev_Fields> | string
+        >;
+        stddev_pop?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Stddev_Pop_Fields> | string
+        >;
+        stddev_samp?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Stddev_Samp_Fields> | string
+        >;
+        sum?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Sum_Fields> | string
+        >;
+        var_pop?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Var_Pop_Fields> | string
+        >;
+        var_samp?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Var_Samp_Fields> | string
+        >;
+        variance?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_CurrentEvents_Variance_Fields> | string
+        >;
+    };
+    schedule_CurrentEvents_avg_fields?: {
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    schedule_CurrentEvents_max_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        endTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        exhibitionId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        intendedRoomModeName?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        itemId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        name?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        roomId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        shufflePeriodId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        startTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        streamTextEventId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        timings_updated_at?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        visibilityLevel?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    schedule_CurrentEvents_min_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        endTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        exhibitionId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        intendedRoomModeName?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        itemId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        name?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        roomId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        shufflePeriodId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        startTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        streamTextEventId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        timings_updated_at?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        visibilityLevel?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    schedule_CurrentEvents_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Schedule_CurrentEvents> | string>
+        >;
+    };
+    schedule_CurrentEvents_stddev_fields?: {
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    schedule_CurrentEvents_stddev_pop_fields?: {
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    schedule_CurrentEvents_stddev_samp_fields?: {
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    schedule_CurrentEvents_sum_fields?: {
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+    };
+    schedule_CurrentEvents_var_pop_fields?: {
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    schedule_CurrentEvents_var_samp_fields?: {
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    schedule_CurrentEvents_variance_fields?: {
+        durationSeconds?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
     schedule_Event?: {
+        automaticParticipationSurvey?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Record<string, never>,
+            Scalars["Boolean"] | string
+        >;
         conference?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
             Record<string, never>,
@@ -74060,6 +75332,16 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        rtmpRoomInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Video_ChannelStack>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        rtmpRoomInputId?: GraphCacheResolver<
+            WithTypename<Video_ChannelStack>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         updatedAt?: GraphCacheResolver<
             WithTypename<Video_ChannelStack>,
             Record<string, never>,
@@ -74211,6 +75493,16 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        rtmpRoomInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Video_ChannelStack_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        rtmpRoomInputId?: GraphCacheResolver<
+            WithTypename<Video_ChannelStack_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
         updatedAt?: GraphCacheResolver<
             WithTypename<Video_ChannelStack_Max_Fields>,
             Record<string, never>,
@@ -74329,6 +75621,16 @@ export type GraphCacheResolvers = {
             Scalars["String"] | string
         >;
         rtmpOutputUri?: GraphCacheResolver<
+            WithTypename<Video_ChannelStack_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        rtmpRoomInputAttachmentName?: GraphCacheResolver<
+            WithTypename<Video_ChannelStack_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        rtmpRoomInputId?: GraphCacheResolver<
             WithTypename<Video_ChannelStack_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
@@ -77357,6 +78659,10 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootDelete_Schedule_Continuation_By_PkArgs,
         Maybe<WithTypename<Schedule_Continuation>>
     >;
+    delete_schedule_CurrentEvents?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Schedule_CurrentEventsArgs,
+        Maybe<WithTypename<Schedule_CurrentEvents_Mutation_Response>>
+    >;
     delete_schedule_Event?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Schedule_EventArgs,
         Maybe<WithTypename<Schedule_Event_Mutation_Response>>
@@ -78146,6 +79452,14 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootInsert_Schedule_Continuation_OneArgs,
         Maybe<WithTypename<Schedule_Continuation>>
     >;
+    insert_schedule_CurrentEvents?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Schedule_CurrentEventsArgs,
+        Maybe<WithTypename<Schedule_CurrentEvents_Mutation_Response>>
+    >;
+    insert_schedule_CurrentEvents_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Schedule_CurrentEvents_OneArgs,
+        Maybe<WithTypename<Schedule_CurrentEvents>>
+    >;
     insert_schedule_Event?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Schedule_EventArgs,
         Maybe<WithTypename<Schedule_Event_Mutation_Response>>
@@ -78365,6 +79679,10 @@ export type GraphCacheOptimisticUpdaters = {
     notifyEventEnded?: GraphCacheOptimisticMutationResolver<
         Mutation_RootNotifyEventEndedArgs,
         WithTypename<NotifyEventEnded>
+    >;
+    notifyEventStarted?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootNotifyEventStartedArgs,
+        WithTypename<NotifyEventStarted>
     >;
     presence_Flush?: GraphCacheOptimisticMutationResolver<Record<string, never>, WithTypename<PresenceFlushOutput>>;
     refreshYouTubeData?: GraphCacheOptimisticMutationResolver<
@@ -78978,6 +80296,10 @@ export type GraphCacheOptimisticUpdaters = {
     update_schedule_Continuation_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Schedule_Continuation_By_PkArgs,
         Maybe<WithTypename<Schedule_Continuation>>
+    >;
+    update_schedule_CurrentEvents?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Schedule_CurrentEventsArgs,
+        Maybe<WithTypename<Schedule_CurrentEvents_Mutation_Response>>
     >;
     update_schedule_Event?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Schedule_EventArgs,
@@ -79830,6 +81152,10 @@ export type GraphCacheUpdaters = {
         delete_schedule_Continuation_by_pk?: GraphCacheUpdateResolver<
             { delete_schedule_Continuation_by_pk: Maybe<WithTypename<Schedule_Continuation>> },
             Mutation_RootDelete_Schedule_Continuation_By_PkArgs
+        >;
+        delete_schedule_CurrentEvents?: GraphCacheUpdateResolver<
+            { delete_schedule_CurrentEvents: Maybe<WithTypename<Schedule_CurrentEvents_Mutation_Response>> },
+            Mutation_RootDelete_Schedule_CurrentEventsArgs
         >;
         delete_schedule_Event?: GraphCacheUpdateResolver<
             { delete_schedule_Event: Maybe<WithTypename<Schedule_Event_Mutation_Response>> },
@@ -80703,6 +82029,14 @@ export type GraphCacheUpdaters = {
             { insert_schedule_Continuation_one: Maybe<WithTypename<Schedule_Continuation>> },
             Mutation_RootInsert_Schedule_Continuation_OneArgs
         >;
+        insert_schedule_CurrentEvents?: GraphCacheUpdateResolver<
+            { insert_schedule_CurrentEvents: Maybe<WithTypename<Schedule_CurrentEvents_Mutation_Response>> },
+            Mutation_RootInsert_Schedule_CurrentEventsArgs
+        >;
+        insert_schedule_CurrentEvents_one?: GraphCacheUpdateResolver<
+            { insert_schedule_CurrentEvents_one: Maybe<WithTypename<Schedule_CurrentEvents>> },
+            Mutation_RootInsert_Schedule_CurrentEvents_OneArgs
+        >;
         insert_schedule_Event?: GraphCacheUpdateResolver<
             { insert_schedule_Event: Maybe<WithTypename<Schedule_Event_Mutation_Response>> },
             Mutation_RootInsert_Schedule_EventArgs
@@ -80950,6 +82284,10 @@ export type GraphCacheUpdaters = {
         notifyEventEnded?: GraphCacheUpdateResolver<
             { notifyEventEnded: WithTypename<NotifyEventEnded> },
             Mutation_RootNotifyEventEndedArgs
+        >;
+        notifyEventStarted?: GraphCacheUpdateResolver<
+            { notifyEventStarted: WithTypename<NotifyEventStarted> },
+            Mutation_RootNotifyEventStartedArgs
         >;
         presence_Flush?: GraphCacheUpdateResolver<
             { presence_Flush: WithTypename<PresenceFlushOutput> },
@@ -81622,6 +82960,10 @@ export type GraphCacheUpdaters = {
         update_schedule_Continuation_by_pk?: GraphCacheUpdateResolver<
             { update_schedule_Continuation_by_pk: Maybe<WithTypename<Schedule_Continuation>> },
             Mutation_RootUpdate_Schedule_Continuation_By_PkArgs
+        >;
+        update_schedule_CurrentEvents?: GraphCacheUpdateResolver<
+            { update_schedule_CurrentEvents: Maybe<WithTypename<Schedule_CurrentEvents_Mutation_Response>> },
+            Mutation_RootUpdate_Schedule_CurrentEventsArgs
         >;
         update_schedule_Event?: GraphCacheUpdateResolver<
             { update_schedule_Event: Maybe<WithTypename<Schedule_Event_Mutation_Response>> },
@@ -82781,6 +84123,14 @@ export type GraphCacheUpdaters = {
         schedule_Continuation_by_pk?: GraphCacheUpdateResolver<
             { schedule_Continuation_by_pk: Maybe<WithTypename<Schedule_Continuation>> },
             Subscription_RootSchedule_Continuation_By_PkArgs
+        >;
+        schedule_CurrentEvents?: GraphCacheUpdateResolver<
+            { schedule_CurrentEvents: Array<WithTypename<Schedule_CurrentEvents>> },
+            Subscription_RootSchedule_CurrentEventsArgs
+        >;
+        schedule_CurrentEvents_aggregate?: GraphCacheUpdateResolver<
+            { schedule_CurrentEvents_aggregate: WithTypename<Schedule_CurrentEvents_Aggregate> },
+            Subscription_RootSchedule_CurrentEvents_AggregateArgs
         >;
         schedule_Event?: GraphCacheUpdateResolver<
             { schedule_Event: Array<WithTypename<Schedule_Event>> },

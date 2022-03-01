@@ -39,7 +39,7 @@ export default function QuickSendEmote({ chat }: { chat: ChatState }): JSX.Eleme
                 <QuickSendEmojiButton send={send} emoji="😃" isDisabled={disable} />
                 <QuickSendEmojiButton send={send} emoji="🤣" isDisabled={disable} />
                 <QuickSendEmojiButton send={send} emoji="😢" isDisabled={disable} />
-                <QuickSendEmojiButton send={send} emoji="❤" isDisabled={disable} />
+                <QuickSendEmojiButton send={send} emoji="<3" isDisabled={disable} />
             </HStack>
         ),
         [send, disable]

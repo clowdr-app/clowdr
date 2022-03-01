@@ -27,7 +27,7 @@ export class RaiseHandState {
         this.offSocketAvailable?.();
         this.offSocketUnavailable?.();
 
-        this.offSocketAvailable = realtimeService.onSocketAvailable((socket) => {
+        this.offSocketAvailable = realtimeService.onSocketAvailable("RaiseHandState.setup", (socket) => {
             socket.on("event.handRaise.raised", this.onRaised.bind(this));
             socket.on("event.handRaise.lowered", this.onLowered.bind(this));
             socket.on("event.handRaise.listing", this.onListing.bind(this));
@@ -39,7 +39,7 @@ export class RaiseHandState {
             });
         });
         this.offSocketUnavailable =
-            realtimeService.onSocketUnavailable((socket) => {
+            realtimeService.onSocketUnavailable("RaiseHandState.setup", (socket) => {
                 socket.off("event.handRaise.raised");
                 socket.off("event.handRaise.lowered");
                 socket.off("event.handRaise.listing");

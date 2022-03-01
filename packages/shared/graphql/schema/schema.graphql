@@ -805,6 +805,10 @@ type NotifyEventEnded {
     ok: Boolean!
 }
 
+type NotifyEventStarted {
+    ok: Boolean!
+}
+
 type PresenceFlushOutput {
     ok: String
 }
@@ -5729,7 +5733,9 @@ enum chat_MessageType_enum {
     ANSWER
     DUPLICATION_MARKER
     EMOTE
+    EVENT_START
     MESSAGE
+    PARTICIPATION_SURVEY
     POLL
     POLL_RESULTS
     QUESTION
@@ -6747,6 +6753,10 @@ enum chat_ReactionType_enum {
     A plain emoji reaction
     """
     EMOJI
+    """
+    Responding to an event participation survey.
+    """
+    EVENT_PARTICIPATION
     """
     A vote in a poll
     """
@@ -10476,6 +10486,10 @@ enum conference_ConfigurationKey_enum {
     Boolean. Whether to enable the External RTMP Broadcast feature.
     """
     ENABLE_EXTERNAL_RTMP_BROADCAST
+    """
+    Boolean. Whether to enable external RTMP input feature.
+    """
+    ENABLE_EXTERNAL_RTMP_INPUT
     """
     Whether to enable email notifications for recordings (default: true).
     """
@@ -15308,11 +15322,19 @@ type job_queues_ChannelStackUpdateJob {
     jobStatusName: job_queues_JobStatus_enum!
     mediaLiveChannelId: String!
     message: String
+    newRtmpBInputAttachmentName: String
+    newRtmpBInputId: String
     newRtmpOutputStreamKey: String
     newRtmpOutputUri: String
+    newRtmpRoomInputAttachmentName: String
+    newRtmpRoomInputId: String
+    oldRtmpBInputAttachmentName: String
+    oldRtmpBInputId: String
     oldRtmpOutputDestinationId: String
     oldRtmpOutputStreamKey: String
     oldRtmpOutputUri: String
+    oldRtmpRoomInputAttachmentName: String
+    oldRtmpRoomInputId: String
     updated_at: timestamptz!
 }
 
@@ -15368,11 +15390,19 @@ input job_queues_ChannelStackUpdateJob_bool_exp {
     jobStatusName: job_queues_JobStatus_enum_comparison_exp
     mediaLiveChannelId: String_comparison_exp
     message: String_comparison_exp
+    newRtmpBInputAttachmentName: String_comparison_exp
+    newRtmpBInputId: String_comparison_exp
     newRtmpOutputStreamKey: String_comparison_exp
     newRtmpOutputUri: String_comparison_exp
+    newRtmpRoomInputAttachmentName: String_comparison_exp
+    newRtmpRoomInputId: String_comparison_exp
+    oldRtmpBInputAttachmentName: String_comparison_exp
+    oldRtmpBInputId: String_comparison_exp
     oldRtmpOutputDestinationId: String_comparison_exp
     oldRtmpOutputStreamKey: String_comparison_exp
     oldRtmpOutputUri: String_comparison_exp
+    oldRtmpRoomInputAttachmentName: String_comparison_exp
+    oldRtmpRoomInputId: String_comparison_exp
     updated_at: timestamptz_comparison_exp
 }
 
@@ -15398,11 +15428,19 @@ input job_queues_ChannelStackUpdateJob_insert_input {
     jobStatusName: job_queues_JobStatus_enum
     mediaLiveChannelId: String
     message: String
+    newRtmpBInputAttachmentName: String
+    newRtmpBInputId: String
     newRtmpOutputStreamKey: String
     newRtmpOutputUri: String
+    newRtmpRoomInputAttachmentName: String
+    newRtmpRoomInputId: String
+    oldRtmpBInputAttachmentName: String
+    oldRtmpBInputId: String
     oldRtmpOutputDestinationId: String
     oldRtmpOutputStreamKey: String
     oldRtmpOutputUri: String
+    oldRtmpRoomInputAttachmentName: String
+    oldRtmpRoomInputId: String
     updated_at: timestamptz
 }
 
@@ -15416,11 +15454,19 @@ type job_queues_ChannelStackUpdateJob_max_fields {
     id: uuid
     mediaLiveChannelId: String
     message: String
+    newRtmpBInputAttachmentName: String
+    newRtmpBInputId: String
     newRtmpOutputStreamKey: String
     newRtmpOutputUri: String
+    newRtmpRoomInputAttachmentName: String
+    newRtmpRoomInputId: String
+    oldRtmpBInputAttachmentName: String
+    oldRtmpBInputId: String
     oldRtmpOutputDestinationId: String
     oldRtmpOutputStreamKey: String
     oldRtmpOutputUri: String
+    oldRtmpRoomInputAttachmentName: String
+    oldRtmpRoomInputId: String
     updated_at: timestamptz
 }
 
@@ -15434,11 +15480,19 @@ input job_queues_ChannelStackUpdateJob_max_order_by {
     id: order_by
     mediaLiveChannelId: order_by
     message: order_by
+    newRtmpBInputAttachmentName: order_by
+    newRtmpBInputId: order_by
     newRtmpOutputStreamKey: order_by
     newRtmpOutputUri: order_by
+    newRtmpRoomInputAttachmentName: order_by
+    newRtmpRoomInputId: order_by
+    oldRtmpBInputAttachmentName: order_by
+    oldRtmpBInputId: order_by
     oldRtmpOutputDestinationId: order_by
     oldRtmpOutputStreamKey: order_by
     oldRtmpOutputUri: order_by
+    oldRtmpRoomInputAttachmentName: order_by
+    oldRtmpRoomInputId: order_by
     updated_at: order_by
 }
 
@@ -15452,11 +15506,19 @@ type job_queues_ChannelStackUpdateJob_min_fields {
     id: uuid
     mediaLiveChannelId: String
     message: String
+    newRtmpBInputAttachmentName: String
+    newRtmpBInputId: String
     newRtmpOutputStreamKey: String
     newRtmpOutputUri: String
+    newRtmpRoomInputAttachmentName: String
+    newRtmpRoomInputId: String
+    oldRtmpBInputAttachmentName: String
+    oldRtmpBInputId: String
     oldRtmpOutputDestinationId: String
     oldRtmpOutputStreamKey: String
     oldRtmpOutputUri: String
+    oldRtmpRoomInputAttachmentName: String
+    oldRtmpRoomInputId: String
     updated_at: timestamptz
 }
 
@@ -15470,11 +15532,19 @@ input job_queues_ChannelStackUpdateJob_min_order_by {
     id: order_by
     mediaLiveChannelId: order_by
     message: order_by
+    newRtmpBInputAttachmentName: order_by
+    newRtmpBInputId: order_by
     newRtmpOutputStreamKey: order_by
     newRtmpOutputUri: order_by
+    newRtmpRoomInputAttachmentName: order_by
+    newRtmpRoomInputId: order_by
+    oldRtmpBInputAttachmentName: order_by
+    oldRtmpBInputId: order_by
     oldRtmpOutputDestinationId: order_by
     oldRtmpOutputStreamKey: order_by
     oldRtmpOutputUri: order_by
+    oldRtmpRoomInputAttachmentName: order_by
+    oldRtmpRoomInputId: order_by
     updated_at: order_by
 }
 
@@ -15513,11 +15583,19 @@ input job_queues_ChannelStackUpdateJob_order_by {
     jobStatusName: order_by
     mediaLiveChannelId: order_by
     message: order_by
+    newRtmpBInputAttachmentName: order_by
+    newRtmpBInputId: order_by
     newRtmpOutputStreamKey: order_by
     newRtmpOutputUri: order_by
+    newRtmpRoomInputAttachmentName: order_by
+    newRtmpRoomInputId: order_by
+    oldRtmpBInputAttachmentName: order_by
+    oldRtmpBInputId: order_by
     oldRtmpOutputDestinationId: order_by
     oldRtmpOutputStreamKey: order_by
     oldRtmpOutputUri: order_by
+    oldRtmpRoomInputAttachmentName: order_by
+    oldRtmpRoomInputId: order_by
     updated_at: order_by
 }
 
@@ -15563,11 +15641,35 @@ enum job_queues_ChannelStackUpdateJob_select_column {
     """
     column name
     """
+    newRtmpBInputAttachmentName
+    """
+    column name
+    """
+    newRtmpBInputId
+    """
+    column name
+    """
     newRtmpOutputStreamKey
     """
     column name
     """
     newRtmpOutputUri
+    """
+    column name
+    """
+    newRtmpRoomInputAttachmentName
+    """
+    column name
+    """
+    newRtmpRoomInputId
+    """
+    column name
+    """
+    oldRtmpBInputAttachmentName
+    """
+    column name
+    """
+    oldRtmpBInputId
     """
     column name
     """
@@ -15580,6 +15682,14 @@ enum job_queues_ChannelStackUpdateJob_select_column {
     column name
     """
     oldRtmpOutputUri
+    """
+    column name
+    """
+    oldRtmpRoomInputAttachmentName
+    """
+    column name
+    """
+    oldRtmpRoomInputId
     """
     column name
     """
@@ -15597,11 +15707,19 @@ input job_queues_ChannelStackUpdateJob_set_input {
     jobStatusName: job_queues_JobStatus_enum
     mediaLiveChannelId: String
     message: String
+    newRtmpBInputAttachmentName: String
+    newRtmpBInputId: String
     newRtmpOutputStreamKey: String
     newRtmpOutputUri: String
+    newRtmpRoomInputAttachmentName: String
+    newRtmpRoomInputId: String
+    oldRtmpBInputAttachmentName: String
+    oldRtmpBInputId: String
     oldRtmpOutputDestinationId: String
     oldRtmpOutputStreamKey: String
     oldRtmpOutputUri: String
+    oldRtmpRoomInputAttachmentName: String
+    oldRtmpRoomInputId: String
     updated_at: timestamptz
 }
 
@@ -15640,11 +15758,35 @@ enum job_queues_ChannelStackUpdateJob_update_column {
     """
     column name
     """
+    newRtmpBInputAttachmentName
+    """
+    column name
+    """
+    newRtmpBInputId
+    """
+    column name
+    """
     newRtmpOutputStreamKey
     """
     column name
     """
     newRtmpOutputUri
+    """
+    column name
+    """
+    newRtmpRoomInputAttachmentName
+    """
+    column name
+    """
+    newRtmpRoomInputId
+    """
+    column name
+    """
+    oldRtmpBInputAttachmentName
+    """
+    column name
+    """
+    oldRtmpBInputId
     """
     column name
     """
@@ -15657,6 +15799,14 @@ enum job_queues_ChannelStackUpdateJob_update_column {
     column name
     """
     oldRtmpOutputUri
+    """
+    column name
+    """
+    oldRtmpRoomInputAttachmentName
+    """
+    column name
+    """
+    oldRtmpRoomInputId
     """
     column name
     """
@@ -20040,6 +20190,15 @@ type mutation_root {
     """
     delete_schedule_Continuation_by_pk(id: uuid!): schedule_Continuation
     """
+    delete data from the table: "schedule.CurrentEvents"
+    """
+    delete_schedule_CurrentEvents(
+        """
+        filter the rows which have to be deleted
+        """
+        where: schedule_CurrentEvents_bool_exp!
+    ): schedule_CurrentEvents_mutation_response
+    """
     delete data from the table: "schedule.Event"
     """
     delete_schedule_Event(
@@ -22265,6 +22424,24 @@ type mutation_root {
         on_conflict: schedule_Continuation_on_conflict
     ): schedule_Continuation
     """
+    insert data into the table: "schedule.CurrentEvents"
+    """
+    insert_schedule_CurrentEvents(
+        """
+        the rows to be inserted
+        """
+        objects: [schedule_CurrentEvents_insert_input!]!
+    ): schedule_CurrentEvents_mutation_response
+    """
+    insert a single row into the table: "schedule.CurrentEvents"
+    """
+    insert_schedule_CurrentEvents_one(
+        """
+        the row to be inserted
+        """
+        object: schedule_CurrentEvents_insert_input!
+    ): schedule_CurrentEvents
+    """
     insert data into the table: "schedule.Event"
     """
     insert_schedule_Event(
@@ -22919,6 +23096,7 @@ type mutation_root {
     joinRoomChimeSession(registrantId: uuid!, roomId: uuid!): JoinRoomChimeSessionOutput
     joinRoomVonageSession(registrantId: uuid!, roomId: uuid!): JoinRoomVonageSessionOutput
     notifyEventEnded(eventId: uuid!): NotifyEventEnded!
+    notifyEventStarted(eventId: uuid!): NotifyEventStarted!
     presence_Flush: PresenceFlushOutput!
     refreshYouTubeData(registrantGoogleAccountId: uuid!, registrantId: uuid!): RefreshYouTubeDataOutput
     stopEventBroadcast(eventId: uuid!): StopEventBroadcastOutput
@@ -25438,6 +25616,23 @@ type mutation_root {
         _set: schedule_Continuation_set_input
         pk_columns: schedule_Continuation_pk_columns_input!
     ): schedule_Continuation
+    """
+    update data of the table: "schedule.CurrentEvents"
+    """
+    update_schedule_CurrentEvents(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: schedule_CurrentEvents_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: schedule_CurrentEvents_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: schedule_CurrentEvents_bool_exp!
+    ): schedule_CurrentEvents_mutation_response
     """
     update data of the table: "schedule.Event"
     """
@@ -30642,6 +30837,56 @@ type query_root {
     fetch data from the table: "schedule.Continuation" using primary key columns
     """
     schedule_Continuation_by_pk(id: uuid!): schedule_Continuation
+    """
+    fetch data from the table: "schedule.CurrentEvents"
+    """
+    schedule_CurrentEvents(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_CurrentEvents_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_CurrentEvents_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_CurrentEvents_bool_exp
+    ): [schedule_CurrentEvents!]!
+    """
+    fetch aggregated fields from the table: "schedule.CurrentEvents"
+    """
+    schedule_CurrentEvents_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_CurrentEvents_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_CurrentEvents_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_CurrentEvents_bool_exp
+    ): schedule_CurrentEvents_aggregate!
     """
     fetch data from the table: "schedule.Event"
     """
@@ -37070,6 +37315,56 @@ type room_Room {
     conferenceId: uuid!
     created_at: timestamptz!
     """
+    An array relationship
+    """
+    currentEvents(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_CurrentEvents_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_CurrentEvents_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_CurrentEvents_bool_exp
+    ): [schedule_CurrentEvents!]!
+    """
+    An aggregate relationship
+    """
+    currentEvents_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_CurrentEvents_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_CurrentEvents_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_CurrentEvents_bool_exp
+    ): schedule_CurrentEvents_aggregate!
+    """
     An object relationship
     """
     currentMode: room_Mode!
@@ -38071,6 +38366,7 @@ input room_Room_bool_exp {
     conference: conference_Conference_bool_exp
     conferenceId: uuid_comparison_exp
     created_at: timestamptz_comparison_exp
+    currentEvents: schedule_CurrentEvents_bool_exp
     currentMode: room_Mode_bool_exp
     currentModeName: room_Mode_enum_comparison_exp
     events: schedule_Event_bool_exp
@@ -38138,6 +38434,7 @@ input room_Room_insert_input {
     conference: conference_Conference_obj_rel_insert_input
     conferenceId: uuid
     created_at: timestamptz
+    currentEvents: schedule_CurrentEvents_arr_rel_insert_input
     currentMode: room_Mode_obj_rel_insert_input
     currentModeName: room_Mode_enum
     events: schedule_Event_arr_rel_insert_input
@@ -38284,6 +38581,7 @@ input room_Room_order_by {
     conference: conference_Conference_order_by
     conferenceId: order_by
     created_at: order_by
+    currentEvents_aggregate: schedule_CurrentEvents_aggregate_order_by
     currentMode: room_Mode_order_by
     currentModeName: order_by
     events_aggregate: schedule_Event_aggregate_order_by
@@ -40998,9 +41296,545 @@ input schedule_Continuation_variance_order_by {
 }
 
 """
+columns and relationships of "schedule.CurrentEvents"
+"""
+type schedule_CurrentEvents {
+    conferenceId: uuid
+    created_at: timestamptz
+    durationSeconds: Int
+    enableRecording: Boolean
+    endTime: timestamptz
+    """
+    An array relationship
+    """
+    eventPeople(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_EventProgramPerson_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_EventProgramPerson_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_EventProgramPerson_bool_exp
+    ): [schedule_EventProgramPerson!]!
+    """
+    An aggregate relationship
+    """
+    eventPeople_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_EventProgramPerson_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_EventProgramPerson_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_EventProgramPerson_bool_exp
+    ): schedule_EventProgramPerson_aggregate!
+    exhibitionId: uuid
+    id: uuid
+    intendedRoomModeName: String
+    itemId: uuid
+    name: String
+    """
+    An object relationship
+    """
+    room: room_Room
+    roomId: uuid
+    shufflePeriodId: uuid
+    startTime: timestamptz
+    streamTextEventId: String
+    subconferenceId: uuid
+    timings_updated_at: timestamptz
+    updated_at: timestamptz
+    visibilityLevel: String
+}
+
+"""
+aggregated selection of "schedule.CurrentEvents"
+"""
+type schedule_CurrentEvents_aggregate {
+    aggregate: schedule_CurrentEvents_aggregate_fields
+    nodes: [schedule_CurrentEvents!]!
+}
+
+"""
+aggregate fields of "schedule.CurrentEvents"
+"""
+type schedule_CurrentEvents_aggregate_fields {
+    avg: schedule_CurrentEvents_avg_fields
+    count(columns: [schedule_CurrentEvents_select_column!], distinct: Boolean): Int!
+    max: schedule_CurrentEvents_max_fields
+    min: schedule_CurrentEvents_min_fields
+    stddev: schedule_CurrentEvents_stddev_fields
+    stddev_pop: schedule_CurrentEvents_stddev_pop_fields
+    stddev_samp: schedule_CurrentEvents_stddev_samp_fields
+    sum: schedule_CurrentEvents_sum_fields
+    var_pop: schedule_CurrentEvents_var_pop_fields
+    var_samp: schedule_CurrentEvents_var_samp_fields
+    variance: schedule_CurrentEvents_variance_fields
+}
+
+"""
+order by aggregate values of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_aggregate_order_by {
+    avg: schedule_CurrentEvents_avg_order_by
+    count: order_by
+    max: schedule_CurrentEvents_max_order_by
+    min: schedule_CurrentEvents_min_order_by
+    stddev: schedule_CurrentEvents_stddev_order_by
+    stddev_pop: schedule_CurrentEvents_stddev_pop_order_by
+    stddev_samp: schedule_CurrentEvents_stddev_samp_order_by
+    sum: schedule_CurrentEvents_sum_order_by
+    var_pop: schedule_CurrentEvents_var_pop_order_by
+    var_samp: schedule_CurrentEvents_var_samp_order_by
+    variance: schedule_CurrentEvents_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_arr_rel_insert_input {
+    data: [schedule_CurrentEvents_insert_input!]!
+}
+
+"""
+aggregate avg on columns
+"""
+type schedule_CurrentEvents_avg_fields {
+    durationSeconds: Float
+}
+
+"""
+order by avg() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_avg_order_by {
+    durationSeconds: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "schedule.CurrentEvents". All fields are combined with a logical 'AND'.
+"""
+input schedule_CurrentEvents_bool_exp {
+    _and: [schedule_CurrentEvents_bool_exp!]
+    _not: schedule_CurrentEvents_bool_exp
+    _or: [schedule_CurrentEvents_bool_exp!]
+    conferenceId: uuid_comparison_exp
+    created_at: timestamptz_comparison_exp
+    durationSeconds: Int_comparison_exp
+    enableRecording: Boolean_comparison_exp
+    endTime: timestamptz_comparison_exp
+    eventPeople: schedule_EventProgramPerson_bool_exp
+    exhibitionId: uuid_comparison_exp
+    id: uuid_comparison_exp
+    intendedRoomModeName: String_comparison_exp
+    itemId: uuid_comparison_exp
+    name: String_comparison_exp
+    room: room_Room_bool_exp
+    roomId: uuid_comparison_exp
+    shufflePeriodId: uuid_comparison_exp
+    startTime: timestamptz_comparison_exp
+    streamTextEventId: String_comparison_exp
+    subconferenceId: uuid_comparison_exp
+    timings_updated_at: timestamptz_comparison_exp
+    updated_at: timestamptz_comparison_exp
+    visibilityLevel: String_comparison_exp
+}
+
+"""
+input type for incrementing numeric columns in table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_inc_input {
+    durationSeconds: Int
+}
+
+"""
+input type for inserting data into table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_insert_input {
+    conferenceId: uuid
+    created_at: timestamptz
+    durationSeconds: Int
+    enableRecording: Boolean
+    endTime: timestamptz
+    eventPeople: schedule_EventProgramPerson_arr_rel_insert_input
+    exhibitionId: uuid
+    id: uuid
+    intendedRoomModeName: String
+    itemId: uuid
+    name: String
+    room: room_Room_obj_rel_insert_input
+    roomId: uuid
+    shufflePeriodId: uuid
+    startTime: timestamptz
+    streamTextEventId: String
+    subconferenceId: uuid
+    timings_updated_at: timestamptz
+    updated_at: timestamptz
+    visibilityLevel: String
+}
+
+"""
+aggregate max on columns
+"""
+type schedule_CurrentEvents_max_fields {
+    conferenceId: uuid
+    created_at: timestamptz
+    durationSeconds: Int
+    endTime: timestamptz
+    exhibitionId: uuid
+    id: uuid
+    intendedRoomModeName: String
+    itemId: uuid
+    name: String
+    roomId: uuid
+    shufflePeriodId: uuid
+    startTime: timestamptz
+    streamTextEventId: String
+    subconferenceId: uuid
+    timings_updated_at: timestamptz
+    updated_at: timestamptz
+    visibilityLevel: String
+}
+
+"""
+order by max() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_max_order_by {
+    conferenceId: order_by
+    created_at: order_by
+    durationSeconds: order_by
+    endTime: order_by
+    exhibitionId: order_by
+    id: order_by
+    intendedRoomModeName: order_by
+    itemId: order_by
+    name: order_by
+    roomId: order_by
+    shufflePeriodId: order_by
+    startTime: order_by
+    streamTextEventId: order_by
+    subconferenceId: order_by
+    timings_updated_at: order_by
+    updated_at: order_by
+    visibilityLevel: order_by
+}
+
+"""
+aggregate min on columns
+"""
+type schedule_CurrentEvents_min_fields {
+    conferenceId: uuid
+    created_at: timestamptz
+    durationSeconds: Int
+    endTime: timestamptz
+    exhibitionId: uuid
+    id: uuid
+    intendedRoomModeName: String
+    itemId: uuid
+    name: String
+    roomId: uuid
+    shufflePeriodId: uuid
+    startTime: timestamptz
+    streamTextEventId: String
+    subconferenceId: uuid
+    timings_updated_at: timestamptz
+    updated_at: timestamptz
+    visibilityLevel: String
+}
+
+"""
+order by min() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_min_order_by {
+    conferenceId: order_by
+    created_at: order_by
+    durationSeconds: order_by
+    endTime: order_by
+    exhibitionId: order_by
+    id: order_by
+    intendedRoomModeName: order_by
+    itemId: order_by
+    name: order_by
+    roomId: order_by
+    shufflePeriodId: order_by
+    startTime: order_by
+    streamTextEventId: order_by
+    subconferenceId: order_by
+    timings_updated_at: order_by
+    updated_at: order_by
+    visibilityLevel: order_by
+}
+
+"""
+response of any mutation on the table "schedule.CurrentEvents"
+"""
+type schedule_CurrentEvents_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [schedule_CurrentEvents!]!
+}
+
+"""
+Ordering options when selecting data from "schedule.CurrentEvents".
+"""
+input schedule_CurrentEvents_order_by {
+    conferenceId: order_by
+    created_at: order_by
+    durationSeconds: order_by
+    enableRecording: order_by
+    endTime: order_by
+    eventPeople_aggregate: schedule_EventProgramPerson_aggregate_order_by
+    exhibitionId: order_by
+    id: order_by
+    intendedRoomModeName: order_by
+    itemId: order_by
+    name: order_by
+    room: room_Room_order_by
+    roomId: order_by
+    shufflePeriodId: order_by
+    startTime: order_by
+    streamTextEventId: order_by
+    subconferenceId: order_by
+    timings_updated_at: order_by
+    updated_at: order_by
+    visibilityLevel: order_by
+}
+
+"""
+select columns of table "schedule.CurrentEvents"
+"""
+enum schedule_CurrentEvents_select_column {
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    durationSeconds
+    """
+    column name
+    """
+    enableRecording
+    """
+    column name
+    """
+    endTime
+    """
+    column name
+    """
+    exhibitionId
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    intendedRoomModeName
+    """
+    column name
+    """
+    itemId
+    """
+    column name
+    """
+    name
+    """
+    column name
+    """
+    roomId
+    """
+    column name
+    """
+    shufflePeriodId
+    """
+    column name
+    """
+    startTime
+    """
+    column name
+    """
+    streamTextEventId
+    """
+    column name
+    """
+    subconferenceId
+    """
+    column name
+    """
+    timings_updated_at
+    """
+    column name
+    """
+    updated_at
+    """
+    column name
+    """
+    visibilityLevel
+}
+
+"""
+input type for updating data in table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_set_input {
+    conferenceId: uuid
+    created_at: timestamptz
+    durationSeconds: Int
+    enableRecording: Boolean
+    endTime: timestamptz
+    exhibitionId: uuid
+    id: uuid
+    intendedRoomModeName: String
+    itemId: uuid
+    name: String
+    roomId: uuid
+    shufflePeriodId: uuid
+    startTime: timestamptz
+    streamTextEventId: String
+    subconferenceId: uuid
+    timings_updated_at: timestamptz
+    updated_at: timestamptz
+    visibilityLevel: String
+}
+
+"""
+aggregate stddev on columns
+"""
+type schedule_CurrentEvents_stddev_fields {
+    durationSeconds: Float
+}
+
+"""
+order by stddev() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_stddev_order_by {
+    durationSeconds: order_by
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type schedule_CurrentEvents_stddev_pop_fields {
+    durationSeconds: Float
+}
+
+"""
+order by stddev_pop() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_stddev_pop_order_by {
+    durationSeconds: order_by
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type schedule_CurrentEvents_stddev_samp_fields {
+    durationSeconds: Float
+}
+
+"""
+order by stddev_samp() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_stddev_samp_order_by {
+    durationSeconds: order_by
+}
+
+"""
+aggregate sum on columns
+"""
+type schedule_CurrentEvents_sum_fields {
+    durationSeconds: Int
+}
+
+"""
+order by sum() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_sum_order_by {
+    durationSeconds: order_by
+}
+
+"""
+aggregate var_pop on columns
+"""
+type schedule_CurrentEvents_var_pop_fields {
+    durationSeconds: Float
+}
+
+"""
+order by var_pop() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_var_pop_order_by {
+    durationSeconds: order_by
+}
+
+"""
+aggregate var_samp on columns
+"""
+type schedule_CurrentEvents_var_samp_fields {
+    durationSeconds: Float
+}
+
+"""
+order by var_samp() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_var_samp_order_by {
+    durationSeconds: order_by
+}
+
+"""
+aggregate variance on columns
+"""
+type schedule_CurrentEvents_variance_fields {
+    durationSeconds: Float
+}
+
+"""
+order by variance() on columns of table "schedule.CurrentEvents"
+"""
+input schedule_CurrentEvents_variance_order_by {
+    durationSeconds: order_by
+}
+
+"""
 columns and relationships of "schedule.Event"
 """
 type schedule_Event {
+    automaticParticipationSurvey: Boolean!
     """
     An object relationship
     """
@@ -41730,6 +42564,7 @@ input schedule_Event_bool_exp {
     _and: [schedule_Event_bool_exp!]
     _not: schedule_Event_bool_exp
     _or: [schedule_Event_bool_exp!]
+    automaticParticipationSurvey: Boolean_comparison_exp
     conference: conference_Conference_bool_exp
     conferenceId: uuid_comparison_exp
     continuations: schedule_Continuation_bool_exp
@@ -41781,6 +42616,7 @@ input schedule_Event_inc_input {
 input type for inserting data into table "schedule.Event"
 """
 input schedule_Event_insert_input {
+    automaticParticipationSurvey: Boolean
     conference: conference_Conference_obj_rel_insert_input
     conferenceId: uuid
     continuations: schedule_Continuation_arr_rel_insert_input
@@ -41932,6 +42768,7 @@ input schedule_Event_on_conflict {
 Ordering options when selecting data from "schedule.Event".
 """
 input schedule_Event_order_by {
+    automaticParticipationSurvey: order_by
     conference: conference_Conference_order_by
     conferenceId: order_by
     continuations_aggregate: schedule_Continuation_aggregate_order_by
@@ -41973,6 +42810,10 @@ input schedule_Event_pk_columns_input {
 select columns of table "schedule.Event"
 """
 enum schedule_Event_select_column {
+    """
+    column name
+    """
+    automaticParticipationSurvey
     """
     column name
     """
@@ -42051,6 +42892,7 @@ enum schedule_Event_select_column {
 input type for updating data in table "schedule.Event"
 """
 input schedule_Event_set_input {
+    automaticParticipationSurvey: Boolean
     conferenceId: uuid
     createdAt: timestamptz
     durationSeconds: Int
@@ -42131,6 +42973,10 @@ input schedule_Event_sum_order_by {
 update columns of table "schedule.Event"
 """
 enum schedule_Event_update_column {
+    """
+    column name
+    """
+    automaticParticipationSurvey
     """
     column name
     """
@@ -47854,6 +48700,56 @@ type subscription_root {
     """
     schedule_Continuation_by_pk(id: uuid!): schedule_Continuation
     """
+    fetch data from the table: "schedule.CurrentEvents"
+    """
+    schedule_CurrentEvents(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_CurrentEvents_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_CurrentEvents_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_CurrentEvents_bool_exp
+    ): [schedule_CurrentEvents!]!
+    """
+    fetch aggregated fields from the table: "schedule.CurrentEvents"
+    """
+    schedule_CurrentEvents_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_CurrentEvents_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_CurrentEvents_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_CurrentEvents_bool_exp
+    ): schedule_CurrentEvents_aggregate!
+    """
     fetch data from the table: "schedule.Event"
     """
     schedule_Event(
@@ -50956,6 +51852,8 @@ type video_ChannelStack {
     rtmpOutputDestinationId: String
     rtmpOutputStreamKey: String
     rtmpOutputUri: String
+    rtmpRoomInputAttachmentName: String
+    rtmpRoomInputId: String
     updatedAt: timestamptz!
 }
 
@@ -51011,6 +51909,8 @@ input video_ChannelStack_bool_exp {
     rtmpOutputDestinationId: String_comparison_exp
     rtmpOutputStreamKey: String_comparison_exp
     rtmpOutputUri: String_comparison_exp
+    rtmpRoomInputAttachmentName: String_comparison_exp
+    rtmpRoomInputId: String_comparison_exp
     updatedAt: timestamptz_comparison_exp
 }
 
@@ -51060,6 +51960,8 @@ input video_ChannelStack_insert_input {
     rtmpOutputDestinationId: String
     rtmpOutputStreamKey: String
     rtmpOutputUri: String
+    rtmpRoomInputAttachmentName: String
+    rtmpRoomInputId: String
     updatedAt: timestamptz
 }
 
@@ -51090,6 +51992,8 @@ type video_ChannelStack_max_fields {
     rtmpOutputDestinationId: String
     rtmpOutputStreamKey: String
     rtmpOutputUri: String
+    rtmpRoomInputAttachmentName: String
+    rtmpRoomInputId: String
     updatedAt: timestamptz
 }
 
@@ -51120,6 +52024,8 @@ type video_ChannelStack_min_fields {
     rtmpOutputDestinationId: String
     rtmpOutputStreamKey: String
     rtmpOutputUri: String
+    rtmpRoomInputAttachmentName: String
+    rtmpRoomInputId: String
     updatedAt: timestamptz
 }
 
@@ -51189,6 +52095,8 @@ input video_ChannelStack_order_by {
     rtmpOutputDestinationId: order_by
     rtmpOutputStreamKey: order_by
     rtmpOutputUri: order_by
+    rtmpRoomInputAttachmentName: order_by
+    rtmpRoomInputId: order_by
     updatedAt: order_by
 }
 
@@ -51298,6 +52206,14 @@ enum video_ChannelStack_select_column {
     """
     column name
     """
+    rtmpRoomInputAttachmentName
+    """
+    column name
+    """
+    rtmpRoomInputId
+    """
+    column name
+    """
     updatedAt
 }
 
@@ -51328,6 +52244,8 @@ input video_ChannelStack_set_input {
     rtmpOutputDestinationId: String
     rtmpOutputStreamKey: String
     rtmpOutputUri: String
+    rtmpRoomInputAttachmentName: String
+    rtmpRoomInputId: String
     updatedAt: timestamptz
 }
 
@@ -51427,6 +52345,14 @@ enum video_ChannelStack_update_column {
     column name
     """
     rtmpOutputUri
+    """
+    column name
+    """
+    rtmpRoomInputAttachmentName
+    """
+    column name
+    """
+    rtmpRoomInputId
     """
     column name
     """
@@ -52935,6 +53861,10 @@ enum video_RtmpInput_enum {
     The B RTMP input.
     """
     RTMP_B
+    """
+    Use the room's RTMP input if one is available.
+    """
+    RTMP_ROOM
 }
 
 """

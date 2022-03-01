@@ -127,7 +127,7 @@ gql`
             id
             sessionId
             eventId
-            participantStreams {
+            participantStreams(where: { stopped_at: { _is_null: true } }) {
                 id
                 registrantId
                 vonageStreamType

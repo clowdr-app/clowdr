@@ -10,7 +10,7 @@ Midspace uses the Vonage Video API (formerly TokBox OpenTok) for video chat.
    make a note of the API key that is generated.
 1. If you have not already, generate a secure random value and note it as `VONAGE_WEBHOOK_SECRET`.
 
-Return to the main README and continue with Part 2 after setting up the actions service. 
+Return to the main README and continue with Part 2 after setting up the actions service.
 
 ## Part 2 (After Actions Service Setup)
 

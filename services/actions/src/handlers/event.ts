@@ -13,6 +13,7 @@ import {
     GetEventChatInfoDocument,
     GetEventTimingsDocument,
     NotifyRealtimeEventEndedDocument,
+    NotifyRealtimeEventStartedDocument,
     Room_Mode_Enum,
     StartChatDuplicationDocument,
 } from "../generated/graphql";
@@ -102,22 +103,6 @@ gql`
         update_chat2: update_chat_Chat_by_pk(pk_columns: { id: $chatId2 }, _set: { duplicateToId: $chatId1 }) {
             id
         }
-        # insert_chat_Message(
-        #     objects: [
-        #         {
-        #             chatId: $chatId1
-        #             data: $data
-        #             isPinned: false
-        #             message: $message
-        #             senderId: null
-        #             type: DUPLICATION_MARKER
-        #             systemId: $systemId1
-        #         }
-        #     ]
-        #     on_conflict: { constraint: Message_systemId_key, update_columns: [] }
-        # ) {
-        #     affected_rows
-        # }
     }
 
     mutation EndChatDuplication(
@@ -130,31 +115,12 @@ gql`
         update_chat2: update_chat_Chat_by_pk(pk_columns: { id: $chatId2 }, _set: { duplicateToId: null }) {
             id
         }
-        # insert_chat_Message(
-        #     objects: [
-        #         {
-        #             chatId: $chatId1
-        #             data: $data
-        #             isPinned: false
-        #             message: $message
-        #             senderId: null
-        #             type: DUPLICATION_MARKER
-        #             systemId: $systemId1
-        #         }
-        #         {
-        #             chatId: $chatId2
-        #             data: $data
-        #             isPinned: false
-        #             message: $message
-        #             senderId: null
-        #             type: DUPLICATION_MARKER
-        #             systemId: $systemId2
-        #         }
-        #     ]
-        #     on_conflict: { constraint: Message_systemId_key, update_columns: [] }
-        # ) {
-        #     affected_rows
-        # }
+    }
+
+    mutation NotifyRealtimeEventStarted($eventId: uuid!) {
+        notifyEventStarted(eventId: $eventId) {
+            ok
+        }
     }
 
     mutation NotifyRealtimeEventEnded($eventId: uuid!) {
@@ -182,45 +148,20 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
                     variables: {
                         chatId1,
                         chatId2,
-                        // systemId1:
-                        //     chatId1 +
-                        //     "::" +
-                        //     (isStart ? "start" : "end") +
-                        //     "::" +
-                        //     (Date.parse(chatInfo.data.schedule_Event_by_pk.startTime) +
-                        //         (isStart ? 0 : chatInfo.data.schedule_Event_by_pk.durationSeconds)),
-                        // systemId2: !isStart
-                        //     ? chatId2 +
-                        //       "::" +
-                        //       (isStart ? "start" : "end") +
-                        //       "::" +
-                        //       (Date.parse(chatInfo.data.schedule_Event_by_pk.startTime) +
-                        //           (isStart ? 0 : chatInfo.data.schedule_Event_by_pk.durationSeconds))
-                        //     : undefined,
-                        // message: "<<<Duplication marker>>>",
-                        // data: {
-                        //     type: isStart ? "start" : "end",
-                        //     event: {
-                        //         id: eventId,
-                        //         startTime: Date.parse(chatInfo.data.schedule_Event_by_pk.startTime),
-                        //         durationSeconds: chatInfo.data.schedule_Event_by_pk.durationSeconds,
-                        //     },
-                        //     room: {
-                        //         id: chatInfo.data.schedule_Event_by_pk.room.id,
-                        //         name: chatInfo.data.schedule_Event_by_pk.room.name,
-                        //         chatId: chatInfo.data.schedule_Event_by_pk.room.chatId,
-                        //     },
-                        //     item: {
-                        //         id: chatInfo.data.schedule_Event_by_pk.item.id,
-                        //         title: chatInfo.data.schedule_Event_by_pk.item.title,
-                        //         chatId: chatInfo.data.schedule_Event_by_pk.item.chatId,
-                        //     },
-                        // },
                     } as StartChatDuplicationMutationVariables | EndChatDuplicationMutationVariables,
                 });
             }
         }
     }
+}
+
+async function notifyRealtimeServiceEventStarted(eventId: string): Promise<void> {
+    await apolloClient.mutate({
+        mutation: NotifyRealtimeEventStartedDocument,
+        variables: {
+            eventId,
+        },
+    });
 }
 
 async function notifyRealtimeServiceEventEnded(eventId: string): Promise<void> {
@@ -319,7 +260,11 @@ export async function handleEventStartNotification(
             insertChatDuplicationMarkers(eventId, true).catch((e) => {
                 logger.error({ eventId, err: e }, "Failed to insert chat duplication start markers");
             });
-        }, startTimeMillis - nowMillis + 500);
+
+            notifyRealtimeServiceEventStarted(eventId).catch((e) => {
+                logger.error("Failed to notify real-time service event started", { eventId, e });
+            });
+        }, Math.max(startTimeMillis - nowMillis + 500, 0));
 
         // Used to skip creating duplicate rooms by accident
         const itemsCreatedRoomsFor: string[] = [];

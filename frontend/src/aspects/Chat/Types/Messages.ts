@@ -63,6 +63,40 @@ export interface DuplicationMarkerMessageData extends BaseMessageData {
     };
 }
 
+export interface EventStartData extends BaseMessageData {
+    event: {
+        id: string;
+        startTime: number;
+        durationSeconds: number;
+        name: string;
+    };
+    room: {
+        id: string;
+        name: string;
+    };
+    item?: {
+        id: string;
+        title: string;
+    };
+}
+
+export interface ParticipationSurveyData extends BaseMessageData {
+    event: {
+        id: string;
+        startTime: number;
+        durationSeconds: number;
+        name: string;
+    };
+    room: {
+        id: string;
+        name: string;
+    };
+    item?: {
+        id: string;
+        title: string;
+    };
+}
+
 export type MessageData =
     | OrdinaryMessageData
     | EmoteMessageData
@@ -70,7 +104,9 @@ export type MessageData =
     | AnswerMessageData
     | PollMessageData
     | PollResultsMessageData
-    | DuplicationMarkerMessageData;
+    | DuplicationMarkerMessageData
+    | EventStartData
+    | ParticipationSurveyData;
 
 export interface AnswerReactionData {
     answerMessageId?: number;
@@ -80,6 +116,11 @@ export interface AnswerReactionData {
     duplicateAnswerMessageSId?: string;
 }
 
+export interface ParticipationReactionData {
+    rating?: number;
+    feedback?: string;
+}
+
 export interface EmojiReactionData {}
 
-export type ReactionData = AnswerReactionData | EmojiReactionData | any;
+export type ReactionData = AnswerReactionData | ParticipationReactionData | EmojiReactionData | any;

@@ -806,7 +806,10 @@ export default function ManageContentV2(): JSX.Element {
                                 Name: tag.name,
                                 Priority: tag.priority,
                                 Colour: tag.colour,
-                            }))
+                            })),
+                            {
+                                columns: ["Conference Id", "Tag Id", "Name", "Priority", "Colour"],
+                            }
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
@@ -837,7 +840,10 @@ export default function ManageContentV2(): JSX.Element {
                                 Priority: exhibition.priority,
                                 Colour: exhibition.colour,
                                 Hidden: exhibition.isHidden ? "Yes" : "No",
-                            }))
+                            })),
+                            {
+                                columns: ["Conference Id", "Exhibition Id", "Name", "Priority", "Colour", "Hidden"],
+                            }
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
@@ -880,54 +886,74 @@ export default function ManageContentV2(): JSX.Element {
                             .toPromise();
 
                         if (contentForExport.data) {
-                            const csvText = Papa.unparse(
-                                contentForExport.data.content_Item.map((item) => {
-                                    const result: any = {
-                                        "Conference Id": item.conferenceId,
-                                        "Content Id": item.id,
+                            const columns: Set<string> = new Set([
+                                "Conference Id",
+                                "Content Id",
+                                "Externally Sourced Data Id",
+                                "Title",
+                                "Short Title",
+                                "Type",
+                                "Tag Ids",
+                                "Exhibitions",
+                                "Discussion Room Ids",
+                                "Chat Id",
+                                "People",
+                            ]);
+                            const data = contentForExport.data.content_Item.map((item) => {
+                                const result: any = {
+                                    "Conference Id": item.conferenceId,
+                                    "Content Id": item.id,
 
-                                        Title: item.title,
-                                        "Short Title": item.shortTitle ?? "",
-                                        Type: item.typeName,
-                                        "Tag Ids": item.itemTags.map((itemTag) => itemTag.tagId),
-                                        Exhibitions: item.itemExhibitions.map(
-                                            (itemExh) => `${itemExh.priority ?? "N"}: ${itemExh.exhibitionId}`
-                                        ),
-                                        "Discussion Room Id": item.room?.id ?? "",
-                                        "Chat Id": item.chatId ?? "",
+                                    Title: item.title,
+                                    "Short Title": item.shortTitle ?? "",
+                                    Type: item.typeName,
+                                    "Tag Ids": item.itemTags.map((itemTag) => itemTag.tagId),
+                                    Exhibitions: item.itemExhibitions.map(
+                                        (itemExh) => `${itemExh.priority ?? "N"}: ${itemExh.exhibitionId}`
+                                    ),
+                                    "Discussion Room Id": item.room?.id ?? "",
+                                    "Chat Id": item.chatId ?? "",
 
-                                        People: item.itemPeople.map(
-                                            (itemPerson) =>
-                                                `${itemPerson.priority ?? "N"}: ${itemPerson.person?.id} (${
-                                                    itemPerson.roleName
-                                                }) [${itemPerson.person?.name} (${
-                                                    itemPerson.person?.affiliation ?? "No affiliation"
-                                                }) <${itemPerson.person?.email ?? "No email"}>]`
-                                        ),
-                                    };
+                                    People: item.itemPeople.map(
+                                        (itemPerson) =>
+                                            `${itemPerson.priority ?? "N"}: ${itemPerson.person?.id} (${
+                                                itemPerson.roleName
+                                            }) [${itemPerson.person?.name} (${
+                                                itemPerson.person?.affiliation ?? "No affiliation"
+                                            }) <${itemPerson.person?.email ?? "No email"}>]`
+                                    ),
+                                };
 
-                                    for (let idx = 0; idx < item.elements.length; idx++) {
-                                        const baseName = `Element ${idx}`;
-                                        const element = item.elements[idx];
-                                        result[`${baseName}: Id`] = element.id;
-                                        result[`${baseName}: Name`] = element.name;
-                                        result[`${baseName}: Type`] = element.typeName;
-                                        result[`${baseName}: Data`] =
-                                            element.data && element.data instanceof Array
-                                                ? JSON.stringify(element.data[element.data.length - 1])
-                                                : null;
-                                        result[`${baseName}: Layout`] = element.layoutData
-                                            ? JSON.stringify(element.layoutData)
+                                for (let idx = 0; idx < item.elements.length; idx++) {
+                                    const baseName = `Element ${idx}`;
+                                    const element = item.elements[idx];
+                                    result[`${baseName}: Id`] = element.id;
+                                    result[`${baseName}: Name`] = element.name;
+                                    result[`${baseName}: Type`] = element.typeName;
+                                    result[`${baseName}: Data`] =
+                                        element.data && element.data instanceof Array
+                                            ? JSON.stringify(element.data[element.data.length - 1])
                                             : null;
-                                        result[`${baseName}: Uploads Remaining`] =
-                                            element.uploadsRemaining ?? "Unlimited";
-                                        result[`${baseName}: Hidden`] = element.isHidden ? "Yes" : "No";
-                                        result[`${baseName}: Updated At`] = element.updatedAt;
-                                    }
+                                    result[`${baseName}: Layout`] = element.layoutData
+                                        ? JSON.stringify(element.layoutData)
+                                        : null;
+                                    result[`${baseName}: Uploads Remaining`] = element.uploadsRemaining ?? "Unlimited";
+                                    result[`${baseName}: Hidden`] = element.isHidden ? "Yes" : "No";
+                                    result[`${baseName}: Updated At`] = element.updatedAt;
 
-                                    return result;
-                                })
-                            );
+                                    columns.add(`${baseName}: Id`);
+                                    columns.add(`${baseName}: Name`);
+                                    columns.add(`${baseName}: Type`);
+                                    columns.add(`${baseName}: Data`);
+                                    columns.add(`${baseName}: Layout`);
+                                    columns.add(`${baseName}: Uploads Remaining`);
+                                    columns.add(`${baseName}: Hidden`);
+                                    columns.add(`${baseName}: Updated At`);
+                                }
+
+                                return result;
+                            });
+                            const csvText = Papa.unparse(data, { columns: [...columns] });
 
                             const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
                             let csvURL: string | null = null;

@@ -657,6 +657,11 @@ export type NotifyEventEnded = {
     ok: Scalars["Boolean"];
 };
 
+export type NotifyEventStarted = {
+    __typename?: "NotifyEventStarted";
+    ok: Scalars["Boolean"];
+};
+
 export type PresenceFlushOutput = {
     __typename?: "PresenceFlushOutput";
     ok?: Maybe<Scalars["String"]>;
@@ -4294,7 +4299,9 @@ export enum Chat_MessageType_Enum {
     Answer = "ANSWER",
     DuplicationMarker = "DUPLICATION_MARKER",
     Emote = "EMOTE",
+    EventStart = "EVENT_START",
     Message = "MESSAGE",
+    ParticipationSurvey = "PARTICIPATION_SURVEY",
     Poll = "POLL",
     PollResults = "POLL_RESULTS",
     Question = "QUESTION",
@@ -5057,6 +5064,8 @@ export enum Chat_ReactionType_Enum {
     Answer = "ANSWER",
     /** A plain emoji reaction */
     Emoji = "EMOJI",
+    /** Responding to an event participation survey. */
+    EventParticipation = "EVENT_PARTICIPATION",
     /** A vote in a poll */
     PollChoice = "POLL_CHOICE",
     /** Stop accepting new responses to the poll */
@@ -7645,6 +7654,8 @@ export enum Conference_ConfigurationKey_Enum {
     EnableBackstageStreamPreview = "ENABLE_BACKSTAGE_STREAM_PREVIEW",
     /** Boolean. Whether to enable the External RTMP Broadcast feature. */
     EnableExternalRtmpBroadcast = "ENABLE_EXTERNAL_RTMP_BROADCAST",
+    /** Boolean. Whether to enable external RTMP input feature. */
+    EnableExternalRtmpInput = "ENABLE_EXTERNAL_RTMP_INPUT",
     /** Whether to enable email notifications for recordings (default: true). */
     EnableRecordingSubtitleEmailNotifications = "ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS",
     /** Boolean. Hide the exhibition people from the event boxes in the schedule. */
@@ -11086,11 +11097,19 @@ export type Job_Queues_ChannelStackUpdateJob = {
     jobStatusName: Job_Queues_JobStatus_Enum;
     mediaLiveChannelId: Scalars["String"];
     message?: Maybe<Scalars["String"]>;
+    newRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    newRtmpBInputId?: Maybe<Scalars["String"]>;
     newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    newRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    newRtmpRoomInputId?: Maybe<Scalars["String"]>;
+    oldRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    oldRtmpBInputId?: Maybe<Scalars["String"]>;
     oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    oldRtmpRoomInputId?: Maybe<Scalars["String"]>;
     updated_at: Scalars["timestamptz"];
 };
 
@@ -11142,11 +11161,19 @@ export type Job_Queues_ChannelStackUpdateJob_Bool_Exp = {
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum_Comparison_Exp>;
     mediaLiveChannelId?: InputMaybe<String_Comparison_Exp>;
     message?: InputMaybe<String_Comparison_Exp>;
+    newRtmpBInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    newRtmpBInputId?: InputMaybe<String_Comparison_Exp>;
     newRtmpOutputStreamKey?: InputMaybe<String_Comparison_Exp>;
     newRtmpOutputUri?: InputMaybe<String_Comparison_Exp>;
+    newRtmpRoomInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    newRtmpRoomInputId?: InputMaybe<String_Comparison_Exp>;
+    oldRtmpBInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    oldRtmpBInputId?: InputMaybe<String_Comparison_Exp>;
     oldRtmpOutputDestinationId?: InputMaybe<String_Comparison_Exp>;
     oldRtmpOutputStreamKey?: InputMaybe<String_Comparison_Exp>;
     oldRtmpOutputUri?: InputMaybe<String_Comparison_Exp>;
+    oldRtmpRoomInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    oldRtmpRoomInputId?: InputMaybe<String_Comparison_Exp>;
     updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -11166,11 +11193,19 @@ export type Job_Queues_ChannelStackUpdateJob_Insert_Input = {
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     mediaLiveChannelId?: InputMaybe<Scalars["String"]>;
     message?: InputMaybe<Scalars["String"]>;
+    newRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    newRtmpBInputId?: InputMaybe<Scalars["String"]>;
     newRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     newRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    newRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    newRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
+    oldRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    oldRtmpBInputId?: InputMaybe<Scalars["String"]>;
     oldRtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     oldRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     oldRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    oldRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    oldRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -11183,11 +11218,19 @@ export type Job_Queues_ChannelStackUpdateJob_Max_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     mediaLiveChannelId?: Maybe<Scalars["String"]>;
     message?: Maybe<Scalars["String"]>;
+    newRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    newRtmpBInputId?: Maybe<Scalars["String"]>;
     newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    newRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    newRtmpRoomInputId?: Maybe<Scalars["String"]>;
+    oldRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    oldRtmpBInputId?: Maybe<Scalars["String"]>;
     oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    oldRtmpRoomInputId?: Maybe<Scalars["String"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -11199,11 +11242,19 @@ export type Job_Queues_ChannelStackUpdateJob_Max_Order_By = {
     id?: InputMaybe<Order_By>;
     mediaLiveChannelId?: InputMaybe<Order_By>;
     message?: InputMaybe<Order_By>;
+    newRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    newRtmpBInputId?: InputMaybe<Order_By>;
     newRtmpOutputStreamKey?: InputMaybe<Order_By>;
     newRtmpOutputUri?: InputMaybe<Order_By>;
+    newRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    newRtmpRoomInputId?: InputMaybe<Order_By>;
+    oldRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    oldRtmpBInputId?: InputMaybe<Order_By>;
     oldRtmpOutputDestinationId?: InputMaybe<Order_By>;
     oldRtmpOutputStreamKey?: InputMaybe<Order_By>;
     oldRtmpOutputUri?: InputMaybe<Order_By>;
+    oldRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    oldRtmpRoomInputId?: InputMaybe<Order_By>;
     updated_at?: InputMaybe<Order_By>;
 };
 
@@ -11216,11 +11267,19 @@ export type Job_Queues_ChannelStackUpdateJob_Min_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     mediaLiveChannelId?: Maybe<Scalars["String"]>;
     message?: Maybe<Scalars["String"]>;
+    newRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    newRtmpBInputId?: Maybe<Scalars["String"]>;
     newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    newRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    newRtmpRoomInputId?: Maybe<Scalars["String"]>;
+    oldRtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    oldRtmpBInputId?: Maybe<Scalars["String"]>;
     oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    oldRtmpRoomInputId?: Maybe<Scalars["String"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -11232,11 +11291,19 @@ export type Job_Queues_ChannelStackUpdateJob_Min_Order_By = {
     id?: InputMaybe<Order_By>;
     mediaLiveChannelId?: InputMaybe<Order_By>;
     message?: InputMaybe<Order_By>;
+    newRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    newRtmpBInputId?: InputMaybe<Order_By>;
     newRtmpOutputStreamKey?: InputMaybe<Order_By>;
     newRtmpOutputUri?: InputMaybe<Order_By>;
+    newRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    newRtmpRoomInputId?: InputMaybe<Order_By>;
+    oldRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    oldRtmpBInputId?: InputMaybe<Order_By>;
     oldRtmpOutputDestinationId?: InputMaybe<Order_By>;
     oldRtmpOutputStreamKey?: InputMaybe<Order_By>;
     oldRtmpOutputUri?: InputMaybe<Order_By>;
+    oldRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    oldRtmpRoomInputId?: InputMaybe<Order_By>;
     updated_at?: InputMaybe<Order_By>;
 };
 
@@ -11266,11 +11333,19 @@ export type Job_Queues_ChannelStackUpdateJob_Order_By = {
     jobStatusName?: InputMaybe<Order_By>;
     mediaLiveChannelId?: InputMaybe<Order_By>;
     message?: InputMaybe<Order_By>;
+    newRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    newRtmpBInputId?: InputMaybe<Order_By>;
     newRtmpOutputStreamKey?: InputMaybe<Order_By>;
     newRtmpOutputUri?: InputMaybe<Order_By>;
+    newRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    newRtmpRoomInputId?: InputMaybe<Order_By>;
+    oldRtmpBInputAttachmentName?: InputMaybe<Order_By>;
+    oldRtmpBInputId?: InputMaybe<Order_By>;
     oldRtmpOutputDestinationId?: InputMaybe<Order_By>;
     oldRtmpOutputStreamKey?: InputMaybe<Order_By>;
     oldRtmpOutputUri?: InputMaybe<Order_By>;
+    oldRtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    oldRtmpRoomInputId?: InputMaybe<Order_By>;
     updated_at?: InputMaybe<Order_By>;
 };
 
@@ -11296,15 +11371,31 @@ export enum Job_Queues_ChannelStackUpdateJob_Select_Column {
     /** column name */
     Message = "message",
     /** column name */
+    NewRtmpBInputAttachmentName = "newRtmpBInputAttachmentName",
+    /** column name */
+    NewRtmpBInputId = "newRtmpBInputId",
+    /** column name */
     NewRtmpOutputStreamKey = "newRtmpOutputStreamKey",
     /** column name */
     NewRtmpOutputUri = "newRtmpOutputUri",
+    /** column name */
+    NewRtmpRoomInputAttachmentName = "newRtmpRoomInputAttachmentName",
+    /** column name */
+    NewRtmpRoomInputId = "newRtmpRoomInputId",
+    /** column name */
+    OldRtmpBInputAttachmentName = "oldRtmpBInputAttachmentName",
+    /** column name */
+    OldRtmpBInputId = "oldRtmpBInputId",
     /** column name */
     OldRtmpOutputDestinationId = "oldRtmpOutputDestinationId",
     /** column name */
     OldRtmpOutputStreamKey = "oldRtmpOutputStreamKey",
     /** column name */
     OldRtmpOutputUri = "oldRtmpOutputUri",
+    /** column name */
+    OldRtmpRoomInputAttachmentName = "oldRtmpRoomInputAttachmentName",
+    /** column name */
+    OldRtmpRoomInputId = "oldRtmpRoomInputId",
     /** column name */
     UpdatedAt = "updated_at",
 }
@@ -11318,11 +11409,19 @@ export type Job_Queues_ChannelStackUpdateJob_Set_Input = {
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     mediaLiveChannelId?: InputMaybe<Scalars["String"]>;
     message?: InputMaybe<Scalars["String"]>;
+    newRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    newRtmpBInputId?: InputMaybe<Scalars["String"]>;
     newRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     newRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    newRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    newRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
+    oldRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    oldRtmpBInputId?: InputMaybe<Scalars["String"]>;
     oldRtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     oldRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     oldRtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    oldRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    oldRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -11343,15 +11442,31 @@ export enum Job_Queues_ChannelStackUpdateJob_Update_Column {
     /** column name */
     Message = "message",
     /** column name */
+    NewRtmpBInputAttachmentName = "newRtmpBInputAttachmentName",
+    /** column name */
+    NewRtmpBInputId = "newRtmpBInputId",
+    /** column name */
     NewRtmpOutputStreamKey = "newRtmpOutputStreamKey",
     /** column name */
     NewRtmpOutputUri = "newRtmpOutputUri",
+    /** column name */
+    NewRtmpRoomInputAttachmentName = "newRtmpRoomInputAttachmentName",
+    /** column name */
+    NewRtmpRoomInputId = "newRtmpRoomInputId",
+    /** column name */
+    OldRtmpBInputAttachmentName = "oldRtmpBInputAttachmentName",
+    /** column name */
+    OldRtmpBInputId = "oldRtmpBInputId",
     /** column name */
     OldRtmpOutputDestinationId = "oldRtmpOutputDestinationId",
     /** column name */
     OldRtmpOutputStreamKey = "oldRtmpOutputStreamKey",
     /** column name */
     OldRtmpOutputUri = "oldRtmpOutputUri",
+    /** column name */
+    OldRtmpRoomInputAttachmentName = "oldRtmpRoomInputAttachmentName",
+    /** column name */
+    OldRtmpRoomInputId = "oldRtmpRoomInputId",
     /** column name */
     UpdatedAt = "updated_at",
 }
@@ -14700,6 +14815,7 @@ export type Mutation_Root = {
     joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
     notifyEventEnded: NotifyEventEnded;
+    notifyEventStarted: NotifyEventStarted;
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
@@ -17322,6 +17438,11 @@ export type Mutation_RootJoinRoomVonageSessionArgs = {
 
 /** mutation root */
 export type Mutation_RootNotifyEventEndedArgs = {
+    eventId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootNotifyEventStartedArgs = {
     eventId: Scalars["uuid"];
 };
 
@@ -28129,7 +28250,6 @@ export type Schedule_CurrentEvents = {
     intendedRoomModeName?: Maybe<Scalars["String"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     room?: Maybe<Room_Room>;
     roomId?: Maybe<Scalars["uuid"]>;
@@ -28236,7 +28356,6 @@ export type Schedule_CurrentEvents_Bool_Exp = {
     intendedRoomModeName?: InputMaybe<String_Comparison_Exp>;
     itemId?: InputMaybe<Uuid_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
-    originatingDataId?: InputMaybe<Uuid_Comparison_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     roomId?: InputMaybe<Uuid_Comparison_Exp>;
     shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -28266,7 +28385,6 @@ export type Schedule_CurrentEvents_Insert_Input = {
     intendedRoomModeName?: InputMaybe<Scalars["String"]>;
     itemId?: InputMaybe<Scalars["uuid"]>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
@@ -28290,7 +28408,6 @@ export type Schedule_CurrentEvents_Max_Fields = {
     intendedRoomModeName?: Maybe<Scalars["String"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     roomId?: Maybe<Scalars["uuid"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
     startTime?: Maybe<Scalars["timestamptz"]>;
@@ -28312,7 +28429,6 @@ export type Schedule_CurrentEvents_Max_Order_By = {
     intendedRoomModeName?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     roomId?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
     startTime?: InputMaybe<Order_By>;
@@ -28335,7 +28451,6 @@ export type Schedule_CurrentEvents_Min_Fields = {
     intendedRoomModeName?: Maybe<Scalars["String"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
     roomId?: Maybe<Scalars["uuid"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
     startTime?: Maybe<Scalars["timestamptz"]>;
@@ -28357,7 +28472,6 @@ export type Schedule_CurrentEvents_Min_Order_By = {
     intendedRoomModeName?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     roomId?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
     startTime?: InputMaybe<Order_By>;
@@ -28390,7 +28504,6 @@ export type Schedule_CurrentEvents_Order_By = {
     intendedRoomModeName?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    originatingDataId?: InputMaybe<Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     roomId?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
@@ -28425,8 +28538,6 @@ export enum Schedule_CurrentEvents_Select_Column {
     /** column name */
     Name = "name",
     /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
     RoomId = "roomId",
     /** column name */
     ShufflePeriodId = "shufflePeriodId",
@@ -28456,7 +28567,6 @@ export type Schedule_CurrentEvents_Set_Input = {
     intendedRoomModeName?: InputMaybe<Scalars["String"]>;
     itemId?: InputMaybe<Scalars["uuid"]>;
     name?: InputMaybe<Scalars["String"]>;
-    originatingDataId?: InputMaybe<Scalars["uuid"]>;
     roomId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
     startTime?: InputMaybe<Scalars["timestamptz"]>;
@@ -28547,6 +28657,7 @@ export type Schedule_CurrentEvents_Variance_Order_By = {
 /** columns and relationships of "schedule.Event" */
 export type Schedule_Event = {
     __typename?: "schedule_Event";
+    automaticParticipationSurvey: Scalars["Boolean"];
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
@@ -29059,6 +29170,7 @@ export type Schedule_Event_Bool_Exp = {
     _and?: InputMaybe<Array<Schedule_Event_Bool_Exp>>;
     _not?: InputMaybe<Schedule_Event_Bool_Exp>;
     _or?: InputMaybe<Array<Schedule_Event_Bool_Exp>>;
+    automaticParticipationSurvey?: InputMaybe<Boolean_Comparison_Exp>;
     conference?: InputMaybe<Conference_Conference_Bool_Exp>;
     conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     continuations?: InputMaybe<Schedule_Continuation_Bool_Exp>;
@@ -29102,6 +29214,7 @@ export type Schedule_Event_Inc_Input = {
 
 /** input type for inserting data into table "schedule.Event" */
 export type Schedule_Event_Insert_Input = {
+    automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     continuations?: InputMaybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
@@ -29234,6 +29347,7 @@ export type Schedule_Event_On_Conflict = {
 
 /** Ordering options when selecting data from "schedule.Event". */
 export type Schedule_Event_Order_By = {
+    automaticParticipationSurvey?: InputMaybe<Order_By>;
     conference?: InputMaybe<Conference_Conference_Order_By>;
     conferenceId?: InputMaybe<Order_By>;
     continuations_aggregate?: InputMaybe<Schedule_Continuation_Aggregate_Order_By>;
@@ -29271,6 +29385,8 @@ export type Schedule_Event_Pk_Columns_Input = {
 
 /** select columns of table "schedule.Event" */
 export enum Schedule_Event_Select_Column {
+    /** column name */
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -29311,6 +29427,7 @@ export enum Schedule_Event_Select_Column {
 
 /** input type for updating data in table "schedule.Event" */
 export type Schedule_Event_Set_Input = {
+    automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     durationSeconds?: InputMaybe<Scalars["Int"]>;
@@ -29377,6 +29494,8 @@ export type Schedule_Event_Sum_Order_By = {
 
 /** update columns of table "schedule.Event" */
 export enum Schedule_Event_Update_Column {
+    /** column name */
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -34312,6 +34431,8 @@ export type Video_ChannelStack = {
     rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     rtmpOutputUri?: Maybe<Scalars["String"]>;
+    rtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpRoomInputId?: Maybe<Scalars["String"]>;
     updatedAt: Scalars["timestamptz"];
 };
 
@@ -34387,6 +34508,8 @@ export type Video_ChannelStack_Bool_Exp = {
     rtmpOutputDestinationId?: InputMaybe<String_Comparison_Exp>;
     rtmpOutputStreamKey?: InputMaybe<String_Comparison_Exp>;
     rtmpOutputUri?: InputMaybe<String_Comparison_Exp>;
+    rtmpRoomInputAttachmentName?: InputMaybe<String_Comparison_Exp>;
+    rtmpRoomInputId?: InputMaybe<String_Comparison_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -34428,6 +34551,8 @@ export type Video_ChannelStack_Insert_Input = {
     rtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     rtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     rtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    rtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    rtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -34457,6 +34582,8 @@ export type Video_ChannelStack_Max_Fields = {
     rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     rtmpOutputUri?: Maybe<Scalars["String"]>;
+    rtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpRoomInputId?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -34486,6 +34613,8 @@ export type Video_ChannelStack_Min_Fields = {
     rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
     rtmpOutputUri?: Maybe<Scalars["String"]>;
+    rtmpRoomInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpRoomInputId?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -34542,6 +34671,8 @@ export type Video_ChannelStack_Order_By = {
     rtmpOutputDestinationId?: InputMaybe<Order_By>;
     rtmpOutputStreamKey?: InputMaybe<Order_By>;
     rtmpOutputUri?: InputMaybe<Order_By>;
+    rtmpRoomInputAttachmentName?: InputMaybe<Order_By>;
+    rtmpRoomInputId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
 };
 
@@ -34599,6 +34730,10 @@ export enum Video_ChannelStack_Select_Column {
     /** column name */
     RtmpOutputUri = "rtmpOutputUri",
     /** column name */
+    RtmpRoomInputAttachmentName = "rtmpRoomInputAttachmentName",
+    /** column name */
+    RtmpRoomInputId = "rtmpRoomInputId",
+    /** column name */
     UpdatedAt = "updatedAt",
 }
 
@@ -34627,6 +34762,8 @@ export type Video_ChannelStack_Set_Input = {
     rtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     rtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     rtmpOutputUri?: InputMaybe<Scalars["String"]>;
+    rtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    rtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -34678,6 +34815,10 @@ export enum Video_ChannelStack_Update_Column {
     RtmpOutputStreamKey = "rtmpOutputStreamKey",
     /** column name */
     RtmpOutputUri = "rtmpOutputUri",
+    /** column name */
+    RtmpRoomInputAttachmentName = "rtmpRoomInputAttachmentName",
+    /** column name */
+    RtmpRoomInputId = "rtmpRoomInputId",
     /** column name */
     UpdatedAt = "updatedAt",
 }
@@ -35786,6 +35927,8 @@ export enum Video_RtmpInput_Enum {
     RtmpA = "RTMP_A",
     /** The B RTMP input. */
     RtmpB = "RTMP_B",
+    /** Use the room's RTMP input if one is available. */
+    RtmpRoom = "RTMP_ROOM",
 }
 
 /** Boolean expression to compare columns of type "video_RtmpInput_enum". All fields are combined with logical 'AND'. */

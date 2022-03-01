@@ -129,6 +129,13 @@ actions:
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
+- name: notifyEventStarted
+  definition:
+    kind: synchronous
+    handler: '{{REALTIME_BASE_URL}}/event/started'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: presence_Flush
   definition:
     kind: synchronous
@@ -303,6 +310,7 @@ custom_types:
   - name: GetSlugOutput
   - name: MatchingPersonOutput
   - name: ToggleVonageRecordingStateOutput
+  - name: NotifyEventStarted
   - name: InitialiseSuperUserOutput
   - name: TranscribeGeneratePresignedUrlOutput
   scalars: []

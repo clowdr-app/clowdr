@@ -1,26 +1,26 @@
 type Mutation {
-  createItemRoom(
+  createItemRoom (
     itemId: uuid!
     conferenceId: uuid!
   ): CreateItemRoomOutput
 }
 
 type Mutation {
-  createRoomDm(
+  createRoomDm (
     conferenceId: uuid!
     registrantIds: [uuid]!
   ): CreateRoomDmOutput
 }
 
 type Mutation {
-  getGoogleOAuthUrl(
+  getGoogleOAuthUrl (
     registrantId: uuid!
     scopes: [String!]!
   ): GetGoogleOAuthUrlOutput
 }
 
 type Query {
-  getSlug(
+  getSlug (
     url: String!
   ): GetSlugOutput!
 }
@@ -34,68 +34,74 @@ type Mutation {
 }
 
 type Mutation {
-  invitationConfirmCurrent(
+  invitationConfirmCurrent (
     inviteCode: uuid!
   ): ConfirmInvitationOutput
 }
 
 type Mutation {
-  joinEventVonageSession(
+  joinEventVonageSession (
     registrantId: uuid!
     eventId: uuid!
   ): JoinEventVonageSessionOutput
 }
 
 type Mutation {
-  joinRoomChimeSession(
+  joinRoomChimeSession (
     registrantId: uuid!
     roomId: uuid!
   ): JoinRoomChimeSessionOutput
 }
 
 type Mutation {
-  joinRoomVonageSession(
+  joinRoomVonageSession (
     registrantId: uuid!
     roomId: uuid!
   ): JoinRoomVonageSessionOutput
 }
 
 type Mutation {
-  notifyEventEnded(
+  notifyEventEnded (
     eventId: uuid!
   ): NotifyEventEnded!
 }
 
 type Mutation {
-  presence_Flush: PresenceFlushOutput!
-}
-
-type Query {
-  presence_Summary: PresenceSummaryOutput
+  notifyEventStarted (
+    eventId: uuid!
+  ): NotifyEventStarted!
 }
 
 type Mutation {
-  refreshYouTubeData(
+  presence_Flush : PresenceFlushOutput!
+}
+
+type Query {
+  presence_Summary : PresenceSummaryOutput
+}
+
+type Mutation {
+  refreshYouTubeData (
     registrantId: uuid!
     registrantGoogleAccountId: uuid!
   ): RefreshYouTubeDataOutput
 }
 
 type Mutation {
-  stopEventBroadcast(
+  stopEventBroadcast (
     eventId: uuid!
   ): StopEventBroadcastOutput
 }
 
 type Mutation {
-  submitGoogleOAuthCode(
+  submitGoogleOAuthCode (
     code: String!
     state: String!
   ): SubmitGoogleOAuthCodeOutput
 }
 
 type Mutation {
-  submitUploadableElement(
+  submitUploadableElement (
     data: jsonb!
     magicToken: String!
     elementId: uuid!
@@ -103,7 +109,7 @@ type Mutation {
 }
 
 type Mutation {
-  toggleVonageRecordingState(
+  toggleVonageRecordingState (
     recordingActive: Boolean!
     vonageSessionId: String!
   ): ToggleVonageRecordingStateOutput
@@ -117,14 +123,14 @@ type Query {
 }
 
 type Mutation {
-  updateProfilePhoto(
+  updateProfilePhoto (
     registrantId: uuid!
     s3URL: String
   ): UpdateProfilePhotoResponse
 }
 
 type Mutation {
-  updateSubtitles(
+  updateSubtitles (
     elementId: String!
     subtitleText: String!
     magicToken: String!
@@ -132,191 +138,195 @@ type Mutation {
 }
 
 type Query {
-  vapidPublicKey: VAPIDPublicKeyOutput!
+  vapidPublicKey : VAPIDPublicKeyOutput!
 }
 
 input SubmitContentItemInput {
-  contentItemData: jsonb!
+  contentItemData : jsonb!
 }
 
 input ConfirmInvitationInput {
-  inviteCode: uuid!
-  confirmationCode: String!
+  inviteCode : uuid!
+  confirmationCode : String!
 }
 
 input InvitationConfirmationEmailInput {
-  inviteCode: uuid!
+  inviteCode : uuid!
 }
 
 input SubmitUpdatedSubtitlesInput {
-  contentItemId: String!
-  subtitleText: String!
-  accessToken: String!
+  contentItemId : String!
+  subtitleText : String!
+  accessToken : String!
 }
 
 type SubmitContentItemOutput {
-  success: Boolean!
-  message: String!
+  success : Boolean!
+  message : String!
 }
 
 type ConfirmInvitationOutput {
-  ok: String!
-  confSlug: String
+  ok : String!
+  confSlug : String
 }
 
 type InvitationConfirmationEmailOutput {
-  sent: Boolean!
+  sent : Boolean!
 }
 
 type InvitationSendEmailResult {
-  attendeeId: String!
-  sent: Boolean!
+  attendeeId : String!
+  sent : Boolean!
 }
 
 type GetContentItemOutput {
-  contentTypeName: String!
-  name: String!
-  id: String!
-  data: jsonb!
-  layoutData: jsonb
-  contentGroupTitle: String!
+  contentTypeName : String!
+  name : String!
+  id : String!
+  data : jsonb!
+  layoutData : jsonb
+  contentGroupTitle : String!
 }
 
 type SubmitUpdatedSubtitlesOutput {
-  success: Boolean!
-  message: String!
+  success : Boolean!
+  message : String!
 }
 
 type GetUploadAgreementOutput {
-  agreementText: String
-  agreementUrl: String
+  agreementText : String
+  agreementUrl : String
 }
 
 type ConferencePrepareOutput {
-  success: Boolean!
-  message: String
+  success : Boolean!
+  message : String
 }
 
 type UploaderSendSubmissionRequestResult {
-  uploaderId: uuid!
-  sent: Boolean!
+  uploaderId : uuid!
+  sent : Boolean!
 }
 
 type JoinEventVonageSessionOutput {
-  accessToken: String
-  isRecorded: Boolean
+  accessToken : String
+  isRecorded : Boolean
 }
 
 type JoinRoomVonageSessionOutput {
-  sessionId: String
-  accessToken: String
-  message: String
-  isRecorded: Boolean
+  sessionId : String
+  accessToken : String
+  message : String
+  isRecorded : Boolean
 }
 
 type ProfilePhotoURLResponse {
-  url: String!
+  url : String!
 }
 
 type UpdateProfilePhotoResponse {
-  ok: Boolean!
-  photoURL_350x350: String
-  photoURL_50x50: String
+  ok : Boolean!
+  photoURL_350x350 : String
+  photoURL_50x50 : String
 }
 
 type CreateRoomDmOutput {
-  roomId: uuid
-  chatId: uuid
-  message: String
+  roomId : uuid
+  chatId : uuid
+  message : String
 }
 
 type CreateContentGroupRoomOutput {
-  roomId: String
-  message: String
+  roomId : String
+  message : String
 }
 
 type StopEventBroadcastOutput {
-  broadcastsStopped: Int!
+  broadcastsStopped : Int!
 }
 
 type GetGoogleOAuthUrlOutput {
-  url: String!
+  url : String!
 }
 
 type SubmitGoogleOAuthTokenOutput {
-  success: Boolean!
-  message: String
+  success : Boolean!
+  message : String
 }
 
 type SubmitGoogleOAuthCodeOutput {
-  success: Boolean!
-  message: String
+  success : Boolean!
+  message : String
 }
 
 type RefreshYouTubeDataOutput {
-  success: Boolean!
-  message: String
+  success : Boolean!
+  message : String
 }
 
 type ChatRemoteToken {
-  jwt: String!
-  expiry: Int!
+  jwt : String!
+  expiry : Int!
 }
 
 type GenerateChatRemoteServiceIdsOutput {
-  error: String
+  error : String
 }
 
 type GenerateChatRemoteUserIdsOutput {
-  error: String
+  error : String
 }
 
 type PresenceSummaryOutput {
-  total_unique_tabs: Int!
-  total_unique_user_ids: Int!
-  pages: jsonb
+  total_unique_tabs : Int!
+  total_unique_user_ids : Int!
+  pages : jsonb
 }
 
 type PresenceFlushOutput {
-  ok: String
+  ok : String
 }
 
 type JoinRoomChimeSessionOutput {
-  meeting: jsonb
-  registrant: jsonb
-  message: String
+  meeting : jsonb
+  registrant : jsonb
+  message : String
 }
 
 type VAPIDPublicKeyOutput {
-  key: String!
+  key : String!
 }
 
 type CreateItemRoomOutput {
-  roomId: String
-  message: String
+  roomId : String
+  message : String
 }
 
 type SubmitUploadableElementOutput {
-  success: Boolean!
-  message: String!
+  success : Boolean!
+  message : String!
 }
 
 type NotifyEventEnded {
-  ok: Boolean!
+  ok : Boolean!
 }
 
 type GetSlugOutput {
-  slug: String
+  slug : String
   url: String
 }
 
 type MatchingPersonOutput {
-  accessToken: String
+  accessToken : String
 }
 
 type ToggleVonageRecordingStateOutput {
-  allowed: Boolean!
-  recordingState: Boolean!
+  allowed : Boolean!
+  recordingState : Boolean!
+}
+
+type NotifyEventStarted {
+  ok : Boolean!
 }
 
 type InitialiseSuperUserOutput {

@@ -60,11 +60,11 @@ export default function ConferenceRoutes(): JSX.Element {
                     </Route>
                 ) : undefined}
 
-                {mRegistrant && mRegistrant.profile && !mRegistrant.profile.hasBeenEdited ? (
+                {/* {mRegistrant && mRegistrant.profile && !mRegistrant.profile.hasBeenEdited ? (
                     <Route path={path}>
                         <Redirect to={`${url}/profile/edit`} />
                     </Route>
-                ) : undefined}
+            ) : undefined} */}
 
                 {mRegistrant && <Route exact path={`${path}/profile/backstages`} component={MyBackstages} />}
 

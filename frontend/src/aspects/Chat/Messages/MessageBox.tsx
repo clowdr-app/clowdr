@@ -1,4 +1,20 @@
-import { Button, Flex, HStack, Image, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import type { UseRadioProps } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    chakra,
+    Divider,
+    Flex,
+    HStack,
+    Image,
+    Text,
+    Textarea,
+    useColorModeValue,
+    useRadio,
+    useRadioGroup,
+    VStack,
+} from "@chakra-ui/react";
+import { datadogLogs } from "@datadog/browser-logs";
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import ReactPlayer from "react-player";
@@ -9,13 +25,14 @@ import FAIcon from "../../Chakra/FAIcon";
 import { DownloadButton } from "../../Chakra/LinkButton";
 import { Markdown } from "../../Chakra/Markdown";
 import { useRegistrant } from "../../Conference/RegistrantsContext";
+import useCurrentRegistrant from "../../Conference/useCurrentRegistrant";
 import { useAddEmojiFloat, useEmojiFloat } from "../../Emoji/EmojiFloat";
 import type { Observable } from "../../Observable";
 import { roundUpToNearest } from "../../Utils/MathUtils";
 import type { MessageState } from "../ChatGlobalState";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
-import type { BaseMessageData } from "../Types/Messages";
+import type { BaseMessageData, EventStartData, ParticipationReactionData } from "../Types/Messages";
 import { MediaType } from "../Types/Messages";
 import MessageControls from "./MessageControls";
 import PollOptions from "./PollOptions";
@@ -210,16 +227,18 @@ function MessageBody({
         [config.currentRegistrantId, message, reactions, registrantNameEl, smallFontSize]
     );
 
-    const emote = useMemo(
+    const messageContents = useMemo(
         () =>
             message.type === Chat_MessageType_Enum.Emote ? (
                 <HStack fontSize={pictureSize} w="100%" pt={config.spacing}>
                     <Twemoji className="twemoji" text={message.message} />
                 </HStack>
+            ) : message.type === Chat_MessageType_Enum.ParticipationSurvey ? (
+                <ParticipationSurvey message={message} />
             ) : (
                 <Markdown restrictHeadingSize>{message.message}</Markdown>
             ),
-        [config.spacing, message.message, message.type, pictureSize]
+        [config.spacing, message, pictureSize]
     );
 
     const reactionEls = useMemo(
@@ -309,7 +328,7 @@ function MessageBody({
                 h={message.type === Chat_MessageType_Enum.Emote ? "100%" : "auto"}
             >
                 {controls}
-                {emote}
+                {messageContents}
                 {reactionEls}
                 {question}
                 {poll}
@@ -336,7 +355,7 @@ function MessageBody({
                 ) : undefined}
             </VStack>
         );
-    }, [config.spacing, controls, emote, message.type, poll, question, reactionEls, messageData]);
+    }, [config.spacing, controls, messageContents, message.type, poll, question, reactionEls, messageData]);
 
     if (message.type === Chat_MessageType_Enum.DuplicationMarker) {
         return <></>;
@@ -407,6 +426,25 @@ function MessageBody({
         //         )}
         //     </Flex>
         // );
+    }
+
+    if (message.type === Chat_MessageType_Enum.EventStart) {
+        const data = message.data as EventStartData;
+        return (
+            <Flex w="100%" fontSize={smallFontSize * 1.1} flexDir={"column"} alignItems="center">
+                <Divider my={config.spacing} borderColor="yellow.400" borderBottomWidth="2px" w="100%" height="2px" />
+                <Text fontWeight="bold">
+                    Started at{" "}
+                    {new Date(message.created_at).toLocaleTimeString(undefined, {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    })}
+                </Text>
+                <Text whiteSpace="normal" overflowWrap="break-word" maxW="100%">
+                    {data.item ? data.item.title : data.event.name}
+                </Text>
+            </Flex>
+        );
     }
 
     return (
@@ -514,5 +552,191 @@ export default function MessageBox({
         >
             <MessageBody subscribeToReactions={subscribeToReactions} registrant={registrant} message={message} />
         </HStack>
+    );
+}
+
+function ParticipationSurvey({ message }: { message: MessageState }): JSX.Element {
+    // TODO: Time cutoff for responses
+    const registrant = useCurrentRegistrant();
+    const [selectedRating, setSelectedRating] = useState<string>("");
+    const [comment, setComment] = useState<string>("");
+    const [submitted, setSubmitted] = useState<ParticipationReactionData | null>(null);
+    const [submitting, setSubmitting] = useState<boolean>(false);
+
+    useEffect(() => {
+        return message.Reactions.subscribe((reactions) => {
+            setSubmitted((old) => old ?? reactions.find((x) => x.senderId === registrant.id)?.data ?? null);
+        });
+    }, [message.Reactions, registrant.id]);
+
+    const allowSubmit = useMemo(() => Date.now() - message.created_at < 5 * 60 * 1000, [message.created_at]);
+
+    return (
+        <VStack spacing={3} w="100%" alignItems="flex-start">
+            {!submitted ? (
+                allowSubmit ? (
+                    <>
+                        <Text>This event has ended. Would you like to log your participation or leave feedback?</Text>
+                        <Box w="100%">
+                            <Text>How did you feel about this event? (optional)</Text>
+                            <FeedbackOptions
+                                options={[
+                                    { label: "😍", value: "5" },
+                                    { label: "🙂", value: "4" },
+                                    { label: "😐", value: "3" },
+                                    { label: "😕", value: "2" },
+                                    { label: "☹", value: "1" },
+                                    { label: "-", value: "" },
+                                ]}
+                                value={selectedRating}
+                                onChange={setSelectedRating}
+                                name={message.data.event.id + "-feedback-rating"}
+                            />
+                        </Box>
+                        <Box w="100%">
+                            <Text>Leave a comment (optional)</Text>
+                            <Textarea value={comment} onChange={(ev) => setComment(ev.target.value)} />
+                        </Box>
+                        <Button
+                            colorScheme="PrimaryActionButton"
+                            size="sm"
+                            isLoading={submitting}
+                            onClick={async () => {
+                                try {
+                                    setSubmitting(true);
+                                    await message.addReaction({
+                                        type: Chat_ReactionType_Enum.EventParticipation,
+                                        data: {
+                                            feedback: comment?.length ? comment : undefined,
+                                            rating: selectedRating?.length ? parseInt(selectedRating, 10) : undefined,
+                                        } as ParticipationReactionData,
+                                        symbol: "",
+                                    });
+                                    setSubmitted({
+                                        feedback: comment?.length ? comment : undefined,
+                                        rating: selectedRating?.length ? parseInt(selectedRating, 10) : undefined,
+                                    });
+                                } catch (e: any) {
+                                    datadogLogs.logger.error("Error submitting participation survey response", {
+                                        error: e,
+                                    });
+                                } finally {
+                                    setSubmitting(false);
+                                }
+                            }}
+                        >
+                            Submit
+                        </Button>
+                        <Text fontSize="sm">Participation logs close after 5 minutes.</Text>
+                    </>
+                ) : (
+                    <>
+                        <Text>
+                            This event has ended. It is no longer possible to log your participation in this event.
+                        </Text>
+                    </>
+                )
+            ) : (
+                <>
+                    <Text>Thank you for logging your participation in this event.</Text>
+                    <Text>(For a certificate of attendance, please contact your conference organizers.)</Text>
+                    {submitted.rating !== undefined ? (
+                        <Text>
+                            You felt{" "}
+                            <Twemoji
+                                className="twemoji"
+                                text={
+                                    submitted.rating === 5
+                                        ? "😍"
+                                        : submitted.rating === 4
+                                        ? "🙂"
+                                        : submitted.rating === 3
+                                        ? "😐"
+                                        : submitted.rating === 2
+                                        ? "😕"
+                                        : submitted.rating === 1
+                                        ? "☹"
+                                        : ""
+                                }
+                            />{" "}
+                            about this event.
+                        </Text>
+                    ) : undefined}
+                    {submitted.feedback ? (
+                        <VStack spacing={1} w="100%" alignItems="flex-start">
+                            <Text>Your feedback:</Text>
+                            <Text>{submitted.feedback}</Text>
+                        </VStack>
+                    ) : undefined}
+                </>
+            )}
+        </VStack>
+    );
+}
+
+function FeedbackOptions({
+    name,
+    options,
+    value,
+    onChange,
+}: {
+    name: string;
+    options: { label: string; value: string }[];
+    value: string;
+    onChange: (value: string) => void;
+}) {
+    const { getRootProps, getRadioProps } = useRadioGroup({
+        name,
+        value,
+        onChange,
+    });
+
+    const group: any = getRootProps();
+
+    return (
+        <HStack {...group} flexWrap="wrap" gridRowGap={2} py={2} px={[2, 4]} w="100%" justifyContent="space-around">
+            {options.map((option) => {
+                const radio = getRadioProps({ value: option.value });
+                return (
+                    <FeedbackCard key={option.value} {...radio}>
+                        <Twemoji className="twemoji" text={option.label} />
+                    </FeedbackCard>
+                );
+            })}
+        </HStack>
+    );
+}
+
+function FeedbackCard(props: React.PropsWithChildren<UseRadioProps>) {
+    const { getInputProps, getCheckboxProps } = useRadio(props);
+
+    const input = getInputProps();
+    const checkbox: any = getCheckboxProps();
+
+    return (
+        <Box as="label">
+            <input {...input} />
+            <Box
+                {...checkbox}
+                cursor="pointer"
+                borderWidth="1px"
+                borderRadius="md"
+                boxShadow="md"
+                _checked={{
+                    bg: "PrimaryActionButton.600",
+                    color: "PrimaryActionButton.textColor",
+                    borderColor: "PrimaryActionButton.600",
+                }}
+                _focus={{
+                    boxShadow: "outline",
+                }}
+                size="xl"
+                px={1}
+                py={1}
+                fontSize="150%"
+            >
+                <chakra.span whiteSpace="nowrap">{props.children}</chakra.span>
+            </Box>
+        </Box>
     );
 }

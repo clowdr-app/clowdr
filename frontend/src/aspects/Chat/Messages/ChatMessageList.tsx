@@ -164,6 +164,13 @@ function MessageList({
                 config.state.setAllMessagesRead(latest.sId);
             }
 
+            setTimeout(() => {
+                ref.current?.scroll({
+                    behavior: "auto",
+                    top: ref.current.scrollHeight,
+                });
+            }, 50);
+
             setLastRenderTime(Date.now());
         },
         [config.state, isVisible]
@@ -205,7 +212,7 @@ function MessageList({
                 setTimeout(() => {
                     ref.current?.scroll({
                         behavior: "auto",
-                        top: 0,
+                        top: ref.current.scrollHeight,
                     });
                 }, 50);
 
@@ -320,40 +327,47 @@ function MessageList({
             {messageElements.current === null ? (
                 <CenteredSpinner spinnerProps={{ label: "Loading messages" }} caller="ChatMessageList:321" />
             ) : (
-                <Flex w="100%" h="100%" overflowX="hidden" overflowY="auto" flexDir="column" justifyContent="flex-end">
+                <Box
+                    w="100%"
+                    h="100%"
+                    overflowX="hidden"
+                    overflowY="auto"
+                    // flexDir="column"
+                    // justifyContent="flex-start"
+                    css={{
+                        scrollbarWidth: "thin",
+                        scrollbarColor: `${scrollbarColour} ${scrollbarBackground}`,
+                        "&::-webkit-scrollbar": {
+                            width: "6px",
+                            height: "6px",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                            width: "8px",
+                            height: "8px",
+                            background: scrollbarBackgroundT,
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                            background: scrollbarColourT,
+                            borderRadius: "24px",
+                        },
+                    }}
+                    ref={ref}
+                >
                     <Flex
                         role="list"
                         w="100%"
                         h="auto"
                         overflowX="hidden"
-                        overflowY="scroll"
+                        overflowY="visible"
                         flexDir="column-reverse"
                         minH="100%"
-                        css={{
-                            scrollbarWidth: "thin",
-                            scrollbarColor: `${scrollbarColour} ${scrollbarBackground}`,
-                            "&::-webkit-scrollbar": {
-                                width: "6px",
-                                height: "6px",
-                            },
-                            "&::-webkit-scrollbar-track": {
-                                width: "8px",
-                                height: "8px",
-                                background: scrollbarBackgroundT,
-                            },
-                            "&::-webkit-scrollbar-thumb": {
-                                background: scrollbarColourT,
-                                borderRadius: "24px",
-                            },
-                        }}
-                        ref={ref}
                     >
                         {bottomEl}
                         {messageElements.current}
                         {topEl}
                         {/* <Box hidden={true}>{lastRenderTime}</Box> */}
                     </Flex>
-                </Flex>
+                </Box>
             )}
         </Box>
     );

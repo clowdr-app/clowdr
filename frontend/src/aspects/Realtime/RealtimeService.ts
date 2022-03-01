@@ -11,8 +11,8 @@ export class RealtimeService {
 
     private _onSocketAvailable: Map<number, (socket: SocketIOClient.Socket) => void> = new Map();
     private _onSocketAvailableGen = 1;
-    onSocketAvailable(handler: (socket: SocketIOClient.Socket) => void): () => void {
-        datadogLogs.logger.info("Realtime service: Socket available");
+    onSocketAvailable(caller: string, handler: (socket: SocketIOClient.Socket) => void): () => void {
+        datadogLogs.logger.info(`Realtime service: Registering handler for socket available (${caller})`);
         const id = this._onSocketAvailableGen++;
         this._onSocketAvailable.set(id, handler);
 
@@ -22,17 +22,20 @@ export class RealtimeService {
         }
 
         return () => {
+            datadogLogs.logger.info(`Realtime service: Unregistering handler for socket available (${caller})`);
             this._onSocketAvailable.delete(id);
         };
     }
 
     private _onSocketUnavailable: Map<number, (socket: SocketIOClient.Socket) => void> = new Map();
     private _onSocketUnavailableGen = 1;
-    onSocketUnavailable(handler: (socket: SocketIOClient.Socket) => void): () => void {
+    onSocketUnavailable(caller: string, handler: (socket: SocketIOClient.Socket) => void): () => void {
+        datadogLogs.logger.info(`Realtime service: Registering handler for socket unavailable (${caller})`);
         const id = this._onSocketUnavailableGen++;
         this._onSocketUnavailable.set(id, handler);
 
         return () => {
+            datadogLogs.logger.info(`Realtime service: Unregistering handler for socket unavailable (${caller})`);
             this._onSocketUnavailable.delete(id);
         };
     }
@@ -126,7 +129,7 @@ export class RealtimeService {
     }
 
     private onDisconnect() {
-        datadogLogs.logger.info("Disconnected from realtime service");
+        datadogLogs.logger.info("Realtime service: Disconnected");
 
         if (this.socket) {
             for (const handler of this._onSocketUnavailable.values()) {

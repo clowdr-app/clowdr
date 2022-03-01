@@ -15,7 +15,7 @@ If you want to contribute to Midspace, please read our [contribution guidelines]
 | services          | Micro-services                                                       |                                                        |
 | services/actions  | A service that handles most Hasura actions.                          | [Actions service readme](services/actions/README.md)   |
 | services/auth     |                                                                      | [Auth service readme](services/auth/README.md)         |
-| services/caches   |                                                                      | [Caches service readme](services/caches/README.md)   |
+| services/caches   |                                                                      | [Caches service readme](services/caches/README.md)     |
 | services/realtime | A service that handles realtime interactions like chat and presence. | [Realtime service readme](services/realtime/README.md) |
 | services/playout  | A service that controls video broadcast pipelines.                   | [Playout service readme](services/playout/README.md)   |
 
@@ -66,9 +66,10 @@ Several other setup steps require an arbitrarily selected secret value shared be
 ## Install Packages
 
 Install all node packages (pnpm descends into subdirectories and creates all necessary `node_modules` directories):
-   ```
-   pnpm i
-   ```
+
+```
+pnpm i
+```
 
 ## Cloud Services
 
@@ -78,7 +79,9 @@ Midspace relies on various cloud services, which will need to be configured for 
 1. [Set up user authentication](docs/auth-setup.md)
 1. **Full Setup:** [Set up AWS account and Deploy AWS CloudFormation Stacks](aws/README.md)
 1. [Set up video chat service](docs/video-service-setup.md)
-1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and an API key for it from Settings -> API Keys.
+1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and an API key for it.
+   1. Take note of the API key when creating the account; you will not be able to view it later without updating it to a new value.
+   1. Also set up [Signed Event Webhook Requests](https://docs.sendgrid.com/for-developers/tracking-events/getting-started-event-webhook-security-features#the-signed-event-webhook) and generate a verification key pair. You will need the public key, but you can come back to the Sendgrid mail settings page &rarr; Signed Event Webhook Requests modal to view it later.
 
 ## Setting Up Local Working Copy
 
@@ -105,10 +108,11 @@ Midspace relies on various cloud services, which will need to be configured for 
       described in previous steps.
    1. **Fixup currently required after running GraphQL Codegen:** Some changes are made to the file `frontend/src/generate/graphql.tsx` that need to be undone:
       1. Restore this line at the beginning of the file:
-         ```import { useQuery } from "@midspace/urql-hasura-cache-generic-resolver/useQuery";```
-      1. Revert all instances of `Urql.useQuery<` back to  `useQuery<`.
+         `import { useQuery } from "@midspace/urql-hasura-cache-generic-resolver/useQuery";`
+      1. Revert all instances of `Urql.useQuery<` back to `useQuery<`.
 
 ### Starting your local working copy
+
 Once you have finished setup, it's easy to run the entire environment with a single VSCode task: "Run All -- Local Development". This task starts PacketRiot tunnels as well as all Midspace services.
 
 ## Final Steps

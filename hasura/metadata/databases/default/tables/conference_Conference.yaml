@@ -144,6 +144,7 @@ select_permissions:
     - created_at
     - defaultProgramVisibilityLevel
     - id
+    - logoURL
     - name
     - shortName
     - slug
@@ -161,6 +162,7 @@ select_permissions:
     - defaultProgramVisibilityLevel
     - demoCodeId
     - id
+    - logoURL
     - name
     - shortName
     - slug
@@ -181,6 +183,7 @@ select_permissions:
     - defaultProgramVisibilityLevel
     - demoCodeId
     - id
+    - logoURL
     - name
     - shortName
     - slug
@@ -195,6 +198,7 @@ select_permissions:
     - created_at
     - defaultProgramVisibilityLevel
     - id
+    - logoURL
     - name
     - shortName
     - slug
@@ -207,6 +211,7 @@ select_permissions:
     columns:
     - created_at
     - id
+    - logoURL
     - name
     - shortName
     - slug

@@ -1,7 +1,8 @@
-import { Box, Link, List, ListItem, Spinner, useColorModeValue } from "@chakra-ui/react";
+import { Box, Link, List, ListItem, Spinner, Text, useColorModeValue, Wrap, WrapItem } from "@chakra-ui/react";
 import type { RawRecord } from "@midspace/shared-types/import/program";
 import React, { useEffect } from "react";
 import FAIcon from "../../../../../Chakra/FAIcon";
+import { DownloadButton, ExternalLinkButton } from "../../../../../Chakra/LinkButton";
 import { Markdown } from "../../../../../Chakra/Markdown";
 import useCSVJSONXMLFileSelector from "../../../../../Files/useCSVJSONXMLFileSelector";
 import useCSVJSONXMLImportOptions from "../../../../../Files/useCSVJSONXMLImportOptions";
@@ -75,6 +76,33 @@ export default function SelectFileStep({
                     : undefined
             }
         >
+            <Text>
+                Get help{" "}
+                <Link
+                    isExternal
+                    href="https://resources.midspace.app/organizer-guides/getting-started/import/"
+                >
+                    importing your program
+                </Link>
+            </Text>
+            <Wrap align="center" spacing={4}>
+                <WrapItem>
+                    <DownloadButton
+                        to="https://docs.google.com/spreadsheets/d/1XtQJPts8h59LNdIsShKRLMj4QndP97aC/export?format=xlsx"
+                        isExternal
+                    >
+                        Download Template
+                    </DownloadButton>
+                </WrapItem>
+                <WrapItem>
+                    <ExternalLinkButton
+                        to="https://docs.google.com/spreadsheets/d/1XtQJPts8h59LNdIsShKRLMj4QndP97aC/copy"
+                        leftIcon={<FAIcon iconStyle="b" icon="google-drive" />}
+                    >
+                        Copy Template
+                    </ExternalLinkButton>
+                </WrapItem>
+            </Wrap>
             {fileImporterEl}
             {openOptionsButton}
             <Box w="100%">

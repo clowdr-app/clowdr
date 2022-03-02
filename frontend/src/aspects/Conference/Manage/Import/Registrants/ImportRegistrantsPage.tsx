@@ -1,14 +1,13 @@
-import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import type { IntermediaryRegistrantData } from "@midspace/shared-types/import/registrant";
 import { JSONataToIntermediaryRegistrant } from "@midspace/shared-types/import/registrant";
 import React, { useMemo, useState } from "react";
-import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
-import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { useTitle } from "../../../../Hooks/useTitle";
 import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
+import { DashboardPage } from "../../DashboardPage";
 import ConfigPanel from "../Shared/ConfigPanel";
 import DataPanel from "../Shared/DataPanel";
 import ReviewPanel from "../Shared/ReviewPanel";
@@ -47,7 +46,6 @@ const presetJSONata_CSV = `
 
 export default function ImportRegistrantsPage(): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
     const title = useTitle(`Import registrants to ${conference.shortName}`);
 
     const [data, setData] = useState<ParsedData<any[]>[]>();
@@ -78,32 +76,25 @@ export default function ImportRegistrantsPage(): JSX.Element {
     return (
         <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
-            <Box mb="auto" w="100%" minH="100vh">
-                <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
-                    Manage {conference.shortName}
-                </Heading>
-                <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                    Import Registrants
-                </Heading>
-                <LinkButton to={`${conferencePath}/manage/registrants`} colorScheme="red">
-                    Go to Manage Registrants
-                </LinkButton>
-                <Tabs defaultIndex={0} w="100%" mt={4}>
-                    <TabList>
-                        <Tab>Data</Tab>
-                        <Tab isDisabled={!data || data.length === 0}>Configure</Tab>
-                        <Tab isDisabled={!data || data.length === 0}>Review</Tab>
-                        <Tab isDisabled={!data || data.length === 0}>Import</Tab>
-                    </TabList>
+            <DashboardPage title="Import Registrants" stickyHeader={false} autoOverflow={false}>
+                <Box mb="auto" w="100%" minH="100vh">
+                    <Tabs defaultIndex={0} w="100%" mt={4}>
+                        <TabList>
+                            <Tab>Data</Tab>
+                            <Tab isDisabled={!data || data.length === 0}>Configure</Tab>
+                            <Tab isDisabled={!data || data.length === 0}>Review</Tab>
+                            <Tab isDisabled={!data || data.length === 0}>Import</Tab>
+                        </TabList>
 
-                    <TabPanels>
-                        <TabPanel>{dataPanel}</TabPanel>
-                        <TabPanel>{configPanel}</TabPanel>
-                        <TabPanel>{reviewPanel}</TabPanel>
-                        <TabPanel>{importPanel}</TabPanel>
-                    </TabPanels>
-                </Tabs>
-            </Box>
+                        <TabPanels>
+                            <TabPanel>{dataPanel}</TabPanel>
+                            <TabPanel>{configPanel}</TabPanel>
+                            <TabPanel>{reviewPanel}</TabPanel>
+                            <TabPanel>{importPanel}</TabPanel>
+                        </TabPanels>
+                    </Tabs>
+                </Box>
+            </DashboardPage>
         </RequireRole>
     );
 }

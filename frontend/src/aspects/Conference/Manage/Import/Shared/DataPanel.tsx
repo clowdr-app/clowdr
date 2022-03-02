@@ -6,13 +6,17 @@ import {
     Box,
     Button,
     Code,
+    Link,
     Select,
     Spinner,
     Text,
     VStack,
+    Wrap,
+    WrapItem,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import FAIcon from "../../../../Chakra/FAIcon";
+import { DownloadButton, ExternalLinkButton } from "../../../../Chakra/LinkButton";
 import useCSVJSONXMLFileSelector from "../../../../Files/useCSVJSONXMLFileSelector";
 import useCSVJSONXMLImportOptions from "../../../../Files/useCSVJSONXMLImportOptions";
 import type { ParsedData, ParserResult } from "../../../../Files/useCSVJSONXMLParser";
@@ -82,7 +86,31 @@ export default function DataPanel({
 
     return (
         <>
-            <VStack w="100%">
+            <VStack w="100%" align="flex-start" spacing={4}>
+                <Text>
+                    Get help{" "}
+                    <Link isExternal href="https://resources.midspace.app/organizer-guides/getting-started/import-registrants/">
+                        importing your registrants
+                    </Link>
+                </Text>
+                <Wrap align="center" spacing={4}>
+                    <WrapItem>
+                        <DownloadButton
+                            to="https://docs.google.com/spreadsheets/d/1XtQJPts8h59LNdIsShKRLMj4QndP97aC/export?format=xlsx"
+                            isExternal
+                        >
+                            Download Template
+                        </DownloadButton>
+                    </WrapItem>
+                    <WrapItem>
+                        <ExternalLinkButton
+                            to="https://docs.google.com/spreadsheets/d/1XtQJPts8h59LNdIsShKRLMj4QndP97aC/copy"
+                            leftIcon={<FAIcon iconStyle="b" icon="google-drive" />}
+                        >
+                            Copy Template
+                        </ExternalLinkButton>
+                    </WrapItem>
+                </Wrap>
                 {fileImporterEl}
                 {openOptionsButton}
                 <Box w="100%">

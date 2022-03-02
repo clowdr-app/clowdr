@@ -220,6 +220,10 @@ export class RemoteScheduleService {
                 ? Video_RtmpInput_Enum.RtmpA
                 : action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference?.endsWith("-rtmpB")
                 ? Video_RtmpInput_Enum.RtmpB
+                : action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference?.endsWith(
+                      "-rtmpRoom"
+                  )
+                ? Video_RtmpInput_Enum.RtmpRoom
                 : null;
 
         if (!actionName || !startTime || !rtmpInputName) {

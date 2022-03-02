@@ -448,7 +448,10 @@ export class ScheduleSyncService {
                     ScheduleActionSettings: {
                         InputSwitchSettings: {
                             InputAttachmentNameReference:
-                                localAction.rtmpInputName === Video_RtmpInput_Enum.RtmpB
+                                localAction.rtmpInputName === Video_RtmpInput_Enum.RtmpRoom &&
+                                channelStackDetails.rtmpRoomInput?.attachmentName
+                                    ? channelStackDetails.rtmpRoomInput.attachmentName
+                                    : localAction.rtmpInputName === Video_RtmpInput_Enum.RtmpB
                                     ? channelStackDetails.rtmpBInputAttachmentName ??
                                       channelStackDetails.rtmpAInputAttachmentName
                                     : channelStackDetails.rtmpAInputAttachmentName,

@@ -14369,6 +14369,10 @@ export type Mutation_Root = {
     delete_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
     /** delete single row from the table: "video.MediaLiveChannelStatus" */
     delete_video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** delete data from the table: "video.RoomRtmpInput" */
+    delete_video_RoomRtmpInput?: Maybe<Video_RoomRtmpInput_Mutation_Response>;
+    /** delete single row from the table: "video.RoomRtmpInput" */
+    delete_video_RoomRtmpInput_by_pk?: Maybe<Video_RoomRtmpInput>;
     /** delete data from the table: "video.RoomRtmpOutput" */
     delete_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
     /** delete single row from the table: "video.RoomRtmpOutput" */
@@ -14767,6 +14771,10 @@ export type Mutation_Root = {
     insert_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
     /** insert a single row into the table: "video.MediaLiveChannelStatus" */
     insert_video_MediaLiveChannelStatus_one?: Maybe<Video_MediaLiveChannelStatus>;
+    /** insert data into the table: "video.RoomRtmpInput" */
+    insert_video_RoomRtmpInput?: Maybe<Video_RoomRtmpInput_Mutation_Response>;
+    /** insert a single row into the table: "video.RoomRtmpInput" */
+    insert_video_RoomRtmpInput_one?: Maybe<Video_RoomRtmpInput>;
     /** insert data into the table: "video.RoomRtmpOutput" */
     insert_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
     /** insert a single row into the table: "video.RoomRtmpOutput" */
@@ -15175,6 +15183,10 @@ export type Mutation_Root = {
     update_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
     /** update single row of the table: "video.MediaLiveChannelStatus" */
     update_video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** update data of the table: "video.RoomRtmpInput" */
+    update_video_RoomRtmpInput?: Maybe<Video_RoomRtmpInput_Mutation_Response>;
+    /** update single row of the table: "video.RoomRtmpInput" */
+    update_video_RoomRtmpInput_by_pk?: Maybe<Video_RoomRtmpInput>;
     /** update data of the table: "video.RoomRtmpOutput" */
     update_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
     /** update single row of the table: "video.RoomRtmpOutput" */
@@ -16121,6 +16133,16 @@ export type Mutation_RootDelete_Video_MediaLiveChannelStatusArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Video_MediaLiveChannelStatus_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RoomRtmpInputArgs = {
+    where: Video_RoomRtmpInput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RoomRtmpInput_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -17296,6 +17318,18 @@ export type Mutation_RootInsert_Video_MediaLiveChannelStatusArgs = {
 export type Mutation_RootInsert_Video_MediaLiveChannelStatus_OneArgs = {
     object: Video_MediaLiveChannelStatus_Insert_Input;
     on_conflict?: InputMaybe<Video_MediaLiveChannelStatus_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RoomRtmpInputArgs = {
+    objects: Array<Video_RoomRtmpInput_Insert_Input>;
+    on_conflict?: InputMaybe<Video_RoomRtmpInput_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RoomRtmpInput_OneArgs = {
+    object: Video_RoomRtmpInput_Insert_Input;
+    on_conflict?: InputMaybe<Video_RoomRtmpInput_On_Conflict>;
 };
 
 /** mutation root */
@@ -18794,6 +18828,18 @@ export type Mutation_RootUpdate_Video_MediaLiveChannelStatus_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Video_RoomRtmpInputArgs = {
+    _set?: InputMaybe<Video_RoomRtmpInput_Set_Input>;
+    where: Video_RoomRtmpInput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RoomRtmpInput_By_PkArgs = {
+    _set?: InputMaybe<Video_RoomRtmpInput_Set_Input>;
+    pk_columns: Video_RoomRtmpInput_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Video_RoomRtmpOutputArgs = {
     _set?: InputMaybe<Video_RoomRtmpOutput_Set_Input>;
     where: Video_RoomRtmpOutput_Bool_Exp;
@@ -19560,6 +19606,12 @@ export type Query_Root = {
     video_MediaLiveChannelStatus_aggregate: Video_MediaLiveChannelStatus_Aggregate;
     /** fetch data from the table: "video.MediaLiveChannelStatus" using primary key columns */
     video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** fetch data from the table: "video.RoomRtmpInput" */
+    video_RoomRtmpInput: Array<Video_RoomRtmpInput>;
+    /** fetch aggregated fields from the table: "video.RoomRtmpInput" */
+    video_RoomRtmpInput_aggregate: Video_RoomRtmpInput_Aggregate;
+    /** fetch data from the table: "video.RoomRtmpInput" using primary key columns */
+    video_RoomRtmpInput_by_pk?: Maybe<Video_RoomRtmpInput>;
     /** fetch data from the table: "video.RoomRtmpOutput" */
     video_RoomRtmpOutput: Array<Video_RoomRtmpOutput>;
     /** fetch aggregated fields from the table: "video.RoomRtmpOutput" */
@@ -21590,6 +21642,26 @@ export type Query_RootVideo_MediaLiveChannelStatus_AggregateArgs = {
 };
 
 export type Query_RootVideo_MediaLiveChannelStatus_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootVideo_RoomRtmpInputArgs = {
+    distinct_on?: InputMaybe<Array<Video_RoomRtmpInput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Video_RoomRtmpInput_Order_By>>;
+    where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+export type Query_RootVideo_RoomRtmpInput_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Video_RoomRtmpInput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Video_RoomRtmpInput_Order_By>>;
+    where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+export type Query_RootVideo_RoomRtmpInput_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -25379,6 +25451,8 @@ export type Room_Room = {
     /** An aggregate relationship */
     roomMemberships_aggregate: Room_RoomMembership_Aggregate;
     /** An object relationship */
+    rtmpInput?: Maybe<Video_RoomRtmpInput>;
+    /** An object relationship */
     rtmpOutput?: Maybe<Video_RoomRtmpOutput>;
     /** An array relationship */
     shuffleRooms: Array<Room_ShuffleRoom>;
@@ -26039,6 +26113,7 @@ export type Room_Room_Bool_Exp = {
     priority?: InputMaybe<Int_Comparison_Exp>;
     publicVonageSessionId?: InputMaybe<String_Comparison_Exp>;
     roomMemberships?: InputMaybe<Room_RoomMembership_Bool_Exp>;
+    rtmpInput?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
     rtmpOutput?: InputMaybe<Video_RoomRtmpOutput_Bool_Exp>;
     shuffleRooms?: InputMaybe<Room_ShuffleRoom_Bool_Exp>;
     stats?: InputMaybe<Analytics_RoomStats_Bool_Exp>;
@@ -26094,6 +26169,7 @@ export type Room_Room_Insert_Input = {
     priority?: InputMaybe<Scalars["Int"]>;
     publicVonageSessionId?: InputMaybe<Scalars["String"]>;
     roomMemberships?: InputMaybe<Room_RoomMembership_Arr_Rel_Insert_Input>;
+    rtmpInput?: InputMaybe<Video_RoomRtmpInput_Obj_Rel_Insert_Input>;
     rtmpOutput?: InputMaybe<Video_RoomRtmpOutput_Obj_Rel_Insert_Input>;
     shuffleRooms?: InputMaybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
     stats?: InputMaybe<Analytics_RoomStats_Arr_Rel_Insert_Input>;
@@ -26223,6 +26299,7 @@ export type Room_Room_Order_By = {
     priority?: InputMaybe<Order_By>;
     publicVonageSessionId?: InputMaybe<Order_By>;
     roomMemberships_aggregate?: InputMaybe<Room_RoomMembership_Aggregate_Order_By>;
+    rtmpInput?: InputMaybe<Video_RoomRtmpInput_Order_By>;
     rtmpOutput?: InputMaybe<Video_RoomRtmpOutput_Order_By>;
     shuffleRooms_aggregate?: InputMaybe<Room_ShuffleRoom_Aggregate_Order_By>;
     stats_aggregate?: InputMaybe<Analytics_RoomStats_Aggregate_Order_By>;
@@ -31123,6 +31200,12 @@ export type Subscription_Root = {
     video_MediaLiveChannelStatus_aggregate: Video_MediaLiveChannelStatus_Aggregate;
     /** fetch data from the table: "video.MediaLiveChannelStatus" using primary key columns */
     video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** fetch data from the table: "video.RoomRtmpInput" */
+    video_RoomRtmpInput: Array<Video_RoomRtmpInput>;
+    /** fetch aggregated fields from the table: "video.RoomRtmpInput" */
+    video_RoomRtmpInput_aggregate: Video_RoomRtmpInput_Aggregate;
+    /** fetch data from the table: "video.RoomRtmpInput" using primary key columns */
+    video_RoomRtmpInput_by_pk?: Maybe<Video_RoomRtmpInput>;
     /** fetch data from the table: "video.RoomRtmpOutput" */
     video_RoomRtmpOutput: Array<Video_RoomRtmpOutput>;
     /** fetch aggregated fields from the table: "video.RoomRtmpOutput" */
@@ -33144,6 +33227,26 @@ export type Subscription_RootVideo_MediaLiveChannelStatus_AggregateArgs = {
 };
 
 export type Subscription_RootVideo_MediaLiveChannelStatus_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootVideo_RoomRtmpInputArgs = {
+    distinct_on?: InputMaybe<Array<Video_RoomRtmpInput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Video_RoomRtmpInput_Order_By>>;
+    where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_RoomRtmpInput_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Video_RoomRtmpInput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Video_RoomRtmpInput_Order_By>>;
+    where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_RoomRtmpInput_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -35694,6 +35797,215 @@ export type Video_MediaLiveChannelStatus_Variance_Fields = {
     pipelinesRunningCount?: Maybe<Scalars["Float"]>;
 };
 
+/** columns and relationships of "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput = {
+    __typename?: "video_RoomRtmpInput";
+    address?: Maybe<Scalars["String"]>;
+    applicationInstance: Scalars["String"];
+    applicationName: Scalars["String"];
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    inputId?: Maybe<Scalars["String"]>;
+    inputName: Scalars["String"];
+    /** An object relationship */
+    room?: Maybe<Room_Room>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Aggregate = {
+    __typename?: "video_RoomRtmpInput_aggregate";
+    aggregate?: Maybe<Video_RoomRtmpInput_Aggregate_Fields>;
+    nodes: Array<Video_RoomRtmpInput>;
+};
+
+/** aggregate fields of "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Aggregate_Fields = {
+    __typename?: "video_RoomRtmpInput_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Video_RoomRtmpInput_Max_Fields>;
+    min?: Maybe<Video_RoomRtmpInput_Min_Fields>;
+};
+
+/** aggregate fields of "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Video_RoomRtmpInput_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "video.RoomRtmpInput". All fields are combined with a logical 'AND'. */
+export type Video_RoomRtmpInput_Bool_Exp = {
+    _and?: InputMaybe<Array<Video_RoomRtmpInput_Bool_Exp>>;
+    _not?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+    _or?: InputMaybe<Array<Video_RoomRtmpInput_Bool_Exp>>;
+    address?: InputMaybe<String_Comparison_Exp>;
+    applicationInstance?: InputMaybe<String_Comparison_Exp>;
+    applicationName?: InputMaybe<String_Comparison_Exp>;
+    created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    id?: InputMaybe<Uuid_Comparison_Exp>;
+    inputId?: InputMaybe<String_Comparison_Exp>;
+    inputName?: InputMaybe<String_Comparison_Exp>;
+    room?: InputMaybe<Room_Room_Bool_Exp>;
+    roomId?: InputMaybe<Uuid_Comparison_Exp>;
+    updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.RoomRtmpInput" */
+export enum Video_RoomRtmpInput_Constraint {
+    /** unique or primary key constraint */
+    RoomRtmpInputApplicationInstanceKey = "RoomRtmpInput_applicationInstance_key",
+    /** unique or primary key constraint */
+    RoomRtmpInputInputIdKey = "RoomRtmpInput_inputId_key",
+    /** unique or primary key constraint */
+    RoomRtmpInputInputNameKey = "RoomRtmpInput_inputName_key",
+    /** unique or primary key constraint */
+    RoomRtmpInputPkey = "RoomRtmpInput_pkey",
+    /** unique or primary key constraint */
+    RoomRtmpInputRoomIdKey = "RoomRtmpInput_roomId_key",
+}
+
+/** input type for inserting data into table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Insert_Input = {
+    address?: InputMaybe<Scalars["String"]>;
+    applicationInstance?: InputMaybe<Scalars["String"]>;
+    applicationName?: InputMaybe<Scalars["String"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    inputId?: InputMaybe<Scalars["String"]>;
+    inputName?: InputMaybe<Scalars["String"]>;
+    room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
+    roomId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Video_RoomRtmpInput_Max_Fields = {
+    __typename?: "video_RoomRtmpInput_max_fields";
+    address?: Maybe<Scalars["String"]>;
+    applicationInstance?: Maybe<Scalars["String"]>;
+    applicationName?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    inputId?: Maybe<Scalars["String"]>;
+    inputName?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Video_RoomRtmpInput_Min_Fields = {
+    __typename?: "video_RoomRtmpInput_min_fields";
+    address?: Maybe<Scalars["String"]>;
+    applicationInstance?: Maybe<Scalars["String"]>;
+    applicationName?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    inputId?: Maybe<Scalars["String"]>;
+    inputName?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Mutation_Response = {
+    __typename?: "video_RoomRtmpInput_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Video_RoomRtmpInput>;
+};
+
+/** input type for inserting object relation for remote table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Obj_Rel_Insert_Input = {
+    data: Video_RoomRtmpInput_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: InputMaybe<Video_RoomRtmpInput_On_Conflict>;
+};
+
+/** on conflict condition type for table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_On_Conflict = {
+    constraint: Video_RoomRtmpInput_Constraint;
+    update_columns?: Array<Video_RoomRtmpInput_Update_Column>;
+    where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.RoomRtmpInput". */
+export type Video_RoomRtmpInput_Order_By = {
+    address?: InputMaybe<Order_By>;
+    applicationInstance?: InputMaybe<Order_By>;
+    applicationName?: InputMaybe<Order_By>;
+    created_at?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    inputId?: InputMaybe<Order_By>;
+    inputName?: InputMaybe<Order_By>;
+    room?: InputMaybe<Room_Room_Order_By>;
+    roomId?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: video_RoomRtmpInput */
+export type Video_RoomRtmpInput_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "video.RoomRtmpInput" */
+export enum Video_RoomRtmpInput_Select_Column {
+    /** column name */
+    Address = "address",
+    /** column name */
+    ApplicationInstance = "applicationInstance",
+    /** column name */
+    ApplicationName = "applicationName",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    InputId = "inputId",
+    /** column name */
+    InputName = "inputName",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Set_Input = {
+    address?: InputMaybe<Scalars["String"]>;
+    applicationInstance?: InputMaybe<Scalars["String"]>;
+    applicationName?: InputMaybe<Scalars["String"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    inputId?: InputMaybe<Scalars["String"]>;
+    inputName?: InputMaybe<Scalars["String"]>;
+    roomId?: InputMaybe<Scalars["uuid"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "video.RoomRtmpInput" */
+export enum Video_RoomRtmpInput_Update_Column {
+    /** column name */
+    Address = "address",
+    /** column name */
+    ApplicationInstance = "applicationInstance",
+    /** column name */
+    ApplicationName = "applicationName",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    InputId = "inputId",
+    /** column name */
+    InputName = "inputName",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
 /**
  * Enables broadcasting of a live-stream from a room to an RTMP-capable service, such as YouTube.
  *
@@ -37936,6 +38248,7 @@ export type GetRoomsNeedingChannelStackQuery = {
         id: any;
         conferenceId: any;
         name: string;
+        rtmpInput?: { __typename?: "video_RoomRtmpInput"; id: any; inputName: string; inputId?: string | null } | null;
         rtmpOutput?: { __typename?: "video_RoomRtmpOutput"; id: any; url: string; streamKey: string } | null;
     }>;
 };
@@ -37963,12 +38276,22 @@ export type GetChannelStacksThatMightNeedUpdateQuery = {
         id: any;
         cloudFormationStackArn?: string | null;
         mediaLiveChannelId: string;
+        rtmpRoomInputId?: string | null;
+        rtmpRoomInputAttachmentName?: string | null;
         rtmpOutputUri?: string | null;
         rtmpOutputStreamKey?: string | null;
         rtmpOutputDestinationId?: string | null;
+        rtmpBInputId?: string | null;
+        rtmpBInputAttachmentName?: string | null;
         room?: {
             __typename?: "room_Room";
             id: any;
+            rtmpInput?: {
+                __typename?: "video_RoomRtmpInput";
+                id: any;
+                inputName: string;
+                inputId?: string | null;
+            } | null;
             rtmpOutput?: { __typename?: "video_RoomRtmpOutput"; id: any; url: string; streamKey: string } | null;
         } | null;
     }>;
@@ -38111,6 +38434,14 @@ export type ChannelStackSync_GetChannelStackUpdateJobsQuery = {
         oldRtmpOutputDestinationId?: string | null;
         newRtmpOutputUri?: string | null;
         newRtmpOutputStreamKey?: string | null;
+        oldRtmpRoomInputId?: string | null;
+        oldRtmpRoomInputAttachmentName?: string | null;
+        newRtmpRoomInputId?: string | null;
+        newRtmpRoomInputAttachmentName?: string | null;
+        oldRtmpBInputId?: string | null;
+        oldRtmpBInputAttachmentName?: string | null;
+        newRtmpBInputId?: string | null;
+        newRtmpBInputAttachmentName?: string | null;
     }>;
 };
 
@@ -38187,6 +38518,8 @@ export type GetChannelStackByRoomQuery = {
             rtmpAInputAttachmentName: string;
             rtmpBInputAttachmentName?: string | null;
             loopingMp4InputAttachmentName: string;
+            rtmpRoomInputId?: string | null;
+            rtmpRoomInputAttachmentName?: string | null;
         } | null;
     } | null;
 };
@@ -38199,14 +38532,16 @@ export type CreateChannelStackMutationVariables = Exact<{
     mp4InputId: Scalars["String"];
     rtmpAInputId: Scalars["String"];
     rtmpAInputUri: Scalars["String"];
-    rtmpBInputId: Scalars["String"];
-    rtmpBInputUri: Scalars["String"];
+    rtmpBInputId?: InputMaybe<Scalars["String"]>;
+    rtmpBInputUri?: InputMaybe<Scalars["String"]>;
+    rtmpRoomInputId?: InputMaybe<Scalars["String"]>;
     endpointUri: Scalars["String"];
     cloudFrontDomain: Scalars["String"];
     mp4InputAttachmentName: Scalars["String"];
     loopingMp4InputAttachmentName: Scalars["String"];
     rtmpAInputAttachmentName: Scalars["String"];
-    rtmpBInputAttachmentName: Scalars["String"];
+    rtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    rtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
     rtmpOutputUri?: InputMaybe<Scalars["String"]>;
     rtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
     rtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
@@ -38264,9 +38599,20 @@ export type ChannelStack_UpdateJob_GetChannelStackQuery = {
         rtmpOutputUri?: string | null;
         rtmpOutputStreamKey?: string | null;
         rtmpOutputDestinationId?: string | null;
+        rtmpRoomInputId?: string | null;
+        rtmpRoomInputAttachmentName?: string | null;
+        rtmpBInputId?: string | null;
+        rtmpBInputUri?: string | null;
+        rtmpBInputAttachmentName?: string | null;
         room?: {
             __typename?: "room_Room";
             id: any;
+            rtmpInput?: {
+                __typename?: "video_RoomRtmpInput";
+                id: any;
+                inputId?: string | null;
+                inputName: string;
+            } | null;
             rtmpOutput?: { __typename?: "video_RoomRtmpOutput"; id: any; url: string; streamKey: string } | null;
         } | null;
     } | null;
@@ -38281,6 +38627,14 @@ export type ChannelStack_CreateChannelStackUpdateJobMutationVariables = Exact<{
     oldRtmpOutputDestinationId?: InputMaybe<Scalars["String"]>;
     newRtmpOutputUri?: InputMaybe<Scalars["String"]>;
     newRtmpOutputStreamKey?: InputMaybe<Scalars["String"]>;
+    oldRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
+    oldRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    newRtmpRoomInputId?: InputMaybe<Scalars["String"]>;
+    newRtmpRoomInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    oldRtmpBInputId?: InputMaybe<Scalars["String"]>;
+    oldRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
+    newRtmpBInputId?: InputMaybe<Scalars["String"]>;
+    newRtmpBInputAttachmentName?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type ChannelStack_CreateChannelStackUpdateJobMutation = {
@@ -38449,6 +38803,11 @@ export type LocalSchedule_GetScheduleQuery = {
             rtmpInputName: Video_RtmpInput_Enum;
         } | null;
     }>;
+    room_Room_by_pk?: {
+        __typename?: "room_Room";
+        id: any;
+        rtmpInput?: { __typename?: "video_RoomRtmpInput"; id: any } | null;
+    } | null;
 };
 
 export type LocalSchedule_EventDetailsFragment = {
@@ -38541,6 +38900,7 @@ export type LocalSchedule_GetEventQuery = {
                 mediaLiveChannelId: string;
                 rtmpAInputAttachmentName: string;
                 rtmpBInputAttachmentName?: string | null;
+                rtmpRoomInputAttachmentName?: string | null;
                 mp4InputAttachmentName: string;
                 loopingMp4InputAttachmentName: string;
             } | null;
@@ -38564,6 +38924,7 @@ export type LocalSchedule_EventFragment = {
             mediaLiveChannelId: string;
             rtmpAInputAttachmentName: string;
             rtmpBInputAttachmentName?: string | null;
+            rtmpRoomInputAttachmentName?: string | null;
             mp4InputAttachmentName: string;
             loopingMp4InputAttachmentName: string;
         } | null;
@@ -38730,6 +39091,10 @@ export const LocalSchedule_EventFragmentDoc = {
                                             {
                                                 kind: "Field",
                                                 name: { kind: "Name", value: "rtmpBInputAttachmentName" },
+                                            },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "rtmpRoomInputAttachmentName" },
                                             },
                                             { kind: "Field", name: { kind: "Name", value: "mp4InputAttachmentName" } },
                                             {
@@ -39004,6 +39369,18 @@ export const GetRoomsNeedingChannelStackDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
                                 { kind: "Field", name: { kind: "Name", value: "name" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "rtmpInput" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "inputName" } },
+                                            { kind: "Field", name: { kind: "Name", value: "inputId" } },
+                                        ],
+                                    },
+                                },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "rtmpOutput" },
@@ -39369,9 +39746,13 @@ export const GetChannelStacksThatMightNeedUpdateDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "cloudFormationStackArn" } },
                                 { kind: "Field", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpRoomInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpRoomInputAttachmentName" } },
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputUri" } },
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputAttachmentName" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "room" },
@@ -39379,6 +39760,18 @@ export const GetChannelStacksThatMightNeedUpdateDocument = {
                                         kind: "SelectionSet",
                                         selections: [
                                             { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "rtmpInput" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "inputName" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "inputId" } },
+                                                    ],
+                                                },
+                                            },
                                             {
                                                 kind: "Field",
                                                 name: { kind: "Name", value: "rtmpOutput" },
@@ -40161,6 +40554,14 @@ export const ChannelStackSync_GetChannelStackUpdateJobsDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "oldRtmpOutputDestinationId" } },
                                 { kind: "Field", name: { kind: "Name", value: "newRtmpOutputUri" } },
                                 { kind: "Field", name: { kind: "Name", value: "newRtmpOutputStreamKey" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpRoomInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpRoomInputAttachmentName" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpRoomInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpRoomInputAttachmentName" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpBInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpBInputAttachmentName" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpBInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpBInputAttachmentName" } },
                             ],
                         },
                     },
@@ -40637,6 +41038,11 @@ export const GetChannelStackByRoomDocument = {
                                                 kind: "Field",
                                                 name: { kind: "Name", value: "loopingMp4InputAttachmentName" },
                                             },
+                                            { kind: "Field", name: { kind: "Name", value: "rtmpRoomInputId" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "rtmpRoomInputAttachmentName" },
+                                            },
                                         ],
                                     },
                                 },
@@ -40694,12 +41100,17 @@ export const CreateChannelStackDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
                 },
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputUri" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpRoomInputId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
                 },
                 {
                     kind: "VariableDefinition",
@@ -40729,7 +41140,12 @@ export const CreateChannelStackDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputAttachmentName" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpRoomInputAttachmentName" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
                 },
                 {
                     kind: "VariableDefinition",
@@ -40915,6 +41331,22 @@ export const CreateChannelStackDocument = {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "roomId" },
                                             value: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpRoomInputId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpRoomInputId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpRoomInputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpRoomInputAttachmentName" },
+                                            },
                                         },
                                     ],
                                 },
@@ -41123,6 +41555,11 @@ export const ChannelStack_UpdateJob_GetChannelStackDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputUri" } },
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
                                 { kind: "Field", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpRoomInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpRoomInputAttachmentName" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpBInputAttachmentName" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "room" },
@@ -41130,6 +41567,18 @@ export const ChannelStack_UpdateJob_GetChannelStackDocument = {
                                         kind: "SelectionSet",
                                         selections: [
                                             { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "rtmpInput" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "inputId" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "inputName" } },
+                                                    ],
+                                                },
+                                            },
                                             {
                                                 kind: "Field",
                                                 name: { kind: "Name", value: "rtmpOutput" },
@@ -41202,6 +41651,46 @@ export const ChannelStack_CreateChannelStackUpdateJobDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpOutputStreamKey" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpRoomInputId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpRoomInputAttachmentName" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpRoomInputId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpRoomInputAttachmentName" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpBInputId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpBInputAttachmentName" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpBInputId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpBInputAttachmentName" } },
                     type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
                 },
             ],
@@ -41285,6 +41774,70 @@ export const ChannelStack_CreateChannelStackUpdateJobDocument = {
                                             value: {
                                                 kind: "Variable",
                                                 name: { kind: "Name", value: "newRtmpOutputStreamKey" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpRoomInputId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpRoomInputId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpRoomInputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpRoomInputAttachmentName" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpRoomInputId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpRoomInputId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpRoomInputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpRoomInputAttachmentName" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpBInputId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpBInputId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpBInputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpBInputAttachmentName" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpBInputId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpBInputId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpBInputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpBInputAttachmentName" },
                                             },
                                         },
                                     ],
@@ -42329,6 +42882,31 @@ export const LocalSchedule_GetScheduleDocument = {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "FragmentSpread", name: { kind: "Name", value: "LocalSchedule_EventDetails" } },
+                            ],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "rtmpInput" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                                    },
+                                },
                             ],
                         },
                     },

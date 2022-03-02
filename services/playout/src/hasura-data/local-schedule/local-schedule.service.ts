@@ -22,6 +22,7 @@ import { GraphQlService } from "../graphql/graphql.service";
 
 export interface LocalSchedule {
     roomId: string;
+    isRoomHybrid: boolean;
     items: LocalScheduleAction[];
 }
 
@@ -119,6 +120,12 @@ export class LocalScheduleService {
                 schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now, _lt: $cutoff } }) {
                     ...LocalSchedule_EventDetails
                 }
+                room_Room_by_pk(id: $roomId) {
+                    id
+                    rtmpInput {
+                        id
+                    }
+                }
             }
 
             fragment LocalSchedule_EventDetails on schedule_Event {
@@ -160,6 +167,7 @@ export class LocalScheduleService {
 
         return {
             roomId,
+            isRoomHybrid: Boolean(scheduleResult.data.room_Room_by_pk?.rtmpInput?.id),
             items: scheduleItems,
         };
     }
@@ -178,8 +186,15 @@ export class LocalScheduleService {
             return scheduleData;
         }
 
-        const evenEvents = liveEvents.filter((_, index) => index % 2 === 0);
-        const oddEvents = liveEvents.filter((_, index) => index % 2 === 1);
+        let evenEvents: LocalScheduleAction[];
+        let oddEvents: LocalScheduleAction[];
+        if (scheduleData.isRoomHybrid) {
+            evenEvents = liveEvents;
+            oddEvents = [];
+        } else {
+            evenEvents = liveEvents.filter((_, index) => index % 2 === 0);
+            oddEvents = liveEvents.filter((_, index) => index % 2 === 1);
+        }
 
         const groupedEvenEvents = R.groupBy((e) => e.rtmpInputName ?? "none", evenEvents);
         const groupedOddEvents = R.groupBy((e) => e.rtmpInputName ?? "none", oddEvents);
@@ -354,6 +369,7 @@ export class LocalScheduleService {
                   rtmpBInputAttachmentName:
                       event.room.channelStack.rtmpBInputAttachmentName ??
                       event.room.channelStack.rtmpAInputAttachmentName,
+                  rtmpRoomInputAttachmentName: event.room.channelStack.rtmpRoomInputAttachmentName ?? null,
               }
             : null;
 
@@ -390,6 +406,7 @@ export class LocalScheduleService {
                         mediaLiveChannelId
                         rtmpAInputAttachmentName
                         rtmpBInputAttachmentName
+                        rtmpRoomInputAttachmentName
                         mp4InputAttachmentName
                         loopingMp4InputAttachmentName
                     }
@@ -432,7 +449,8 @@ export interface ChannelStack {
     id: string;
     mediaLiveChannelId: string;
     rtmpAInputAttachmentName: string;
-    rtmpBInputAttachmentName: string;
+    rtmpBInputAttachmentName: string | null;
+    rtmpRoomInputAttachmentName: string | null;
     mp4InputAttachmentName: string;
     loopingMp4InputAttachmentName: string;
 }

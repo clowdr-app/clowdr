@@ -778,7 +778,30 @@ export default function ManageConfig(): JSX.Element {
                         </SettingUpdater>
                     </Setting>
                     <Setting
-                        title="External RTMP Broadcast"
+                        title="External RTMP Input (Hybrid rooms)"
+                        description="Enable or disable ingesting of streams from a hybrid room, such as from Zoom or in-room equipment."
+                    >
+                        <SettingUpdater<boolean>
+                            settingName={Conference_ConfigurationKey_Enum.EnableExternalRtmpInput}
+                            defaultValue={false}
+                        >
+                            {({ value, onChange, settingName }) => (
+                                <RadioSetting
+                                    settingName={settingName}
+                                    onChange={(newValue) =>
+                                        onChange(newValue === undefined ? undefined : newValue === "true")
+                                    }
+                                    value={value ? "true" : "false"}
+                                    options={[
+                                        { label: "Enabled", value: "true" },
+                                        { label: "Disabled", value: "false" },
+                                    ]}
+                                />
+                            )}
+                        </SettingUpdater>
+                    </Setting>
+                    <Setting
+                        title="External RTMP Broadcast (Livestream to external services, e.g. YouTube)"
                         description="Enable or disable broadcasting of streams from a room to an external RTMP destination such as YouTube."
                     >
                         <SettingUpdater<boolean>

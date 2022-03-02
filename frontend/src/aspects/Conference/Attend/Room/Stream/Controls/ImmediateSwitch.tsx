@@ -15,6 +15,7 @@ import {
     useToast,
     VisuallyHidden,
 } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import type {
     FillerImmediateSwitchData,
     RtmpPushImmediateSwitchData,
@@ -37,6 +38,7 @@ import {
     useImmediateSwitch_GetElementsQuery,
 } from "../../../../../../generated/graphql";
 import FAIcon from "../../../../../Chakra/FAIcon";
+import { makeContext } from "../../../../../GQL/make-context";
 import { useRealTime } from "../../../../../Hooks/useRealTime";
 import { useConference } from "../../../../useConference";
 import { BackstageContext } from "../BackstageContext";
@@ -54,6 +56,14 @@ gql`
                     name
                     itemId
                     typeName
+                }
+            }
+            roomId
+            room {
+                id
+                rtmpInput {
+                    id
+                    roomId
                 }
             }
             exhibitionId
@@ -95,10 +105,18 @@ export function ImmediateSwitch(): JSX.Element {
     const live = offsetNow >= startTime && offsetNow <= endTime;
     const secondsUntilOffAir = (endTime - offsetNow) / 1000;
 
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.RoomId]: event.roomId,
+            }),
+        [event.roomId]
+    );
     const [{ data: elementsData }] = useImmediateSwitch_GetElementsQuery({
         variables: {
             eventId: event.id,
         },
+        context,
     });
 
     const [, createImmediateSwitch] = useImmediateSwitch_CreateMutation();
@@ -110,12 +128,14 @@ export function ImmediateSwitch(): JSX.Element {
     const options = useMemo(
         () => (
             <>
-                <option key="rtmp_push" value="rtmp_push">
+                <option key="rtmp_push_event" value="rtmp_push:rtmpEvent">
                     Live backstage (default)
                 </option>
-                <option key="filler" value="filler">
-                    Filler video
-                </option>
+                {elementsData?.schedule_Event_by_pk?.room?.rtmpInput?.id ? (
+                    <option key="rtmp_push_external" value="rtmp_push:rtmpRoom">
+                        Hybrid Room (External RTMP input)
+                    </option>
+                ) : undefined}
                 {R.sort(
                     (a, b) => a.title.localeCompare(b.title),
                     elementsData?.schedule_Event_by_pk?.item && elementsData?.schedule_Event_by_pk?.exhibition?.items
@@ -137,7 +157,11 @@ export function ImmediateSwitch(): JSX.Element {
                 )}
             </>
         ),
-        [elementsData?.schedule_Event_by_pk?.item, elementsData?.schedule_Event_by_pk?.exhibition?.items]
+        [
+            elementsData?.schedule_Event_by_pk?.room?.rtmpInput?.id,
+            elementsData?.schedule_Event_by_pk?.item,
+            elementsData?.schedule_Event_by_pk?.exhibition?.items,
+        ]
     );
 
     const disable = useMemo(() => !live || secondsUntilOffAir < 20, [live, secondsUntilOffAir]);
@@ -146,7 +170,7 @@ export function ImmediateSwitch(): JSX.Element {
 
     const client = useClient();
     const performSwitch = useCallback(
-        async (choice: string) => {
+        async (choice: string, source?: "rtmpEvent" | "rtmpRoom") => {
             switch (choice) {
                 case "filler": {
                     try {
@@ -180,6 +204,7 @@ export function ImmediateSwitch(): JSX.Element {
                     try {
                         const data: RtmpPushImmediateSwitchData = {
                             kind: "rtmp_push",
+                            source,
                         };
                         await createImmediateSwitch({
                             data,
@@ -250,6 +275,7 @@ export function ImmediateSwitch(): JSX.Element {
 
     const cancelRef = useRef<HTMLButtonElement>(null);
     const [switchAction, setSwitchAction] = useState<string | null>(null);
+    const [switchSource, setSwitchSource] = useState<"rtmpEvent" | "rtmpRoom" | null>(null);
 
     const form = useMemo(
         () => (
@@ -259,7 +285,11 @@ export function ImmediateSwitch(): JSX.Element {
                         choice: "filler",
                     }}
                     onSubmit={async (values) => {
-                        setSwitchAction(values.choice);
+                        const parts = values.choice.split(":");
+                        const choice = parts[0] ?? null;
+                        const source = parts[1] ?? null;
+                        setSwitchAction(choice);
+                        setSwitchSource(source as "rtmpEvent" | "rtmpRoom" | null);
                         onOpen();
                     }}
                 >
@@ -327,7 +357,8 @@ export function ImmediateSwitch(): JSX.Element {
                                 onClick={async () => {
                                     if (switchAction) {
                                         setSwitchAction(null);
-                                        await performSwitch(switchAction);
+                                        setSwitchSource(null);
+                                        await performSwitch(switchAction, switchSource ?? undefined);
                                         onClose();
                                     }
                                 }}
@@ -339,7 +370,7 @@ export function ImmediateSwitch(): JSX.Element {
                 </AlertDialog>
             </>
         ),
-        [disable, enableSwitchButton, isOpen, onClose, onOpen, options, performSwitch, switchAction]
+        [disable, enableSwitchButton, isOpen, onClose, onOpen, options, performSwitch, switchAction, switchSource]
     );
 
     return form;

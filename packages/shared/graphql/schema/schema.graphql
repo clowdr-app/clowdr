@@ -20407,6 +20407,19 @@ type mutation_root {
     """
     delete_video_MediaLiveChannelStatus_by_pk(id: uuid!): video_MediaLiveChannelStatus
     """
+    delete data from the table: "video.RoomRtmpInput"
+    """
+    delete_video_RoomRtmpInput(
+        """
+        filter the rows which have to be deleted
+        """
+        where: video_RoomRtmpInput_bool_exp!
+    ): video_RoomRtmpInput_mutation_response
+    """
+    delete single row from the table: "video.RoomRtmpInput"
+    """
+    delete_video_RoomRtmpInput_by_pk(id: uuid!): video_RoomRtmpInput
+    """
     delete data from the table: "video.RoomRtmpOutput"
     """
     delete_video_RoomRtmpOutput(
@@ -22857,6 +22870,32 @@ type mutation_root {
         """
         on_conflict: video_MediaLiveChannelStatus_on_conflict
     ): video_MediaLiveChannelStatus
+    """
+    insert data into the table: "video.RoomRtmpInput"
+    """
+    insert_video_RoomRtmpInput(
+        """
+        the rows to be inserted
+        """
+        objects: [video_RoomRtmpInput_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: video_RoomRtmpInput_on_conflict
+    ): video_RoomRtmpInput_mutation_response
+    """
+    insert a single row into the table: "video.RoomRtmpInput"
+    """
+    insert_video_RoomRtmpInput_one(
+        """
+        the row to be inserted
+        """
+        object: video_RoomRtmpInput_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: video_RoomRtmpInput_on_conflict
+    ): video_RoomRtmpInput
     """
     insert data into the table: "video.RoomRtmpOutput"
     """
@@ -26113,6 +26152,29 @@ type mutation_root {
         _set: video_MediaLiveChannelStatus_set_input
         pk_columns: video_MediaLiveChannelStatus_pk_columns_input!
     ): video_MediaLiveChannelStatus
+    """
+    update data of the table: "video.RoomRtmpInput"
+    """
+    update_video_RoomRtmpInput(
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: video_RoomRtmpInput_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: video_RoomRtmpInput_bool_exp!
+    ): video_RoomRtmpInput_mutation_response
+    """
+    update single row of the table: "video.RoomRtmpInput"
+    """
+    update_video_RoomRtmpInput_by_pk(
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: video_RoomRtmpInput_set_input
+        pk_columns: video_RoomRtmpInput_pk_columns_input!
+    ): video_RoomRtmpInput
     """
     update data of the table: "video.RoomRtmpOutput"
     """
@@ -31912,6 +31974,60 @@ type query_root {
     """
     video_MediaLiveChannelStatus_by_pk(id: uuid!): video_MediaLiveChannelStatus
     """
+    fetch data from the table: "video.RoomRtmpInput"
+    """
+    video_RoomRtmpInput(
+        """
+        distinct select on columns
+        """
+        distinct_on: [video_RoomRtmpInput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [video_RoomRtmpInput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: video_RoomRtmpInput_bool_exp
+    ): [video_RoomRtmpInput!]!
+    """
+    fetch aggregated fields from the table: "video.RoomRtmpInput"
+    """
+    video_RoomRtmpInput_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [video_RoomRtmpInput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [video_RoomRtmpInput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: video_RoomRtmpInput_bool_exp
+    ): video_RoomRtmpInput_aggregate!
+    """
+    fetch data from the table: "video.RoomRtmpInput" using primary key columns
+    """
+    video_RoomRtmpInput_by_pk(id: uuid!): video_RoomRtmpInput
+    """
     fetch data from the table: "video.RoomRtmpOutput"
     """
     video_RoomRtmpOutput(
@@ -37594,6 +37710,10 @@ type room_Room {
     """
     An object relationship
     """
+    rtmpInput: video_RoomRtmpInput
+    """
+    An object relationship
+    """
     rtmpOutput: video_RoomRtmpOutput
     """
     An array relationship
@@ -38383,6 +38503,7 @@ input room_Room_bool_exp {
     priority: Int_comparison_exp
     publicVonageSessionId: String_comparison_exp
     roomMemberships: room_RoomMembership_bool_exp
+    rtmpInput: video_RoomRtmpInput_bool_exp
     rtmpOutput: video_RoomRtmpOutput_bool_exp
     shuffleRooms: room_ShuffleRoom_bool_exp
     stats: analytics_RoomStats_bool_exp
@@ -38450,6 +38571,7 @@ input room_Room_insert_input {
     priority: Int
     publicVonageSessionId: String
     roomMemberships: room_RoomMembership_arr_rel_insert_input
+    rtmpInput: video_RoomRtmpInput_obj_rel_insert_input
     rtmpOutput: video_RoomRtmpOutput_obj_rel_insert_input
     shuffleRooms: room_ShuffleRoom_arr_rel_insert_input
     stats: analytics_RoomStats_arr_rel_insert_input
@@ -38598,6 +38720,7 @@ input room_Room_order_by {
     priority: order_by
     publicVonageSessionId: order_by
     roomMemberships_aggregate: room_RoomMembership_aggregate_order_by
+    rtmpInput: video_RoomRtmpInput_order_by
     rtmpOutput: video_RoomRtmpOutput_order_by
     shuffleRooms_aggregate: room_ShuffleRoom_aggregate_order_by
     stats_aggregate: analytics_RoomStats_aggregate_order_by
@@ -49772,6 +49895,60 @@ type subscription_root {
     """
     video_MediaLiveChannelStatus_by_pk(id: uuid!): video_MediaLiveChannelStatus
     """
+    fetch data from the table: "video.RoomRtmpInput"
+    """
+    video_RoomRtmpInput(
+        """
+        distinct select on columns
+        """
+        distinct_on: [video_RoomRtmpInput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [video_RoomRtmpInput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: video_RoomRtmpInput_bool_exp
+    ): [video_RoomRtmpInput!]!
+    """
+    fetch aggregated fields from the table: "video.RoomRtmpInput"
+    """
+    video_RoomRtmpInput_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [video_RoomRtmpInput_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [video_RoomRtmpInput_order_by!]
+        """
+        filter the rows returned
+        """
+        where: video_RoomRtmpInput_bool_exp
+    ): video_RoomRtmpInput_aggregate!
+    """
+    fetch data from the table: "video.RoomRtmpInput" using primary key columns
+    """
+    video_RoomRtmpInput_by_pk(id: uuid!): video_RoomRtmpInput
+    """
     fetch data from the table: "video.RoomRtmpOutput"
     """
     video_RoomRtmpOutput(
@@ -53575,6 +53752,289 @@ aggregate variance on columns
 """
 type video_MediaLiveChannelStatus_variance_fields {
     pipelinesRunningCount: Float
+}
+
+"""
+columns and relationships of "video.RoomRtmpInput"
+"""
+type video_RoomRtmpInput {
+    address: String
+    applicationInstance: String!
+    applicationName: String!
+    created_at: timestamptz!
+    id: uuid!
+    inputId: String
+    inputName: String!
+    """
+    An object relationship
+    """
+    room: room_Room
+    roomId: uuid
+    updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "video.RoomRtmpInput"
+"""
+type video_RoomRtmpInput_aggregate {
+    aggregate: video_RoomRtmpInput_aggregate_fields
+    nodes: [video_RoomRtmpInput!]!
+}
+
+"""
+aggregate fields of "video.RoomRtmpInput"
+"""
+type video_RoomRtmpInput_aggregate_fields {
+    count(columns: [video_RoomRtmpInput_select_column!], distinct: Boolean): Int!
+    max: video_RoomRtmpInput_max_fields
+    min: video_RoomRtmpInput_min_fields
+}
+
+"""
+Boolean expression to filter rows from the table "video.RoomRtmpInput". All fields are combined with a logical 'AND'.
+"""
+input video_RoomRtmpInput_bool_exp {
+    _and: [video_RoomRtmpInput_bool_exp!]
+    _not: video_RoomRtmpInput_bool_exp
+    _or: [video_RoomRtmpInput_bool_exp!]
+    address: String_comparison_exp
+    applicationInstance: String_comparison_exp
+    applicationName: String_comparison_exp
+    created_at: timestamptz_comparison_exp
+    id: uuid_comparison_exp
+    inputId: String_comparison_exp
+    inputName: String_comparison_exp
+    room: room_Room_bool_exp
+    roomId: uuid_comparison_exp
+    updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "video.RoomRtmpInput"
+"""
+enum video_RoomRtmpInput_constraint {
+    """
+    unique or primary key constraint
+    """
+    RoomRtmpInput_applicationInstance_key
+    """
+    unique or primary key constraint
+    """
+    RoomRtmpInput_inputId_key
+    """
+    unique or primary key constraint
+    """
+    RoomRtmpInput_inputName_key
+    """
+    unique or primary key constraint
+    """
+    RoomRtmpInput_pkey
+    """
+    unique or primary key constraint
+    """
+    RoomRtmpInput_roomId_key
+}
+
+"""
+input type for inserting data into table "video.RoomRtmpInput"
+"""
+input video_RoomRtmpInput_insert_input {
+    address: String
+    applicationInstance: String
+    applicationName: String
+    created_at: timestamptz
+    id: uuid
+    inputId: String
+    inputName: String
+    room: room_Room_obj_rel_insert_input
+    roomId: uuid
+    updated_at: timestamptz
+}
+
+"""
+aggregate max on columns
+"""
+type video_RoomRtmpInput_max_fields {
+    address: String
+    applicationInstance: String
+    applicationName: String
+    created_at: timestamptz
+    id: uuid
+    inputId: String
+    inputName: String
+    roomId: uuid
+    updated_at: timestamptz
+}
+
+"""
+aggregate min on columns
+"""
+type video_RoomRtmpInput_min_fields {
+    address: String
+    applicationInstance: String
+    applicationName: String
+    created_at: timestamptz
+    id: uuid
+    inputId: String
+    inputName: String
+    roomId: uuid
+    updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "video.RoomRtmpInput"
+"""
+type video_RoomRtmpInput_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [video_RoomRtmpInput!]!
+}
+
+"""
+input type for inserting object relation for remote table "video.RoomRtmpInput"
+"""
+input video_RoomRtmpInput_obj_rel_insert_input {
+    data: video_RoomRtmpInput_insert_input!
+    """
+    on conflict condition
+    """
+    on_conflict: video_RoomRtmpInput_on_conflict
+}
+
+"""
+on conflict condition type for table "video.RoomRtmpInput"
+"""
+input video_RoomRtmpInput_on_conflict {
+    constraint: video_RoomRtmpInput_constraint!
+    update_columns: [video_RoomRtmpInput_update_column!]! = []
+    where: video_RoomRtmpInput_bool_exp
+}
+
+"""
+Ordering options when selecting data from "video.RoomRtmpInput".
+"""
+input video_RoomRtmpInput_order_by {
+    address: order_by
+    applicationInstance: order_by
+    applicationName: order_by
+    created_at: order_by
+    id: order_by
+    inputId: order_by
+    inputName: order_by
+    room: room_Room_order_by
+    roomId: order_by
+    updated_at: order_by
+}
+
+"""
+primary key columns input for table: video_RoomRtmpInput
+"""
+input video_RoomRtmpInput_pk_columns_input {
+    id: uuid!
+}
+
+"""
+select columns of table "video.RoomRtmpInput"
+"""
+enum video_RoomRtmpInput_select_column {
+    """
+    column name
+    """
+    address
+    """
+    column name
+    """
+    applicationInstance
+    """
+    column name
+    """
+    applicationName
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    inputId
+    """
+    column name
+    """
+    inputName
+    """
+    column name
+    """
+    roomId
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+input type for updating data in table "video.RoomRtmpInput"
+"""
+input video_RoomRtmpInput_set_input {
+    address: String
+    applicationInstance: String
+    applicationName: String
+    created_at: timestamptz
+    id: uuid
+    inputId: String
+    inputName: String
+    roomId: uuid
+    updated_at: timestamptz
+}
+
+"""
+update columns of table "video.RoomRtmpInput"
+"""
+enum video_RoomRtmpInput_update_column {
+    """
+    column name
+    """
+    address
+    """
+    column name
+    """
+    applicationInstance
+    """
+    column name
+    """
+    applicationName
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    inputId
+    """
+    column name
+    """
+    inputName
+    """
+    column name
+    """
+    roomId
+    """
+    column name
+    """
+    updated_at
 }
 
 """

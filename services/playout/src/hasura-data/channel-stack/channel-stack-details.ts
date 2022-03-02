@@ -6,6 +6,10 @@ export interface ChannelStackDetails {
     mp4InputAttachmentName: string;
     rtmpAInputAttachmentName: string;
     rtmpBInputAttachmentName: string | null;
+    rtmpRoomInput: {
+        inputId: string;
+        attachmentName: string;
+    } | null;
     loopingMp4InputAttachmentName: string;
     fillerVideoKey: string | null;
 }

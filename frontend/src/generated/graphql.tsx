@@ -14378,6 +14378,10 @@ export type Mutation_Root = {
     readonly delete_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
     /** delete single row from the table: "video.MediaLiveChannelStatus" */
     readonly delete_video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** delete data from the table: "video.RoomRtmpInput" */
+    readonly delete_video_RoomRtmpInput?: Maybe<Video_RoomRtmpInput_Mutation_Response>;
+    /** delete single row from the table: "video.RoomRtmpInput" */
+    readonly delete_video_RoomRtmpInput_by_pk?: Maybe<Video_RoomRtmpInput>;
     /** delete data from the table: "video.RoomRtmpOutput" */
     readonly delete_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
     /** delete single row from the table: "video.RoomRtmpOutput" */
@@ -14776,6 +14780,10 @@ export type Mutation_Root = {
     readonly insert_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
     /** insert a single row into the table: "video.MediaLiveChannelStatus" */
     readonly insert_video_MediaLiveChannelStatus_one?: Maybe<Video_MediaLiveChannelStatus>;
+    /** insert data into the table: "video.RoomRtmpInput" */
+    readonly insert_video_RoomRtmpInput?: Maybe<Video_RoomRtmpInput_Mutation_Response>;
+    /** insert a single row into the table: "video.RoomRtmpInput" */
+    readonly insert_video_RoomRtmpInput_one?: Maybe<Video_RoomRtmpInput>;
     /** insert data into the table: "video.RoomRtmpOutput" */
     readonly insert_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
     /** insert a single row into the table: "video.RoomRtmpOutput" */
@@ -15184,6 +15192,10 @@ export type Mutation_Root = {
     readonly update_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
     /** update single row of the table: "video.MediaLiveChannelStatus" */
     readonly update_video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** update data of the table: "video.RoomRtmpInput" */
+    readonly update_video_RoomRtmpInput?: Maybe<Video_RoomRtmpInput_Mutation_Response>;
+    /** update single row of the table: "video.RoomRtmpInput" */
+    readonly update_video_RoomRtmpInput_by_pk?: Maybe<Video_RoomRtmpInput>;
     /** update data of the table: "video.RoomRtmpOutput" */
     readonly update_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
     /** update single row of the table: "video.RoomRtmpOutput" */
@@ -16130,6 +16142,16 @@ export type Mutation_RootDelete_Video_MediaLiveChannelStatusArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Video_MediaLiveChannelStatus_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RoomRtmpInputArgs = {
+    where: Video_RoomRtmpInput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RoomRtmpInput_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -17305,6 +17327,18 @@ export type Mutation_RootInsert_Video_MediaLiveChannelStatusArgs = {
 export type Mutation_RootInsert_Video_MediaLiveChannelStatus_OneArgs = {
     object: Video_MediaLiveChannelStatus_Insert_Input;
     on_conflict?: InputMaybe<Video_MediaLiveChannelStatus_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RoomRtmpInputArgs = {
+    objects: ReadonlyArray<Video_RoomRtmpInput_Insert_Input>;
+    on_conflict?: InputMaybe<Video_RoomRtmpInput_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RoomRtmpInput_OneArgs = {
+    object: Video_RoomRtmpInput_Insert_Input;
+    on_conflict?: InputMaybe<Video_RoomRtmpInput_On_Conflict>;
 };
 
 /** mutation root */
@@ -18803,6 +18837,18 @@ export type Mutation_RootUpdate_Video_MediaLiveChannelStatus_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Video_RoomRtmpInputArgs = {
+    _set?: InputMaybe<Video_RoomRtmpInput_Set_Input>;
+    where: Video_RoomRtmpInput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RoomRtmpInput_By_PkArgs = {
+    _set?: InputMaybe<Video_RoomRtmpInput_Set_Input>;
+    pk_columns: Video_RoomRtmpInput_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Video_RoomRtmpOutputArgs = {
     _set?: InputMaybe<Video_RoomRtmpOutput_Set_Input>;
     where: Video_RoomRtmpOutput_Bool_Exp;
@@ -19569,6 +19615,12 @@ export type Query_Root = {
     readonly video_MediaLiveChannelStatus_aggregate: Video_MediaLiveChannelStatus_Aggregate;
     /** fetch data from the table: "video.MediaLiveChannelStatus" using primary key columns */
     readonly video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** fetch data from the table: "video.RoomRtmpInput" */
+    readonly video_RoomRtmpInput: ReadonlyArray<Video_RoomRtmpInput>;
+    /** fetch aggregated fields from the table: "video.RoomRtmpInput" */
+    readonly video_RoomRtmpInput_aggregate: Video_RoomRtmpInput_Aggregate;
+    /** fetch data from the table: "video.RoomRtmpInput" using primary key columns */
+    readonly video_RoomRtmpInput_by_pk?: Maybe<Video_RoomRtmpInput>;
     /** fetch data from the table: "video.RoomRtmpOutput" */
     readonly video_RoomRtmpOutput: ReadonlyArray<Video_RoomRtmpOutput>;
     /** fetch aggregated fields from the table: "video.RoomRtmpOutput" */
@@ -21599,6 +21651,26 @@ export type Query_RootVideo_MediaLiveChannelStatus_AggregateArgs = {
 };
 
 export type Query_RootVideo_MediaLiveChannelStatus_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootVideo_RoomRtmpInputArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Order_By>>;
+    where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+export type Query_RootVideo_RoomRtmpInput_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Order_By>>;
+    where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+export type Query_RootVideo_RoomRtmpInput_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -25388,6 +25460,8 @@ export type Room_Room = {
     /** An aggregate relationship */
     readonly roomMemberships_aggregate: Room_RoomMembership_Aggregate;
     /** An object relationship */
+    readonly rtmpInput?: Maybe<Video_RoomRtmpInput>;
+    /** An object relationship */
     readonly rtmpOutput?: Maybe<Video_RoomRtmpOutput>;
     /** An array relationship */
     readonly shuffleRooms: ReadonlyArray<Room_ShuffleRoom>;
@@ -26048,6 +26122,7 @@ export type Room_Room_Bool_Exp = {
     readonly priority?: InputMaybe<Int_Comparison_Exp>;
     readonly publicVonageSessionId?: InputMaybe<String_Comparison_Exp>;
     readonly roomMemberships?: InputMaybe<Room_RoomMembership_Bool_Exp>;
+    readonly rtmpInput?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
     readonly rtmpOutput?: InputMaybe<Video_RoomRtmpOutput_Bool_Exp>;
     readonly shuffleRooms?: InputMaybe<Room_ShuffleRoom_Bool_Exp>;
     readonly stats?: InputMaybe<Analytics_RoomStats_Bool_Exp>;
@@ -26103,6 +26178,7 @@ export type Room_Room_Insert_Input = {
     readonly priority?: InputMaybe<Scalars["Int"]>;
     readonly publicVonageSessionId?: InputMaybe<Scalars["String"]>;
     readonly roomMemberships?: InputMaybe<Room_RoomMembership_Arr_Rel_Insert_Input>;
+    readonly rtmpInput?: InputMaybe<Video_RoomRtmpInput_Obj_Rel_Insert_Input>;
     readonly rtmpOutput?: InputMaybe<Video_RoomRtmpOutput_Obj_Rel_Insert_Input>;
     readonly shuffleRooms?: InputMaybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
     readonly stats?: InputMaybe<Analytics_RoomStats_Arr_Rel_Insert_Input>;
@@ -26232,6 +26308,7 @@ export type Room_Room_Order_By = {
     readonly priority?: InputMaybe<Order_By>;
     readonly publicVonageSessionId?: InputMaybe<Order_By>;
     readonly roomMemberships_aggregate?: InputMaybe<Room_RoomMembership_Aggregate_Order_By>;
+    readonly rtmpInput?: InputMaybe<Video_RoomRtmpInput_Order_By>;
     readonly rtmpOutput?: InputMaybe<Video_RoomRtmpOutput_Order_By>;
     readonly shuffleRooms_aggregate?: InputMaybe<Room_ShuffleRoom_Aggregate_Order_By>;
     readonly stats_aggregate?: InputMaybe<Analytics_RoomStats_Aggregate_Order_By>;
@@ -31132,6 +31209,12 @@ export type Subscription_Root = {
     readonly video_MediaLiveChannelStatus_aggregate: Video_MediaLiveChannelStatus_Aggregate;
     /** fetch data from the table: "video.MediaLiveChannelStatus" using primary key columns */
     readonly video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** fetch data from the table: "video.RoomRtmpInput" */
+    readonly video_RoomRtmpInput: ReadonlyArray<Video_RoomRtmpInput>;
+    /** fetch aggregated fields from the table: "video.RoomRtmpInput" */
+    readonly video_RoomRtmpInput_aggregate: Video_RoomRtmpInput_Aggregate;
+    /** fetch data from the table: "video.RoomRtmpInput" using primary key columns */
+    readonly video_RoomRtmpInput_by_pk?: Maybe<Video_RoomRtmpInput>;
     /** fetch data from the table: "video.RoomRtmpOutput" */
     readonly video_RoomRtmpOutput: ReadonlyArray<Video_RoomRtmpOutput>;
     /** fetch aggregated fields from the table: "video.RoomRtmpOutput" */
@@ -33153,6 +33236,26 @@ export type Subscription_RootVideo_MediaLiveChannelStatus_AggregateArgs = {
 };
 
 export type Subscription_RootVideo_MediaLiveChannelStatus_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootVideo_RoomRtmpInputArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Order_By>>;
+    where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_RoomRtmpInput_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Order_By>>;
+    where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_RoomRtmpInput_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -35702,6 +35805,215 @@ export type Video_MediaLiveChannelStatus_Variance_Fields = {
     readonly __typename?: "video_MediaLiveChannelStatus_variance_fields";
     readonly pipelinesRunningCount?: Maybe<Scalars["Float"]>;
 };
+
+/** columns and relationships of "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput = {
+    readonly __typename?: "video_RoomRtmpInput";
+    readonly address?: Maybe<Scalars["String"]>;
+    readonly applicationInstance: Scalars["String"];
+    readonly applicationName: Scalars["String"];
+    readonly created_at: Scalars["timestamptz"];
+    readonly id: Scalars["uuid"];
+    readonly inputId?: Maybe<Scalars["String"]>;
+    readonly inputName: Scalars["String"];
+    /** An object relationship */
+    readonly room?: Maybe<Room_Room>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Aggregate = {
+    readonly __typename?: "video_RoomRtmpInput_aggregate";
+    readonly aggregate?: Maybe<Video_RoomRtmpInput_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Video_RoomRtmpInput>;
+};
+
+/** aggregate fields of "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Aggregate_Fields = {
+    readonly __typename?: "video_RoomRtmpInput_aggregate_fields";
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Video_RoomRtmpInput_Max_Fields>;
+    readonly min?: Maybe<Video_RoomRtmpInput_Min_Fields>;
+};
+
+/** aggregate fields of "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "video.RoomRtmpInput". All fields are combined with a logical 'AND'. */
+export type Video_RoomRtmpInput_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Bool_Exp>>;
+    readonly _not?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Video_RoomRtmpInput_Bool_Exp>>;
+    readonly address?: InputMaybe<String_Comparison_Exp>;
+    readonly applicationInstance?: InputMaybe<String_Comparison_Exp>;
+    readonly applicationName?: InputMaybe<String_Comparison_Exp>;
+    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly inputId?: InputMaybe<String_Comparison_Exp>;
+    readonly inputName?: InputMaybe<String_Comparison_Exp>;
+    readonly room?: InputMaybe<Room_Room_Bool_Exp>;
+    readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.RoomRtmpInput" */
+export enum Video_RoomRtmpInput_Constraint {
+    /** unique or primary key constraint */
+    RoomRtmpInputApplicationInstanceKey = "RoomRtmpInput_applicationInstance_key",
+    /** unique or primary key constraint */
+    RoomRtmpInputInputIdKey = "RoomRtmpInput_inputId_key",
+    /** unique or primary key constraint */
+    RoomRtmpInputInputNameKey = "RoomRtmpInput_inputName_key",
+    /** unique or primary key constraint */
+    RoomRtmpInputPkey = "RoomRtmpInput_pkey",
+    /** unique or primary key constraint */
+    RoomRtmpInputRoomIdKey = "RoomRtmpInput_roomId_key",
+}
+
+/** input type for inserting data into table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Insert_Input = {
+    readonly address?: InputMaybe<Scalars["String"]>;
+    readonly applicationInstance?: InputMaybe<Scalars["String"]>;
+    readonly applicationName?: InputMaybe<Scalars["String"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly inputId?: InputMaybe<Scalars["String"]>;
+    readonly inputName?: InputMaybe<Scalars["String"]>;
+    readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
+    readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Video_RoomRtmpInput_Max_Fields = {
+    readonly __typename?: "video_RoomRtmpInput_max_fields";
+    readonly address?: Maybe<Scalars["String"]>;
+    readonly applicationInstance?: Maybe<Scalars["String"]>;
+    readonly applicationName?: Maybe<Scalars["String"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly inputId?: Maybe<Scalars["String"]>;
+    readonly inputName?: Maybe<Scalars["String"]>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Video_RoomRtmpInput_Min_Fields = {
+    readonly __typename?: "video_RoomRtmpInput_min_fields";
+    readonly address?: Maybe<Scalars["String"]>;
+    readonly applicationInstance?: Maybe<Scalars["String"]>;
+    readonly applicationName?: Maybe<Scalars["String"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly inputId?: Maybe<Scalars["String"]>;
+    readonly inputName?: Maybe<Scalars["String"]>;
+    readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Mutation_Response = {
+    readonly __typename?: "video_RoomRtmpInput_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Video_RoomRtmpInput>;
+};
+
+/** input type for inserting object relation for remote table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Obj_Rel_Insert_Input = {
+    readonly data: Video_RoomRtmpInput_Insert_Input;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Video_RoomRtmpInput_On_Conflict>;
+};
+
+/** on conflict condition type for table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_On_Conflict = {
+    readonly constraint: Video_RoomRtmpInput_Constraint;
+    readonly update_columns?: ReadonlyArray<Video_RoomRtmpInput_Update_Column>;
+    readonly where?: InputMaybe<Video_RoomRtmpInput_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.RoomRtmpInput". */
+export type Video_RoomRtmpInput_Order_By = {
+    readonly address?: InputMaybe<Order_By>;
+    readonly applicationInstance?: InputMaybe<Order_By>;
+    readonly applicationName?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly inputId?: InputMaybe<Order_By>;
+    readonly inputName?: InputMaybe<Order_By>;
+    readonly room?: InputMaybe<Room_Room_Order_By>;
+    readonly roomId?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: video_RoomRtmpInput */
+export type Video_RoomRtmpInput_Pk_Columns_Input = {
+    readonly id: Scalars["uuid"];
+};
+
+/** select columns of table "video.RoomRtmpInput" */
+export enum Video_RoomRtmpInput_Select_Column {
+    /** column name */
+    Address = "address",
+    /** column name */
+    ApplicationInstance = "applicationInstance",
+    /** column name */
+    ApplicationName = "applicationName",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    InputId = "inputId",
+    /** column name */
+    InputName = "inputName",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "video.RoomRtmpInput" */
+export type Video_RoomRtmpInput_Set_Input = {
+    readonly address?: InputMaybe<Scalars["String"]>;
+    readonly applicationInstance?: InputMaybe<Scalars["String"]>;
+    readonly applicationName?: InputMaybe<Scalars["String"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly inputId?: InputMaybe<Scalars["String"]>;
+    readonly inputName?: InputMaybe<Scalars["String"]>;
+    readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "video.RoomRtmpInput" */
+export enum Video_RoomRtmpInput_Update_Column {
+    /** column name */
+    Address = "address",
+    /** column name */
+    ApplicationInstance = "applicationInstance",
+    /** column name */
+    ApplicationName = "applicationName",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    InputId = "inputId",
+    /** column name */
+    InputName = "inputName",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
 
 /**
  * Enables broadcasting of a live-stream from a room to an RTMP-capable service, such as YouTube.
@@ -40156,6 +40468,7 @@ export type ImmediateSwitch_GetElementsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly itemId?: any | null;
+        readonly roomId: any;
         readonly exhibitionId?: any | null;
         readonly item?: {
             readonly __typename?: "content_Item";
@@ -40169,6 +40482,15 @@ export type ImmediateSwitch_GetElementsQuery = {
                 readonly typeName: Content_ElementType_Enum;
             }>;
         } | null;
+        readonly room: {
+            readonly __typename?: "room_Room";
+            readonly id: any;
+            readonly rtmpInput?: {
+                readonly __typename?: "video_RoomRtmpInput";
+                readonly id: any;
+                readonly roomId?: any | null;
+            } | null;
+        };
         readonly exhibition?: {
             readonly __typename?: "collection_Exhibition";
             readonly id: any;
@@ -40258,6 +40580,7 @@ export type VonageBackstage_GetVonageSessionQuery = {
     readonly schedule_Event_by_pk?: {
         readonly __typename?: "schedule_Event";
         readonly id: any;
+        readonly roomId: any;
         readonly eventVonageSession?: {
             readonly __typename?: "video_EventVonageSession";
             readonly id: any;
@@ -40270,6 +40593,7 @@ export type VonageBackstage_GetVonageSessionQuery = {
 export type Event_EventVonageSessionFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
+    readonly roomId: any;
     readonly eventVonageSession?: {
         readonly __typename?: "video_EventVonageSession";
         readonly id: any;
@@ -44489,13 +44813,19 @@ export type DeleteRoomPersonMutation = {
     } | null;
 };
 
-export type GetIsExternalRtmpBroadcastEnabledQueryVariables = Exact<{
+export type GetIsExternalRtmpEnabledQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
 }>;
 
-export type GetIsExternalRtmpBroadcastEnabledQuery = {
+export type GetIsExternalRtmpEnabledQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Configuration_by_pk?: {
+    readonly broadcast?: {
+        readonly __typename?: "conference_Configuration";
+        readonly conferenceId: any;
+        readonly key: Conference_ConfigurationKey_Enum;
+        readonly value: any;
+    } | null;
+    readonly input?: {
         readonly __typename?: "conference_Configuration";
         readonly conferenceId: any;
         readonly key: Conference_ConfigurationKey_Enum;
@@ -44906,6 +45236,25 @@ export type DeleteRoomRtmpOutputMutation = {
     readonly delete_video_RoomRtmpOutput_by_pk?: {
         readonly __typename?: "video_RoomRtmpOutput";
         readonly id: any;
+    } | null;
+};
+
+export type GetRoomRtmpInputQueryVariables = Exact<{
+    roomId: Scalars["uuid"];
+}>;
+
+export type GetRoomRtmpInputQuery = {
+    readonly __typename?: "query_root";
+    readonly room_Room_by_pk?: {
+        readonly __typename?: "room_Room";
+        readonly id: any;
+        readonly rtmpInput?: {
+            readonly __typename?: "video_RoomRtmpInput";
+            readonly id: any;
+            readonly address?: string | null;
+            readonly applicationName: string;
+            readonly applicationInstance: string;
+        } | null;
     } | null;
 };
 
@@ -48155,6 +48504,7 @@ export const VonageParticipantStreamDetailsFragmentDoc = gql`
 export const Event_EventVonageSessionFragmentDoc = gql`
     fragment Event_EventVonageSession on schedule_Event {
         id
+        roomId
         eventVonageSession {
             id
             sessionId
@@ -50233,6 +50583,14 @@ export const ImmediateSwitch_GetElementsDocument = gql`
                     name
                     itemId
                     typeName
+                }
+            }
+            roomId
+            room {
+                id
+                rtmpInput {
+                    id
+                    roomId
                 }
             }
             exhibitionId
@@ -53175,9 +53533,14 @@ export const DeleteRoomPersonDocument = gql`
 export function useDeleteRoomPersonMutation() {
     return Urql.useMutation<DeleteRoomPersonMutation, DeleteRoomPersonMutationVariables>(DeleteRoomPersonDocument);
 }
-export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
-    query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
-        conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_BROADCAST) {
+export const GetIsExternalRtmpEnabledDocument = gql`
+    query GetIsExternalRtmpEnabled($conferenceId: uuid!) {
+        broadcast: conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_BROADCAST) {
+            conferenceId
+            key
+            value
+        }
+        input: conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_INPUT) {
             conferenceId
             key
             value
@@ -53185,13 +53548,10 @@ export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
     }
 `;
 
-export function useGetIsExternalRtmpBroadcastEnabledQuery(
-    options: Omit<Urql.UseQueryArgs<GetIsExternalRtmpBroadcastEnabledQueryVariables>, "query">
+export function useGetIsExternalRtmpEnabledQuery(
+    options: Omit<Urql.UseQueryArgs<GetIsExternalRtmpEnabledQueryVariables>, "query">
 ) {
-    return Urql.useQuery<GetIsExternalRtmpBroadcastEnabledQuery>({
-        query: GetIsExternalRtmpBroadcastEnabledDocument,
-        ...options,
-    });
+    return Urql.useQuery<GetIsExternalRtmpEnabledQuery>({ query: GetIsExternalRtmpEnabledDocument, ...options });
 }
 export const ConferenceTechSupportAddressDocument = gql`
     query ConferenceTechSupportAddress($conferenceId: uuid!) {
@@ -53451,6 +53811,23 @@ export function useDeleteRoomRtmpOutputMutation() {
     return Urql.useMutation<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>(
         DeleteRoomRtmpOutputDocument
     );
+}
+export const GetRoomRtmpInputDocument = gql`
+    query GetRoomRtmpInput($roomId: uuid!) {
+        room_Room_by_pk(id: $roomId) {
+            id
+            rtmpInput {
+                id
+                address
+                applicationName
+                applicationInstance
+            }
+        }
+    }
+`;
+
+export function useGetRoomRtmpInputQuery(options: Omit<Urql.UseQueryArgs<GetRoomRtmpInputQueryVariables>, "query">) {
+    return Urql.useQuery<GetRoomRtmpInputQuery>({ query: GetRoomRtmpInputDocument, ...options });
 }
 export const AddEventPeople_SelectItemPeopleDocument = gql`
     query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {
@@ -56530,6 +56907,14 @@ export type GraphCacheKeysConfig = {
     video_MediaLiveChannelStatus_variance_fields?: (
         data: WithTypename<Video_MediaLiveChannelStatus_Variance_Fields>
     ) => null | string;
+    video_RoomRtmpInput?: (data: WithTypename<Video_RoomRtmpInput>) => null | string;
+    video_RoomRtmpInput_aggregate?: (data: WithTypename<Video_RoomRtmpInput_Aggregate>) => null | string;
+    video_RoomRtmpInput_aggregate_fields?: (data: WithTypename<Video_RoomRtmpInput_Aggregate_Fields>) => null | string;
+    video_RoomRtmpInput_max_fields?: (data: WithTypename<Video_RoomRtmpInput_Max_Fields>) => null | string;
+    video_RoomRtmpInput_min_fields?: (data: WithTypename<Video_RoomRtmpInput_Min_Fields>) => null | string;
+    video_RoomRtmpInput_mutation_response?: (
+        data: WithTypename<Video_RoomRtmpInput_Mutation_Response>
+    ) => null | string;
     video_RoomRtmpOutput?: (data: WithTypename<Video_RoomRtmpOutput>) => null | string;
     video_RoomRtmpOutput_aggregate?: (data: WithTypename<Video_RoomRtmpOutput_Aggregate>) => null | string;
     video_RoomRtmpOutput_aggregate_fields?: (
@@ -58103,6 +58488,21 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootVideo_MediaLiveChannelStatus_By_PkArgs,
             WithTypename<Video_MediaLiveChannelStatus> | string
+        >;
+        video_RoomRtmpInput?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootVideo_RoomRtmpInputArgs,
+            Array<WithTypename<Video_RoomRtmpInput> | string>
+        >;
+        video_RoomRtmpInput_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootVideo_RoomRtmpInput_AggregateArgs,
+            WithTypename<Video_RoomRtmpInput_Aggregate> | string
+        >;
+        video_RoomRtmpInput_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootVideo_RoomRtmpInput_By_PkArgs,
+            WithTypename<Video_RoomRtmpInput> | string
         >;
         video_RoomRtmpOutput?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -70694,6 +71094,11 @@ export type GraphCacheResolvers = {
             Room_RoomRoomMemberships_AggregateArgs,
             WithTypename<Room_RoomMembership_Aggregate> | string
         >;
+        rtmpInput?: GraphCacheResolver<
+            WithTypename<Room_Room>,
+            Record<string, never>,
+            WithTypename<Video_RoomRtmpInput> | string
+        >;
         rtmpOutput?: GraphCacheResolver<
             WithTypename<Room_Room>,
             Record<string, never>,
@@ -76389,6 +76794,185 @@ export type GraphCacheResolvers = {
             Scalars["Float"] | string
         >;
     };
+    video_RoomRtmpInput?: {
+        address?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        applicationInstance?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        applicationName?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<WithTypename<Video_RoomRtmpInput>, Record<string, never>, Scalars["uuid"] | string>;
+        inputId?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        inputName?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        room?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput>,
+            Record<string, never>,
+            WithTypename<Room_Room> | string
+        >;
+        roomId?: GraphCacheResolver<WithTypename<Video_RoomRtmpInput>, Record<string, never>, Scalars["uuid"] | string>;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    video_RoomRtmpInput_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Aggregate>,
+            Record<string, never>,
+            WithTypename<Video_RoomRtmpInput_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Video_RoomRtmpInput> | string>
+        >;
+    };
+    video_RoomRtmpInput_aggregate_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Aggregate_Fields>,
+            Video_RoomRtmpInput_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Video_RoomRtmpInput_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Video_RoomRtmpInput_Min_Fields> | string
+        >;
+    };
+    video_RoomRtmpInput_max_fields?: {
+        address?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        applicationInstance?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        applicationName?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        inputId?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        inputName?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        roomId?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    video_RoomRtmpInput_min_fields?: {
+        address?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        applicationInstance?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        applicationName?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        inputId?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        inputName?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        roomId?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    video_RoomRtmpInput_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Video_RoomRtmpInput_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Video_RoomRtmpInput> | string>
+        >;
+    };
     video_RoomRtmpOutput?: {
         created_at?: GraphCacheResolver<
             WithTypename<Video_RoomRtmpOutput>,
@@ -78791,6 +79375,14 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootDelete_Video_MediaLiveChannelStatus_By_PkArgs,
         Maybe<WithTypename<Video_MediaLiveChannelStatus>>
     >;
+    delete_video_RoomRtmpInput?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Video_RoomRtmpInputArgs,
+        Maybe<WithTypename<Video_RoomRtmpInput_Mutation_Response>>
+    >;
+    delete_video_RoomRtmpInput_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Video_RoomRtmpInput_By_PkArgs,
+        Maybe<WithTypename<Video_RoomRtmpInput>>
+    >;
     delete_video_RoomRtmpOutput?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Video_RoomRtmpOutputArgs,
         Maybe<WithTypename<Video_RoomRtmpOutput_Mutation_Response>>
@@ -79587,6 +80179,14 @@ export type GraphCacheOptimisticUpdaters = {
     insert_video_MediaLiveChannelStatus_one?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Video_MediaLiveChannelStatus_OneArgs,
         Maybe<WithTypename<Video_MediaLiveChannelStatus>>
+    >;
+    insert_video_RoomRtmpInput?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Video_RoomRtmpInputArgs,
+        Maybe<WithTypename<Video_RoomRtmpInput_Mutation_Response>>
+    >;
+    insert_video_RoomRtmpInput_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Video_RoomRtmpInput_OneArgs,
+        Maybe<WithTypename<Video_RoomRtmpInput>>
     >;
     insert_video_RoomRtmpOutput?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Video_RoomRtmpOutputArgs,
@@ -80428,6 +81028,14 @@ export type GraphCacheOptimisticUpdaters = {
     update_video_MediaLiveChannelStatus_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Video_MediaLiveChannelStatus_By_PkArgs,
         Maybe<WithTypename<Video_MediaLiveChannelStatus>>
+    >;
+    update_video_RoomRtmpInput?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Video_RoomRtmpInputArgs,
+        Maybe<WithTypename<Video_RoomRtmpInput_Mutation_Response>>
+    >;
+    update_video_RoomRtmpInput_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Video_RoomRtmpInput_By_PkArgs,
+        Maybe<WithTypename<Video_RoomRtmpInput>>
     >;
     update_video_RoomRtmpOutput?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Video_RoomRtmpOutputArgs,
@@ -81304,6 +81912,14 @@ export type GraphCacheUpdaters = {
         delete_video_MediaLiveChannelStatus_by_pk?: GraphCacheUpdateResolver<
             { delete_video_MediaLiveChannelStatus_by_pk: Maybe<WithTypename<Video_MediaLiveChannelStatus>> },
             Mutation_RootDelete_Video_MediaLiveChannelStatus_By_PkArgs
+        >;
+        delete_video_RoomRtmpInput?: GraphCacheUpdateResolver<
+            { delete_video_RoomRtmpInput: Maybe<WithTypename<Video_RoomRtmpInput_Mutation_Response>> },
+            Mutation_RootDelete_Video_RoomRtmpInputArgs
+        >;
+        delete_video_RoomRtmpInput_by_pk?: GraphCacheUpdateResolver<
+            { delete_video_RoomRtmpInput_by_pk: Maybe<WithTypename<Video_RoomRtmpInput>> },
+            Mutation_RootDelete_Video_RoomRtmpInput_By_PkArgs
         >;
         delete_video_RoomRtmpOutput?: GraphCacheUpdateResolver<
             { delete_video_RoomRtmpOutput: Maybe<WithTypename<Video_RoomRtmpOutput_Mutation_Response>> },
@@ -82184,6 +82800,14 @@ export type GraphCacheUpdaters = {
         insert_video_MediaLiveChannelStatus_one?: GraphCacheUpdateResolver<
             { insert_video_MediaLiveChannelStatus_one: Maybe<WithTypename<Video_MediaLiveChannelStatus>> },
             Mutation_RootInsert_Video_MediaLiveChannelStatus_OneArgs
+        >;
+        insert_video_RoomRtmpInput?: GraphCacheUpdateResolver<
+            { insert_video_RoomRtmpInput: Maybe<WithTypename<Video_RoomRtmpInput_Mutation_Response>> },
+            Mutation_RootInsert_Video_RoomRtmpInputArgs
+        >;
+        insert_video_RoomRtmpInput_one?: GraphCacheUpdateResolver<
+            { insert_video_RoomRtmpInput_one: Maybe<WithTypename<Video_RoomRtmpInput>> },
+            Mutation_RootInsert_Video_RoomRtmpInput_OneArgs
         >;
         insert_video_RoomRtmpOutput?: GraphCacheUpdateResolver<
             { insert_video_RoomRtmpOutput: Maybe<WithTypename<Video_RoomRtmpOutput_Mutation_Response>> },
@@ -83112,6 +83736,14 @@ export type GraphCacheUpdaters = {
         update_video_MediaLiveChannelStatus_by_pk?: GraphCacheUpdateResolver<
             { update_video_MediaLiveChannelStatus_by_pk: Maybe<WithTypename<Video_MediaLiveChannelStatus>> },
             Mutation_RootUpdate_Video_MediaLiveChannelStatus_By_PkArgs
+        >;
+        update_video_RoomRtmpInput?: GraphCacheUpdateResolver<
+            { update_video_RoomRtmpInput: Maybe<WithTypename<Video_RoomRtmpInput_Mutation_Response>> },
+            Mutation_RootUpdate_Video_RoomRtmpInputArgs
+        >;
+        update_video_RoomRtmpInput_by_pk?: GraphCacheUpdateResolver<
+            { update_video_RoomRtmpInput_by_pk: Maybe<WithTypename<Video_RoomRtmpInput>> },
+            Mutation_RootUpdate_Video_RoomRtmpInput_By_PkArgs
         >;
         update_video_RoomRtmpOutput?: GraphCacheUpdateResolver<
             { update_video_RoomRtmpOutput: Maybe<WithTypename<Video_RoomRtmpOutput_Mutation_Response>> },
@@ -84349,6 +84981,18 @@ export type GraphCacheUpdaters = {
         video_MediaLiveChannelStatus_by_pk?: GraphCacheUpdateResolver<
             { video_MediaLiveChannelStatus_by_pk: Maybe<WithTypename<Video_MediaLiveChannelStatus>> },
             Subscription_RootVideo_MediaLiveChannelStatus_By_PkArgs
+        >;
+        video_RoomRtmpInput?: GraphCacheUpdateResolver<
+            { video_RoomRtmpInput: Array<WithTypename<Video_RoomRtmpInput>> },
+            Subscription_RootVideo_RoomRtmpInputArgs
+        >;
+        video_RoomRtmpInput_aggregate?: GraphCacheUpdateResolver<
+            { video_RoomRtmpInput_aggregate: WithTypename<Video_RoomRtmpInput_Aggregate> },
+            Subscription_RootVideo_RoomRtmpInput_AggregateArgs
+        >;
+        video_RoomRtmpInput_by_pk?: GraphCacheUpdateResolver<
+            { video_RoomRtmpInput_by_pk: Maybe<WithTypename<Video_RoomRtmpInput>> },
+            Subscription_RootVideo_RoomRtmpInput_By_PkArgs
         >;
         video_RoomRtmpOutput?: GraphCacheUpdateResolver<
             { video_RoomRtmpOutput: Array<WithTypename<Video_RoomRtmpOutput>> },

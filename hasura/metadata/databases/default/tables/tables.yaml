@@ -94,6 +94,7 @@
 - "!include video_ImmediateSwitch.yaml"
 - "!include video_InputType.yaml"
 - "!include video_MediaLiveChannelStatus.yaml"
+- "!include video_RoomRtmpInput.yaml"
 - "!include video_RoomRtmpOutput.yaml"
 - "!include video_RtmpInput.yaml"
 - "!include video_TranscriptionJob.yaml"

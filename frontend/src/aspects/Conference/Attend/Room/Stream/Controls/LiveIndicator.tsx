@@ -70,13 +70,22 @@ export function LiveIndicator(): JSX.Element {
                         <Text>Filler video</Text>
                     </>
                 );
-            case "rtmp_push":
+            case "rtmp_push:rtmpEvent":
                 return (
                     <>
                         <FAIcon icon="broadcast-tower" iconStyle="s" fontSize="lg" />
                         <VStack>
                             <Text fontSize={!connected ? "xs" : undefined}>Backstage is live</Text>
                             {!connected ? <Text>You are not connected</Text> : undefined}
+                        </VStack>
+                    </>
+                );
+            case "rtmp_push:rtmpRoom":
+                return (
+                    <>
+                        <FAIcon icon="broadcast-tower" iconStyle="s" fontSize="lg" />
+                        <VStack>
+                            <Text fontSize={!connected ? "xs" : undefined}>Hybrid room is live</Text>
                         </VStack>
                     </>
                 );

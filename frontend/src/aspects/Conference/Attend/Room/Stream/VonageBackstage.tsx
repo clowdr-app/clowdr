@@ -26,6 +26,7 @@ gql`
 
     fragment Event_EventVonageSession on schedule_Event {
         id
+        roomId
         eventVonageSession {
             id
             sessionId

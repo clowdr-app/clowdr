@@ -44,6 +44,15 @@ object_relationships:
 - name: managementMode
   using:
     foreign_key_constraint_on: managementModeName
+- name: rtmpInput
+  using:
+    manual_configuration:
+      column_mapping:
+        id: roomId
+      insertion_order: null
+      remote_table:
+        name: RoomRtmpInput
+        schema: video
 - name: rtmpOutput
   using:
     manual_configuration:

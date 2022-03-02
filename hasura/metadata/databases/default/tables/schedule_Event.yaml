@@ -67,6 +67,7 @@ insert_permissions:
         - subconferenceId:
             _is_null: true
     columns:
+    - automaticParticipationSurvey
     - conferenceId
     - durationSeconds
     - enableRecording
@@ -184,6 +185,7 @@ select_permissions:
   role: conference-organizer
 - permission:
     columns:
+    - automaticParticipationSurvey
     - conferenceId
     - created_at
     - durationSeconds
@@ -278,6 +280,7 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - automaticParticipationSurvey
     - durationSeconds
     - enableRecording
     - endTime

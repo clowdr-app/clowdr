@@ -208,7 +208,11 @@ export default function NewConferenceForm(): JSX.Element {
                 let failed: false | string = false;
 
                 const takenResult = await client
-                    .query<ConferenceTakenQuery, ConferenceTakenQueryVariables>(ConferenceTakenDocument, values, {
+                    .query<ConferenceTakenQuery, ConferenceTakenQueryVariables>(ConferenceTakenDocument, {
+                        name: values.name,
+                        shortName: values.shortName,
+                        slug: values.slug,
+                    }, {
                         requestPolicy: "network-only",
                     })
                     .toPromise();

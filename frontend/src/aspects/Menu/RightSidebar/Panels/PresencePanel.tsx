@@ -34,7 +34,11 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
             setTotalUserIds(ids.size);
 
             const limit = 70;
-            if (!updateTimeoutId.current) {
+            if (ids.size <= limit && ids.size != totalUserIdsRef.current) {
+                setUserIds([...ids].map((x) => ({ user: x })));
+                totalUserIdsRef.current = ids.size;
+                updateTimeoutId.current = undefined;
+            } else if (!updateTimeoutId.current) {
                 const update = () => {
                     const reducedIds: string[] = [...ids];
                     while (reducedIds.length > limit) {
@@ -50,8 +54,6 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
                 } else {
                     updateTimeoutId.current = setTimeout(update as TimerHandler, 60000);
                 }
-            } else if (ids.size <= limit && ids.size < totalUserIdsRef.current) {
-                setUserIds([...ids].map((x) => ({ user: x })));
             }
         });
 

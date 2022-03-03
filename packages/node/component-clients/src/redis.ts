@@ -99,9 +99,15 @@ export const redisClientP = {
         ),
     zrem: (redisClient: RedisClient) =>
         promisify((key: string, member: string, cb?: Callback<number>) => redisClient.zrem(key, member, cb)),
+    zrank: (redisClient: RedisClient) =>
+        promisify((key: string, member: string, cb?: Callback<number | null>) => redisClient.zrank(key, member, cb)),
     zrange: (redisClient: RedisClient) =>
         promisify((key: string, start: number, stop: number, cb?: Callback<string[]>) =>
             redisClient.zrange(key, start, stop, cb)
+        ),
+    zrangebyscore: (redisClient: RedisClient) =>
+        promisify((key: string, start: number, stop: number, cb?: Callback<string[]>) =>
+            redisClient.zrangebyscore(key, start, stop, cb)
         ),
     zremrangebyrank: (redisClient: RedisClient) =>
         promisify((key: string, start: number, stop: number, cb?: Callback<number>) =>

@@ -6,23 +6,43 @@ import { realtimeService } from "./RealtimeService";
 export class PresenceState {
     private offSocketAvailable: (() => void) | undefined;
     private offSocketUnavailable: (() => void) | undefined;
+    private intervalId: number | undefined;
     setup(): void {
         this.offSocketAvailable?.();
         this.offSocketUnavailable?.();
 
-        this.offSocketAvailable = realtimeService.onSocketAvailable("PresenceState.setup", (socket) => {
-            socket.on("entered", this.onEntered.bind(this));
-            socket.on("left", this.onLeft.bind(this));
-            socket.on("presences", this.onListPresent.bind(this));
-
-            this.pageChanged(window.location.pathname);
-        });
         this.offSocketUnavailable =
             realtimeService.onSocketUnavailable("PresenceState.setup", (socket) => {
                 socket.off("entered");
                 socket.off("left");
                 socket.off("presences");
+
+                if (this.intervalId) {
+                    const id = this.intervalId;
+                    this.intervalId = undefined;
+                    clearInterval(id);
+                }
             }) ?? undefined;
+        this.offSocketAvailable = realtimeService.onSocketAvailable("PresenceState.setup", (socket) => {
+            socket.on("entered", this.onEntered.bind(this));
+            socket.on("left", this.onLeft.bind(this));
+            socket.on("presences", this.onListPresent.bind(this));
+
+            realtimeService?.socket?.emit("pagePresence", this.currentPath);
+            realtimeService.socket?.emit("conferencePresence", this.currentSlug);
+
+            this.intervalId = setInterval(
+                (() => {
+                    if (this.currentPath) {
+                        realtimeService.socket?.emit("pagePresence", this.currentPath);
+                    }
+                    if (this.currentSlug) {
+                        realtimeService.socket?.emit("conferencePresence", this.currentSlug);
+                    }
+                }) as TimerHandler,
+                60000
+            );
+        });
     }
 
     teardown(): void {
@@ -83,14 +103,17 @@ export class PresenceState {
         }
     }
 
-    private oldPath: string | undefined;
-    public pageChanged(newPath: string): void {
-        // TODO: Similar mechanism for just the conference slug
+    private currentSlug: string | null = null;
+    private currentPath: string | null = null;
+    public pageChanged(newSlug: string | null, newPath: string): void {
+        if (this.currentPath !== newPath) {
+            realtimeService?.socket?.emit("pageUnpresence", this.currentPath);
+        }
 
-        // console.log("Presence:pageChanged", newPath);
-        realtimeService.socket?.emit("leavePage", this.oldPath);
-        realtimeService.socket?.emit("enterPage", newPath);
-        this.oldPath = newPath;
+        this.currentSlug = newSlug;
+        this.currentPath = newPath;
+
+        realtimeService?.socket?.emit("pagePresence", this.currentPath);
     }
 
     private observersMutex = new Mutex();

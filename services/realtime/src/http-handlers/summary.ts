@@ -14,9 +14,7 @@ export async function summary(req: Request, res: Response, _next?: NextFunction)
                 const scan = promisify<(...opts: string[]) => Promise<[string, string[]]>>(
                     redisClient.scan as unknown as any
                 ).bind(redisClient);
-                const smembers = promisify<(...opts: string[]) => Promise<string[]>>(
-                    redisClient.smembers as unknown as any
-                ).bind(redisClient);
+                const zmembers = promisify<string, string[]>((key, cb) => redisClient.zrange(key, 0, -1, cb));
                 const scanAll = async (pattern: string) => {
                     const found = [];
                     let cursor = "0";
@@ -37,7 +35,7 @@ export async function summary(req: Request, res: Response, _next?: NextFunction)
                         (key) => key.lastIndexOf(":") === basePresenceListKey.length - 1
                     );
                     const results = await Promise.all(
-                        interestingKeys.map(async (key) => ({ key, userIds: await smembers(key) }))
+                        interestingKeys.map(async (key) => ({ key, userIds: await zmembers(key) }))
                     );
                     const userIds = new Set<string>();
                     for (const result of results) {

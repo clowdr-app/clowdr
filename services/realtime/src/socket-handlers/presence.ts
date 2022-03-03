@@ -110,8 +110,7 @@ export async function maintainPresenceList(redisClient: RedisClient, listKey: st
         multi = multi.zremrangebyscore(listKey, lowerLimit, upperLimit);
         discard = false;
         const results = await promisify((cb: Callback<any[]>) => multi.exec(cb))();
-        // Last item in results is output of zremrangebyscore
-        const userIds = results.slice(0, results.length - 1);
+        const userIds = results[0];
         for (const userId of userIds) {
             socketServer.in(chan).emit("left", { listId, userId });
         }

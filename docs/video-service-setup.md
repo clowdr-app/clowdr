@@ -29,6 +29,6 @@ Return to the main README and continue with Part 2 after setting up the actions 
    - `ContentBucketId`
 1. Use the `VONAGE_WEBHOOK_SECRET` value, the Actions Service public URL, and
    the following path to set the Archiving Callback URL:
-   - `http://<custom-actions-subdomain>.<custom-domain>/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`
+   - `http://<custom-actions-subdomain>.<custom-domain>/vonage/archiveMonitoring/<VONAGE_WEBHOOK_SECRET>`
 
 Return to the main README and continue with [Setting Up Local Working Copy](../README.md#setting-up-local-working-copy).

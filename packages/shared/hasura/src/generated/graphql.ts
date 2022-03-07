@@ -26463,6 +26463,8 @@ export type Room_Room = {
     id: Scalars["uuid"];
     /** A computed field, executes function "room.IsProgramRoom" */
     isProgramRoom?: Maybe<Scalars["Boolean"]>;
+    /** A computed field, executes function "room.IsStreamingProgramRoom" */
+    isStreamingProgramRoom?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
     item?: Maybe<Content_Item>;
     itemId?: Maybe<Scalars["uuid"]>;
@@ -27116,6 +27118,7 @@ export type Room_Room_Bool_Exp = {
     events?: InputMaybe<Schedule_Event_Bool_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
     isProgramRoom?: InputMaybe<Boolean_Comparison_Exp>;
+    isStreamingProgramRoom?: InputMaybe<Boolean_Comparison_Exp>;
     item?: InputMaybe<Content_Item_Bool_Exp>;
     itemId?: InputMaybe<Uuid_Comparison_Exp>;
     livestreamDuration?: InputMaybe<Room_LivestreamDurations_Bool_Exp>;
@@ -27300,6 +27303,7 @@ export type Room_Room_Order_By = {
     events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     id?: InputMaybe<Order_By>;
     isProgramRoom?: InputMaybe<Order_By>;
+    isStreamingProgramRoom?: InputMaybe<Order_By>;
     item?: InputMaybe<Content_Item_Order_By>;
     itemId?: InputMaybe<Order_By>;
     livestreamDuration?: InputMaybe<Room_LivestreamDurations_Order_By>;

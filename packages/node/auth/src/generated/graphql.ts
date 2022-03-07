@@ -7007,10 +7007,14 @@ export type Conference_Conference = {
     programPeople: Array<Collection_ProgramPerson>;
     /** An aggregate relationship */
     programPeople_aggregate: Collection_ProgramPerson_Aggregate;
+    /** An object relationship */
+    quota?: Maybe<Conference_Quota>;
     /** An array relationship */
     registrants: Array<Registrant_Registrant>;
     /** An aggregate relationship */
     registrants_aggregate: Registrant_Registrant_Aggregate;
+    /** An object relationship */
+    remainingQuota?: Maybe<Conference_RemainingQuota>;
     /** An array relationship */
     rooms: Array<Room_Room>;
     /** An aggregate relationship */
@@ -7034,6 +7038,8 @@ export type Conference_Conference = {
     /** An aggregate relationship */
     tags_aggregate: Collection_Tag_Aggregate;
     updatedAt: Scalars["timestamptz"];
+    /** An object relationship */
+    usage?: Maybe<Conference_Usage>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7310,7 +7316,9 @@ export type Conference_Conference_Bool_Exp = {
     items?: InputMaybe<Content_Item_Bool_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
+    quota?: InputMaybe<Conference_Quota_Bool_Exp>;
     registrants?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    remainingQuota?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
     rooms?: InputMaybe<Room_Room_Bool_Exp>;
     shortName?: InputMaybe<String_Comparison_Exp>;
     shufflePeriods?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
@@ -7319,6 +7327,7 @@ export type Conference_Conference_Bool_Exp = {
     subconferences?: InputMaybe<Conference_Subconference_Bool_Exp>;
     tags?: InputMaybe<Collection_Tag_Bool_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+    usage?: InputMaybe<Conference_Usage_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "conference.Conference" */
@@ -7357,7 +7366,9 @@ export type Conference_Conference_Insert_Input = {
     items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
     name?: InputMaybe<Scalars["String"]>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
+    quota?: InputMaybe<Conference_Quota_Obj_Rel_Insert_Input>;
     registrants?: InputMaybe<Registrant_Registrant_Arr_Rel_Insert_Input>;
+    remainingQuota?: InputMaybe<Conference_RemainingQuota_Obj_Rel_Insert_Input>;
     rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
     shortName?: InputMaybe<Scalars["String"]>;
     shufflePeriods?: InputMaybe<Room_ShufflePeriod_Arr_Rel_Insert_Input>;
@@ -7366,6 +7377,7 @@ export type Conference_Conference_Insert_Input = {
     subconferences?: InputMaybe<Conference_Subconference_Arr_Rel_Insert_Input>;
     tags?: InputMaybe<Collection_Tag_Arr_Rel_Insert_Input>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
+    usage?: InputMaybe<Conference_Usage_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -7473,7 +7485,9 @@ export type Conference_Conference_Order_By = {
     items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
     name?: InputMaybe<Order_By>;
     programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
+    quota?: InputMaybe<Conference_Quota_Order_By>;
     registrants_aggregate?: InputMaybe<Registrant_Registrant_Aggregate_Order_By>;
+    remainingQuota?: InputMaybe<Conference_RemainingQuota_Order_By>;
     rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
     shortName?: InputMaybe<Order_By>;
     shufflePeriods_aggregate?: InputMaybe<Room_ShufflePeriod_Aggregate_Order_By>;
@@ -7482,6 +7496,7 @@ export type Conference_Conference_Order_By = {
     subconferences_aggregate?: InputMaybe<Conference_Subconference_Aggregate_Order_By>;
     tags_aggregate?: InputMaybe<Collection_Tag_Aggregate_Order_By>;
     updatedAt?: InputMaybe<Order_By>;
+    usage?: InputMaybe<Conference_Usage_Order_By>;
 };
 
 /** primary key columns input for table: conference_Conference */
@@ -8148,6 +8163,828 @@ export enum Conference_DemoCode_Update_Column {
     UsedById = "usedById",
 }
 
+/** columns and relationships of "conference.Quota" */
+export type Conference_Quota = {
+    __typename?: "conference_Quota";
+    areStreamingEventsAllowed: Scalars["Boolean"];
+    areVideoChatEventsAllowed: Scalars["Boolean"];
+    /** An object relationship */
+    conference: Conference_Conference;
+    conferenceId: Scalars["uuid"];
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    maxContentItems: Scalars["Int"];
+    maxMediaElementsPerContentItem: Scalars["Int"];
+    maxMediaElementsPerSponsor: Scalars["Int"];
+    maxNonMediaElementsPerContentItem: Scalars["Int"];
+    maxNonMediaElementsPerSponsor: Scalars["Int"];
+    maxNonStreamingProgramRooms: Scalars["Int"];
+    maxPublicSocialRooms: Scalars["Int"];
+    maxRegistrants: Scalars["Int"];
+    maxStreamingEventIndividualMinutes: Scalars["Int"];
+    maxStreamingEventTotalMinutes: Scalars["Int"];
+    maxStreamingProgramRooms: Scalars["Int"];
+    maxSubconferences: Scalars["Int"];
+    maxSupportMeetingMinutes: Scalars["Int"];
+    maxVideoChatEventIndividualMinutes: Scalars["Int"];
+    maxVideoChatEventTotalMinutes: Scalars["Int"];
+    maxVideoChatNonEventTotalMinutesConsumed: Scalars["Int"];
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "conference.Quota" */
+export type Conference_Quota_Aggregate = {
+    __typename?: "conference_Quota_aggregate";
+    aggregate?: Maybe<Conference_Quota_Aggregate_Fields>;
+    nodes: Array<Conference_Quota>;
+};
+
+/** aggregate fields of "conference.Quota" */
+export type Conference_Quota_Aggregate_Fields = {
+    __typename?: "conference_Quota_aggregate_fields";
+    avg?: Maybe<Conference_Quota_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Conference_Quota_Max_Fields>;
+    min?: Maybe<Conference_Quota_Min_Fields>;
+    stddev?: Maybe<Conference_Quota_Stddev_Fields>;
+    stddev_pop?: Maybe<Conference_Quota_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Conference_Quota_Stddev_Samp_Fields>;
+    sum?: Maybe<Conference_Quota_Sum_Fields>;
+    var_pop?: Maybe<Conference_Quota_Var_Pop_Fields>;
+    var_samp?: Maybe<Conference_Quota_Var_Samp_Fields>;
+    variance?: Maybe<Conference_Quota_Variance_Fields>;
+};
+
+/** aggregate fields of "conference.Quota" */
+export type Conference_Quota_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Conference_Quota_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** aggregate avg on columns */
+export type Conference_Quota_Avg_Fields = {
+    __typename?: "conference_Quota_avg_fields";
+    maxContentItems?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    maxRegistrants?: Maybe<Scalars["Float"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxSubconferences?: Maybe<Scalars["Float"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** Boolean expression to filter rows from the table "conference.Quota". All fields are combined with a logical 'AND'. */
+export type Conference_Quota_Bool_Exp = {
+    _and?: InputMaybe<Array<Conference_Quota_Bool_Exp>>;
+    _not?: InputMaybe<Conference_Quota_Bool_Exp>;
+    _or?: InputMaybe<Array<Conference_Quota_Bool_Exp>>;
+    areStreamingEventsAllowed?: InputMaybe<Boolean_Comparison_Exp>;
+    areVideoChatEventsAllowed?: InputMaybe<Boolean_Comparison_Exp>;
+    conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    id?: InputMaybe<Uuid_Comparison_Exp>;
+    maxContentItems?: InputMaybe<Int_Comparison_Exp>;
+    maxMediaElementsPerContentItem?: InputMaybe<Int_Comparison_Exp>;
+    maxMediaElementsPerSponsor?: InputMaybe<Int_Comparison_Exp>;
+    maxNonMediaElementsPerContentItem?: InputMaybe<Int_Comparison_Exp>;
+    maxNonMediaElementsPerSponsor?: InputMaybe<Int_Comparison_Exp>;
+    maxNonStreamingProgramRooms?: InputMaybe<Int_Comparison_Exp>;
+    maxPublicSocialRooms?: InputMaybe<Int_Comparison_Exp>;
+    maxRegistrants?: InputMaybe<Int_Comparison_Exp>;
+    maxStreamingEventIndividualMinutes?: InputMaybe<Int_Comparison_Exp>;
+    maxStreamingEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    maxStreamingProgramRooms?: InputMaybe<Int_Comparison_Exp>;
+    maxSubconferences?: InputMaybe<Int_Comparison_Exp>;
+    maxSupportMeetingMinutes?: InputMaybe<Int_Comparison_Exp>;
+    maxVideoChatEventIndividualMinutes?: InputMaybe<Int_Comparison_Exp>;
+    maxVideoChatEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Int_Comparison_Exp>;
+    updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "conference.Quota" */
+export enum Conference_Quota_Constraint {
+    /** unique or primary key constraint */
+    QuotaConferenceIdKey = "Quota_conferenceId_key",
+    /** unique or primary key constraint */
+    QuotaPkey = "Quota_pkey",
+}
+
+/** input type for incrementing numeric columns in table "conference.Quota" */
+export type Conference_Quota_Inc_Input = {
+    maxContentItems?: InputMaybe<Scalars["Int"]>;
+    maxMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    maxMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    maxNonMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    maxNonMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    maxNonStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    maxPublicSocialRooms?: InputMaybe<Scalars["Int"]>;
+    maxRegistrants?: InputMaybe<Scalars["Int"]>;
+    maxStreamingEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    maxStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    maxStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    maxSubconferences?: InputMaybe<Scalars["Int"]>;
+    maxSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    maxVideoChatEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    maxVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "conference.Quota" */
+export type Conference_Quota_Insert_Input = {
+    areStreamingEventsAllowed?: InputMaybe<Scalars["Boolean"]>;
+    areVideoChatEventsAllowed?: InputMaybe<Scalars["Boolean"]>;
+    conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    maxContentItems?: InputMaybe<Scalars["Int"]>;
+    maxMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    maxMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    maxNonMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    maxNonMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    maxNonStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    maxPublicSocialRooms?: InputMaybe<Scalars["Int"]>;
+    maxRegistrants?: InputMaybe<Scalars["Int"]>;
+    maxStreamingEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    maxStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    maxStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    maxSubconferences?: InputMaybe<Scalars["Int"]>;
+    maxSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    maxVideoChatEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    maxVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Scalars["Int"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Conference_Quota_Max_Fields = {
+    __typename?: "conference_Quota_max_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    maxContentItems?: Maybe<Scalars["Int"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Int"]>;
+    maxRegistrants?: Maybe<Scalars["Int"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    maxSubconferences?: Maybe<Scalars["Int"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Int"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Conference_Quota_Min_Fields = {
+    __typename?: "conference_Quota_min_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    maxContentItems?: Maybe<Scalars["Int"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Int"]>;
+    maxRegistrants?: Maybe<Scalars["Int"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    maxSubconferences?: Maybe<Scalars["Int"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Int"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "conference.Quota" */
+export type Conference_Quota_Mutation_Response = {
+    __typename?: "conference_Quota_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Conference_Quota>;
+};
+
+/** input type for inserting object relation for remote table "conference.Quota" */
+export type Conference_Quota_Obj_Rel_Insert_Input = {
+    data: Conference_Quota_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: InputMaybe<Conference_Quota_On_Conflict>;
+};
+
+/** on conflict condition type for table "conference.Quota" */
+export type Conference_Quota_On_Conflict = {
+    constraint: Conference_Quota_Constraint;
+    update_columns?: Array<Conference_Quota_Update_Column>;
+    where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "conference.Quota". */
+export type Conference_Quota_Order_By = {
+    areStreamingEventsAllowed?: InputMaybe<Order_By>;
+    areVideoChatEventsAllowed?: InputMaybe<Order_By>;
+    conference?: InputMaybe<Conference_Conference_Order_By>;
+    conferenceId?: InputMaybe<Order_By>;
+    created_at?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    maxContentItems?: InputMaybe<Order_By>;
+    maxMediaElementsPerContentItem?: InputMaybe<Order_By>;
+    maxMediaElementsPerSponsor?: InputMaybe<Order_By>;
+    maxNonMediaElementsPerContentItem?: InputMaybe<Order_By>;
+    maxNonMediaElementsPerSponsor?: InputMaybe<Order_By>;
+    maxNonStreamingProgramRooms?: InputMaybe<Order_By>;
+    maxPublicSocialRooms?: InputMaybe<Order_By>;
+    maxRegistrants?: InputMaybe<Order_By>;
+    maxStreamingEventIndividualMinutes?: InputMaybe<Order_By>;
+    maxStreamingEventTotalMinutes?: InputMaybe<Order_By>;
+    maxStreamingProgramRooms?: InputMaybe<Order_By>;
+    maxSubconferences?: InputMaybe<Order_By>;
+    maxSupportMeetingMinutes?: InputMaybe<Order_By>;
+    maxVideoChatEventIndividualMinutes?: InputMaybe<Order_By>;
+    maxVideoChatEventTotalMinutes?: InputMaybe<Order_By>;
+    maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: conference_Quota */
+export type Conference_Quota_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "conference.Quota" */
+export enum Conference_Quota_Select_Column {
+    /** column name */
+    AreStreamingEventsAllowed = "areStreamingEventsAllowed",
+    /** column name */
+    AreVideoChatEventsAllowed = "areVideoChatEventsAllowed",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    MaxContentItems = "maxContentItems",
+    /** column name */
+    MaxMediaElementsPerContentItem = "maxMediaElementsPerContentItem",
+    /** column name */
+    MaxMediaElementsPerSponsor = "maxMediaElementsPerSponsor",
+    /** column name */
+    MaxNonMediaElementsPerContentItem = "maxNonMediaElementsPerContentItem",
+    /** column name */
+    MaxNonMediaElementsPerSponsor = "maxNonMediaElementsPerSponsor",
+    /** column name */
+    MaxNonStreamingProgramRooms = "maxNonStreamingProgramRooms",
+    /** column name */
+    MaxPublicSocialRooms = "maxPublicSocialRooms",
+    /** column name */
+    MaxRegistrants = "maxRegistrants",
+    /** column name */
+    MaxStreamingEventIndividualMinutes = "maxStreamingEventIndividualMinutes",
+    /** column name */
+    MaxStreamingEventTotalMinutes = "maxStreamingEventTotalMinutes",
+    /** column name */
+    MaxStreamingProgramRooms = "maxStreamingProgramRooms",
+    /** column name */
+    MaxSubconferences = "maxSubconferences",
+    /** column name */
+    MaxSupportMeetingMinutes = "maxSupportMeetingMinutes",
+    /** column name */
+    MaxVideoChatEventIndividualMinutes = "maxVideoChatEventIndividualMinutes",
+    /** column name */
+    MaxVideoChatEventTotalMinutes = "maxVideoChatEventTotalMinutes",
+    /** column name */
+    MaxVideoChatNonEventTotalMinutesConsumed = "maxVideoChatNonEventTotalMinutesConsumed",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "conference.Quota" */
+export type Conference_Quota_Set_Input = {
+    areStreamingEventsAllowed?: InputMaybe<Scalars["Boolean"]>;
+    areVideoChatEventsAllowed?: InputMaybe<Scalars["Boolean"]>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    maxContentItems?: InputMaybe<Scalars["Int"]>;
+    maxMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    maxMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    maxNonMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    maxNonMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    maxNonStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    maxPublicSocialRooms?: InputMaybe<Scalars["Int"]>;
+    maxRegistrants?: InputMaybe<Scalars["Int"]>;
+    maxStreamingEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    maxStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    maxStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    maxSubconferences?: InputMaybe<Scalars["Int"]>;
+    maxSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    maxVideoChatEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    maxVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Scalars["Int"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Conference_Quota_Stddev_Fields = {
+    __typename?: "conference_Quota_stddev_fields";
+    maxContentItems?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    maxRegistrants?: Maybe<Scalars["Float"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxSubconferences?: Maybe<Scalars["Float"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Conference_Quota_Stddev_Pop_Fields = {
+    __typename?: "conference_Quota_stddev_pop_fields";
+    maxContentItems?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    maxRegistrants?: Maybe<Scalars["Float"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxSubconferences?: Maybe<Scalars["Float"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Conference_Quota_Stddev_Samp_Fields = {
+    __typename?: "conference_Quota_stddev_samp_fields";
+    maxContentItems?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    maxRegistrants?: Maybe<Scalars["Float"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxSubconferences?: Maybe<Scalars["Float"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Conference_Quota_Sum_Fields = {
+    __typename?: "conference_Quota_sum_fields";
+    maxContentItems?: Maybe<Scalars["Int"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Int"]>;
+    maxRegistrants?: Maybe<Scalars["Int"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    maxSubconferences?: Maybe<Scalars["Int"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Int"]>;
+};
+
+/** update columns of table "conference.Quota" */
+export enum Conference_Quota_Update_Column {
+    /** column name */
+    AreStreamingEventsAllowed = "areStreamingEventsAllowed",
+    /** column name */
+    AreVideoChatEventsAllowed = "areVideoChatEventsAllowed",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    MaxContentItems = "maxContentItems",
+    /** column name */
+    MaxMediaElementsPerContentItem = "maxMediaElementsPerContentItem",
+    /** column name */
+    MaxMediaElementsPerSponsor = "maxMediaElementsPerSponsor",
+    /** column name */
+    MaxNonMediaElementsPerContentItem = "maxNonMediaElementsPerContentItem",
+    /** column name */
+    MaxNonMediaElementsPerSponsor = "maxNonMediaElementsPerSponsor",
+    /** column name */
+    MaxNonStreamingProgramRooms = "maxNonStreamingProgramRooms",
+    /** column name */
+    MaxPublicSocialRooms = "maxPublicSocialRooms",
+    /** column name */
+    MaxRegistrants = "maxRegistrants",
+    /** column name */
+    MaxStreamingEventIndividualMinutes = "maxStreamingEventIndividualMinutes",
+    /** column name */
+    MaxStreamingEventTotalMinutes = "maxStreamingEventTotalMinutes",
+    /** column name */
+    MaxStreamingProgramRooms = "maxStreamingProgramRooms",
+    /** column name */
+    MaxSubconferences = "maxSubconferences",
+    /** column name */
+    MaxSupportMeetingMinutes = "maxSupportMeetingMinutes",
+    /** column name */
+    MaxVideoChatEventIndividualMinutes = "maxVideoChatEventIndividualMinutes",
+    /** column name */
+    MaxVideoChatEventTotalMinutes = "maxVideoChatEventTotalMinutes",
+    /** column name */
+    MaxVideoChatNonEventTotalMinutesConsumed = "maxVideoChatNonEventTotalMinutesConsumed",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Conference_Quota_Var_Pop_Fields = {
+    __typename?: "conference_Quota_var_pop_fields";
+    maxContentItems?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    maxRegistrants?: Maybe<Scalars["Float"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxSubconferences?: Maybe<Scalars["Float"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Conference_Quota_Var_Samp_Fields = {
+    __typename?: "conference_Quota_var_samp_fields";
+    maxContentItems?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    maxRegistrants?: Maybe<Scalars["Float"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxSubconferences?: Maybe<Scalars["Float"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Conference_Quota_Variance_Fields = {
+    __typename?: "conference_Quota_variance_fields";
+    maxContentItems?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    maxRegistrants?: Maybe<Scalars["Float"]>;
+    maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    maxSubconferences?: Maybe<Scalars["Float"]>;
+    maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** columns and relationships of "conference.RemainingQuota" */
+export type Conference_RemainingQuota = {
+    __typename?: "conference_RemainingQuota";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    remainingContentItems?: Maybe<Scalars["bigint"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["bigint"]>;
+    remainingRegistrants?: Maybe<Scalars["bigint"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    remainingSubconferences?: Maybe<Scalars["bigint"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    slug?: Maybe<Scalars["String"]>;
+};
+
+/** aggregated selection of "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Aggregate = {
+    __typename?: "conference_RemainingQuota_aggregate";
+    aggregate?: Maybe<Conference_RemainingQuota_Aggregate_Fields>;
+    nodes: Array<Conference_RemainingQuota>;
+};
+
+/** aggregate fields of "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Aggregate_Fields = {
+    __typename?: "conference_RemainingQuota_aggregate_fields";
+    avg?: Maybe<Conference_RemainingQuota_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Conference_RemainingQuota_Max_Fields>;
+    min?: Maybe<Conference_RemainingQuota_Min_Fields>;
+    stddev?: Maybe<Conference_RemainingQuota_Stddev_Fields>;
+    stddev_pop?: Maybe<Conference_RemainingQuota_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Conference_RemainingQuota_Stddev_Samp_Fields>;
+    sum?: Maybe<Conference_RemainingQuota_Sum_Fields>;
+    var_pop?: Maybe<Conference_RemainingQuota_Var_Pop_Fields>;
+    var_samp?: Maybe<Conference_RemainingQuota_Var_Samp_Fields>;
+    variance?: Maybe<Conference_RemainingQuota_Variance_Fields>;
+};
+
+/** aggregate fields of "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Conference_RemainingQuota_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** aggregate avg on columns */
+export type Conference_RemainingQuota_Avg_Fields = {
+    __typename?: "conference_RemainingQuota_avg_fields";
+    remainingContentItems?: Maybe<Scalars["Float"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    remainingRegistrants?: Maybe<Scalars["Float"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingSubconferences?: Maybe<Scalars["Float"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** Boolean expression to filter rows from the table "conference.RemainingQuota". All fields are combined with a logical 'AND'. */
+export type Conference_RemainingQuota_Bool_Exp = {
+    _and?: InputMaybe<Array<Conference_RemainingQuota_Bool_Exp>>;
+    _not?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+    _or?: InputMaybe<Array<Conference_RemainingQuota_Bool_Exp>>;
+    conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    remainingContentItems?: InputMaybe<Bigint_Comparison_Exp>;
+    remainingNonStreamingProgramRooms?: InputMaybe<Bigint_Comparison_Exp>;
+    remainingPublicSocialRooms?: InputMaybe<Bigint_Comparison_Exp>;
+    remainingRegistrants?: InputMaybe<Bigint_Comparison_Exp>;
+    remainingStreamingEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    remainingStreamingProgramRooms?: InputMaybe<Bigint_Comparison_Exp>;
+    remainingSubconferences?: InputMaybe<Bigint_Comparison_Exp>;
+    remainingSupportMeetingMinutes?: InputMaybe<Int_Comparison_Exp>;
+    remainingVideoChatEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    remainingVideoChatNonEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    slug?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Insert_Input = {
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    remainingContentItems?: InputMaybe<Scalars["bigint"]>;
+    remainingNonStreamingProgramRooms?: InputMaybe<Scalars["bigint"]>;
+    remainingPublicSocialRooms?: InputMaybe<Scalars["bigint"]>;
+    remainingRegistrants?: InputMaybe<Scalars["bigint"]>;
+    remainingStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    remainingStreamingProgramRooms?: InputMaybe<Scalars["bigint"]>;
+    remainingSubconferences?: InputMaybe<Scalars["bigint"]>;
+    remainingSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    remainingVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    remainingVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    slug?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Conference_RemainingQuota_Max_Fields = {
+    __typename?: "conference_RemainingQuota_max_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    remainingContentItems?: Maybe<Scalars["bigint"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["bigint"]>;
+    remainingRegistrants?: Maybe<Scalars["bigint"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    remainingSubconferences?: Maybe<Scalars["bigint"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    slug?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate min on columns */
+export type Conference_RemainingQuota_Min_Fields = {
+    __typename?: "conference_RemainingQuota_min_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    remainingContentItems?: Maybe<Scalars["bigint"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["bigint"]>;
+    remainingRegistrants?: Maybe<Scalars["bigint"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    remainingSubconferences?: Maybe<Scalars["bigint"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    slug?: Maybe<Scalars["String"]>;
+};
+
+/** input type for inserting object relation for remote table "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Obj_Rel_Insert_Input = {
+    data: Conference_RemainingQuota_Insert_Input;
+};
+
+/** Ordering options when selecting data from "conference.RemainingQuota". */
+export type Conference_RemainingQuota_Order_By = {
+    conferenceId?: InputMaybe<Order_By>;
+    remainingContentItems?: InputMaybe<Order_By>;
+    remainingNonStreamingProgramRooms?: InputMaybe<Order_By>;
+    remainingPublicSocialRooms?: InputMaybe<Order_By>;
+    remainingRegistrants?: InputMaybe<Order_By>;
+    remainingStreamingEventTotalMinutes?: InputMaybe<Order_By>;
+    remainingStreamingProgramRooms?: InputMaybe<Order_By>;
+    remainingSubconferences?: InputMaybe<Order_By>;
+    remainingSupportMeetingMinutes?: InputMaybe<Order_By>;
+    remainingVideoChatEventTotalMinutes?: InputMaybe<Order_By>;
+    remainingVideoChatNonEventTotalMinutes?: InputMaybe<Order_By>;
+    slug?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "conference.RemainingQuota" */
+export enum Conference_RemainingQuota_Select_Column {
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    RemainingContentItems = "remainingContentItems",
+    /** column name */
+    RemainingNonStreamingProgramRooms = "remainingNonStreamingProgramRooms",
+    /** column name */
+    RemainingPublicSocialRooms = "remainingPublicSocialRooms",
+    /** column name */
+    RemainingRegistrants = "remainingRegistrants",
+    /** column name */
+    RemainingStreamingEventTotalMinutes = "remainingStreamingEventTotalMinutes",
+    /** column name */
+    RemainingStreamingProgramRooms = "remainingStreamingProgramRooms",
+    /** column name */
+    RemainingSubconferences = "remainingSubconferences",
+    /** column name */
+    RemainingSupportMeetingMinutes = "remainingSupportMeetingMinutes",
+    /** column name */
+    RemainingVideoChatEventTotalMinutes = "remainingVideoChatEventTotalMinutes",
+    /** column name */
+    RemainingVideoChatNonEventTotalMinutes = "remainingVideoChatNonEventTotalMinutes",
+    /** column name */
+    Slug = "slug",
+}
+
+/** aggregate stddev on columns */
+export type Conference_RemainingQuota_Stddev_Fields = {
+    __typename?: "conference_RemainingQuota_stddev_fields";
+    remainingContentItems?: Maybe<Scalars["Float"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    remainingRegistrants?: Maybe<Scalars["Float"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingSubconferences?: Maybe<Scalars["Float"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Conference_RemainingQuota_Stddev_Pop_Fields = {
+    __typename?: "conference_RemainingQuota_stddev_pop_fields";
+    remainingContentItems?: Maybe<Scalars["Float"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    remainingRegistrants?: Maybe<Scalars["Float"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingSubconferences?: Maybe<Scalars["Float"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Conference_RemainingQuota_Stddev_Samp_Fields = {
+    __typename?: "conference_RemainingQuota_stddev_samp_fields";
+    remainingContentItems?: Maybe<Scalars["Float"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    remainingRegistrants?: Maybe<Scalars["Float"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingSubconferences?: Maybe<Scalars["Float"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Conference_RemainingQuota_Sum_Fields = {
+    __typename?: "conference_RemainingQuota_sum_fields";
+    remainingContentItems?: Maybe<Scalars["bigint"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["bigint"]>;
+    remainingRegistrants?: Maybe<Scalars["bigint"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    remainingSubconferences?: Maybe<Scalars["bigint"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate var_pop on columns */
+export type Conference_RemainingQuota_Var_Pop_Fields = {
+    __typename?: "conference_RemainingQuota_var_pop_fields";
+    remainingContentItems?: Maybe<Scalars["Float"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    remainingRegistrants?: Maybe<Scalars["Float"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingSubconferences?: Maybe<Scalars["Float"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Conference_RemainingQuota_Var_Samp_Fields = {
+    __typename?: "conference_RemainingQuota_var_samp_fields";
+    remainingContentItems?: Maybe<Scalars["Float"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    remainingRegistrants?: Maybe<Scalars["Float"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingSubconferences?: Maybe<Scalars["Float"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Conference_RemainingQuota_Variance_Fields = {
+    __typename?: "conference_RemainingQuota_variance_fields";
+    remainingContentItems?: Maybe<Scalars["Float"]>;
+    remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    remainingRegistrants?: Maybe<Scalars["Float"]>;
+    remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    remainingSubconferences?: Maybe<Scalars["Float"]>;
+    remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
 /** columns and relationships of "conference.Subconference" */
 export type Conference_Subconference = {
     __typename?: "conference_Subconference";
@@ -8412,6 +9249,330 @@ export enum Conference_Subconference_Update_Column {
     UpdatedAt = "updated_at",
 }
 
+/** columns and relationships of "conference.Usage" */
+export type Conference_Usage = {
+    __typename?: "conference_Usage";
+    /** An object relationship */
+    conference: Conference_Conference;
+    conferenceId: Scalars["uuid"];
+    consumedStreamingEventTotalMinutes: Scalars["Int"];
+    consumedSupportMeetingMinutes: Scalars["Int"];
+    consumedVideoChatEventTotalMinutes: Scalars["Int"];
+    consumedVideoChatNonEventTotalMinutes: Scalars["Int"];
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    lastUpdatedConsumedStreamingEventTotalMinutes: Scalars["timestamptz"];
+    lastUpdatedConsumedSupportMeetingMinutes: Scalars["timestamptz"];
+    lastUpdatedConsumedVideoChatEventTotalMinutes: Scalars["timestamptz"];
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes: Scalars["timestamptz"];
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "conference.Usage" */
+export type Conference_Usage_Aggregate = {
+    __typename?: "conference_Usage_aggregate";
+    aggregate?: Maybe<Conference_Usage_Aggregate_Fields>;
+    nodes: Array<Conference_Usage>;
+};
+
+/** aggregate fields of "conference.Usage" */
+export type Conference_Usage_Aggregate_Fields = {
+    __typename?: "conference_Usage_aggregate_fields";
+    avg?: Maybe<Conference_Usage_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Conference_Usage_Max_Fields>;
+    min?: Maybe<Conference_Usage_Min_Fields>;
+    stddev?: Maybe<Conference_Usage_Stddev_Fields>;
+    stddev_pop?: Maybe<Conference_Usage_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Conference_Usage_Stddev_Samp_Fields>;
+    sum?: Maybe<Conference_Usage_Sum_Fields>;
+    var_pop?: Maybe<Conference_Usage_Var_Pop_Fields>;
+    var_samp?: Maybe<Conference_Usage_Var_Samp_Fields>;
+    variance?: Maybe<Conference_Usage_Variance_Fields>;
+};
+
+/** aggregate fields of "conference.Usage" */
+export type Conference_Usage_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Conference_Usage_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** aggregate avg on columns */
+export type Conference_Usage_Avg_Fields = {
+    __typename?: "conference_Usage_avg_fields";
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** Boolean expression to filter rows from the table "conference.Usage". All fields are combined with a logical 'AND'. */
+export type Conference_Usage_Bool_Exp = {
+    _and?: InputMaybe<Array<Conference_Usage_Bool_Exp>>;
+    _not?: InputMaybe<Conference_Usage_Bool_Exp>;
+    _or?: InputMaybe<Array<Conference_Usage_Bool_Exp>>;
+    conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    consumedStreamingEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    consumedSupportMeetingMinutes?: InputMaybe<Int_Comparison_Exp>;
+    consumedVideoChatEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    consumedVideoChatNonEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    id?: InputMaybe<Uuid_Comparison_Exp>;
+    lastUpdatedConsumedStreamingEventTotalMinutes?: InputMaybe<Timestamptz_Comparison_Exp>;
+    lastUpdatedConsumedSupportMeetingMinutes?: InputMaybe<Timestamptz_Comparison_Exp>;
+    lastUpdatedConsumedVideoChatEventTotalMinutes?: InputMaybe<Timestamptz_Comparison_Exp>;
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes?: InputMaybe<Timestamptz_Comparison_Exp>;
+    updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "conference.Usage" */
+export enum Conference_Usage_Constraint {
+    /** unique or primary key constraint */
+    UsageConferenceIdKey = "Usage_conferenceId_key",
+    /** unique or primary key constraint */
+    UsagePkey = "Usage_pkey",
+}
+
+/** input type for incrementing numeric columns in table "conference.Usage" */
+export type Conference_Usage_Inc_Input = {
+    consumedStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    consumedSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    consumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    consumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "conference.Usage" */
+export type Conference_Usage_Insert_Input = {
+    conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    consumedStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    consumedSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    consumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    consumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    lastUpdatedConsumedStreamingEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedSupportMeetingMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Conference_Usage_Max_Fields = {
+    __typename?: "conference_Usage_max_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    lastUpdatedConsumedStreamingEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedSupportMeetingMinutes?: Maybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedVideoChatEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Conference_Usage_Min_Fields = {
+    __typename?: "conference_Usage_min_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    lastUpdatedConsumedStreamingEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedSupportMeetingMinutes?: Maybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedVideoChatEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "conference.Usage" */
+export type Conference_Usage_Mutation_Response = {
+    __typename?: "conference_Usage_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Conference_Usage>;
+};
+
+/** input type for inserting object relation for remote table "conference.Usage" */
+export type Conference_Usage_Obj_Rel_Insert_Input = {
+    data: Conference_Usage_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: InputMaybe<Conference_Usage_On_Conflict>;
+};
+
+/** on conflict condition type for table "conference.Usage" */
+export type Conference_Usage_On_Conflict = {
+    constraint: Conference_Usage_Constraint;
+    update_columns?: Array<Conference_Usage_Update_Column>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "conference.Usage". */
+export type Conference_Usage_Order_By = {
+    conference?: InputMaybe<Conference_Conference_Order_By>;
+    conferenceId?: InputMaybe<Order_By>;
+    consumedStreamingEventTotalMinutes?: InputMaybe<Order_By>;
+    consumedSupportMeetingMinutes?: InputMaybe<Order_By>;
+    consumedVideoChatEventTotalMinutes?: InputMaybe<Order_By>;
+    consumedVideoChatNonEventTotalMinutes?: InputMaybe<Order_By>;
+    created_at?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    lastUpdatedConsumedStreamingEventTotalMinutes?: InputMaybe<Order_By>;
+    lastUpdatedConsumedSupportMeetingMinutes?: InputMaybe<Order_By>;
+    lastUpdatedConsumedVideoChatEventTotalMinutes?: InputMaybe<Order_By>;
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: conference_Usage */
+export type Conference_Usage_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "conference.Usage" */
+export enum Conference_Usage_Select_Column {
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    ConsumedStreamingEventTotalMinutes = "consumedStreamingEventTotalMinutes",
+    /** column name */
+    ConsumedSupportMeetingMinutes = "consumedSupportMeetingMinutes",
+    /** column name */
+    ConsumedVideoChatEventTotalMinutes = "consumedVideoChatEventTotalMinutes",
+    /** column name */
+    ConsumedVideoChatNonEventTotalMinutes = "consumedVideoChatNonEventTotalMinutes",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    LastUpdatedConsumedStreamingEventTotalMinutes = "lastUpdatedConsumedStreamingEventTotalMinutes",
+    /** column name */
+    LastUpdatedConsumedSupportMeetingMinutes = "lastUpdatedConsumedSupportMeetingMinutes",
+    /** column name */
+    LastUpdatedConsumedVideoChatEventTotalMinutes = "lastUpdatedConsumedVideoChatEventTotalMinutes",
+    /** column name */
+    LastUpdatedConsumedVideoChatNonEventTotalMinutes = "lastUpdatedConsumedVideoChatNonEventTotalMinutes",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "conference.Usage" */
+export type Conference_Usage_Set_Input = {
+    conferenceId?: InputMaybe<Scalars["uuid"]>;
+    consumedStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    consumedSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    consumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    consumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    id?: InputMaybe<Scalars["uuid"]>;
+    lastUpdatedConsumedStreamingEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedSupportMeetingMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Conference_Usage_Stddev_Fields = {
+    __typename?: "conference_Usage_stddev_fields";
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Conference_Usage_Stddev_Pop_Fields = {
+    __typename?: "conference_Usage_stddev_pop_fields";
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Conference_Usage_Stddev_Samp_Fields = {
+    __typename?: "conference_Usage_stddev_samp_fields";
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Conference_Usage_Sum_Fields = {
+    __typename?: "conference_Usage_sum_fields";
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+};
+
+/** update columns of table "conference.Usage" */
+export enum Conference_Usage_Update_Column {
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    ConsumedStreamingEventTotalMinutes = "consumedStreamingEventTotalMinutes",
+    /** column name */
+    ConsumedSupportMeetingMinutes = "consumedSupportMeetingMinutes",
+    /** column name */
+    ConsumedVideoChatEventTotalMinutes = "consumedVideoChatEventTotalMinutes",
+    /** column name */
+    ConsumedVideoChatNonEventTotalMinutes = "consumedVideoChatNonEventTotalMinutes",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    LastUpdatedConsumedStreamingEventTotalMinutes = "lastUpdatedConsumedStreamingEventTotalMinutes",
+    /** column name */
+    LastUpdatedConsumedSupportMeetingMinutes = "lastUpdatedConsumedSupportMeetingMinutes",
+    /** column name */
+    LastUpdatedConsumedVideoChatEventTotalMinutes = "lastUpdatedConsumedVideoChatEventTotalMinutes",
+    /** column name */
+    LastUpdatedConsumedVideoChatNonEventTotalMinutes = "lastUpdatedConsumedVideoChatNonEventTotalMinutes",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Conference_Usage_Var_Pop_Fields = {
+    __typename?: "conference_Usage_var_pop_fields";
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Conference_Usage_Var_Samp_Fields = {
+    __typename?: "conference_Usage_var_samp_fields";
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Conference_Usage_Variance_Fields = {
+    __typename?: "conference_Usage_variance_fields";
+    consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
 /** columns and relationships of "conference.VisibilityLevel" */
 export type Conference_VisibilityLevel = {
     __typename?: "conference_VisibilityLevel";
@@ -8542,7 +9703,12 @@ export enum Conference_VisibilityLevel_Update_Column {
     Name = "name",
 }
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_Element = {
     __typename?: "content_Element";
     /** An object relationship */
@@ -8581,22 +9747,42 @@ export type Content_Element = {
     youTubeUploads_aggregate: Video_YouTubeUpload_Aggregate;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementDataArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementLayoutDataArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementSourceArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementStatsArgs = {
     distinct_on?: InputMaybe<Array<Analytics_ContentElementStats_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -8605,7 +9791,12 @@ export type Content_ElementStatsArgs = {
     where?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementStats_AggregateArgs = {
     distinct_on?: InputMaybe<Array<Analytics_ContentElementStats_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -8614,7 +9805,12 @@ export type Content_ElementStats_AggregateArgs = {
     where?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementYouTubeUploadsArgs = {
     distinct_on?: InputMaybe<Array<Video_YouTubeUpload_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -8623,7 +9819,12 @@ export type Content_ElementYouTubeUploadsArgs = {
     where?: InputMaybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementYouTubeUploads_AggregateArgs = {
     distinct_on?: InputMaybe<Array<Video_YouTubeUpload_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -14008,6 +15209,8 @@ export type Jsonb_Comparison_Exp = {
 /** mutation root */
 export type Mutation_Root = {
     __typename?: "mutation_root";
+    /** execute VOLATILE function "conference.updateEventUsage" which returns "conference.Usage" */
+    conference_updateEventUsage: Array<Conference_Usage>;
     createItemRoom?: Maybe<CreateItemRoomOutput>;
     createRoomDm?: Maybe<CreateRoomDmOutput>;
     /** delete data from the table: "Email" */
@@ -14118,10 +15321,18 @@ export type Mutation_Root = {
     delete_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** delete single row from the table: "conference.DemoCode" */
     delete_conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
+    /** delete data from the table: "conference.Quota" */
+    delete_conference_Quota?: Maybe<Conference_Quota_Mutation_Response>;
+    /** delete single row from the table: "conference.Quota" */
+    delete_conference_Quota_by_pk?: Maybe<Conference_Quota>;
     /** delete data from the table: "conference.Subconference" */
     delete_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** delete single row from the table: "conference.Subconference" */
     delete_conference_Subconference_by_pk?: Maybe<Conference_Subconference>;
+    /** delete data from the table: "conference.Usage" */
+    delete_conference_Usage?: Maybe<Conference_Usage_Mutation_Response>;
+    /** delete single row from the table: "conference.Usage" */
+    delete_conference_Usage_by_pk?: Maybe<Conference_Usage>;
     /** delete data from the table: "conference.VisibilityLevel" */
     delete_conference_VisibilityLevel?: Maybe<Conference_VisibilityLevel_Mutation_Response>;
     /** delete single row from the table: "conference.VisibilityLevel" */
@@ -14262,10 +15473,6 @@ export type Mutation_Root = {
     delete_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
     /** delete single row from the table: "room.Mode" */
     delete_room_Mode_by_pk?: Maybe<Room_Mode>;
-    /** delete data from the table: "room.Participant" */
-    delete_room_Participant?: Maybe<Room_Participant_Mutation_Response>;
-    /** delete single row from the table: "room.Participant" */
-    delete_room_Participant_by_pk?: Maybe<Room_Participant>;
     /** delete data from the table: "room.PersonRole" */
     delete_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** delete single row from the table: "room.PersonRole" */
@@ -14518,10 +15725,18 @@ export type Mutation_Root = {
     insert_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** insert a single row into the table: "conference.DemoCode" */
     insert_conference_DemoCode_one?: Maybe<Conference_DemoCode>;
+    /** insert data into the table: "conference.Quota" */
+    insert_conference_Quota?: Maybe<Conference_Quota_Mutation_Response>;
+    /** insert a single row into the table: "conference.Quota" */
+    insert_conference_Quota_one?: Maybe<Conference_Quota>;
     /** insert data into the table: "conference.Subconference" */
     insert_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** insert a single row into the table: "conference.Subconference" */
     insert_conference_Subconference_one?: Maybe<Conference_Subconference>;
+    /** insert data into the table: "conference.Usage" */
+    insert_conference_Usage?: Maybe<Conference_Usage_Mutation_Response>;
+    /** insert a single row into the table: "conference.Usage" */
+    insert_conference_Usage_one?: Maybe<Conference_Usage>;
     /** insert data into the table: "conference.VisibilityLevel" */
     insert_conference_VisibilityLevel?: Maybe<Conference_VisibilityLevel_Mutation_Response>;
     /** insert a single row into the table: "conference.VisibilityLevel" */
@@ -14662,10 +15877,6 @@ export type Mutation_Root = {
     insert_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
     /** insert a single row into the table: "room.Mode" */
     insert_room_Mode_one?: Maybe<Room_Mode>;
-    /** insert data into the table: "room.Participant" */
-    insert_room_Participant?: Maybe<Room_Participant_Mutation_Response>;
-    /** insert a single row into the table: "room.Participant" */
-    insert_room_Participant_one?: Maybe<Room_Participant>;
     /** insert data into the table: "room.PersonRole" */
     insert_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** insert a single row into the table: "room.PersonRole" */
@@ -14932,10 +16143,18 @@ export type Mutation_Root = {
     update_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** update single row of the table: "conference.DemoCode" */
     update_conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
+    /** update data of the table: "conference.Quota" */
+    update_conference_Quota?: Maybe<Conference_Quota_Mutation_Response>;
+    /** update single row of the table: "conference.Quota" */
+    update_conference_Quota_by_pk?: Maybe<Conference_Quota>;
     /** update data of the table: "conference.Subconference" */
     update_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** update single row of the table: "conference.Subconference" */
     update_conference_Subconference_by_pk?: Maybe<Conference_Subconference>;
+    /** update data of the table: "conference.Usage" */
+    update_conference_Usage?: Maybe<Conference_Usage_Mutation_Response>;
+    /** update single row of the table: "conference.Usage" */
+    update_conference_Usage_by_pk?: Maybe<Conference_Usage>;
     /** update data of the table: "conference.VisibilityLevel" */
     update_conference_VisibilityLevel?: Maybe<Conference_VisibilityLevel_Mutation_Response>;
     /** update single row of the table: "conference.VisibilityLevel" */
@@ -15076,10 +16295,6 @@ export type Mutation_Root = {
     update_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
     /** update single row of the table: "room.Mode" */
     update_room_Mode_by_pk?: Maybe<Room_Mode>;
-    /** update data of the table: "room.Participant" */
-    update_room_Participant?: Maybe<Room_Participant_Mutation_Response>;
-    /** update single row of the table: "room.Participant" */
-    update_room_Participant_by_pk?: Maybe<Room_Participant>;
     /** update data of the table: "room.PersonRole" */
     update_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** update single row of the table: "room.PersonRole" */
@@ -15222,6 +16437,15 @@ export type Mutation_Root = {
     update_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** update single row of the table: "video.YouTubeUpload" */
     update_video_YouTubeUpload_by_pk?: Maybe<Video_YouTubeUpload>;
+};
+
+/** mutation root */
+export type Mutation_RootConference_UpdateEventUsageArgs = {
+    distinct_on?: InputMaybe<Array<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
 };
 
 /** mutation root */
@@ -15511,12 +16735,32 @@ export type Mutation_RootDelete_Conference_DemoCode_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Conference_QuotaArgs = {
+    where: Conference_Quota_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_Quota_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Conference_SubconferenceArgs = {
     where: Conference_Subconference_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootDelete_Conference_Subconference_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_UsageArgs = {
+    where: Conference_Usage_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_Usage_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -15868,16 +17112,6 @@ export type Mutation_RootDelete_Room_ModeArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_Mode_By_PkArgs = {
     name: Scalars["String"];
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Room_ParticipantArgs = {
-    where: Room_Participant_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Room_Participant_By_PkArgs = {
-    id: Scalars["uuid"];
 };
 
 /** mutation root */
@@ -16566,6 +17800,18 @@ export type Mutation_RootInsert_Conference_DemoCode_OneArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Conference_QuotaArgs = {
+    objects: Array<Conference_Quota_Insert_Input>;
+    on_conflict?: InputMaybe<Conference_Quota_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_Quota_OneArgs = {
+    object: Conference_Quota_Insert_Input;
+    on_conflict?: InputMaybe<Conference_Quota_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Conference_SubconferenceArgs = {
     objects: Array<Conference_Subconference_Insert_Input>;
     on_conflict?: InputMaybe<Conference_Subconference_On_Conflict>;
@@ -16575,6 +17821,18 @@ export type Mutation_RootInsert_Conference_SubconferenceArgs = {
 export type Mutation_RootInsert_Conference_Subconference_OneArgs = {
     object: Conference_Subconference_Insert_Input;
     on_conflict?: InputMaybe<Conference_Subconference_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_UsageArgs = {
+    objects: Array<Conference_Usage_Insert_Input>;
+    on_conflict?: InputMaybe<Conference_Usage_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_Usage_OneArgs = {
+    object: Conference_Usage_Insert_Input;
+    on_conflict?: InputMaybe<Conference_Usage_On_Conflict>;
 };
 
 /** mutation root */
@@ -16995,18 +18253,6 @@ export type Mutation_RootInsert_Room_ModeArgs = {
 export type Mutation_RootInsert_Room_Mode_OneArgs = {
     object: Room_Mode_Insert_Input;
     on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Room_ParticipantArgs = {
-    objects: Array<Room_Participant_Insert_Input>;
-    on_conflict?: InputMaybe<Room_Participant_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Room_Participant_OneArgs = {
-    object: Room_Participant_Insert_Input;
-    on_conflict?: InputMaybe<Room_Participant_On_Conflict>;
 };
 
 /** mutation root */
@@ -17906,6 +19152,20 @@ export type Mutation_RootUpdate_Conference_DemoCode_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Conference_QuotaArgs = {
+    _inc?: InputMaybe<Conference_Quota_Inc_Input>;
+    _set?: InputMaybe<Conference_Quota_Set_Input>;
+    where: Conference_Quota_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_Quota_By_PkArgs = {
+    _inc?: InputMaybe<Conference_Quota_Inc_Input>;
+    _set?: InputMaybe<Conference_Quota_Set_Input>;
+    pk_columns: Conference_Quota_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Conference_SubconferenceArgs = {
     _set?: InputMaybe<Conference_Subconference_Set_Input>;
     where: Conference_Subconference_Bool_Exp;
@@ -17915,6 +19175,20 @@ export type Mutation_RootUpdate_Conference_SubconferenceArgs = {
 export type Mutation_RootUpdate_Conference_Subconference_By_PkArgs = {
     _set?: InputMaybe<Conference_Subconference_Set_Input>;
     pk_columns: Conference_Subconference_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_UsageArgs = {
+    _inc?: InputMaybe<Conference_Usage_Inc_Input>;
+    _set?: InputMaybe<Conference_Usage_Set_Input>;
+    where: Conference_Usage_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_Usage_By_PkArgs = {
+    _inc?: InputMaybe<Conference_Usage_Inc_Input>;
+    _set?: InputMaybe<Conference_Usage_Set_Input>;
+    pk_columns: Conference_Usage_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -18457,18 +19731,6 @@ export type Mutation_RootUpdate_Room_ModeArgs = {
 export type Mutation_RootUpdate_Room_Mode_By_PkArgs = {
     _set?: InputMaybe<Room_Mode_Set_Input>;
     pk_columns: Room_Mode_Pk_Columns_Input;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Room_ParticipantArgs = {
-    _set?: InputMaybe<Room_Participant_Set_Input>;
-    where: Room_Participant_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Room_Participant_By_PkArgs = {
-    _set?: InputMaybe<Room_Participant_Set_Input>;
-    pk_columns: Room_Participant_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -19196,12 +20458,28 @@ export type Query_Root = {
     conference_DemoCode_aggregate: Conference_DemoCode_Aggregate;
     /** fetch data from the table: "conference.DemoCode" using primary key columns */
     conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
+    /** fetch data from the table: "conference.Quota" */
+    conference_Quota: Array<Conference_Quota>;
+    /** fetch aggregated fields from the table: "conference.Quota" */
+    conference_Quota_aggregate: Conference_Quota_Aggregate;
+    /** fetch data from the table: "conference.Quota" using primary key columns */
+    conference_Quota_by_pk?: Maybe<Conference_Quota>;
+    /** fetch data from the table: "conference.RemainingQuota" */
+    conference_RemainingQuota: Array<Conference_RemainingQuota>;
+    /** fetch aggregated fields from the table: "conference.RemainingQuota" */
+    conference_RemainingQuota_aggregate: Conference_RemainingQuota_Aggregate;
     /** fetch data from the table: "conference.Subconference" */
     conference_Subconference: Array<Conference_Subconference>;
     /** fetch aggregated fields from the table: "conference.Subconference" */
     conference_Subconference_aggregate: Conference_Subconference_Aggregate;
     /** fetch data from the table: "conference.Subconference" using primary key columns */
     conference_Subconference_by_pk?: Maybe<Conference_Subconference>;
+    /** fetch data from the table: "conference.Usage" */
+    conference_Usage: Array<Conference_Usage>;
+    /** fetch aggregated fields from the table: "conference.Usage" */
+    conference_Usage_aggregate: Conference_Usage_Aggregate;
+    /** fetch data from the table: "conference.Usage" using primary key columns */
+    conference_Usage_by_pk?: Maybe<Conference_Usage>;
     /** fetch data from the table: "conference.VisibilityLevel" */
     conference_VisibilityLevel: Array<Conference_VisibilityLevel>;
     /** fetch aggregated fields from the table: "conference.VisibilityLevel" */
@@ -19431,12 +20709,6 @@ export type Query_Root = {
     room_Mode_aggregate: Room_Mode_Aggregate;
     /** fetch data from the table: "room.Mode" using primary key columns */
     room_Mode_by_pk?: Maybe<Room_Mode>;
-    /** fetch data from the table: "room.Participant" */
-    room_Participant: Array<Room_Participant>;
-    /** fetch aggregated fields from the table: "room.Participant" */
-    room_Participant_aggregate: Room_Participant_Aggregate;
-    /** fetch data from the table: "room.Participant" using primary key columns */
-    room_Participant_by_pk?: Maybe<Room_Participant>;
     /** fetch data from the table: "room.PersonRole" */
     room_PersonRole: Array<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -20261,6 +21533,42 @@ export type Query_RootConference_DemoCode_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Query_RootConference_QuotaArgs = {
+    distinct_on?: InputMaybe<Array<Conference_Quota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_Quota_Order_By>>;
+    where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+export type Query_RootConference_Quota_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Conference_Quota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_Quota_Order_By>>;
+    where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+export type Query_RootConference_Quota_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootConference_RemainingQuotaArgs = {
+    distinct_on?: InputMaybe<Array<Conference_RemainingQuota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_RemainingQuota_Order_By>>;
+    where?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+};
+
+export type Query_RootConference_RemainingQuota_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Conference_RemainingQuota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_RemainingQuota_Order_By>>;
+    where?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+};
+
 export type Query_RootConference_SubconferenceArgs = {
     distinct_on?: InputMaybe<Array<Conference_Subconference_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -20278,6 +21586,26 @@ export type Query_RootConference_Subconference_AggregateArgs = {
 };
 
 export type Query_RootConference_Subconference_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootConference_UsageArgs = {
+    distinct_on?: InputMaybe<Array<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+export type Query_RootConference_Usage_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+export type Query_RootConference_Usage_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -21051,26 +22379,6 @@ export type Query_RootRoom_Mode_AggregateArgs = {
 
 export type Query_RootRoom_Mode_By_PkArgs = {
     name: Scalars["String"];
-};
-
-export type Query_RootRoom_ParticipantArgs = {
-    distinct_on?: InputMaybe<Array<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-export type Query_RootRoom_Participant_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-export type Query_RootRoom_Participant_By_PkArgs = {
-    id: Scalars["uuid"];
 };
 
 export type Query_RootRoom_PersonRoleArgs = {
@@ -23298,10 +24606,6 @@ export type Registrant_Registrant = {
     /** An aggregate relationship */
     programPeople_aggregate: Collection_ProgramPerson_Aggregate;
     /** An array relationship */
-    roomParticipants: Array<Room_Participant>;
-    /** An aggregate relationship */
-    roomParticipants_aggregate: Room_Participant_Aggregate;
-    /** An array relationship */
     subconferenceMemberships: Array<Registrant_SubconferenceMembership>;
     /** An aggregate relationship */
     subconferenceMemberships_aggregate: Registrant_SubconferenceMembership_Aggregate;
@@ -23368,24 +24672,6 @@ export type Registrant_RegistrantProgramPeople_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Collection_ProgramPerson_Order_By>>;
     where?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-};
-
-/** columns and relationships of "registrant.Registrant" */
-export type Registrant_RegistrantRoomParticipantsArgs = {
-    distinct_on?: InputMaybe<Array<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-/** columns and relationships of "registrant.Registrant" */
-export type Registrant_RegistrantRoomParticipants_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
 };
 
 /** columns and relationships of "registrant.Registrant" */
@@ -23586,7 +24872,6 @@ export type Registrant_Registrant_Bool_Exp = {
     inviteSent?: InputMaybe<Boolean_Comparison_Exp>;
     profile?: InputMaybe<Registrant_Profile_Bool_Exp>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-    roomParticipants?: InputMaybe<Room_Participant_Bool_Exp>;
     subconferenceMemberships?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     user?: InputMaybe<User_Bool_Exp>;
@@ -23614,7 +24899,6 @@ export type Registrant_Registrant_Insert_Input = {
     invitation?: InputMaybe<Registrant_Invitation_Obj_Rel_Insert_Input>;
     profile?: InputMaybe<Registrant_Profile_Obj_Rel_Insert_Input>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
-    roomParticipants?: InputMaybe<Room_Participant_Arr_Rel_Insert_Input>;
     subconferenceMemberships?: InputMaybe<Registrant_SubconferenceMembership_Arr_Rel_Insert_Input>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     user?: InputMaybe<User_Obj_Rel_Insert_Input>;
@@ -23701,7 +24985,6 @@ export type Registrant_Registrant_Order_By = {
     inviteSent?: InputMaybe<Order_By>;
     profile?: InputMaybe<Registrant_Profile_Order_By>;
     programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
-    roomParticipants_aggregate?: InputMaybe<Room_Participant_Aggregate_Order_By>;
     subconferenceMemberships_aggregate?: InputMaybe<Registrant_SubconferenceMembership_Aggregate_Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     user?: InputMaybe<User_Order_By>;
@@ -25010,252 +26293,6 @@ export enum Room_Mode_Update_Column {
     Name = "name",
 }
 
-/** columns and relationships of "room.Participant" */
-export type Room_Participant = {
-    __typename?: "room_Participant";
-    chimeRegistrantId?: Maybe<Scalars["String"]>;
-    /** An object relationship */
-    conference: Conference_Conference;
-    conferenceId: Scalars["uuid"];
-    createdAt: Scalars["timestamptz"];
-    id: Scalars["uuid"];
-    /** An object relationship */
-    registrant: Registrant_Registrant;
-    registrantId: Scalars["uuid"];
-    /** An object relationship */
-    room: Room_Room;
-    roomId: Scalars["uuid"];
-    subconferenceId?: Maybe<Scalars["uuid"]>;
-    updatedAt: Scalars["timestamptz"];
-    vonageConnectionId?: Maybe<Scalars["String"]>;
-};
-
-/** aggregated selection of "room.Participant" */
-export type Room_Participant_Aggregate = {
-    __typename?: "room_Participant_aggregate";
-    aggregate?: Maybe<Room_Participant_Aggregate_Fields>;
-    nodes: Array<Room_Participant>;
-};
-
-/** aggregate fields of "room.Participant" */
-export type Room_Participant_Aggregate_Fields = {
-    __typename?: "room_Participant_aggregate_fields";
-    count: Scalars["Int"];
-    max?: Maybe<Room_Participant_Max_Fields>;
-    min?: Maybe<Room_Participant_Min_Fields>;
-};
-
-/** aggregate fields of "room.Participant" */
-export type Room_Participant_Aggregate_FieldsCountArgs = {
-    columns?: InputMaybe<Array<Room_Participant_Select_Column>>;
-    distinct?: InputMaybe<Scalars["Boolean"]>;
-};
-
-/** order by aggregate values of table "room.Participant" */
-export type Room_Participant_Aggregate_Order_By = {
-    count?: InputMaybe<Order_By>;
-    max?: InputMaybe<Room_Participant_Max_Order_By>;
-    min?: InputMaybe<Room_Participant_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "room.Participant" */
-export type Room_Participant_Arr_Rel_Insert_Input = {
-    data: Array<Room_Participant_Insert_Input>;
-    /** on conflict condition */
-    on_conflict?: InputMaybe<Room_Participant_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "room.Participant". All fields are combined with a logical 'AND'. */
-export type Room_Participant_Bool_Exp = {
-    _and?: InputMaybe<Array<Room_Participant_Bool_Exp>>;
-    _not?: InputMaybe<Room_Participant_Bool_Exp>;
-    _or?: InputMaybe<Array<Room_Participant_Bool_Exp>>;
-    chimeRegistrantId?: InputMaybe<String_Comparison_Exp>;
-    conference?: InputMaybe<Conference_Conference_Bool_Exp>;
-    conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-    id?: InputMaybe<Uuid_Comparison_Exp>;
-    registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
-    registrantId?: InputMaybe<Uuid_Comparison_Exp>;
-    room?: InputMaybe<Room_Room_Bool_Exp>;
-    roomId?: InputMaybe<Uuid_Comparison_Exp>;
-    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-    vonageConnectionId?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "room.Participant" */
-export enum Room_Participant_Constraint {
-    /** unique or primary key constraint */
-    ParticipantPkey = "Participant_pkey",
-    /** unique or primary key constraint */
-    ParticipantRoomIdRegistrantIdKey = "Participant_roomId_registrantId_key",
-}
-
-/** input type for inserting data into table "room.Participant" */
-export type Room_Participant_Insert_Input = {
-    chimeRegistrantId?: InputMaybe<Scalars["String"]>;
-    conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
-    conferenceId?: InputMaybe<Scalars["uuid"]>;
-    createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    id?: InputMaybe<Scalars["uuid"]>;
-    registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
-    registrantId?: InputMaybe<Scalars["uuid"]>;
-    room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
-    roomId?: InputMaybe<Scalars["uuid"]>;
-    subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    updatedAt?: InputMaybe<Scalars["timestamptz"]>;
-    vonageConnectionId?: InputMaybe<Scalars["String"]>;
-};
-
-/** aggregate max on columns */
-export type Room_Participant_Max_Fields = {
-    __typename?: "room_Participant_max_fields";
-    chimeRegistrantId?: Maybe<Scalars["String"]>;
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    registrantId?: Maybe<Scalars["uuid"]>;
-    roomId?: Maybe<Scalars["uuid"]>;
-    subconferenceId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-    vonageConnectionId?: Maybe<Scalars["String"]>;
-};
-
-/** order by max() on columns of table "room.Participant" */
-export type Room_Participant_Max_Order_By = {
-    chimeRegistrantId?: InputMaybe<Order_By>;
-    conferenceId?: InputMaybe<Order_By>;
-    createdAt?: InputMaybe<Order_By>;
-    id?: InputMaybe<Order_By>;
-    registrantId?: InputMaybe<Order_By>;
-    roomId?: InputMaybe<Order_By>;
-    subconferenceId?: InputMaybe<Order_By>;
-    updatedAt?: InputMaybe<Order_By>;
-    vonageConnectionId?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Room_Participant_Min_Fields = {
-    __typename?: "room_Participant_min_fields";
-    chimeRegistrantId?: Maybe<Scalars["String"]>;
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    registrantId?: Maybe<Scalars["uuid"]>;
-    roomId?: Maybe<Scalars["uuid"]>;
-    subconferenceId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-    vonageConnectionId?: Maybe<Scalars["String"]>;
-};
-
-/** order by min() on columns of table "room.Participant" */
-export type Room_Participant_Min_Order_By = {
-    chimeRegistrantId?: InputMaybe<Order_By>;
-    conferenceId?: InputMaybe<Order_By>;
-    createdAt?: InputMaybe<Order_By>;
-    id?: InputMaybe<Order_By>;
-    registrantId?: InputMaybe<Order_By>;
-    roomId?: InputMaybe<Order_By>;
-    subconferenceId?: InputMaybe<Order_By>;
-    updatedAt?: InputMaybe<Order_By>;
-    vonageConnectionId?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "room.Participant" */
-export type Room_Participant_Mutation_Response = {
-    __typename?: "room_Participant_mutation_response";
-    /** number of rows affected by the mutation */
-    affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    returning: Array<Room_Participant>;
-};
-
-/** on conflict condition type for table "room.Participant" */
-export type Room_Participant_On_Conflict = {
-    constraint: Room_Participant_Constraint;
-    update_columns?: Array<Room_Participant_Update_Column>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "room.Participant". */
-export type Room_Participant_Order_By = {
-    chimeRegistrantId?: InputMaybe<Order_By>;
-    conference?: InputMaybe<Conference_Conference_Order_By>;
-    conferenceId?: InputMaybe<Order_By>;
-    createdAt?: InputMaybe<Order_By>;
-    id?: InputMaybe<Order_By>;
-    registrant?: InputMaybe<Registrant_Registrant_Order_By>;
-    registrantId?: InputMaybe<Order_By>;
-    room?: InputMaybe<Room_Room_Order_By>;
-    roomId?: InputMaybe<Order_By>;
-    subconferenceId?: InputMaybe<Order_By>;
-    updatedAt?: InputMaybe<Order_By>;
-    vonageConnectionId?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: room_Participant */
-export type Room_Participant_Pk_Columns_Input = {
-    id: Scalars["uuid"];
-};
-
-/** select columns of table "room.Participant" */
-export enum Room_Participant_Select_Column {
-    /** column name */
-    ChimeRegistrantId = "chimeRegistrantId",
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Id = "id",
-    /** column name */
-    RegistrantId = "registrantId",
-    /** column name */
-    RoomId = "roomId",
-    /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-    /** column name */
-    VonageConnectionId = "vonageConnectionId",
-}
-
-/** input type for updating data in table "room.Participant" */
-export type Room_Participant_Set_Input = {
-    chimeRegistrantId?: InputMaybe<Scalars["String"]>;
-    conferenceId?: InputMaybe<Scalars["uuid"]>;
-    createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    id?: InputMaybe<Scalars["uuid"]>;
-    registrantId?: InputMaybe<Scalars["uuid"]>;
-    roomId?: InputMaybe<Scalars["uuid"]>;
-    subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    updatedAt?: InputMaybe<Scalars["timestamptz"]>;
-    vonageConnectionId?: InputMaybe<Scalars["String"]>;
-};
-
-/** update columns of table "room.Participant" */
-export enum Room_Participant_Update_Column {
-    /** column name */
-    ChimeRegistrantId = "chimeRegistrantId",
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Id = "id",
-    /** column name */
-    RegistrantId = "registrantId",
-    /** column name */
-    RoomId = "roomId",
-    /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-    /** column name */
-    VonageConnectionId = "vonageConnectionId",
-}
-
 /** columns and relationships of "room.PersonRole" */
 export type Room_PersonRole = {
     __typename?: "room_PersonRole";
@@ -25426,6 +26463,8 @@ export type Room_Room = {
     id: Scalars["uuid"];
     /** A computed field, executes function "room.IsProgramRoom" */
     isProgramRoom?: Maybe<Scalars["Boolean"]>;
+    /** A computed field, executes function "room.IsStreamingProgramRoom" */
+    isStreamingProgramRoom?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
     item?: Maybe<Content_Item>;
     itemId?: Maybe<Scalars["uuid"]>;
@@ -25435,10 +26474,6 @@ export type Room_Room = {
     managementMode: Room_ManagementMode;
     managementModeName: Room_ManagementMode_Enum;
     name: Scalars["String"];
-    /** An array relationship */
-    participants: Array<Room_Participant>;
-    /** An aggregate relationship */
-    participants_aggregate: Room_Participant_Aggregate;
     /** An array relationship */
     presenceCounts: Array<Analytics_RoomPresence>;
     /** An aggregate relationship */
@@ -25527,24 +26562,6 @@ export type Room_RoomEvents_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
     where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Room" */
-export type Room_RoomParticipantsArgs = {
-    distinct_on?: InputMaybe<Array<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Room" */
-export type Room_RoomParticipants_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
 };
 
 /** columns and relationships of "room.Room" */
@@ -26101,13 +27118,13 @@ export type Room_Room_Bool_Exp = {
     events?: InputMaybe<Schedule_Event_Bool_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
     isProgramRoom?: InputMaybe<Boolean_Comparison_Exp>;
+    isStreamingProgramRoom?: InputMaybe<Boolean_Comparison_Exp>;
     item?: InputMaybe<Content_Item_Bool_Exp>;
     itemId?: InputMaybe<Uuid_Comparison_Exp>;
     livestreamDuration?: InputMaybe<Room_LivestreamDurations_Bool_Exp>;
     managementMode?: InputMaybe<Room_ManagementMode_Bool_Exp>;
     managementModeName?: InputMaybe<Room_ManagementMode_Enum_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
-    participants?: InputMaybe<Room_Participant_Bool_Exp>;
     presenceCounts?: InputMaybe<Analytics_RoomPresence_Bool_Exp>;
     priority?: InputMaybe<Int_Comparison_Exp>;
     publicVonageSessionId?: InputMaybe<String_Comparison_Exp>;
@@ -26163,7 +27180,6 @@ export type Room_Room_Insert_Input = {
     managementMode?: InputMaybe<Room_ManagementMode_Obj_Rel_Insert_Input>;
     managementModeName?: InputMaybe<Room_ManagementMode_Enum>;
     name?: InputMaybe<Scalars["String"]>;
-    participants?: InputMaybe<Room_Participant_Arr_Rel_Insert_Input>;
     presenceCounts?: InputMaybe<Analytics_RoomPresence_Arr_Rel_Insert_Input>;
     priority?: InputMaybe<Scalars["Int"]>;
     publicVonageSessionId?: InputMaybe<Scalars["String"]>;
@@ -26287,13 +27303,13 @@ export type Room_Room_Order_By = {
     events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     id?: InputMaybe<Order_By>;
     isProgramRoom?: InputMaybe<Order_By>;
+    isStreamingProgramRoom?: InputMaybe<Order_By>;
     item?: InputMaybe<Content_Item_Order_By>;
     itemId?: InputMaybe<Order_By>;
     livestreamDuration?: InputMaybe<Room_LivestreamDurations_Order_By>;
     managementMode?: InputMaybe<Room_ManagementMode_Order_By>;
     managementModeName?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
-    participants_aggregate?: InputMaybe<Room_Participant_Aggregate_Order_By>;
     presenceCounts_aggregate?: InputMaybe<Analytics_RoomPresence_Aggregate_Order_By>;
     priority?: InputMaybe<Order_By>;
     publicVonageSessionId?: InputMaybe<Order_By>;
@@ -30795,12 +31811,28 @@ export type Subscription_Root = {
     conference_DemoCode_aggregate: Conference_DemoCode_Aggregate;
     /** fetch data from the table: "conference.DemoCode" using primary key columns */
     conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
+    /** fetch data from the table: "conference.Quota" */
+    conference_Quota: Array<Conference_Quota>;
+    /** fetch aggregated fields from the table: "conference.Quota" */
+    conference_Quota_aggregate: Conference_Quota_Aggregate;
+    /** fetch data from the table: "conference.Quota" using primary key columns */
+    conference_Quota_by_pk?: Maybe<Conference_Quota>;
+    /** fetch data from the table: "conference.RemainingQuota" */
+    conference_RemainingQuota: Array<Conference_RemainingQuota>;
+    /** fetch aggregated fields from the table: "conference.RemainingQuota" */
+    conference_RemainingQuota_aggregate: Conference_RemainingQuota_Aggregate;
     /** fetch data from the table: "conference.Subconference" */
     conference_Subconference: Array<Conference_Subconference>;
     /** fetch aggregated fields from the table: "conference.Subconference" */
     conference_Subconference_aggregate: Conference_Subconference_Aggregate;
     /** fetch data from the table: "conference.Subconference" using primary key columns */
     conference_Subconference_by_pk?: Maybe<Conference_Subconference>;
+    /** fetch data from the table: "conference.Usage" */
+    conference_Usage: Array<Conference_Usage>;
+    /** fetch aggregated fields from the table: "conference.Usage" */
+    conference_Usage_aggregate: Conference_Usage_Aggregate;
+    /** fetch data from the table: "conference.Usage" using primary key columns */
+    conference_Usage_by_pk?: Maybe<Conference_Usage>;
     /** fetch data from the table: "conference.VisibilityLevel" */
     conference_VisibilityLevel: Array<Conference_VisibilityLevel>;
     /** fetch aggregated fields from the table: "conference.VisibilityLevel" */
@@ -31027,12 +32059,6 @@ export type Subscription_Root = {
     room_Mode_aggregate: Room_Mode_Aggregate;
     /** fetch data from the table: "room.Mode" using primary key columns */
     room_Mode_by_pk?: Maybe<Room_Mode>;
-    /** fetch data from the table: "room.Participant" */
-    room_Participant: Array<Room_Participant>;
-    /** fetch aggregated fields from the table: "room.Participant" */
-    room_Participant_aggregate: Room_Participant_Aggregate;
-    /** fetch data from the table: "room.Participant" using primary key columns */
-    room_Participant_by_pk?: Maybe<Room_Participant>;
     /** fetch data from the table: "room.PersonRole" */
     room_PersonRole: Array<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -31855,6 +32881,42 @@ export type Subscription_RootConference_DemoCode_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Subscription_RootConference_QuotaArgs = {
+    distinct_on?: InputMaybe<Array<Conference_Quota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_Quota_Order_By>>;
+    where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+export type Subscription_RootConference_Quota_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Conference_Quota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_Quota_Order_By>>;
+    where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+export type Subscription_RootConference_Quota_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootConference_RemainingQuotaArgs = {
+    distinct_on?: InputMaybe<Array<Conference_RemainingQuota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_RemainingQuota_Order_By>>;
+    where?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+};
+
+export type Subscription_RootConference_RemainingQuota_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Conference_RemainingQuota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_RemainingQuota_Order_By>>;
+    where?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+};
+
 export type Subscription_RootConference_SubconferenceArgs = {
     distinct_on?: InputMaybe<Array<Conference_Subconference_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -31872,6 +32934,26 @@ export type Subscription_RootConference_Subconference_AggregateArgs = {
 };
 
 export type Subscription_RootConference_Subconference_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootConference_UsageArgs = {
+    distinct_on?: InputMaybe<Array<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+export type Subscription_RootConference_Usage_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+export type Subscription_RootConference_Usage_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -32641,26 +33723,6 @@ export type Subscription_RootRoom_Mode_AggregateArgs = {
 
 export type Subscription_RootRoom_Mode_By_PkArgs = {
     name: Scalars["String"];
-};
-
-export type Subscription_RootRoom_ParticipantArgs = {
-    distinct_on?: InputMaybe<Array<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Participant_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Participant_By_PkArgs = {
-    id: Scalars["uuid"];
 };
 
 export type Subscription_RootRoom_PersonRoleArgs = {

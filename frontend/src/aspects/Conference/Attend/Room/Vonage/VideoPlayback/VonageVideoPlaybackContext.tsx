@@ -139,7 +139,7 @@ function useValue({ vonageSessionId, canControlPlaybackAs }: Props) {
     useEvent(vonage, "video-playback-signal-received", receivedCommand);
 
     gql`
-        query VonageVideoPlaybackContext_GetElement($elementId: uuid!) {
+        query VonageVideoPlaybackContext_GetElement($elementId: uuid!) @cached {
             content_Element_by_pk(id: $elementId) {
                 id
                 ...useMediaElement_MediaElement

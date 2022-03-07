@@ -246,7 +246,7 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
 }
 
 gql`
-    query VonageRoomStateProvider_GetVonageMaxSimultaneousScreenShares($conferenceId: uuid!) {
+    query VonageRoomStateProvider_GetVonageMaxSimultaneousScreenShares($conferenceId: uuid!) @cached {
         conference_Configuration_by_pk(conferenceId: $conferenceId, key: VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES) {
             conferenceId
             key

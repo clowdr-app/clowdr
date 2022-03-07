@@ -49,7 +49,7 @@ gql`
         }
     }
 
-    query SelectAllExhibitions($conferenceId: uuid!) {
+    query SelectAllExhibitions($conferenceId: uuid!) @cached {
         collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, isHidden: { _eq: false } }) {
             ...ExhibitionSummary
         }

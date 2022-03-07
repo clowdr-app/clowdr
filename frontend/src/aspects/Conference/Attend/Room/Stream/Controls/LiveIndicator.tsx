@@ -38,7 +38,7 @@ gql`
         }
     }
 
-    query LiveIndicator_GetElement($elementId: uuid!) {
+    query LiveIndicator_GetElement($elementId: uuid!) @cached {
         content_Element_by_pk(id: $elementId) {
             id
             data

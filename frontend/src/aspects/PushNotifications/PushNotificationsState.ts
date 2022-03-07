@@ -16,7 +16,7 @@ import {
 } from "../../generated/graphql";
 
 gql`
-    query GetVAPIDPublicKey {
+    query GetVAPIDPublicKey @cached {
         vapidPublicKey {
             key
         }

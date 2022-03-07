@@ -59,7 +59,7 @@ const VideoPlayer = React.lazy(() => import("./Video/VideoPlayerEventPlayer"));
 const HlsPlayer = React.lazy(() => import("./Video/HlsPlayer"));
 
 gql`
-    query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
+    query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) @cached {
         schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }) {
             ...Room_EventSummary
         }
@@ -112,7 +112,7 @@ gql`
         }
     }
 
-    query Room_GetDefaultVideoRoomBackend {
+    query Room_GetDefaultVideoRoomBackend @cached {
         system_Configuration_by_pk(key: DEFAULT_VIDEO_ROOM_BACKEND) {
             value
         }

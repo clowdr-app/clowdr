@@ -10,7 +10,7 @@ import { BackstageContext } from "../BackstageContext";
 const HlsPlayer = React.lazy(() => import("../../Video/HlsPlayer"));
 
 gql`
-    query EnableBackstageStreamPreview($conferenceId: uuid!) {
+    query EnableBackstageStreamPreview($conferenceId: uuid!) @cached {
         conference_Configuration_by_pk(key: ENABLE_BACKSTAGE_STREAM_PREVIEW, conferenceId: $conferenceId) {
             key
             conferenceId

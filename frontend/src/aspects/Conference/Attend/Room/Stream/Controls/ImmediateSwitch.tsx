@@ -44,7 +44,7 @@ import { useConference } from "../../../../useConference";
 import { BackstageContext } from "../BackstageContext";
 
 gql`
-    query ImmediateSwitch_GetElements($eventId: uuid!) {
+    query ImmediateSwitch_GetElements($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             id
             itemId

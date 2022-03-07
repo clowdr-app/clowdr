@@ -75,7 +75,7 @@ gql`
         }
     }
 
-    query SearchAll($conferenceId: uuid!, $search: String!, $limit: Int!, $offset: Int!) {
+    query SearchAll($conferenceId: uuid!, $search: String!, $limit: Int!, $offset: Int!) @cached {
         content_searchItems(args: { conferenceId: $conferenceId, search: $search }, limit: $limit, offset: $offset) {
             ...SearchedItem
         }

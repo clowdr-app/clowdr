@@ -29,7 +29,7 @@ gql`
         }
     }
 
-    query SelectSwagBags($conferenceId: uuid!) {
+    query SelectSwagBags($conferenceId: uuid!) @cached {
         content_Item(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SWAG_BAG } }) {
             ...SwagBag
         }

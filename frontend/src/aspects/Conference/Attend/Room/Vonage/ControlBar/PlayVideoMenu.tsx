@@ -21,7 +21,7 @@ import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { VonageVideoPlaybackContext } from "../VideoPlayback/VonageVideoPlaybackContext";
 
 gql`
-    query GetEventVideos($eventId: uuid!) {
+    query GetEventVideos($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             id
             itemId
@@ -59,7 +59,7 @@ gql`
         }
     }
 
-    query GetRoomVideos($roomId: uuid!) {
+    query GetRoomVideos($roomId: uuid!) @cached {
         room_Room_by_pk(id: $roomId) {
             id
             item {

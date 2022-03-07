@@ -15,13 +15,13 @@ import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useConference } from "./useConference";
 
 gql`
-    query RegistrantsById($conferenceId: uuid!, $registrantIds: [uuid!]!) {
+    query RegistrantsById($conferenceId: uuid!, $registrantIds: [uuid!]!) @cached {
         registrant_Registrant(where: { id: { _in: $registrantIds }, conferenceId: { _eq: $conferenceId } }) {
             ...RegistrantData
         }
     }
 
-    query RegistrantsByUserId($conferenceId: uuid!, $userIds: [String!]!) {
+    query RegistrantsByUserId($conferenceId: uuid!, $userIds: [String!]!) @cached {
         registrant_Registrant(where: { userId: { _in: $userIds }, conferenceId: { _eq: $conferenceId } }) {
             ...RegistrantData
         }

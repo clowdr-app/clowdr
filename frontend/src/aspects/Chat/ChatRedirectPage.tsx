@@ -7,7 +7,7 @@ import { useAuthParameters } from "../GQL/AuthParameters";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 
 gql`
-    query GetChatPath($chatId: uuid!) {
+    query GetChatPath($chatId: uuid!) @cached {
         chat_Chat_by_pk(id: $chatId) {
             id
             room {

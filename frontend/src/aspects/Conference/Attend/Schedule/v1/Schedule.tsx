@@ -104,7 +104,7 @@ gql`
         }
     }
 
-    query Schedule_SelectItem($id: uuid!) {
+    query Schedule_SelectItem($id: uuid!) @cached {
         content_Item_by_pk(id: $id) {
             ...Schedule_Item
         }
@@ -140,7 +140,7 @@ gql`
         conferenceId
     }
 
-    query Schedule_SelectSummaries($conferenceId: uuid!) {
+    query Schedule_SelectSummaries($conferenceId: uuid!) @cached {
         room_Room(
             where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] }, events: {} }
         ) {

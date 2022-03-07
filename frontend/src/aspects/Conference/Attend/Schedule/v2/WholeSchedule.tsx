@@ -7,7 +7,7 @@ import { useConference } from "../../../useConference";
 import Schedule from "./Schedule";
 
 gql`
-    query ScheduleV2_AllEvents_Params($conferenceId: uuid!) {
+    query ScheduleV2_AllEvents_Params($conferenceId: uuid!) @cached {
         earliestStartingEvent: schedule_Event(
             where: { conferenceId: { _eq: $conferenceId } }
             limit: 1

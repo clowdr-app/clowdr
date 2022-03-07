@@ -11,7 +11,7 @@ import { useConference } from "../../../Conference/useConference";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 
 gql`
-    query GetItemChatId($itemOrExhibitionId: uuid!) {
+    query GetItemChatId($itemOrExhibitionId: uuid!) @cached {
         content_Item(
             where: {
                 _or: [
@@ -26,7 +26,7 @@ gql`
         }
     }
 
-    query GetConferenceLandingPageItemId($conferenceId: uuid!) {
+    query GetConferenceLandingPageItemId($conferenceId: uuid!) @cached {
         content_Item(where: { typeName: { _eq: LANDING_PAGE }, conferenceId: { _eq: $conferenceId } }, limit: 1) {
             id
             typeName

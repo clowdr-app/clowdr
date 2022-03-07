@@ -64,13 +64,13 @@ gql`
         priority
     }
 
-    query ContentOfTag($id: uuid!) {
+    query ContentOfTag($id: uuid!) @cached {
         content_ItemTag(where: { tagId: { _eq: $id } }) {
             ...ItemList_ItemTagData
         }
     }
 
-    query Tags($conferenceId: uuid!) {
+    query Tags($conferenceId: uuid!) @cached {
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ItemList_TagInfo
         }

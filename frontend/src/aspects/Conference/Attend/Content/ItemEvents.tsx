@@ -132,7 +132,7 @@ fragment ItemRoomEvent on schedule_Event {
     roomId
 }
 
-query ItemEvent_RoomNearbyEvents {
+query ItemEvent_RoomNearbyEvents @cached {
     ${events.reduce((acc, event, index) => {
         return `${acc}
 

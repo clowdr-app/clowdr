@@ -21,7 +21,7 @@ gql`
         conferenceId
     }
 
-    query ScheduleV2_Rooms($conferenceId: uuid!) {
+    query ScheduleV2_Rooms($conferenceId: uuid!) @cached {
         room_Room(where: { conferenceId: { _eq: $conferenceId }, events: {} }) {
             ...ScheduleV2_Room
         }
@@ -35,7 +35,7 @@ gql`
         conferenceId
     }
 
-    query ScheduleV2_Tags($conferenceId: uuid!) {
+    query ScheduleV2_Tags($conferenceId: uuid!) @cached {
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ScheduleV2_Tag
         }

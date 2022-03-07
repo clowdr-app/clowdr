@@ -84,7 +84,7 @@ gql`
         }
     }
 
-    query SelectExhibition($id: uuid!) {
+    query SelectExhibition($id: uuid!) @cached {
         collection_Exhibition_by_pk(id: $id) {
             ...ExhibitionWithContent
         }

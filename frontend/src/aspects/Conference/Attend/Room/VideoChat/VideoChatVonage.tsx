@@ -16,7 +16,7 @@ import { useGetAccessToken } from "../Vonage/useGetAccessToken";
 import type { VonageRoom } from "../Vonage/VonageRoom";
 
 gql`
-    query GetRoomVonageSessionId($roomId: uuid!) {
+    query GetRoomVonageSessionId($roomId: uuid!) @cached {
         room_Room_by_pk(id: $roomId) {
             id
             publicVonageSessionId

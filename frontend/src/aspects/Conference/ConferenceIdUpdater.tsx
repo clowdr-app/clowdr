@@ -4,7 +4,7 @@ import { useConferenceBySlugQuery } from "../../generated/graphql";
 import { useAuthParameters } from "../GQL/AuthParameters";
 
 gql`
-    query ConferenceBySlug($slug: String!) {
+    query ConferenceBySlug($slug: String!) @cached {
         conference_Conference(where: { slug: { _eq: $slug } }) {
             id
             slug

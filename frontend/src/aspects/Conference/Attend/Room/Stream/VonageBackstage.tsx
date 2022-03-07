@@ -18,7 +18,7 @@ import { BackstageContext, BackstageProvider } from "./BackstageContext";
 import { BackstageControls } from "./Controls/BackstageControls";
 
 gql`
-    query VonageBackstage_GetVonageSession($eventId: uuid!) {
+    query VonageBackstage_GetVonageSession($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             ...Event_EventVonageSession
         }

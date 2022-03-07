@@ -30,7 +30,7 @@ export default function VideoPlayerEventPlayer({
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
     gql`
-        query VideoPlayer_GetElement($elementId: uuid!) {
+        query VideoPlayer_GetElement($elementId: uuid!) @cached {
             content_Element_by_pk(id: $elementId) {
                 id
                 item {

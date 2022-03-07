@@ -59,7 +59,7 @@ gql`
         }
     }
 
-    query ContinuationChoices_Rooms($ids: [uuid!]!) {
+    query ContinuationChoices_Rooms($ids: [uuid!]!) @cached {
         content_Item(where: { id: { _in: $ids } }) {
             id
             room {

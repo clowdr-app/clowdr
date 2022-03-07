@@ -36,7 +36,7 @@ import RegistrantExtraInfo from "./RegistrantExtraInfo";
 import RegistrantItems from "./RegistrantItems";
 
 gql`
-    query ProfilePage_Items($registrantId: uuid!) {
+    query ProfilePage_Items($registrantId: uuid!) @cached {
         content_Item(where: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
             ...ProfilePage_Item
         }

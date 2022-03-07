@@ -21,13 +21,13 @@ import type { Registrant } from "../../useCurrentRegistrant";
 import RegistrantsList from "./RegistrantsList";
 
 gql`
-    query SelectRegistrants($conferenceId: uuid!) {
+    query SelectRegistrants($conferenceId: uuid!) @cached {
         registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }, order_by: { displayName: asc }) {
             ...RegistrantData
         }
     }
 
-    query SearchRegistrants($conferenceId: uuid!, $search: String!) {
+    query SearchRegistrants($conferenceId: uuid!, $search: String!) @cached {
         registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
             ...RegistrantData
         }

@@ -13,14 +13,14 @@ import { makeContext } from "../GQL/make-context";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
-    query ConferenceById_WithUser($id: uuid!, $userId: String!) {
+    query ConferenceById_WithUser($id: uuid!, $userId: String!) @cached {
         conference_Conference_by_pk(id: $id) {
             ...PublicConferenceInfo
             ...AuthdConferenceInfo
         }
     }
 
-    query ConferenceById_WithoutUser($id: uuid!) {
+    query ConferenceById_WithoutUser($id: uuid!) @cached {
         conference_Conference_by_pk(id: $id) {
             ...PublicConferenceInfo
         }

@@ -18,7 +18,7 @@ import ExhibitionNameList from "./ExhibitionNameList";
 import TagList from "./TagList";
 
 gql`
-    query ItemElements_GetItem($itemId: uuid!) {
+    query ItemElements_GetItem($itemId: uuid!) @cached {
         content_Item_by_pk(id: $itemId) {
             ...ItemElements_ItemData
         }

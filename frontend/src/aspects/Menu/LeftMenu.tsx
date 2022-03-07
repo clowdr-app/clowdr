@@ -20,7 +20,7 @@ import MenuButton from "./MenuButton";
 import { useNavigationState } from "./NavigationState";
 
 gql`
-    query CountSwagBags($conferenceId: uuid!) {
+    query CountSwagBags($conferenceId: uuid!) @cached {
         content_Item_aggregate(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SWAG_BAG } }) {
             aggregate {
                 count

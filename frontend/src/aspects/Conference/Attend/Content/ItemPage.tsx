@@ -19,7 +19,7 @@ import { ItemLive } from "./ItemLive";
 import { ItemVideos } from "./ItemVideos";
 
 gql`
-    query GetItem($itemId: uuid!) {
+    query GetItem($itemId: uuid!) @cached {
         content_Item_by_pk(id: $itemId) {
             ...ItemElements_ItemData
             ...ItemPage_ItemRooms

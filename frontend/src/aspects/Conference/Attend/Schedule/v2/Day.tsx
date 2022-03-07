@@ -29,7 +29,7 @@ gql`
         conferenceId
     }
 
-    query ScheduleV2_DayLightweightEvents(
+    query ScheduleV2_DayLightweightEvents @cached (
         $conferenceId: uuid!
         $startOfDay: timestamptz!
         $endOfDay: timestamptz!
@@ -49,7 +49,7 @@ gql`
         }
     }
 
-    query ScheduleV2_DayEvents($eventIds: [uuid!]!) {
+    query ScheduleV2_DayEvents($eventIds: [uuid!]!) @cached {
         schedule_Event(where: { id: { _in: $eventIds } }) {
             ...ScheduleV2_Event
         }

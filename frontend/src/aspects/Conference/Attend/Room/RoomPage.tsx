@@ -12,7 +12,7 @@ import useCurrentRegistrant from "../../useCurrentRegistrant";
 import Room from "./Room";
 
 gql`
-    query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
+    query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) @cached {
         room_Room_by_pk(id: $roomId) {
             ...RoomPage_RoomDetails
         }
@@ -122,7 +122,7 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
 }
 
 gql`
-    query GetEventVonageDetails($eventId: uuid!) {
+    query GetEventVonageDetails($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             eventVonageSession {
                 sessionId

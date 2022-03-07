@@ -36,7 +36,7 @@ gql`
         acceptedPrivacyPolicyAt
     }
 
-    query SelectCurrentUser($userId: String!) {
+    query SelectCurrentUser($userId: String!) @cached {
         User_by_pk(id: $userId) {
             ...UserInfo
         }
@@ -69,7 +69,7 @@ function CurrentUserProvider_NotAuthenticated({ children }: { children: string |
 }
 
 gql`
-    query TermsConfigs {
+    query TermsConfigs @cached {
         hostOrganisationName: system_Configuration_by_pk(key: HOST_ORGANISATION_NAME) {
             key
             value

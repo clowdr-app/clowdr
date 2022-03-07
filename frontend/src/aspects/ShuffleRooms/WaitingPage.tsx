@@ -88,7 +88,7 @@ gql`
         }
     }
 
-    query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) {
+    query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) @cached {
         room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, endAt: { _gte: $end } }) {
             ...ShufflePeriodData
         }

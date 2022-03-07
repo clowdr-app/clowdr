@@ -40,7 +40,7 @@ const VideoTestPage = React.lazy(() =>
 );
 
 gql`
-    query GetSlugForUrl($url: String!) {
+    query GetSlugForUrl($url: String!) @cached {
         getSlug(url: $url) {
             slug
         }

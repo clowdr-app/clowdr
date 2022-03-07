@@ -9,7 +9,7 @@ import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
 import { makeContext } from "../../../GQL/make-context";
 
 gql`
-    query GetRoomChatId($roomId: uuid!) {
+    query GetRoomChatId($roomId: uuid!) @cached {
         room_Room_by_pk(id: $roomId) {
             id
             chatId

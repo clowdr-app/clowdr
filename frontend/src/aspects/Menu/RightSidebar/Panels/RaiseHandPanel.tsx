@@ -15,7 +15,7 @@ import { RaisedHandsList } from "./RaisedHandsList";
 import { RegistrantsList } from "./RegistrantsList";
 
 gql`
-    query RaiseHandPanel_GetEventDetails($eventId: uuid!) {
+    query RaiseHandPanel_GetEventDetails($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             ...Room_EventSummary
         }

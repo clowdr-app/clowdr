@@ -5,7 +5,7 @@ import { useRoomSponsorContent_GetElementsQuery } from "../../../../../generated
 import ElementsGridLayout from "../../Content/Element/ElementsGridLayout";
 
 gql`
-    query RoomSponsorContent_GetElements($itemId: uuid!) {
+    query RoomSponsorContent_GetElements($itemId: uuid!) @cached {
         content_Item(where: { id: { _eq: $itemId }, typeName: { _eq: SPONSOR } }) {
             ...RoomSponsorContent_ItemData
         }

@@ -28,13 +28,13 @@ gql`
         conferenceRole
     }
 
-    query SelectCurrentUserRegistrations($userId: String!) {
+    query SelectCurrentUserRegistrations($userId: String!) @cached {
         registrant_Registrant(where: { userId: { _eq: $userId } }) {
             ...RegistrantFields
         }
     }
 
-    query SelectRegistration($registrantId: uuid!) {
+    query SelectRegistration($registrantId: uuid!) @cached {
         registrant_Registrant_by_pk(id: $registrantId) {
             ...RegistrantFields
         }

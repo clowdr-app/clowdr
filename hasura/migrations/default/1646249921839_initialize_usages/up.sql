@@ -8,7 +8,7 @@ SELECT
     conf.id as "conferenceId",
     ROUND(COALESCE(x.total, 0) / 60) as "consumedStreamingEventTotalMinutes",
     ROUND(COALESCE(y.total, 0) / 60) as "consumedVideoChatEventTotalMinutes",
-    ROUND(COALESCE(z.total, 0) / 60) as "consumedVideoChatNonEventTotalMinutes"
+    0 as "consumedVideoChatNonEventTotalMinutes"
 FROM "conference"."Conference" as conf
 LEFT JOIN (
     SELECT SUM(event1."durationSeconds") as total, event1."conferenceId"
@@ -30,21 +30,4 @@ LEFT JOIN (
     )
     GROUP BY event2."conferenceId"
 ) y
-ON y."conferenceId" = conf."id"
---- TODO: This is not correct - this computes published time, not subscribed participant minutes
-LEFT JOIN (
-    SELECT SUM(EXTRACT(EPOCH FROM ("stopped_at" - "created_at"))) as total, stream."conferenceId"
-    FROM "video"."VonageParticipantStream" as stream
-    WHERE NOT EXISTS (
-        SELECT 1 FROM "room"."Room" as innerRoom
-        WHERE innerRoom."publicVonageSessionId" = stream."vonageSessionId"
-        AND "room"."IsProgramRoom"(innerRoom)
-    ) 
-    AND NOT EXISTS (
-        SELECT 1 FROM "video"."EventVonageSession" as innerRoom
-        WHERE innerRoom."sessionId" = stream."vonageSessionId"
-    )
-    AND NOT (stopped_at IS NULL)
-    GROUP BY stream."conferenceId"
-) z
-ON z."conferenceId" = conf."id";
+ON y."conferenceId" = conf."id";

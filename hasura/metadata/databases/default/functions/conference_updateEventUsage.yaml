@@ -1,0 +1,5 @@
+function:
+  name: updateEventUsage
+  schema: conference
+configuration:
+  exposed_as: mutation

@@ -24,6 +24,7 @@
 - "!include conference_ConfigurationKey.yaml"
 - "!include conference_DemoCode.yaml"
 - "!include conference_Quota.yaml"
+- "!include conference_RemainingQuota.yaml"
 - "!include conference_Subconference.yaml"
 - "!include conference_Usage.yaml"
 - "!include conference_VisibilityLevel.yaml"

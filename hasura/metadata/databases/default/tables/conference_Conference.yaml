@@ -22,6 +22,33 @@ object_relationships:
 - name: demoCode
   using:
     foreign_key_constraint_on: demoCodeId
+- name: quota
+  using:
+    manual_configuration:
+      column_mapping:
+        id: conferenceId
+      insertion_order: null
+      remote_table:
+        name: Quota
+        schema: conference
+- name: remainingQuota
+  using:
+    manual_configuration:
+      column_mapping:
+        id: conferenceId
+      insertion_order: null
+      remote_table:
+        name: RemainingQuota
+        schema: conference
+- name: usage
+  using:
+    manual_configuration:
+      column_mapping:
+        id: conferenceId
+      insertion_order: null
+      remote_table:
+        name: Usage
+        schema: conference
 array_relationships:
 - name: chats
   using:

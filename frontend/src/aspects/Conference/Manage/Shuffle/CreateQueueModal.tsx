@@ -18,7 +18,6 @@ import {
     NumberInput,
     NumberInputField,
     NumberInputStepper,
-    Select,
     Tooltip,
     useDisclosure,
     useToast,
@@ -214,7 +213,7 @@ export default function CreateQueueModal(): JSX.Element {
                                     Name of the queue, shown to registrants. For example, a topic or theme.
                                 </FormHelperText>
                             </FormControl>
-                            <FormControl>
+                            {/* <FormControl>
                                 <FormLabel>Automation</FormLabel>
                                 <Select
                                     isDisabled={insertResponse.fetching}
@@ -236,7 +235,7 @@ export default function CreateQueueModal(): JSX.Element {
                                     manually configure rooms and allocations and let the algorithm handle the rest, or
                                     have no automation and do it all yourself.
                                 </FormHelperText>
-                            </FormControl>
+                            </FormControl> */}
                             <FormControl>
                                 <FormLabel>Start at</FormLabel>
                                 <DateTimePicker

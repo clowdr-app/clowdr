@@ -87,27 +87,18 @@ import type {
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useAuthParameters } from "../../GQL/AuthParameters";
+import extractActualError from "../../GQL/ExtractActualError";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useTitle } from "../../Hooks/useTitle";
+import useRoomParticipants from "../../Room/useRoomParticipants";
+import { useRegistrants } from "../RegistrantsContext";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import ExternalRtmpBroadcastEditor from "./Room/ExternalRtmpBroadcastEditor";
 import ExternalRtmpInputEditor from "./Room/ExternalRtmpInputEditor";
 
 gql`
-    fragment RoomParticipantWithRegistrantInfo on room_Participant {
-        id
-        conferenceId
-        registrantId
-        roomId
-
-        registrant {
-            id
-            displayName
-        }
-    }
-
     fragment RoomWithParticipantInfo on room_Room {
         id
         created_at
@@ -119,9 +110,6 @@ gql`
         itemId
         managementModeName
         isProgramRoom
-        participants {
-            ...RoomParticipantWithRegistrantInfo
-        }
         chatId
         chat {
             id
@@ -368,9 +356,11 @@ function RoomSecondaryEditor({
     const { onCopy: onCopyRoomId, hasCopied: hasCopiedRoomId } = useClipboard(room?.id ?? "");
     const createdAt = useMemo(() => (room ? new Date(room.created_at) : new Date()), [room]);
 
+    const roomParticipants = useRoomParticipants(room?.id)[room?.id];
+    const roomParticipantRegistrants = useRegistrants(roomParticipants);
     const sortedParticipants = useMemo(
-        () => (room?.participants ? R.sortBy((x) => x.registrant?.displayName, room.participants) : []),
-        [room?.participants]
+        () => (roomParticipantRegistrants ? R.sortBy((x) => x.displayName, roomParticipantRegistrants) : []),
+        [roomParticipantRegistrants]
     );
     const sortedMembers = useMemo(
         () =>
@@ -477,7 +467,7 @@ function RoomSecondaryEditor({
                                                 <UnorderedList>
                                                     {sortedParticipants.map((participant) => (
                                                         <ListItem key={participant.id}>
-                                                            {participant.registrant.displayName}
+                                                            {participant.displayName}
                                                         </ListItem>
                                                     ))}
                                                 </UnorderedList>
@@ -1426,6 +1416,10 @@ function EditableRoomsCRUDTable() {
         [selectAllRoomsResult.data?.room_Room]
     );
 
+    const actualError = extractActualError(
+        insertRoomResponse.error ?? updateRoomResponse.error ?? deleteRoomsResponse.error
+    );
+
     return (
         <>
             <CRUDTable
@@ -1520,15 +1514,12 @@ function EditableRoomsCRUDTable() {
                               status: "error",
                               title: "Error saving changes",
                               description:
-                                  insertRoomResponse.error?.message ??
-                                  updateRoomResponse.error?.message ??
-                                  (deleteRoomsResponse.error?.message.includes(
+                                  (actualError?.includes(
                                       // eslint-disable-next-line quotes
                                       'Foreign key violation. update or delete on table "Room" violates foreign key constraint "Event_roomId_fkey" on table "Event"'
                                   )
                                       ? "Events are scheduled in this room. Please delete them before deleting this room."
-                                      : deleteRoomsResponse.error?.message) ??
-                                  "Unknown error",
+                                      : actualError) ?? "Unknown error",
                           }
                         : undefined
                 }

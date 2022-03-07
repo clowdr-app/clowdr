@@ -39,6 +39,7 @@ import { router as roomRouter } from "./router/room";
 import { router as shuffleRoomsRouter } from "./router/shuffleRooms";
 import { router as superuserRouter } from "./router/superuser";
 import { router as transcribeRouter } from "./router/transcribe";
+import { router as usageRouter } from "./router/usage";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
 import { router as vonageSessionLayoutRouter } from "./router/vonageSessionLayout";
@@ -122,6 +123,8 @@ app.use("/su", superuserRouter);
 app.use("/conference", conferenceRouter);
 app.use("/invitation", invitationRouter);
 app.use("/transcribe", transcribeRouter);
+
+app.use("/usage", usageRouter);
 
 app.get("/", function (_req, res) {
     res.send("Midspace");

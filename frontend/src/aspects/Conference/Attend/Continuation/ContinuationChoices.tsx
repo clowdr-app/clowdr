@@ -13,8 +13,8 @@ import {
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import { useMyBackstagesModal } from "../Profile/MyBackstages";
-import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModalProvider";
-import { useLiveProgramRooms } from "../Rooms/V2/useLiveProgramRooms";
+import { SocialiseModalTab, useSocialiseModal } from "../Rooms/SocialiseModalProvider";
+import { useLiveProgramRooms } from "../Rooms/useLiveProgramRooms";
 import { ProgramModalTab, useScheduleModal } from "../Schedule/ProgramModal";
 import ContinuationActiveChoice from "./ContinuationActiveChoice";
 import ContinuationPassiveChoice from "./ContinuationPassiveChoice";

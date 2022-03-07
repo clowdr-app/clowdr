@@ -38,7 +38,7 @@ gql`
                 managementModeName: $managementModeName
             }
         ) {
-            ...RoomListRoomDetails
+            ...SocialRoom
         }
     }
 `;

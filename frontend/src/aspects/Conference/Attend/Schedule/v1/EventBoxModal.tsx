@@ -30,7 +30,7 @@ import { Markdown } from "../../../../Chakra/Markdown";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { AuthorList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";
-import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
+import { EventModeIcon } from "../../Rooms/EventHighlight";
 import StarEventButton from "../StarEventButton";
 import type { TimelineEvent } from "./DayList";
 import useTimelineParameters from "./useTimelineParameters";

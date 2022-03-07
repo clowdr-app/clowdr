@@ -7,7 +7,7 @@ import { gql } from "urql";
 import type { ScheduleV2_EventFragment, ScheduleV2_TagFragment } from "../../../../../generated/graphql";
 import { PlainAuthorsList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";
-import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
+import { EventModeIcon } from "../../Rooms/EventHighlight";
 import StarEventButton from "../StarEventButton";
 import type { EventCellDescriptor } from "./Types";
 

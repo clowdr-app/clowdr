@@ -63,28 +63,34 @@ export async function canSelectChat(userId: string, chatId: string, respectAdmin
 export async function canAccessEvent(userId: string, eventId: string): Promise<boolean> {
     const event = await new EventCache(logger).getEntity(eventId);
     if (event) {
-        const user = await new UserCache(logger).getEntity(userId);
-        if (user) {
-            const userRegistrant = user.registrants.find((x) => x.conferenceId === event.conferenceId);
-            if (userRegistrant) {
-                const registrant = await new RegistrantCache(logger).getEntity(userRegistrant.id);
-                if (registrant) {
-                    if (
-                        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
-                        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator
-                    ) {
+        return canAccessRoom(userId, event.conferenceId, event.roomId);
+    }
+
+    return false;
+}
+
+export async function canAccessRoom(userId: string, conferenceId: string, roomId: string): Promise<boolean> {
+    const user = await new UserCache(logger).getEntity(userId);
+    if (user) {
+        const userRegistrant = user.registrants.find((x) => x.conferenceId === conferenceId);
+        if (userRegistrant) {
+            const registrant = await new RegistrantCache(logger).getEntity(userRegistrant.id);
+            if (registrant) {
+                if (
+                    registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+                    registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator
+                ) {
+                    return true;
+                }
+
+                const room = await new RoomCache(logger).getEntity(roomId);
+                if (room) {
+                    if (room.managementModeName === Room_ManagementMode_Enum.Public) {
                         return true;
                     }
-
-                    const room = await new RoomCache(logger).getEntity(event.roomId);
-                    if (room) {
-                        if (room.managementModeName === Room_ManagementMode_Enum.Public) {
-                            return true;
-                        }
-                        const membership = await roomMembershipsCache(logger).getField(event.roomId, registrant.id);
-                        if (membership) {
-                            return true;
-                        }
+                    const membership = await roomMembershipsCache(logger).getField(roomId, registrant.id);
+                    if (membership) {
+                        return true;
                     }
                 }
             }

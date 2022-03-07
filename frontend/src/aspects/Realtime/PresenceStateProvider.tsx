@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useAuthParameters } from "../GQL/AuthParameters";
 import type { PresenceState } from "./PresenceState";
 import { State } from "./PresenceState";
 
@@ -26,6 +27,11 @@ export function PresenceStateProvider({
         // console.log("Page changed", location.pathname);
         State.pageChanged(location.pathname);
     }, [location.pathname]);
+
+    const { conferenceId } = useAuthParameters();
+    useEffect(() => {
+        State.conferenceId = conferenceId ?? undefined;
+    }, [conferenceId]);
 
     return <PresenceStateContext.Provider value={State}>{children}</PresenceStateContext.Provider>;
 }

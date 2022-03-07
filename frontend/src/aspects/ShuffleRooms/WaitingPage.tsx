@@ -99,16 +99,6 @@ gql`
             ...PrefetchShuffleQueueEntryData
         }
     }
-
-    query GetShuffleRoomsParticipantsCount($conferenceId: uuid!) {
-        room_Participant_aggregate(
-            where: { conferenceId: { _eq: $conferenceId }, room: { shuffleRooms: { isEnded: { _eq: false } } } }
-        ) {
-            aggregate {
-                count
-            }
-        }
-    }
 `;
 
 function QueuedShufflePeriodBox({

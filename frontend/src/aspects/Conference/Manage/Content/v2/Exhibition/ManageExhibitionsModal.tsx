@@ -53,6 +53,7 @@ import type {
     RowSpecification,
 } from "../../../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../../../CRUDTable2/CRUDTable2";
+import extractActualError from "../../../../../GQL/ExtractActualError";
 import { makeContext } from "../../../../../GQL/make-context";
 import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { useConference } from "../../../../useConference";
@@ -522,10 +523,11 @@ function ManageExhibitionsModalBody(): JSX.Element {
                               status: "error",
                               title: "Error saving changes",
                               description:
-                                  insertExhibitionResponse.error?.message ??
-                                  updateExhibitionResponse.error?.message ??
-                                  deleteExhibitionsResponse.error?.message ??
-                                  "Unknown error",
+                                  extractActualError(
+                                      insertExhibitionResponse.error ??
+                                          updateExhibitionResponse.error ??
+                                          deleteExhibitionsResponse.error
+                                  ) ?? "Unknown error",
                           }
                         : undefined
                 }

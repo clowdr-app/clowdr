@@ -7,6 +7,7 @@ import { deleteRoomChimeMeetingForRoom } from "../lib/roomChimeMeeting";
 import { addRoomParticipant, removeRoomParticipant } from "../lib/roomParticipant";
 import type { ChimeMeetingEndedDetail, ChimeRegistrantJoinedDetail, ChimeRegistrantLeftDetail } from "../types/chime";
 import { callWithRetry } from "../utils";
+import { getVideoChatNonEventRemainingQuota, incrementVideoChatNonEventUsage } from "./usage";
 
 export async function handleJoinRoom(
     logger: P.Logger,
@@ -47,6 +48,13 @@ export async function handleJoinRoom(
 
     const chimeRegistrant = await addRegistrantToChimeMeeting(payload.registrantId, maybeChimeMeeting.MeetingId);
 
+    const remainingQuota = await getVideoChatNonEventRemainingQuota(maybeChimeMeeting.conferenceId);
+    if (remainingQuota <= 0) {
+        throw new Error("Quota limit reached (video-chat social minutes)");
+    } else {
+        await incrementVideoChatNonEventUsage(maybeChimeMeeting.conferenceId, 1);
+    }
+
     return {
         registrant: chimeRegistrant,
         meeting: maybeChimeMeeting,
@@ -76,7 +84,7 @@ export async function handleChimeRegistrantJoinedNotification(
             logger,
             room.roomId,
             room.conferenceId,
-            { chimeRegistrantId: payload.registrantId },
+            { chimeRegistrantId: payload.registrantId, chimeMeetingId: payload.meetingId },
             payload.externalUserId
         )
     );
@@ -100,7 +108,7 @@ export async function handleChimeRegistrantLeftNotification(
     }
 
     await callWithRetry(async () =>
-        removeRoomParticipant(logger, room.roomId, room.conferenceId, payload.externalUserId)
+        removeRoomParticipant(logger, room.roomId, room.conferenceId, payload.externalUserId, undefined, false)
     );
 }
 

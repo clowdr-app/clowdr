@@ -14,11 +14,13 @@ export function DeviceSetup(): JSX.Element {
         try {
             await meetingManager.start();
             setIsLoading(false);
-        } catch (e) {
+        } catch (e: any) {
             setIsLoading(false);
             console.error("Failed to start meeting", e);
             toast({
-                title: "Failed to join room",
+                status: "error",
+                title: "Cannot connect to room",
+                description: typeof e === "string" ? e : e?.message ?? undefined,
             });
         }
     }, [meetingManager, toast]);

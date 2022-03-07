@@ -20,7 +20,6 @@ const ExhibitionsPage = React.lazy(() => import("./Attend/Exhibition/Exhibitions
 const MyRecordingsPage = React.lazy(() => import("./Attend/Recordings/MyRecordingsPage"));
 const RegistrantListPage = React.lazy(() => import("./Attend/Registrant/RegistrantListPage"));
 const RoomPage = React.lazy(() => import("./Attend/Room/RoomPage"));
-const RoomListPageV1 = React.lazy(() => import("./Attend/Rooms/V1/RoomListPage"));
 const Schedule = React.lazy(() => import("./Attend/Schedule/v1/Schedule"));
 const ScheduleV2 = React.lazy(() => import("./Attend/Schedule/v2/WholeSchedule"));
 const SwagBags = React.lazy(() => import("./Attend/SwagBag/SwagBags"));
@@ -29,10 +28,10 @@ const WaitingPage = React.lazy(() => import("../ShuffleRooms/WaitingPage"));
 const PageNotFound = React.lazy(() => import("../Errors/PageNotFound"));
 const SearchPage = React.lazy(() => import("../Search/SearchPage"));
 const SponsorsPage = React.lazy(() =>
-    import("./Attend/Rooms/V2/SponsorBooths").then((x) => ({ default: x.SponsorsPage }))
+    import("./Attend/Rooms/SponsorBooths").then((x) => ({ default: x.SponsorsPage }))
 );
 const SocialisePage = React.lazy(() =>
-    import("./Attend/Rooms/V2/SocialiseModal").then((x) => ({ default: x.SocialisePage }))
+    import("./Attend/Rooms/SocialiseModal").then((x) => ({ default: x.SocialisePage }))
 );
 
 export default function ConferenceRoutes(): JSX.Element {
@@ -89,10 +88,6 @@ export default function ConferenceRoutes(): JSX.Element {
                         <ExhibitionPage exhibitionId={props.match.params.exhibitionId} />
                     )}
                 />
-
-                <Route path={`${path}/rooms`}>
-                    <RoomListPageV1 />
-                </Route>
 
                 <Route path={`${path}/sponsors`}>
                     <SponsorsPage />

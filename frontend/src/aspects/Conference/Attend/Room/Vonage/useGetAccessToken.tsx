@@ -3,6 +3,7 @@ import { gql } from "@urql/core";
 import { useCallback, useMemo, useState } from "react";
 import { useCallbackRef } from "use-callback-ref";
 import { useGetEventVonageTokenMutation, useGetRoomVonageTokenMutation } from "../../../../../generated/graphql";
+import extractActualError from "../../../../GQL/ExtractActualError";
 import { makeContext } from "../../../../GQL/make-context";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
@@ -54,6 +55,10 @@ export function useGetAccessToken(roomId: string, eventId?: string) {
                     context
                 )
                     .then((result) => {
+                        const error = extractActualError(result.error);
+                        if (error) {
+                            throw new Error(error);
+                        }
                         if (!result.data?.joinEventVonageSession?.accessToken) {
                             throw new Error("No Vonage session ID");
                         }
@@ -84,6 +89,10 @@ export function useGetAccessToken(roomId: string, eventId?: string) {
                     context
                 )
                     .then((result) => {
+                        const error = extractActualError(result.error);
+                        if (error) {
+                            throw new Error(error);
+                        }
                         if (!result.data?.joinRoomVonageSession?.accessToken) {
                             throw new Error("No Vonage session ID");
                         }

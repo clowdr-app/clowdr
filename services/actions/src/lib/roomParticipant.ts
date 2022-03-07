@@ -1,128 +1,51 @@
 import { gql } from "@apollo/client/core";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
 import type { P } from "pino";
-import type { RoomParticipantFragment } from "../generated/graphql";
-import {
-    CountRoomParticipantsDocument,
-    CreateRoomParticipantDocument,
-    DeleteRoomParticipantsCreatedBeforeDocument,
-    GetRoomParticipantDetailsDocument,
-    InsertVonageSessionLayoutDocument,
-    RemoveRoomParticipantDocument,
-} from "../generated/graphql";
+import { InsertVonageSessionLayoutDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { kickRegistrantFromRoom } from "./vonage/vonageTools";
-
-gql`
-    mutation CreateRoomParticipant(
-        $registrantId: uuid!
-        $conferenceId: uuid!
-        $roomId: uuid!
-        $vonageConnectionId: String
-        $chimeRegistrantId: String
-    ) {
-        insert_room_Participant_one(
-            object: {
-                registrantId: $registrantId
-                conferenceId: $conferenceId
-                roomId: $roomId
-                vonageConnectionId: $vonageConnectionId
-                chimeRegistrantId: $chimeRegistrantId
-            }
-            on_conflict: { constraint: Participant_roomId_registrantId_key, update_columns: [updatedAt] }
-        ) {
-            id
-        }
-    }
-`;
 
 export async function addRoomParticipant(
     logger: P.Logger,
     roomId: string,
     conferenceId: string,
-    identifier: { vonageConnectionId: string } | { chimeRegistrantId: string },
+    identifier:
+        | { vonageConnectionId: string; vonageSessionId: string }
+        | { chimeRegistrantId: string; chimeMeetingId: string },
     registrantId: string
 ): Promise<void> {
-    const participantIdentifier =
-        "vonageConnectionId" in identifier
-            ? { vonageConnectionId: identifier.vonageConnectionId }
-            : { chimeRegistrantId: identifier.chimeRegistrantId };
-
+    const redisClient = await redisClientPool.acquire("lib/vonage/sessionMonitoring");
     try {
-        await apolloClient.mutate({
-            mutation: CreateRoomParticipantDocument,
-            variables: {
-                registrantId,
-                conferenceId,
-                roomId,
-                vonageConnectionId: null,
-                chimeRegistrantId: null,
-                ...participantIdentifier,
-            },
-        });
-    } catch (err) {
-        if ("vonageConnectionId" in identifier) {
-            // If there is already a row for this room, kick the previous connection before recording the new one
-            logger.info(
-                {
-                    roomId,
-                    registrantId,
-                    conferenceId,
-                },
-                "Registrant is already in the Vonage room, kicking from previous session"
-            );
-            await kickRegistrantFromRoom(logger, roomId, registrantId);
+        const alreadyExisted =
+            (await redisClientP.zadd(redisClient)(`RoomParticipants:${roomId}`, Date.now(), registrantId)) === 0;
 
-            await apolloClient.mutate({
-                mutation: CreateRoomParticipantDocument,
-                variables: {
-                    registrantId,
-                    conferenceId,
-                    roomId,
-                    vonageConnectionId: null,
-                    chimeRegistrantId: null,
-                    ...participantIdentifier,
-                },
-            });
-        } else {
-            logger.info(
-                {
-                    roomId,
-                    registrantId,
-                    conferenceId,
-                },
-                "Registrant is already in the Chime room, ignoring"
+        if ("vonageConnectionId" in identifier) {
+            await redisClientP.zadd(redisClient)(
+                `VonageConnections:${identifier.vonageSessionId}`,
+                Date.now(),
+                identifier.vonageConnectionId
             );
         }
+
+        if (alreadyExisted) {
+            logger.info(
+                {
+                    roomId,
+                    registrantId,
+                    conferenceId,
+                },
+                "Registrant is already connected to the room, kicking from previous session"
+            );
+            await kickRegistrantFromRoom(logger, roomId, registrantId, identifier, true);
+        }
+    } finally {
+        await redisClientPool.release("lib/vonage/sessionMonitoring", redisClient);
     }
 }
 
 gql`
-    mutation RemoveRoomParticipant(
-        $registrantId: uuid!
-        $conferenceId: uuid!
-        $roomId: uuid! # $vonageConnectionId: String # $chimeRegistrantId: String
-    ) {
-        delete_room_Participant(
-            where: {
-                registrantId: { _eq: $registrantId }
-                conferenceId: { _eq: $conferenceId }
-                roomId: { _eq: $roomId }
-            }
-        ) {
-            affected_rows
-        }
-    }
-
-    query CountRoomParticipants($roomId: uuid!) {
-        room_Participant_aggregate(where: { roomId: { _eq: $roomId } }) {
-            aggregate {
-                count
-            }
-        }
-    }
-
     mutation InsertVonageSessionLayout($object: video_VonageSessionLayout_insert_input!) {
         insert_video_VonageSessionLayout_one(object: $object) {
             id
@@ -130,50 +53,80 @@ gql`
     }
 `;
 
+export async function removeAllRoomParticipants(
+    logger: P.Logger,
+    roomId: string,
+    vonageSessionId: string | undefined
+): Promise<void> {
+    try {
+        const redisClient = await redisClientPool.acquire("lib/roomParticipant");
+        try {
+            await redisClientP.del(redisClient)(`RoomParticipants:${roomId}`);
+            if (vonageSessionId) {
+                await redisClientP.del(redisClient)(`VonageConnections:${vonageSessionId}`);
+            }
+        } finally {
+            await redisClientPool.release("lib/roomParticipant", redisClient);
+        }
+    } catch (err) {
+        logger.error({ roomId, err }, "Failed to remove all RoomParticipants");
+        throw new Error("Failed to remove all RoomParticipants");
+    }
+}
+
 export async function removeRoomParticipant(
     logger: P.Logger,
     roomId: string,
-    conferenceId: string,
+    conferenceId: string | undefined,
     registrantId: string,
-    vonageSessionId?: string
+    vonage: { sessionId: string; connectionId: string } | undefined,
+    removeOnlyConnection: boolean
 ): Promise<void> {
     try {
-        const removeResult = await apolloClient.mutate({
-            mutation: RemoveRoomParticipantDocument,
-            variables: {
-                registrantId,
-                conferenceId,
-                roomId,
-            },
-        });
+        const redisClient = await redisClientPool.acquire("lib/roomParticipant");
+        try {
+            const redisKey = `RoomParticipants:${roomId}`;
 
-        if (
-            !removeResult.data?.delete_room_Participant?.affected_rows ||
-            removeResult.data.delete_room_Participant.affected_rows === 0
-        ) {
-            logger.warn({ roomId, registrantId }, "Could not find participant to remove for room");
-        } else if (vonageSessionId) {
-            const response = await apolloClient.query({
-                query: CountRoomParticipantsDocument,
-                variables: {
-                    roomId,
-                },
-            });
-            if (response.data.room_Participant_aggregate.aggregate?.count === 0) {
-                await apolloClient.mutate({
-                    mutation: InsertVonageSessionLayoutDocument,
-                    variables: {
-                        object: {
-                            conferenceId,
-                            vonageSessionId,
-                            layoutData: {
-                                type: VonageSessionLayoutType.BestFit,
-                                screenShareType: "verticalPresentation",
-                            } as VonageSessionLayoutData,
-                        },
-                    },
-                });
+            if (vonage) {
+                logger.info({ registrantId, roomId, vonage }, "Removing vonage connection");
+                const zremResult = await redisClientP.zrem(redisClient)(
+                    `VonageConnections:${vonage.sessionId}`,
+                    vonage.connectionId
+                );
+                removeOnlyConnection = removeOnlyConnection || zremResult === 0;
+                logger.info(
+                    { zremResult, registrantId, roomId, removeOnlyConnection, vonage },
+                    "Removed vonage connection"
+                );
             }
+
+            if (!removeOnlyConnection) {
+                logger.info({ registrantId, roomId }, "Removing registrant from room");
+                await redisClientP.zrem(redisClient)(redisKey, registrantId);
+            }
+
+            if (vonage && conferenceId) {
+                if (conferenceId) {
+                    const count = await redisClientP.zcard(redisClient)(redisKey);
+                    if (count === 0) {
+                        await apolloClient.mutate({
+                            mutation: InsertVonageSessionLayoutDocument,
+                            variables: {
+                                object: {
+                                    conferenceId,
+                                    vonageSessionId: vonage.sessionId,
+                                    layoutData: {
+                                        type: VonageSessionLayoutType.BestFit,
+                                        screenShareType: "verticalPresentation",
+                                    } as VonageSessionLayoutData,
+                                },
+                            },
+                        });
+                    }
+                }
+            }
+        } finally {
+            await redisClientPool.release("lib/roomParticipant", redisClient);
         }
     } catch (err) {
         logger.error({ roomId, conferenceId, registrantId, err }, "Failed to remove RoomParticipant record");
@@ -181,59 +134,30 @@ export async function removeRoomParticipant(
     }
 }
 
-export async function getRoomParticipantDetails(
-    roomId: string,
-    registrantId: string
-): Promise<RoomParticipantFragment[]> {
-    gql`
-        query GetRoomParticipantDetails($roomId: uuid!, $registrantId: uuid!) {
-            room_Participant(where: { roomId: { _eq: $roomId }, registrantId: { _eq: $registrantId } }) {
-                ...RoomParticipant
-            }
-        }
-
-        fragment RoomParticipant on room_Participant {
-            id
-            room {
-                id
-                conferenceId
-                publicVonageSessionId
-                chimeMeeting {
-                    id
-                    chimeMeetingId
-                }
-            }
-            vonageConnectionId
-            chimeRegistrantId
-        }
-    `;
-
-    const result = await apolloClient.query({
-        query: GetRoomParticipantDetailsDocument,
-        variables: {
-            registrantId,
-            roomId,
-        },
-    });
-
-    return result.data.room_Participant;
-}
-
 export async function deleteRoomParticipantsCreatedBefore(date: Date): Promise<number> {
-    gql`
-        mutation DeleteRoomParticipantsCreatedBefore($before: timestamptz!) {
-            delete_room_Participant(where: { createdAt: { _lte: $before } }) {
-                affected_rows
-            }
-        }
-    `;
+    const cutoff = date.getTime();
+    let totalRemoved = 0;
 
-    const result = await apolloClient.mutate({
-        mutation: DeleteRoomParticipantsCreatedBeforeDocument,
-        variables: {
-            before: date.toISOString(),
-        },
-    });
+    const redisClient = await redisClientPool.acquire("lib/roomParticipant");
+    try {
+        let [cursor, keys] = await redisClientP.scan(redisClient)("0", "RoomParticipants:*");
+        do {
+            totalRemoved += (
+                await Promise.all(keys.map((key) => redisClientP.zremrangebyscore(redisClient)(key, 0, cutoff)))
+            ).reduce((acc, x) => acc + x, 0);
 
-    return result.data?.delete_room_Participant?.affected_rows ?? 0;
+            [cursor, keys] = await redisClientP.scan(redisClient)(cursor, "RoomParticipants:*");
+        } while (cursor !== "0");
+
+        [cursor, keys] = await redisClientP.scan(redisClient)("0", "VonageConnections:*");
+        do {
+            await Promise.all(keys.map((key) => redisClientP.zremrangebyscore(redisClient)(key, 0, cutoff)));
+
+            [cursor, keys] = await redisClientP.scan(redisClient)(cursor, "VonageConnections:*");
+        } while (cursor !== "0");
+    } finally {
+        await redisClientPool.release("lib/roomParticipant", redisClient);
+    }
+
+    return totalRemoved;
 }

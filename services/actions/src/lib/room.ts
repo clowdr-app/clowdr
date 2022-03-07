@@ -197,12 +197,16 @@ export async function createRoomChimeMeeting(logger: P.Logger, roomId: string, c
     return chimeMeetingData;
 }
 
-export async function getExistingRoomChimeMeeting(logger: P.Logger, roomId: string): Promise<Meeting | null> {
+export async function getExistingRoomChimeMeeting(
+    logger: P.Logger,
+    roomId: string
+): Promise<(Meeting & { conferenceId: string }) | null> {
     gql`
         query GetRoomChimeMeeting($roomId: uuid!) {
             room_ChimeMeeting(where: { roomId: { _eq: $roomId } }) {
                 id
                 chimeMeetingData
+                conferenceId
             }
         }
     `;
@@ -216,6 +220,7 @@ export async function getExistingRoomChimeMeeting(logger: P.Logger, roomId: stri
 
     if (result.data.room_ChimeMeeting.length === 1) {
         const chimeMeetingId = result.data.room_ChimeMeeting[0].id;
+        const conferenceId = result.data.room_ChimeMeeting[0].conferenceId;
         const chimeMeetingData: Meeting = result.data.room_ChimeMeeting[0].chimeMeetingData;
         if (!is<Meeting>(chimeMeetingData)) {
             logger.warn(
@@ -255,7 +260,7 @@ export async function getExistingRoomChimeMeeting(logger: P.Logger, roomId: stri
             return null;
         }
 
-        return chimeMeetingData;
+        return { ...chimeMeetingData, conferenceId };
     }
 
     return null;
@@ -281,7 +286,10 @@ export async function getExistingRoomVonageMeeting(roomId: string): Promise<stri
     return result.data.room_Room_by_pk?.publicVonageSessionId ?? null;
 }
 
-export async function getRoomChimeMeeting(logger: P.Logger, roomId: string): Promise<Meeting> {
+export async function getRoomChimeMeeting(
+    logger: P.Logger,
+    roomId: string
+): Promise<Meeting & { conferenceId: string }> {
     const existingChimeMeetingData = await getExistingRoomChimeMeeting(logger, roomId);
 
     if (existingChimeMeetingData) {
@@ -291,11 +299,11 @@ export async function getRoomChimeMeeting(logger: P.Logger, roomId: string): Pro
     try {
         const { conferenceId } = await getRoomConferenceId(roomId);
         const chimeMeetingData = await createRoomChimeMeeting(logger, roomId, conferenceId);
-        return chimeMeetingData;
+        return { ...chimeMeetingData, conferenceId };
     } catch (e: any) {
         const existingChimeMeetingData = await getExistingRoomChimeMeeting(logger, roomId);
         if (existingChimeMeetingData) {
-            return existingChimeMeetingData;
+            return { ...existingChimeMeetingData, conferenceId: existingChimeMeetingData.conferenceId };
         }
 
         logger.error({ err: e, roomId }, "Could not get Chime meeting data");

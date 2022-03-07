@@ -77,7 +77,7 @@ export function useRegistrant(id: RegistrantIdSpec | null | undefined): Registra
     return registrant;
 }
 
-export function useRegistrants(ids: RegistrantIdSpec[]): RegistrantDataFragment[] {
+export function useRegistrants(ids?: RegistrantIdSpec[] | null): RegistrantDataFragment[] {
     const registrantsCtx = useRegistrantsContext();
 
     const _registrants = useRef<{
@@ -91,23 +91,25 @@ export function useRegistrants(ids: RegistrantIdSpec[]): RegistrantDataFragment[
     useEffect(() => {
         const subs: number[] = [];
         const result: RegistrantDataFragment[] = [];
-        for (const id of ids) {
-            const sub = registrantsCtx.subscribe(id, (registrant, subId) => {
-                registrantsCtx.unsubscribe(subId);
+        if (ids) {
+            for (const id of ids) {
+                const sub = registrantsCtx.subscribe(id, (registrant, subId) => {
+                    registrantsCtx.unsubscribe(subId);
 
-                _registrants.current.updatedAt = Date.now();
-                const old = _registrants.current.data;
-                if (old?.some((x) => x.id === registrant.id)) {
-                    _registrants.current.data = old.map((x) => (x.id === registrant.id ? registrant : x));
-                } else if (old) {
-                    _registrants.current.data = [...old, registrant];
-                } else {
-                    _registrants.current.data = [registrant];
+                    _registrants.current.updatedAt = Date.now();
+                    const old = _registrants.current.data;
+                    if (old?.some((x) => x.id === registrant.id)) {
+                        _registrants.current.data = old.map((x) => (x.id === registrant.id ? registrant : x));
+                    } else if (old) {
+                        _registrants.current.data = [...old, registrant];
+                    } else {
+                        _registrants.current.data = [registrant];
+                    }
+                });
+                subs.push(sub.id);
+                if (sub.registrant) {
+                    result.push(sub.registrant);
                 }
-            });
-            subs.push(sub.id);
-            if (sub.registrant) {
-                result.push(sub.registrant);
             }
         }
 

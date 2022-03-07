@@ -57,6 +57,7 @@ import type {
     RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
+import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import { maybeCompare } from "../../../Utils/maybeCompare";
 import { addRegistrantsToEvent } from "./BatchAddEventPeople";
@@ -610,10 +611,11 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                               status: "error",
                                               title: "Error saving changes",
                                               description:
-                                                  insertEventProgramPersonResponse.error?.message ??
-                                                  updateEventProgramPersonResponse.error?.message ??
-                                                  deleteEventProgramPersonsResponse.error?.message ??
-                                                  "Unknown error",
+                                                  extractActualError(
+                                                      insertEventProgramPersonResponse.error ??
+                                                          updateEventProgramPersonResponse.error ??
+                                                          deleteEventProgramPersonsResponse.error
+                                                  ) ?? "Unknown error",
                                           }
                                         : undefined
                                 }

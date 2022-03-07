@@ -9,9 +9,9 @@ import type { ElementDataFragment } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
 import { ExternalLinkButton } from "../../../../Chakra/LinkButton";
 import { Markdown } from "../../../../Chakra/Markdown";
-import ActiveSocialRooms from "../../Rooms/V2/ActiveSocialRooms";
-import LiveProgramRooms from "../../Rooms/V2/LiveProgramRooms";
-import SponsorBooths from "../../Rooms/V2/SponsorBooths";
+import ActiveSocialRooms from "../../Rooms/ActiveSocialRooms";
+import LiveProgramRooms from "../../Rooms/LiveProgramRooms";
+import SponsorBooths from "../../Rooms/SponsorBooths";
 import { ProgramModalTab, useScheduleModal } from "../../Schedule/ProgramModal";
 import { VideoElement } from "./VideoElement";
 
@@ -43,7 +43,7 @@ function ElementInner({
             case Content_ElementType_Enum.LiveProgramRooms:
                 return <LiveProgramRooms />;
             case Content_ElementType_Enum.ActiveSocialRooms:
-                return <ActiveSocialRooms excludeLiveEventRooms={true} />;
+                return <ActiveSocialRooms />;
             case Content_ElementType_Enum.Divider:
                 return <Divider />;
             case Content_ElementType_Enum.SponsorBooths:

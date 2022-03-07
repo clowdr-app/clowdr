@@ -2,6 +2,7 @@ import { Box, Tooltip, useToast } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import type { CombinedError } from "urql";
 import FAIcon from "../Chakra/FAIcon";
+import extractActualError from "./ExtractActualError";
 import { useUrqlContext } from "./UrqlProvider";
 
 // let shownJWTIssuedAtFutureReloadWarning = false;
@@ -18,8 +19,8 @@ export default function useQueryErrorToast(
     useEffect(() => {
         let tId: number | undefined;
         if (error) {
-            const message = typeof error === "string" ? error : error.message;
-            if (message.includes("JWTIssuedAtFuture")) {
+            const message = typeof error === "string" ? error : extractActualError(error);
+            if (message?.includes("JWTIssuedAtFuture")) {
                 console.error(
                     "Oh not this again... Hasura's clock is out of sync with the rest of the world. Lookup JWT Leeway in the Hasura docs."
                 );

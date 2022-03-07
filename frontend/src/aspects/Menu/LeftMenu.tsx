@@ -1,15 +1,17 @@
 import { Box, Flex, Link, useColorModeValue, useToken } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Link as ReactLink, useLocation } from "react-router-dom";
-import { useCountSwagBagsQuery } from "../../generated/graphql";
-import { useSocialiseModal } from "../Conference/Attend/Rooms/V2/SocialiseModalProvider";
-import { useLiveProgramRooms } from "../Conference/Attend/Rooms/V2/useLiveProgramRooms";
+import { useCountSwagBagsQuery, useGetSocialRoomsQuery } from "../../generated/graphql";
+import { useSocialiseModal } from "../Conference/Attend/Rooms/SocialiseModalProvider";
+import { useLiveProgramRooms } from "../Conference/Attend/Rooms/useLiveProgramRooms";
 import { ProgramModalTab, useScheduleModal } from "../Conference/Attend/Schedule/ProgramModal";
 import RequireRole from "../Conference/RequireRole";
 import { useConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../GQL/AuthParameters";
+import { makeContext } from "../GQL/make-context";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
 import useIsVeryNarrowView from "../Hooks/useIsVeryNarrowView";
 import { useLiveEvents } from "../LiveEvents/LiveEvents";
@@ -71,7 +73,31 @@ export default function LeftMenu({
         socialise_OnClose();
     }, [location.pathname, liveNow_OnClose, schedule_OnClose, socialise_OnClose]);
 
-    const roomParticipants = useRoomParticipants();
+    const getSocialRoomsContext = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.IncludeRoomIds]: "true",
+            }),
+        []
+    );
+    const [socialRoomsResult] = useGetSocialRoomsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+        context: getSocialRoomsContext,
+    });
+    const socialRoomIds = useMemo(
+        () => socialRoomsResult.data?.room_Room.map((x) => x.id),
+        [socialRoomsResult.data?.room_Room]
+    );
+    const socialRoomParticipants = useRoomParticipants(socialRoomIds);
+    const countOfSocialRoomParticipants = useMemo(
+        () =>
+            socialRoomParticipants
+                ? Object.values(socialRoomParticipants).reduce((acc, x) => acc + (x?.length ?? 0), 0)
+                : undefined,
+        [socialRoomParticipants]
+    );
 
     const { liveEventsByRoom } = useLiveEvents();
     const liveRoomCount = Object.keys(liveEventsByRoom).length;
@@ -210,11 +236,9 @@ export default function LeftMenu({
                             <MenuButton
                                 label="Socialise"
                                 ariaLabel={
-                                    roomParticipants !== undefined &&
-                                    roomParticipants !== false &&
-                                    roomParticipants.length > 0
-                                        ? `Socialise: ${roomParticipants.length} ${
-                                              roomParticipants.length === 1 ? "person" : "people"
+                                    countOfSocialRoomParticipants
+                                        ? `Socialise: ${countOfSocialRoomParticipants} ${
+                                              countOfSocialRoomParticipants === 1 ? "person" : "people"
                                           } connected`
                                         : "Socialise"
                                 }
@@ -231,11 +255,9 @@ export default function LeftMenu({
                                 showLabel={isExpanded}
                                 isDisabled={navState.disabled}
                             >
-                                {roomParticipants !== undefined &&
-                                roomParticipants !== false &&
-                                roomParticipants.length > 0 ? (
+                                {countOfSocialRoomParticipants ? (
                                     <Box pos="absolute" top={1} right={1} fontSize="xs">
-                                        {roomParticipants.length}
+                                        {countOfSocialRoomParticipants}
                                     </Box>
                                 ) : undefined}
                             </MenuButton>

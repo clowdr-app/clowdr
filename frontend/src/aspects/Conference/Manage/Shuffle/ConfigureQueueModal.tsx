@@ -18,7 +18,6 @@ import {
     NumberInput,
     NumberInputField,
     NumberInputStepper,
-    Select,
     Tooltip,
     useDisclosure,
     useToast,
@@ -62,7 +61,7 @@ export default function ConfigureQueueModal({
     const [updateResponse, update] = useUpdateShufflePeriodMutation();
 
     const [name, setName] = useState<string>(initialQueue.name);
-    const [algorithm, setAlgorithm] = useState<Room_ShuffleAlgorithm_Enum>(initialQueue.algorithm);
+    const [algorithm, _setAlgorithm] = useState<Room_ShuffleAlgorithm_Enum>(initialQueue.algorithm);
     const [startAt, setStartAt] = useState<Date>(new Date(initialQueue.startAt));
     const [endAt, setEndAt] = useState<Date>(new Date(initialQueue.endAt));
     const [roomDurationMinutes, setRoomDurationMinutes] = useState<number>(initialQueue.roomDurationMinutes);
@@ -205,7 +204,7 @@ export default function ConfigureQueueModal({
                                     Name of the queue, shown to registrants. For example, a topic or theme.
                                 </FormHelperText>
                             </FormControl>
-                            <FormControl>
+                            {/* <FormControl>
                                 <FormLabel>Automation</FormLabel>
                                 <Select
                                     isDisabled={updateResponse.fetching}
@@ -227,7 +226,7 @@ export default function ConfigureQueueModal({
                                     manually configure rooms and allocations and let the algorithm handle the rest, or
                                     have no automation and do it all yourself.
                                 </FormHelperText>
-                            </FormControl>
+                            </FormControl> */}
                             <FormControl>
                                 <FormLabel>Start at</FormLabel>
                                 <DateTimePicker

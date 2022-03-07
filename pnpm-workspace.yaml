@@ -3,3 +3,4 @@ packages:
   - "services/**"
   - "aws"
   - "packages/**"
+  - "test/**"

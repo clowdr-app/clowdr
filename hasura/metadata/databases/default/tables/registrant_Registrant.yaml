@@ -55,13 +55,6 @@ array_relationships:
       table:
         name: ProgramPerson
         schema: collection
-- name: roomParticipants
-  using:
-    foreign_key_constraint_on:
-      column: registrantId
-      table:
-        name: Participant
-        schema: room
 - name: subconferenceMemberships
   using:
     foreign_key_constraint_on:

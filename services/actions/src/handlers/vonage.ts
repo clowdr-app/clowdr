@@ -50,6 +50,7 @@ import type {
     SessionMonitoringWebhookReqBody,
 } from "../types/vonage";
 import { callWithRetry } from "../utils";
+import { getVideoChatNonEventRemainingQuota, incrementVideoChatNonEventUsage } from "./usage";
 
 gql`
     query OngoingBroadcastableVideoRoomEvents($time: timestamptz!, $sessionId: String!) {
@@ -396,6 +397,8 @@ gql`
             id
             intendedRoomModeName
             enableRecording
+            startTime
+            durationSeconds
             eventVonageSession {
                 id
                 sessionId
@@ -468,6 +471,15 @@ export async function handleJoinEvent(
         });
     }
 
+    if (Date.parse(result.data.schedule_Event_by_pk.startTime) - 10 * 60 * 1000 > Date.now()) {
+        const remainingQuota = await getVideoChatNonEventRemainingQuota(registrant.conferenceId);
+        if (remainingQuota <= 0) {
+            throw new Error("Quota limit reached (video-chat social minutes)");
+        } else {
+            await incrementVideoChatNonEventUsage(registrant.conferenceId, 1);
+        }
+    }
+
     const isPresenterOrChairOrConferenceOrganizerOrConferenceModerator =
         result.data.schedule_Event_by_pk.eventPeople.some(
             (eventPerson) =>
@@ -531,7 +543,7 @@ export async function handleJoinRoom(
     allowedRoomIds: string[],
     userId: string
 ): Promise<JoinRoomVonageSessionOutput> {
-    // Assumption: list of registrants will never include a registrant that does not have access
+    // Guarantee: list of registrants will never include a registrant that does not have access
     // to a room in the list of rooms.
     if (!allowedRegistrantIds.includes(payload.registrantId)) {
         throw new ForbiddenError("Forbidden to join room", {
@@ -544,7 +556,7 @@ export async function handleJoinRoom(
     }
 
     if (!allowedRoomIds.includes(payload.roomId)) {
-        throw new ForbiddenError("Forbiddent to join room", {
+        throw new ForbiddenError("Forbidden to join room", {
             privateMessage: "Room is not in list of allowed rooms",
             privateErrorData: {
                 roomId: payload.roomId,
@@ -571,6 +583,13 @@ export async function handleJoinRoom(
                 registrantId: payload.registrantId,
             },
         });
+    }
+
+    const remainingQuota = await getVideoChatNonEventRemainingQuota(registrant.conferenceId);
+    if (remainingQuota <= 0) {
+        throw new Error("Quota limit reached (video-chat social minutes)");
+    } else {
+        await incrementVideoChatNonEventUsage(registrant.conferenceId, 1);
     }
 
     const connectionData: CustomConnectionData = {

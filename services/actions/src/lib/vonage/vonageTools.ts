@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { DeleteAttendeeCommand } from "@aws-sdk/client-chime";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
 import type OpenTok from "opentok";
@@ -19,7 +20,7 @@ import type { StreamData } from "../../types/vonage";
 import { callWithRetry } from "../../utils";
 import { getRegistrantDetails } from "../authorisation";
 import { Chime, shortId } from "../aws/awsClient";
-import { getRoomParticipantDetails, removeRoomParticipant } from "../roomParticipant";
+import { removeAllRoomParticipants, removeRoomParticipant } from "../roomParticipant";
 import Vonage from "./vonageClient";
 
 gql`
@@ -488,52 +489,73 @@ export async function stopRoomVonageArchiving(
     }
 }
 
-export async function kickRegistrantFromRoom(logger: P.Logger, roomId: string, registrantId: string): Promise<void> {
-    const roomParticipants = await getRoomParticipantDetails(roomId, registrantId);
-
-    if (roomParticipants.length !== 1) {
-        logger.error({ roomId, registrantId }, "Could not find a room participant to kick");
-        throw new Error("Could not find a room participant to kick");
+export async function kickAllRegistrantsFromVonageRoom(logger: P.Logger, roomId: string, vonageSessionId: string) {
+    try {
+        const redisClient = await redisClientPool.acquire("lib/roomParticipant");
+        try {
+            const connectionIds = await redisClientP.zmembers(redisClient)(`VonageConnections:${vonageSessionId}`);
+            await Promise.all(
+                connectionIds.map((connectionId) =>
+                    callWithRetry(() => Vonage.forceDisconnect(vonageSessionId, connectionId))
+                )
+            );
+            await removeAllRoomParticipants(logger, roomId, vonageSessionId);
+        } finally {
+            await redisClientPool.release("lib/roomParticipant", redisClient);
+        }
+    } catch (error: any) {
+        logger.error({ error, roomId, vonageSessionId }, "Failed to kick all registrants from vonage room");
     }
+}
 
-    const roomParticipant = roomParticipants[0];
+export async function kickRegistrantFromRoom(
+    logger: P.Logger,
+    roomId: string,
+    registrantId: string,
+    identifier:
+        | { vonageConnectionId: string; vonageSessionId: string }
+        | { chimeRegistrantId: string; chimeMeetingId: string },
+    isRemovingDuplicate: boolean
+): Promise<void> {
+    if ("vonageConnectionId" in identifier) {
+        await removeRoomParticipant(
+            logger,
+            roomId,
+            undefined,
+            registrantId,
+            {
+                connectionId: identifier.vonageConnectionId,
+                sessionId: identifier.vonageSessionId,
+            },
+            isRemovingDuplicate
+        );
 
-    if (roomParticipant.vonageConnectionId) {
-        if (!roomParticipant.room.publicVonageSessionId) {
-            logger.warn({ roomId, registrantId }, "Could not find Vonage session to kick participant from");
-        } else {
-            logger.info({ roomId, registrantId }, "Forcing Vonage disconnection of registrant");
-            try {
-                await Vonage.forceDisconnect(
-                    roomParticipant.room.publicVonageSessionId,
-                    roomParticipant.vonageConnectionId
-                );
-            } catch (err) {
-                logger.error({ roomId, registrantId, err }, "Failed to force Vonage disconnection of registrant");
-                throw new Error("Failed to force Vonage disconnection of registrant");
-            }
+        logger.info({ roomId, identifier }, "Forcing Vonage disconnection of registrant");
+        try {
+            await callWithRetry(() =>
+                Vonage.forceDisconnect(identifier.vonageSessionId, identifier.vonageConnectionId)
+            );
+        } catch (err) {
+            logger.error({ roomId, identifier, err }, "Failed to force Vonage disconnection of registrant");
+            throw new Error("Failed to force Vonage disconnection of registrant");
         }
+    } else if ("chimeRegistrantId" in identifier) {
+        await removeRoomParticipant(logger, roomId, undefined, registrantId, undefined, isRemovingDuplicate);
 
-        await removeRoomParticipant(logger, roomId, roomParticipant.room.conferenceId, registrantId);
-    } else if (roomParticipant.chimeRegistrantId) {
-        if (!roomParticipant.room.chimeMeeting) {
-            logger.warn({ roomId, registrantId }, "Could not find Chime session to kick participant from");
-        } else {
-            logger.info({ roomId, registrantId }, "Forcing Chime disconnection of registrant");
-            try {
-                await Chime.send(
+        logger.info({ roomId, identifier }, "Forcing Chime disconnection of registrant");
+        try {
+            await callWithRetry(() =>
+                Chime.send(
                     new DeleteAttendeeCommand({
-                        AttendeeId: roomParticipant.chimeRegistrantId,
-                        MeetingId: roomParticipant.room.chimeMeeting.chimeMeetingId,
+                        AttendeeId: identifier.chimeRegistrantId,
+                        MeetingId: identifier.chimeMeetingId,
                     })
-                );
-            } catch (err) {
-                logger.error({ roomId, registrantId, err }, "Failed to force Chime disconnection of registrant");
-                throw new Error("Failed to force Chime disconnection of registrant");
-            }
+                )
+            );
+        } catch (err) {
+            logger.error({ roomId, identifier, err }, "Failed to force Chime disconnection of registrant");
+            throw new Error("Failed to force Chime disconnection of registrant");
         }
-
-        await removeRoomParticipant(logger, roomId, roomParticipant.room.conferenceId, registrantId);
     }
 }
 

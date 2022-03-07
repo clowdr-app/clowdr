@@ -68,7 +68,6 @@
 - "!include room_LivestreamDurations.yaml"
 - "!include room_ManagementMode.yaml"
 - "!include room_Mode.yaml"
-- "!include room_Participant.yaml"
 - "!include room_PersonRole.yaml"
 - "!include room_Room.yaml"
 - "!include room_RoomGroupMembership.yaml"

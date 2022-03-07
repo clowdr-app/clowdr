@@ -12,6 +12,7 @@ import {
 import type { CombineVideosJobDataBlob } from "@midspace/shared-types/combineVideosJob";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { AWSJobStatus, Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
+import { SourceType } from "@midspace/shared-types/content/element";
 import { TranscodeMode } from "@midspace/shared-types/sns/mediaconvert";
 import assert from "assert";
 import type { P } from "pino";
@@ -292,6 +293,7 @@ gql`
         $itemId: uuid!
         $conferenceId: uuid!
         $subconferenceId: uuid!
+        $source: jsonb!
     ) {
         insert_content_Element_one(
             object: {
@@ -302,6 +304,7 @@ gql`
                 itemId: $itemId
                 conferenceId: $conferenceId
                 subconferenceId: $subconferenceId
+                source: $source
             }
         ) {
             id
@@ -378,6 +381,7 @@ export async function completeCombineVideosJob(
                         name:
                             combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk?.outputName ??
                             "Combined video",
+                        source: SourceType.CombineVideos,
                     },
                 })
         );

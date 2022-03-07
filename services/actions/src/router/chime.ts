@@ -161,7 +161,7 @@ router.use(checkEventSecret);
 router.post(
     "/joinRoom",
     json(),
-    async (req: Request, res: Response<JoinRoomChimeSessionOutput>, next: NextFunction) => {
+    async (req: Request, res: Response<JoinRoomChimeSessionOutput | string>, next: NextFunction) => {
         try {
             const body = assertType<ActionPayload<joinRoomChimeSessionArgs>>(req.body);
             if (!req.userId) {
@@ -173,7 +173,7 @@ router.post(
             if (err instanceof TypeGuardError) {
                 next(new BadRequestError("Invalid request", { originalError: err }));
             } else if (err instanceof Error) {
-                next(err);
+                res.status(403).json(err.toString());
             } else {
                 next(new UnexpectedServerError("Server error", undefined, err));
             }

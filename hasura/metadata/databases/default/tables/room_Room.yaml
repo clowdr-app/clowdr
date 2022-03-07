@@ -95,13 +95,6 @@ array_relationships:
       table:
         name: Event
         schema: schedule
-- name: participants
-  using:
-    foreign_key_constraint_on:
-      column: roomId
-      table:
-        name: Participant
-        schema: room
 - name: presenceCounts
   using:
     manual_configuration:

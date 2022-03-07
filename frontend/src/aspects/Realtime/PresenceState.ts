@@ -6,6 +6,8 @@ import { realtimeService } from "./RealtimeService";
 export class PresenceState {
     private offSocketAvailable: (() => void) | undefined;
     private offSocketUnavailable: (() => void) | undefined;
+    private roomParticipantsIntervalId: number | undefined;
+    public conferenceId: string | undefined;
     setup(): void {
         this.offSocketAvailable?.();
         this.offSocketUnavailable?.();
@@ -14,21 +16,38 @@ export class PresenceState {
             socket.on("entered", this.onEntered.bind(this));
             socket.on("left", this.onLeft.bind(this));
             socket.on("presences", this.onListPresent.bind(this));
+            socket.on("room-participants", this.onListRoomParticipants.bind(this));
 
             this.pageChanged(window.location.pathname);
+
+            this.roomParticipantsIntervalId = setInterval(
+                (() => {
+                    if (this.conferenceId) {
+                        const confId = this.conferenceId;
+                        Object.keys(this.roomObservers).map((roomId) => this.pollRoomParticipants(roomId, confId));
+                    }
+                }) as TimerHandler,
+                60000
+            );
         });
         this.offSocketUnavailable =
             realtimeService.onSocketUnavailable("PresenceState.setup", (socket) => {
+                if (this.roomParticipantsIntervalId) {
+                    const id = this.roomParticipantsIntervalId;
+                    this.roomParticipantsIntervalId = undefined;
+                    clearInterval(id);
+                }
+
                 socket.off("entered");
                 socket.off("left");
                 socket.off("presences");
+                socket.off("room-participants");
             }) ?? undefined;
     }
 
     teardown(): void {
         this.offSocketAvailable?.();
         this.offSocketUnavailable?.();
-        this.presences = {};
     }
 
     async sha256(message: string): Promise<string> {
@@ -53,6 +72,13 @@ export class PresenceState {
         [k: string]: Observable<Set<string>>;
     } = {};
 
+    private roomParticipants: {
+        [k: string]: Set<string>;
+    } = {};
+    private roomObservers: {
+        [k: string]: Observable<Set<string>>;
+    } = {};
+
     private onEntered(data: { listId: string; userId: string }) {
         // console.log("Presence:onEntered", data);
         if (!this.presences[data.listId]) {
@@ -73,13 +99,21 @@ export class PresenceState {
         }
     }
     private onListPresent(data: { listId: string; userIds: string[] }) {
-        // console.log("Presence:onListPresent", data);
         this.presences[data.listId] = new Set();
         for (const userId of data.userIds) {
             this.presences[data.listId].add(userId);
         }
         if (this.observers[data.listId]) {
             this.observers[data.listId].publish(this.presences[data.listId]);
+        }
+    }
+    private onListRoomParticipants(data: { roomId: string; registrantIds: string[] }) {
+        this.roomParticipants[data.roomId] = new Set();
+        for (const registrantId of data.registrantIds) {
+            this.roomParticipants[data.roomId].add(registrantId);
+        }
+        if (this.roomObservers[data.roomId]) {
+            this.roomObservers[data.roomId].publish(this.roomParticipants[data.roomId]);
         }
     }
 
@@ -145,6 +179,54 @@ export class PresenceState {
                             realtimeService.socket?.emit("unobservePage", path);
                         }
                     }
+                    info.unsubscribe();
+                } catch (e) {
+                    console.error("Error unsubscribing from presence observer", e);
+                } finally {
+                    release();
+                }
+            })();
+        };
+    }
+
+    private roomObserversMutex = new Mutex();
+    public pollRoomParticipants(roomId: string, conferenceId: string) {
+        realtimeService.socket?.emit("roomParticipants", { roomId, conferenceId });
+    }
+    public observeRoom(roomId: string, conferenceId: string, observer: Observer<Set<string>>): () => void {
+        const promise = (async () => {
+            const release = await this.roomObserversMutex.acquire();
+
+            let unsubscribe: () => void = () => {
+                // Empty
+            };
+            try {
+                if (!this.roomObservers[roomId]) {
+                    this.roomObservers[roomId] = new Observable((observer) => {
+                        observer(this.presences[roomId as string] ?? new Set());
+                    });
+                }
+                unsubscribe = this.roomObservers[roomId].subscribe(observer);
+
+                this.pollRoomParticipants(roomId, conferenceId);
+            } catch (e) {
+                console.error("Error subscribing to presence observer", e);
+            } finally {
+                release();
+            }
+            return {
+                unsubscribe,
+                roomId,
+                conferenceId,
+            };
+        })();
+
+        return () => {
+            (async () => {
+                const release = await this.roomObserversMutex.acquire();
+
+                try {
+                    const info = await promise;
                     info.unsubscribe();
                 } catch (e) {
                     console.error("Error unsubscribing from presence observer", e);

@@ -44,6 +44,7 @@ import type {
     RowSpecification,
 } from "../../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../../CRUDTable2/CRUDTable2";
+import extractActualError from "../../../../GQL/ExtractActualError";
 import { makeContext } from "../../../../GQL/make-context";
 import { maybeCompare } from "../../../../Utils/maybeCompare";
 import { useConference } from "../../../useConference";
@@ -402,10 +403,9 @@ function ManageTagsModalBody(): JSX.Element {
                               status: "error",
                               title: "Error saving changes",
                               description:
-                                  insertTagResponse.error?.message ??
-                                  updateTagResponse.error?.message ??
-                                  deleteTagsResponse.error?.message ??
-                                  "Unknown error",
+                                  extractActualError(
+                                      insertTagResponse.error ?? updateTagResponse.error ?? deleteTagsResponse.error
+                                  ) ?? "Unknown error",
                           }
                         : undefined
                 }

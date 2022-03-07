@@ -29,7 +29,7 @@ import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
 import { useConference } from "../../useConference";
 import ItemList from "../Content/ItemList";
 import { ExhibitionsGrid } from "../Exhibition/ExhibitionsPage";
-import { SponsorBoothsInner } from "../Rooms/V2/SponsorBooths";
+import { SponsorBoothsInner } from "../Rooms/SponsorBooths";
 import { ProgramModalTab } from "./ProgramModal";
 import { ScheduleFetchWrapper, ScheduleInner } from "./v1/Schedule";
 import WholeSchedule from "./v2/WholeSchedule";
@@ -210,85 +210,90 @@ export default function ScheduleModal({
             <ModalContent h="100vh" overflow="hidden" m={4}>
                 <ModalCloseButton ref={closeRef} />
                 <ModalBody display="flex" justifyContent="center" overflow="hidden" p={0}>
-                    <Tabs
-                        isLazy
-                        w="100%"
-                        display="flex"
-                        flexDir="column"
-                        variant="solid-rounded"
-                        colorScheme="PrimaryActionButton"
-                        index={selectedTabIndex}
-                        onChange={setSelectedTabFromIndex}
-                        size="sm"
-                        pt={1}
-                    >
-                        <TabList justifyContent="center">
-                            {anyHappeningSoon ? (
+                    {isOpen ? (
+                        <Tabs
+                            isLazy
+                            w="100%"
+                            display="flex"
+                            flexDir="column"
+                            variant="solid-rounded"
+                            colorScheme="PrimaryActionButton"
+                            index={selectedTabIndex}
+                            onChange={setSelectedTabFromIndex}
+                            size="sm"
+                            pt={1}
+                        >
+                            <TabList justifyContent="center">
+                                {anyHappeningSoon ? (
+                                    <Tab alignItems="center">
+                                        <FAIcon iconStyle="s" icon="clock" />
+                                        &nbsp;&nbsp;Happening soon
+                                    </Tab>
+                                ) : undefined}
                                 <Tab alignItems="center">
-                                    <FAIcon iconStyle="s" icon="clock" />
-                                    &nbsp;&nbsp;Happening soon
+                                    <FAIcon iconStyle="s" icon="tags" />
+                                    &nbsp;&nbsp;Browse content
                                 </Tab>
-                            ) : undefined}
-                            <Tab alignItems="center">
-                                <FAIcon iconStyle="s" icon="tags" />
-                                &nbsp;&nbsp;Browse content
-                            </Tab>
-                            <Tab alignItems="center">
-                                <FAIcon iconStyle="s" icon="puzzle-piece" />
-                                &nbsp;&nbsp;{conference.visibleExhibitionsLabel[0]?.value ?? "Exhibition"}s
-                            </Tab>
-                            {anySponsors ? (
                                 <Tab alignItems="center">
-                                    <FAIcon iconStyle="s" icon="star" />
-                                    &nbsp;&nbsp;{conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
+                                    <FAIcon iconStyle="s" icon="puzzle-piece" />
+                                    &nbsp;&nbsp;{conference.visibleExhibitionsLabel[0]?.value ?? "Exhibition"}s
                                 </Tab>
-                            ) : undefined}
-                            <Tab alignItems="center">
-                                <FAIcon iconStyle="s" icon="calendar" />
-                                &nbsp;&nbsp;Full schedule
-                            </Tab>
-                            {enableScheduleViewV2 ? (
+                                {anySponsors ? (
+                                    <Tab alignItems="center">
+                                        <FAIcon iconStyle="s" icon="star" />
+                                        &nbsp;&nbsp;{conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
+                                    </Tab>
+                                ) : undefined}
                                 <Tab alignItems="center">
                                     <FAIcon iconStyle="s" icon="calendar" />
-                                    &nbsp;&nbsp;Schedule V2: Early preview
+                                    &nbsp;&nbsp;Full schedule
                                 </Tab>
-                            ) : undefined}
-                        </TabList>
-                        <TabPanels h="100%" overflow="hidden">
-                            {anyHappeningSoon ? (
-                                <TabPanel w="100%" h="100%" display="flex" justifyContent="center">
-                                    {happeningSoon}
+                                {enableScheduleViewV2 ? (
+                                    <Tab alignItems="center">
+                                        <FAIcon iconStyle="s" icon="calendar" />
+                                        &nbsp;&nbsp;Schedule V2: Early preview
+                                    </Tab>
+                                ) : undefined}
+                            </TabList>
+                            <TabPanels h="100%" overflow="hidden">
+                                {anyHappeningSoon ? (
+                                    <TabPanel w="100%" h="100%" display="flex" justifyContent="center">
+                                        {happeningSoon}
+                                    </TabPanel>
+                                ) : undefined}
+                                <TabPanel w="100%" h="100%" display="flex" justifyContent="center" overflowY="auto">
+                                    <ItemList
+                                        overrideSelectedTag={selectedTagId}
+                                        setOverrideSelectedTag={setSelectedTag}
+                                    />
                                 </TabPanel>
-                            ) : undefined}
-                            <TabPanel w="100%" h="100%" display="flex" justifyContent="center" overflowY="auto">
-                                <ItemList overrideSelectedTag={selectedTagId} setOverrideSelectedTag={setSelectedTag} />
-                            </TabPanel>
-                            <TabPanel w="100%" h="100%" overflowY="auto">
-                                <ExhibitionsGrid />
-                            </TabPanel>
-                            {anySponsors ? (
                                 <TabPanel w="100%" h="100%" overflowY="auto">
-                                    {sponsors}
+                                    <ExhibitionsGrid />
                                 </TabPanel>
-                            ) : undefined}
-                            <TabPanel
-                                w="100%"
-                                h="100%"
-                                display="flex"
-                                flexDir="column"
-                                alignItems="center"
-                                p={0}
-                                pt={2}
-                            >
-                                <ScheduleFetchWrapper />
-                            </TabPanel>
-                            {enableScheduleViewV2 ? (
-                                <TabPanel w="100%" h="100%" display="flex" flexDir="column" alignItems="center">
-                                    <WholeSchedule />
+                                {anySponsors ? (
+                                    <TabPanel w="100%" h="100%" overflowY="auto">
+                                        {sponsors}
+                                    </TabPanel>
+                                ) : undefined}
+                                <TabPanel
+                                    w="100%"
+                                    h="100%"
+                                    display="flex"
+                                    flexDir="column"
+                                    alignItems="center"
+                                    p={0}
+                                    pt={2}
+                                >
+                                    <ScheduleFetchWrapper />
                                 </TabPanel>
-                            ) : undefined}
-                        </TabPanels>
-                    </Tabs>
+                                {enableScheduleViewV2 ? (
+                                    <TabPanel w="100%" h="100%" display="flex" flexDir="column" alignItems="center">
+                                        <WholeSchedule />
+                                    </TabPanel>
+                                ) : undefined}
+                            </TabPanels>
+                        </Tabs>
+                    ) : undefined}
                 </ModalBody>
             </ModalContent>
         </Modal>

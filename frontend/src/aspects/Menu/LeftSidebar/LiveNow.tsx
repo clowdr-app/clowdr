@@ -1,8 +1,8 @@
 import { Button } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../../Chakra/FAIcon";
-import LiveProgramRooms from "../../Conference/Attend/Rooms/V2/LiveProgramRooms";
-import { useLiveProgramRooms } from "../../Conference/Attend/Rooms/V2/useLiveProgramRooms";
+import LiveProgramRooms from "../../Conference/Attend/Rooms/LiveProgramRooms";
+import { useLiveProgramRooms } from "../../Conference/Attend/Rooms/useLiveProgramRooms";
 import useIsNarrowView from "../../Hooks/useIsNarrowView";
 import Pullout from "./Pullout";
 

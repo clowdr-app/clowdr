@@ -428,7 +428,7 @@ export default function SystemConfiguration(): JSX.Element {
             //               status: "error",
             //               title: "Error saving changes",
             //               description:
-            //                   insertResponse.error?.message ?? updateResponse.error?.message ?? deleteResponse.error?.message ?? "Unknown error",
+            //                   extractActualError(insertResponse.error ?? updateResponse.error ?? deleteResponse.error) ?? "Unknown error",
             //           }
             //         : undefined
             // }

@@ -166,7 +166,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     />
                     <RestrictedDashboardButton
                         to="shuffle"
-                        name="Shuffle"
+                        name="Networking"
                         icon="random"
                         description="Manage randomised, time-limited networking, aka. shuffle periods."
                         organizerRole

@@ -13,7 +13,7 @@ import { Schedule_SelectItemDocument } from "../../../../../generated/graphql";
 import { useConference } from "../../../useConference";
 import { PlainAuthorsList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";
-import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
+import { EventModeIcon } from "../../Rooms/EventHighlight";
 import StarEventButton from "../StarEventButton";
 import type { TimelineEvent } from "./DayList";
 import EventBoxModal from "./EventBoxModal";

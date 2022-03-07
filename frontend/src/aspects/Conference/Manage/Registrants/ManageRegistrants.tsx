@@ -70,6 +70,7 @@ import type {
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
+import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useTitle } from "../../../Hooks/useTitle";
@@ -1474,11 +1475,12 @@ export default function ManageRegistrants(): JSX.Element {
                               status: "error",
                               title: "Error saving changes",
                               description:
-                                  insertRegistrantResponse.error?.message ??
-                                  insertRegistrantWithoutInviteResponse.error?.message ??
-                                  updateRegistrantResponse.error?.message ??
-                                  deleteRegistrantsResponse.error?.message ??
-                                  "Unknown error",
+                                  extractActualError(
+                                      insertRegistrantResponse.error ??
+                                          insertRegistrantWithoutInviteResponse.error ??
+                                          updateRegistrantResponse.error ??
+                                          deleteRegistrantsResponse.error
+                                  ) ?? "Unknown error",
                           }
                         : undefined
                 }

@@ -33,6 +33,7 @@
         "@aws-sdk/url-parser-node": "^3.1.0",
         "@graphql-typed-document-node/core": "^3.1.1",
         "@midspace/auth": "workspace:*",
+        "@midspace/component-clients": "workspace:*",
         "@midspace/graphql": "workspace:*",
         "@midspace/hasura": "workspace:*",
         "@midspace/server-utils": "workspace:*",

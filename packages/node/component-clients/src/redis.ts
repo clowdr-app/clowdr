@@ -89,6 +89,8 @@ export const redisClientP = {
         promisify((key: string, value: string, cb?: Callback<number>) => redisClient.sismember(key, value, cb)),
     smembers: (redisClient: RedisClient) =>
         promisify((key: string, cb?: Callback<string[]>) => redisClient.smembers(key, cb)),
+    zmembers: (redisClient: RedisClient) =>
+        promisify((key: string, cb?: Callback<string[]>) => redisClient.zrange(key, 0, -1, cb)),
     scan: (redisClient: RedisClient) =>
         promisify((cursor: string, pattern: string, cb?: Callback<[string, string[]]>) =>
             redisClient.scan(cursor, "match", pattern, cb)
@@ -103,6 +105,10 @@ export const redisClientP = {
         promisify((key: string, start: number, stop: number, cb?: Callback<string[]>) =>
             redisClient.zrange(key, start, stop, cb)
         ),
+    zremrangebyscore: (redisClient: RedisClient) =>
+        promisify((key: string, start: number, stop: number, cb?: Callback<number>) =>
+            redisClient.zremrangebyscore(key, start, stop, cb)
+        ),
     zremrangebyrank: (redisClient: RedisClient) =>
         promisify((key: string, start: number, stop: number, cb?: Callback<number>) =>
             redisClient.zremrangebyrank(key, start, stop, cb)
@@ -111,6 +117,8 @@ export const redisClientP = {
     zrevrank: (redisClient: RedisClient) =>
         promisify((key: string, member: string, cb?: Callback<number | null>) => redisClient.zrevrank(key, member, cb)),
     incr: (redisClient: RedisClient) => promisify((key: string, cb?: Callback<number>) => redisClient.incr(key, cb)),
+    incrBy: (redisClient: RedisClient) =>
+        promisify((key: string, increment: number, cb?: Callback<number>) => redisClient.incrby(key, increment, cb)),
     getset: (redisClient: RedisClient) =>
         promisify((key: string, value: string, cb?: Callback<string>) => redisClient.getset(key, value, cb)),
 

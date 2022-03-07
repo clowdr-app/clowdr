@@ -25,6 +25,7 @@ import type {
     RowSpecification,
 } from "../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
+import extractActualError from "../../GQL/ExtractActualError";
 import { makeContext } from "../../GQL/make-context";
 import useCurrentUser from "../../Users/CurrentUser/useCurrentUser";
 
@@ -512,7 +513,7 @@ export default function SysConfigPermissionGrants(): JSX.Element {
                           status: "error",
                           title: "Error saving changes",
                           description:
-                              insertResponse.error?.message ?? deleteResponse.error?.message ?? "Unknown error",
+                              extractActualError(insertResponse.error ?? deleteResponse.error) ?? "Unknown error",
                       }
                     : undefined
             }

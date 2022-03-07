@@ -56,6 +56,7 @@ import type {
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
+import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useTitle } from "../../../Hooks/useTitle";
@@ -1255,10 +1256,9 @@ export default function ManageContentV2(): JSX.Element {
                       status: "error",
                       title: "Error saving changes",
                       description:
-                          insertItemResponse.error?.message ??
-                          updateItemResponse.error?.message ??
-                          deleteItemsResponse.error?.message ??
-                          "Unknown error",
+                          extractActualError(
+                              insertItemResponse.error ?? updateItemResponse.error ?? deleteItemsResponse.error
+                          ) ?? "Unknown error",
                   }
                 : undefined,
         [deleteItemsResponse.error, insertItemResponse.error, updateItemResponse.error]

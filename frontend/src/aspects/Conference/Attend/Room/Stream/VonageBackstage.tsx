@@ -10,6 +10,7 @@ import {
     useGetEventVonageTokenMutation,
     useVonageBackstage_GetVonageSessionQuery,
 } from "../../../../../generated/graphql";
+import extractActualError from "../../../../GQL/ExtractActualError";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { RecordingControlReason } from "../Vonage/State/VonageRoomProvider";
@@ -95,6 +96,10 @@ export function VonageBackstageInner({
             registrantId: registrant.id,
         });
         if (!result.data?.joinEventVonageSession?.accessToken) {
+            const error = extractActualError(result.error);
+            if (error) {
+                throw new Error(error);
+            }
             throw new Error("No Vonage session ID");
         }
         return result.data?.joinEventVonageSession.accessToken;

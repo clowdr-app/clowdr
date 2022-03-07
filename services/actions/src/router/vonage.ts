@@ -97,7 +97,7 @@ router.post(
     "/joinEvent",
     json(),
     parseSessionVariables,
-    async (req: Request, res: Response<JoinEventVonageSessionOutput>, next: NextFunction) => {
+    async (req: Request, res: Response<JoinEventVonageSessionOutput | string>, next: NextFunction) => {
         try {
             const body = assertType<ActionPayload<joinEventVonageSessionArgs>>(req.body);
             if (!req.userId) {
@@ -109,7 +109,7 @@ router.post(
             if (err instanceof TypeGuardError) {
                 next(new BadRequestError("Invalid request", { originalError: err }));
             } else if (err instanceof Error) {
-                next(err);
+                res.status(403).json(err.toString());
             } else {
                 next(new UnexpectedServerError("Server error", undefined, err));
             }
@@ -121,7 +121,7 @@ router.post(
     "/joinRoom",
     json(),
     parseSessionVariables,
-    async (req: Request, res: Response<JoinRoomVonageSessionOutput>, next: NextFunction): Promise<void> => {
+    async (req: Request, res: Response<JoinRoomVonageSessionOutput | string>, next: NextFunction): Promise<void> => {
         try {
             const body = assertType<ActionPayload<joinRoomVonageSessionArgs>>(req.body);
             if (!req.userId) {
@@ -133,7 +133,7 @@ router.post(
             if (err instanceof TypeGuardError) {
                 next(new BadRequestError("Invalid request", { originalError: err }));
             } else if (err instanceof Error) {
-                next(err);
+                res.status(403).json(err.toString());
             } else {
                 next(new UnexpectedServerError("Server error", undefined, err));
             }

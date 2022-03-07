@@ -7017,10 +7017,14 @@ export type Conference_Conference = {
     readonly programPeople: ReadonlyArray<Collection_ProgramPerson>;
     /** An aggregate relationship */
     readonly programPeople_aggregate: Collection_ProgramPerson_Aggregate;
+    /** An object relationship */
+    readonly quota?: Maybe<Conference_Quota>;
     /** An array relationship */
     readonly registrants: ReadonlyArray<Registrant_Registrant>;
     /** An aggregate relationship */
     readonly registrants_aggregate: Registrant_Registrant_Aggregate;
+    /** An object relationship */
+    readonly remainingQuota?: Maybe<Conference_RemainingQuota>;
     /** An array relationship */
     readonly rooms: ReadonlyArray<Room_Room>;
     /** An aggregate relationship */
@@ -7044,6 +7048,8 @@ export type Conference_Conference = {
     /** An aggregate relationship */
     readonly tags_aggregate: Collection_Tag_Aggregate;
     readonly updatedAt: Scalars["timestamptz"];
+    /** An object relationship */
+    readonly usage?: Maybe<Conference_Usage>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7320,7 +7326,9 @@ export type Conference_Conference_Bool_Exp = {
     readonly items?: InputMaybe<Content_Item_Bool_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
+    readonly quota?: InputMaybe<Conference_Quota_Bool_Exp>;
     readonly registrants?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    readonly remainingQuota?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
     readonly rooms?: InputMaybe<Room_Room_Bool_Exp>;
     readonly shortName?: InputMaybe<String_Comparison_Exp>;
     readonly shufflePeriods?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
@@ -7329,6 +7337,7 @@ export type Conference_Conference_Bool_Exp = {
     readonly subconferences?: InputMaybe<Conference_Subconference_Bool_Exp>;
     readonly tags?: InputMaybe<Collection_Tag_Bool_Exp>;
     readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly usage?: InputMaybe<Conference_Usage_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "conference.Conference" */
@@ -7367,7 +7376,9 @@ export type Conference_Conference_Insert_Input = {
     readonly items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
+    readonly quota?: InputMaybe<Conference_Quota_Obj_Rel_Insert_Input>;
     readonly registrants?: InputMaybe<Registrant_Registrant_Arr_Rel_Insert_Input>;
+    readonly remainingQuota?: InputMaybe<Conference_RemainingQuota_Obj_Rel_Insert_Input>;
     readonly rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
     readonly shortName?: InputMaybe<Scalars["String"]>;
     readonly shufflePeriods?: InputMaybe<Room_ShufflePeriod_Arr_Rel_Insert_Input>;
@@ -7376,6 +7387,7 @@ export type Conference_Conference_Insert_Input = {
     readonly subconferences?: InputMaybe<Conference_Subconference_Arr_Rel_Insert_Input>;
     readonly tags?: InputMaybe<Collection_Tag_Arr_Rel_Insert_Input>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
+    readonly usage?: InputMaybe<Conference_Usage_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -7483,7 +7495,9 @@ export type Conference_Conference_Order_By = {
     readonly items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
+    readonly quota?: InputMaybe<Conference_Quota_Order_By>;
     readonly registrants_aggregate?: InputMaybe<Registrant_Registrant_Aggregate_Order_By>;
+    readonly remainingQuota?: InputMaybe<Conference_RemainingQuota_Order_By>;
     readonly rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
     readonly shortName?: InputMaybe<Order_By>;
     readonly shufflePeriods_aggregate?: InputMaybe<Room_ShufflePeriod_Aggregate_Order_By>;
@@ -7492,6 +7506,7 @@ export type Conference_Conference_Order_By = {
     readonly subconferences_aggregate?: InputMaybe<Conference_Subconference_Aggregate_Order_By>;
     readonly tags_aggregate?: InputMaybe<Collection_Tag_Aggregate_Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
+    readonly usage?: InputMaybe<Conference_Usage_Order_By>;
 };
 
 /** primary key columns input for table: conference_Conference */
@@ -8158,6 +8173,828 @@ export enum Conference_DemoCode_Update_Column {
     UsedById = "usedById",
 }
 
+/** columns and relationships of "conference.Quota" */
+export type Conference_Quota = {
+    readonly __typename?: "conference_Quota";
+    readonly areStreamingEventsAllowed: Scalars["Boolean"];
+    readonly areVideoChatEventsAllowed: Scalars["Boolean"];
+    /** An object relationship */
+    readonly conference: Conference_Conference;
+    readonly conferenceId: Scalars["uuid"];
+    readonly created_at: Scalars["timestamptz"];
+    readonly id: Scalars["uuid"];
+    readonly maxContentItems: Scalars["Int"];
+    readonly maxMediaElementsPerContentItem: Scalars["Int"];
+    readonly maxMediaElementsPerSponsor: Scalars["Int"];
+    readonly maxNonMediaElementsPerContentItem: Scalars["Int"];
+    readonly maxNonMediaElementsPerSponsor: Scalars["Int"];
+    readonly maxNonStreamingProgramRooms: Scalars["Int"];
+    readonly maxPublicSocialRooms: Scalars["Int"];
+    readonly maxRegistrants: Scalars["Int"];
+    readonly maxStreamingEventIndividualMinutes: Scalars["Int"];
+    readonly maxStreamingEventTotalMinutes: Scalars["Int"];
+    readonly maxStreamingProgramRooms: Scalars["Int"];
+    readonly maxSubconferences: Scalars["Int"];
+    readonly maxSupportMeetingMinutes: Scalars["Int"];
+    readonly maxVideoChatEventIndividualMinutes: Scalars["Int"];
+    readonly maxVideoChatEventTotalMinutes: Scalars["Int"];
+    readonly maxVideoChatNonEventTotalMinutesConsumed: Scalars["Int"];
+    readonly updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "conference.Quota" */
+export type Conference_Quota_Aggregate = {
+    readonly __typename?: "conference_Quota_aggregate";
+    readonly aggregate?: Maybe<Conference_Quota_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Conference_Quota>;
+};
+
+/** aggregate fields of "conference.Quota" */
+export type Conference_Quota_Aggregate_Fields = {
+    readonly __typename?: "conference_Quota_aggregate_fields";
+    readonly avg?: Maybe<Conference_Quota_Avg_Fields>;
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Conference_Quota_Max_Fields>;
+    readonly min?: Maybe<Conference_Quota_Min_Fields>;
+    readonly stddev?: Maybe<Conference_Quota_Stddev_Fields>;
+    readonly stddev_pop?: Maybe<Conference_Quota_Stddev_Pop_Fields>;
+    readonly stddev_samp?: Maybe<Conference_Quota_Stddev_Samp_Fields>;
+    readonly sum?: Maybe<Conference_Quota_Sum_Fields>;
+    readonly var_pop?: Maybe<Conference_Quota_Var_Pop_Fields>;
+    readonly var_samp?: Maybe<Conference_Quota_Var_Samp_Fields>;
+    readonly variance?: Maybe<Conference_Quota_Variance_Fields>;
+};
+
+/** aggregate fields of "conference.Quota" */
+export type Conference_Quota_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Conference_Quota_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** aggregate avg on columns */
+export type Conference_Quota_Avg_Fields = {
+    readonly __typename?: "conference_Quota_avg_fields";
+    readonly maxContentItems?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Float"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** Boolean expression to filter rows from the table "conference.Quota". All fields are combined with a logical 'AND'. */
+export type Conference_Quota_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Conference_Quota_Bool_Exp>>;
+    readonly _not?: InputMaybe<Conference_Quota_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Conference_Quota_Bool_Exp>>;
+    readonly areStreamingEventsAllowed?: InputMaybe<Boolean_Comparison_Exp>;
+    readonly areVideoChatEventsAllowed?: InputMaybe<Boolean_Comparison_Exp>;
+    readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly maxContentItems?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxMediaElementsPerContentItem?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxMediaElementsPerSponsor?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxNonMediaElementsPerContentItem?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxNonMediaElementsPerSponsor?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxNonStreamingProgramRooms?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxPublicSocialRooms?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxRegistrants?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxStreamingEventIndividualMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxStreamingEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxStreamingProgramRooms?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxSubconferences?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxSupportMeetingMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxVideoChatEventIndividualMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxVideoChatEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Int_Comparison_Exp>;
+    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "conference.Quota" */
+export enum Conference_Quota_Constraint {
+    /** unique or primary key constraint */
+    QuotaConferenceIdKey = "Quota_conferenceId_key",
+    /** unique or primary key constraint */
+    QuotaPkey = "Quota_pkey",
+}
+
+/** input type for incrementing numeric columns in table "conference.Quota" */
+export type Conference_Quota_Inc_Input = {
+    readonly maxContentItems?: InputMaybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    readonly maxNonStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    readonly maxPublicSocialRooms?: InputMaybe<Scalars["Int"]>;
+    readonly maxRegistrants?: InputMaybe<Scalars["Int"]>;
+    readonly maxStreamingEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    readonly maxSubconferences?: InputMaybe<Scalars["Int"]>;
+    readonly maxSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxVideoChatEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "conference.Quota" */
+export type Conference_Quota_Insert_Input = {
+    readonly areStreamingEventsAllowed?: InputMaybe<Scalars["Boolean"]>;
+    readonly areVideoChatEventsAllowed?: InputMaybe<Scalars["Boolean"]>;
+    readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly maxContentItems?: InputMaybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    readonly maxNonStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    readonly maxPublicSocialRooms?: InputMaybe<Scalars["Int"]>;
+    readonly maxRegistrants?: InputMaybe<Scalars["Int"]>;
+    readonly maxStreamingEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    readonly maxSubconferences?: InputMaybe<Scalars["Int"]>;
+    readonly maxSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxVideoChatEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Scalars["Int"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Conference_Quota_Max_Fields = {
+    readonly __typename?: "conference_Quota_max_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly maxContentItems?: Maybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Int"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Int"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Int"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Int"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Conference_Quota_Min_Fields = {
+    readonly __typename?: "conference_Quota_min_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly maxContentItems?: Maybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Int"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Int"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Int"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Int"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "conference.Quota" */
+export type Conference_Quota_Mutation_Response = {
+    readonly __typename?: "conference_Quota_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Conference_Quota>;
+};
+
+/** input type for inserting object relation for remote table "conference.Quota" */
+export type Conference_Quota_Obj_Rel_Insert_Input = {
+    readonly data: Conference_Quota_Insert_Input;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Conference_Quota_On_Conflict>;
+};
+
+/** on conflict condition type for table "conference.Quota" */
+export type Conference_Quota_On_Conflict = {
+    readonly constraint: Conference_Quota_Constraint;
+    readonly update_columns?: ReadonlyArray<Conference_Quota_Update_Column>;
+    readonly where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "conference.Quota". */
+export type Conference_Quota_Order_By = {
+    readonly areStreamingEventsAllowed?: InputMaybe<Order_By>;
+    readonly areVideoChatEventsAllowed?: InputMaybe<Order_By>;
+    readonly conference?: InputMaybe<Conference_Conference_Order_By>;
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly maxContentItems?: InputMaybe<Order_By>;
+    readonly maxMediaElementsPerContentItem?: InputMaybe<Order_By>;
+    readonly maxMediaElementsPerSponsor?: InputMaybe<Order_By>;
+    readonly maxNonMediaElementsPerContentItem?: InputMaybe<Order_By>;
+    readonly maxNonMediaElementsPerSponsor?: InputMaybe<Order_By>;
+    readonly maxNonStreamingProgramRooms?: InputMaybe<Order_By>;
+    readonly maxPublicSocialRooms?: InputMaybe<Order_By>;
+    readonly maxRegistrants?: InputMaybe<Order_By>;
+    readonly maxStreamingEventIndividualMinutes?: InputMaybe<Order_By>;
+    readonly maxStreamingEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly maxStreamingProgramRooms?: InputMaybe<Order_By>;
+    readonly maxSubconferences?: InputMaybe<Order_By>;
+    readonly maxSupportMeetingMinutes?: InputMaybe<Order_By>;
+    readonly maxVideoChatEventIndividualMinutes?: InputMaybe<Order_By>;
+    readonly maxVideoChatEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: conference_Quota */
+export type Conference_Quota_Pk_Columns_Input = {
+    readonly id: Scalars["uuid"];
+};
+
+/** select columns of table "conference.Quota" */
+export enum Conference_Quota_Select_Column {
+    /** column name */
+    AreStreamingEventsAllowed = "areStreamingEventsAllowed",
+    /** column name */
+    AreVideoChatEventsAllowed = "areVideoChatEventsAllowed",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    MaxContentItems = "maxContentItems",
+    /** column name */
+    MaxMediaElementsPerContentItem = "maxMediaElementsPerContentItem",
+    /** column name */
+    MaxMediaElementsPerSponsor = "maxMediaElementsPerSponsor",
+    /** column name */
+    MaxNonMediaElementsPerContentItem = "maxNonMediaElementsPerContentItem",
+    /** column name */
+    MaxNonMediaElementsPerSponsor = "maxNonMediaElementsPerSponsor",
+    /** column name */
+    MaxNonStreamingProgramRooms = "maxNonStreamingProgramRooms",
+    /** column name */
+    MaxPublicSocialRooms = "maxPublicSocialRooms",
+    /** column name */
+    MaxRegistrants = "maxRegistrants",
+    /** column name */
+    MaxStreamingEventIndividualMinutes = "maxStreamingEventIndividualMinutes",
+    /** column name */
+    MaxStreamingEventTotalMinutes = "maxStreamingEventTotalMinutes",
+    /** column name */
+    MaxStreamingProgramRooms = "maxStreamingProgramRooms",
+    /** column name */
+    MaxSubconferences = "maxSubconferences",
+    /** column name */
+    MaxSupportMeetingMinutes = "maxSupportMeetingMinutes",
+    /** column name */
+    MaxVideoChatEventIndividualMinutes = "maxVideoChatEventIndividualMinutes",
+    /** column name */
+    MaxVideoChatEventTotalMinutes = "maxVideoChatEventTotalMinutes",
+    /** column name */
+    MaxVideoChatNonEventTotalMinutesConsumed = "maxVideoChatNonEventTotalMinutesConsumed",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "conference.Quota" */
+export type Conference_Quota_Set_Input = {
+    readonly areStreamingEventsAllowed?: InputMaybe<Scalars["Boolean"]>;
+    readonly areVideoChatEventsAllowed?: InputMaybe<Scalars["Boolean"]>;
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly maxContentItems?: InputMaybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerContentItem?: InputMaybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerSponsor?: InputMaybe<Scalars["Int"]>;
+    readonly maxNonStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    readonly maxPublicSocialRooms?: InputMaybe<Scalars["Int"]>;
+    readonly maxRegistrants?: InputMaybe<Scalars["Int"]>;
+    readonly maxStreamingEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxStreamingProgramRooms?: InputMaybe<Scalars["Int"]>;
+    readonly maxSubconferences?: InputMaybe<Scalars["Int"]>;
+    readonly maxSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxVideoChatEventIndividualMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: InputMaybe<Scalars["Int"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Conference_Quota_Stddev_Fields = {
+    readonly __typename?: "conference_Quota_stddev_fields";
+    readonly maxContentItems?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Float"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Conference_Quota_Stddev_Pop_Fields = {
+    readonly __typename?: "conference_Quota_stddev_pop_fields";
+    readonly maxContentItems?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Float"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Conference_Quota_Stddev_Samp_Fields = {
+    readonly __typename?: "conference_Quota_stddev_samp_fields";
+    readonly maxContentItems?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Float"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Conference_Quota_Sum_Fields = {
+    readonly __typename?: "conference_Quota_sum_fields";
+    readonly maxContentItems?: Maybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Int"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Int"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Int"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Int"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Int"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Int"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Int"]>;
+};
+
+/** update columns of table "conference.Quota" */
+export enum Conference_Quota_Update_Column {
+    /** column name */
+    AreStreamingEventsAllowed = "areStreamingEventsAllowed",
+    /** column name */
+    AreVideoChatEventsAllowed = "areVideoChatEventsAllowed",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    MaxContentItems = "maxContentItems",
+    /** column name */
+    MaxMediaElementsPerContentItem = "maxMediaElementsPerContentItem",
+    /** column name */
+    MaxMediaElementsPerSponsor = "maxMediaElementsPerSponsor",
+    /** column name */
+    MaxNonMediaElementsPerContentItem = "maxNonMediaElementsPerContentItem",
+    /** column name */
+    MaxNonMediaElementsPerSponsor = "maxNonMediaElementsPerSponsor",
+    /** column name */
+    MaxNonStreamingProgramRooms = "maxNonStreamingProgramRooms",
+    /** column name */
+    MaxPublicSocialRooms = "maxPublicSocialRooms",
+    /** column name */
+    MaxRegistrants = "maxRegistrants",
+    /** column name */
+    MaxStreamingEventIndividualMinutes = "maxStreamingEventIndividualMinutes",
+    /** column name */
+    MaxStreamingEventTotalMinutes = "maxStreamingEventTotalMinutes",
+    /** column name */
+    MaxStreamingProgramRooms = "maxStreamingProgramRooms",
+    /** column name */
+    MaxSubconferences = "maxSubconferences",
+    /** column name */
+    MaxSupportMeetingMinutes = "maxSupportMeetingMinutes",
+    /** column name */
+    MaxVideoChatEventIndividualMinutes = "maxVideoChatEventIndividualMinutes",
+    /** column name */
+    MaxVideoChatEventTotalMinutes = "maxVideoChatEventTotalMinutes",
+    /** column name */
+    MaxVideoChatNonEventTotalMinutesConsumed = "maxVideoChatNonEventTotalMinutesConsumed",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Conference_Quota_Var_Pop_Fields = {
+    readonly __typename?: "conference_Quota_var_pop_fields";
+    readonly maxContentItems?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Float"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Conference_Quota_Var_Samp_Fields = {
+    readonly __typename?: "conference_Quota_var_samp_fields";
+    readonly maxContentItems?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Float"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Conference_Quota_Variance_Fields = {
+    readonly __typename?: "conference_Quota_variance_fields";
+    readonly maxContentItems?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerContentItem?: Maybe<Scalars["Float"]>;
+    readonly maxNonMediaElementsPerSponsor?: Maybe<Scalars["Float"]>;
+    readonly maxNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly maxRegistrants?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly maxSubconferences?: Maybe<Scalars["Float"]>;
+    readonly maxSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventIndividualMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly maxVideoChatNonEventTotalMinutesConsumed?: Maybe<Scalars["Float"]>;
+};
+
+/** columns and relationships of "conference.RemainingQuota" */
+export type Conference_RemainingQuota = {
+    readonly __typename?: "conference_RemainingQuota";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly remainingContentItems?: Maybe<Scalars["bigint"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["bigint"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["bigint"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly slug?: Maybe<Scalars["String"]>;
+};
+
+/** aggregated selection of "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Aggregate = {
+    readonly __typename?: "conference_RemainingQuota_aggregate";
+    readonly aggregate?: Maybe<Conference_RemainingQuota_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Conference_RemainingQuota>;
+};
+
+/** aggregate fields of "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Aggregate_Fields = {
+    readonly __typename?: "conference_RemainingQuota_aggregate_fields";
+    readonly avg?: Maybe<Conference_RemainingQuota_Avg_Fields>;
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Conference_RemainingQuota_Max_Fields>;
+    readonly min?: Maybe<Conference_RemainingQuota_Min_Fields>;
+    readonly stddev?: Maybe<Conference_RemainingQuota_Stddev_Fields>;
+    readonly stddev_pop?: Maybe<Conference_RemainingQuota_Stddev_Pop_Fields>;
+    readonly stddev_samp?: Maybe<Conference_RemainingQuota_Stddev_Samp_Fields>;
+    readonly sum?: Maybe<Conference_RemainingQuota_Sum_Fields>;
+    readonly var_pop?: Maybe<Conference_RemainingQuota_Var_Pop_Fields>;
+    readonly var_samp?: Maybe<Conference_RemainingQuota_Var_Samp_Fields>;
+    readonly variance?: Maybe<Conference_RemainingQuota_Variance_Fields>;
+};
+
+/** aggregate fields of "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** aggregate avg on columns */
+export type Conference_RemainingQuota_Avg_Fields = {
+    readonly __typename?: "conference_RemainingQuota_avg_fields";
+    readonly remainingContentItems?: Maybe<Scalars["Float"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["Float"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** Boolean expression to filter rows from the table "conference.RemainingQuota". All fields are combined with a logical 'AND'. */
+export type Conference_RemainingQuota_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Bool_Exp>>;
+    readonly _not?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Bool_Exp>>;
+    readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly remainingContentItems?: InputMaybe<Bigint_Comparison_Exp>;
+    readonly remainingNonStreamingProgramRooms?: InputMaybe<Bigint_Comparison_Exp>;
+    readonly remainingPublicSocialRooms?: InputMaybe<Bigint_Comparison_Exp>;
+    readonly remainingRegistrants?: InputMaybe<Bigint_Comparison_Exp>;
+    readonly remainingStreamingEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly remainingStreamingProgramRooms?: InputMaybe<Bigint_Comparison_Exp>;
+    readonly remainingSubconferences?: InputMaybe<Bigint_Comparison_Exp>;
+    readonly remainingSupportMeetingMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly remainingVideoChatEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly remainingVideoChatNonEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly slug?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Insert_Input = {
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly remainingContentItems?: InputMaybe<Scalars["bigint"]>;
+    readonly remainingNonStreamingProgramRooms?: InputMaybe<Scalars["bigint"]>;
+    readonly remainingPublicSocialRooms?: InputMaybe<Scalars["bigint"]>;
+    readonly remainingRegistrants?: InputMaybe<Scalars["bigint"]>;
+    readonly remainingStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly remainingStreamingProgramRooms?: InputMaybe<Scalars["bigint"]>;
+    readonly remainingSubconferences?: InputMaybe<Scalars["bigint"]>;
+    readonly remainingSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly remainingVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly slug?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Conference_RemainingQuota_Max_Fields = {
+    readonly __typename?: "conference_RemainingQuota_max_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly remainingContentItems?: Maybe<Scalars["bigint"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["bigint"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["bigint"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly slug?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate min on columns */
+export type Conference_RemainingQuota_Min_Fields = {
+    readonly __typename?: "conference_RemainingQuota_min_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly remainingContentItems?: Maybe<Scalars["bigint"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["bigint"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["bigint"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly slug?: Maybe<Scalars["String"]>;
+};
+
+/** input type for inserting object relation for remote table "conference.RemainingQuota" */
+export type Conference_RemainingQuota_Obj_Rel_Insert_Input = {
+    readonly data: Conference_RemainingQuota_Insert_Input;
+};
+
+/** Ordering options when selecting data from "conference.RemainingQuota". */
+export type Conference_RemainingQuota_Order_By = {
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly remainingContentItems?: InputMaybe<Order_By>;
+    readonly remainingNonStreamingProgramRooms?: InputMaybe<Order_By>;
+    readonly remainingPublicSocialRooms?: InputMaybe<Order_By>;
+    readonly remainingRegistrants?: InputMaybe<Order_By>;
+    readonly remainingStreamingEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly remainingStreamingProgramRooms?: InputMaybe<Order_By>;
+    readonly remainingSubconferences?: InputMaybe<Order_By>;
+    readonly remainingSupportMeetingMinutes?: InputMaybe<Order_By>;
+    readonly remainingVideoChatEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly remainingVideoChatNonEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly slug?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "conference.RemainingQuota" */
+export enum Conference_RemainingQuota_Select_Column {
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    RemainingContentItems = "remainingContentItems",
+    /** column name */
+    RemainingNonStreamingProgramRooms = "remainingNonStreamingProgramRooms",
+    /** column name */
+    RemainingPublicSocialRooms = "remainingPublicSocialRooms",
+    /** column name */
+    RemainingRegistrants = "remainingRegistrants",
+    /** column name */
+    RemainingStreamingEventTotalMinutes = "remainingStreamingEventTotalMinutes",
+    /** column name */
+    RemainingStreamingProgramRooms = "remainingStreamingProgramRooms",
+    /** column name */
+    RemainingSubconferences = "remainingSubconferences",
+    /** column name */
+    RemainingSupportMeetingMinutes = "remainingSupportMeetingMinutes",
+    /** column name */
+    RemainingVideoChatEventTotalMinutes = "remainingVideoChatEventTotalMinutes",
+    /** column name */
+    RemainingVideoChatNonEventTotalMinutes = "remainingVideoChatNonEventTotalMinutes",
+    /** column name */
+    Slug = "slug",
+}
+
+/** aggregate stddev on columns */
+export type Conference_RemainingQuota_Stddev_Fields = {
+    readonly __typename?: "conference_RemainingQuota_stddev_fields";
+    readonly remainingContentItems?: Maybe<Scalars["Float"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["Float"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Conference_RemainingQuota_Stddev_Pop_Fields = {
+    readonly __typename?: "conference_RemainingQuota_stddev_pop_fields";
+    readonly remainingContentItems?: Maybe<Scalars["Float"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["Float"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Conference_RemainingQuota_Stddev_Samp_Fields = {
+    readonly __typename?: "conference_RemainingQuota_stddev_samp_fields";
+    readonly remainingContentItems?: Maybe<Scalars["Float"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["Float"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Conference_RemainingQuota_Sum_Fields = {
+    readonly __typename?: "conference_RemainingQuota_sum_fields";
+    readonly remainingContentItems?: Maybe<Scalars["bigint"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["bigint"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["bigint"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["bigint"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate var_pop on columns */
+export type Conference_RemainingQuota_Var_Pop_Fields = {
+    readonly __typename?: "conference_RemainingQuota_var_pop_fields";
+    readonly remainingContentItems?: Maybe<Scalars["Float"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["Float"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Conference_RemainingQuota_Var_Samp_Fields = {
+    readonly __typename?: "conference_RemainingQuota_var_samp_fields";
+    readonly remainingContentItems?: Maybe<Scalars["Float"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["Float"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Conference_RemainingQuota_Variance_Fields = {
+    readonly __typename?: "conference_RemainingQuota_variance_fields";
+    readonly remainingContentItems?: Maybe<Scalars["Float"]>;
+    readonly remainingNonStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingPublicSocialRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingRegistrants?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingStreamingProgramRooms?: Maybe<Scalars["Float"]>;
+    readonly remainingSubconferences?: Maybe<Scalars["Float"]>;
+    readonly remainingSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly remainingVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
 /** columns and relationships of "conference.Subconference" */
 export type Conference_Subconference = {
     readonly __typename?: "conference_Subconference";
@@ -8422,6 +9259,330 @@ export enum Conference_Subconference_Update_Column {
     UpdatedAt = "updated_at",
 }
 
+/** columns and relationships of "conference.Usage" */
+export type Conference_Usage = {
+    readonly __typename?: "conference_Usage";
+    /** An object relationship */
+    readonly conference: Conference_Conference;
+    readonly conferenceId: Scalars["uuid"];
+    readonly consumedStreamingEventTotalMinutes: Scalars["Int"];
+    readonly consumedSupportMeetingMinutes: Scalars["Int"];
+    readonly consumedVideoChatEventTotalMinutes: Scalars["Int"];
+    readonly consumedVideoChatNonEventTotalMinutes: Scalars["Int"];
+    readonly created_at: Scalars["timestamptz"];
+    readonly id: Scalars["uuid"];
+    readonly lastUpdatedConsumedStreamingEventTotalMinutes: Scalars["timestamptz"];
+    readonly lastUpdatedConsumedSupportMeetingMinutes: Scalars["timestamptz"];
+    readonly lastUpdatedConsumedVideoChatEventTotalMinutes: Scalars["timestamptz"];
+    readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes: Scalars["timestamptz"];
+    readonly updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "conference.Usage" */
+export type Conference_Usage_Aggregate = {
+    readonly __typename?: "conference_Usage_aggregate";
+    readonly aggregate?: Maybe<Conference_Usage_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Conference_Usage>;
+};
+
+/** aggregate fields of "conference.Usage" */
+export type Conference_Usage_Aggregate_Fields = {
+    readonly __typename?: "conference_Usage_aggregate_fields";
+    readonly avg?: Maybe<Conference_Usage_Avg_Fields>;
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Conference_Usage_Max_Fields>;
+    readonly min?: Maybe<Conference_Usage_Min_Fields>;
+    readonly stddev?: Maybe<Conference_Usage_Stddev_Fields>;
+    readonly stddev_pop?: Maybe<Conference_Usage_Stddev_Pop_Fields>;
+    readonly stddev_samp?: Maybe<Conference_Usage_Stddev_Samp_Fields>;
+    readonly sum?: Maybe<Conference_Usage_Sum_Fields>;
+    readonly var_pop?: Maybe<Conference_Usage_Var_Pop_Fields>;
+    readonly var_samp?: Maybe<Conference_Usage_Var_Samp_Fields>;
+    readonly variance?: Maybe<Conference_Usage_Variance_Fields>;
+};
+
+/** aggregate fields of "conference.Usage" */
+export type Conference_Usage_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Conference_Usage_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** aggregate avg on columns */
+export type Conference_Usage_Avg_Fields = {
+    readonly __typename?: "conference_Usage_avg_fields";
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** Boolean expression to filter rows from the table "conference.Usage". All fields are combined with a logical 'AND'. */
+export type Conference_Usage_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Conference_Usage_Bool_Exp>>;
+    readonly _not?: InputMaybe<Conference_Usage_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Conference_Usage_Bool_Exp>>;
+    readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
+    readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly consumedStreamingEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly consumedSupportMeetingMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly consumedVideoChatEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly consumedVideoChatNonEventTotalMinutes?: InputMaybe<Int_Comparison_Exp>;
+    readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly lastUpdatedConsumedStreamingEventTotalMinutes?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly lastUpdatedConsumedSupportMeetingMinutes?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly lastUpdatedConsumedVideoChatEventTotalMinutes?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "conference.Usage" */
+export enum Conference_Usage_Constraint {
+    /** unique or primary key constraint */
+    UsageConferenceIdKey = "Usage_conferenceId_key",
+    /** unique or primary key constraint */
+    UsagePkey = "Usage_pkey",
+}
+
+/** input type for incrementing numeric columns in table "conference.Usage" */
+export type Conference_Usage_Inc_Input = {
+    readonly consumedStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly consumedSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly consumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "conference.Usage" */
+export type Conference_Usage_Insert_Input = {
+    readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly consumedStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly consumedSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly consumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly lastUpdatedConsumedStreamingEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedSupportMeetingMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Conference_Usage_Max_Fields = {
+    readonly __typename?: "conference_Usage_max_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly lastUpdatedConsumedStreamingEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedSupportMeetingMinutes?: Maybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedVideoChatEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Conference_Usage_Min_Fields = {
+    readonly __typename?: "conference_Usage_min_fields";
+    readonly conferenceId?: Maybe<Scalars["uuid"]>;
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly created_at?: Maybe<Scalars["timestamptz"]>;
+    readonly id?: Maybe<Scalars["uuid"]>;
+    readonly lastUpdatedConsumedStreamingEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedSupportMeetingMinutes?: Maybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedVideoChatEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["timestamptz"]>;
+    readonly updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "conference.Usage" */
+export type Conference_Usage_Mutation_Response = {
+    readonly __typename?: "conference_Usage_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Conference_Usage>;
+};
+
+/** input type for inserting object relation for remote table "conference.Usage" */
+export type Conference_Usage_Obj_Rel_Insert_Input = {
+    readonly data: Conference_Usage_Insert_Input;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Conference_Usage_On_Conflict>;
+};
+
+/** on conflict condition type for table "conference.Usage" */
+export type Conference_Usage_On_Conflict = {
+    readonly constraint: Conference_Usage_Constraint;
+    readonly update_columns?: ReadonlyArray<Conference_Usage_Update_Column>;
+    readonly where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "conference.Usage". */
+export type Conference_Usage_Order_By = {
+    readonly conference?: InputMaybe<Conference_Conference_Order_By>;
+    readonly conferenceId?: InputMaybe<Order_By>;
+    readonly consumedStreamingEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly consumedSupportMeetingMinutes?: InputMaybe<Order_By>;
+    readonly consumedVideoChatEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly consumedVideoChatNonEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly created_at?: InputMaybe<Order_By>;
+    readonly id?: InputMaybe<Order_By>;
+    readonly lastUpdatedConsumedStreamingEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly lastUpdatedConsumedSupportMeetingMinutes?: InputMaybe<Order_By>;
+    readonly lastUpdatedConsumedVideoChatEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes?: InputMaybe<Order_By>;
+    readonly updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: conference_Usage */
+export type Conference_Usage_Pk_Columns_Input = {
+    readonly id: Scalars["uuid"];
+};
+
+/** select columns of table "conference.Usage" */
+export enum Conference_Usage_Select_Column {
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    ConsumedStreamingEventTotalMinutes = "consumedStreamingEventTotalMinutes",
+    /** column name */
+    ConsumedSupportMeetingMinutes = "consumedSupportMeetingMinutes",
+    /** column name */
+    ConsumedVideoChatEventTotalMinutes = "consumedVideoChatEventTotalMinutes",
+    /** column name */
+    ConsumedVideoChatNonEventTotalMinutes = "consumedVideoChatNonEventTotalMinutes",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    LastUpdatedConsumedStreamingEventTotalMinutes = "lastUpdatedConsumedStreamingEventTotalMinutes",
+    /** column name */
+    LastUpdatedConsumedSupportMeetingMinutes = "lastUpdatedConsumedSupportMeetingMinutes",
+    /** column name */
+    LastUpdatedConsumedVideoChatEventTotalMinutes = "lastUpdatedConsumedVideoChatEventTotalMinutes",
+    /** column name */
+    LastUpdatedConsumedVideoChatNonEventTotalMinutes = "lastUpdatedConsumedVideoChatNonEventTotalMinutes",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "conference.Usage" */
+export type Conference_Usage_Set_Input = {
+    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
+    readonly consumedStreamingEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly consumedSupportMeetingMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly consumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["Int"]>;
+    readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
+    readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly lastUpdatedConsumedStreamingEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedSupportMeetingMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedVideoChatEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes?: InputMaybe<Scalars["timestamptz"]>;
+    readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate stddev on columns */
+export type Conference_Usage_Stddev_Fields = {
+    readonly __typename?: "conference_Usage_stddev_fields";
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Conference_Usage_Stddev_Pop_Fields = {
+    readonly __typename?: "conference_Usage_stddev_pop_fields";
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Conference_Usage_Stddev_Samp_Fields = {
+    readonly __typename?: "conference_Usage_stddev_samp_fields";
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Conference_Usage_Sum_Fields = {
+    readonly __typename?: "conference_Usage_sum_fields";
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Int"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Int"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Int"]>;
+};
+
+/** update columns of table "conference.Usage" */
+export enum Conference_Usage_Update_Column {
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    ConsumedStreamingEventTotalMinutes = "consumedStreamingEventTotalMinutes",
+    /** column name */
+    ConsumedSupportMeetingMinutes = "consumedSupportMeetingMinutes",
+    /** column name */
+    ConsumedVideoChatEventTotalMinutes = "consumedVideoChatEventTotalMinutes",
+    /** column name */
+    ConsumedVideoChatNonEventTotalMinutes = "consumedVideoChatNonEventTotalMinutes",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    LastUpdatedConsumedStreamingEventTotalMinutes = "lastUpdatedConsumedStreamingEventTotalMinutes",
+    /** column name */
+    LastUpdatedConsumedSupportMeetingMinutes = "lastUpdatedConsumedSupportMeetingMinutes",
+    /** column name */
+    LastUpdatedConsumedVideoChatEventTotalMinutes = "lastUpdatedConsumedVideoChatEventTotalMinutes",
+    /** column name */
+    LastUpdatedConsumedVideoChatNonEventTotalMinutes = "lastUpdatedConsumedVideoChatNonEventTotalMinutes",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** aggregate var_pop on columns */
+export type Conference_Usage_Var_Pop_Fields = {
+    readonly __typename?: "conference_Usage_var_pop_fields";
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Conference_Usage_Var_Samp_Fields = {
+    readonly __typename?: "conference_Usage_var_samp_fields";
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Conference_Usage_Variance_Fields = {
+    readonly __typename?: "conference_Usage_variance_fields";
+    readonly consumedStreamingEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedSupportMeetingMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatEventTotalMinutes?: Maybe<Scalars["Float"]>;
+    readonly consumedVideoChatNonEventTotalMinutes?: Maybe<Scalars["Float"]>;
+};
+
 /** columns and relationships of "conference.VisibilityLevel" */
 export type Conference_VisibilityLevel = {
     readonly __typename?: "conference_VisibilityLevel";
@@ -8552,7 +9713,12 @@ export enum Conference_VisibilityLevel_Update_Column {
     Name = "name",
 }
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_Element = {
     readonly __typename?: "content_Element";
     /** An object relationship */
@@ -8591,22 +9757,42 @@ export type Content_Element = {
     readonly youTubeUploads_aggregate: Video_YouTubeUpload_Aggregate;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementDataArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementLayoutDataArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementSourceArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementStatsArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Analytics_ContentElementStats_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -8615,7 +9801,12 @@ export type Content_ElementStatsArgs = {
     where?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementStats_AggregateArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Analytics_ContentElementStats_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -8624,7 +9815,12 @@ export type Content_ElementStats_AggregateArgs = {
     where?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementYouTubeUploadsArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Video_YouTubeUpload_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -8633,7 +9829,12 @@ export type Content_ElementYouTubeUploadsArgs = {
     where?: InputMaybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
-/** columns and relationships of "content.Element" */
+/**
+ * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+ *
+ *
+ * columns and relationships of "content.Element"
+ */
 export type Content_ElementYouTubeUploads_AggregateArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Video_YouTubeUpload_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -14018,6 +15219,8 @@ export type Jsonb_Comparison_Exp = {
 /** mutation root */
 export type Mutation_Root = {
     readonly __typename?: "mutation_root";
+    /** execute VOLATILE function "conference.updateEventUsage" which returns "conference.Usage" */
+    readonly conference_updateEventUsage: ReadonlyArray<Conference_Usage>;
     readonly createItemRoom?: Maybe<CreateItemRoomOutput>;
     readonly createRoomDm?: Maybe<CreateRoomDmOutput>;
     /** delete data from the table: "Email" */
@@ -14128,10 +15331,18 @@ export type Mutation_Root = {
     readonly delete_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** delete single row from the table: "conference.DemoCode" */
     readonly delete_conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
+    /** delete data from the table: "conference.Quota" */
+    readonly delete_conference_Quota?: Maybe<Conference_Quota_Mutation_Response>;
+    /** delete single row from the table: "conference.Quota" */
+    readonly delete_conference_Quota_by_pk?: Maybe<Conference_Quota>;
     /** delete data from the table: "conference.Subconference" */
     readonly delete_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** delete single row from the table: "conference.Subconference" */
     readonly delete_conference_Subconference_by_pk?: Maybe<Conference_Subconference>;
+    /** delete data from the table: "conference.Usage" */
+    readonly delete_conference_Usage?: Maybe<Conference_Usage_Mutation_Response>;
+    /** delete single row from the table: "conference.Usage" */
+    readonly delete_conference_Usage_by_pk?: Maybe<Conference_Usage>;
     /** delete data from the table: "conference.VisibilityLevel" */
     readonly delete_conference_VisibilityLevel?: Maybe<Conference_VisibilityLevel_Mutation_Response>;
     /** delete single row from the table: "conference.VisibilityLevel" */
@@ -14272,10 +15483,6 @@ export type Mutation_Root = {
     readonly delete_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
     /** delete single row from the table: "room.Mode" */
     readonly delete_room_Mode_by_pk?: Maybe<Room_Mode>;
-    /** delete data from the table: "room.Participant" */
-    readonly delete_room_Participant?: Maybe<Room_Participant_Mutation_Response>;
-    /** delete single row from the table: "room.Participant" */
-    readonly delete_room_Participant_by_pk?: Maybe<Room_Participant>;
     /** delete data from the table: "room.PersonRole" */
     readonly delete_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** delete single row from the table: "room.PersonRole" */
@@ -14528,10 +15735,18 @@ export type Mutation_Root = {
     readonly insert_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** insert a single row into the table: "conference.DemoCode" */
     readonly insert_conference_DemoCode_one?: Maybe<Conference_DemoCode>;
+    /** insert data into the table: "conference.Quota" */
+    readonly insert_conference_Quota?: Maybe<Conference_Quota_Mutation_Response>;
+    /** insert a single row into the table: "conference.Quota" */
+    readonly insert_conference_Quota_one?: Maybe<Conference_Quota>;
     /** insert data into the table: "conference.Subconference" */
     readonly insert_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** insert a single row into the table: "conference.Subconference" */
     readonly insert_conference_Subconference_one?: Maybe<Conference_Subconference>;
+    /** insert data into the table: "conference.Usage" */
+    readonly insert_conference_Usage?: Maybe<Conference_Usage_Mutation_Response>;
+    /** insert a single row into the table: "conference.Usage" */
+    readonly insert_conference_Usage_one?: Maybe<Conference_Usage>;
     /** insert data into the table: "conference.VisibilityLevel" */
     readonly insert_conference_VisibilityLevel?: Maybe<Conference_VisibilityLevel_Mutation_Response>;
     /** insert a single row into the table: "conference.VisibilityLevel" */
@@ -14672,10 +15887,6 @@ export type Mutation_Root = {
     readonly insert_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
     /** insert a single row into the table: "room.Mode" */
     readonly insert_room_Mode_one?: Maybe<Room_Mode>;
-    /** insert data into the table: "room.Participant" */
-    readonly insert_room_Participant?: Maybe<Room_Participant_Mutation_Response>;
-    /** insert a single row into the table: "room.Participant" */
-    readonly insert_room_Participant_one?: Maybe<Room_Participant>;
     /** insert data into the table: "room.PersonRole" */
     readonly insert_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** insert a single row into the table: "room.PersonRole" */
@@ -14942,10 +16153,18 @@ export type Mutation_Root = {
     readonly update_conference_DemoCode?: Maybe<Conference_DemoCode_Mutation_Response>;
     /** update single row of the table: "conference.DemoCode" */
     readonly update_conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
+    /** update data of the table: "conference.Quota" */
+    readonly update_conference_Quota?: Maybe<Conference_Quota_Mutation_Response>;
+    /** update single row of the table: "conference.Quota" */
+    readonly update_conference_Quota_by_pk?: Maybe<Conference_Quota>;
     /** update data of the table: "conference.Subconference" */
     readonly update_conference_Subconference?: Maybe<Conference_Subconference_Mutation_Response>;
     /** update single row of the table: "conference.Subconference" */
     readonly update_conference_Subconference_by_pk?: Maybe<Conference_Subconference>;
+    /** update data of the table: "conference.Usage" */
+    readonly update_conference_Usage?: Maybe<Conference_Usage_Mutation_Response>;
+    /** update single row of the table: "conference.Usage" */
+    readonly update_conference_Usage_by_pk?: Maybe<Conference_Usage>;
     /** update data of the table: "conference.VisibilityLevel" */
     readonly update_conference_VisibilityLevel?: Maybe<Conference_VisibilityLevel_Mutation_Response>;
     /** update single row of the table: "conference.VisibilityLevel" */
@@ -15086,10 +16305,6 @@ export type Mutation_Root = {
     readonly update_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
     /** update single row of the table: "room.Mode" */
     readonly update_room_Mode_by_pk?: Maybe<Room_Mode>;
-    /** update data of the table: "room.Participant" */
-    readonly update_room_Participant?: Maybe<Room_Participant_Mutation_Response>;
-    /** update single row of the table: "room.Participant" */
-    readonly update_room_Participant_by_pk?: Maybe<Room_Participant>;
     /** update data of the table: "room.PersonRole" */
     readonly update_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** update single row of the table: "room.PersonRole" */
@@ -15232,6 +16447,15 @@ export type Mutation_Root = {
     readonly update_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** update single row of the table: "video.YouTubeUpload" */
     readonly update_video_YouTubeUpload_by_pk?: Maybe<Video_YouTubeUpload>;
+};
+
+/** mutation root */
+export type Mutation_RootConference_UpdateEventUsageArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
 };
 
 /** mutation root */
@@ -15521,12 +16745,32 @@ export type Mutation_RootDelete_Conference_DemoCode_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Conference_QuotaArgs = {
+    where: Conference_Quota_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_Quota_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Conference_SubconferenceArgs = {
     where: Conference_Subconference_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootDelete_Conference_Subconference_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_UsageArgs = {
+    where: Conference_Usage_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_Usage_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -15878,16 +17122,6 @@ export type Mutation_RootDelete_Room_ModeArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_Mode_By_PkArgs = {
     name: Scalars["String"];
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Room_ParticipantArgs = {
-    where: Room_Participant_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Room_Participant_By_PkArgs = {
-    id: Scalars["uuid"];
 };
 
 /** mutation root */
@@ -16576,6 +17810,18 @@ export type Mutation_RootInsert_Conference_DemoCode_OneArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Conference_QuotaArgs = {
+    objects: ReadonlyArray<Conference_Quota_Insert_Input>;
+    on_conflict?: InputMaybe<Conference_Quota_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_Quota_OneArgs = {
+    object: Conference_Quota_Insert_Input;
+    on_conflict?: InputMaybe<Conference_Quota_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Conference_SubconferenceArgs = {
     objects: ReadonlyArray<Conference_Subconference_Insert_Input>;
     on_conflict?: InputMaybe<Conference_Subconference_On_Conflict>;
@@ -16585,6 +17831,18 @@ export type Mutation_RootInsert_Conference_SubconferenceArgs = {
 export type Mutation_RootInsert_Conference_Subconference_OneArgs = {
     object: Conference_Subconference_Insert_Input;
     on_conflict?: InputMaybe<Conference_Subconference_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_UsageArgs = {
+    objects: ReadonlyArray<Conference_Usage_Insert_Input>;
+    on_conflict?: InputMaybe<Conference_Usage_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_Usage_OneArgs = {
+    object: Conference_Usage_Insert_Input;
+    on_conflict?: InputMaybe<Conference_Usage_On_Conflict>;
 };
 
 /** mutation root */
@@ -17005,18 +18263,6 @@ export type Mutation_RootInsert_Room_ModeArgs = {
 export type Mutation_RootInsert_Room_Mode_OneArgs = {
     object: Room_Mode_Insert_Input;
     on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Room_ParticipantArgs = {
-    objects: ReadonlyArray<Room_Participant_Insert_Input>;
-    on_conflict?: InputMaybe<Room_Participant_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Room_Participant_OneArgs = {
-    object: Room_Participant_Insert_Input;
-    on_conflict?: InputMaybe<Room_Participant_On_Conflict>;
 };
 
 /** mutation root */
@@ -17916,6 +19162,20 @@ export type Mutation_RootUpdate_Conference_DemoCode_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Conference_QuotaArgs = {
+    _inc?: InputMaybe<Conference_Quota_Inc_Input>;
+    _set?: InputMaybe<Conference_Quota_Set_Input>;
+    where: Conference_Quota_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_Quota_By_PkArgs = {
+    _inc?: InputMaybe<Conference_Quota_Inc_Input>;
+    _set?: InputMaybe<Conference_Quota_Set_Input>;
+    pk_columns: Conference_Quota_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Conference_SubconferenceArgs = {
     _set?: InputMaybe<Conference_Subconference_Set_Input>;
     where: Conference_Subconference_Bool_Exp;
@@ -17925,6 +19185,20 @@ export type Mutation_RootUpdate_Conference_SubconferenceArgs = {
 export type Mutation_RootUpdate_Conference_Subconference_By_PkArgs = {
     _set?: InputMaybe<Conference_Subconference_Set_Input>;
     pk_columns: Conference_Subconference_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_UsageArgs = {
+    _inc?: InputMaybe<Conference_Usage_Inc_Input>;
+    _set?: InputMaybe<Conference_Usage_Set_Input>;
+    where: Conference_Usage_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_Usage_By_PkArgs = {
+    _inc?: InputMaybe<Conference_Usage_Inc_Input>;
+    _set?: InputMaybe<Conference_Usage_Set_Input>;
+    pk_columns: Conference_Usage_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -18467,18 +19741,6 @@ export type Mutation_RootUpdate_Room_ModeArgs = {
 export type Mutation_RootUpdate_Room_Mode_By_PkArgs = {
     _set?: InputMaybe<Room_Mode_Set_Input>;
     pk_columns: Room_Mode_Pk_Columns_Input;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Room_ParticipantArgs = {
-    _set?: InputMaybe<Room_Participant_Set_Input>;
-    where: Room_Participant_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Room_Participant_By_PkArgs = {
-    _set?: InputMaybe<Room_Participant_Set_Input>;
-    pk_columns: Room_Participant_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -19206,12 +20468,28 @@ export type Query_Root = {
     readonly conference_DemoCode_aggregate: Conference_DemoCode_Aggregate;
     /** fetch data from the table: "conference.DemoCode" using primary key columns */
     readonly conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
+    /** fetch data from the table: "conference.Quota" */
+    readonly conference_Quota: ReadonlyArray<Conference_Quota>;
+    /** fetch aggregated fields from the table: "conference.Quota" */
+    readonly conference_Quota_aggregate: Conference_Quota_Aggregate;
+    /** fetch data from the table: "conference.Quota" using primary key columns */
+    readonly conference_Quota_by_pk?: Maybe<Conference_Quota>;
+    /** fetch data from the table: "conference.RemainingQuota" */
+    readonly conference_RemainingQuota: ReadonlyArray<Conference_RemainingQuota>;
+    /** fetch aggregated fields from the table: "conference.RemainingQuota" */
+    readonly conference_RemainingQuota_aggregate: Conference_RemainingQuota_Aggregate;
     /** fetch data from the table: "conference.Subconference" */
     readonly conference_Subconference: ReadonlyArray<Conference_Subconference>;
     /** fetch aggregated fields from the table: "conference.Subconference" */
     readonly conference_Subconference_aggregate: Conference_Subconference_Aggregate;
     /** fetch data from the table: "conference.Subconference" using primary key columns */
     readonly conference_Subconference_by_pk?: Maybe<Conference_Subconference>;
+    /** fetch data from the table: "conference.Usage" */
+    readonly conference_Usage: ReadonlyArray<Conference_Usage>;
+    /** fetch aggregated fields from the table: "conference.Usage" */
+    readonly conference_Usage_aggregate: Conference_Usage_Aggregate;
+    /** fetch data from the table: "conference.Usage" using primary key columns */
+    readonly conference_Usage_by_pk?: Maybe<Conference_Usage>;
     /** fetch data from the table: "conference.VisibilityLevel" */
     readonly conference_VisibilityLevel: ReadonlyArray<Conference_VisibilityLevel>;
     /** fetch aggregated fields from the table: "conference.VisibilityLevel" */
@@ -19441,12 +20719,6 @@ export type Query_Root = {
     readonly room_Mode_aggregate: Room_Mode_Aggregate;
     /** fetch data from the table: "room.Mode" using primary key columns */
     readonly room_Mode_by_pk?: Maybe<Room_Mode>;
-    /** fetch data from the table: "room.Participant" */
-    readonly room_Participant: ReadonlyArray<Room_Participant>;
-    /** fetch aggregated fields from the table: "room.Participant" */
-    readonly room_Participant_aggregate: Room_Participant_Aggregate;
-    /** fetch data from the table: "room.Participant" using primary key columns */
-    readonly room_Participant_by_pk?: Maybe<Room_Participant>;
     /** fetch data from the table: "room.PersonRole" */
     readonly room_PersonRole: ReadonlyArray<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -20271,6 +21543,42 @@ export type Query_RootConference_DemoCode_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Query_RootConference_QuotaArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_Quota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_Quota_Order_By>>;
+    where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+export type Query_RootConference_Quota_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_Quota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_Quota_Order_By>>;
+    where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+export type Query_RootConference_Quota_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootConference_RemainingQuotaArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Order_By>>;
+    where?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+};
+
+export type Query_RootConference_RemainingQuota_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Order_By>>;
+    where?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+};
+
 export type Query_RootConference_SubconferenceArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Conference_Subconference_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -20288,6 +21596,26 @@ export type Query_RootConference_Subconference_AggregateArgs = {
 };
 
 export type Query_RootConference_Subconference_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootConference_UsageArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+export type Query_RootConference_Usage_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+export type Query_RootConference_Usage_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -21061,26 +22389,6 @@ export type Query_RootRoom_Mode_AggregateArgs = {
 
 export type Query_RootRoom_Mode_By_PkArgs = {
     name: Scalars["String"];
-};
-
-export type Query_RootRoom_ParticipantArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-export type Query_RootRoom_Participant_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-export type Query_RootRoom_Participant_By_PkArgs = {
-    id: Scalars["uuid"];
 };
 
 export type Query_RootRoom_PersonRoleArgs = {
@@ -23308,10 +24616,6 @@ export type Registrant_Registrant = {
     /** An aggregate relationship */
     readonly programPeople_aggregate: Collection_ProgramPerson_Aggregate;
     /** An array relationship */
-    readonly roomParticipants: ReadonlyArray<Room_Participant>;
-    /** An aggregate relationship */
-    readonly roomParticipants_aggregate: Room_Participant_Aggregate;
-    /** An array relationship */
     readonly subconferenceMemberships: ReadonlyArray<Registrant_SubconferenceMembership>;
     /** An aggregate relationship */
     readonly subconferenceMemberships_aggregate: Registrant_SubconferenceMembership_Aggregate;
@@ -23378,24 +24682,6 @@ export type Registrant_RegistrantProgramPeople_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Collection_ProgramPerson_Order_By>>;
     where?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-};
-
-/** columns and relationships of "registrant.Registrant" */
-export type Registrant_RegistrantRoomParticipantsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-/** columns and relationships of "registrant.Registrant" */
-export type Registrant_RegistrantRoomParticipants_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
 };
 
 /** columns and relationships of "registrant.Registrant" */
@@ -23596,7 +24882,6 @@ export type Registrant_Registrant_Bool_Exp = {
     readonly inviteSent?: InputMaybe<Boolean_Comparison_Exp>;
     readonly profile?: InputMaybe<Registrant_Profile_Bool_Exp>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
-    readonly roomParticipants?: InputMaybe<Room_Participant_Bool_Exp>;
     readonly subconferenceMemberships?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
     readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly user?: InputMaybe<User_Bool_Exp>;
@@ -23624,7 +24909,6 @@ export type Registrant_Registrant_Insert_Input = {
     readonly invitation?: InputMaybe<Registrant_Invitation_Obj_Rel_Insert_Input>;
     readonly profile?: InputMaybe<Registrant_Profile_Obj_Rel_Insert_Input>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
-    readonly roomParticipants?: InputMaybe<Room_Participant_Arr_Rel_Insert_Input>;
     readonly subconferenceMemberships?: InputMaybe<Registrant_SubconferenceMembership_Arr_Rel_Insert_Input>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly user?: InputMaybe<User_Obj_Rel_Insert_Input>;
@@ -23711,7 +24995,6 @@ export type Registrant_Registrant_Order_By = {
     readonly inviteSent?: InputMaybe<Order_By>;
     readonly profile?: InputMaybe<Registrant_Profile_Order_By>;
     readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
-    readonly roomParticipants_aggregate?: InputMaybe<Room_Participant_Aggregate_Order_By>;
     readonly subconferenceMemberships_aggregate?: InputMaybe<Registrant_SubconferenceMembership_Aggregate_Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
     readonly user?: InputMaybe<User_Order_By>;
@@ -25020,252 +26303,6 @@ export enum Room_Mode_Update_Column {
     Name = "name",
 }
 
-/** columns and relationships of "room.Participant" */
-export type Room_Participant = {
-    readonly __typename?: "room_Participant";
-    readonly chimeRegistrantId?: Maybe<Scalars["String"]>;
-    /** An object relationship */
-    readonly conference: Conference_Conference;
-    readonly conferenceId: Scalars["uuid"];
-    readonly createdAt: Scalars["timestamptz"];
-    readonly id: Scalars["uuid"];
-    /** An object relationship */
-    readonly registrant: Registrant_Registrant;
-    readonly registrantId: Scalars["uuid"];
-    /** An object relationship */
-    readonly room: Room_Room;
-    readonly roomId: Scalars["uuid"];
-    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly updatedAt: Scalars["timestamptz"];
-    readonly vonageConnectionId?: Maybe<Scalars["String"]>;
-};
-
-/** aggregated selection of "room.Participant" */
-export type Room_Participant_Aggregate = {
-    readonly __typename?: "room_Participant_aggregate";
-    readonly aggregate?: Maybe<Room_Participant_Aggregate_Fields>;
-    readonly nodes: ReadonlyArray<Room_Participant>;
-};
-
-/** aggregate fields of "room.Participant" */
-export type Room_Participant_Aggregate_Fields = {
-    readonly __typename?: "room_Participant_aggregate_fields";
-    readonly count: Scalars["Int"];
-    readonly max?: Maybe<Room_Participant_Max_Fields>;
-    readonly min?: Maybe<Room_Participant_Min_Fields>;
-};
-
-/** aggregate fields of "room.Participant" */
-export type Room_Participant_Aggregate_FieldsCountArgs = {
-    columns?: InputMaybe<ReadonlyArray<Room_Participant_Select_Column>>;
-    distinct?: InputMaybe<Scalars["Boolean"]>;
-};
-
-/** order by aggregate values of table "room.Participant" */
-export type Room_Participant_Aggregate_Order_By = {
-    readonly count?: InputMaybe<Order_By>;
-    readonly max?: InputMaybe<Room_Participant_Max_Order_By>;
-    readonly min?: InputMaybe<Room_Participant_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "room.Participant" */
-export type Room_Participant_Arr_Rel_Insert_Input = {
-    readonly data: ReadonlyArray<Room_Participant_Insert_Input>;
-    /** on conflict condition */
-    readonly on_conflict?: InputMaybe<Room_Participant_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "room.Participant". All fields are combined with a logical 'AND'. */
-export type Room_Participant_Bool_Exp = {
-    readonly _and?: InputMaybe<ReadonlyArray<Room_Participant_Bool_Exp>>;
-    readonly _not?: InputMaybe<Room_Participant_Bool_Exp>;
-    readonly _or?: InputMaybe<ReadonlyArray<Room_Participant_Bool_Exp>>;
-    readonly chimeRegistrantId?: InputMaybe<String_Comparison_Exp>;
-    readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
-    readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-    readonly id?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
-    readonly registrantId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly room?: InputMaybe<Room_Room_Bool_Exp>;
-    readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-    readonly vonageConnectionId?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "room.Participant" */
-export enum Room_Participant_Constraint {
-    /** unique or primary key constraint */
-    ParticipantPkey = "Participant_pkey",
-    /** unique or primary key constraint */
-    ParticipantRoomIdRegistrantIdKey = "Participant_roomId_registrantId_key",
-}
-
-/** input type for inserting data into table "room.Participant" */
-export type Room_Participant_Insert_Input = {
-    readonly chimeRegistrantId?: InputMaybe<Scalars["String"]>;
-    readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
-    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
-    readonly registrantId?: InputMaybe<Scalars["uuid"]>;
-    readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
-    readonly roomId?: InputMaybe<Scalars["uuid"]>;
-    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly vonageConnectionId?: InputMaybe<Scalars["String"]>;
-};
-
-/** aggregate max on columns */
-export type Room_Participant_Max_Fields = {
-    readonly __typename?: "room_Participant_max_fields";
-    readonly chimeRegistrantId?: Maybe<Scalars["String"]>;
-    readonly conferenceId?: Maybe<Scalars["uuid"]>;
-    readonly createdAt?: Maybe<Scalars["timestamptz"]>;
-    readonly id?: Maybe<Scalars["uuid"]>;
-    readonly registrantId?: Maybe<Scalars["uuid"]>;
-    readonly roomId?: Maybe<Scalars["uuid"]>;
-    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
-    readonly vonageConnectionId?: Maybe<Scalars["String"]>;
-};
-
-/** order by max() on columns of table "room.Participant" */
-export type Room_Participant_Max_Order_By = {
-    readonly chimeRegistrantId?: InputMaybe<Order_By>;
-    readonly conferenceId?: InputMaybe<Order_By>;
-    readonly createdAt?: InputMaybe<Order_By>;
-    readonly id?: InputMaybe<Order_By>;
-    readonly registrantId?: InputMaybe<Order_By>;
-    readonly roomId?: InputMaybe<Order_By>;
-    readonly subconferenceId?: InputMaybe<Order_By>;
-    readonly updatedAt?: InputMaybe<Order_By>;
-    readonly vonageConnectionId?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Room_Participant_Min_Fields = {
-    readonly __typename?: "room_Participant_min_fields";
-    readonly chimeRegistrantId?: Maybe<Scalars["String"]>;
-    readonly conferenceId?: Maybe<Scalars["uuid"]>;
-    readonly createdAt?: Maybe<Scalars["timestamptz"]>;
-    readonly id?: Maybe<Scalars["uuid"]>;
-    readonly registrantId?: Maybe<Scalars["uuid"]>;
-    readonly roomId?: Maybe<Scalars["uuid"]>;
-    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
-    readonly vonageConnectionId?: Maybe<Scalars["String"]>;
-};
-
-/** order by min() on columns of table "room.Participant" */
-export type Room_Participant_Min_Order_By = {
-    readonly chimeRegistrantId?: InputMaybe<Order_By>;
-    readonly conferenceId?: InputMaybe<Order_By>;
-    readonly createdAt?: InputMaybe<Order_By>;
-    readonly id?: InputMaybe<Order_By>;
-    readonly registrantId?: InputMaybe<Order_By>;
-    readonly roomId?: InputMaybe<Order_By>;
-    readonly subconferenceId?: InputMaybe<Order_By>;
-    readonly updatedAt?: InputMaybe<Order_By>;
-    readonly vonageConnectionId?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "room.Participant" */
-export type Room_Participant_Mutation_Response = {
-    readonly __typename?: "room_Participant_mutation_response";
-    /** number of rows affected by the mutation */
-    readonly affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    readonly returning: ReadonlyArray<Room_Participant>;
-};
-
-/** on conflict condition type for table "room.Participant" */
-export type Room_Participant_On_Conflict = {
-    readonly constraint: Room_Participant_Constraint;
-    readonly update_columns?: ReadonlyArray<Room_Participant_Update_Column>;
-    readonly where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "room.Participant". */
-export type Room_Participant_Order_By = {
-    readonly chimeRegistrantId?: InputMaybe<Order_By>;
-    readonly conference?: InputMaybe<Conference_Conference_Order_By>;
-    readonly conferenceId?: InputMaybe<Order_By>;
-    readonly createdAt?: InputMaybe<Order_By>;
-    readonly id?: InputMaybe<Order_By>;
-    readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
-    readonly registrantId?: InputMaybe<Order_By>;
-    readonly room?: InputMaybe<Room_Room_Order_By>;
-    readonly roomId?: InputMaybe<Order_By>;
-    readonly subconferenceId?: InputMaybe<Order_By>;
-    readonly updatedAt?: InputMaybe<Order_By>;
-    readonly vonageConnectionId?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: room_Participant */
-export type Room_Participant_Pk_Columns_Input = {
-    readonly id: Scalars["uuid"];
-};
-
-/** select columns of table "room.Participant" */
-export enum Room_Participant_Select_Column {
-    /** column name */
-    ChimeRegistrantId = "chimeRegistrantId",
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Id = "id",
-    /** column name */
-    RegistrantId = "registrantId",
-    /** column name */
-    RoomId = "roomId",
-    /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-    /** column name */
-    VonageConnectionId = "vonageConnectionId",
-}
-
-/** input type for updating data in table "room.Participant" */
-export type Room_Participant_Set_Input = {
-    readonly chimeRegistrantId?: InputMaybe<Scalars["String"]>;
-    readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly registrantId?: InputMaybe<Scalars["uuid"]>;
-    readonly roomId?: InputMaybe<Scalars["uuid"]>;
-    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly vonageConnectionId?: InputMaybe<Scalars["String"]>;
-};
-
-/** update columns of table "room.Participant" */
-export enum Room_Participant_Update_Column {
-    /** column name */
-    ChimeRegistrantId = "chimeRegistrantId",
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Id = "id",
-    /** column name */
-    RegistrantId = "registrantId",
-    /** column name */
-    RoomId = "roomId",
-    /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-    /** column name */
-    VonageConnectionId = "vonageConnectionId",
-}
-
 /** columns and relationships of "room.PersonRole" */
 export type Room_PersonRole = {
     readonly __typename?: "room_PersonRole";
@@ -25446,10 +26483,6 @@ export type Room_Room = {
     readonly managementModeName: Room_ManagementMode_Enum;
     readonly name: Scalars["String"];
     /** An array relationship */
-    readonly participants: ReadonlyArray<Room_Participant>;
-    /** An aggregate relationship */
-    readonly participants_aggregate: Room_Participant_Aggregate;
-    /** An array relationship */
     readonly presenceCounts: ReadonlyArray<Analytics_RoomPresence>;
     /** An aggregate relationship */
     readonly presenceCounts_aggregate: Analytics_RoomPresence_Aggregate;
@@ -25537,24 +26570,6 @@ export type Room_RoomEvents_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
     where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Room" */
-export type Room_RoomParticipantsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Room" */
-export type Room_RoomParticipants_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
 };
 
 /** columns and relationships of "room.Room" */
@@ -26117,7 +27132,6 @@ export type Room_Room_Bool_Exp = {
     readonly managementMode?: InputMaybe<Room_ManagementMode_Bool_Exp>;
     readonly managementModeName?: InputMaybe<Room_ManagementMode_Enum_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
-    readonly participants?: InputMaybe<Room_Participant_Bool_Exp>;
     readonly presenceCounts?: InputMaybe<Analytics_RoomPresence_Bool_Exp>;
     readonly priority?: InputMaybe<Int_Comparison_Exp>;
     readonly publicVonageSessionId?: InputMaybe<String_Comparison_Exp>;
@@ -26173,7 +27187,6 @@ export type Room_Room_Insert_Input = {
     readonly managementMode?: InputMaybe<Room_ManagementMode_Obj_Rel_Insert_Input>;
     readonly managementModeName?: InputMaybe<Room_ManagementMode_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly participants?: InputMaybe<Room_Participant_Arr_Rel_Insert_Input>;
     readonly presenceCounts?: InputMaybe<Analytics_RoomPresence_Arr_Rel_Insert_Input>;
     readonly priority?: InputMaybe<Scalars["Int"]>;
     readonly publicVonageSessionId?: InputMaybe<Scalars["String"]>;
@@ -26303,7 +27316,6 @@ export type Room_Room_Order_By = {
     readonly managementMode?: InputMaybe<Room_ManagementMode_Order_By>;
     readonly managementModeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly participants_aggregate?: InputMaybe<Room_Participant_Aggregate_Order_By>;
     readonly presenceCounts_aggregate?: InputMaybe<Analytics_RoomPresence_Aggregate_Order_By>;
     readonly priority?: InputMaybe<Order_By>;
     readonly publicVonageSessionId?: InputMaybe<Order_By>;
@@ -30805,12 +31817,28 @@ export type Subscription_Root = {
     readonly conference_DemoCode_aggregate: Conference_DemoCode_Aggregate;
     /** fetch data from the table: "conference.DemoCode" using primary key columns */
     readonly conference_DemoCode_by_pk?: Maybe<Conference_DemoCode>;
+    /** fetch data from the table: "conference.Quota" */
+    readonly conference_Quota: ReadonlyArray<Conference_Quota>;
+    /** fetch aggregated fields from the table: "conference.Quota" */
+    readonly conference_Quota_aggregate: Conference_Quota_Aggregate;
+    /** fetch data from the table: "conference.Quota" using primary key columns */
+    readonly conference_Quota_by_pk?: Maybe<Conference_Quota>;
+    /** fetch data from the table: "conference.RemainingQuota" */
+    readonly conference_RemainingQuota: ReadonlyArray<Conference_RemainingQuota>;
+    /** fetch aggregated fields from the table: "conference.RemainingQuota" */
+    readonly conference_RemainingQuota_aggregate: Conference_RemainingQuota_Aggregate;
     /** fetch data from the table: "conference.Subconference" */
     readonly conference_Subconference: ReadonlyArray<Conference_Subconference>;
     /** fetch aggregated fields from the table: "conference.Subconference" */
     readonly conference_Subconference_aggregate: Conference_Subconference_Aggregate;
     /** fetch data from the table: "conference.Subconference" using primary key columns */
     readonly conference_Subconference_by_pk?: Maybe<Conference_Subconference>;
+    /** fetch data from the table: "conference.Usage" */
+    readonly conference_Usage: ReadonlyArray<Conference_Usage>;
+    /** fetch aggregated fields from the table: "conference.Usage" */
+    readonly conference_Usage_aggregate: Conference_Usage_Aggregate;
+    /** fetch data from the table: "conference.Usage" using primary key columns */
+    readonly conference_Usage_by_pk?: Maybe<Conference_Usage>;
     /** fetch data from the table: "conference.VisibilityLevel" */
     readonly conference_VisibilityLevel: ReadonlyArray<Conference_VisibilityLevel>;
     /** fetch aggregated fields from the table: "conference.VisibilityLevel" */
@@ -31037,12 +32065,6 @@ export type Subscription_Root = {
     readonly room_Mode_aggregate: Room_Mode_Aggregate;
     /** fetch data from the table: "room.Mode" using primary key columns */
     readonly room_Mode_by_pk?: Maybe<Room_Mode>;
-    /** fetch data from the table: "room.Participant" */
-    readonly room_Participant: ReadonlyArray<Room_Participant>;
-    /** fetch aggregated fields from the table: "room.Participant" */
-    readonly room_Participant_aggregate: Room_Participant_Aggregate;
-    /** fetch data from the table: "room.Participant" using primary key columns */
-    readonly room_Participant_by_pk?: Maybe<Room_Participant>;
     /** fetch data from the table: "room.PersonRole" */
     readonly room_PersonRole: ReadonlyArray<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -31865,6 +32887,42 @@ export type Subscription_RootConference_DemoCode_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Subscription_RootConference_QuotaArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_Quota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_Quota_Order_By>>;
+    where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+export type Subscription_RootConference_Quota_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_Quota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_Quota_Order_By>>;
+    where?: InputMaybe<Conference_Quota_Bool_Exp>;
+};
+
+export type Subscription_RootConference_Quota_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootConference_RemainingQuotaArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Order_By>>;
+    where?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+};
+
+export type Subscription_RootConference_RemainingQuota_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_RemainingQuota_Order_By>>;
+    where?: InputMaybe<Conference_RemainingQuota_Bool_Exp>;
+};
+
 export type Subscription_RootConference_SubconferenceArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Conference_Subconference_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -31882,6 +32940,26 @@ export type Subscription_RootConference_Subconference_AggregateArgs = {
 };
 
 export type Subscription_RootConference_Subconference_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootConference_UsageArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+export type Subscription_RootConference_Usage_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Conference_Usage_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Conference_Usage_Order_By>>;
+    where?: InputMaybe<Conference_Usage_Bool_Exp>;
+};
+
+export type Subscription_RootConference_Usage_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -32651,26 +33729,6 @@ export type Subscription_RootRoom_Mode_AggregateArgs = {
 
 export type Subscription_RootRoom_Mode_By_PkArgs = {
     name: Scalars["String"];
-};
-
-export type Subscription_RootRoom_ParticipantArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Participant_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Participant_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Participant_Order_By>>;
-    where?: InputMaybe<Room_Participant_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Participant_By_PkArgs = {
-    id: Scalars["uuid"];
 };
 
 export type Subscription_RootRoom_PersonRoleArgs = {
@@ -39984,31 +41042,11 @@ export type Registrant_RegistrantCreateRoomMutation = {
     readonly insert_room_Room_one?: {
         readonly __typename?: "room_Room";
         readonly id: any;
-        readonly conferenceId: any;
         readonly name: string;
         readonly priority: number;
-        readonly managementModeName: Room_ManagementMode_Enum;
+        readonly conferenceId: any;
         readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
-        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
+        readonly managementModeName: Room_ManagementMode_Enum;
     } | null;
 };
 
@@ -40884,197 +41922,6 @@ export type GetRoomVonageTokenMutation = {
     } | null;
 };
 
-export type GetAllRoomsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type GetAllRoomsQuery = {
-    readonly __typename?: "query_root";
-    readonly socialRooms: ReadonlyArray<{
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
-        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-    }>;
-    readonly programRooms: ReadonlyArray<{
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
-        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-    }>;
-};
-
-export type GetAllTodaysRoomsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    todayStart: Scalars["timestamptz"];
-    todayEnd: Scalars["timestamptz"];
-}>;
-
-export type GetAllTodaysRoomsQuery = {
-    readonly __typename?: "query_root";
-    readonly socialOrDiscussionRooms: ReadonlyArray<{
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
-        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-    }>;
-    readonly programRooms: ReadonlyArray<{
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly itemId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly roleName: string;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly registrantId?: any | null;
-                };
-            }>;
-        } | null;
-        readonly chat?: {
-            readonly __typename?: "chat_Chat";
-            readonly id: any;
-            readonly enableMandatoryPin: boolean;
-        } | null;
-        readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-    }>;
-};
-
-export type RoomListRoomDetailsFragment = {
-    readonly __typename?: "room_Room";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly name: string;
-    readonly priority: number;
-    readonly managementModeName: Room_ManagementMode_Enum;
-    readonly itemId?: any | null;
-    readonly item?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly roleName: string;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly registrantId?: any | null;
-            };
-        }>;
-    } | null;
-    readonly chat?: {
-        readonly __typename?: "chat_Chat";
-        readonly id: any;
-        readonly enableMandatoryPin: boolean;
-    } | null;
-    readonly events: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-};
-
-export type GetSocialRoomsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type GetSocialRoomsQuery = {
-    readonly __typename?: "query_root";
-    readonly socialRooms: ReadonlyArray<{
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly chatId?: any | null;
-        readonly conferenceId: any;
-        readonly itemId?: any | null;
-    }>;
-};
-
-export type SocialRoomFragment = {
-    readonly __typename?: "room_Room";
-    readonly id: any;
-    readonly name: string;
-    readonly priority: number;
-    readonly chatId?: any | null;
-    readonly conferenceId: any;
-    readonly itemId?: any | null;
-};
-
 export type RoomTile_GetRoomQueryVariables = Exact<{
     roomId: Scalars["uuid"];
     withEvent: Scalars["Boolean"];
@@ -41152,6 +41999,33 @@ export type RoomTile_EventFragment = {
         readonly name: string;
     } | null;
     readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+};
+
+export type GetSocialRoomsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type GetSocialRoomsQuery = {
+    readonly __typename?: "query_root";
+    readonly room_Room: ReadonlyArray<{
+        readonly __typename?: "room_Room";
+        readonly id: any;
+        readonly name: string;
+        readonly priority: number;
+        readonly conferenceId: any;
+        readonly itemId?: any | null;
+        readonly managementModeName: Room_ManagementMode_Enum;
+    }>;
+};
+
+export type SocialRoomFragment = {
+    readonly __typename?: "room_Room";
+    readonly id: any;
+    readonly name: string;
+    readonly priority: number;
+    readonly conferenceId: any;
+    readonly itemId?: any | null;
+    readonly managementModeName: Room_ManagementMode_Enum;
 };
 
 export type GetSponsorBoothsQueryVariables = Exact<{
@@ -41657,91 +42531,6 @@ export type StarredEvents_SelectEventIdsQuery = {
         readonly registrantId: any;
     }>;
     readonly schedule_Event: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-};
-
-export type ScheduleV2_LightweightEventFragment = {
-    readonly __typename?: "schedule_Event";
-    readonly id: any;
-    readonly startTime: any;
-    readonly endTime?: any | null;
-    readonly roomId: any;
-    readonly conferenceId: any;
-};
-
-export type ScheduleV2_DayLightweightEventsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    startOfDay: Scalars["timestamptz"];
-    endOfDay: Scalars["timestamptz"];
-    filter: Schedule_Event_Bool_Exp;
-}>;
-
-export type ScheduleV2_DayLightweightEventsQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly roomId: any;
-        readonly conferenceId: any;
-    }>;
-};
-
-export type ScheduleV2_DayEventsQueryVariables = Exact<{
-    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type ScheduleV2_DayEventsQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly roomId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly name: string;
-        readonly startTime: any;
-        readonly durationSeconds: number;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly shortTitle?: string | null;
-            readonly typeName: Content_ItemType_Enum;
-            readonly abstractElements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly typeName: Content_ElementType_Enum;
-                readonly name: string;
-                readonly layoutData?: any | null;
-                readonly data: any;
-            }>;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly priority?: number | null;
-                readonly roleName: string;
-                readonly itemId: any;
-                readonly personId: any;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
-                    readonly conferenceId: any;
-                };
-            }>;
-            readonly itemTags: ReadonlyArray<{
-                readonly __typename?: "content_ItemTag";
-                readonly id: any;
-                readonly itemId: any;
-                readonly tagId: any;
-            }>;
-        } | null;
-    }>;
 };
 
 export type ScheduleV2_ElementFragment = {
@@ -44499,19 +45288,6 @@ export type ManageProgramPeople_UpdateProgramPersonMutation = {
     } | null;
 };
 
-export type RoomParticipantWithRegistrantInfoFragment = {
-    readonly __typename?: "room_Participant";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly registrantId: any;
-    readonly roomId: any;
-    readonly registrant: {
-        readonly __typename?: "registrant_Registrant";
-        readonly id: any;
-        readonly displayName: string;
-    };
-};
-
 export type RoomWithParticipantInfoFragment = {
     readonly __typename?: "room_Room";
     readonly id: any;
@@ -44525,18 +45301,6 @@ export type RoomWithParticipantInfoFragment = {
     readonly managementModeName: Room_ManagementMode_Enum;
     readonly isProgramRoom?: boolean | null;
     readonly chatId?: any | null;
-    readonly participants: ReadonlyArray<{
-        readonly __typename?: "room_Participant";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly registrantId: any;
-        readonly roomId: any;
-        readonly registrant: {
-            readonly __typename?: "registrant_Registrant";
-            readonly id: any;
-            readonly displayName: string;
-        };
-    }>;
     readonly chat?: {
         readonly __typename?: "chat_Chat";
         readonly id: any;
@@ -44566,18 +45330,6 @@ export type SelectAllRoomsWithParticipantsQuery = {
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
         readonly chatId?: any | null;
-        readonly participants: ReadonlyArray<{
-            readonly __typename?: "room_Participant";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly registrantId: any;
-            readonly roomId: any;
-            readonly registrant: {
-                readonly __typename?: "registrant_Registrant";
-                readonly id: any;
-                readonly displayName: string;
-            };
-        }>;
         readonly chat?: {
             readonly __typename?: "chat_Chat";
             readonly id: any;
@@ -44681,18 +45433,6 @@ export type CreateRoomMutation = {
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
         readonly chatId?: any | null;
-        readonly participants: ReadonlyArray<{
-            readonly __typename?: "room_Participant";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly registrantId: any;
-            readonly roomId: any;
-            readonly registrant: {
-                readonly __typename?: "registrant_Registrant";
-                readonly id: any;
-                readonly displayName: string;
-            };
-        }>;
         readonly chat?: {
             readonly __typename?: "chat_Chat";
             readonly id: any;
@@ -44733,18 +45473,6 @@ export type UpdateRoomsWithParticipantsMutation = {
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
         readonly chatId?: any | null;
-        readonly participants: ReadonlyArray<{
-            readonly __typename?: "room_Participant";
-            readonly id: any;
-            readonly conferenceId: any;
-            readonly registrantId: any;
-            readonly roomId: any;
-            readonly registrant: {
-                readonly __typename?: "registrant_Registrant";
-                readonly id: any;
-                readonly displayName: string;
-            };
-        }>;
         readonly chat?: {
             readonly __typename?: "chat_Chat";
             readonly id: any;
@@ -47046,29 +47774,6 @@ export type DeletePushNotificationSubscriptionMutation = {
     } | null;
 };
 
-export type GetAllRoomParticipantsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type GetAllRoomParticipantsQuery = {
-    readonly __typename?: "query_root";
-    readonly room_Participant: ReadonlyArray<{
-        readonly __typename?: "room_Participant";
-        readonly conferenceId: any;
-        readonly id: any;
-        readonly roomId: any;
-        readonly registrantId: any;
-    }>;
-};
-
-export type RoomParticipantDetailsFragment = {
-    readonly __typename?: "room_Participant";
-    readonly conferenceId: any;
-    readonly id: any;
-    readonly roomId: any;
-    readonly registrantId: any;
-};
-
 export type SearchedItemPersonFragment = {
     readonly __typename?: "content_ItemProgramPerson";
     readonly id: any;
@@ -47355,21 +48060,6 @@ export type JoinShuffleQueueMutation = {
             readonly roomId: any;
         } | null;
     } | null;
-};
-
-export type GetShuffleRoomsParticipantsCountQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type GetShuffleRoomsParticipantsCountQuery = {
-    readonly __typename?: "query_root";
-    readonly room_Participant_aggregate: {
-        readonly __typename?: "room_Participant_aggregate";
-        readonly aggregate?: {
-            readonly __typename?: "room_Participant_aggregate_fields";
-            readonly count: number;
-        } | null;
-    };
 };
 
 export type UpdateSubtitlesMutationVariables = Exact<{
@@ -48512,44 +49202,6 @@ export const Event_EventVonageSessionFragmentDoc = gql`
         }
     }
 `;
-export const RoomListRoomDetailsFragmentDoc = gql`
-    fragment RoomListRoomDetails on room_Room {
-        id
-        conferenceId
-        name
-        priority
-        managementModeName
-        itemId
-        item {
-            id
-            itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-                id
-                roleName
-                person {
-                    id
-                    registrantId
-                }
-            }
-        }
-        chat {
-            id
-            enableMandatoryPin
-        }
-        events(limit: 1) {
-            id
-        }
-    }
-`;
-export const SocialRoomFragmentDoc = gql`
-    fragment SocialRoom on room_Room {
-        id
-        name
-        priority
-        chatId
-        conferenceId
-        itemId
-    }
-`;
 export const RoomTile_EventFragmentDoc = gql`
     fragment RoomTile_Event on schedule_Event {
         id
@@ -48585,6 +49237,16 @@ export const RoomTile_RoomFragmentDoc = gql`
         }
     }
     ${RoomTile_EventFragmentDoc}
+`;
+export const SocialRoomFragmentDoc = gql`
+    fragment SocialRoom on room_Room {
+        id
+        name
+        priority
+        conferenceId
+        itemId
+        managementModeName
+    }
 `;
 export const SponsorBoothsList_TierFragmentDoc = gql`
     fragment SponsorBoothsList_Tier on sponsor_Tier {
@@ -48738,15 +49400,6 @@ export const Schedule_TagFragmentDoc = gql`
         name
         colour
         priority
-        conferenceId
-    }
-`;
-export const ScheduleV2_LightweightEventFragmentDoc = gql`
-    fragment ScheduleV2_LightweightEvent on schedule_Event {
-        id
-        startTime
-        endTime
-        roomId
         conferenceId
     }
 `;
@@ -49300,18 +49953,6 @@ export const ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc = gql`
         accessToken
     }
 `;
-export const RoomParticipantWithRegistrantInfoFragmentDoc = gql`
-    fragment RoomParticipantWithRegistrantInfo on room_Participant {
-        id
-        conferenceId
-        registrantId
-        roomId
-        registrant {
-            id
-            displayName
-        }
-    }
-`;
 export const RoomWithParticipantInfoFragmentDoc = gql`
     fragment RoomWithParticipantInfo on room_Room {
         id
@@ -49324,9 +49965,6 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
         itemId
         managementModeName
         isProgramRoom
-        participants {
-            ...RoomParticipantWithRegistrantInfo
-        }
         chatId
         chat {
             id
@@ -49336,7 +49974,6 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
             enableAutoSubscribe
         }
     }
-    ${RoomParticipantWithRegistrantInfoFragmentDoc}
 `;
 export const RoomPersonInfoFragmentDoc = gql`
     fragment RoomPersonInfo on room_RoomMembership {
@@ -49755,14 +50392,6 @@ export const MinimalEventInfoFragmentDoc = gql`
         }
     }
 `;
-export const RoomParticipantDetailsFragmentDoc = gql`
-    fragment RoomParticipantDetails on room_Participant {
-        conferenceId
-        id
-        roomId
-        registrantId
-    }
-`;
 export const SearchedPerson_ReducedFragmentDoc = gql`
     fragment SearchedPerson_Reduced on collection_ProgramPerson {
         id
@@ -49904,7 +50533,7 @@ export const RegistrantFieldsFragmentDoc = gql`
     }
 `;
 export const GetSlugForUrlDocument = gql`
-    query GetSlugForUrl($url: String!) {
+    query GetSlugForUrl($url: String!) @cached {
         getSlug(url: $url) {
             slug
         }
@@ -50049,7 +50678,7 @@ export function useInsertChatFlagMutation() {
     return Urql.useMutation<InsertChatFlagMutation, InsertChatFlagMutationVariables>(InsertChatFlagDocument);
 }
 export const GetChatPathDocument = gql`
-    query GetChatPath($chatId: uuid!) {
+    query GetChatPath($chatId: uuid!) @cached {
         chat_Chat_by_pk(id: $chatId) {
             id
             room {
@@ -50066,7 +50695,7 @@ export function useGetChatPathQuery(options: Omit<Urql.UseQueryArgs<GetChatPathQ
     return Urql.useQuery<GetChatPathQuery>({ query: GetChatPathDocument, ...options });
 }
 export const ConferenceLandingPageItemDocument = gql`
-    query ConferenceLandingPageItem($conferenceId: uuid!) {
+    query ConferenceLandingPageItem($conferenceId: uuid!) @cached {
         content_Item(where: { _and: [{ conferenceId: { _eq: $conferenceId } }, { typeName: { _eq: LANDING_PAGE } }] }) {
             ...ItemElements_JustElementData
         }
@@ -50080,7 +50709,7 @@ export function useConferenceLandingPageItemQuery(
     return Urql.useQuery<ConferenceLandingPageItemQuery>({ query: ConferenceLandingPageItemDocument, ...options });
 }
 export const ItemElements_GetItemDocument = gql`
-    query ItemElements_GetItem($itemId: uuid!) {
+    query ItemElements_GetItem($itemId: uuid!) @cached {
         content_Item_by_pk(id: $itemId) {
             ...ItemElements_ItemData
         }
@@ -50094,7 +50723,7 @@ export function useItemElements_GetItemQuery(
     return Urql.useQuery<ItemElements_GetItemQuery>({ query: ItemElements_GetItemDocument, ...options });
 }
 export const ContentOfTagDocument = gql`
-    query ContentOfTag($id: uuid!) {
+    query ContentOfTag($id: uuid!) @cached {
         content_ItemTag(where: { tagId: { _eq: $id } }) {
             ...ItemList_ItemTagData
         }
@@ -50106,7 +50735,7 @@ export function useContentOfTagQuery(options: Omit<Urql.UseQueryArgs<ContentOfTa
     return Urql.useQuery<ContentOfTagQuery>({ query: ContentOfTagDocument, ...options });
 }
 export const TagsDocument = gql`
-    query Tags($conferenceId: uuid!) {
+    query Tags($conferenceId: uuid!) @cached {
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ItemList_TagInfo
         }
@@ -50118,7 +50747,7 @@ export function useTagsQuery(options: Omit<Urql.UseQueryArgs<TagsQueryVariables>
     return Urql.useQuery<TagsQuery>({ query: TagsDocument, ...options });
 }
 export const GetItemDocument = gql`
-    query GetItem($itemId: uuid!) {
+    query GetItem($itemId: uuid!) @cached {
         content_Item_by_pk(id: $itemId) {
             ...ItemElements_ItemData
             ...ItemPage_ItemRooms
@@ -50180,7 +50809,7 @@ export function useContinuationChoices_ContinuationsQuery(
     });
 }
 export const ContinuationChoices_RoomsDocument = gql`
-    query ContinuationChoices_Rooms($ids: [uuid!]!) {
+    query ContinuationChoices_Rooms($ids: [uuid!]!) @cached {
         content_Item(where: { id: { _in: $ids } }) {
             id
             room {
@@ -50201,7 +50830,7 @@ export function useContinuationChoices_RoomsQuery(
     return Urql.useQuery<ContinuationChoices_RoomsQuery>({ query: ContinuationChoices_RoomsDocument, ...options });
 }
 export const SelectExhibitionDocument = gql`
-    query SelectExhibition($id: uuid!) {
+    query SelectExhibition($id: uuid!) @cached {
         collection_Exhibition_by_pk(id: $id) {
             ...ExhibitionWithContent
         }
@@ -50217,7 +50846,7 @@ export function useSelectExhibitionQuery(options: Omit<Urql.UseQueryArgs<SelectE
     return Urql.useQuery<SelectExhibitionQuery>({ query: SelectExhibitionDocument, ...options });
 }
 export const SelectAllExhibitionsDocument = gql`
-    query SelectAllExhibitions($conferenceId: uuid!) {
+    query SelectAllExhibitions($conferenceId: uuid!) @cached {
         collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, isHidden: { _eq: false } }) {
             ...ExhibitionSummary
         }
@@ -50325,7 +50954,7 @@ export function useRegistrantEventsWithBackstagesQuery(
     });
 }
 export const ProfilePage_ItemsDocument = gql`
-    query ProfilePage_Items($registrantId: uuid!) {
+    query ProfilePage_Items($registrantId: uuid!) @cached {
         content_Item(where: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
             ...ProfilePage_Item
         }
@@ -50362,7 +50991,7 @@ export function useMyRecordingsQuery(options: Omit<Urql.UseQueryArgs<MyRecording
     return Urql.useQuery<MyRecordingsQuery>({ query: MyRecordingsDocument, ...options });
 }
 export const SelectRegistrantsDocument = gql`
-    query SelectRegistrants($conferenceId: uuid!) {
+    query SelectRegistrants($conferenceId: uuid!) @cached {
         registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }, order_by: { displayName: asc }) {
             ...RegistrantData
         }
@@ -50374,7 +51003,7 @@ export function useSelectRegistrantsQuery(options: Omit<Urql.UseQueryArgs<Select
     return Urql.useQuery<SelectRegistrantsQuery>({ query: SelectRegistrantsDocument, ...options });
 }
 export const SearchRegistrantsDocument = gql`
-    query SearchRegistrants($conferenceId: uuid!, $search: String!) {
+    query SearchRegistrants($conferenceId: uuid!, $search: String!) @cached {
         registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
             ...RegistrantData
         }
@@ -50400,10 +51029,10 @@ export const Registrant_RegistrantCreateRoomDocument = gql`
                 managementModeName: $managementModeName
             }
         ) {
-            ...RoomListRoomDetails
+            ...SocialRoom
         }
     }
-    ${RoomListRoomDetailsFragmentDoc}
+    ${SocialRoomFragmentDoc}
 `;
 
 export function useRegistrant_RegistrantCreateRoomMutation() {
@@ -50456,7 +51085,7 @@ export function useRemoveRegistrantFromRoomMutation() {
     );
 }
 export const Room_GetEventsDocument = gql`
-    query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
+    query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) @cached {
         schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }) {
             ...Room_EventSummary
         }
@@ -50468,7 +51097,7 @@ export function useRoom_GetEventsQuery(options: Omit<Urql.UseQueryArgs<Room_GetE
     return Urql.useQuery<Room_GetEventsQuery>({ query: Room_GetEventsDocument, ...options });
 }
 export const Room_GetDefaultVideoRoomBackendDocument = gql`
-    query Room_GetDefaultVideoRoomBackend {
+    query Room_GetDefaultVideoRoomBackend @cached {
         system_Configuration_by_pk(key: DEFAULT_VIDEO_ROOM_BACKEND) {
             value
         }
@@ -50484,7 +51113,7 @@ export function useRoom_GetDefaultVideoRoomBackendQuery(
     });
 }
 export const RoomPage_GetRoomDetailsDocument = gql`
-    query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
+    query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) @cached {
         room_Room_by_pk(id: $roomId) {
             ...RoomPage_RoomDetails
         }
@@ -50515,7 +51144,7 @@ export function useRoomPage_GetRoomChannelStackQuery(
     });
 }
 export const GetEventVonageDetailsDocument = gql`
-    query GetEventVonageDetails($eventId: uuid!) {
+    query GetEventVonageDetails($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             eventVonageSession {
                 sessionId
@@ -50533,7 +51162,7 @@ export function useGetEventVonageDetailsQuery(
     return Urql.useQuery<GetEventVonageDetailsQuery>({ query: GetEventVonageDetailsDocument, ...options });
 }
 export const RoomSponsorContent_GetElementsDocument = gql`
-    query RoomSponsorContent_GetElements($itemId: uuid!) {
+    query RoomSponsorContent_GetElements($itemId: uuid!) @cached {
         content_Item(where: { id: { _eq: $itemId }, typeName: { _eq: SPONSOR } }) {
             ...RoomSponsorContent_ItemData
         }
@@ -50571,7 +51200,7 @@ export function useGetVonageParticipantStreamsSubscription<TData = GetVonagePart
     >({ query: GetVonageParticipantStreamsDocument, ...options }, handler);
 }
 export const ImmediateSwitch_GetElementsDocument = gql`
-    query ImmediateSwitch_GetElements($eventId: uuid!) {
+    query ImmediateSwitch_GetElements($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             id
             itemId
@@ -50654,7 +51283,7 @@ export function useLiveIndicator_GetLatestQuery(
     return Urql.useQuery<LiveIndicator_GetLatestQuery>({ query: LiveIndicator_GetLatestDocument, ...options });
 }
 export const LiveIndicator_GetElementDocument = gql`
-    query LiveIndicator_GetElement($elementId: uuid!) {
+    query LiveIndicator_GetElement($elementId: uuid!) @cached {
         content_Element_by_pk(id: $elementId) {
             id
             data
@@ -50668,7 +51297,7 @@ export function useLiveIndicator_GetElementQuery(
     return Urql.useQuery<LiveIndicator_GetElementQuery>({ query: LiveIndicator_GetElementDocument, ...options });
 }
 export const EnableBackstageStreamPreviewDocument = gql`
-    query EnableBackstageStreamPreview($conferenceId: uuid!) {
+    query EnableBackstageStreamPreview($conferenceId: uuid!) @cached {
         conference_Configuration_by_pk(key: ENABLE_BACKSTAGE_STREAM_PREVIEW, conferenceId: $conferenceId) {
             key
             conferenceId
@@ -50686,7 +51315,7 @@ export function useEnableBackstageStreamPreviewQuery(
     });
 }
 export const VonageBackstage_GetVonageSessionDocument = gql`
-    query VonageBackstage_GetVonageSession($eventId: uuid!) {
+    query VonageBackstage_GetVonageSession($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             ...Event_EventVonageSession
         }
@@ -50719,7 +51348,7 @@ export function useTranscribeGeneratePresignedUrlQuery(
     });
 }
 export const VideoPlayer_GetElementDocument = gql`
-    query VideoPlayer_GetElement($elementId: uuid!) {
+    query VideoPlayer_GetElement($elementId: uuid!) @cached {
         content_Element_by_pk(id: $elementId) {
             id
             item {
@@ -50751,7 +51380,7 @@ export function useGetRoomChimeDataMutation() {
     return Urql.useMutation<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>(GetRoomChimeDataDocument);
 }
 export const GetRoomVonageSessionIdDocument = gql`
-    query GetRoomVonageSessionId($roomId: uuid!) {
+    query GetRoomVonageSessionId($roomId: uuid!) @cached {
         room_Room_by_pk(id: $roomId) {
             id
             publicVonageSessionId
@@ -50765,7 +51394,7 @@ export function useGetRoomVonageSessionIdQuery(
     return Urql.useQuery<GetRoomVonageSessionIdQuery>({ query: GetRoomVonageSessionIdDocument, ...options });
 }
 export const GetEventVideosDocument = gql`
-    query GetEventVideos($eventId: uuid!) {
+    query GetEventVideos($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             id
             itemId
@@ -50808,7 +51437,7 @@ export function useGetEventVideosQuery(options: Omit<Urql.UseQueryArgs<GetEventV
     return Urql.useQuery<GetEventVideosQuery>({ query: GetEventVideosDocument, ...options });
 }
 export const GetRoomVideosDocument = gql`
-    query GetRoomVideos($roomId: uuid!) {
+    query GetRoomVideos($roomId: uuid!) @cached {
         room_Room_by_pk(id: $roomId) {
             id
             item {
@@ -50879,7 +51508,7 @@ export function useInsertVonageSessionLayoutMutation() {
     );
 }
 export const VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocument = gql`
-    query VonageRoomStateProvider_GetVonageMaxSimultaneousScreenShares($conferenceId: uuid!) {
+    query VonageRoomStateProvider_GetVonageMaxSimultaneousScreenShares($conferenceId: uuid!) @cached {
         conference_Configuration_by_pk(conferenceId: $conferenceId, key: VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES) {
             conferenceId
             key
@@ -50937,7 +51566,7 @@ export function useVonageVideoPlaybackContext_GetLatestCommandQuery(
     });
 }
 export const VonageVideoPlaybackContext_GetElementDocument = gql`
-    query VonageVideoPlaybackContext_GetElement($elementId: uuid!) {
+    query VonageVideoPlaybackContext_GetElement($elementId: uuid!) @cached {
         content_Element_by_pk(id: $elementId) {
             id
             ...useMediaElement_MediaElement
@@ -51023,89 +51652,8 @@ export function useGetRoomVonageTokenMutation() {
         GetRoomVonageTokenDocument
     );
 }
-export const GetAllRoomsDocument = gql`
-    query GetAllRooms($conferenceId: uuid!) {
-        socialRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-                itemId: { _is_null: true }
-            }
-            order_by: { name: asc }
-        ) {
-            ...RoomListRoomDetails
-        }
-        programRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                events: {}
-                managementModeName: { _in: [PUBLIC, PRIVATE] }
-                _or: [{ itemId: { _is_null: true } }, { item: { typeName: { _neq: SPONSOR } } }]
-            }
-            order_by: { name: asc }
-        ) {
-            ...RoomListRoomDetails
-        }
-    }
-    ${RoomListRoomDetailsFragmentDoc}
-`;
-
-export function useGetAllRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllRoomsQueryVariables>, "query">) {
-    return Urql.useQuery<GetAllRoomsQuery>({ query: GetAllRoomsDocument, ...options });
-}
-export const GetAllTodaysRoomsDocument = gql`
-    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
-        socialOrDiscussionRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                _and: [
-                    { item: { typeName: { _neq: SPONSOR } } }
-                    { _not: { _or: [{ events: {} }, { chat: { enableMandatorySubscribe: { _eq: true } } }] } }
-                ]
-            }
-            order_by: { name: asc }
-        ) {
-            ...RoomListRoomDetails
-        }
-        programRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                events: { startTime: { _lte: $todayEnd }, endTime: { _gte: $todayStart } }
-                _or: [{ itemId: { _is_null: true } }, { item: { typeName: { _neq: SPONSOR } } }]
-                managementModeName: { _in: [PUBLIC, PRIVATE] }
-            }
-            order_by: { name: asc }
-        ) {
-            ...RoomListRoomDetails
-        }
-    }
-    ${RoomListRoomDetailsFragmentDoc}
-`;
-
-export function useGetAllTodaysRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllTodaysRoomsQueryVariables>, "query">) {
-    return Urql.useQuery<GetAllTodaysRoomsQuery>({ query: GetAllTodaysRoomsDocument, ...options });
-}
-export const GetSocialRoomsDocument = gql`
-    query GetSocialRooms($conferenceId: uuid!) {
-        socialRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-                itemId: { _is_null: true }
-            }
-            order_by: { name: asc }
-        ) {
-            ...SocialRoom
-        }
-    }
-    ${SocialRoomFragmentDoc}
-`;
-
-export function useGetSocialRoomsQuery(options: Omit<Urql.UseQueryArgs<GetSocialRoomsQueryVariables>, "query">) {
-    return Urql.useQuery<GetSocialRoomsQuery>({ query: GetSocialRoomsDocument, ...options });
-}
 export const RoomTile_GetRoomDocument = gql`
-    query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) {
+    query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) @cached {
         room_Room_by_pk(id: $roomId) {
             ...RoomTile_Room
         }
@@ -51116,8 +51664,27 @@ export const RoomTile_GetRoomDocument = gql`
 export function useRoomTile_GetRoomQuery(options: Omit<Urql.UseQueryArgs<RoomTile_GetRoomQueryVariables>, "query">) {
     return Urql.useQuery<RoomTile_GetRoomQuery>({ query: RoomTile_GetRoomDocument, ...options });
 }
+export const GetSocialRoomsDocument = gql`
+    query GetSocialRooms($conferenceId: uuid!) @cached {
+        room_Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
+                _not: { events: {} }
+                itemId: { _is_null: true }
+            }
+        ) {
+            ...SocialRoom
+        }
+    }
+    ${SocialRoomFragmentDoc}
+`;
+
+export function useGetSocialRoomsQuery(options: Omit<Urql.UseQueryArgs<GetSocialRoomsQueryVariables>, "query">) {
+    return Urql.useQuery<GetSocialRoomsQuery>({ query: GetSocialRoomsDocument, ...options });
+}
 export const GetSponsorBoothsDocument = gql`
-    query GetSponsorBooths($conferenceId: uuid!) {
+    query GetSponsorBooths($conferenceId: uuid!) @cached {
         content_Item(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SPONSOR } }) {
             ...SponsorBoothsList_Item
         }
@@ -51214,7 +51781,7 @@ export function useStarEventButton_DeleteStarsMutation() {
     );
 }
 export const Schedule_SelectItemDocument = gql`
-    query Schedule_SelectItem($id: uuid!) {
+    query Schedule_SelectItem($id: uuid!) @cached {
         content_Item_by_pk(id: $id) {
             ...Schedule_Item
         }
@@ -51228,7 +51795,7 @@ export function useSchedule_SelectItemQuery(
     return Urql.useQuery<Schedule_SelectItemQuery>({ query: Schedule_SelectItemDocument, ...options });
 }
 export const Schedule_SelectSummariesDocument = gql`
-    query Schedule_SelectSummaries($conferenceId: uuid!) {
+    query Schedule_SelectSummaries($conferenceId: uuid!) @cached {
         room_Room(
             where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] }, events: {} }
         ) {
@@ -51279,53 +51846,8 @@ export function useStarredEvents_SelectEventIdsQuery(
         ...options,
     });
 }
-export const ScheduleV2_DayLightweightEventsDocument = gql`
-    query ScheduleV2_DayLightweightEvents(
-        $conferenceId: uuid!
-        $startOfDay: timestamptz!
-        $endOfDay: timestamptz!
-        $filter: schedule_Event_bool_exp!
-    ) {
-        schedule_Event(
-            where: {
-                _and: [
-                    { conferenceId: { _eq: $conferenceId } }
-                    { startTime: { _lt: $endOfDay } }
-                    { endTime: { _gt: $startOfDay } }
-                    $filter
-                ]
-            }
-        ) {
-            ...ScheduleV2_LightweightEvent
-        }
-    }
-    ${ScheduleV2_LightweightEventFragmentDoc}
-`;
-
-export function useScheduleV2_DayLightweightEventsQuery(
-    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>, "query">
-) {
-    return Urql.useQuery<ScheduleV2_DayLightweightEventsQuery>({
-        query: ScheduleV2_DayLightweightEventsDocument,
-        ...options,
-    });
-}
-export const ScheduleV2_DayEventsDocument = gql`
-    query ScheduleV2_DayEvents($eventIds: [uuid!]!) {
-        schedule_Event(where: { id: { _in: $eventIds } }) {
-            ...ScheduleV2_Event
-        }
-    }
-    ${ScheduleV2_EventFragmentDoc}
-`;
-
-export function useScheduleV2_DayEventsQuery(
-    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, "query">
-) {
-    return Urql.useQuery<ScheduleV2_DayEventsQuery>({ query: ScheduleV2_DayEventsDocument, ...options });
-}
 export const ScheduleV2_RoomsDocument = gql`
-    query ScheduleV2_Rooms($conferenceId: uuid!) {
+    query ScheduleV2_Rooms($conferenceId: uuid!) @cached {
         room_Room(where: { conferenceId: { _eq: $conferenceId }, events: {} }) {
             ...ScheduleV2_Room
         }
@@ -51337,7 +51859,7 @@ export function useScheduleV2_RoomsQuery(options: Omit<Urql.UseQueryArgs<Schedul
     return Urql.useQuery<ScheduleV2_RoomsQuery>({ query: ScheduleV2_RoomsDocument, ...options });
 }
 export const ScheduleV2_TagsDocument = gql`
-    query ScheduleV2_Tags($conferenceId: uuid!) {
+    query ScheduleV2_Tags($conferenceId: uuid!) @cached {
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ScheduleV2_Tag
         }
@@ -51349,7 +51871,7 @@ export function useScheduleV2_TagsQuery(options: Omit<Urql.UseQueryArgs<Schedule
     return Urql.useQuery<ScheduleV2_TagsQuery>({ query: ScheduleV2_TagsDocument, ...options });
 }
 export const ScheduleV2_AllEvents_ParamsDocument = gql`
-    query ScheduleV2_AllEvents_Params($conferenceId: uuid!) {
+    query ScheduleV2_AllEvents_Params($conferenceId: uuid!) @cached {
         earliestStartingEvent: schedule_Event(
             where: { conferenceId: { _eq: $conferenceId } }
             limit: 1
@@ -51377,7 +51899,7 @@ export function useScheduleV2_AllEvents_ParamsQuery(
     return Urql.useQuery<ScheduleV2_AllEvents_ParamsQuery>({ query: ScheduleV2_AllEvents_ParamsDocument, ...options });
 }
 export const SelectSwagBagsDocument = gql`
-    query SelectSwagBags($conferenceId: uuid!) {
+    query SelectSwagBags($conferenceId: uuid!) @cached {
         content_Item(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SWAG_BAG } }) {
             ...SwagBag
         }
@@ -51389,7 +51911,7 @@ export function useSelectSwagBagsQuery(options: Omit<Urql.UseQueryArgs<SelectSwa
     return Urql.useQuery<SelectSwagBagsQuery>({ query: SelectSwagBagsDocument, ...options });
 }
 export const ConferenceBySlugDocument = gql`
-    query ConferenceBySlug($slug: String!) {
+    query ConferenceBySlug($slug: String!) @cached {
         conference_Conference(where: { slug: { _eq: $slug } }) {
             id
             slug
@@ -54648,7 +55170,7 @@ export function useCreateNewConferenceMetaStructureMutation() {
     >(CreateNewConferenceMetaStructureDocument);
 }
 export const RegistrantsByIdDocument = gql`
-    query RegistrantsById($conferenceId: uuid!, $registrantIds: [uuid!]!) {
+    query RegistrantsById($conferenceId: uuid!, $registrantIds: [uuid!]!) @cached {
         registrant_Registrant(where: { id: { _in: $registrantIds }, conferenceId: { _eq: $conferenceId } }) {
             ...RegistrantData
         }
@@ -54660,7 +55182,7 @@ export function useRegistrantsByIdQuery(options: Omit<Urql.UseQueryArgs<Registra
     return Urql.useQuery<RegistrantsByIdQuery>({ query: RegistrantsByIdDocument, ...options });
 }
 export const RegistrantsByUserIdDocument = gql`
-    query RegistrantsByUserId($conferenceId: uuid!, $userIds: [String!]!) {
+    query RegistrantsByUserId($conferenceId: uuid!, $userIds: [String!]!) @cached {
         registrant_Registrant(where: { userId: { _in: $userIds }, conferenceId: { _eq: $conferenceId } }) {
             ...RegistrantData
         }
@@ -54674,7 +55196,7 @@ export function useRegistrantsByUserIdQuery(
     return Urql.useQuery<RegistrantsByUserIdQuery>({ query: RegistrantsByUserIdDocument, ...options });
 }
 export const ConferenceById_WithUserDocument = gql`
-    query ConferenceById_WithUser($id: uuid!, $userId: String!) {
+    query ConferenceById_WithUser($id: uuid!, $userId: String!) @cached {
         conference_Conference_by_pk(id: $id) {
             ...PublicConferenceInfo
             ...AuthdConferenceInfo
@@ -54690,7 +55212,7 @@ export function useConferenceById_WithUserQuery(
     return Urql.useQuery<ConferenceById_WithUserQuery>({ query: ConferenceById_WithUserDocument, ...options });
 }
 export const ConferenceById_WithoutUserDocument = gql`
-    query ConferenceById_WithoutUser($id: uuid!) {
+    query ConferenceById_WithoutUser($id: uuid!) @cached {
         conference_Conference_by_pk(id: $id) {
             ...PublicConferenceInfo
         }
@@ -54778,7 +55300,7 @@ export function useGetEventsInNextHourQuery(
     return Urql.useQuery<GetEventsInNextHourQuery>({ query: GetEventsInNextHourDocument, ...options });
 }
 export const CountSwagBagsDocument = gql`
-    query CountSwagBags($conferenceId: uuid!) {
+    query CountSwagBags($conferenceId: uuid!) @cached {
         content_Item_aggregate(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SWAG_BAG } }) {
             aggregate {
                 count
@@ -54804,7 +55326,7 @@ export function useCreateDmMutation() {
     return Urql.useMutation<CreateDmMutation, CreateDmMutationVariables>(CreateDmDocument);
 }
 export const GetItemChatIdDocument = gql`
-    query GetItemChatId($itemOrExhibitionId: uuid!) {
+    query GetItemChatId($itemOrExhibitionId: uuid!) @cached {
         content_Item(
             where: {
                 _or: [
@@ -54824,7 +55346,7 @@ export function useGetItemChatIdQuery(options: Omit<Urql.UseQueryArgs<GetItemCha
     return Urql.useQuery<GetItemChatIdQuery>({ query: GetItemChatIdDocument, ...options });
 }
 export const GetConferenceLandingPageItemIdDocument = gql`
-    query GetConferenceLandingPageItemId($conferenceId: uuid!) {
+    query GetConferenceLandingPageItemId($conferenceId: uuid!) @cached {
         content_Item(where: { typeName: { _eq: LANDING_PAGE }, conferenceId: { _eq: $conferenceId } }, limit: 1) {
             id
             typeName
@@ -54842,7 +55364,7 @@ export function useGetConferenceLandingPageItemIdQuery(
     });
 }
 export const RaiseHandPanel_GetEventDetailsDocument = gql`
-    query RaiseHandPanel_GetEventDetails($eventId: uuid!) {
+    query RaiseHandPanel_GetEventDetails($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             ...Room_EventSummary
         }
@@ -54859,7 +55381,7 @@ export function useRaiseHandPanel_GetEventDetailsQuery(
     });
 }
 export const GetRoomChatIdDocument = gql`
-    query GetRoomChatId($roomId: uuid!) {
+    query GetRoomChatId($roomId: uuid!) @cached {
         room_Room_by_pk(id: $roomId) {
             id
             chatId
@@ -54872,7 +55394,7 @@ export function useGetRoomChatIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomCha
     return Urql.useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
 }
 export const GetVapidPublicKeyDocument = gql`
-    query GetVAPIDPublicKey {
+    query GetVAPIDPublicKey @cached {
         vapidPublicKey {
             key
         }
@@ -54913,22 +55435,8 @@ export function useDeletePushNotificationSubscriptionMutation() {
         DeletePushNotificationSubscriptionMutationVariables
     >(DeletePushNotificationSubscriptionDocument);
 }
-export const GetAllRoomParticipantsDocument = gql`
-    query GetAllRoomParticipants($conferenceId: uuid!) {
-        room_Participant(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...RoomParticipantDetails
-        }
-    }
-    ${RoomParticipantDetailsFragmentDoc}
-`;
-
-export function useGetAllRoomParticipantsQuery(
-    options: Omit<Urql.UseQueryArgs<GetAllRoomParticipantsQueryVariables>, "query">
-) {
-    return Urql.useQuery<GetAllRoomParticipantsQuery>({ query: GetAllRoomParticipantsDocument, ...options });
-}
 export const SearchAllDocument = gql`
-    query SearchAll($conferenceId: uuid!, $search: String!, $limit: Int!, $offset: Int!) {
+    query SearchAll($conferenceId: uuid!, $search: String!, $limit: Int!, $offset: Int!) @cached {
         content_searchItems(args: { conferenceId: $conferenceId, search: $search }, limit: $limit, offset: $offset) {
             ...SearchedItem
         }
@@ -54975,7 +55483,7 @@ export function useMyShuffleQueueEntryQuery(
     return Urql.useQuery<MyShuffleQueueEntryQuery>({ query: MyShuffleQueueEntryDocument, ...options });
 }
 export const ShufflePeriodsDocument = gql`
-    query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) {
+    query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) @cached {
         room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, endAt: { _gte: $end } }) {
             ...ShufflePeriodData
         }
@@ -54997,26 +55505,6 @@ export const JoinShuffleQueueDocument = gql`
 
 export function useJoinShuffleQueueMutation() {
     return Urql.useMutation<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>(JoinShuffleQueueDocument);
-}
-export const GetShuffleRoomsParticipantsCountDocument = gql`
-    query GetShuffleRoomsParticipantsCount($conferenceId: uuid!) {
-        room_Participant_aggregate(
-            where: { conferenceId: { _eq: $conferenceId }, room: { shuffleRooms: { isEnded: { _eq: false } } } }
-        ) {
-            aggregate {
-                count
-            }
-        }
-    }
-`;
-
-export function useGetShuffleRoomsParticipantsCountQuery(
-    options: Omit<Urql.UseQueryArgs<GetShuffleRoomsParticipantsCountQueryVariables>, "query">
-) {
-    return Urql.useQuery<GetShuffleRoomsParticipantsCountQuery>({
-        query: GetShuffleRoomsParticipantsCountDocument,
-        ...options,
-    });
 }
 export const UpdateSubtitlesDocument = gql`
     mutation UpdateSubtitles($elementId: String!, $magicToken: String!, $subtitleText: String!) {
@@ -55373,7 +55861,7 @@ export function useDeleteSystemConfigurationsMutation() {
     );
 }
 export const SelectCurrentUserDocument = gql`
-    query SelectCurrentUser($userId: String!) {
+    query SelectCurrentUser($userId: String!) @cached {
         User_by_pk(id: $userId) {
             ...UserInfo
         }
@@ -55385,7 +55873,7 @@ export function useSelectCurrentUserQuery(options: Omit<Urql.UseQueryArgs<Select
     return Urql.useQuery<SelectCurrentUserQuery>({ query: SelectCurrentUserDocument, ...options });
 }
 export const TermsConfigsDocument = gql`
-    query TermsConfigs {
+    query TermsConfigs @cached {
         hostOrganisationName: system_Configuration_by_pk(key: HOST_ORGANISATION_NAME) {
             key
             value
@@ -55441,7 +55929,7 @@ export function useAgreeToTermsMutation() {
     return Urql.useMutation<AgreeToTermsMutation, AgreeToTermsMutationVariables>(AgreeToTermsDocument);
 }
 export const SelectCurrentUserRegistrationsDocument = gql`
-    query SelectCurrentUserRegistrations($userId: String!) {
+    query SelectCurrentUserRegistrations($userId: String!) @cached {
         registrant_Registrant(where: { userId: { _eq: $userId } }) {
             ...RegistrantFields
         }
@@ -55458,7 +55946,7 @@ export function useSelectCurrentUserRegistrationsQuery(
     });
 }
 export const SelectRegistrationDocument = gql`
-    query SelectRegistration($registrantId: uuid!) {
+    query SelectRegistration($registrantId: uuid!) @cached {
         registrant_Registrant_by_pk(id: $registrantId) {
             ...RegistrantFields
         }
@@ -55979,6 +56467,47 @@ export type GraphCacheKeysConfig = {
     conference_DemoCode_mutation_response?: (
         data: WithTypename<Conference_DemoCode_Mutation_Response>
     ) => null | string;
+    conference_Quota?: (data: WithTypename<Conference_Quota>) => null | string;
+    conference_Quota_aggregate?: (data: WithTypename<Conference_Quota_Aggregate>) => null | string;
+    conference_Quota_aggregate_fields?: (data: WithTypename<Conference_Quota_Aggregate_Fields>) => null | string;
+    conference_Quota_avg_fields?: (data: WithTypename<Conference_Quota_Avg_Fields>) => null | string;
+    conference_Quota_max_fields?: (data: WithTypename<Conference_Quota_Max_Fields>) => null | string;
+    conference_Quota_min_fields?: (data: WithTypename<Conference_Quota_Min_Fields>) => null | string;
+    conference_Quota_mutation_response?: (data: WithTypename<Conference_Quota_Mutation_Response>) => null | string;
+    conference_Quota_stddev_fields?: (data: WithTypename<Conference_Quota_Stddev_Fields>) => null | string;
+    conference_Quota_stddev_pop_fields?: (data: WithTypename<Conference_Quota_Stddev_Pop_Fields>) => null | string;
+    conference_Quota_stddev_samp_fields?: (data: WithTypename<Conference_Quota_Stddev_Samp_Fields>) => null | string;
+    conference_Quota_sum_fields?: (data: WithTypename<Conference_Quota_Sum_Fields>) => null | string;
+    conference_Quota_var_pop_fields?: (data: WithTypename<Conference_Quota_Var_Pop_Fields>) => null | string;
+    conference_Quota_var_samp_fields?: (data: WithTypename<Conference_Quota_Var_Samp_Fields>) => null | string;
+    conference_Quota_variance_fields?: (data: WithTypename<Conference_Quota_Variance_Fields>) => null | string;
+    conference_RemainingQuota?: (data: WithTypename<Conference_RemainingQuota>) => null | string;
+    conference_RemainingQuota_aggregate?: (data: WithTypename<Conference_RemainingQuota_Aggregate>) => null | string;
+    conference_RemainingQuota_aggregate_fields?: (
+        data: WithTypename<Conference_RemainingQuota_Aggregate_Fields>
+    ) => null | string;
+    conference_RemainingQuota_avg_fields?: (data: WithTypename<Conference_RemainingQuota_Avg_Fields>) => null | string;
+    conference_RemainingQuota_max_fields?: (data: WithTypename<Conference_RemainingQuota_Max_Fields>) => null | string;
+    conference_RemainingQuota_min_fields?: (data: WithTypename<Conference_RemainingQuota_Min_Fields>) => null | string;
+    conference_RemainingQuota_stddev_fields?: (
+        data: WithTypename<Conference_RemainingQuota_Stddev_Fields>
+    ) => null | string;
+    conference_RemainingQuota_stddev_pop_fields?: (
+        data: WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>
+    ) => null | string;
+    conference_RemainingQuota_stddev_samp_fields?: (
+        data: WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>
+    ) => null | string;
+    conference_RemainingQuota_sum_fields?: (data: WithTypename<Conference_RemainingQuota_Sum_Fields>) => null | string;
+    conference_RemainingQuota_var_pop_fields?: (
+        data: WithTypename<Conference_RemainingQuota_Var_Pop_Fields>
+    ) => null | string;
+    conference_RemainingQuota_var_samp_fields?: (
+        data: WithTypename<Conference_RemainingQuota_Var_Samp_Fields>
+    ) => null | string;
+    conference_RemainingQuota_variance_fields?: (
+        data: WithTypename<Conference_RemainingQuota_Variance_Fields>
+    ) => null | string;
     conference_Subconference?: (data: WithTypename<Conference_Subconference>) => null | string;
     conference_Subconference_aggregate?: (data: WithTypename<Conference_Subconference_Aggregate>) => null | string;
     conference_Subconference_aggregate_fields?: (
@@ -55989,6 +56518,20 @@ export type GraphCacheKeysConfig = {
     conference_Subconference_mutation_response?: (
         data: WithTypename<Conference_Subconference_Mutation_Response>
     ) => null | string;
+    conference_Usage?: (data: WithTypename<Conference_Usage>) => null | string;
+    conference_Usage_aggregate?: (data: WithTypename<Conference_Usage_Aggregate>) => null | string;
+    conference_Usage_aggregate_fields?: (data: WithTypename<Conference_Usage_Aggregate_Fields>) => null | string;
+    conference_Usage_avg_fields?: (data: WithTypename<Conference_Usage_Avg_Fields>) => null | string;
+    conference_Usage_max_fields?: (data: WithTypename<Conference_Usage_Max_Fields>) => null | string;
+    conference_Usage_min_fields?: (data: WithTypename<Conference_Usage_Min_Fields>) => null | string;
+    conference_Usage_mutation_response?: (data: WithTypename<Conference_Usage_Mutation_Response>) => null | string;
+    conference_Usage_stddev_fields?: (data: WithTypename<Conference_Usage_Stddev_Fields>) => null | string;
+    conference_Usage_stddev_pop_fields?: (data: WithTypename<Conference_Usage_Stddev_Pop_Fields>) => null | string;
+    conference_Usage_stddev_samp_fields?: (data: WithTypename<Conference_Usage_Stddev_Samp_Fields>) => null | string;
+    conference_Usage_sum_fields?: (data: WithTypename<Conference_Usage_Sum_Fields>) => null | string;
+    conference_Usage_var_pop_fields?: (data: WithTypename<Conference_Usage_Var_Pop_Fields>) => null | string;
+    conference_Usage_var_samp_fields?: (data: WithTypename<Conference_Usage_Var_Samp_Fields>) => null | string;
+    conference_Usage_variance_fields?: (data: WithTypename<Conference_Usage_Variance_Fields>) => null | string;
     conference_VisibilityLevel?: (data: WithTypename<Conference_VisibilityLevel>) => null | string;
     conference_VisibilityLevel_aggregate?: (data: WithTypename<Conference_VisibilityLevel_Aggregate>) => null | string;
     conference_VisibilityLevel_aggregate_fields?: (
@@ -56501,12 +57044,6 @@ export type GraphCacheKeysConfig = {
     room_Mode_max_fields?: (data: WithTypename<Room_Mode_Max_Fields>) => null | string;
     room_Mode_min_fields?: (data: WithTypename<Room_Mode_Min_Fields>) => null | string;
     room_Mode_mutation_response?: (data: WithTypename<Room_Mode_Mutation_Response>) => null | string;
-    room_Participant?: (data: WithTypename<Room_Participant>) => null | string;
-    room_Participant_aggregate?: (data: WithTypename<Room_Participant_Aggregate>) => null | string;
-    room_Participant_aggregate_fields?: (data: WithTypename<Room_Participant_Aggregate_Fields>) => null | string;
-    room_Participant_max_fields?: (data: WithTypename<Room_Participant_Max_Fields>) => null | string;
-    room_Participant_min_fields?: (data: WithTypename<Room_Participant_Min_Fields>) => null | string;
-    room_Participant_mutation_response?: (data: WithTypename<Room_Participant_Mutation_Response>) => null | string;
     room_PersonRole?: (data: WithTypename<Room_PersonRole>) => null | string;
     room_PersonRole_aggregate?: (data: WithTypename<Room_PersonRole_Aggregate>) => null | string;
     room_PersonRole_aggregate_fields?: (data: WithTypename<Room_PersonRole_Aggregate_Fields>) => null | string;
@@ -57454,6 +57991,31 @@ export type GraphCacheResolvers = {
             Query_RootConference_DemoCode_By_PkArgs,
             WithTypename<Conference_DemoCode> | string
         >;
+        conference_Quota?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootConference_QuotaArgs,
+            Array<WithTypename<Conference_Quota> | string>
+        >;
+        conference_Quota_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootConference_Quota_AggregateArgs,
+            WithTypename<Conference_Quota_Aggregate> | string
+        >;
+        conference_Quota_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootConference_Quota_By_PkArgs,
+            WithTypename<Conference_Quota> | string
+        >;
+        conference_RemainingQuota?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootConference_RemainingQuotaArgs,
+            Array<WithTypename<Conference_RemainingQuota> | string>
+        >;
+        conference_RemainingQuota_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootConference_RemainingQuota_AggregateArgs,
+            WithTypename<Conference_RemainingQuota_Aggregate> | string
+        >;
         conference_Subconference?: GraphCacheResolver<
             WithTypename<Query_Root>,
             Query_RootConference_SubconferenceArgs,
@@ -57468,6 +58030,21 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootConference_Subconference_By_PkArgs,
             WithTypename<Conference_Subconference> | string
+        >;
+        conference_Usage?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootConference_UsageArgs,
+            Array<WithTypename<Conference_Usage> | string>
+        >;
+        conference_Usage_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootConference_Usage_AggregateArgs,
+            WithTypename<Conference_Usage_Aggregate> | string
+        >;
+        conference_Usage_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootConference_Usage_By_PkArgs,
+            WithTypename<Conference_Usage> | string
         >;
         conference_VisibilityLevel?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -58048,21 +58625,6 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootRoom_Mode_By_PkArgs,
             WithTypename<Room_Mode> | string
-        >;
-        room_Participant?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootRoom_ParticipantArgs,
-            Array<WithTypename<Room_Participant> | string>
-        >;
-        room_Participant_aggregate?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootRoom_Participant_AggregateArgs,
-            WithTypename<Room_Participant_Aggregate> | string
-        >;
-        room_Participant_by_pk?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootRoom_Participant_By_PkArgs,
-            WithTypename<Room_Participant> | string
         >;
         room_PersonRole?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -63657,6 +64219,11 @@ export type GraphCacheResolvers = {
             Conference_ConferenceProgramPeople_AggregateArgs,
             WithTypename<Collection_ProgramPerson_Aggregate> | string
         >;
+        quota?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Record<string, never>,
+            WithTypename<Conference_Quota> | string
+        >;
         registrants?: GraphCacheResolver<
             WithTypename<Conference_Conference>,
             Conference_ConferenceRegistrantsArgs,
@@ -63666,6 +64233,11 @@ export type GraphCacheResolvers = {
             WithTypename<Conference_Conference>,
             Conference_ConferenceRegistrants_AggregateArgs,
             WithTypename<Registrant_Registrant_Aggregate> | string
+        >;
+        remainingQuota?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota> | string
         >;
         rooms?: GraphCacheResolver<
             WithTypename<Conference_Conference>,
@@ -63731,6 +64303,11 @@ export type GraphCacheResolvers = {
             WithTypename<Conference_Conference>,
             Record<string, never>,
             Scalars["timestamptz"] | string
+        >;
+        usage?: GraphCacheResolver<
+            WithTypename<Conference_Conference>,
+            Record<string, never>,
+            WithTypename<Conference_Usage> | string
         >;
     };
     conference_Conference_aggregate?: {
@@ -64196,6 +64773,1731 @@ export type GraphCacheResolvers = {
             Array<WithTypename<Conference_DemoCode> | string>
         >;
     };
+    conference_Quota?: {
+        areStreamingEventsAllowed?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Boolean"] | string
+        >;
+        areVideoChatEventsAllowed?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Boolean"] | string
+        >;
+        conference?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            WithTypename<Conference_Conference> | string
+        >;
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<WithTypename<Conference_Quota>, Record<string, never>, Scalars["uuid"] | string>;
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Conference_Quota>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    conference_Quota_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Conference_Quota> | string>
+        >;
+    };
+    conference_Quota_aggregate_fields?: {
+        avg?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Avg_Fields> | string
+        >;
+        count?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Conference_Quota_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Min_Fields> | string
+        >;
+        stddev?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Stddev_Fields> | string
+        >;
+        stddev_pop?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Stddev_Pop_Fields> | string
+        >;
+        stddev_samp?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Stddev_Samp_Fields> | string
+        >;
+        sum?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Sum_Fields> | string
+        >;
+        var_pop?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Var_Pop_Fields> | string
+        >;
+        var_samp?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Var_Samp_Fields> | string
+        >;
+        variance?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Quota_Variance_Fields> | string
+        >;
+    };
+    conference_Quota_avg_fields?: {
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Quota_max_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    conference_Quota_min_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    conference_Quota_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Conference_Quota> | string>
+        >;
+    };
+    conference_Quota_stddev_fields?: {
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Quota_stddev_pop_fields?: {
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Quota_stddev_samp_fields?: {
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Quota_sum_fields?: {
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+    };
+    conference_Quota_var_pop_fields?: {
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Quota_var_samp_fields?: {
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Quota_variance_fields?: {
+        maxContentItems?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerContentItem?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonMediaElementsPerSponsor?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventIndividualMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        maxVideoChatNonEventTotalMinutesConsumed?: GraphCacheResolver<
+            WithTypename<Conference_Quota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_RemainingQuota?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        slug?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    conference_RemainingQuota_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Conference_RemainingQuota> | string>
+        >;
+    };
+    conference_RemainingQuota_aggregate_fields?: {
+        avg?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Avg_Fields> | string
+        >;
+        count?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Conference_RemainingQuota_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Min_Fields> | string
+        >;
+        stddev?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Stddev_Fields> | string
+        >;
+        stddev_pop?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields> | string
+        >;
+        stddev_samp?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields> | string
+        >;
+        sum?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Sum_Fields> | string
+        >;
+        var_pop?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields> | string
+        >;
+        var_samp?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields> | string
+        >;
+        variance?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_RemainingQuota_Variance_Fields> | string
+        >;
+    };
+    conference_RemainingQuota_avg_fields?: {
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_RemainingQuota_max_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        slug?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    conference_RemainingQuota_min_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        slug?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    conference_RemainingQuota_stddev_fields?: {
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_RemainingQuota_stddev_pop_fields?: {
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_RemainingQuota_stddev_samp_fields?: {
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_RemainingQuota_sum_fields?: {
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["bigint"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+    };
+    conference_RemainingQuota_var_pop_fields?: {
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_RemainingQuota_var_samp_fields?: {
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_RemainingQuota_variance_fields?: {
+        remainingContentItems?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingNonStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingPublicSocialRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingRegistrants?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingStreamingProgramRooms?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSubconferences?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        remainingVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_RemainingQuota_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
     conference_Subconference?: {
         conference?: GraphCacheResolver<
             WithTypename<Conference_Subconference>,
@@ -64371,6 +66673,450 @@ export type GraphCacheResolvers = {
             WithTypename<Conference_Subconference_Mutation_Response>,
             Record<string, never>,
             Array<WithTypename<Conference_Subconference> | string>
+        >;
+    };
+    conference_Usage?: {
+        conference?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            WithTypename<Conference_Conference> | string
+        >;
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<WithTypename<Conference_Usage>, Record<string, never>, Scalars["uuid"] | string>;
+        lastUpdatedConsumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        lastUpdatedConsumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        lastUpdatedConsumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        lastUpdatedConsumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Conference_Usage>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    conference_Usage_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Conference_Usage> | string>
+        >;
+    };
+    conference_Usage_aggregate_fields?: {
+        avg?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Avg_Fields> | string
+        >;
+        count?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Conference_Usage_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Min_Fields> | string
+        >;
+        stddev?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Stddev_Fields> | string
+        >;
+        stddev_pop?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Stddev_Pop_Fields> | string
+        >;
+        stddev_samp?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Stddev_Samp_Fields> | string
+        >;
+        sum?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Sum_Fields> | string
+        >;
+        var_pop?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Var_Pop_Fields> | string
+        >;
+        var_samp?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Var_Samp_Fields> | string
+        >;
+        variance?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Conference_Usage_Variance_Fields> | string
+        >;
+    };
+    conference_Usage_avg_fields?: {
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Avg_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Usage_max_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        lastUpdatedConsumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        lastUpdatedConsumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        lastUpdatedConsumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        lastUpdatedConsumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    conference_Usage_min_fields?: {
+        conferenceId?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        created_at?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        id?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        lastUpdatedConsumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        lastUpdatedConsumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        lastUpdatedConsumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        lastUpdatedConsumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        updated_at?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+    };
+    conference_Usage_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Mutation_Response>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        returning?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Mutation_Response>,
+            Record<string, never>,
+            Array<WithTypename<Conference_Usage> | string>
+        >;
+    };
+    conference_Usage_stddev_fields?: {
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Usage_stddev_pop_fields?: {
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Usage_stddev_samp_fields?: {
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Stddev_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Usage_sum_fields?: {
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Sum_Fields>,
+            Record<string, never>,
+            Scalars["Int"] | string
+        >;
+    };
+    conference_Usage_var_pop_fields?: {
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Var_Pop_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Usage_var_samp_fields?: {
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Var_Samp_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+    };
+    conference_Usage_variance_fields?: {
+        consumedStreamingEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedSupportMeetingMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
+        >;
+        consumedVideoChatNonEventTotalMinutes?: GraphCacheResolver<
+            WithTypename<Conference_Usage_Variance_Fields>,
+            Record<string, never>,
+            Scalars["Float"] | string
         >;
     };
     conference_VisibilityLevel?: {
@@ -69630,16 +72376,6 @@ export type GraphCacheResolvers = {
             Registrant_RegistrantProgramPeople_AggregateArgs,
             WithTypename<Collection_ProgramPerson_Aggregate> | string
         >;
-        roomParticipants?: GraphCacheResolver<
-            WithTypename<Registrant_Registrant>,
-            Registrant_RegistrantRoomParticipantsArgs,
-            Array<WithTypename<Room_Participant> | string>
-        >;
-        roomParticipants_aggregate?: GraphCacheResolver<
-            WithTypename<Registrant_Registrant>,
-            Registrant_RegistrantRoomParticipants_AggregateArgs,
-            WithTypename<Room_Participant_Aggregate> | string
-        >;
         subconferenceMemberships?: GraphCacheResolver<
             WithTypename<Registrant_Registrant>,
             Registrant_RegistrantSubconferenceMembershipsArgs,
@@ -70713,195 +73449,6 @@ export type GraphCacheResolvers = {
             Array<WithTypename<Room_Mode> | string>
         >;
     };
-    room_Participant?: {
-        chimeRegistrantId?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-        conference?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            WithTypename<Conference_Conference> | string
-        >;
-        conferenceId?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        createdAt?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        id?: GraphCacheResolver<WithTypename<Room_Participant>, Record<string, never>, Scalars["uuid"] | string>;
-        registrant?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            WithTypename<Registrant_Registrant> | string
-        >;
-        registrantId?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        room?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            WithTypename<Room_Room> | string
-        >;
-        roomId?: GraphCacheResolver<WithTypename<Room_Participant>, Record<string, never>, Scalars["uuid"] | string>;
-        subconferenceId?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        updatedAt?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        vonageConnectionId?: GraphCacheResolver<
-            WithTypename<Room_Participant>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-    };
-    room_Participant_aggregate?: {
-        aggregate?: GraphCacheResolver<
-            WithTypename<Room_Participant_Aggregate>,
-            Record<string, never>,
-            WithTypename<Room_Participant_Aggregate_Fields> | string
-        >;
-        nodes?: GraphCacheResolver<
-            WithTypename<Room_Participant_Aggregate>,
-            Record<string, never>,
-            Array<WithTypename<Room_Participant> | string>
-        >;
-    };
-    room_Participant_aggregate_fields?: {
-        count?: GraphCacheResolver<
-            WithTypename<Room_Participant_Aggregate_Fields>,
-            Room_Participant_Aggregate_FieldsCountArgs,
-            Scalars["Int"] | string
-        >;
-        max?: GraphCacheResolver<
-            WithTypename<Room_Participant_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Room_Participant_Max_Fields> | string
-        >;
-        min?: GraphCacheResolver<
-            WithTypename<Room_Participant_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Room_Participant_Min_Fields> | string
-        >;
-    };
-    room_Participant_max_fields?: {
-        chimeRegistrantId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Max_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-        conferenceId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        createdAt?: GraphCacheResolver<
-            WithTypename<Room_Participant_Max_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        id?: GraphCacheResolver<
-            WithTypename<Room_Participant_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        registrantId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        roomId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        subconferenceId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Max_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        updatedAt?: GraphCacheResolver<
-            WithTypename<Room_Participant_Max_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        vonageConnectionId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Max_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-    };
-    room_Participant_min_fields?: {
-        chimeRegistrantId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Min_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-        conferenceId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        createdAt?: GraphCacheResolver<
-            WithTypename<Room_Participant_Min_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        id?: GraphCacheResolver<
-            WithTypename<Room_Participant_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        registrantId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        roomId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        subconferenceId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Min_Fields>,
-            Record<string, never>,
-            Scalars["uuid"] | string
-        >;
-        updatedAt?: GraphCacheResolver<
-            WithTypename<Room_Participant_Min_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        vonageConnectionId?: GraphCacheResolver<
-            WithTypename<Room_Participant_Min_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-    };
-    room_Participant_mutation_response?: {
-        affected_rows?: GraphCacheResolver<
-            WithTypename<Room_Participant_Mutation_Response>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
-        returning?: GraphCacheResolver<
-            WithTypename<Room_Participant_Mutation_Response>,
-            Record<string, never>,
-            Array<WithTypename<Room_Participant> | string>
-        >;
-    };
     room_PersonRole?: {
         description?: GraphCacheResolver<
             WithTypename<Room_PersonRole>,
@@ -71058,16 +73605,6 @@ export type GraphCacheResolvers = {
             Room_ManagementMode_Enum | string
         >;
         name?: GraphCacheResolver<WithTypename<Room_Room>, Record<string, never>, Scalars["String"] | string>;
-        participants?: GraphCacheResolver<
-            WithTypename<Room_Room>,
-            Room_RoomParticipantsArgs,
-            Array<WithTypename<Room_Participant> | string>
-        >;
-        participants_aggregate?: GraphCacheResolver<
-            WithTypename<Room_Room>,
-            Room_RoomParticipants_AggregateArgs,
-            WithTypename<Room_Participant_Aggregate> | string
-        >;
         presenceCounts?: GraphCacheResolver<
             WithTypename<Room_Room>,
             Room_RoomPresenceCountsArgs,
@@ -78651,6 +81188,10 @@ export type GraphCacheResolvers = {
 };
 
 export type GraphCacheOptimisticUpdaters = {
+    conference_updateEventUsage?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootConference_UpdateEventUsageArgs,
+        Array<WithTypename<Conference_Usage>>
+    >;
     createItemRoom?: GraphCacheOptimisticMutationResolver<
         Mutation_RootCreateItemRoomArgs,
         Maybe<WithTypename<CreateItemRoomOutput>>
@@ -78875,6 +81416,14 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootDelete_Conference_DemoCode_By_PkArgs,
         Maybe<WithTypename<Conference_DemoCode>>
     >;
+    delete_conference_Quota?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Conference_QuotaArgs,
+        Maybe<WithTypename<Conference_Quota_Mutation_Response>>
+    >;
+    delete_conference_Quota_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Conference_Quota_By_PkArgs,
+        Maybe<WithTypename<Conference_Quota>>
+    >;
     delete_conference_Subconference?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Conference_SubconferenceArgs,
         Maybe<WithTypename<Conference_Subconference_Mutation_Response>>
@@ -78882,6 +81431,14 @@ export type GraphCacheOptimisticUpdaters = {
     delete_conference_Subconference_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Conference_Subconference_By_PkArgs,
         Maybe<WithTypename<Conference_Subconference>>
+    >;
+    delete_conference_Usage?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Conference_UsageArgs,
+        Maybe<WithTypename<Conference_Usage_Mutation_Response>>
+    >;
+    delete_conference_Usage_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Conference_Usage_By_PkArgs,
+        Maybe<WithTypename<Conference_Usage>>
     >;
     delete_conference_VisibilityLevel?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Conference_VisibilityLevelArgs,
@@ -79162,14 +81719,6 @@ export type GraphCacheOptimisticUpdaters = {
     delete_room_Mode_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Room_Mode_By_PkArgs,
         Maybe<WithTypename<Room_Mode>>
-    >;
-    delete_room_Participant?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootDelete_Room_ParticipantArgs,
-        Maybe<WithTypename<Room_Participant_Mutation_Response>>
-    >;
-    delete_room_Participant_by_pk?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootDelete_Room_Participant_By_PkArgs,
-        Maybe<WithTypename<Room_Participant>>
     >;
     delete_room_PersonRole?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Room_PersonRoleArgs,
@@ -79676,6 +82225,14 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootInsert_Conference_DemoCode_OneArgs,
         Maybe<WithTypename<Conference_DemoCode>>
     >;
+    insert_conference_Quota?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Conference_QuotaArgs,
+        Maybe<WithTypename<Conference_Quota_Mutation_Response>>
+    >;
+    insert_conference_Quota_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Conference_Quota_OneArgs,
+        Maybe<WithTypename<Conference_Quota>>
+    >;
     insert_conference_Subconference?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Conference_SubconferenceArgs,
         Maybe<WithTypename<Conference_Subconference_Mutation_Response>>
@@ -79683,6 +82240,14 @@ export type GraphCacheOptimisticUpdaters = {
     insert_conference_Subconference_one?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Conference_Subconference_OneArgs,
         Maybe<WithTypename<Conference_Subconference>>
+    >;
+    insert_conference_Usage?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Conference_UsageArgs,
+        Maybe<WithTypename<Conference_Usage_Mutation_Response>>
+    >;
+    insert_conference_Usage_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Conference_Usage_OneArgs,
+        Maybe<WithTypename<Conference_Usage>>
     >;
     insert_conference_VisibilityLevel?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Conference_VisibilityLevelArgs,
@@ -79963,14 +82528,6 @@ export type GraphCacheOptimisticUpdaters = {
     insert_room_Mode_one?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Room_Mode_OneArgs,
         Maybe<WithTypename<Room_Mode>>
-    >;
-    insert_room_Participant?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootInsert_Room_ParticipantArgs,
-        Maybe<WithTypename<Room_Participant_Mutation_Response>>
-    >;
-    insert_room_Participant_one?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootInsert_Room_Participant_OneArgs,
-        Maybe<WithTypename<Room_Participant>>
     >;
     insert_room_PersonRole?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Room_PersonRoleArgs,
@@ -80529,6 +83086,14 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootUpdate_Conference_DemoCode_By_PkArgs,
         Maybe<WithTypename<Conference_DemoCode>>
     >;
+    update_conference_Quota?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Conference_QuotaArgs,
+        Maybe<WithTypename<Conference_Quota_Mutation_Response>>
+    >;
+    update_conference_Quota_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Conference_Quota_By_PkArgs,
+        Maybe<WithTypename<Conference_Quota>>
+    >;
     update_conference_Subconference?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Conference_SubconferenceArgs,
         Maybe<WithTypename<Conference_Subconference_Mutation_Response>>
@@ -80536,6 +83101,14 @@ export type GraphCacheOptimisticUpdaters = {
     update_conference_Subconference_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Conference_Subconference_By_PkArgs,
         Maybe<WithTypename<Conference_Subconference>>
+    >;
+    update_conference_Usage?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Conference_UsageArgs,
+        Maybe<WithTypename<Conference_Usage_Mutation_Response>>
+    >;
+    update_conference_Usage_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Conference_Usage_By_PkArgs,
+        Maybe<WithTypename<Conference_Usage>>
     >;
     update_conference_VisibilityLevel?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Conference_VisibilityLevelArgs,
@@ -80816,14 +83389,6 @@ export type GraphCacheOptimisticUpdaters = {
     update_room_Mode_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Room_Mode_By_PkArgs,
         Maybe<WithTypename<Room_Mode>>
-    >;
-    update_room_Participant?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootUpdate_Room_ParticipantArgs,
-        Maybe<WithTypename<Room_Participant_Mutation_Response>>
-    >;
-    update_room_Participant_by_pk?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootUpdate_Room_Participant_By_PkArgs,
-        Maybe<WithTypename<Room_Participant>>
     >;
     update_room_PersonRole?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Room_PersonRoleArgs,
@@ -81113,6 +83678,10 @@ export type GraphCacheOptimisticUpdaters = {
 
 export type GraphCacheUpdaters = {
     Mutation?: {
+        conference_updateEventUsage?: GraphCacheUpdateResolver<
+            { conference_updateEventUsage: Array<WithTypename<Conference_Usage>> },
+            Mutation_RootConference_UpdateEventUsageArgs
+        >;
         createItemRoom?: GraphCacheUpdateResolver<
             { createItemRoom: Maybe<WithTypename<CreateItemRoomOutput>> },
             Mutation_RootCreateItemRoomArgs
@@ -81345,6 +83914,14 @@ export type GraphCacheUpdaters = {
             { delete_conference_DemoCode_by_pk: Maybe<WithTypename<Conference_DemoCode>> },
             Mutation_RootDelete_Conference_DemoCode_By_PkArgs
         >;
+        delete_conference_Quota?: GraphCacheUpdateResolver<
+            { delete_conference_Quota: Maybe<WithTypename<Conference_Quota_Mutation_Response>> },
+            Mutation_RootDelete_Conference_QuotaArgs
+        >;
+        delete_conference_Quota_by_pk?: GraphCacheUpdateResolver<
+            { delete_conference_Quota_by_pk: Maybe<WithTypename<Conference_Quota>> },
+            Mutation_RootDelete_Conference_Quota_By_PkArgs
+        >;
         delete_conference_Subconference?: GraphCacheUpdateResolver<
             { delete_conference_Subconference: Maybe<WithTypename<Conference_Subconference_Mutation_Response>> },
             Mutation_RootDelete_Conference_SubconferenceArgs
@@ -81352,6 +83929,14 @@ export type GraphCacheUpdaters = {
         delete_conference_Subconference_by_pk?: GraphCacheUpdateResolver<
             { delete_conference_Subconference_by_pk: Maybe<WithTypename<Conference_Subconference>> },
             Mutation_RootDelete_Conference_Subconference_By_PkArgs
+        >;
+        delete_conference_Usage?: GraphCacheUpdateResolver<
+            { delete_conference_Usage: Maybe<WithTypename<Conference_Usage_Mutation_Response>> },
+            Mutation_RootDelete_Conference_UsageArgs
+        >;
+        delete_conference_Usage_by_pk?: GraphCacheUpdateResolver<
+            { delete_conference_Usage_by_pk: Maybe<WithTypename<Conference_Usage>> },
+            Mutation_RootDelete_Conference_Usage_By_PkArgs
         >;
         delete_conference_VisibilityLevel?: GraphCacheUpdateResolver<
             { delete_conference_VisibilityLevel: Maybe<WithTypename<Conference_VisibilityLevel_Mutation_Response>> },
@@ -81680,14 +84265,6 @@ export type GraphCacheUpdaters = {
         delete_room_Mode_by_pk?: GraphCacheUpdateResolver<
             { delete_room_Mode_by_pk: Maybe<WithTypename<Room_Mode>> },
             Mutation_RootDelete_Room_Mode_By_PkArgs
-        >;
-        delete_room_Participant?: GraphCacheUpdateResolver<
-            { delete_room_Participant: Maybe<WithTypename<Room_Participant_Mutation_Response>> },
-            Mutation_RootDelete_Room_ParticipantArgs
-        >;
-        delete_room_Participant_by_pk?: GraphCacheUpdateResolver<
-            { delete_room_Participant_by_pk: Maybe<WithTypename<Room_Participant>> },
-            Mutation_RootDelete_Room_Participant_By_PkArgs
         >;
         delete_room_PersonRole?: GraphCacheUpdateResolver<
             { delete_room_PersonRole: Maybe<WithTypename<Room_PersonRole_Mutation_Response>> },
@@ -82233,6 +84810,14 @@ export type GraphCacheUpdaters = {
             { insert_conference_DemoCode_one: Maybe<WithTypename<Conference_DemoCode>> },
             Mutation_RootInsert_Conference_DemoCode_OneArgs
         >;
+        insert_conference_Quota?: GraphCacheUpdateResolver<
+            { insert_conference_Quota: Maybe<WithTypename<Conference_Quota_Mutation_Response>> },
+            Mutation_RootInsert_Conference_QuotaArgs
+        >;
+        insert_conference_Quota_one?: GraphCacheUpdateResolver<
+            { insert_conference_Quota_one: Maybe<WithTypename<Conference_Quota>> },
+            Mutation_RootInsert_Conference_Quota_OneArgs
+        >;
         insert_conference_Subconference?: GraphCacheUpdateResolver<
             { insert_conference_Subconference: Maybe<WithTypename<Conference_Subconference_Mutation_Response>> },
             Mutation_RootInsert_Conference_SubconferenceArgs
@@ -82240,6 +84825,14 @@ export type GraphCacheUpdaters = {
         insert_conference_Subconference_one?: GraphCacheUpdateResolver<
             { insert_conference_Subconference_one: Maybe<WithTypename<Conference_Subconference>> },
             Mutation_RootInsert_Conference_Subconference_OneArgs
+        >;
+        insert_conference_Usage?: GraphCacheUpdateResolver<
+            { insert_conference_Usage: Maybe<WithTypename<Conference_Usage_Mutation_Response>> },
+            Mutation_RootInsert_Conference_UsageArgs
+        >;
+        insert_conference_Usage_one?: GraphCacheUpdateResolver<
+            { insert_conference_Usage_one: Maybe<WithTypename<Conference_Usage>> },
+            Mutation_RootInsert_Conference_Usage_OneArgs
         >;
         insert_conference_VisibilityLevel?: GraphCacheUpdateResolver<
             { insert_conference_VisibilityLevel: Maybe<WithTypename<Conference_VisibilityLevel_Mutation_Response>> },
@@ -82564,14 +85157,6 @@ export type GraphCacheUpdaters = {
         insert_room_Mode_one?: GraphCacheUpdateResolver<
             { insert_room_Mode_one: Maybe<WithTypename<Room_Mode>> },
             Mutation_RootInsert_Room_Mode_OneArgs
-        >;
-        insert_room_Participant?: GraphCacheUpdateResolver<
-            { insert_room_Participant: Maybe<WithTypename<Room_Participant_Mutation_Response>> },
-            Mutation_RootInsert_Room_ParticipantArgs
-        >;
-        insert_room_Participant_one?: GraphCacheUpdateResolver<
-            { insert_room_Participant_one: Maybe<WithTypename<Room_Participant>> },
-            Mutation_RootInsert_Room_Participant_OneArgs
         >;
         insert_room_PersonRole?: GraphCacheUpdateResolver<
             { insert_room_PersonRole: Maybe<WithTypename<Room_PersonRole_Mutation_Response>> },
@@ -83169,6 +85754,14 @@ export type GraphCacheUpdaters = {
             { update_conference_DemoCode_by_pk: Maybe<WithTypename<Conference_DemoCode>> },
             Mutation_RootUpdate_Conference_DemoCode_By_PkArgs
         >;
+        update_conference_Quota?: GraphCacheUpdateResolver<
+            { update_conference_Quota: Maybe<WithTypename<Conference_Quota_Mutation_Response>> },
+            Mutation_RootUpdate_Conference_QuotaArgs
+        >;
+        update_conference_Quota_by_pk?: GraphCacheUpdateResolver<
+            { update_conference_Quota_by_pk: Maybe<WithTypename<Conference_Quota>> },
+            Mutation_RootUpdate_Conference_Quota_By_PkArgs
+        >;
         update_conference_Subconference?: GraphCacheUpdateResolver<
             { update_conference_Subconference: Maybe<WithTypename<Conference_Subconference_Mutation_Response>> },
             Mutation_RootUpdate_Conference_SubconferenceArgs
@@ -83176,6 +85769,14 @@ export type GraphCacheUpdaters = {
         update_conference_Subconference_by_pk?: GraphCacheUpdateResolver<
             { update_conference_Subconference_by_pk: Maybe<WithTypename<Conference_Subconference>> },
             Mutation_RootUpdate_Conference_Subconference_By_PkArgs
+        >;
+        update_conference_Usage?: GraphCacheUpdateResolver<
+            { update_conference_Usage: Maybe<WithTypename<Conference_Usage_Mutation_Response>> },
+            Mutation_RootUpdate_Conference_UsageArgs
+        >;
+        update_conference_Usage_by_pk?: GraphCacheUpdateResolver<
+            { update_conference_Usage_by_pk: Maybe<WithTypename<Conference_Usage>> },
+            Mutation_RootUpdate_Conference_Usage_By_PkArgs
         >;
         update_conference_VisibilityLevel?: GraphCacheUpdateResolver<
             { update_conference_VisibilityLevel: Maybe<WithTypename<Conference_VisibilityLevel_Mutation_Response>> },
@@ -83504,14 +86105,6 @@ export type GraphCacheUpdaters = {
         update_room_Mode_by_pk?: GraphCacheUpdateResolver<
             { update_room_Mode_by_pk: Maybe<WithTypename<Room_Mode>> },
             Mutation_RootUpdate_Room_Mode_By_PkArgs
-        >;
-        update_room_Participant?: GraphCacheUpdateResolver<
-            { update_room_Participant: Maybe<WithTypename<Room_Participant_Mutation_Response>> },
-            Mutation_RootUpdate_Room_ParticipantArgs
-        >;
-        update_room_Participant_by_pk?: GraphCacheUpdateResolver<
-            { update_room_Participant_by_pk: Maybe<WithTypename<Room_Participant>> },
-            Mutation_RootUpdate_Room_Participant_By_PkArgs
         >;
         update_room_PersonRole?: GraphCacheUpdateResolver<
             { update_room_PersonRole: Maybe<WithTypename<Room_PersonRole_Mutation_Response>> },
@@ -84166,6 +86759,26 @@ export type GraphCacheUpdaters = {
             { conference_DemoCode_by_pk: Maybe<WithTypename<Conference_DemoCode>> },
             Subscription_RootConference_DemoCode_By_PkArgs
         >;
+        conference_Quota?: GraphCacheUpdateResolver<
+            { conference_Quota: Array<WithTypename<Conference_Quota>> },
+            Subscription_RootConference_QuotaArgs
+        >;
+        conference_Quota_aggregate?: GraphCacheUpdateResolver<
+            { conference_Quota_aggregate: WithTypename<Conference_Quota_Aggregate> },
+            Subscription_RootConference_Quota_AggregateArgs
+        >;
+        conference_Quota_by_pk?: GraphCacheUpdateResolver<
+            { conference_Quota_by_pk: Maybe<WithTypename<Conference_Quota>> },
+            Subscription_RootConference_Quota_By_PkArgs
+        >;
+        conference_RemainingQuota?: GraphCacheUpdateResolver<
+            { conference_RemainingQuota: Array<WithTypename<Conference_RemainingQuota>> },
+            Subscription_RootConference_RemainingQuotaArgs
+        >;
+        conference_RemainingQuota_aggregate?: GraphCacheUpdateResolver<
+            { conference_RemainingQuota_aggregate: WithTypename<Conference_RemainingQuota_Aggregate> },
+            Subscription_RootConference_RemainingQuota_AggregateArgs
+        >;
         conference_Subconference?: GraphCacheUpdateResolver<
             { conference_Subconference: Array<WithTypename<Conference_Subconference>> },
             Subscription_RootConference_SubconferenceArgs
@@ -84177,6 +86790,18 @@ export type GraphCacheUpdaters = {
         conference_Subconference_by_pk?: GraphCacheUpdateResolver<
             { conference_Subconference_by_pk: Maybe<WithTypename<Conference_Subconference>> },
             Subscription_RootConference_Subconference_By_PkArgs
+        >;
+        conference_Usage?: GraphCacheUpdateResolver<
+            { conference_Usage: Array<WithTypename<Conference_Usage>> },
+            Subscription_RootConference_UsageArgs
+        >;
+        conference_Usage_aggregate?: GraphCacheUpdateResolver<
+            { conference_Usage_aggregate: WithTypename<Conference_Usage_Aggregate> },
+            Subscription_RootConference_Usage_AggregateArgs
+        >;
+        conference_Usage_by_pk?: GraphCacheUpdateResolver<
+            { conference_Usage_by_pk: Maybe<WithTypename<Conference_Usage>> },
+            Subscription_RootConference_Usage_By_PkArgs
         >;
         conference_VisibilityLevel?: GraphCacheUpdateResolver<
             { conference_VisibilityLevel: Array<WithTypename<Conference_VisibilityLevel>> },
@@ -84635,18 +87260,6 @@ export type GraphCacheUpdaters = {
         room_Mode_by_pk?: GraphCacheUpdateResolver<
             { room_Mode_by_pk: Maybe<WithTypename<Room_Mode>> },
             Subscription_RootRoom_Mode_By_PkArgs
-        >;
-        room_Participant?: GraphCacheUpdateResolver<
-            { room_Participant: Array<WithTypename<Room_Participant>> },
-            Subscription_RootRoom_ParticipantArgs
-        >;
-        room_Participant_aggregate?: GraphCacheUpdateResolver<
-            { room_Participant_aggregate: WithTypename<Room_Participant_Aggregate> },
-            Subscription_RootRoom_Participant_AggregateArgs
-        >;
-        room_Participant_by_pk?: GraphCacheUpdateResolver<
-            { room_Participant_by_pk: Maybe<WithTypename<Room_Participant>> },
-            Subscription_RootRoom_Participant_By_PkArgs
         >;
         room_PersonRole?: GraphCacheUpdateResolver<
             { room_PersonRole: Array<WithTypename<Room_PersonRole>> },

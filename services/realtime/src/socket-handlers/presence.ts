@@ -1,6 +1,7 @@
-import { redisClientPool } from "@midspace/component-clients/redis";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import type { Socket } from "socket.io";
 import { logger } from "../lib/logger";
+import { canAccessRoom } from "../lib/permissions";
 import { getVerifiedPageKey, presenceChannelName, presenceListKey } from "../lib/presence";
 import { enterPresence, exitAllPresences, exitPresence } from "../lib/presenceSocketFunctions";
 import { socketServer } from "../servers/socket-server";
@@ -219,4 +220,36 @@ export function onDisconnect(socketId: string, userId: string): void {
         .catch((err) => {
             logger.error({ err }, `Error exiting all presences on socket ${socketId}`);
         });
+}
+
+export function onRoomParticipants(userId: string, socket: Socket): (data: any) => Promise<void> {
+    return async (data) => {
+        let registrantIds: string[] = [];
+
+        try {
+            if (
+                data &&
+                typeof data === "object" &&
+                typeof data.roomId === "string" &&
+                typeof data.conferenceId === "string"
+            ) {
+                const accessAllowed = await canAccessRoom(userId, data.conferenceId, data.roomId);
+
+                if (accessAllowed) {
+                    const redisClient = await redisClientPool.acquire("socket-handlers/presence/onRoomParticipants");
+                    try {
+                        registrantIds = await redisClientP.zmembers(redisClient)(`RoomParticipants:${data.roomId}`);
+                    } finally {
+                        await redisClientPool.release("socket-handlers/presence/onRoomParticipants", redisClient);
+                    }
+                } else {
+                    logger.info({ data }, "User is not authorized to list participants of room");
+                }
+            }
+        } catch (error: any) {
+            logger.error({ error }, `Error listing room participants on socket ${socket.id}`);
+        } finally {
+            socket.emit("room-participants", { roomId: data.roomId, registrantIds });
+        }
+    };
 }

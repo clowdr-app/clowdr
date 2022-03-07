@@ -13,8 +13,8 @@ import { GlobalChatStateProvider } from "../Chat/GlobalChatStateProvider";
 import { MyBackstagesModalProvider } from "../Conference/Attend/Profile/MyBackstages";
 import { PermissionInstructionsProvider } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 import { VonageGlobalStateProvider } from "../Conference/Attend/Room/Vonage/State/VonageGlobalStateProvider";
-import { SocialiseModalProvider } from "../Conference/Attend/Rooms/V2/SocialiseModalProvider";
-import { LiveProgramRoomsProvider } from "../Conference/Attend/Rooms/V2/useLiveProgramRooms";
+import { SocialiseModalProvider } from "../Conference/Attend/Rooms/SocialiseModalProvider";
+import { LiveProgramRoomsProvider } from "../Conference/Attend/Rooms/useLiveProgramRooms";
 import { ScheduleModalProvider } from "../Conference/Attend/Schedule/ProgramModal";
 import useConferenceIdUpdater from "../Conference/ConferenceIdUpdater";
 import AttendeesContextProvider from "../Conference/RegistrantsContext";
@@ -28,8 +28,6 @@ import { LiveEventsProvider } from "../LiveEvents/LiveEvents";
 import { NavigationStateProvider } from "../Menu/NavigationState";
 import { RightSidebarCurrentTabProvider } from "../Menu/RightSidebar/RightSidebarCurrentTab";
 import { RaiseHandProvider } from "../RaiseHand/RaiseHandProvider";
-import { EnableRoomParticipantsPollingProvider } from "../Room/EnableRoomParticipantsPollingContext";
-import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
 import CurrentUserProvider from "../Users/CurrentUser/CurrentUserProvider";
 import "./App.css";
@@ -106,26 +104,22 @@ function AppInner2(): JSX.Element {
                                 <RaiseHandProvider>
                                     <AttendeesContextProvider>
                                         <LiveEventsProvider>
-                                            <EnableRoomParticipantsPollingProvider>
-                                                <RoomParticipantsProvider>
-                                                    <ScheduleModalProvider>
-                                                        <LiveProgramRoomsProvider>
-                                                            <MyBackstagesModalProvider>
-                                                                <SocialiseModalProvider>
-                                                                    {/* <ShuffleRoomsQueueMonitor /> */}
-                                                                    <PermissionInstructionsProvider>
-                                                                        <AppLayoutProvider>
-                                                                            <SharedRoomContextProvider>
-                                                                                {page}
-                                                                            </SharedRoomContextProvider>
-                                                                        </AppLayoutProvider>
-                                                                    </PermissionInstructionsProvider>
-                                                                </SocialiseModalProvider>
-                                                            </MyBackstagesModalProvider>
-                                                        </LiveProgramRoomsProvider>
-                                                    </ScheduleModalProvider>
-                                                </RoomParticipantsProvider>
-                                            </EnableRoomParticipantsPollingProvider>
+                                            <ScheduleModalProvider>
+                                                <LiveProgramRoomsProvider>
+                                                    <MyBackstagesModalProvider>
+                                                        <SocialiseModalProvider>
+                                                            {/* <ShuffleRoomsQueueMonitor /> */}
+                                                            <PermissionInstructionsProvider>
+                                                                <AppLayoutProvider>
+                                                                    <SharedRoomContextProvider>
+                                                                        {page}
+                                                                    </SharedRoomContextProvider>
+                                                                </AppLayoutProvider>
+                                                            </PermissionInstructionsProvider>
+                                                        </SocialiseModalProvider>
+                                                    </MyBackstagesModalProvider>
+                                                </LiveProgramRoomsProvider>
+                                            </ScheduleModalProvider>
                                         </LiveEventsProvider>
                                     </AttendeesContextProvider>
                                 </RaiseHandProvider>

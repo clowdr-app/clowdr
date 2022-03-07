@@ -20,7 +20,7 @@ import {
     SetShuffleRoomsEndedDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { kickRegistrantFromRoom } from "../lib/vonage/vonageTools";
+import { kickAllRegistrantsFromVonageRoom } from "../lib/vonage/vonageTools";
 
 gql`
     fragment UnallocatedShuffleQueueEntry on room_ShuffleQueueEntry {
@@ -39,10 +39,7 @@ gql`
                 id
                 registrantId
             }
-            participants {
-                id
-                registrantId
-            }
+            publicVonageSessionId
         }
     }
 
@@ -486,22 +483,13 @@ async function endRooms(logger: P.Logger, period: ActiveShufflePeriodFragment): 
         await Promise.all(
             endedRooms.map(async (shuffleRoom) => {
                 logger.info({ shuffleRoomId: shuffleRoom.id }, "Ending shuffle room");
-                await Promise.all(
-                    shuffleRoom.room.participants.map(async (participant) => {
-                        try {
-                            logger.info(
-                                { participantId: participant.id, shuffleRoomId: shuffleRoom.id },
-                                "Kicking shuffle room participant"
-                            );
-                            await kickRegistrantFromRoom(logger, shuffleRoom.room.id, participant.registrantId);
-                        } catch (e: any) {
-                            logger.error(
-                                { participantId: participant.id, shuffleRoomId: shuffleRoom.id, err: e },
-                                "Failed to kick participant while terminating shuffle room"
-                            );
-                        }
-                    })
-                );
+                if (shuffleRoom.room.publicVonageSessionId) {
+                    await kickAllRegistrantsFromVonageRoom(
+                        logger,
+                        shuffleRoom.room.id,
+                        shuffleRoom.room.publicVonageSessionId
+                    );
+                }
             })
         );
 

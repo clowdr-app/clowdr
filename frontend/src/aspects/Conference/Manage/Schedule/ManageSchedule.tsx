@@ -84,6 +84,7 @@ import type {
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
+import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import { useTitle } from "../../../Hooks/useTitle";
@@ -1691,10 +1692,11 @@ function EditableScheduleTable(): JSX.Element {
                               status: "error",
                               title: "Error saving changes",
                               description:
-                                  insertEventResponse.error?.message ??
-                                  updateEventResponse.error?.message ??
-                                  deleteEventsResponse.error?.message ??
-                                  "Unknown error",
+                                  extractActualError(
+                                      insertEventResponse.error ??
+                                          updateEventResponse.error ??
+                                          deleteEventsResponse.error
+                                  ) ?? "Unknown error",
                           }
                         : undefined
                 }

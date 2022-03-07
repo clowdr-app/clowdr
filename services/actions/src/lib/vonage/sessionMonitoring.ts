@@ -256,7 +256,7 @@ export async function addAndRemoveRoomParticipants(
                             logger,
                             room.roomId,
                             room.conferenceId,
-                            { vonageConnectionId: payload.connection.id },
+                            { vonageConnectionId: payload.connection.id, vonageSessionId: payload.sessionId },
                             registrantId
                         )
                 );
@@ -297,7 +297,11 @@ export async function addAndRemoveRoomParticipants(
                             room.roomId,
                             room.conferenceId,
                             registrantId,
-                            payload.sessionId
+                            {
+                                sessionId: payload.sessionId,
+                                connectionId: payload.connection.id,
+                            },
+                            false
                         )
                 );
             }

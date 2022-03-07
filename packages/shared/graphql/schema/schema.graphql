@@ -9665,6 +9665,10 @@ type conference_Conference {
         where: collection_ProgramPerson_bool_exp
     ): collection_ProgramPerson_aggregate!
     """
+    An object relationship
+    """
+    quota: conference_Quota
+    """
     An array relationship
     """
     registrants(
@@ -9714,6 +9718,10 @@ type conference_Conference {
         """
         where: registrant_Registrant_bool_exp
     ): registrant_Registrant_aggregate!
+    """
+    An object relationship
+    """
+    remainingQuota: conference_RemainingQuota
     """
     An array relationship
     """
@@ -9967,6 +9975,10 @@ type conference_Conference {
         where: collection_Tag_bool_exp
     ): collection_Tag_aggregate!
     updatedAt: timestamptz!
+    """
+    An object relationship
+    """
+    usage: conference_Usage
 }
 
 """
@@ -10031,7 +10043,9 @@ input conference_Conference_bool_exp {
     items: content_Item_bool_exp
     name: String_comparison_exp
     programPeople: collection_ProgramPerson_bool_exp
+    quota: conference_Quota_bool_exp
     registrants: registrant_Registrant_bool_exp
+    remainingQuota: conference_RemainingQuota_bool_exp
     rooms: room_Room_bool_exp
     shortName: String_comparison_exp
     shufflePeriods: room_ShufflePeriod_bool_exp
@@ -10040,6 +10054,7 @@ input conference_Conference_bool_exp {
     subconferences: conference_Subconference_bool_exp
     tags: collection_Tag_bool_exp
     updatedAt: timestamptz_comparison_exp
+    usage: conference_Usage_bool_exp
 }
 
 """
@@ -10094,7 +10109,9 @@ input conference_Conference_insert_input {
     items: content_Item_arr_rel_insert_input
     name: String
     programPeople: collection_ProgramPerson_arr_rel_insert_input
+    quota: conference_Quota_obj_rel_insert_input
     registrants: registrant_Registrant_arr_rel_insert_input
+    remainingQuota: conference_RemainingQuota_obj_rel_insert_input
     rooms: room_Room_arr_rel_insert_input
     shortName: String
     shufflePeriods: room_ShufflePeriod_arr_rel_insert_input
@@ -10103,6 +10120,7 @@ input conference_Conference_insert_input {
     subconferences: conference_Subconference_arr_rel_insert_input
     tags: collection_Tag_arr_rel_insert_input
     updatedAt: timestamptz
+    usage: conference_Usage_obj_rel_insert_input
 }
 
 """
@@ -10229,7 +10247,9 @@ input conference_Conference_order_by {
     items_aggregate: content_Item_aggregate_order_by
     name: order_by
     programPeople_aggregate: collection_ProgramPerson_aggregate_order_by
+    quota: conference_Quota_order_by
     registrants_aggregate: registrant_Registrant_aggregate_order_by
+    remainingQuota: conference_RemainingQuota_order_by
     rooms_aggregate: room_Room_aggregate_order_by
     shortName: order_by
     shufflePeriods_aggregate: room_ShufflePeriod_aggregate_order_by
@@ -10238,6 +10258,7 @@ input conference_Conference_order_by {
     subconferences_aggregate: conference_Subconference_aggregate_order_by
     tags_aggregate: collection_Tag_aggregate_order_by
     updatedAt: order_by
+    usage: conference_Usage_order_by
 }
 
 """
@@ -11185,6 +11206,999 @@ enum conference_DemoCode_update_column {
 }
 
 """
+columns and relationships of "conference.Quota"
+"""
+type conference_Quota {
+    areStreamingEventsAllowed: Boolean!
+    areVideoChatEventsAllowed: Boolean!
+    """
+    An object relationship
+    """
+    conference: conference_Conference!
+    conferenceId: uuid!
+    created_at: timestamptz!
+    id: uuid!
+    maxContentItems: Int!
+    maxMediaElementsPerContentItem: Int!
+    maxMediaElementsPerSponsor: Int!
+    maxNonMediaElementsPerContentItem: Int!
+    maxNonMediaElementsPerSponsor: Int!
+    maxNonStreamingProgramRooms: Int!
+    maxPublicSocialRooms: Int!
+    maxRegistrants: Int!
+    maxStreamingEventIndividualMinutes: Int!
+    maxStreamingEventTotalMinutes: Int!
+    maxStreamingProgramRooms: Int!
+    maxSubconferences: Int!
+    maxSupportMeetingMinutes: Int!
+    maxVideoChatEventIndividualMinutes: Int!
+    maxVideoChatEventTotalMinutes: Int!
+    maxVideoChatNonEventTotalMinutesConsumed: Int!
+    updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "conference.Quota"
+"""
+type conference_Quota_aggregate {
+    aggregate: conference_Quota_aggregate_fields
+    nodes: [conference_Quota!]!
+}
+
+"""
+aggregate fields of "conference.Quota"
+"""
+type conference_Quota_aggregate_fields {
+    avg: conference_Quota_avg_fields
+    count(columns: [conference_Quota_select_column!], distinct: Boolean): Int!
+    max: conference_Quota_max_fields
+    min: conference_Quota_min_fields
+    stddev: conference_Quota_stddev_fields
+    stddev_pop: conference_Quota_stddev_pop_fields
+    stddev_samp: conference_Quota_stddev_samp_fields
+    sum: conference_Quota_sum_fields
+    var_pop: conference_Quota_var_pop_fields
+    var_samp: conference_Quota_var_samp_fields
+    variance: conference_Quota_variance_fields
+}
+
+"""
+aggregate avg on columns
+"""
+type conference_Quota_avg_fields {
+    maxContentItems: Float
+    maxMediaElementsPerContentItem: Float
+    maxMediaElementsPerSponsor: Float
+    maxNonMediaElementsPerContentItem: Float
+    maxNonMediaElementsPerSponsor: Float
+    maxNonStreamingProgramRooms: Float
+    maxPublicSocialRooms: Float
+    maxRegistrants: Float
+    maxStreamingEventIndividualMinutes: Float
+    maxStreamingEventTotalMinutes: Float
+    maxStreamingProgramRooms: Float
+    maxSubconferences: Float
+    maxSupportMeetingMinutes: Float
+    maxVideoChatEventIndividualMinutes: Float
+    maxVideoChatEventTotalMinutes: Float
+    maxVideoChatNonEventTotalMinutesConsumed: Float
+}
+
+"""
+Boolean expression to filter rows from the table "conference.Quota". All fields are combined with a logical 'AND'.
+"""
+input conference_Quota_bool_exp {
+    _and: [conference_Quota_bool_exp!]
+    _not: conference_Quota_bool_exp
+    _or: [conference_Quota_bool_exp!]
+    areStreamingEventsAllowed: Boolean_comparison_exp
+    areVideoChatEventsAllowed: Boolean_comparison_exp
+    conference: conference_Conference_bool_exp
+    conferenceId: uuid_comparison_exp
+    created_at: timestamptz_comparison_exp
+    id: uuid_comparison_exp
+    maxContentItems: Int_comparison_exp
+    maxMediaElementsPerContentItem: Int_comparison_exp
+    maxMediaElementsPerSponsor: Int_comparison_exp
+    maxNonMediaElementsPerContentItem: Int_comparison_exp
+    maxNonMediaElementsPerSponsor: Int_comparison_exp
+    maxNonStreamingProgramRooms: Int_comparison_exp
+    maxPublicSocialRooms: Int_comparison_exp
+    maxRegistrants: Int_comparison_exp
+    maxStreamingEventIndividualMinutes: Int_comparison_exp
+    maxStreamingEventTotalMinutes: Int_comparison_exp
+    maxStreamingProgramRooms: Int_comparison_exp
+    maxSubconferences: Int_comparison_exp
+    maxSupportMeetingMinutes: Int_comparison_exp
+    maxVideoChatEventIndividualMinutes: Int_comparison_exp
+    maxVideoChatEventTotalMinutes: Int_comparison_exp
+    maxVideoChatNonEventTotalMinutesConsumed: Int_comparison_exp
+    updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "conference.Quota"
+"""
+enum conference_Quota_constraint {
+    """
+    unique or primary key constraint
+    """
+    Quota_conferenceId_key
+    """
+    unique or primary key constraint
+    """
+    Quota_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "conference.Quota"
+"""
+input conference_Quota_inc_input {
+    maxContentItems: Int
+    maxMediaElementsPerContentItem: Int
+    maxMediaElementsPerSponsor: Int
+    maxNonMediaElementsPerContentItem: Int
+    maxNonMediaElementsPerSponsor: Int
+    maxNonStreamingProgramRooms: Int
+    maxPublicSocialRooms: Int
+    maxRegistrants: Int
+    maxStreamingEventIndividualMinutes: Int
+    maxStreamingEventTotalMinutes: Int
+    maxStreamingProgramRooms: Int
+    maxSubconferences: Int
+    maxSupportMeetingMinutes: Int
+    maxVideoChatEventIndividualMinutes: Int
+    maxVideoChatEventTotalMinutes: Int
+    maxVideoChatNonEventTotalMinutesConsumed: Int
+}
+
+"""
+input type for inserting data into table "conference.Quota"
+"""
+input conference_Quota_insert_input {
+    areStreamingEventsAllowed: Boolean
+    areVideoChatEventsAllowed: Boolean
+    conference: conference_Conference_obj_rel_insert_input
+    conferenceId: uuid
+    created_at: timestamptz
+    id: uuid
+    maxContentItems: Int
+    maxMediaElementsPerContentItem: Int
+    maxMediaElementsPerSponsor: Int
+    maxNonMediaElementsPerContentItem: Int
+    maxNonMediaElementsPerSponsor: Int
+    maxNonStreamingProgramRooms: Int
+    maxPublicSocialRooms: Int
+    maxRegistrants: Int
+    maxStreamingEventIndividualMinutes: Int
+    maxStreamingEventTotalMinutes: Int
+    maxStreamingProgramRooms: Int
+    maxSubconferences: Int
+    maxSupportMeetingMinutes: Int
+    maxVideoChatEventIndividualMinutes: Int
+    maxVideoChatEventTotalMinutes: Int
+    maxVideoChatNonEventTotalMinutesConsumed: Int
+    updated_at: timestamptz
+}
+
+"""
+aggregate max on columns
+"""
+type conference_Quota_max_fields {
+    conferenceId: uuid
+    created_at: timestamptz
+    id: uuid
+    maxContentItems: Int
+    maxMediaElementsPerContentItem: Int
+    maxMediaElementsPerSponsor: Int
+    maxNonMediaElementsPerContentItem: Int
+    maxNonMediaElementsPerSponsor: Int
+    maxNonStreamingProgramRooms: Int
+    maxPublicSocialRooms: Int
+    maxRegistrants: Int
+    maxStreamingEventIndividualMinutes: Int
+    maxStreamingEventTotalMinutes: Int
+    maxStreamingProgramRooms: Int
+    maxSubconferences: Int
+    maxSupportMeetingMinutes: Int
+    maxVideoChatEventIndividualMinutes: Int
+    maxVideoChatEventTotalMinutes: Int
+    maxVideoChatNonEventTotalMinutesConsumed: Int
+    updated_at: timestamptz
+}
+
+"""
+aggregate min on columns
+"""
+type conference_Quota_min_fields {
+    conferenceId: uuid
+    created_at: timestamptz
+    id: uuid
+    maxContentItems: Int
+    maxMediaElementsPerContentItem: Int
+    maxMediaElementsPerSponsor: Int
+    maxNonMediaElementsPerContentItem: Int
+    maxNonMediaElementsPerSponsor: Int
+    maxNonStreamingProgramRooms: Int
+    maxPublicSocialRooms: Int
+    maxRegistrants: Int
+    maxStreamingEventIndividualMinutes: Int
+    maxStreamingEventTotalMinutes: Int
+    maxStreamingProgramRooms: Int
+    maxSubconferences: Int
+    maxSupportMeetingMinutes: Int
+    maxVideoChatEventIndividualMinutes: Int
+    maxVideoChatEventTotalMinutes: Int
+    maxVideoChatNonEventTotalMinutesConsumed: Int
+    updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "conference.Quota"
+"""
+type conference_Quota_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [conference_Quota!]!
+}
+
+"""
+input type for inserting object relation for remote table "conference.Quota"
+"""
+input conference_Quota_obj_rel_insert_input {
+    data: conference_Quota_insert_input!
+    """
+    on conflict condition
+    """
+    on_conflict: conference_Quota_on_conflict
+}
+
+"""
+on conflict condition type for table "conference.Quota"
+"""
+input conference_Quota_on_conflict {
+    constraint: conference_Quota_constraint!
+    update_columns: [conference_Quota_update_column!]! = []
+    where: conference_Quota_bool_exp
+}
+
+"""
+Ordering options when selecting data from "conference.Quota".
+"""
+input conference_Quota_order_by {
+    areStreamingEventsAllowed: order_by
+    areVideoChatEventsAllowed: order_by
+    conference: conference_Conference_order_by
+    conferenceId: order_by
+    created_at: order_by
+    id: order_by
+    maxContentItems: order_by
+    maxMediaElementsPerContentItem: order_by
+    maxMediaElementsPerSponsor: order_by
+    maxNonMediaElementsPerContentItem: order_by
+    maxNonMediaElementsPerSponsor: order_by
+    maxNonStreamingProgramRooms: order_by
+    maxPublicSocialRooms: order_by
+    maxRegistrants: order_by
+    maxStreamingEventIndividualMinutes: order_by
+    maxStreamingEventTotalMinutes: order_by
+    maxStreamingProgramRooms: order_by
+    maxSubconferences: order_by
+    maxSupportMeetingMinutes: order_by
+    maxVideoChatEventIndividualMinutes: order_by
+    maxVideoChatEventTotalMinutes: order_by
+    maxVideoChatNonEventTotalMinutesConsumed: order_by
+    updated_at: order_by
+}
+
+"""
+primary key columns input for table: conference_Quota
+"""
+input conference_Quota_pk_columns_input {
+    id: uuid!
+}
+
+"""
+select columns of table "conference.Quota"
+"""
+enum conference_Quota_select_column {
+    """
+    column name
+    """
+    areStreamingEventsAllowed
+    """
+    column name
+    """
+    areVideoChatEventsAllowed
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    maxContentItems
+    """
+    column name
+    """
+    maxMediaElementsPerContentItem
+    """
+    column name
+    """
+    maxMediaElementsPerSponsor
+    """
+    column name
+    """
+    maxNonMediaElementsPerContentItem
+    """
+    column name
+    """
+    maxNonMediaElementsPerSponsor
+    """
+    column name
+    """
+    maxNonStreamingProgramRooms
+    """
+    column name
+    """
+    maxPublicSocialRooms
+    """
+    column name
+    """
+    maxRegistrants
+    """
+    column name
+    """
+    maxStreamingEventIndividualMinutes
+    """
+    column name
+    """
+    maxStreamingEventTotalMinutes
+    """
+    column name
+    """
+    maxStreamingProgramRooms
+    """
+    column name
+    """
+    maxSubconferences
+    """
+    column name
+    """
+    maxSupportMeetingMinutes
+    """
+    column name
+    """
+    maxVideoChatEventIndividualMinutes
+    """
+    column name
+    """
+    maxVideoChatEventTotalMinutes
+    """
+    column name
+    """
+    maxVideoChatNonEventTotalMinutesConsumed
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+input type for updating data in table "conference.Quota"
+"""
+input conference_Quota_set_input {
+    areStreamingEventsAllowed: Boolean
+    areVideoChatEventsAllowed: Boolean
+    conferenceId: uuid
+    created_at: timestamptz
+    id: uuid
+    maxContentItems: Int
+    maxMediaElementsPerContentItem: Int
+    maxMediaElementsPerSponsor: Int
+    maxNonMediaElementsPerContentItem: Int
+    maxNonMediaElementsPerSponsor: Int
+    maxNonStreamingProgramRooms: Int
+    maxPublicSocialRooms: Int
+    maxRegistrants: Int
+    maxStreamingEventIndividualMinutes: Int
+    maxStreamingEventTotalMinutes: Int
+    maxStreamingProgramRooms: Int
+    maxSubconferences: Int
+    maxSupportMeetingMinutes: Int
+    maxVideoChatEventIndividualMinutes: Int
+    maxVideoChatEventTotalMinutes: Int
+    maxVideoChatNonEventTotalMinutesConsumed: Int
+    updated_at: timestamptz
+}
+
+"""
+aggregate stddev on columns
+"""
+type conference_Quota_stddev_fields {
+    maxContentItems: Float
+    maxMediaElementsPerContentItem: Float
+    maxMediaElementsPerSponsor: Float
+    maxNonMediaElementsPerContentItem: Float
+    maxNonMediaElementsPerSponsor: Float
+    maxNonStreamingProgramRooms: Float
+    maxPublicSocialRooms: Float
+    maxRegistrants: Float
+    maxStreamingEventIndividualMinutes: Float
+    maxStreamingEventTotalMinutes: Float
+    maxStreamingProgramRooms: Float
+    maxSubconferences: Float
+    maxSupportMeetingMinutes: Float
+    maxVideoChatEventIndividualMinutes: Float
+    maxVideoChatEventTotalMinutes: Float
+    maxVideoChatNonEventTotalMinutesConsumed: Float
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type conference_Quota_stddev_pop_fields {
+    maxContentItems: Float
+    maxMediaElementsPerContentItem: Float
+    maxMediaElementsPerSponsor: Float
+    maxNonMediaElementsPerContentItem: Float
+    maxNonMediaElementsPerSponsor: Float
+    maxNonStreamingProgramRooms: Float
+    maxPublicSocialRooms: Float
+    maxRegistrants: Float
+    maxStreamingEventIndividualMinutes: Float
+    maxStreamingEventTotalMinutes: Float
+    maxStreamingProgramRooms: Float
+    maxSubconferences: Float
+    maxSupportMeetingMinutes: Float
+    maxVideoChatEventIndividualMinutes: Float
+    maxVideoChatEventTotalMinutes: Float
+    maxVideoChatNonEventTotalMinutesConsumed: Float
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type conference_Quota_stddev_samp_fields {
+    maxContentItems: Float
+    maxMediaElementsPerContentItem: Float
+    maxMediaElementsPerSponsor: Float
+    maxNonMediaElementsPerContentItem: Float
+    maxNonMediaElementsPerSponsor: Float
+    maxNonStreamingProgramRooms: Float
+    maxPublicSocialRooms: Float
+    maxRegistrants: Float
+    maxStreamingEventIndividualMinutes: Float
+    maxStreamingEventTotalMinutes: Float
+    maxStreamingProgramRooms: Float
+    maxSubconferences: Float
+    maxSupportMeetingMinutes: Float
+    maxVideoChatEventIndividualMinutes: Float
+    maxVideoChatEventTotalMinutes: Float
+    maxVideoChatNonEventTotalMinutesConsumed: Float
+}
+
+"""
+aggregate sum on columns
+"""
+type conference_Quota_sum_fields {
+    maxContentItems: Int
+    maxMediaElementsPerContentItem: Int
+    maxMediaElementsPerSponsor: Int
+    maxNonMediaElementsPerContentItem: Int
+    maxNonMediaElementsPerSponsor: Int
+    maxNonStreamingProgramRooms: Int
+    maxPublicSocialRooms: Int
+    maxRegistrants: Int
+    maxStreamingEventIndividualMinutes: Int
+    maxStreamingEventTotalMinutes: Int
+    maxStreamingProgramRooms: Int
+    maxSubconferences: Int
+    maxSupportMeetingMinutes: Int
+    maxVideoChatEventIndividualMinutes: Int
+    maxVideoChatEventTotalMinutes: Int
+    maxVideoChatNonEventTotalMinutesConsumed: Int
+}
+
+"""
+update columns of table "conference.Quota"
+"""
+enum conference_Quota_update_column {
+    """
+    column name
+    """
+    areStreamingEventsAllowed
+    """
+    column name
+    """
+    areVideoChatEventsAllowed
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    maxContentItems
+    """
+    column name
+    """
+    maxMediaElementsPerContentItem
+    """
+    column name
+    """
+    maxMediaElementsPerSponsor
+    """
+    column name
+    """
+    maxNonMediaElementsPerContentItem
+    """
+    column name
+    """
+    maxNonMediaElementsPerSponsor
+    """
+    column name
+    """
+    maxNonStreamingProgramRooms
+    """
+    column name
+    """
+    maxPublicSocialRooms
+    """
+    column name
+    """
+    maxRegistrants
+    """
+    column name
+    """
+    maxStreamingEventIndividualMinutes
+    """
+    column name
+    """
+    maxStreamingEventTotalMinutes
+    """
+    column name
+    """
+    maxStreamingProgramRooms
+    """
+    column name
+    """
+    maxSubconferences
+    """
+    column name
+    """
+    maxSupportMeetingMinutes
+    """
+    column name
+    """
+    maxVideoChatEventIndividualMinutes
+    """
+    column name
+    """
+    maxVideoChatEventTotalMinutes
+    """
+    column name
+    """
+    maxVideoChatNonEventTotalMinutesConsumed
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+aggregate var_pop on columns
+"""
+type conference_Quota_var_pop_fields {
+    maxContentItems: Float
+    maxMediaElementsPerContentItem: Float
+    maxMediaElementsPerSponsor: Float
+    maxNonMediaElementsPerContentItem: Float
+    maxNonMediaElementsPerSponsor: Float
+    maxNonStreamingProgramRooms: Float
+    maxPublicSocialRooms: Float
+    maxRegistrants: Float
+    maxStreamingEventIndividualMinutes: Float
+    maxStreamingEventTotalMinutes: Float
+    maxStreamingProgramRooms: Float
+    maxSubconferences: Float
+    maxSupportMeetingMinutes: Float
+    maxVideoChatEventIndividualMinutes: Float
+    maxVideoChatEventTotalMinutes: Float
+    maxVideoChatNonEventTotalMinutesConsumed: Float
+}
+
+"""
+aggregate var_samp on columns
+"""
+type conference_Quota_var_samp_fields {
+    maxContentItems: Float
+    maxMediaElementsPerContentItem: Float
+    maxMediaElementsPerSponsor: Float
+    maxNonMediaElementsPerContentItem: Float
+    maxNonMediaElementsPerSponsor: Float
+    maxNonStreamingProgramRooms: Float
+    maxPublicSocialRooms: Float
+    maxRegistrants: Float
+    maxStreamingEventIndividualMinutes: Float
+    maxStreamingEventTotalMinutes: Float
+    maxStreamingProgramRooms: Float
+    maxSubconferences: Float
+    maxSupportMeetingMinutes: Float
+    maxVideoChatEventIndividualMinutes: Float
+    maxVideoChatEventTotalMinutes: Float
+    maxVideoChatNonEventTotalMinutesConsumed: Float
+}
+
+"""
+aggregate variance on columns
+"""
+type conference_Quota_variance_fields {
+    maxContentItems: Float
+    maxMediaElementsPerContentItem: Float
+    maxMediaElementsPerSponsor: Float
+    maxNonMediaElementsPerContentItem: Float
+    maxNonMediaElementsPerSponsor: Float
+    maxNonStreamingProgramRooms: Float
+    maxPublicSocialRooms: Float
+    maxRegistrants: Float
+    maxStreamingEventIndividualMinutes: Float
+    maxStreamingEventTotalMinutes: Float
+    maxStreamingProgramRooms: Float
+    maxSubconferences: Float
+    maxSupportMeetingMinutes: Float
+    maxVideoChatEventIndividualMinutes: Float
+    maxVideoChatEventTotalMinutes: Float
+    maxVideoChatNonEventTotalMinutesConsumed: Float
+}
+
+"""
+columns and relationships of "conference.RemainingQuota"
+"""
+type conference_RemainingQuota {
+    conferenceId: uuid
+    remainingContentItems: bigint
+    remainingNonStreamingProgramRooms: bigint
+    remainingPublicSocialRooms: bigint
+    remainingRegistrants: bigint
+    remainingStreamingEventTotalMinutes: Int
+    remainingStreamingProgramRooms: bigint
+    remainingSubconferences: bigint
+    remainingSupportMeetingMinutes: Int
+    remainingVideoChatEventTotalMinutes: Int
+    remainingVideoChatNonEventTotalMinutes: Int
+    slug: String
+}
+
+"""
+aggregated selection of "conference.RemainingQuota"
+"""
+type conference_RemainingQuota_aggregate {
+    aggregate: conference_RemainingQuota_aggregate_fields
+    nodes: [conference_RemainingQuota!]!
+}
+
+"""
+aggregate fields of "conference.RemainingQuota"
+"""
+type conference_RemainingQuota_aggregate_fields {
+    avg: conference_RemainingQuota_avg_fields
+    count(columns: [conference_RemainingQuota_select_column!], distinct: Boolean): Int!
+    max: conference_RemainingQuota_max_fields
+    min: conference_RemainingQuota_min_fields
+    stddev: conference_RemainingQuota_stddev_fields
+    stddev_pop: conference_RemainingQuota_stddev_pop_fields
+    stddev_samp: conference_RemainingQuota_stddev_samp_fields
+    sum: conference_RemainingQuota_sum_fields
+    var_pop: conference_RemainingQuota_var_pop_fields
+    var_samp: conference_RemainingQuota_var_samp_fields
+    variance: conference_RemainingQuota_variance_fields
+}
+
+"""
+aggregate avg on columns
+"""
+type conference_RemainingQuota_avg_fields {
+    remainingContentItems: Float
+    remainingNonStreamingProgramRooms: Float
+    remainingPublicSocialRooms: Float
+    remainingRegistrants: Float
+    remainingStreamingEventTotalMinutes: Float
+    remainingStreamingProgramRooms: Float
+    remainingSubconferences: Float
+    remainingSupportMeetingMinutes: Float
+    remainingVideoChatEventTotalMinutes: Float
+    remainingVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+Boolean expression to filter rows from the table "conference.RemainingQuota". All fields are combined with a logical 'AND'.
+"""
+input conference_RemainingQuota_bool_exp {
+    _and: [conference_RemainingQuota_bool_exp!]
+    _not: conference_RemainingQuota_bool_exp
+    _or: [conference_RemainingQuota_bool_exp!]
+    conferenceId: uuid_comparison_exp
+    remainingContentItems: bigint_comparison_exp
+    remainingNonStreamingProgramRooms: bigint_comparison_exp
+    remainingPublicSocialRooms: bigint_comparison_exp
+    remainingRegistrants: bigint_comparison_exp
+    remainingStreamingEventTotalMinutes: Int_comparison_exp
+    remainingStreamingProgramRooms: bigint_comparison_exp
+    remainingSubconferences: bigint_comparison_exp
+    remainingSupportMeetingMinutes: Int_comparison_exp
+    remainingVideoChatEventTotalMinutes: Int_comparison_exp
+    remainingVideoChatNonEventTotalMinutes: Int_comparison_exp
+    slug: String_comparison_exp
+}
+
+"""
+input type for inserting data into table "conference.RemainingQuota"
+"""
+input conference_RemainingQuota_insert_input {
+    conferenceId: uuid
+    remainingContentItems: bigint
+    remainingNonStreamingProgramRooms: bigint
+    remainingPublicSocialRooms: bigint
+    remainingRegistrants: bigint
+    remainingStreamingEventTotalMinutes: Int
+    remainingStreamingProgramRooms: bigint
+    remainingSubconferences: bigint
+    remainingSupportMeetingMinutes: Int
+    remainingVideoChatEventTotalMinutes: Int
+    remainingVideoChatNonEventTotalMinutes: Int
+    slug: String
+}
+
+"""
+aggregate max on columns
+"""
+type conference_RemainingQuota_max_fields {
+    conferenceId: uuid
+    remainingContentItems: bigint
+    remainingNonStreamingProgramRooms: bigint
+    remainingPublicSocialRooms: bigint
+    remainingRegistrants: bigint
+    remainingStreamingEventTotalMinutes: Int
+    remainingStreamingProgramRooms: bigint
+    remainingSubconferences: bigint
+    remainingSupportMeetingMinutes: Int
+    remainingVideoChatEventTotalMinutes: Int
+    remainingVideoChatNonEventTotalMinutes: Int
+    slug: String
+}
+
+"""
+aggregate min on columns
+"""
+type conference_RemainingQuota_min_fields {
+    conferenceId: uuid
+    remainingContentItems: bigint
+    remainingNonStreamingProgramRooms: bigint
+    remainingPublicSocialRooms: bigint
+    remainingRegistrants: bigint
+    remainingStreamingEventTotalMinutes: Int
+    remainingStreamingProgramRooms: bigint
+    remainingSubconferences: bigint
+    remainingSupportMeetingMinutes: Int
+    remainingVideoChatEventTotalMinutes: Int
+    remainingVideoChatNonEventTotalMinutes: Int
+    slug: String
+}
+
+"""
+input type for inserting object relation for remote table "conference.RemainingQuota"
+"""
+input conference_RemainingQuota_obj_rel_insert_input {
+    data: conference_RemainingQuota_insert_input!
+}
+
+"""
+Ordering options when selecting data from "conference.RemainingQuota".
+"""
+input conference_RemainingQuota_order_by {
+    conferenceId: order_by
+    remainingContentItems: order_by
+    remainingNonStreamingProgramRooms: order_by
+    remainingPublicSocialRooms: order_by
+    remainingRegistrants: order_by
+    remainingStreamingEventTotalMinutes: order_by
+    remainingStreamingProgramRooms: order_by
+    remainingSubconferences: order_by
+    remainingSupportMeetingMinutes: order_by
+    remainingVideoChatEventTotalMinutes: order_by
+    remainingVideoChatNonEventTotalMinutes: order_by
+    slug: order_by
+}
+
+"""
+select columns of table "conference.RemainingQuota"
+"""
+enum conference_RemainingQuota_select_column {
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    remainingContentItems
+    """
+    column name
+    """
+    remainingNonStreamingProgramRooms
+    """
+    column name
+    """
+    remainingPublicSocialRooms
+    """
+    column name
+    """
+    remainingRegistrants
+    """
+    column name
+    """
+    remainingStreamingEventTotalMinutes
+    """
+    column name
+    """
+    remainingStreamingProgramRooms
+    """
+    column name
+    """
+    remainingSubconferences
+    """
+    column name
+    """
+    remainingSupportMeetingMinutes
+    """
+    column name
+    """
+    remainingVideoChatEventTotalMinutes
+    """
+    column name
+    """
+    remainingVideoChatNonEventTotalMinutes
+    """
+    column name
+    """
+    slug
+}
+
+"""
+aggregate stddev on columns
+"""
+type conference_RemainingQuota_stddev_fields {
+    remainingContentItems: Float
+    remainingNonStreamingProgramRooms: Float
+    remainingPublicSocialRooms: Float
+    remainingRegistrants: Float
+    remainingStreamingEventTotalMinutes: Float
+    remainingStreamingProgramRooms: Float
+    remainingSubconferences: Float
+    remainingSupportMeetingMinutes: Float
+    remainingVideoChatEventTotalMinutes: Float
+    remainingVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type conference_RemainingQuota_stddev_pop_fields {
+    remainingContentItems: Float
+    remainingNonStreamingProgramRooms: Float
+    remainingPublicSocialRooms: Float
+    remainingRegistrants: Float
+    remainingStreamingEventTotalMinutes: Float
+    remainingStreamingProgramRooms: Float
+    remainingSubconferences: Float
+    remainingSupportMeetingMinutes: Float
+    remainingVideoChatEventTotalMinutes: Float
+    remainingVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type conference_RemainingQuota_stddev_samp_fields {
+    remainingContentItems: Float
+    remainingNonStreamingProgramRooms: Float
+    remainingPublicSocialRooms: Float
+    remainingRegistrants: Float
+    remainingStreamingEventTotalMinutes: Float
+    remainingStreamingProgramRooms: Float
+    remainingSubconferences: Float
+    remainingSupportMeetingMinutes: Float
+    remainingVideoChatEventTotalMinutes: Float
+    remainingVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate sum on columns
+"""
+type conference_RemainingQuota_sum_fields {
+    remainingContentItems: bigint
+    remainingNonStreamingProgramRooms: bigint
+    remainingPublicSocialRooms: bigint
+    remainingRegistrants: bigint
+    remainingStreamingEventTotalMinutes: Int
+    remainingStreamingProgramRooms: bigint
+    remainingSubconferences: bigint
+    remainingSupportMeetingMinutes: Int
+    remainingVideoChatEventTotalMinutes: Int
+    remainingVideoChatNonEventTotalMinutes: Int
+}
+
+"""
+aggregate var_pop on columns
+"""
+type conference_RemainingQuota_var_pop_fields {
+    remainingContentItems: Float
+    remainingNonStreamingProgramRooms: Float
+    remainingPublicSocialRooms: Float
+    remainingRegistrants: Float
+    remainingStreamingEventTotalMinutes: Float
+    remainingStreamingProgramRooms: Float
+    remainingSubconferences: Float
+    remainingSupportMeetingMinutes: Float
+    remainingVideoChatEventTotalMinutes: Float
+    remainingVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate var_samp on columns
+"""
+type conference_RemainingQuota_var_samp_fields {
+    remainingContentItems: Float
+    remainingNonStreamingProgramRooms: Float
+    remainingPublicSocialRooms: Float
+    remainingRegistrants: Float
+    remainingStreamingEventTotalMinutes: Float
+    remainingStreamingProgramRooms: Float
+    remainingSubconferences: Float
+    remainingSupportMeetingMinutes: Float
+    remainingVideoChatEventTotalMinutes: Float
+    remainingVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate variance on columns
+"""
+type conference_RemainingQuota_variance_fields {
+    remainingContentItems: Float
+    remainingNonStreamingProgramRooms: Float
+    remainingPublicSocialRooms: Float
+    remainingRegistrants: Float
+    remainingStreamingEventTotalMinutes: Float
+    remainingStreamingProgramRooms: Float
+    remainingSubconferences: Float
+    remainingSupportMeetingMinutes: Float
+    remainingVideoChatEventTotalMinutes: Float
+    remainingVideoChatNonEventTotalMinutes: Float
+}
+
+"""
 columns and relationships of "conference.Subconference"
 """
 type conference_Subconference {
@@ -11559,6 +12573,420 @@ enum conference_Subconference_update_column {
 }
 
 """
+columns and relationships of "conference.Usage"
+"""
+type conference_Usage {
+    """
+    An object relationship
+    """
+    conference: conference_Conference!
+    conferenceId: uuid!
+    consumedStreamingEventTotalMinutes: Int!
+    consumedSupportMeetingMinutes: Int!
+    consumedVideoChatEventTotalMinutes: Int!
+    consumedVideoChatNonEventTotalMinutes: Int!
+    created_at: timestamptz!
+    id: uuid!
+    lastUpdatedConsumedStreamingEventTotalMinutes: timestamptz!
+    lastUpdatedConsumedSupportMeetingMinutes: timestamptz!
+    lastUpdatedConsumedVideoChatEventTotalMinutes: timestamptz!
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes: timestamptz!
+    updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "conference.Usage"
+"""
+type conference_Usage_aggregate {
+    aggregate: conference_Usage_aggregate_fields
+    nodes: [conference_Usage!]!
+}
+
+"""
+aggregate fields of "conference.Usage"
+"""
+type conference_Usage_aggregate_fields {
+    avg: conference_Usage_avg_fields
+    count(columns: [conference_Usage_select_column!], distinct: Boolean): Int!
+    max: conference_Usage_max_fields
+    min: conference_Usage_min_fields
+    stddev: conference_Usage_stddev_fields
+    stddev_pop: conference_Usage_stddev_pop_fields
+    stddev_samp: conference_Usage_stddev_samp_fields
+    sum: conference_Usage_sum_fields
+    var_pop: conference_Usage_var_pop_fields
+    var_samp: conference_Usage_var_samp_fields
+    variance: conference_Usage_variance_fields
+}
+
+"""
+aggregate avg on columns
+"""
+type conference_Usage_avg_fields {
+    consumedStreamingEventTotalMinutes: Float
+    consumedSupportMeetingMinutes: Float
+    consumedVideoChatEventTotalMinutes: Float
+    consumedVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+Boolean expression to filter rows from the table "conference.Usage". All fields are combined with a logical 'AND'.
+"""
+input conference_Usage_bool_exp {
+    _and: [conference_Usage_bool_exp!]
+    _not: conference_Usage_bool_exp
+    _or: [conference_Usage_bool_exp!]
+    conference: conference_Conference_bool_exp
+    conferenceId: uuid_comparison_exp
+    consumedStreamingEventTotalMinutes: Int_comparison_exp
+    consumedSupportMeetingMinutes: Int_comparison_exp
+    consumedVideoChatEventTotalMinutes: Int_comparison_exp
+    consumedVideoChatNonEventTotalMinutes: Int_comparison_exp
+    created_at: timestamptz_comparison_exp
+    id: uuid_comparison_exp
+    lastUpdatedConsumedStreamingEventTotalMinutes: timestamptz_comparison_exp
+    lastUpdatedConsumedSupportMeetingMinutes: timestamptz_comparison_exp
+    lastUpdatedConsumedVideoChatEventTotalMinutes: timestamptz_comparison_exp
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes: timestamptz_comparison_exp
+    updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "conference.Usage"
+"""
+enum conference_Usage_constraint {
+    """
+    unique or primary key constraint
+    """
+    Usage_conferenceId_key
+    """
+    unique or primary key constraint
+    """
+    Usage_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "conference.Usage"
+"""
+input conference_Usage_inc_input {
+    consumedStreamingEventTotalMinutes: Int
+    consumedSupportMeetingMinutes: Int
+    consumedVideoChatEventTotalMinutes: Int
+    consumedVideoChatNonEventTotalMinutes: Int
+}
+
+"""
+input type for inserting data into table "conference.Usage"
+"""
+input conference_Usage_insert_input {
+    conference: conference_Conference_obj_rel_insert_input
+    conferenceId: uuid
+    consumedStreamingEventTotalMinutes: Int
+    consumedSupportMeetingMinutes: Int
+    consumedVideoChatEventTotalMinutes: Int
+    consumedVideoChatNonEventTotalMinutes: Int
+    created_at: timestamptz
+    id: uuid
+    lastUpdatedConsumedStreamingEventTotalMinutes: timestamptz
+    lastUpdatedConsumedSupportMeetingMinutes: timestamptz
+    lastUpdatedConsumedVideoChatEventTotalMinutes: timestamptz
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes: timestamptz
+    updated_at: timestamptz
+}
+
+"""
+aggregate max on columns
+"""
+type conference_Usage_max_fields {
+    conferenceId: uuid
+    consumedStreamingEventTotalMinutes: Int
+    consumedSupportMeetingMinutes: Int
+    consumedVideoChatEventTotalMinutes: Int
+    consumedVideoChatNonEventTotalMinutes: Int
+    created_at: timestamptz
+    id: uuid
+    lastUpdatedConsumedStreamingEventTotalMinutes: timestamptz
+    lastUpdatedConsumedSupportMeetingMinutes: timestamptz
+    lastUpdatedConsumedVideoChatEventTotalMinutes: timestamptz
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes: timestamptz
+    updated_at: timestamptz
+}
+
+"""
+aggregate min on columns
+"""
+type conference_Usage_min_fields {
+    conferenceId: uuid
+    consumedStreamingEventTotalMinutes: Int
+    consumedSupportMeetingMinutes: Int
+    consumedVideoChatEventTotalMinutes: Int
+    consumedVideoChatNonEventTotalMinutes: Int
+    created_at: timestamptz
+    id: uuid
+    lastUpdatedConsumedStreamingEventTotalMinutes: timestamptz
+    lastUpdatedConsumedSupportMeetingMinutes: timestamptz
+    lastUpdatedConsumedVideoChatEventTotalMinutes: timestamptz
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes: timestamptz
+    updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "conference.Usage"
+"""
+type conference_Usage_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [conference_Usage!]!
+}
+
+"""
+input type for inserting object relation for remote table "conference.Usage"
+"""
+input conference_Usage_obj_rel_insert_input {
+    data: conference_Usage_insert_input!
+    """
+    on conflict condition
+    """
+    on_conflict: conference_Usage_on_conflict
+}
+
+"""
+on conflict condition type for table "conference.Usage"
+"""
+input conference_Usage_on_conflict {
+    constraint: conference_Usage_constraint!
+    update_columns: [conference_Usage_update_column!]! = []
+    where: conference_Usage_bool_exp
+}
+
+"""
+Ordering options when selecting data from "conference.Usage".
+"""
+input conference_Usage_order_by {
+    conference: conference_Conference_order_by
+    conferenceId: order_by
+    consumedStreamingEventTotalMinutes: order_by
+    consumedSupportMeetingMinutes: order_by
+    consumedVideoChatEventTotalMinutes: order_by
+    consumedVideoChatNonEventTotalMinutes: order_by
+    created_at: order_by
+    id: order_by
+    lastUpdatedConsumedStreamingEventTotalMinutes: order_by
+    lastUpdatedConsumedSupportMeetingMinutes: order_by
+    lastUpdatedConsumedVideoChatEventTotalMinutes: order_by
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes: order_by
+    updated_at: order_by
+}
+
+"""
+primary key columns input for table: conference_Usage
+"""
+input conference_Usage_pk_columns_input {
+    id: uuid!
+}
+
+"""
+select columns of table "conference.Usage"
+"""
+enum conference_Usage_select_column {
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    consumedStreamingEventTotalMinutes
+    """
+    column name
+    """
+    consumedSupportMeetingMinutes
+    """
+    column name
+    """
+    consumedVideoChatEventTotalMinutes
+    """
+    column name
+    """
+    consumedVideoChatNonEventTotalMinutes
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    lastUpdatedConsumedStreamingEventTotalMinutes
+    """
+    column name
+    """
+    lastUpdatedConsumedSupportMeetingMinutes
+    """
+    column name
+    """
+    lastUpdatedConsumedVideoChatEventTotalMinutes
+    """
+    column name
+    """
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+input type for updating data in table "conference.Usage"
+"""
+input conference_Usage_set_input {
+    conferenceId: uuid
+    consumedStreamingEventTotalMinutes: Int
+    consumedSupportMeetingMinutes: Int
+    consumedVideoChatEventTotalMinutes: Int
+    consumedVideoChatNonEventTotalMinutes: Int
+    created_at: timestamptz
+    id: uuid
+    lastUpdatedConsumedStreamingEventTotalMinutes: timestamptz
+    lastUpdatedConsumedSupportMeetingMinutes: timestamptz
+    lastUpdatedConsumedVideoChatEventTotalMinutes: timestamptz
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes: timestamptz
+    updated_at: timestamptz
+}
+
+"""
+aggregate stddev on columns
+"""
+type conference_Usage_stddev_fields {
+    consumedStreamingEventTotalMinutes: Float
+    consumedSupportMeetingMinutes: Float
+    consumedVideoChatEventTotalMinutes: Float
+    consumedVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type conference_Usage_stddev_pop_fields {
+    consumedStreamingEventTotalMinutes: Float
+    consumedSupportMeetingMinutes: Float
+    consumedVideoChatEventTotalMinutes: Float
+    consumedVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type conference_Usage_stddev_samp_fields {
+    consumedStreamingEventTotalMinutes: Float
+    consumedSupportMeetingMinutes: Float
+    consumedVideoChatEventTotalMinutes: Float
+    consumedVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate sum on columns
+"""
+type conference_Usage_sum_fields {
+    consumedStreamingEventTotalMinutes: Int
+    consumedSupportMeetingMinutes: Int
+    consumedVideoChatEventTotalMinutes: Int
+    consumedVideoChatNonEventTotalMinutes: Int
+}
+
+"""
+update columns of table "conference.Usage"
+"""
+enum conference_Usage_update_column {
+    """
+    column name
+    """
+    conferenceId
+    """
+    column name
+    """
+    consumedStreamingEventTotalMinutes
+    """
+    column name
+    """
+    consumedSupportMeetingMinutes
+    """
+    column name
+    """
+    consumedVideoChatEventTotalMinutes
+    """
+    column name
+    """
+    consumedVideoChatNonEventTotalMinutes
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    id
+    """
+    column name
+    """
+    lastUpdatedConsumedStreamingEventTotalMinutes
+    """
+    column name
+    """
+    lastUpdatedConsumedSupportMeetingMinutes
+    """
+    column name
+    """
+    lastUpdatedConsumedVideoChatEventTotalMinutes
+    """
+    column name
+    """
+    lastUpdatedConsumedVideoChatNonEventTotalMinutes
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+aggregate var_pop on columns
+"""
+type conference_Usage_var_pop_fields {
+    consumedStreamingEventTotalMinutes: Float
+    consumedSupportMeetingMinutes: Float
+    consumedVideoChatEventTotalMinutes: Float
+    consumedVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate var_samp on columns
+"""
+type conference_Usage_var_samp_fields {
+    consumedStreamingEventTotalMinutes: Float
+    consumedSupportMeetingMinutes: Float
+    consumedVideoChatEventTotalMinutes: Float
+    consumedVideoChatNonEventTotalMinutes: Float
+}
+
+"""
+aggregate variance on columns
+"""
+type conference_Usage_variance_fields {
+    consumedStreamingEventTotalMinutes: Float
+    consumedSupportMeetingMinutes: Float
+    consumedVideoChatEventTotalMinutes: Float
+    consumedVideoChatNonEventTotalMinutes: Float
+}
+
+"""
 columns and relationships of "conference.VisibilityLevel"
 """
 type conference_VisibilityLevel {
@@ -11725,6 +13153,9 @@ enum conference_VisibilityLevel_update_column {
 }
 
 """
+The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
+
+
 columns and relationships of "content.Element"
 """
 type content_Element {
@@ -19235,6 +20666,31 @@ input jsonb_comparison_exp {
 mutation root
 """
 type mutation_root {
+    """
+    execute VOLATILE function "conference.updateEventUsage" which returns "conference.Usage"
+    """
+    conference_updateEventUsage(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_Usage_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_Usage_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_Usage_bool_exp
+    ): [conference_Usage!]!
     createItemRoom(conferenceId: uuid!, itemId: uuid!): CreateItemRoomOutput
     createRoomDm(conferenceId: uuid!, registrantIds: [uuid]!): CreateRoomDmOutput
     """
@@ -19592,6 +21048,19 @@ type mutation_root {
     """
     delete_conference_DemoCode_by_pk(id: uuid!): conference_DemoCode
     """
+    delete data from the table: "conference.Quota"
+    """
+    delete_conference_Quota(
+        """
+        filter the rows which have to be deleted
+        """
+        where: conference_Quota_bool_exp!
+    ): conference_Quota_mutation_response
+    """
+    delete single row from the table: "conference.Quota"
+    """
+    delete_conference_Quota_by_pk(id: uuid!): conference_Quota
+    """
     delete data from the table: "conference.Subconference"
     """
     delete_conference_Subconference(
@@ -19604,6 +21073,19 @@ type mutation_root {
     delete single row from the table: "conference.Subconference"
     """
     delete_conference_Subconference_by_pk(id: uuid!): conference_Subconference
+    """
+    delete data from the table: "conference.Usage"
+    """
+    delete_conference_Usage(
+        """
+        filter the rows which have to be deleted
+        """
+        where: conference_Usage_bool_exp!
+    ): conference_Usage_mutation_response
+    """
+    delete single row from the table: "conference.Usage"
+    """
+    delete_conference_Usage_by_pk(id: uuid!): conference_Usage
     """
     delete data from the table: "conference.VisibilityLevel"
     """
@@ -20059,19 +21541,6 @@ type mutation_root {
     delete single row from the table: "room.Mode"
     """
     delete_room_Mode_by_pk(name: String!): room_Mode
-    """
-    delete data from the table: "room.Participant"
-    """
-    delete_room_Participant(
-        """
-        filter the rows which have to be deleted
-        """
-        where: room_Participant_bool_exp!
-    ): room_Participant_mutation_response
-    """
-    delete single row from the table: "room.Participant"
-    """
-    delete_room_Participant_by_pk(id: uuid!): room_Participant
     """
     delete data from the table: "room.PersonRole"
     """
@@ -21241,6 +22710,32 @@ type mutation_root {
         on_conflict: conference_DemoCode_on_conflict
     ): conference_DemoCode
     """
+    insert data into the table: "conference.Quota"
+    """
+    insert_conference_Quota(
+        """
+        the rows to be inserted
+        """
+        objects: [conference_Quota_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: conference_Quota_on_conflict
+    ): conference_Quota_mutation_response
+    """
+    insert a single row into the table: "conference.Quota"
+    """
+    insert_conference_Quota_one(
+        """
+        the row to be inserted
+        """
+        object: conference_Quota_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: conference_Quota_on_conflict
+    ): conference_Quota
+    """
     insert data into the table: "conference.Subconference"
     """
     insert_conference_Subconference(
@@ -21266,6 +22761,32 @@ type mutation_root {
         """
         on_conflict: conference_Subconference_on_conflict
     ): conference_Subconference
+    """
+    insert data into the table: "conference.Usage"
+    """
+    insert_conference_Usage(
+        """
+        the rows to be inserted
+        """
+        objects: [conference_Usage_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: conference_Usage_on_conflict
+    ): conference_Usage_mutation_response
+    """
+    insert a single row into the table: "conference.Usage"
+    """
+    insert_conference_Usage_one(
+        """
+        the row to be inserted
+        """
+        object: conference_Usage_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: conference_Usage_on_conflict
+    ): conference_Usage
     """
     insert data into the table: "conference.VisibilityLevel"
     """
@@ -22176,32 +23697,6 @@ type mutation_root {
         """
         on_conflict: room_Mode_on_conflict
     ): room_Mode
-    """
-    insert data into the table: "room.Participant"
-    """
-    insert_room_Participant(
-        """
-        the rows to be inserted
-        """
-        objects: [room_Participant_insert_input!]!
-        """
-        on conflict condition
-        """
-        on_conflict: room_Participant_on_conflict
-    ): room_Participant_mutation_response
-    """
-    insert a single row into the table: "room.Participant"
-    """
-    insert_room_Participant_one(
-        """
-        the row to be inserted
-        """
-        object: room_Participant_insert_input!
-        """
-        on conflict condition
-        """
-        on_conflict: room_Participant_on_conflict
-    ): room_Participant
     """
     insert data into the table: "room.PersonRole"
     """
@@ -24030,6 +25525,37 @@ type mutation_root {
         pk_columns: conference_DemoCode_pk_columns_input!
     ): conference_DemoCode
     """
+    update data of the table: "conference.Quota"
+    """
+    update_conference_Quota(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: conference_Quota_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: conference_Quota_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: conference_Quota_bool_exp!
+    ): conference_Quota_mutation_response
+    """
+    update single row of the table: "conference.Quota"
+    """
+    update_conference_Quota_by_pk(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: conference_Quota_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: conference_Quota_set_input
+        pk_columns: conference_Quota_pk_columns_input!
+    ): conference_Quota
+    """
     update data of the table: "conference.Subconference"
     """
     update_conference_Subconference(
@@ -24052,6 +25578,37 @@ type mutation_root {
         _set: conference_Subconference_set_input
         pk_columns: conference_Subconference_pk_columns_input!
     ): conference_Subconference
+    """
+    update data of the table: "conference.Usage"
+    """
+    update_conference_Usage(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: conference_Usage_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: conference_Usage_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: conference_Usage_bool_exp!
+    ): conference_Usage_mutation_response
+    """
+    update single row of the table: "conference.Usage"
+    """
+    update_conference_Usage_by_pk(
+        """
+        increments the numeric columns with given value of the filtered values
+        """
+        _inc: conference_Usage_inc_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: conference_Usage_set_input
+        pk_columns: conference_Usage_pk_columns_input!
+    ): conference_Usage
     """
     update data of the table: "conference.VisibilityLevel"
     """
@@ -25345,29 +26902,6 @@ type mutation_root {
         _set: room_Mode_set_input
         pk_columns: room_Mode_pk_columns_input!
     ): room_Mode
-    """
-    update data of the table: "room.Participant"
-    """
-    update_room_Participant(
-        """
-        sets the columns of the filtered rows to the given values
-        """
-        _set: room_Participant_set_input
-        """
-        filter the rows which have to be updated
-        """
-        where: room_Participant_bool_exp!
-    ): room_Participant_mutation_response
-    """
-    update single row of the table: "room.Participant"
-    """
-    update_room_Participant_by_pk(
-        """
-        sets the columns of the filtered rows to the given values
-        """
-        _set: room_Participant_set_input
-        pk_columns: room_Participant_pk_columns_input!
-    ): room_Participant
     """
     update data of the table: "room.PersonRole"
     """
@@ -28197,6 +29731,110 @@ type query_root {
     """
     conference_DemoCode_by_pk(id: uuid!): conference_DemoCode
     """
+    fetch data from the table: "conference.Quota"
+    """
+    conference_Quota(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_Quota_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_Quota_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_Quota_bool_exp
+    ): [conference_Quota!]!
+    """
+    fetch aggregated fields from the table: "conference.Quota"
+    """
+    conference_Quota_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_Quota_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_Quota_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_Quota_bool_exp
+    ): conference_Quota_aggregate!
+    """
+    fetch data from the table: "conference.Quota" using primary key columns
+    """
+    conference_Quota_by_pk(id: uuid!): conference_Quota
+    """
+    fetch data from the table: "conference.RemainingQuota"
+    """
+    conference_RemainingQuota(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_RemainingQuota_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_RemainingQuota_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_RemainingQuota_bool_exp
+    ): [conference_RemainingQuota!]!
+    """
+    fetch aggregated fields from the table: "conference.RemainingQuota"
+    """
+    conference_RemainingQuota_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_RemainingQuota_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_RemainingQuota_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_RemainingQuota_bool_exp
+    ): conference_RemainingQuota_aggregate!
+    """
     fetch data from the table: "conference.Subconference"
     """
     conference_Subconference(
@@ -28250,6 +29888,60 @@ type query_root {
     fetch data from the table: "conference.Subconference" using primary key columns
     """
     conference_Subconference_by_pk(id: uuid!): conference_Subconference
+    """
+    fetch data from the table: "conference.Usage"
+    """
+    conference_Usage(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_Usage_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_Usage_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_Usage_bool_exp
+    ): [conference_Usage!]!
+    """
+    fetch aggregated fields from the table: "conference.Usage"
+    """
+    conference_Usage_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_Usage_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_Usage_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_Usage_bool_exp
+    ): conference_Usage_aggregate!
+    """
+    fetch data from the table: "conference.Usage" using primary key columns
+    """
+    conference_Usage_by_pk(id: uuid!): conference_Usage
     """
     fetch data from the table: "conference.VisibilityLevel"
     """
@@ -30359,60 +32051,6 @@ type query_root {
     fetch data from the table: "room.Mode" using primary key columns
     """
     room_Mode_by_pk(name: String!): room_Mode
-    """
-    fetch data from the table: "room.Participant"
-    """
-    room_Participant(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Participant_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Participant_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Participant_bool_exp
-    ): [room_Participant!]!
-    """
-    fetch aggregated fields from the table: "room.Participant"
-    """
-    room_Participant_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Participant_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Participant_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Participant_bool_exp
-    ): room_Participant_aggregate!
-    """
-    fetch data from the table: "room.Participant" using primary key columns
-    """
-    room_Participant_by_pk(id: uuid!): room_Participant
     """
     fetch data from the table: "room.PersonRole"
     """
@@ -34614,56 +36252,6 @@ type registrant_Registrant {
     """
     An array relationship
     """
-    roomParticipants(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Participant_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Participant_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Participant_bool_exp
-    ): [room_Participant!]!
-    """
-    An aggregate relationship
-    """
-    roomParticipants_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Participant_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Participant_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Participant_bool_exp
-    ): room_Participant_aggregate!
-    """
-    An array relationship
-    """
     subconferenceMemberships(
         """
         distinct select on columns
@@ -34937,7 +36525,6 @@ input registrant_Registrant_bool_exp {
     inviteSent: Boolean_comparison_exp
     profile: registrant_Profile_bool_exp
     programPeople: collection_ProgramPerson_bool_exp
-    roomParticipants: room_Participant_bool_exp
     subconferenceMemberships: registrant_SubconferenceMembership_bool_exp
     updatedAt: timestamptz_comparison_exp
     user: User_bool_exp
@@ -34973,7 +36560,6 @@ input registrant_Registrant_insert_input {
     invitation: registrant_Invitation_obj_rel_insert_input
     profile: registrant_Profile_obj_rel_insert_input
     programPeople: collection_ProgramPerson_arr_rel_insert_input
-    roomParticipants: room_Participant_arr_rel_insert_input
     subconferenceMemberships: registrant_SubconferenceMembership_arr_rel_insert_input
     updatedAt: timestamptz
     user: User_obj_rel_insert_input
@@ -35079,7 +36665,6 @@ input registrant_Registrant_order_by {
     inviteSent: order_by
     profile: registrant_Profile_order_by
     programPeople_aggregate: collection_ProgramPerson_aggregate_order_by
-    roomParticipants_aggregate: room_Participant_aggregate_order_by
     subconferenceMemberships_aggregate: registrant_SubconferenceMembership_aggregate_order_by
     updatedAt: order_by
     user: User_order_by
@@ -36854,330 +38439,6 @@ enum room_Mode_update_column {
 }
 
 """
-columns and relationships of "room.Participant"
-"""
-type room_Participant {
-    chimeRegistrantId: String
-    """
-    An object relationship
-    """
-    conference: conference_Conference!
-    conferenceId: uuid!
-    createdAt: timestamptz!
-    id: uuid!
-    """
-    An object relationship
-    """
-    registrant: registrant_Registrant!
-    registrantId: uuid!
-    """
-    An object relationship
-    """
-    room: room_Room!
-    roomId: uuid!
-    subconferenceId: uuid
-    updatedAt: timestamptz!
-    vonageConnectionId: String
-}
-
-"""
-aggregated selection of "room.Participant"
-"""
-type room_Participant_aggregate {
-    aggregate: room_Participant_aggregate_fields
-    nodes: [room_Participant!]!
-}
-
-"""
-aggregate fields of "room.Participant"
-"""
-type room_Participant_aggregate_fields {
-    count(columns: [room_Participant_select_column!], distinct: Boolean): Int!
-    max: room_Participant_max_fields
-    min: room_Participant_min_fields
-}
-
-"""
-order by aggregate values of table "room.Participant"
-"""
-input room_Participant_aggregate_order_by {
-    count: order_by
-    max: room_Participant_max_order_by
-    min: room_Participant_min_order_by
-}
-
-"""
-input type for inserting array relation for remote table "room.Participant"
-"""
-input room_Participant_arr_rel_insert_input {
-    data: [room_Participant_insert_input!]!
-    """
-    on conflict condition
-    """
-    on_conflict: room_Participant_on_conflict
-}
-
-"""
-Boolean expression to filter rows from the table "room.Participant". All fields are combined with a logical 'AND'.
-"""
-input room_Participant_bool_exp {
-    _and: [room_Participant_bool_exp!]
-    _not: room_Participant_bool_exp
-    _or: [room_Participant_bool_exp!]
-    chimeRegistrantId: String_comparison_exp
-    conference: conference_Conference_bool_exp
-    conferenceId: uuid_comparison_exp
-    createdAt: timestamptz_comparison_exp
-    id: uuid_comparison_exp
-    registrant: registrant_Registrant_bool_exp
-    registrantId: uuid_comparison_exp
-    room: room_Room_bool_exp
-    roomId: uuid_comparison_exp
-    subconferenceId: uuid_comparison_exp
-    updatedAt: timestamptz_comparison_exp
-    vonageConnectionId: String_comparison_exp
-}
-
-"""
-unique or primary key constraints on table "room.Participant"
-"""
-enum room_Participant_constraint {
-    """
-    unique or primary key constraint
-    """
-    Participant_pkey
-    """
-    unique or primary key constraint
-    """
-    Participant_roomId_registrantId_key
-}
-
-"""
-input type for inserting data into table "room.Participant"
-"""
-input room_Participant_insert_input {
-    chimeRegistrantId: String
-    conference: conference_Conference_obj_rel_insert_input
-    conferenceId: uuid
-    createdAt: timestamptz
-    id: uuid
-    registrant: registrant_Registrant_obj_rel_insert_input
-    registrantId: uuid
-    room: room_Room_obj_rel_insert_input
-    roomId: uuid
-    subconferenceId: uuid
-    updatedAt: timestamptz
-    vonageConnectionId: String
-}
-
-"""
-aggregate max on columns
-"""
-type room_Participant_max_fields {
-    chimeRegistrantId: String
-    conferenceId: uuid
-    createdAt: timestamptz
-    id: uuid
-    registrantId: uuid
-    roomId: uuid
-    subconferenceId: uuid
-    updatedAt: timestamptz
-    vonageConnectionId: String
-}
-
-"""
-order by max() on columns of table "room.Participant"
-"""
-input room_Participant_max_order_by {
-    chimeRegistrantId: order_by
-    conferenceId: order_by
-    createdAt: order_by
-    id: order_by
-    registrantId: order_by
-    roomId: order_by
-    subconferenceId: order_by
-    updatedAt: order_by
-    vonageConnectionId: order_by
-}
-
-"""
-aggregate min on columns
-"""
-type room_Participant_min_fields {
-    chimeRegistrantId: String
-    conferenceId: uuid
-    createdAt: timestamptz
-    id: uuid
-    registrantId: uuid
-    roomId: uuid
-    subconferenceId: uuid
-    updatedAt: timestamptz
-    vonageConnectionId: String
-}
-
-"""
-order by min() on columns of table "room.Participant"
-"""
-input room_Participant_min_order_by {
-    chimeRegistrantId: order_by
-    conferenceId: order_by
-    createdAt: order_by
-    id: order_by
-    registrantId: order_by
-    roomId: order_by
-    subconferenceId: order_by
-    updatedAt: order_by
-    vonageConnectionId: order_by
-}
-
-"""
-response of any mutation on the table "room.Participant"
-"""
-type room_Participant_mutation_response {
-    """
-    number of rows affected by the mutation
-    """
-    affected_rows: Int!
-    """
-    data from the rows affected by the mutation
-    """
-    returning: [room_Participant!]!
-}
-
-"""
-on conflict condition type for table "room.Participant"
-"""
-input room_Participant_on_conflict {
-    constraint: room_Participant_constraint!
-    update_columns: [room_Participant_update_column!]! = []
-    where: room_Participant_bool_exp
-}
-
-"""
-Ordering options when selecting data from "room.Participant".
-"""
-input room_Participant_order_by {
-    chimeRegistrantId: order_by
-    conference: conference_Conference_order_by
-    conferenceId: order_by
-    createdAt: order_by
-    id: order_by
-    registrant: registrant_Registrant_order_by
-    registrantId: order_by
-    room: room_Room_order_by
-    roomId: order_by
-    subconferenceId: order_by
-    updatedAt: order_by
-    vonageConnectionId: order_by
-}
-
-"""
-primary key columns input for table: room_Participant
-"""
-input room_Participant_pk_columns_input {
-    id: uuid!
-}
-
-"""
-select columns of table "room.Participant"
-"""
-enum room_Participant_select_column {
-    """
-    column name
-    """
-    chimeRegistrantId
-    """
-    column name
-    """
-    conferenceId
-    """
-    column name
-    """
-    createdAt
-    """
-    column name
-    """
-    id
-    """
-    column name
-    """
-    registrantId
-    """
-    column name
-    """
-    roomId
-    """
-    column name
-    """
-    subconferenceId
-    """
-    column name
-    """
-    updatedAt
-    """
-    column name
-    """
-    vonageConnectionId
-}
-
-"""
-input type for updating data in table "room.Participant"
-"""
-input room_Participant_set_input {
-    chimeRegistrantId: String
-    conferenceId: uuid
-    createdAt: timestamptz
-    id: uuid
-    registrantId: uuid
-    roomId: uuid
-    subconferenceId: uuid
-    updatedAt: timestamptz
-    vonageConnectionId: String
-}
-
-"""
-update columns of table "room.Participant"
-"""
-enum room_Participant_update_column {
-    """
-    column name
-    """
-    chimeRegistrantId
-    """
-    column name
-    """
-    conferenceId
-    """
-    column name
-    """
-    createdAt
-    """
-    column name
-    """
-    id
-    """
-    column name
-    """
-    registrantId
-    """
-    column name
-    """
-    roomId
-    """
-    column name
-    """
-    subconferenceId
-    """
-    column name
-    """
-    updatedAt
-    """
-    column name
-    """
-    vonageConnectionId
-}
-
-"""
 columns and relationships of "room.PersonRole"
 """
 type room_PersonRole {
@@ -37555,56 +38816,6 @@ type room_Room {
     managementMode: room_ManagementMode!
     managementModeName: room_ManagementMode_enum!
     name: String!
-    """
-    An array relationship
-    """
-    participants(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Participant_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Participant_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Participant_bool_exp
-    ): [room_Participant!]!
-    """
-    An aggregate relationship
-    """
-    participants_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Participant_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Participant_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Participant_bool_exp
-    ): room_Participant_aggregate!
     """
     An array relationship
     """
@@ -38498,7 +39709,6 @@ input room_Room_bool_exp {
     managementMode: room_ManagementMode_bool_exp
     managementModeName: room_ManagementMode_enum_comparison_exp
     name: String_comparison_exp
-    participants: room_Participant_bool_exp
     presenceCounts: analytics_RoomPresence_bool_exp
     priority: Int_comparison_exp
     publicVonageSessionId: String_comparison_exp
@@ -38566,7 +39776,6 @@ input room_Room_insert_input {
     managementMode: room_ManagementMode_obj_rel_insert_input
     managementModeName: room_ManagementMode_enum
     name: String
-    participants: room_Participant_arr_rel_insert_input
     presenceCounts: analytics_RoomPresence_arr_rel_insert_input
     priority: Int
     publicVonageSessionId: String
@@ -38715,7 +39924,6 @@ input room_Room_order_by {
     managementMode: room_ManagementMode_order_by
     managementModeName: order_by
     name: order_by
-    participants_aggregate: room_Participant_aggregate_order_by
     presenceCounts_aggregate: analytics_RoomPresence_aggregate_order_by
     priority: order_by
     publicVonageSessionId: order_by
@@ -46123,6 +47331,110 @@ type subscription_root {
     """
     conference_DemoCode_by_pk(id: uuid!): conference_DemoCode
     """
+    fetch data from the table: "conference.Quota"
+    """
+    conference_Quota(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_Quota_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_Quota_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_Quota_bool_exp
+    ): [conference_Quota!]!
+    """
+    fetch aggregated fields from the table: "conference.Quota"
+    """
+    conference_Quota_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_Quota_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_Quota_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_Quota_bool_exp
+    ): conference_Quota_aggregate!
+    """
+    fetch data from the table: "conference.Quota" using primary key columns
+    """
+    conference_Quota_by_pk(id: uuid!): conference_Quota
+    """
+    fetch data from the table: "conference.RemainingQuota"
+    """
+    conference_RemainingQuota(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_RemainingQuota_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_RemainingQuota_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_RemainingQuota_bool_exp
+    ): [conference_RemainingQuota!]!
+    """
+    fetch aggregated fields from the table: "conference.RemainingQuota"
+    """
+    conference_RemainingQuota_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_RemainingQuota_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_RemainingQuota_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_RemainingQuota_bool_exp
+    ): conference_RemainingQuota_aggregate!
+    """
     fetch data from the table: "conference.Subconference"
     """
     conference_Subconference(
@@ -46176,6 +47488,60 @@ type subscription_root {
     fetch data from the table: "conference.Subconference" using primary key columns
     """
     conference_Subconference_by_pk(id: uuid!): conference_Subconference
+    """
+    fetch data from the table: "conference.Usage"
+    """
+    conference_Usage(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_Usage_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_Usage_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_Usage_bool_exp
+    ): [conference_Usage!]!
+    """
+    fetch aggregated fields from the table: "conference.Usage"
+    """
+    conference_Usage_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [conference_Usage_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [conference_Usage_order_by!]
+        """
+        filter the rows returned
+        """
+        where: conference_Usage_bool_exp
+    ): conference_Usage_aggregate!
+    """
+    fetch data from the table: "conference.Usage" using primary key columns
+    """
+    conference_Usage_by_pk(id: uuid!): conference_Usage
     """
     fetch data from the table: "conference.VisibilityLevel"
     """
@@ -48282,60 +49648,6 @@ type subscription_root {
     fetch data from the table: "room.Mode" using primary key columns
     """
     room_Mode_by_pk(name: String!): room_Mode
-    """
-    fetch data from the table: "room.Participant"
-    """
-    room_Participant(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Participant_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Participant_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Participant_bool_exp
-    ): [room_Participant!]!
-    """
-    fetch aggregated fields from the table: "room.Participant"
-    """
-    room_Participant_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Participant_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Participant_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Participant_bool_exp
-    ): room_Participant_aggregate!
-    """
-    fetch data from the table: "room.Participant" using primary key columns
-    """
-    room_Participant_by_pk(id: uuid!): room_Participant
     """
     fetch data from the table: "room.PersonRole"
     """

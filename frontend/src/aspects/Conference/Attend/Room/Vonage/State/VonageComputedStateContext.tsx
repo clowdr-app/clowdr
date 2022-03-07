@@ -131,12 +131,13 @@ function useValue({
             try {
                 await vonage.connectToSession();
                 onRoomJoined?.(true);
-            } catch (e) {
+            } catch (e: any) {
                 if (e !== "Declined to be recorded") {
                     console.error("Failed to join room", e);
                     toast({
                         status: "error",
-                        description: "Cannot connect to room",
+                        title: "Cannot connect to room",
+                        description: typeof e === "string" ? e : e?.message ?? undefined,
                     });
                 }
             } finally {

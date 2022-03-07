@@ -42533,6 +42533,91 @@ export type StarredEvents_SelectEventIdsQuery = {
     readonly schedule_Event: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
 };
 
+export type ScheduleV2_LightweightEventFragment = {
+    readonly __typename?: "schedule_Event";
+    readonly id: any;
+    readonly startTime: any;
+    readonly endTime?: any | null;
+    readonly roomId: any;
+    readonly conferenceId: any;
+};
+
+export type ScheduleV2_DayLightweightEventsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    startOfDay: Scalars["timestamptz"];
+    endOfDay: Scalars["timestamptz"];
+    filter: Schedule_Event_Bool_Exp;
+}>;
+
+export type ScheduleV2_DayLightweightEventsQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly startTime: any;
+        readonly endTime?: any | null;
+        readonly roomId: any;
+        readonly conferenceId: any;
+    }>;
+};
+
+export type ScheduleV2_DayEventsQueryVariables = Exact<{
+    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ScheduleV2_DayEventsQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly roomId: any;
+        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly name: string;
+        readonly startTime: any;
+        readonly durationSeconds: number;
+        readonly itemId?: any | null;
+        readonly exhibitionId?: any | null;
+        readonly shufflePeriodId?: any | null;
+        readonly item?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly title: string;
+            readonly shortTitle?: string | null;
+            readonly typeName: Content_ItemType_Enum;
+            readonly abstractElements: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly typeName: Content_ElementType_Enum;
+                readonly name: string;
+                readonly layoutData?: any | null;
+                readonly data: any;
+            }>;
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly priority?: number | null;
+                readonly roleName: string;
+                readonly itemId: any;
+                readonly personId: any;
+                readonly person: {
+                    readonly __typename?: "collection_ProgramPerson";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly affiliation?: string | null;
+                    readonly registrantId?: any | null;
+                    readonly conferenceId: any;
+                };
+            }>;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
+                readonly id: any;
+                readonly itemId: any;
+                readonly tagId: any;
+            }>;
+        } | null;
+    }>;
+};
+
 export type ScheduleV2_ElementFragment = {
     readonly __typename?: "content_Element";
     readonly id: any;
@@ -49403,6 +49488,15 @@ export const Schedule_TagFragmentDoc = gql`
         conferenceId
     }
 `;
+export const ScheduleV2_LightweightEventFragmentDoc = gql`
+    fragment ScheduleV2_LightweightEvent on schedule_Event {
+        id
+        startTime
+        endTime
+        roomId
+        conferenceId
+    }
+`;
 export const ScheduleV2_ProgramPersonFragmentDoc = gql`
     fragment ScheduleV2_ProgramPerson on collection_ProgramPerson {
         id
@@ -51845,6 +51939,51 @@ export function useStarredEvents_SelectEventIdsQuery(
         query: StarredEvents_SelectEventIdsDocument,
         ...options,
     });
+}
+export const ScheduleV2_DayLightweightEventsDocument = gql`
+    query ScheduleV2_DayLightweightEvents(
+        $conferenceId: uuid!
+        $startOfDay: timestamptz!
+        $endOfDay: timestamptz!
+        $filter: schedule_Event_bool_exp!
+    ) @cached {
+        schedule_Event(
+            where: {
+                _and: [
+                    { conferenceId: { _eq: $conferenceId } }
+                    { startTime: { _lt: $endOfDay } }
+                    { endTime: { _gt: $startOfDay } }
+                    $filter
+                ]
+            }
+        ) {
+            ...ScheduleV2_LightweightEvent
+        }
+    }
+    ${ScheduleV2_LightweightEventFragmentDoc}
+`;
+
+export function useScheduleV2_DayLightweightEventsQuery(
+    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ScheduleV2_DayLightweightEventsQuery>({
+        query: ScheduleV2_DayLightweightEventsDocument,
+        ...options,
+    });
+}
+export const ScheduleV2_DayEventsDocument = gql`
+    query ScheduleV2_DayEvents($eventIds: [uuid!]!) @cached {
+        schedule_Event(where: { id: { _in: $eventIds } }) {
+            ...ScheduleV2_Event
+        }
+    }
+    ${ScheduleV2_EventFragmentDoc}
+`;
+
+export function useScheduleV2_DayEventsQuery(
+    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ScheduleV2_DayEventsQuery>({ query: ScheduleV2_DayEventsDocument, ...options });
 }
 export const ScheduleV2_RoomsDocument = gql`
     query ScheduleV2_Rooms($conferenceId: uuid!) @cached {

@@ -40916,7 +40916,7 @@ export type Vonage_GetEventDetailsQuery = {
         startTime: any;
         durationSeconds: number;
         eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
-        room: { __typename?: "room_Room"; id: any; publicVonageSessionId?: string | null };
+        room: { __typename?: "room_Room"; id: any; capacity?: number | null; publicVonageSessionId?: string | null };
         eventPeople: Array<{
             __typename?: "schedule_EventProgramPerson";
             id: any;
@@ -40942,6 +40942,7 @@ export type VonageJoinRoom_GetInfoQuery = {
     room_Room_by_pk?: {
         __typename?: "room_Room";
         id: any;
+        capacity?: number | null;
         item?: {
             __typename?: "content_Item";
             id: any;
@@ -52268,6 +52269,7 @@ export const Vonage_GetEventDetailsDocument = {
                                         kind: "SelectionSet",
                                         selections: [
                                             { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "capacity" } },
                                             { kind: "Field", name: { kind: "Name", value: "publicVonageSessionId" } },
                                         ],
                                     },
@@ -52385,6 +52387,7 @@ export const VonageJoinRoom_GetInfoDocument = {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "capacity" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "item" },

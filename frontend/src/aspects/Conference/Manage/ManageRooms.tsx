@@ -746,65 +746,64 @@ function EditableRoomsCRUDTable() {
                     }
                 },
             },
-            // {
-            //     id: "capacity",
-            //     header: function CapacityHeader({
-            //         isInCreate,
-            //         onClick,
-            //         sortDir,
-            //     }: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
-            //         return isInCreate ? (
-            //             <FormLabel>Capacity</FormLabel>
-            //         ) : (
-            //             <Button size="xs" onClick={onClick}>
-            //                 Capacity{sortDir !== null ? ` ${sortDir}` : undefined}
-            //             </Button>
-            //         );
-            //     },
-            //     get: (data) => data.capacity,
-            //     set: (record, value: number) => {
-            //         record.capacity = value;
-            //     },
-            //     sort: (x: number, y: number) => x - y,
-            //     filterFn: (
-            //         rows: Array<RoomWithParticipantInfoFragment>,
-            //         filterValue: { min?: number; max?: number }
-            //     ) => {
-            //         return rows.filter(
-            //             (row) =>
-            //                 (filterValue.min === undefined && filterValue.max === undefined) ||
-            //                 (row.capacity &&
-            //                     (filterValue.min === undefined || filterValue.min <= row.capacity) &&
-            //                     (filterValue.max === undefined || filterValue.max >= row.capacity))
-            //         );
-            //     },
-            //     filterEl: NumberRangeColumnFilter(0, 3000),
-            //     cell: function EventNameCell({
-            //         isInCreate,
-            //         value,
-            //         onChange,
-            //         onBlur,
-            //         ref
-            //     }: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
-            //         return (
-            //             <NumberInput
-            //                 border="1px solid"
-            //                 borderColor="rgba(255, 255, 255, 0.16)"
-            //                 value={value ?? 3000}
-            //                 min={0}
-            //                 max={3000}
-            //                 onChange={(vStr, v) => onChange?.(vStr === "" ? undefined : v)}
-            //                 onBlur={onBlur}
-            //             >
-            //                 <NumberInputField ref={ref as LegacyRef<HTMLInputElement>} />
-            //                 <NumberInputStepper>
-            //                     <NumberIncrementStepper aria-label="Increment" />
-            //                     <NumberDecrementStepper aria-label="Decrement" />
-            //                 </NumberInputStepper>
-            //             </NumberInput>
-            //         );
-            //     },
-            // },
+            {
+                id: "capacity",
+                header: function CapacityHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    return isInCreate ? (
+                        <FormLabel>Capacity</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={onClick}>
+                            Capacity{sortDir !== null ? ` ${sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.capacity,
+                set: (record, value: number) => {
+                    record.capacity = value;
+                },
+                sort: (x: number, y: number) => x - y,
+                filterFn: (
+                    rows: Array<RoomWithParticipantInfoFragment>,
+                    filterValue: { min?: number; max?: number }
+                ) => {
+                    return rows.filter(
+                        (row) =>
+                            (filterValue.min === undefined && filterValue.max === undefined) ||
+                            (row.capacity &&
+                                (filterValue.min === undefined || filterValue.min <= row.capacity) &&
+                                (filterValue.max === undefined || filterValue.max >= row.capacity))
+                    );
+                },
+                filterEl: NumberRangeColumnFilter(0, 3000),
+                cell: function EventNameCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
+                    return (
+                        <NumberInput
+                            border="1px solid"
+                            borderColor="rgba(255, 255, 255, 0.16)"
+                            value={value ?? 3000}
+                            min={0}
+                            max={3000}
+                            onChange={(vStr, v) => onChange?.(vStr === "" ? undefined : v)}
+                            onBlur={onBlur}
+                        >
+                            <NumberInputField ref={ref as LegacyRef<HTMLInputElement>} />
+                            <NumberInputStepper>
+                                <NumberIncrementStepper aria-label="Increment" />
+                                <NumberDecrementStepper aria-label="Decrement" />
+                            </NumberInputStepper>
+                        </NumberInput>
+                    );
+                },
+            },
             {
                 id: "priority",
                 header: function PriorityHeader({
@@ -1438,7 +1437,7 @@ function EditableRoomsCRUDTable() {
                     generateDefaults: () => ({
                         id: uuidv4(),
                         conferenceId: conference.id,
-                        capacity: undefined,
+                        capacity: 350,
                         priority: 10,
                         currentModeName: Room_Mode_Enum.VideoChat,
                         name: "New room " + (data.length + 1),

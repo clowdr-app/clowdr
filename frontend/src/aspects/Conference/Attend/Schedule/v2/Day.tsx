@@ -29,12 +29,12 @@ gql`
         conferenceId
     }
 
-    query ScheduleV2_DayLightweightEvents @cached (
+    query ScheduleV2_DayLightweightEvents(
         $conferenceId: uuid!
         $startOfDay: timestamptz!
         $endOfDay: timestamptz!
         $filter: schedule_Event_bool_exp!
-    ) {
+    ) @cached {
         schedule_Event(
             where: {
                 _and: [

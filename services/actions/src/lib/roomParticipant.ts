@@ -7,6 +7,25 @@ import { InsertVonageSessionLayoutDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { kickRegistrantFromRoom } from "./vonage/vonageTools";
 
+export async function getRoomParticipantsCount(roomId: string): Promise<number> {
+    const redisClient = await redisClientPool.acquire("lib/vonage/getRoomParticipantsCount");
+    try {
+        return await redisClientP.zcard(redisClient)(`RoomParticipants:${roomId}`);
+    } finally {
+        await redisClientPool.release("lib/vonage/getRoomParticipantsCount", redisClient);
+    }
+}
+
+export async function getIsRoomParticipant(roomId: string, registrantId: string): Promise<boolean> {
+    const redisClient = await redisClientPool.acquire("lib/vonage/getRoomParticipantsCount");
+    try {
+        const rank = await redisClientP.zrank(redisClient)(`RoomParticipants:${roomId}`, registrantId);
+        return rank !== null;
+    } finally {
+        await redisClientPool.release("lib/vonage/getRoomParticipantsCount", redisClient);
+    }
+}
+
 export async function addRoomParticipant(
     logger: P.Logger,
     roomId: string,

@@ -291,7 +291,7 @@ export async function handleCreateForItem(
 }
 
 export async function handleRemoveOldRoomParticipants(logger: P.Logger): Promise<void> {
-    logger.info("Removing room participants created more than 24 hours ago");
-    const deleted = await deleteRoomParticipantsCreatedBefore(sub(new Date(), { hours: 24 }));
-    logger.info({ count: deleted }, `Removed ${deleted} room participants created more than 24 hours ago`);
+    logger.info("Removing room participants created more than 6 hours ago");
+    const deleted = await deleteRoomParticipantsCreatedBefore(sub(new Date(), { hours: 6 }));
+    logger.info({ count: deleted }, `Removed ${deleted} room participants created more than 6 hours ago`);
 }

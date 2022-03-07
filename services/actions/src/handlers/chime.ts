@@ -55,6 +55,8 @@ export async function handleJoinRoom(
         await incrementVideoChatNonEventUsage(maybeChimeMeeting.conferenceId, 1);
     }
 
+    // TODO: Respect the "capacity" field on Room
+
     return {
         registrant: chimeRegistrant,
         meeting: maybeChimeMeeting,

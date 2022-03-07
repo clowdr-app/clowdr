@@ -114,6 +114,8 @@ export const redisClientP = {
             redisClient.zremrangebyrank(key, start, stop, cb)
         ),
     zcard: (redisClient: RedisClient) => promisify((key: string, cb?: Callback<number>) => redisClient.zcard(key, cb)),
+    zrank: (redisClient: RedisClient) =>
+        promisify((key: string, member: string, cb?: Callback<number | null>) => redisClient.zrank(key, member, cb)),
     zrevrank: (redisClient: RedisClient) =>
         promisify((key: string, member: string, cb?: Callback<number | null>) => redisClient.zrevrank(key, member, cb)),
     incr: (redisClient: RedisClient) => promisify((key: string, cb?: Callback<number>) => redisClient.incr(key, cb)),

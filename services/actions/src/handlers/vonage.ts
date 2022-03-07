@@ -34,6 +34,7 @@ import { apolloClient } from "../graphqlClient";
 import { getRegistrantDetails } from "../lib/authorisation";
 import { BadRequestError, ForbiddenError, NotFoundError, ServerError } from "../lib/errors";
 import { getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
+import { getIsRoomParticipant, getRoomParticipantsCount } from "../lib/roomParticipant";
 import {
     addAndRemoveRoomParticipants,
     addAndRemoveVonageParticipantStreams,
@@ -405,6 +406,7 @@ gql`
             }
             room {
                 id
+                capacity
                 publicVonageSessionId
             }
             eventPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
@@ -446,6 +448,22 @@ export async function handleJoinEvent(
         throw new NotFoundError("Event not found", { privateErrorData: { eventId: payload.eventId } });
     }
 
+    if (
+        !(
+            result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+            result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.QAndA ||
+            result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.Prerecorded
+        )
+    ) {
+        const existingParticipantsCount = await getRoomParticipantsCount(result.data.schedule_Event_by_pk.room.id);
+        if (
+            result.data.schedule_Event_by_pk.room.capacity &&
+            existingParticipantsCount >= result.data.schedule_Event_by_pk.room.capacity
+        ) {
+            throw new Error("The number of participants has reached the room's maximum capacity");
+        }
+    }
+
     const vonageSessionId =
         result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.Presentation ||
         result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.QAndA ||
@@ -469,6 +487,16 @@ export async function handleJoinEvent(
         throw new NotFoundError("Registrant not found", {
             privateErrorData: { registrantId: payload.registrantId },
         });
+    }
+
+    const isAlreadyParticipant = await getIsRoomParticipant(
+        result.data.schedule_Event_by_pk.room.id,
+        payload.registrantId
+    );
+    if (isAlreadyParticipant) {
+        throw new Error(
+            "You are already connected to this room, possibly from a different tab or device. If you recently left the room, please wait a minute before trying to rejoin."
+        );
     }
 
     if (Date.parse(result.data.schedule_Event_by_pk.startTime) - 10 * 60 * 1000 > Date.now()) {
@@ -524,6 +552,7 @@ gql`
     query VonageJoinRoom_GetInfo($roomId: uuid!, $registrantId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             id
+            capacity
             item {
                 id
                 itemPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
@@ -585,17 +614,19 @@ export async function handleJoinRoom(
         });
     }
 
+    const isAlreadyParticipant = await getIsRoomParticipant(payload.roomId, payload.registrantId);
+    if (isAlreadyParticipant) {
+        throw new Error(
+            "You are already connected to this room, possibly from a different tab or device. If you recently left the room, please wait a minute before trying to rejoin."
+        );
+    }
+
     const remainingQuota = await getVideoChatNonEventRemainingQuota(registrant.conferenceId);
     if (remainingQuota <= 0) {
         throw new Error("Quota limit reached (video-chat social minutes)");
     } else {
         await incrementVideoChatNonEventUsage(registrant.conferenceId, 1);
     }
-
-    const connectionData: CustomConnectionData = {
-        registrantId: payload.registrantId,
-        userId,
-    };
 
     const roomInfo = await apolloClient.query({
         query: VonageJoinRoom_GetInfoDocument,
@@ -611,6 +642,16 @@ export async function handleJoinRoom(
         });
         throw new Error("Failed to fetch room information");
     }
+
+    const existingParticipantsCount = await getRoomParticipantsCount(payload.roomId);
+    if (roomInfo.data.room_Room_by_pk.capacity && existingParticipantsCount >= roomInfo.data.room_Room_by_pk.capacity) {
+        throw new Error("The number of participants has reached the room's maximum capacity");
+    }
+
+    const connectionData: CustomConnectionData = {
+        registrantId: payload.registrantId,
+        userId,
+    };
 
     const isPresenterOrChairOrConferenceOrganizerOrConferenceModerator =
         !!roomInfo.data.room_Room_by_pk.item?.itemPeople.some(

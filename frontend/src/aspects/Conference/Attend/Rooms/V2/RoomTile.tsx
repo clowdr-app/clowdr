@@ -11,7 +11,7 @@ import EventHighlight from "./EventHighlight";
 import RoomPresenceGrid from "./RoomPresenceGrid";
 
 gql`
-    query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) {
+    query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) @cached {
         room_Room_by_pk(id: $roomId) {
             ...RoomTile_Room
         }

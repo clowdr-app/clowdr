@@ -51105,7 +51105,7 @@ export function useGetSocialRoomsQuery(options: Omit<Urql.UseQueryArgs<GetSocial
     return Urql.useQuery<GetSocialRoomsQuery>({ query: GetSocialRoomsDocument, ...options });
 }
 export const RoomTile_GetRoomDocument = gql`
-    query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) {
+    query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) @cached {
         room_Room_by_pk(id: $roomId) {
             ...RoomTile_Room
         }

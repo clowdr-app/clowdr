@@ -152,6 +152,11 @@ computed_fields:
       name: IsProgramRoom
       schema: room
   name: isProgramRoom
+- definition:
+    function:
+      name: IsStreamingProgramRoom
+      schema: room
+  name: isStreamingProgramRoom
 insert_permissions:
 - permission:
     backend_only: false
@@ -269,6 +274,7 @@ select_permissions:
     - updated_at
     computed_fields:
     - isProgramRoom
+    - isStreamingProgramRoom
     filter:
       _and:
       - _or:
@@ -309,6 +315,7 @@ select_permissions:
     - subconferenceId
     computed_fields:
     - isProgramRoom
+    - isStreamingProgramRoom
     filter:
       _or:
       - _and:
@@ -336,6 +343,7 @@ select_permissions:
     - subconferenceId
     computed_fields:
     - isProgramRoom
+    - isStreamingProgramRoom
     filter:
       _and:
       - _or:
@@ -376,6 +384,7 @@ select_permissions:
     - subconferenceId
     computed_fields:
     - isProgramRoom
+    - isStreamingProgramRoom
     filter:
       _and:
       - _or:
@@ -416,6 +425,7 @@ select_permissions:
     - subconferenceId
     computed_fields:
     - isProgramRoom
+    - isStreamingProgramRoom
     filter:
       _or:
       - _and:

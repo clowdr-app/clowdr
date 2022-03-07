@@ -110,6 +110,7 @@ gql`
         itemId
         managementModeName
         isProgramRoom
+        isStreamingProgramRoom
         chatId
         chat {
             id
@@ -729,6 +730,44 @@ function EditableRoomsCRUDTable() {
                 sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
                 filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: boolean) => {
                     return rows.filter((row) => row.isProgramRoom === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function InviteSentCell({
+                    isInCreate,
+                    value,
+                }: CellProps<Partial<RoomWithParticipantInfoFragment>, boolean>) {
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Center>
+                                <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
+                            </Center>
+                        );
+                    }
+                },
+            },
+            {
+                id: "isStreamingProgramRoom",
+                header: function IsStreamingProgramRoomHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Button size="xs" onClick={onClick}>
+                                Live-streaming?{sortDir !== null ? ` ${sortDir}` : undefined}
+                            </Button>
+                        );
+                    }
+                },
+                get: (data) => data.isStreamingProgramRoom,
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: boolean) => {
+                    return rows.filter((row) => row.isStreamingProgramRoom === filterValue);
                 },
                 filterEl: CheckBoxColumnFilter,
                 cell: function InviteSentCell({

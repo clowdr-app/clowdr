@@ -38802,6 +38802,10 @@ type room_Room {
     """
     isProgramRoom: Boolean
     """
+    A computed field, executes function "room.IsStreamingProgramRoom"
+    """
+    isStreamingProgramRoom: Boolean
+    """
     An object relationship
     """
     item: content_Item
@@ -39703,6 +39707,7 @@ input room_Room_bool_exp {
     events: schedule_Event_bool_exp
     id: uuid_comparison_exp
     isProgramRoom: Boolean_comparison_exp
+    isStreamingProgramRoom: Boolean_comparison_exp
     item: content_Item_bool_exp
     itemId: uuid_comparison_exp
     livestreamDuration: room_LivestreamDurations_bool_exp
@@ -39918,6 +39923,7 @@ input room_Room_order_by {
     events_aggregate: schedule_Event_aggregate_order_by
     id: order_by
     isProgramRoom: order_by
+    isStreamingProgramRoom: order_by
     item: content_Item_order_by
     itemId: order_by
     livestreamDuration: room_LivestreamDurations_order_by

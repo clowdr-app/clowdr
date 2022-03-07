@@ -282,17 +282,19 @@ function RoomInner({
     const showDefaultVideoChatRoom = useMemo(
         () =>
             !roomDetails.isProgramRoom ||
-            (!currentRoomEvent &&
-                (!nextRoomEvent ||
-                    nextRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Zoom ||
-                    zoomEventStartsAt - now30s > 10 * 60 * 1000)) ||
-            currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat ||
-            (!currentRoomEvent && roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor),
+            (!roomDetails.isStreamingProgramRoom &&
+                ((!currentRoomEvent &&
+                    (!nextRoomEvent ||
+                        nextRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Zoom ||
+                        zoomEventStartsAt - now30s > 10 * 60 * 1000)) ||
+                    currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat ||
+                    (!currentRoomEvent && roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor))),
         [
             currentRoomEvent,
             nextRoomEvent,
             now30s,
             roomDetails.isProgramRoom,
+            roomDetails.isStreamingProgramRoom,
             roomDetails.item?.typeName,
             zoomEventStartsAt,
         ]
@@ -804,7 +806,13 @@ function RoomInner({
                     )}
                 </Flex>
 
-                {playerEl}
+                {playerEl ??
+                    (!showDefaultVideoChatRoom ? (
+                        <Text h="100%" p={4} fontSize="xl">
+                            There is not currently a live event in this room. The live-stream video will appear here
+                            when the next event starts.
+                        </Text>
+                    ) : undefined)}
 
                 {!showBackstage ? (
                     <>

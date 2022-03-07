@@ -23,6 +23,7 @@ gql`
         name
         currentModeName
         isProgramRoom
+        isStreamingProgramRoom
         publicVonageSessionId
         chatId
         itemId

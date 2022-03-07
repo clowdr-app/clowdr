@@ -26473,6 +26473,8 @@ export type Room_Room = {
     readonly id: Scalars["uuid"];
     /** A computed field, executes function "room.IsProgramRoom" */
     readonly isProgramRoom?: Maybe<Scalars["Boolean"]>;
+    /** A computed field, executes function "room.IsStreamingProgramRoom" */
+    readonly isStreamingProgramRoom?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
     readonly item?: Maybe<Content_Item>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
@@ -27126,6 +27128,7 @@ export type Room_Room_Bool_Exp = {
     readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly isProgramRoom?: InputMaybe<Boolean_Comparison_Exp>;
+    readonly isStreamingProgramRoom?: InputMaybe<Boolean_Comparison_Exp>;
     readonly item?: InputMaybe<Content_Item_Bool_Exp>;
     readonly itemId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly livestreamDuration?: InputMaybe<Room_LivestreamDurations_Bool_Exp>;
@@ -27310,6 +27313,7 @@ export type Room_Room_Order_By = {
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly isProgramRoom?: InputMaybe<Order_By>;
+    readonly isStreamingProgramRoom?: InputMaybe<Order_By>;
     readonly item?: InputMaybe<Content_Item_Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly livestreamDuration?: InputMaybe<Room_LivestreamDurations_Order_By>;
@@ -41281,6 +41285,7 @@ export type RoomPage_GetRoomDetailsQuery = {
         readonly name: string;
         readonly currentModeName: Room_Mode_Enum;
         readonly isProgramRoom?: boolean | null;
+        readonly isStreamingProgramRoom?: boolean | null;
         readonly publicVonageSessionId?: string | null;
         readonly chatId?: any | null;
         readonly itemId?: any | null;
@@ -41328,6 +41333,7 @@ export type RoomPage_RoomDetailsFragment = {
     readonly name: string;
     readonly currentModeName: Room_Mode_Enum;
     readonly isProgramRoom?: boolean | null;
+    readonly isStreamingProgramRoom?: boolean | null;
     readonly publicVonageSessionId?: string | null;
     readonly chatId?: any | null;
     readonly itemId?: any | null;
@@ -45385,6 +45391,7 @@ export type RoomWithParticipantInfoFragment = {
     readonly itemId?: any | null;
     readonly managementModeName: Room_ManagementMode_Enum;
     readonly isProgramRoom?: boolean | null;
+    readonly isStreamingProgramRoom?: boolean | null;
     readonly chatId?: any | null;
     readonly chat?: {
         readonly __typename?: "chat_Chat";
@@ -45414,6 +45421,7 @@ export type SelectAllRoomsWithParticipantsQuery = {
         readonly itemId?: any | null;
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
+        readonly isStreamingProgramRoom?: boolean | null;
         readonly chatId?: any | null;
         readonly chat?: {
             readonly __typename?: "chat_Chat";
@@ -45517,6 +45525,7 @@ export type CreateRoomMutation = {
         readonly itemId?: any | null;
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
+        readonly isStreamingProgramRoom?: boolean | null;
         readonly chatId?: any | null;
         readonly chat?: {
             readonly __typename?: "chat_Chat";
@@ -45557,6 +45566,7 @@ export type UpdateRoomsWithParticipantsMutation = {
         readonly itemId?: any | null;
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly isProgramRoom?: boolean | null;
+        readonly isStreamingProgramRoom?: boolean | null;
         readonly chatId?: any | null;
         readonly chat?: {
             readonly __typename?: "chat_Chat";
@@ -49194,6 +49204,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
         name
         currentModeName
         isProgramRoom
+        isStreamingProgramRoom
         publicVonageSessionId
         chatId
         itemId
@@ -50059,6 +50070,7 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
         itemId
         managementModeName
         isProgramRoom
+        isStreamingProgramRoom
         chatId
         chat {
             id
@@ -73726,6 +73738,11 @@ export type GraphCacheResolvers = {
         >;
         id?: GraphCacheResolver<WithTypename<Room_Room>, Record<string, never>, Scalars["uuid"] | string>;
         isProgramRoom?: GraphCacheResolver<WithTypename<Room_Room>, Record<string, never>, Scalars["Boolean"] | string>;
+        isStreamingProgramRoom?: GraphCacheResolver<
+            WithTypename<Room_Room>,
+            Record<string, never>,
+            Scalars["Boolean"] | string
+        >;
         item?: GraphCacheResolver<WithTypename<Room_Room>, Record<string, never>, WithTypename<Content_Item> | string>;
         itemId?: GraphCacheResolver<WithTypename<Room_Room>, Record<string, never>, Scalars["uuid"] | string>;
         livestreamDuration?: GraphCacheResolver<

@@ -1,0 +1,45 @@
+{
+    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.json", "public/js/ServiceWorker.ts"],
+    "exclude": ["./build"],
+    "compilerOptions": {
+        /* Basic Options */
+        "target": "ES2020",
+        "module": "ESNext",
+        "lib": ["DOM", "ES2019"],
+        "jsx": "preserve",
+        "baseUrl": "./",
+        "noEmit": true,
+        "typeRoots": ["types", "node_modules/@types"],
+
+        /* Strict Type-Checking Options */
+        "strict": true,
+
+        /* Additional Checks */
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "importsNotUsedAsValues": "error",
+
+        /* Module Resolution Options */
+        "moduleResolution": "node",
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "allowSyntheticDefaultImports": true,
+
+        /* Source Map Options */
+
+        /* Experimental Options */
+        "experimentalDecorators": true,
+
+        /* Advanced Options */
+        "skipLibCheck": true,
+        "emitDecoratorMetadata": true,
+        "composite": true
+    },
+    "references": [
+        { "path": "../../packages/shared/shared-types/tsconfig.esm.json" },
+        { "path": "../../packages/node/component-clients/tsconfig.esm.json" }
+    ]
+}

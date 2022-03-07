@@ -1,0 +1,30 @@
+{
+    "name": "@midspace/test-e2e-usage-and-quotas",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "test": "vitest run",
+        "test:watch": "vitest watch",
+        "test:dev": "vitest dev",
+        "test:related": "vitest related",
+        "test:coverage": "vitest run --coverage",
+        "codegen": "graphql-codegen --config codegen.js"
+    },
+    "author": "Clowdr CIC",
+    "license": "AGPL-3.0-or-later",
+    "devDependencies": {
+        "@graphql-codegen/cli": "^2.5.0",
+        "@graphql-codegen/typescript": "^2.4.3",
+        "@graphql-codegen/typescript-operations": "^2.2.4",
+        "@graphql-codegen/typescript-urql": "^3.5.1",
+        "@midspace/component-clients": "workspace:*",
+        "@midspace/graphql": "workspace:*",
+        "dotenv": "^16.0.0",
+        "graphql": "^15.7.2",
+        "graphql-tag": "^2.12.6",
+        "react": "^17.0.2",
+        "vite": "^2.8.4",
+        "vite-plugin-environment": "^1.1.0",
+        "vitest": "^0.6.0"
+    }
+}

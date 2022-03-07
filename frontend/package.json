@@ -13,7 +13,9 @@
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
         "codegen": "graphql-codegen --config codegen.js",
         "storybook": "start-storybook -p 6006",
-        "build-storybook": "build-storybook"
+        "build-storybook": "build-storybook",
+        "test": "vitest",
+        "coverage": "vitest run --coverage"
     },
     "dependencies": {
         "@ahanapediatrics/ahana-fp": "^2.6.0",
@@ -175,6 +177,7 @@
         "@storybook/manager-webpack5": "^6.4.19",
         "babel-loader": "^8.2.3",
         "dotenv": "^16.0.0",
+        "vitest": "^0.6.0",
         "webpack": "^5.69.0"
     },
     "engines": {

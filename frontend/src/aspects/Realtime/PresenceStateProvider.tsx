@@ -23,10 +23,11 @@ export function PresenceStateProvider({
     }, []);
 
     const location = useLocation();
+    const { conferenceSlug } = useAuthParameters();
     useEffect(() => {
         // console.log("Page changed", location.pathname);
-        State.pageChanged(location.pathname);
-    }, [location.pathname]);
+        State.pageChanged(conferenceSlug, location.pathname);
+    }, [conferenceSlug, location.pathname]);
 
     const { conferenceId } = useAuthParameters();
     useEffect(() => {

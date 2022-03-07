@@ -105,6 +105,10 @@ export const redisClientP = {
         promisify((key: string, start: number, stop: number, cb?: Callback<string[]>) =>
             redisClient.zrange(key, start, stop, cb)
         ),
+    zrangebyscore: (redisClient: RedisClient) =>
+        promisify((key: string, start: number, stop: number, cb?: Callback<string[]>) =>
+            redisClient.zrangebyscore(key, start, stop, cb)
+        ),
     zremrangebyscore: (redisClient: RedisClient) =>
         promisify((key: string, start: number, stop: number, cb?: Callback<number>) =>
             redisClient.zremrangebyscore(key, start, stop, cb)

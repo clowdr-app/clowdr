@@ -6,19 +6,40 @@ import { realtimeService } from "./RealtimeService";
 export class PresenceState {
     private offSocketAvailable: (() => void) | undefined;
     private offSocketUnavailable: (() => void) | undefined;
+    private emitPresenceIntervalId: number | undefined;
     private roomParticipantsIntervalId: number | undefined;
     public conferenceId: string | undefined;
     setup(): void {
         this.offSocketAvailable?.();
         this.offSocketUnavailable?.();
 
+        this.offSocketUnavailable =
+            realtimeService.onSocketUnavailable("PresenceState.setup", (socket) => {
+                if (this.roomParticipantsIntervalId) {
+                    const id = this.roomParticipantsIntervalId;
+                    this.roomParticipantsIntervalId = undefined;
+                    clearInterval(id);
+                }
+
+                if (this.emitPresenceIntervalId) {
+                    const id = this.emitPresenceIntervalId;
+                    this.emitPresenceIntervalId = undefined;
+                    clearInterval(id);
+                }
+
+                socket.off("entered");
+                socket.off("left");
+                socket.off("presences");
+                socket.off("room-participants");
+            }) ?? undefined;
         this.offSocketAvailable = realtimeService.onSocketAvailable("PresenceState.setup", (socket) => {
             socket.on("entered", this.onEntered.bind(this));
             socket.on("left", this.onLeft.bind(this));
             socket.on("presences", this.onListPresent.bind(this));
             socket.on("room-participants", this.onListRoomParticipants.bind(this));
 
-            this.pageChanged(window.location.pathname);
+            realtimeService?.socket?.emit("pagePresence", this.currentPath);
+            realtimeService.socket?.emit("conferencePresence", this.currentSlug);
 
             this.roomParticipantsIntervalId = setInterval(
                 (() => {
@@ -29,20 +50,19 @@ export class PresenceState {
                 }) as TimerHandler,
                 60000
             );
-        });
-        this.offSocketUnavailable =
-            realtimeService.onSocketUnavailable("PresenceState.setup", (socket) => {
-                if (this.roomParticipantsIntervalId) {
-                    const id = this.roomParticipantsIntervalId;
-                    this.roomParticipantsIntervalId = undefined;
-                    clearInterval(id);
-                }
 
-                socket.off("entered");
-                socket.off("left");
-                socket.off("presences");
-                socket.off("room-participants");
-            }) ?? undefined;
+            this.emitPresenceIntervalId = setInterval(
+                (() => {
+                    if (this.currentPath) {
+                        realtimeService.socket?.emit("pagePresence", this.currentPath);
+                    }
+                    if (this.currentSlug) {
+                        realtimeService.socket?.emit("conferencePresence", this.currentSlug);
+                    }
+                }) as TimerHandler,
+                60000
+            );
+        });
     }
 
     teardown(): void {
@@ -117,14 +137,17 @@ export class PresenceState {
         }
     }
 
-    private oldPath: string | undefined;
-    public pageChanged(newPath: string): void {
-        // TODO: Similar mechanism for just the conference slug
+    private currentSlug: string | null = null;
+    private currentPath: string | null = null;
+    public pageChanged(newSlug: string | null, newPath: string): void {
+        if (this.currentPath !== newPath) {
+            realtimeService?.socket?.emit("pageUnpresence", this.currentPath);
+        }
 
-        // console.log("Presence:pageChanged", newPath);
-        realtimeService.socket?.emit("leavePage", this.oldPath);
-        realtimeService.socket?.emit("enterPage", newPath);
-        this.oldPath = newPath;
+        this.currentSlug = newSlug;
+        this.currentPath = newPath;
+
+        realtimeService?.socket?.emit("pagePresence", this.currentPath);
     }
 
     private observersMutex = new Mutex();

@@ -33,10 +33,15 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
         const unobserve = presence.observePage(location.pathname, mConference?.slug, (ids) => {
             setTotalUserIds(ids.size);
 
-            if (!updateTimeoutId.current) {
+            const limit = 70;
+            if (ids.size <= limit && ids.size != totalUserIdsRef.current) {
+                setUserIds([...ids].map((x) => ({ user: x })));
+                totalUserIdsRef.current = ids.size;
+                updateTimeoutId.current = undefined;
+            } else if (!updateTimeoutId.current) {
                 const update = () => {
                     const reducedIds: string[] = [...ids];
-                    while (reducedIds.length > 70) {
+                    while (reducedIds.length > limit) {
                         const index = Math.round(Math.random() * (reducedIds.length - 1));
                         reducedIds.splice(index, 1);
                     }
@@ -57,6 +62,7 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
 
             if (updateTimeoutId.current) {
                 clearTimeout(updateTimeoutId.current);
+                updateTimeoutId.current = undefined;
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps

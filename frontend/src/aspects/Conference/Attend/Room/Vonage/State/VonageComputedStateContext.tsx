@@ -6,6 +6,7 @@ import { theme } from "../../../../../Chakra/ChakraCustomProvider";
 import { useNavigationState } from "../../../../../Menu/NavigationState";
 import { useEvent } from "../../../../../Utils/useEvent";
 import { useRecordingState } from "../Recording/useRecordingState";
+import { useTranscript } from "../Transcript/useTranscript";
 import type { TranscriptData, VonageGlobalState } from "./VonageGlobalState";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
@@ -169,7 +170,7 @@ function useValue({
     }, [getAccessToken, vonage]);
 
     const recordingState = useRecordingState(connected, vonageSessionId);
-    // const transcript = useTranscript();
+    const transcript = useTranscript();
 
     const onSessionConnected = useCallback(
         (isConnected: boolean) => {
@@ -245,7 +246,7 @@ function useValue({
     useEvent(vonage, "recording-stopped", recordingState.onRecordingStopped);
     useEvent(vonage, "recording-id-received", onRecordingIdReceivedInternal);
     useEvent(vonage, "layout-signal-received", onLayoutReceived);
-    // useEvent(vonage, "transcript-data-received", transcript.onTranscript);
+    useEvent(vonage, "transcript-data-received", transcript.onTranscript);
 
     const previousVonageSessionId = useRef<string>("");
     useEffect(() => {
@@ -301,8 +302,6 @@ function useValue({
         };
     }, [vonage.state.type]);
 
-    const transcriptRefShim = useRef<((data: TranscriptData) => void) | undefined>(undefined);
-
     return useMemo(
         () => ({
             vonage,
@@ -316,8 +315,7 @@ function useValue({
             leaveRoom,
             cancelJoin,
             isRecordingActive: recordingState.isRecordingActive,
-            // onTranscriptRef: transcript.onTranscriptRef,
-            onTranscriptRef: transcriptRefShim,
+            onTranscriptRef: transcript.onTranscriptRef,
             recentlyConnected,
             recentlyToggledRecording,
             setRecentlyToggledRecording,
@@ -335,6 +333,7 @@ function useValue({
             leaveRoom,
             cancelJoin,
             recordingState.isRecordingActive,
+            transcript.onTranscriptRef,
             recentlyConnected,
             recentlyToggledRecording,
             layoutData,

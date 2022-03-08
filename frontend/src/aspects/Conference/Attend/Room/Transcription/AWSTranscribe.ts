@@ -183,7 +183,7 @@ export function useAWSTranscription(
                             isClosable: true,
                             title: "Error initializing closed-captioning",
                             description:
-                                "Your browser does not support web audio contexts. Please use the latest version of Chrome or FireFox to enable generating closed-captions for your microphone.",
+                                "Your browser does not support web audio contexts. Please use the latest version of Chrome or Firefox to enable generating closed-captions for your microphone.",
                         });
                     }
                 }

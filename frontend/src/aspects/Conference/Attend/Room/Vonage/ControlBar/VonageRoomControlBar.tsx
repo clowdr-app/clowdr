@@ -400,7 +400,7 @@ export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: 
         "RoomControlBar.backgroundColor-dark"
     );
 
-    const [subtitlesVisible, _setSubtitlesVisible] = useState<boolean>(false);
+    const [subtitlesVisible, setSubtitlesVisible] = useState<boolean>(false);
 
     const layout = useContext(VonageLayoutContext);
     const toast = useToast();
@@ -480,7 +480,7 @@ export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: 
                         onClick={{ active: stopScreenShare, inactive: startScreenShare }}
                         isEnabled={!joining}
                     />
-                    {/* <ControlBarButton
+                    <ControlBarButton
                         label={{ active: "Hide subtitles", inactive: "Show subtitles" }}
                         icon={{
                             active: { style: "s", icon: "closed-captioning" },
@@ -490,7 +490,7 @@ export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: 
                         isActive={subtitlesVisible}
                         onClick={() => setSubtitlesVisible((old) => !old)}
                         isEnabled={!joining}
-                    /> */}
+                    />
                 </ControlBarButtonGroup>
                 <WrapItem flex="1 1 auto" />
                 <ControlBarButtonGroup

@@ -5,7 +5,7 @@ import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
-import { handleGeneratePresignedTranscribeWebsocketURL } from "../handlers/transcibe";
+import { handleGeneratePresignedTranscribeWebsocketURL } from "../handlers/transcribe";
 
 export const router = express.Router();
 

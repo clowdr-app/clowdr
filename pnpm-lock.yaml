@@ -1653,6 +1653,7 @@ importers:
       '@graphql-codegen/typescript-urql': ^3.5.1
       '@midspace/component-clients': workspace:*
       '@midspace/graphql': workspace:*
+      '@types/node': ^17.0.16
       dotenv: ^16.0.0
       graphql: ^15.7.2
       graphql-tag: ^2.12.6
@@ -1661,12 +1662,13 @@ importers:
       vite-plugin-environment: ^1.1.0
       vitest: ^0.6.0
     devDependencies:
-      '@graphql-codegen/cli': 2.5.0_graphql@15.7.2+typescript@4.5.5
+      '@graphql-codegen/cli': 2.5.0_ba40b6883f983a50f8fb9e87ee28657f
       '@graphql-codegen/typescript': 2.4.3_graphql@15.7.2
       '@graphql-codegen/typescript-operations': 2.2.4_graphql@15.7.2
       '@graphql-codegen/typescript-urql': 3.5.1_a200a8b101ce12e4e050343b0b6fa1a4
       '@midspace/component-clients': link:../../packages/node/component-clients
       '@midspace/graphql': link:../../packages/shared/graphql
+      '@types/node': 17.0.16
       dotenv: 16.0.0
       graphql: 15.7.2
       graphql-tag: 2.12.6_graphql@15.7.2

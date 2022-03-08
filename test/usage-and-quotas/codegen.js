@@ -6,7 +6,14 @@ module.exports = {
     hooks: {
         afterAllFileWrite: "prettier --write",
     },
-    documents: ["./src/*.tsx", "./src/*.ts", "./test/**/*.tsx", "./test/**/*.ts"],
+    documents: [
+        "./src/*.tsx",
+        "./src/*.ts",
+        "./src/lib/**/*.tsx",
+        "./src/lib/**/*.ts",
+        "./test/**/*.tsx",
+        "./test/**/*.ts",
+    ],
     overwrite: true,
     generates: {
         "./src/generated/graphql.ts": {

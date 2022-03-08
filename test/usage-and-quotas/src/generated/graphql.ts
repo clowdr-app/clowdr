@@ -39300,6 +39300,753 @@ export enum Video_YouTubeUpload_Update_Column {
     VideoTitle = "videoTitle",
 }
 
+export type CleanUpTestConferenceMutationVariables = Exact<{
+    slug: Scalars["String"];
+}>;
+
+export type CleanUpTestConferenceMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_room_Room?: {
+        readonly __typename?: "room_Room_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly delete_chat_Chat?: {
+        readonly __typename?: "chat_Chat_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly delete_conference_Usage?: {
+        readonly __typename?: "conference_Usage_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly delete_conference_Quota?: {
+        readonly __typename?: "conference_Quota_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly delete_conference_Conference?: {
+        readonly __typename?: "conference_Conference_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
+export type CleanUpTestConferenceEventsMutationVariables = Exact<{
+    slug: Scalars["String"];
+}>;
+
+export type CleanUpTestConferenceEventsMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_schedule_Event?: {
+        readonly __typename?: "schedule_Event_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly delete_content_Item?: {
+        readonly __typename?: "content_Item_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
+export type TestConferenceFragment = {
+    readonly __typename?: "conference_Conference";
+    readonly id: any;
+    readonly quota?: { readonly __typename?: "conference_Quota"; readonly id: any } | null;
+    readonly usage?: { readonly __typename?: "conference_Usage"; readonly id: any } | null;
+};
+
+export type CreateConferenceMutationVariables = Exact<{
+    object: Conference_Conference_Insert_Input;
+}>;
+
+export type CreateConferenceMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_conference_Conference_one?: {
+        readonly __typename?: "conference_Conference";
+        readonly id: any;
+        readonly quota?: { readonly __typename?: "conference_Quota"; readonly id: any } | null;
+        readonly usage?: { readonly __typename?: "conference_Usage"; readonly id: any } | null;
+    } | null;
+};
+
+export type EventFragment = {
+    readonly __typename?: "schedule_Event";
+    readonly id: any;
+    readonly createdAt: any;
+    readonly updatedAt: any;
+    readonly conferenceId: any;
+    readonly roomId: any;
+    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly itemId?: any | null;
+    readonly name: string;
+    readonly startTime: any;
+    readonly durationSeconds: number;
+    readonly endTime?: any | null;
+    readonly exhibitionId?: any | null;
+    readonly shufflePeriodId?: any | null;
+    readonly timingsUpdatedAt: any;
+    readonly enableRecording: boolean;
+    readonly streamTextEventId?: string | null;
+    readonly subconferenceId?: any | null;
+    readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+    readonly automaticParticipationSurvey: boolean;
+};
+
+export type GetEventQueryVariables = Exact<{
+    eventId: Scalars["uuid"];
+}>;
+
+export type GetEventQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event_by_pk?: {
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly roomId: any;
+        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly itemId?: any | null;
+        readonly name: string;
+        readonly startTime: any;
+        readonly durationSeconds: number;
+        readonly endTime?: any | null;
+        readonly exhibitionId?: any | null;
+        readonly shufflePeriodId?: any | null;
+        readonly timingsUpdatedAt: any;
+        readonly enableRecording: boolean;
+        readonly streamTextEventId?: string | null;
+        readonly subconferenceId?: any | null;
+        readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly automaticParticipationSurvey: boolean;
+    } | null;
+};
+
+export type InsertEventMutationVariables = Exact<{
+    object: Schedule_Event_Insert_Input;
+}>;
+
+export type InsertEventMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_schedule_Event_one?: {
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly roomId: any;
+        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly itemId?: any | null;
+        readonly name: string;
+        readonly startTime: any;
+        readonly durationSeconds: number;
+        readonly endTime?: any | null;
+        readonly exhibitionId?: any | null;
+        readonly shufflePeriodId?: any | null;
+        readonly timingsUpdatedAt: any;
+        readonly enableRecording: boolean;
+        readonly streamTextEventId?: string | null;
+        readonly subconferenceId?: any | null;
+        readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly automaticParticipationSurvey: boolean;
+    } | null;
+};
+
+export type UpdateEventMutationVariables = Exact<{
+    eventId: Scalars["uuid"];
+    set: Schedule_Event_Set_Input;
+}>;
+
+export type UpdateEventMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_schedule_Event_by_pk?: {
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly roomId: any;
+        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly itemId?: any | null;
+        readonly name: string;
+        readonly startTime: any;
+        readonly durationSeconds: number;
+        readonly endTime?: any | null;
+        readonly exhibitionId?: any | null;
+        readonly shufflePeriodId?: any | null;
+        readonly timingsUpdatedAt: any;
+        readonly enableRecording: boolean;
+        readonly streamTextEventId?: string | null;
+        readonly subconferenceId?: any | null;
+        readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly automaticParticipationSurvey: boolean;
+    } | null;
+};
+
+export type DeleteEventMutationVariables = Exact<{
+    eventId: Scalars["uuid"];
+}>;
+
+export type DeleteEventMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_schedule_Event_by_pk?: { readonly __typename?: "schedule_Event"; readonly id: any } | null;
+};
+
+export type ItemFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly createdAt: any;
+    readonly updatedAt: any;
+    readonly conferenceId: any;
+    readonly typeName: Content_ItemType_Enum;
+    readonly title: string;
+    readonly shortTitle?: string | null;
+    readonly chatId?: any | null;
+    readonly subconferenceId?: any | null;
+    readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+};
+
+export type GetItemQueryVariables = Exact<{
+    itemId: Scalars["uuid"];
+}>;
+
+export type GetItemQuery = {
+    readonly __typename?: "query_root";
+    readonly content_Item_by_pk?: {
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly typeName: Content_ItemType_Enum;
+        readonly title: string;
+        readonly shortTitle?: string | null;
+        readonly chatId?: any | null;
+        readonly subconferenceId?: any | null;
+        readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+    } | null;
+};
+
+export type InsertItemMutationVariables = Exact<{
+    object: Content_Item_Insert_Input;
+}>;
+
+export type InsertItemMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_content_Item_one?: {
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly typeName: Content_ItemType_Enum;
+        readonly title: string;
+        readonly shortTitle?: string | null;
+        readonly chatId?: any | null;
+        readonly subconferenceId?: any | null;
+        readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+    } | null;
+};
+
+export type UpdateItemMutationVariables = Exact<{
+    itemId: Scalars["uuid"];
+    set: Content_Item_Set_Input;
+}>;
+
+export type UpdateItemMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_content_Item_by_pk?: {
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly typeName: Content_ItemType_Enum;
+        readonly title: string;
+        readonly shortTitle?: string | null;
+        readonly chatId?: any | null;
+        readonly subconferenceId?: any | null;
+        readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+    } | null;
+};
+
+export type DeleteItemMutationVariables = Exact<{
+    itemId: Scalars["uuid"];
+}>;
+
+export type DeleteItemMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_content_Item_by_pk?: { readonly __typename?: "content_Item"; readonly id: any } | null;
+};
+
+export type QuotaFragment = {
+    readonly __typename?: "conference_Quota";
+    readonly id: any;
+    readonly created_at: any;
+    readonly updated_at: any;
+    readonly conferenceId: any;
+    readonly maxSubconferences: number;
+    readonly maxStreamingEventTotalMinutes: number;
+    readonly maxStreamingEventIndividualMinutes: number;
+    readonly maxVideoChatEventTotalMinutes: number;
+    readonly maxVideoChatEventIndividualMinutes: number;
+    readonly maxRegistrants: number;
+    readonly maxVideoChatNonEventTotalMinutesConsumed: number;
+    readonly maxSupportMeetingMinutes: number;
+    readonly maxStreamingProgramRooms: number;
+    readonly maxNonStreamingProgramRooms: number;
+    readonly maxPublicSocialRooms: number;
+    readonly maxContentItems: number;
+    readonly maxMediaElementsPerContentItem: number;
+    readonly maxNonMediaElementsPerContentItem: number;
+    readonly maxMediaElementsPerSponsor: number;
+    readonly maxNonMediaElementsPerSponsor: number;
+    readonly areStreamingEventsAllowed: boolean;
+    readonly areVideoChatEventsAllowed: boolean;
+};
+
+export type GetQuotaQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type GetQuotaQuery = {
+    readonly __typename?: "query_root";
+    readonly conference_Quota: ReadonlyArray<{
+        readonly __typename?: "conference_Quota";
+        readonly id: any;
+        readonly created_at: any;
+        readonly updated_at: any;
+        readonly conferenceId: any;
+        readonly maxSubconferences: number;
+        readonly maxStreamingEventTotalMinutes: number;
+        readonly maxStreamingEventIndividualMinutes: number;
+        readonly maxVideoChatEventTotalMinutes: number;
+        readonly maxVideoChatEventIndividualMinutes: number;
+        readonly maxRegistrants: number;
+        readonly maxVideoChatNonEventTotalMinutesConsumed: number;
+        readonly maxSupportMeetingMinutes: number;
+        readonly maxStreamingProgramRooms: number;
+        readonly maxNonStreamingProgramRooms: number;
+        readonly maxPublicSocialRooms: number;
+        readonly maxContentItems: number;
+        readonly maxMediaElementsPerContentItem: number;
+        readonly maxNonMediaElementsPerContentItem: number;
+        readonly maxMediaElementsPerSponsor: number;
+        readonly maxNonMediaElementsPerSponsor: number;
+        readonly areStreamingEventsAllowed: boolean;
+        readonly areVideoChatEventsAllowed: boolean;
+    }>;
+};
+
+export type UpdateQuotaMutationVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    set: Conference_Quota_Set_Input;
+}>;
+
+export type UpdateQuotaMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_conference_Quota?: {
+        readonly __typename?: "conference_Quota_mutation_response";
+        readonly affected_rows: number;
+        readonly returning: ReadonlyArray<{
+            readonly __typename?: "conference_Quota";
+            readonly id: any;
+            readonly created_at: any;
+            readonly updated_at: any;
+            readonly conferenceId: any;
+            readonly maxSubconferences: number;
+            readonly maxStreamingEventTotalMinutes: number;
+            readonly maxStreamingEventIndividualMinutes: number;
+            readonly maxVideoChatEventTotalMinutes: number;
+            readonly maxVideoChatEventIndividualMinutes: number;
+            readonly maxRegistrants: number;
+            readonly maxVideoChatNonEventTotalMinutesConsumed: number;
+            readonly maxSupportMeetingMinutes: number;
+            readonly maxStreamingProgramRooms: number;
+            readonly maxNonStreamingProgramRooms: number;
+            readonly maxPublicSocialRooms: number;
+            readonly maxContentItems: number;
+            readonly maxMediaElementsPerContentItem: number;
+            readonly maxNonMediaElementsPerContentItem: number;
+            readonly maxMediaElementsPerSponsor: number;
+            readonly maxNonMediaElementsPerSponsor: number;
+            readonly areStreamingEventsAllowed: boolean;
+            readonly areVideoChatEventsAllowed: boolean;
+        }>;
+    } | null;
+};
+
+export type RegistrantFragment = {
+    readonly __typename?: "registrant_Registrant";
+    readonly id: any;
+    readonly createdAt: any;
+    readonly updatedAt: any;
+    readonly conferenceId: any;
+    readonly displayName: string;
+    readonly userId?: string | null;
+    readonly conferenceRole: Registrant_RegistrantRole_Enum;
+};
+
+export type GetRegistrantQueryVariables = Exact<{
+    registrantId: Scalars["uuid"];
+}>;
+
+export type GetRegistrantQuery = {
+    readonly __typename?: "query_root";
+    readonly registrant_Registrant_by_pk?: {
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly displayName: string;
+        readonly userId?: string | null;
+        readonly conferenceRole: Registrant_RegistrantRole_Enum;
+    } | null;
+};
+
+export type InsertRegistrantMutationVariables = Exact<{
+    object: Registrant_Registrant_Insert_Input;
+}>;
+
+export type InsertRegistrantMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_registrant_Registrant_one?: {
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly displayName: string;
+        readonly userId?: string | null;
+        readonly conferenceRole: Registrant_RegistrantRole_Enum;
+    } | null;
+};
+
+export type UpdateRegistrantMutationVariables = Exact<{
+    registrantId: Scalars["uuid"];
+    set: Registrant_Registrant_Set_Input;
+}>;
+
+export type UpdateRegistrantMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_registrant_Registrant_by_pk?: {
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly displayName: string;
+        readonly userId?: string | null;
+        readonly conferenceRole: Registrant_RegistrantRole_Enum;
+    } | null;
+};
+
+export type DeleteRegistrantMutationVariables = Exact<{
+    registrantId: Scalars["uuid"];
+}>;
+
+export type DeleteRegistrantMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_registrant_Registrant_by_pk?: {
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+    } | null;
+};
+
+export type RemainingQuotaFragment = {
+    readonly __typename?: "conference_RemainingQuota";
+    readonly conferenceId?: any | null;
+    readonly remainingSubconferences?: any | null;
+    readonly remainingStreamingEventTotalMinutes?: number | null;
+    readonly remainingVideoChatEventTotalMinutes?: number | null;
+    readonly remainingRegistrants?: any | null;
+    readonly remainingVideoChatNonEventTotalMinutes?: number | null;
+    readonly remainingSupportMeetingMinutes?: number | null;
+    readonly remainingStreamingProgramRooms?: any | null;
+    readonly remainingNonStreamingProgramRooms?: any | null;
+    readonly remainingPublicSocialRooms?: any | null;
+    readonly remainingContentItems?: any | null;
+};
+
+export type GetRemainingQuotaQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type GetRemainingQuotaQuery = {
+    readonly __typename?: "query_root";
+    readonly conference_RemainingQuota: ReadonlyArray<{
+        readonly __typename?: "conference_RemainingQuota";
+        readonly conferenceId?: any | null;
+        readonly remainingSubconferences?: any | null;
+        readonly remainingStreamingEventTotalMinutes?: number | null;
+        readonly remainingVideoChatEventTotalMinutes?: number | null;
+        readonly remainingRegistrants?: any | null;
+        readonly remainingVideoChatNonEventTotalMinutes?: number | null;
+        readonly remainingSupportMeetingMinutes?: number | null;
+        readonly remainingStreamingProgramRooms?: any | null;
+        readonly remainingNonStreamingProgramRooms?: any | null;
+        readonly remainingPublicSocialRooms?: any | null;
+        readonly remainingContentItems?: any | null;
+    }>;
+};
+
+export type RoomFragment = {
+    readonly __typename?: "room_Room";
+    readonly id: any;
+    readonly created_at: any;
+    readonly updated_at: any;
+    readonly conferenceId: any;
+    readonly name: string;
+    readonly currentModeName: Room_Mode_Enum;
+    readonly capacity?: number | null;
+    readonly publicVonageSessionId?: string | null;
+    readonly priority: number;
+    readonly managementModeName: Room_ManagementMode_Enum;
+    readonly chatId?: any | null;
+    readonly itemId?: any | null;
+    readonly backendName?: Room_Backend_Enum | null;
+    readonly colour: string;
+    readonly subconferenceId?: any | null;
+};
+
+export type GetRoomQueryVariables = Exact<{
+    roomId: Scalars["uuid"];
+}>;
+
+export type GetRoomQuery = {
+    readonly __typename?: "query_root";
+    readonly room_Room_by_pk?: {
+        readonly __typename?: "room_Room";
+        readonly id: any;
+        readonly created_at: any;
+        readonly updated_at: any;
+        readonly conferenceId: any;
+        readonly name: string;
+        readonly currentModeName: Room_Mode_Enum;
+        readonly capacity?: number | null;
+        readonly publicVonageSessionId?: string | null;
+        readonly priority: number;
+        readonly managementModeName: Room_ManagementMode_Enum;
+        readonly chatId?: any | null;
+        readonly itemId?: any | null;
+        readonly backendName?: Room_Backend_Enum | null;
+        readonly colour: string;
+        readonly subconferenceId?: any | null;
+    } | null;
+};
+
+export type InsertRoomMutationVariables = Exact<{
+    object: Room_Room_Insert_Input;
+}>;
+
+export type InsertRoomMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_room_Room_one?: {
+        readonly __typename?: "room_Room";
+        readonly id: any;
+        readonly created_at: any;
+        readonly updated_at: any;
+        readonly conferenceId: any;
+        readonly name: string;
+        readonly currentModeName: Room_Mode_Enum;
+        readonly capacity?: number | null;
+        readonly publicVonageSessionId?: string | null;
+        readonly priority: number;
+        readonly managementModeName: Room_ManagementMode_Enum;
+        readonly chatId?: any | null;
+        readonly itemId?: any | null;
+        readonly backendName?: Room_Backend_Enum | null;
+        readonly colour: string;
+        readonly subconferenceId?: any | null;
+    } | null;
+};
+
+export type UpdateRoomMutationVariables = Exact<{
+    roomId: Scalars["uuid"];
+    set: Room_Room_Set_Input;
+}>;
+
+export type UpdateRoomMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_room_Room_by_pk?: {
+        readonly __typename?: "room_Room";
+        readonly id: any;
+        readonly created_at: any;
+        readonly updated_at: any;
+        readonly conferenceId: any;
+        readonly name: string;
+        readonly currentModeName: Room_Mode_Enum;
+        readonly capacity?: number | null;
+        readonly publicVonageSessionId?: string | null;
+        readonly priority: number;
+        readonly managementModeName: Room_ManagementMode_Enum;
+        readonly chatId?: any | null;
+        readonly itemId?: any | null;
+        readonly backendName?: Room_Backend_Enum | null;
+        readonly colour: string;
+        readonly subconferenceId?: any | null;
+    } | null;
+};
+
+export type DeleteRoomMutationVariables = Exact<{
+    roomId: Scalars["uuid"];
+}>;
+
+export type DeleteRoomMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_room_Room_by_pk?: { readonly __typename?: "room_Room"; readonly id: any } | null;
+};
+
+export type SubconferenceFragment = {
+    readonly __typename?: "conference_Subconference";
+    readonly id: any;
+    readonly created_at: any;
+    readonly updated_at: any;
+    readonly conferenceId: any;
+    readonly name: string;
+    readonly shortName: string;
+    readonly slug: string;
+    readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+    readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+};
+
+export type GetSubconferenceQueryVariables = Exact<{
+    subconferenceId: Scalars["uuid"];
+}>;
+
+export type GetSubconferenceQuery = {
+    readonly __typename?: "query_root";
+    readonly conference_Subconference_by_pk?: {
+        readonly __typename?: "conference_Subconference";
+        readonly id: any;
+        readonly created_at: any;
+        readonly updated_at: any;
+        readonly conferenceId: any;
+        readonly name: string;
+        readonly shortName: string;
+        readonly slug: string;
+        readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+    } | null;
+};
+
+export type InsertSubconferenceMutationVariables = Exact<{
+    object: Conference_Subconference_Insert_Input;
+}>;
+
+export type InsertSubconferenceMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_conference_Subconference_one?: {
+        readonly __typename?: "conference_Subconference";
+        readonly id: any;
+        readonly created_at: any;
+        readonly updated_at: any;
+        readonly conferenceId: any;
+        readonly name: string;
+        readonly shortName: string;
+        readonly slug: string;
+        readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+    } | null;
+};
+
+export type UpdateSubconferenceMutationVariables = Exact<{
+    subconferenceId: Scalars["uuid"];
+    set: Conference_Subconference_Set_Input;
+}>;
+
+export type UpdateSubconferenceMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_conference_Subconference_by_pk?: {
+        readonly __typename?: "conference_Subconference";
+        readonly id: any;
+        readonly created_at: any;
+        readonly updated_at: any;
+        readonly conferenceId: any;
+        readonly name: string;
+        readonly shortName: string;
+        readonly slug: string;
+        readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+    } | null;
+};
+
+export type DeleteSubconferenceMutationVariables = Exact<{
+    subconferenceId: Scalars["uuid"];
+}>;
+
+export type DeleteSubconferenceMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_conference_Subconference_by_pk?: {
+        readonly __typename?: "conference_Subconference";
+        readonly id: any;
+    } | null;
+};
+
+export type UsageFragment = {
+    readonly __typename?: "conference_Usage";
+    readonly id: any;
+    readonly created_at: any;
+    readonly updated_at: any;
+    readonly conferenceId: any;
+    readonly consumedStreamingEventTotalMinutes: number;
+    readonly consumedVideoChatEventTotalMinutes: number;
+    readonly consumedVideoChatNonEventTotalMinutes: number;
+    readonly consumedSupportMeetingMinutes: number;
+    readonly lastUpdatedConsumedStreamingEventTotalMinutes: any;
+    readonly lastUpdatedConsumedVideoChatEventTotalMinutes: any;
+    readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes: any;
+    readonly lastUpdatedConsumedSupportMeetingMinutes: any;
+};
+
+export type GetUsageQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type GetUsageQuery = {
+    readonly __typename?: "query_root";
+    readonly conference_Usage: ReadonlyArray<{
+        readonly __typename?: "conference_Usage";
+        readonly id: any;
+        readonly created_at: any;
+        readonly updated_at: any;
+        readonly conferenceId: any;
+        readonly consumedStreamingEventTotalMinutes: number;
+        readonly consumedVideoChatEventTotalMinutes: number;
+        readonly consumedVideoChatNonEventTotalMinutes: number;
+        readonly consumedSupportMeetingMinutes: number;
+        readonly lastUpdatedConsumedStreamingEventTotalMinutes: any;
+        readonly lastUpdatedConsumedVideoChatEventTotalMinutes: any;
+        readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes: any;
+        readonly lastUpdatedConsumedSupportMeetingMinutes: any;
+    }>;
+};
+
+export type UpdateUsageMutationVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    set: Conference_Usage_Set_Input;
+}>;
+
+export type UpdateUsageMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_conference_Usage?: {
+        readonly __typename?: "conference_Usage_mutation_response";
+        readonly affected_rows: number;
+        readonly returning: ReadonlyArray<{
+            readonly __typename?: "conference_Usage";
+            readonly id: any;
+            readonly created_at: any;
+            readonly updated_at: any;
+            readonly conferenceId: any;
+            readonly consumedStreamingEventTotalMinutes: number;
+            readonly consumedVideoChatEventTotalMinutes: number;
+            readonly consumedVideoChatNonEventTotalMinutes: number;
+            readonly consumedSupportMeetingMinutes: number;
+            readonly lastUpdatedConsumedStreamingEventTotalMinutes: any;
+            readonly lastUpdatedConsumedVideoChatEventTotalMinutes: any;
+            readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes: any;
+            readonly lastUpdatedConsumedSupportMeetingMinutes: any;
+        }>;
+    } | null;
+};
+
 export type BasicQueryVariables = Exact<{ [key: string]: never }>;
 
 export type BasicQuery = {
@@ -39307,6 +40054,514 @@ export type BasicQuery = {
     readonly User: ReadonlyArray<{ readonly __typename?: "User"; readonly id: string }>;
 };
 
+export const TestConferenceFragmentDoc = gql`
+    fragment TestConference on conference_Conference {
+        id
+        quota {
+            id
+        }
+        usage {
+            id
+        }
+    }
+`;
+export const EventFragmentDoc = gql`
+    fragment Event on schedule_Event {
+        id
+        createdAt
+        updatedAt
+        conferenceId
+        roomId
+        intendedRoomModeName
+        itemId
+        name
+        startTime
+        durationSeconds
+        endTime
+        exhibitionId
+        shufflePeriodId
+        timingsUpdatedAt
+        enableRecording
+        streamTextEventId
+        subconferenceId
+        visibilityLevel
+        automaticParticipationSurvey
+    }
+`;
+export const ItemFragmentDoc = gql`
+    fragment Item on content_Item {
+        id
+        createdAt
+        updatedAt
+        conferenceId
+        typeName
+        title
+        shortTitle
+        chatId
+        subconferenceId
+        visibilityLevel
+    }
+`;
+export const QuotaFragmentDoc = gql`
+    fragment Quota on conference_Quota {
+        id
+        created_at
+        updated_at
+        conferenceId
+        maxSubconferences
+        maxStreamingEventTotalMinutes
+        maxStreamingEventIndividualMinutes
+        maxVideoChatEventTotalMinutes
+        maxVideoChatEventIndividualMinutes
+        maxRegistrants
+        maxVideoChatNonEventTotalMinutesConsumed
+        maxSupportMeetingMinutes
+        maxStreamingProgramRooms
+        maxNonStreamingProgramRooms
+        maxPublicSocialRooms
+        maxContentItems
+        maxMediaElementsPerContentItem
+        maxNonMediaElementsPerContentItem
+        maxMediaElementsPerSponsor
+        maxNonMediaElementsPerSponsor
+        areStreamingEventsAllowed
+        areVideoChatEventsAllowed
+    }
+`;
+export const RegistrantFragmentDoc = gql`
+    fragment Registrant on registrant_Registrant {
+        id
+        createdAt
+        updatedAt
+        conferenceId
+        displayName
+        userId
+        conferenceRole
+    }
+`;
+export const RemainingQuotaFragmentDoc = gql`
+    fragment RemainingQuota on conference_RemainingQuota {
+        conferenceId
+        remainingSubconferences
+        remainingStreamingEventTotalMinutes
+        remainingVideoChatEventTotalMinutes
+        remainingRegistrants
+        remainingVideoChatNonEventTotalMinutes
+        remainingSupportMeetingMinutes
+        remainingStreamingProgramRooms
+        remainingNonStreamingProgramRooms
+        remainingPublicSocialRooms
+        remainingContentItems
+    }
+`;
+export const RoomFragmentDoc = gql`
+    fragment Room on room_Room {
+        id
+        created_at
+        updated_at
+        conferenceId
+        name
+        currentModeName
+        capacity
+        publicVonageSessionId
+        priority
+        managementModeName
+        chatId
+        itemId
+        backendName
+        colour
+        subconferenceId
+    }
+`;
+export const SubconferenceFragmentDoc = gql`
+    fragment Subconference on conference_Subconference {
+        id
+        created_at
+        updated_at
+        conferenceId
+        name
+        shortName
+        slug
+        conferenceVisibilityLevel
+        defaultProgramVisibilityLevel
+    }
+`;
+export const UsageFragmentDoc = gql`
+    fragment Usage on conference_Usage {
+        id
+        created_at
+        updated_at
+        conferenceId
+        consumedStreamingEventTotalMinutes
+        consumedVideoChatEventTotalMinutes
+        consumedVideoChatNonEventTotalMinutes
+        consumedSupportMeetingMinutes
+        lastUpdatedConsumedStreamingEventTotalMinutes
+        lastUpdatedConsumedVideoChatEventTotalMinutes
+        lastUpdatedConsumedVideoChatNonEventTotalMinutes
+        lastUpdatedConsumedSupportMeetingMinutes
+    }
+`;
+export const CleanUpTestConferenceDocument = gql`
+    mutation CleanUpTestConference($slug: String!) {
+        delete_room_Room(where: { conference: { slug: { _eq: $slug } } }) {
+            affected_rows
+        }
+        delete_chat_Chat(where: { conference: { slug: { _eq: $slug } } }) {
+            affected_rows
+        }
+        delete_conference_Usage(where: { conference: { slug: { _eq: $slug } } }) {
+            affected_rows
+        }
+        delete_conference_Quota(where: { conference: { slug: { _eq: $slug } } }) {
+            affected_rows
+        }
+        delete_conference_Conference(where: { slug: { _eq: $slug } }) {
+            affected_rows
+        }
+    }
+`;
+
+export function useCleanUpTestConferenceMutation() {
+    return Urql.useMutation<CleanUpTestConferenceMutation, CleanUpTestConferenceMutationVariables>(
+        CleanUpTestConferenceDocument
+    );
+}
+export const CleanUpTestConferenceEventsDocument = gql`
+    mutation CleanUpTestConferenceEvents($slug: String!) {
+        delete_schedule_Event(where: { conference: { slug: { _eq: $slug } } }) {
+            affected_rows
+        }
+        delete_content_Item(where: { conference: { slug: { _eq: $slug } } }) {
+            affected_rows
+        }
+    }
+`;
+
+export function useCleanUpTestConferenceEventsMutation() {
+    return Urql.useMutation<CleanUpTestConferenceEventsMutation, CleanUpTestConferenceEventsMutationVariables>(
+        CleanUpTestConferenceEventsDocument
+    );
+}
+export const CreateConferenceDocument = gql`
+    mutation CreateConference($object: conference_Conference_insert_input!) {
+        insert_conference_Conference_one(object: $object) {
+            ...TestConference
+        }
+    }
+    ${TestConferenceFragmentDoc}
+`;
+
+export function useCreateConferenceMutation() {
+    return Urql.useMutation<CreateConferenceMutation, CreateConferenceMutationVariables>(CreateConferenceDocument);
+}
+export const GetEventDocument = gql`
+    query GetEvent($eventId: uuid!) {
+        schedule_Event_by_pk(id: $eventId) {
+            ...Event
+        }
+    }
+    ${EventFragmentDoc}
+`;
+
+export function useGetEventQuery(options: Omit<Urql.UseQueryArgs<GetEventQueryVariables>, "query">) {
+    return Urql.useQuery<GetEventQuery>({ query: GetEventDocument, ...options });
+}
+export const InsertEventDocument = gql`
+    mutation InsertEvent($object: schedule_Event_insert_input!) {
+        insert_schedule_Event_one(object: $object) {
+            ...Event
+        }
+    }
+    ${EventFragmentDoc}
+`;
+
+export function useInsertEventMutation() {
+    return Urql.useMutation<InsertEventMutation, InsertEventMutationVariables>(InsertEventDocument);
+}
+export const UpdateEventDocument = gql`
+    mutation UpdateEvent($eventId: uuid!, $set: schedule_Event_set_input!) {
+        update_schedule_Event_by_pk(pk_columns: { id: $eventId }, _set: $set) {
+            ...Event
+        }
+    }
+    ${EventFragmentDoc}
+`;
+
+export function useUpdateEventMutation() {
+    return Urql.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument);
+}
+export const DeleteEventDocument = gql`
+    mutation DeleteEvent($eventId: uuid!) {
+        delete_schedule_Event_by_pk(id: $eventId) {
+            id
+        }
+    }
+`;
+
+export function useDeleteEventMutation() {
+    return Urql.useMutation<DeleteEventMutation, DeleteEventMutationVariables>(DeleteEventDocument);
+}
+export const GetItemDocument = gql`
+    query GetItem($itemId: uuid!) {
+        content_Item_by_pk(id: $itemId) {
+            ...Item
+        }
+    }
+    ${ItemFragmentDoc}
+`;
+
+export function useGetItemQuery(options: Omit<Urql.UseQueryArgs<GetItemQueryVariables>, "query">) {
+    return Urql.useQuery<GetItemQuery>({ query: GetItemDocument, ...options });
+}
+export const InsertItemDocument = gql`
+    mutation InsertItem($object: content_Item_insert_input!) {
+        insert_content_Item_one(object: $object) {
+            ...Item
+        }
+    }
+    ${ItemFragmentDoc}
+`;
+
+export function useInsertItemMutation() {
+    return Urql.useMutation<InsertItemMutation, InsertItemMutationVariables>(InsertItemDocument);
+}
+export const UpdateItemDocument = gql`
+    mutation UpdateItem($itemId: uuid!, $set: content_Item_set_input!) {
+        update_content_Item_by_pk(pk_columns: { id: $itemId }, _set: $set) {
+            ...Item
+        }
+    }
+    ${ItemFragmentDoc}
+`;
+
+export function useUpdateItemMutation() {
+    return Urql.useMutation<UpdateItemMutation, UpdateItemMutationVariables>(UpdateItemDocument);
+}
+export const DeleteItemDocument = gql`
+    mutation DeleteItem($itemId: uuid!) {
+        delete_content_Item_by_pk(id: $itemId) {
+            id
+        }
+    }
+`;
+
+export function useDeleteItemMutation() {
+    return Urql.useMutation<DeleteItemMutation, DeleteItemMutationVariables>(DeleteItemDocument);
+}
+export const GetQuotaDocument = gql`
+    query GetQuota($conferenceId: uuid!) {
+        conference_Quota(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Quota
+        }
+    }
+    ${QuotaFragmentDoc}
+`;
+
+export function useGetQuotaQuery(options: Omit<Urql.UseQueryArgs<GetQuotaQueryVariables>, "query">) {
+    return Urql.useQuery<GetQuotaQuery>({ query: GetQuotaDocument, ...options });
+}
+export const UpdateQuotaDocument = gql`
+    mutation UpdateQuota($conferenceId: uuid!, $set: conference_Quota_set_input!) {
+        update_conference_Quota(where: { conferenceId: { _eq: $conferenceId } }, _set: $set) {
+            affected_rows
+            returning {
+                ...Quota
+            }
+        }
+    }
+    ${QuotaFragmentDoc}
+`;
+
+export function useUpdateQuotaMutation() {
+    return Urql.useMutation<UpdateQuotaMutation, UpdateQuotaMutationVariables>(UpdateQuotaDocument);
+}
+export const GetRegistrantDocument = gql`
+    query GetRegistrant($registrantId: uuid!) {
+        registrant_Registrant_by_pk(id: $registrantId) {
+            ...Registrant
+        }
+    }
+    ${RegistrantFragmentDoc}
+`;
+
+export function useGetRegistrantQuery(options: Omit<Urql.UseQueryArgs<GetRegistrantQueryVariables>, "query">) {
+    return Urql.useQuery<GetRegistrantQuery>({ query: GetRegistrantDocument, ...options });
+}
+export const InsertRegistrantDocument = gql`
+    mutation InsertRegistrant($object: registrant_Registrant_insert_input!) {
+        insert_registrant_Registrant_one(object: $object) {
+            ...Registrant
+        }
+    }
+    ${RegistrantFragmentDoc}
+`;
+
+export function useInsertRegistrantMutation() {
+    return Urql.useMutation<InsertRegistrantMutation, InsertRegistrantMutationVariables>(InsertRegistrantDocument);
+}
+export const UpdateRegistrantDocument = gql`
+    mutation UpdateRegistrant($registrantId: uuid!, $set: registrant_Registrant_set_input!) {
+        update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: $set) {
+            ...Registrant
+        }
+    }
+    ${RegistrantFragmentDoc}
+`;
+
+export function useUpdateRegistrantMutation() {
+    return Urql.useMutation<UpdateRegistrantMutation, UpdateRegistrantMutationVariables>(UpdateRegistrantDocument);
+}
+export const DeleteRegistrantDocument = gql`
+    mutation DeleteRegistrant($registrantId: uuid!) {
+        delete_registrant_Registrant_by_pk(id: $registrantId) {
+            id
+        }
+    }
+`;
+
+export function useDeleteRegistrantMutation() {
+    return Urql.useMutation<DeleteRegistrantMutation, DeleteRegistrantMutationVariables>(DeleteRegistrantDocument);
+}
+export const GetRemainingQuotaDocument = gql`
+    query GetRemainingQuota($conferenceId: uuid!) {
+        conference_RemainingQuota(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...RemainingQuota
+        }
+    }
+    ${RemainingQuotaFragmentDoc}
+`;
+
+export function useGetRemainingQuotaQuery(options: Omit<Urql.UseQueryArgs<GetRemainingQuotaQueryVariables>, "query">) {
+    return Urql.useQuery<GetRemainingQuotaQuery>({ query: GetRemainingQuotaDocument, ...options });
+}
+export const GetRoomDocument = gql`
+    query GetRoom($roomId: uuid!) {
+        room_Room_by_pk(id: $roomId) {
+            ...Room
+        }
+    }
+    ${RoomFragmentDoc}
+`;
+
+export function useGetRoomQuery(options: Omit<Urql.UseQueryArgs<GetRoomQueryVariables>, "query">) {
+    return Urql.useQuery<GetRoomQuery>({ query: GetRoomDocument, ...options });
+}
+export const InsertRoomDocument = gql`
+    mutation InsertRoom($object: room_Room_insert_input!) {
+        insert_room_Room_one(object: $object) {
+            ...Room
+        }
+    }
+    ${RoomFragmentDoc}
+`;
+
+export function useInsertRoomMutation() {
+    return Urql.useMutation<InsertRoomMutation, InsertRoomMutationVariables>(InsertRoomDocument);
+}
+export const UpdateRoomDocument = gql`
+    mutation UpdateRoom($roomId: uuid!, $set: room_Room_set_input!) {
+        update_room_Room_by_pk(pk_columns: { id: $roomId }, _set: $set) {
+            ...Room
+        }
+    }
+    ${RoomFragmentDoc}
+`;
+
+export function useUpdateRoomMutation() {
+    return Urql.useMutation<UpdateRoomMutation, UpdateRoomMutationVariables>(UpdateRoomDocument);
+}
+export const DeleteRoomDocument = gql`
+    mutation DeleteRoom($roomId: uuid!) {
+        delete_room_Room_by_pk(id: $roomId) {
+            id
+        }
+    }
+`;
+
+export function useDeleteRoomMutation() {
+    return Urql.useMutation<DeleteRoomMutation, DeleteRoomMutationVariables>(DeleteRoomDocument);
+}
+export const GetSubconferenceDocument = gql`
+    query GetSubconference($subconferenceId: uuid!) {
+        conference_Subconference_by_pk(id: $subconferenceId) {
+            ...Subconference
+        }
+    }
+    ${SubconferenceFragmentDoc}
+`;
+
+export function useGetSubconferenceQuery(options: Omit<Urql.UseQueryArgs<GetSubconferenceQueryVariables>, "query">) {
+    return Urql.useQuery<GetSubconferenceQuery>({ query: GetSubconferenceDocument, ...options });
+}
+export const InsertSubconferenceDocument = gql`
+    mutation InsertSubconference($object: conference_Subconference_insert_input!) {
+        insert_conference_Subconference_one(object: $object) {
+            ...Subconference
+        }
+    }
+    ${SubconferenceFragmentDoc}
+`;
+
+export function useInsertSubconferenceMutation() {
+    return Urql.useMutation<InsertSubconferenceMutation, InsertSubconferenceMutationVariables>(
+        InsertSubconferenceDocument
+    );
+}
+export const UpdateSubconferenceDocument = gql`
+    mutation UpdateSubconference($subconferenceId: uuid!, $set: conference_Subconference_set_input!) {
+        update_conference_Subconference_by_pk(pk_columns: { id: $subconferenceId }, _set: $set) {
+            ...Subconference
+        }
+    }
+    ${SubconferenceFragmentDoc}
+`;
+
+export function useUpdateSubconferenceMutation() {
+    return Urql.useMutation<UpdateSubconferenceMutation, UpdateSubconferenceMutationVariables>(
+        UpdateSubconferenceDocument
+    );
+}
+export const DeleteSubconferenceDocument = gql`
+    mutation DeleteSubconference($subconferenceId: uuid!) {
+        delete_conference_Subconference_by_pk(id: $subconferenceId) {
+            id
+        }
+    }
+`;
+
+export function useDeleteSubconferenceMutation() {
+    return Urql.useMutation<DeleteSubconferenceMutation, DeleteSubconferenceMutationVariables>(
+        DeleteSubconferenceDocument
+    );
+}
+export const GetUsageDocument = gql`
+    query GetUsage($conferenceId: uuid!) {
+        conference_Usage(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Usage
+        }
+    }
+    ${UsageFragmentDoc}
+`;
+
+export function useGetUsageQuery(options: Omit<Urql.UseQueryArgs<GetUsageQueryVariables>, "query">) {
+    return Urql.useQuery<GetUsageQuery>({ query: GetUsageDocument, ...options });
+}
+export const UpdateUsageDocument = gql`
+    mutation UpdateUsage($conferenceId: uuid!, $set: conference_Usage_set_input!) {
+        update_conference_Usage(where: { conferenceId: { _eq: $conferenceId } }, _set: $set) {
+            affected_rows
+            returning {
+                ...Usage
+            }
+        }
+    }
+    ${UsageFragmentDoc}
+`;
+
+export function useUpdateUsageMutation() {
+    return Urql.useMutation<UpdateUsageMutation, UpdateUsageMutationVariables>(UpdateUsageDocument);
+}
 export const BasicDocument = gql`
     query Basic {
         User {

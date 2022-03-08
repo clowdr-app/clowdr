@@ -523,7 +523,8 @@
                 "auth",
                 "caches",
                 "graphql",
-                "hasura"
+                "hasura",
+                "test-e2e-usage-and-quotas"
             ],
             "type": "pickString"
         }

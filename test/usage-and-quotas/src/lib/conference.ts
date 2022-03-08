@@ -15,29 +15,29 @@ import {
 } from "../generated/graphql";
 
 gql`
-    mutation CleanUpTestConference($slug: String!) {
-        delete_room_Room(where: { conference: { slug: { _eq: $slug } } }) {
+    mutation CleanUpTestConference($id: uuid!) {
+        delete_room_Room(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_chat_Chat(where: { conference: { slug: { _eq: $slug } } }) {
+        delete_chat_Chat(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_conference_Usage(where: { conference: { slug: { _eq: $slug } } }) {
+        delete_conference_Usage(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_conference_Quota(where: { conference: { slug: { _eq: $slug } } }) {
+        delete_conference_Quota(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_conference_Conference(where: { slug: { _eq: $slug } }) {
+        delete_conference_Conference(where: { id: { _eq: $id } }) {
             affected_rows
         }
     }
 
-    mutation CleanUpTestConferenceEvents($slug: String!) {
-        delete_schedule_Event(where: { conference: { slug: { _eq: $slug } } }) {
+    mutation CleanUpTestConferenceEvents($id: uuid!) {
+        delete_schedule_Event(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_content_Item(where: { conference: { slug: { _eq: $slug } } }) {
+        delete_content_Item(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
     }
@@ -65,7 +65,7 @@ export async function createTestConference() {
     return gqlClient
         ?.mutation<CreateConferenceMutation, CreateConferenceMutationVariables>(CreateConferenceDocument, {
             object: {
-                slug,
+                slug: slug + "-" + Math.round(Math.random() * 100000000),
                 createdBy: process.env.TEST_USER_ID,
                 demoCode: {
                     data: {
@@ -80,12 +80,12 @@ export async function createTestConference() {
         .toPromise();
 }
 
-export async function cleanupTestConference() {
+export async function cleanupTestConference(conferenceId: string) {
     await gqlClient
         ?.mutation<CleanUpTestConferenceEventsMutation, CleanUpTestConferenceEventsMutationVariables>(
             CleanUpTestConferenceEventsDocument,
             {
-                slug,
+                id: conferenceId,
             }
         )
         .toPromise();
@@ -94,7 +94,7 @@ export async function cleanupTestConference() {
         ?.mutation<CleanUpTestConferenceMutation, CleanUpTestConferenceMutationVariables>(
             CleanUpTestConferenceDocument,
             {
-                slug,
+                id: conferenceId,
             }
         )
         .toPromise();

@@ -26,8 +26,6 @@ describe("RemainingQuota", () => {
     let videoChatRoom1: RoomFragment;
 
     beforeEach(async () => {
-        await cleanupTestConference();
-
         conference = (await createTestConference())?.data?.insert_conference_Conference_one;
         expect(conference).toBeDefined();
 
@@ -53,7 +51,11 @@ describe("RemainingQuota", () => {
         expect(streamingRoom1).toBeDefined();
         expect(videoChatRoom1).toBeDefined();
     });
-    afterEach(cleanupTestConference);
+    afterEach(async () => {
+        if (conference) {
+            await cleanupTestConference(conference.id);
+        }
+    });
 
     describe("remainingSubconferences", () => {
         it("is initially zero", () => {
@@ -869,8 +871,6 @@ describe("RemainingQuota - Room quotas", () => {
     let initialRemainingQuota: RemainingQuotaFragment;
 
     beforeEach(async () => {
-        await cleanupTestConference();
-
         conference = (await createTestConference())?.data?.insert_conference_Conference_one;
         expect(conference).toBeDefined();
 
@@ -882,7 +882,11 @@ describe("RemainingQuota - Room quotas", () => {
         expect(initialUsage).toBeDefined();
         expect(initialRemainingQuota).toBeDefined();
     });
-    afterEach(cleanupTestConference);
+    afterEach(async () => {
+        if (conference) {
+            await cleanupTestConference(conference.id);
+        }
+    });
 
     describe("remainingStreamingProgramRooms", () => {
         it("equals quota when no rooms exist", () => {

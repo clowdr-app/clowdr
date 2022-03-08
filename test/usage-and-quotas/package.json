@@ -20,6 +20,7 @@
         "@midspace/component-clients": "workspace:*",
         "@midspace/graphql": "workspace:*",
         "@types/node": "^17.0.16",
+        "@urql/core": "^2.4.1",
         "dotenv": "^16.0.0",
         "graphql": "^15.7.2",
         "graphql-tag": "^2.12.6",

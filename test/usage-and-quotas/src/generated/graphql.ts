@@ -39301,7 +39301,7 @@ export enum Video_YouTubeUpload_Update_Column {
 }
 
 export type CleanUpTestConferenceMutationVariables = Exact<{
-    slug: Scalars["String"];
+    id: Scalars["uuid"];
 }>;
 
 export type CleanUpTestConferenceMutation = {
@@ -39329,7 +39329,7 @@ export type CleanUpTestConferenceMutation = {
 };
 
 export type CleanUpTestConferenceEventsMutationVariables = Exact<{
-    slug: Scalars["String"];
+    id: Scalars["uuid"];
 }>;
 
 export type CleanUpTestConferenceEventsMutation = {
@@ -40203,20 +40203,20 @@ export const UsageFragmentDoc = gql`
     }
 `;
 export const CleanUpTestConferenceDocument = gql`
-    mutation CleanUpTestConference($slug: String!) {
-        delete_room_Room(where: { conference: { slug: { _eq: $slug } } }) {
+    mutation CleanUpTestConference($id: uuid!) {
+        delete_room_Room(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_chat_Chat(where: { conference: { slug: { _eq: $slug } } }) {
+        delete_chat_Chat(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_conference_Usage(where: { conference: { slug: { _eq: $slug } } }) {
+        delete_conference_Usage(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_conference_Quota(where: { conference: { slug: { _eq: $slug } } }) {
+        delete_conference_Quota(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_conference_Conference(where: { slug: { _eq: $slug } }) {
+        delete_conference_Conference(where: { id: { _eq: $id } }) {
             affected_rows
         }
     }
@@ -40228,11 +40228,11 @@ export function useCleanUpTestConferenceMutation() {
     );
 }
 export const CleanUpTestConferenceEventsDocument = gql`
-    mutation CleanUpTestConferenceEvents($slug: String!) {
-        delete_schedule_Event(where: { conference: { slug: { _eq: $slug } } }) {
+    mutation CleanUpTestConferenceEvents($id: uuid!) {
+        delete_schedule_Event(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
-        delete_content_Item(where: { conference: { slug: { _eq: $slug } } }) {
+        delete_content_Item(where: { conferenceId: { _eq: $id } }) {
             affected_rows
         }
     }

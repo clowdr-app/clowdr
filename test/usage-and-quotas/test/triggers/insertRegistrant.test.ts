@@ -10,7 +10,7 @@ import { getQuota, updateQuota } from "../../src/lib/quota";
 import { insertRegistrant } from "../../src/lib/registrant";
 import { getRemainingQuota } from "../../src/lib/remainingQuota";
 import { getUsage } from "../../src/lib/usage";
-import extractActualError from "./extractError";
+import expectError from "../expectError";
 
 describe("checkInsertRegistrant", () => {
     let conference: TestConferenceFragment;
@@ -50,17 +50,20 @@ describe("checkInsertRegistrant", () => {
         }
     });
 
-    it.fails("prevents insert when remaining quota = 0", async () => {
+    it("prevents insert when remaining quota = 0", async () => {
         await updateQuota(conference.id, {
             maxRegistrants: 0,
         });
-        await insertRegistrant({
-            conferenceId: conference.id,
-            displayName: "e2e-test-usage-and-quotas-registrant-1",
-        });
+        await expectError(
+            "Quota limit reached",
+            insertRegistrant({
+                conferenceId: conference.id,
+                displayName: "e2e-test-usage-and-quotas-registrant-1",
+            })
+        );
     });
 
-    it.fails("prevents insert when remaining quota < 0", async () => {
+    it("prevents insert when remaining quota < 0", async () => {
         await updateQuota(conference.id, {
             maxRegistrants: 1,
         });
@@ -71,23 +74,25 @@ describe("checkInsertRegistrant", () => {
         await updateQuota(conference.id, {
             maxRegistrants: 0,
         });
-        await insertRegistrant({
-            conferenceId: conference.id,
-            displayName: "e2e-test-usage-and-quotas-registrant-1",
-        });
+        await expectError(
+            "Quota limit reached",
+            insertRegistrant({
+                conferenceId: conference.id,
+                displayName: "e2e-test-usage-and-quotas-registrant-1",
+            })
+        );
     });
 
     it("prevented insert returns useful error message", async () => {
         await updateQuota(conference.id, {
             maxRegistrants: 0,
         });
-        await expect(
+        await expectError(
+            "Quota limit reached",
             insertRegistrant({
                 conferenceId: conference.id,
                 displayName: "e2e-test-usage-and-quotas-registrant-1",
-            }).catch((err) => {
-                throw extractActualError(err);
             })
-        ).rejects.toThrowError("Quota limit reached");
+        );
     });
 });

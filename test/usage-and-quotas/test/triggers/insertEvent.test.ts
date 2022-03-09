@@ -13,7 +13,7 @@ import { getQuota, updateQuota } from "../../src/lib/quota";
 import { getRemainingQuota } from "../../src/lib/remainingQuota";
 import { insertRoom } from "../../src/lib/room";
 import { getUsage } from "../../src/lib/usage";
-import extractActualError from "./extractError";
+import expectError from "../expectError";
 
 describe("checkInsertEvent", () => {
     let conference: TestConferenceFragment;
@@ -74,24 +74,12 @@ describe("checkInsertEvent", () => {
     });
 
     describe("streaming events", () => {
-        it.fails("prevents insert if streaming events are not allowed", async () => {
+        it("prevents insert if streaming events are not allowed", async () => {
             await updateQuota(conference.id, {
                 areStreamingEventsAllowed: false,
             });
-            await insertEvent({
-                conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
-                name: "E2E Usage-and-Quotas Test Event",
-                roomId: streamingRoom1.id,
-            });
-        });
-        it("prevents insert if streaming events are not allowed - error message check", async () => {
-            await updateQuota(conference.id, {
-                areStreamingEventsAllowed: false,
-            });
-            await expect(
+            await expectError(
+                "Quota limit reached (streaming events not included)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -99,10 +87,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.Prerecorded,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: streamingRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (streaming events not included)");
+            );
         });
 
         it("permits insert if streaming events are allowed (and other quotas are met)", async () => {
@@ -123,27 +109,7 @@ describe("checkInsertEvent", () => {
             });
         });
 
-        it.fails(
-            "prevents insert if the event duration is greater than the individual event duration quota (and other quotas are met)",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-                    areStreamingEventsAllowed: true,
-                    maxStreamingEventTotalMinutes: 100,
-                    maxStreamingEventIndividualMinutes: 5,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
-                    name: "E2E Usage-and-Quotas Test Event",
-                    roomId: streamingRoom1.id,
-                });
-            }
-        );
-        it("prevents insert if the event duration is greater than the individual event duration quota (and other quotas are met) - error message check", async () => {
+        it("prevents insert if the event duration is greater than the individual event duration quota (and other quotas are met)", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -151,7 +117,8 @@ describe("checkInsertEvent", () => {
                 maxStreamingEventTotalMinutes: 100,
                 maxStreamingEventIndividualMinutes: 5,
             });
-            await expect(
+            await expectError(
+                "Quota limit reached (streaming event duration)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -159,10 +126,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.Prerecorded,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: streamingRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (streaming event duration)");
+            );
         });
 
         it("permits insert if the event duration is equal to the individual event duration quota (and other quotas are met)", async () => {
@@ -201,27 +166,7 @@ describe("checkInsertEvent", () => {
             });
         });
 
-        it.fails(
-            "prevents insert if the event duration is greater than the remaining events-total quota (and other quotas are met)",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-                    areStreamingEventsAllowed: true,
-                    maxStreamingEventTotalMinutes: 5,
-                    maxStreamingEventIndividualMinutes: 100,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
-                    name: "E2E Usage-and-Quotas Test Event",
-                    roomId: streamingRoom1.id,
-                });
-            }
-        );
-        it("prevents insert if the event duration is greater than the remaining events-total quota (and other quotas are met) - error message check", async () => {
+        it("prevents insert if the event duration is greater than the remaining events-total quota (and other quotas are met)", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -229,7 +174,8 @@ describe("checkInsertEvent", () => {
                 maxStreamingEventTotalMinutes: 5,
                 maxStreamingEventIndividualMinutes: 100,
             });
-            await expect(
+            await expectError(
+                "Quota limit reached (total streaming event minutes)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -237,10 +183,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.Prerecorded,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: streamingRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (total streaming event minutes)");
+            );
         });
 
         it("permits insert if the event duration is equal to the remaining events-total quota (and other quotas are met)", async () => {
@@ -279,40 +223,7 @@ describe("checkInsertEvent", () => {
             });
         });
 
-        it.fails(
-            "prevents insert if the target room contains a non-streaming event (and other quotas are met)",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-
-                    areStreamingEventsAllowed: true,
-                    maxStreamingEventTotalMinutes: 100,
-                    maxStreamingEventIndividualMinutes: 100,
-
-                    areVideoChatEventsAllowed: true,
-                    maxVideoChatEventTotalMinutes: 100,
-                    maxVideoChatEventIndividualMinutes: 100,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
-                    name: "E2E Usage-and-Quotas Test Event 1",
-                    roomId: videoChatRoom1.id,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
-                    name: "E2E Usage-and-Quotas Test Event 2",
-                    roomId: videoChatRoom1.id,
-                });
-            }
-        );
-        it("prevents insert if the target room contains a non-streaming event (and other quotas are met) - error message check", async () => {
+        it("prevents insert if the target room contains a non-streaming event (and other quotas are met)", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -333,7 +244,8 @@ describe("checkInsertEvent", () => {
                 name: "E2E Usage-and-Quotas Test Event 1",
                 roomId: videoChatRoom1.id,
             });
-            await expect(
+            await expectError(
+                "Room is a non-streaming program room.",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
@@ -341,10 +253,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.Prerecorded,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Room is a non-streaming program room.");
+            );
         });
 
         it("permits insert if the target room contains only streaming events (and other quotas are met)", async () => {
@@ -391,7 +301,7 @@ describe("checkInsertEvent", () => {
             });
         });
 
-        it.fails("prevents insert if the room is not already a program room and remaining quota is zero", async () => {
+        it("prevents insert if the room is not already a program room and remaining quota is zero", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 0,
                 maxNonStreamingProgramRooms: 1,
@@ -399,24 +309,8 @@ describe("checkInsertEvent", () => {
                 maxStreamingEventTotalMinutes: 100,
                 maxStreamingEventIndividualMinutes: 100,
             });
-            await insertEvent({
-                conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
-                name: "E2E Usage-and-Quotas Test Event 1",
-                roomId: streamingRoom1.id,
-            });
-        });
-        it("prevents insert if the room is not already a program room and remaining quota is zero - error message check", async () => {
-            await updateQuota(conference.id, {
-                maxStreamingProgramRooms: 0,
-                maxNonStreamingProgramRooms: 1,
-                areStreamingEventsAllowed: true,
-                maxStreamingEventTotalMinutes: 100,
-                maxStreamingEventIndividualMinutes: 100,
-            });
-            await expect(
+            await expectError(
+                "Quota limit reached (streaming program rooms)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -424,48 +318,11 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.Prerecorded,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (streaming program rooms)");
+            );
         });
 
-        it.fails(
-            "prevents insert if the room is not already a program room and remaining quota is less than zero",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-                    areStreamingEventsAllowed: true,
-                    maxStreamingEventTotalMinutes: 100,
-                    maxStreamingEventIndividualMinutes: 100,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
-                    name: "E2E Usage-and-Quotas Test Event 1",
-                    roomId: streamingRoom1.id,
-                });
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 0,
-                    maxNonStreamingProgramRooms: 1,
-                    areStreamingEventsAllowed: true,
-                    maxStreamingEventTotalMinutes: 100,
-                    maxStreamingEventIndividualMinutes: 100,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
-                    name: "E2E Usage-and-Quotas Test Event 1",
-                    roomId: streamingRoom2.id,
-                });
-            }
-        );
-        it("prevents insert if the room is not already a program room and remaining quota is less than zero - error message check", async () => {
+        it("prevents insert if the room is not already a program room and remaining quota is less than zero", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -488,7 +345,8 @@ describe("checkInsertEvent", () => {
                 maxStreamingEventTotalMinutes: 100,
                 maxStreamingEventIndividualMinutes: 100,
             });
-            await expect(
+            await expectError(
+                "Quota limit reached (streaming program rooms)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -496,10 +354,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.Prerecorded,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom2.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (streaming program rooms)");
+            );
         });
 
         it("permits insert if the room is not already a program room and remaining quota is greater than zero", async () => {
@@ -563,24 +419,12 @@ describe("checkInsertEvent", () => {
     });
 
     describe("video-chat events", () => {
-        it.fails("prevents insert if video-chat events are not allowed", async () => {
+        it("prevents insert if video-chat events are not allowed", async () => {
             await updateQuota(conference.id, {
                 areVideoChatEventsAllowed: false,
             });
-            await insertEvent({
-                conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
-                name: "E2E Usage-and-Quotas Test Event",
-                roomId: videoChatRoom1.id,
-            });
-        });
-        it("prevents insert if video-chat events are not allowed - error message check", async () => {
-            await updateQuota(conference.id, {
-                areVideoChatEventsAllowed: false,
-            });
-            await expect(
+            await expectError(
+                "Quota limit reached (video-chat events not included)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -588,10 +432,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: videoChatRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (video-chat events not included)");
+            );
         });
 
         it("permits insert if video-chat events are allowed (and other quotas are met)", async () => {
@@ -612,27 +454,7 @@ describe("checkInsertEvent", () => {
             });
         });
 
-        it.fails(
-            "prevents insert if the event duration is greater than the individual event duration quota (and other quotas are met)",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-                    areVideoChatEventsAllowed: true,
-                    maxVideoChatEventTotalMinutes: 100,
-                    maxVideoChatEventIndividualMinutes: 5,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
-                    name: "E2E Usage-and-Quotas Test Event",
-                    roomId: videoChatRoom1.id,
-                });
-            }
-        );
-        it("prevents insert if the event duration is greater than the individual event duration quota (and other quotas are met) - error message check", async () => {
+        it("prevents insert if the event duration is greater than the individual event duration quota (and other quotas are met)", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -640,7 +462,8 @@ describe("checkInsertEvent", () => {
                 maxVideoChatEventTotalMinutes: 100,
                 maxVideoChatEventIndividualMinutes: 5,
             });
-            await expect(
+            await expectError(
+                "Quota limit reached (video-chat event duration)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -648,10 +471,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: videoChatRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (video-chat event duration)");
+            );
         });
 
         it("permits insert if the event duration is equal to the individual event duration quota (and other quotas are met)", async () => {
@@ -690,27 +511,7 @@ describe("checkInsertEvent", () => {
             });
         });
 
-        it.fails(
-            "prevents insert if the event duration is greater than the remaining events-total quota (and other quotas are met)",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-                    areVideoChatEventsAllowed: true,
-                    maxVideoChatEventTotalMinutes: 5,
-                    maxVideoChatEventIndividualMinutes: 100,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
-                    name: "E2E Usage-and-Quotas Test Event",
-                    roomId: videoChatRoom1.id,
-                });
-            }
-        );
-        it("prevents insert if the event duration is greater than the remaining events-total quota (and other quotas are met) - error message check", async () => {
+        it("prevents insert if the event duration is greater than the remaining events-total quota (and other quotas are met)", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -718,7 +519,8 @@ describe("checkInsertEvent", () => {
                 maxVideoChatEventTotalMinutes: 5,
                 maxVideoChatEventIndividualMinutes: 100,
             });
-            await expect(
+            await expectError(
+                "Quota limit reached (total video-chat event minutes)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -726,10 +528,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: videoChatRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (total video-chat event minutes)");
+            );
         });
 
         it("permits insert if the event duration is equal to the remaining events-total quota (and other quotas are met)", async () => {
@@ -768,40 +568,7 @@ describe("checkInsertEvent", () => {
             });
         });
 
-        it.fails(
-            "prevents insert if the target room contains a streaming event (and other quotas are met)",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-
-                    areStreamingEventsAllowed: true,
-                    maxStreamingEventTotalMinutes: 100,
-                    maxStreamingEventIndividualMinutes: 100,
-
-                    areVideoChatEventsAllowed: true,
-                    maxVideoChatEventTotalMinutes: 100,
-                    maxVideoChatEventIndividualMinutes: 100,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
-                    name: "E2E Usage-and-Quotas Test Event 1",
-                    roomId: streamingRoom1.id,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
-                    name: "E2E Usage-and-Quotas Test Event 2",
-                    roomId: streamingRoom1.id,
-                });
-            }
-        );
-        it("prevents insert if the target room contains a streaming event (and other quotas are met) - error message check", async () => {
+        it("prevents insert if the target room contains a streaming event (and other quotas are met)", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -822,7 +589,8 @@ describe("checkInsertEvent", () => {
                 name: "E2E Usage-and-Quotas Test Event 1",
                 roomId: streamingRoom1.id,
             });
-            await expect(
+            await expectError(
+                "Room is a streaming program room.",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
@@ -830,10 +598,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Room is a streaming program room.");
+            );
         });
 
         it("permits insert if the target room contains only non-streaming events (and other quotas are met)", async () => {
@@ -888,7 +654,7 @@ describe("checkInsertEvent", () => {
             });
         });
 
-        it.fails("prevents insert if the room is not already a program room and remaining quota is zero", async () => {
+        it("prevents insert if the room is not already a program room and remaining quota is zero", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -904,32 +670,8 @@ describe("checkInsertEvent", () => {
                 name: "E2E Usage-and-Quotas Test Event 1",
                 roomId: videoChatRoom1.id,
             });
-            await insertEvent({
-                conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
-                name: "E2E Usage-and-Quotas Test Event 2",
-                roomId: videoChatRoom2.id,
-            });
-        });
-        it("prevents insert if the room is not already a program room and remaining quota is zero - error message check", async () => {
-            await updateQuota(conference.id, {
-                maxStreamingProgramRooms: 1,
-                maxNonStreamingProgramRooms: 1,
-                areVideoChatEventsAllowed: true,
-                maxVideoChatEventTotalMinutes: 100,
-                maxVideoChatEventIndividualMinutes: 100,
-            });
-            await insertEvent({
-                conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
-                name: "E2E Usage-and-Quotas Test Event 1",
-                roomId: videoChatRoom1.id,
-            });
-            await expect(
+            await expectError(
+                "Quota limit reached (non-streaming program rooms)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -937,47 +679,45 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (non-streaming program rooms)");
+            );
         });
 
-        it.fails(
-            "prevents insert if the room is not already a program room and remaining quota is less than zero",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-                    areVideoChatEventsAllowed: true,
-                    maxVideoChatEventTotalMinutes: 100,
-                    maxVideoChatEventIndividualMinutes: 100,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
-                    name: "E2E Usage-and-Quotas Test Event 1",
-                    roomId: videoChatRoom1.id,
-                });
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 0,
-                    areVideoChatEventsAllowed: true,
-                    maxVideoChatEventTotalMinutes: 100,
-                    maxVideoChatEventIndividualMinutes: 100,
-                });
-                await insertEvent({
+        it("prevents insert if the room is not already a program room and remaining quota is less than zero", async () => {
+            await updateQuota(conference.id, {
+                maxStreamingProgramRooms: 1,
+                maxNonStreamingProgramRooms: 1,
+                areVideoChatEventsAllowed: true,
+                maxVideoChatEventTotalMinutes: 100,
+                maxVideoChatEventIndividualMinutes: 100,
+            });
+            await insertEvent({
+                conferenceId: conference.id,
+                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                durationSeconds: 10 * 60,
+                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                name: "E2E Usage-and-Quotas Test Event 1",
+                roomId: videoChatRoom1.id,
+            });
+            await updateQuota(conference.id, {
+                maxStreamingProgramRooms: 1,
+                maxNonStreamingProgramRooms: 0,
+                areVideoChatEventsAllowed: true,
+                maxVideoChatEventTotalMinutes: 100,
+                maxVideoChatEventIndividualMinutes: 100,
+            });
+            await expectError(
+                "Quota limit reached (non-streaming program rooms)",
+                insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
                     durationSeconds: 10 * 60,
                     intendedRoomModeName: Room_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
-                });
-            }
-        );
+                })
+            );
+        });
 
         it("permits insert if the room is not already a program room and remaining quota is greater than zero", async () => {
             await updateQuota(conference.id, {
@@ -1040,40 +780,7 @@ describe("checkInsertEvent", () => {
     });
 
     describe("other events", () => {
-        it.fails(
-            "prevents insert if the target room contains a streaming event (and other quotas are met)",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-
-                    areStreamingEventsAllowed: true,
-                    maxStreamingEventTotalMinutes: 100,
-                    maxStreamingEventIndividualMinutes: 100,
-
-                    areVideoChatEventsAllowed: true,
-                    maxVideoChatEventTotalMinutes: 100,
-                    maxVideoChatEventIndividualMinutes: 100,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
-                    name: "E2E Usage-and-Quotas Test Event 1",
-                    roomId: streamingRoom1.id,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Exhibition,
-                    name: "E2E Usage-and-Quotas Test Event 2",
-                    roomId: streamingRoom1.id,
-                });
-            }
-        );
-        it("prevents insert if the target room contains a streaming event (and other quotas are met) - error message check", async () => {
+        it("prevents insert if the target room contains a streaming event (and other quotas are met)", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -1094,7 +801,8 @@ describe("checkInsertEvent", () => {
                 name: "E2E Usage-and-Quotas Test Event 1",
                 roomId: streamingRoom1.id,
             });
-            await expect(
+            await expectError(
+                "Room is a streaming program room.",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
@@ -1102,10 +810,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.Exhibition,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Room is a streaming program room.");
+            );
         });
 
         it("permits insert if the target room contains only non-streaming events (and other quotas are met)", async () => {
@@ -1170,7 +876,7 @@ describe("checkInsertEvent", () => {
             });
         });
 
-        it.fails("prevents insert if the room is not already a program room and remaining quota is zero", async () => {
+        it("prevents insert if the room is not already a program room and remaining quota is zero", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 0,
@@ -1183,29 +889,8 @@ describe("checkInsertEvent", () => {
                 maxVideoChatEventTotalMinutes: 100,
                 maxVideoChatEventIndividualMinutes: 100,
             });
-            await insertEvent({
-                conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Exhibition,
-                name: "E2E Usage-and-Quotas Test Event 1",
-                roomId: videoChatRoom1.id,
-            });
-        });
-        it("prevents insert if the room is not already a program room and remaining quota is zero - error message check", async () => {
-            await updateQuota(conference.id, {
-                maxStreamingProgramRooms: 1,
-                maxNonStreamingProgramRooms: 0,
-
-                areStreamingEventsAllowed: true,
-                maxStreamingEventTotalMinutes: 100,
-                maxStreamingEventIndividualMinutes: 100,
-
-                areVideoChatEventsAllowed: true,
-                maxVideoChatEventTotalMinutes: 100,
-                maxVideoChatEventIndividualMinutes: 100,
-            });
-            await expect(
+            await expectError(
+                "Quota limit reached (non-streaming program rooms)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -1213,49 +898,11 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.Exhibition,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (non-streaming program rooms)");
+            );
         });
 
-        it.fails(
-            "prevents insert if the room is not already a program room and remaining quota is less than zero",
-            async () => {
-                await updateQuota(conference.id, {
-                    maxStreamingProgramRooms: 1,
-                    maxNonStreamingProgramRooms: 1,
-
-                    areStreamingEventsAllowed: true,
-                    maxStreamingEventTotalMinutes: 100,
-                    maxStreamingEventIndividualMinutes: 100,
-
-                    areVideoChatEventsAllowed: true,
-                    maxVideoChatEventTotalMinutes: 100,
-                    maxVideoChatEventIndividualMinutes: 100,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Exhibition,
-                    name: "E2E Usage-and-Quotas Test Event 1",
-                    roomId: videoChatRoom1.id,
-                });
-                await updateQuota(conference.id, {
-                    maxNonStreamingProgramRooms: 0,
-                });
-                await insertEvent({
-                    conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Exhibition,
-                    name: "E2E Usage-and-Quotas Test Event 1",
-                    roomId: videoChatRoom2.id,
-                });
-            }
-        );
-        it("prevents insert if the room is not already a program room and remaining quota is less than zero - error message check", async () => {
+        it("prevents insert if the room is not already a program room and remaining quota is less than zero", async () => {
             await updateQuota(conference.id, {
                 maxStreamingProgramRooms: 1,
                 maxNonStreamingProgramRooms: 1,
@@ -1279,7 +926,8 @@ describe("checkInsertEvent", () => {
             await updateQuota(conference.id, {
                 maxNonStreamingProgramRooms: 0,
             });
-            await expect(
+            await expectError(
+                "Quota limit reached (non-streaming program rooms)",
                 insertEvent({
                     conferenceId: conference.id,
                     startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -1287,10 +935,8 @@ describe("checkInsertEvent", () => {
                     intendedRoomModeName: Room_Mode_Enum.Exhibition,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom2.id,
-                }).catch((err) => {
-                    throw extractActualError(err);
                 })
-            ).rejects.toThrowError("Quota limit reached (non-streaming program rooms)");
+            );
         });
 
         it("permits insert if the room is not already a program room and remaining quota is greater than zero", async () => {

@@ -10,7 +10,7 @@ import { getQuota, updateQuota } from "../../src/lib/quota";
 import { getRemainingQuota } from "../../src/lib/remainingQuota";
 import { insertSubconference } from "../../src/lib/subconference";
 import { getUsage } from "../../src/lib/usage";
-import extractActualError from "./extractError";
+import expectError from "../expectError";
 
 describe("checkInsertSubconference", () => {
     let conference: TestConferenceFragment;
@@ -52,19 +52,22 @@ describe("checkInsertSubconference", () => {
         }
     });
 
-    it.fails("prevents insert when remaining quota = 0", async () => {
+    it("prevents insert when remaining quota = 0", async () => {
         await updateQuota(conference.id, {
             maxSubconferences: 0,
         });
-        await insertSubconference({
-            conferenceId: conference.id,
-            name: "e2e-test-usage-and-quotas-subconference-1",
-            shortName: "e2e-test-usage-and-quotas-subconference-1",
-            slug: "e2e-test-usage-and-quotas-subconference-1",
-        });
+        await expectError(
+            "Quota limit reached",
+            insertSubconference({
+                conferenceId: conference.id,
+                name: "e2e-test-usage-and-quotas-subconference-1",
+                shortName: "e2e-test-usage-and-quotas-subconference-1",
+                slug: "e2e-test-usage-and-quotas-subconference-1",
+            })
+        );
     });
 
-    it.fails("prevents insert when remaining quota < 0", async () => {
+    it("prevents insert when remaining quota < 0", async () => {
         await updateQuota(conference.id, {
             maxSubconferences: 1,
         });
@@ -77,27 +80,29 @@ describe("checkInsertSubconference", () => {
         await updateQuota(conference.id, {
             maxSubconferences: 0,
         });
-        await insertSubconference({
-            conferenceId: conference.id,
-            name: "e2e-test-usage-and-quotas-subconference-1",
-            shortName: "e2e-test-usage-and-quotas-subconference-1",
-            slug: "e2e-test-usage-and-quotas-subconference-1",
-        });
+        await expectError(
+            "Quota limit reached",
+            insertSubconference({
+                conferenceId: conference.id,
+                name: "e2e-test-usage-and-quotas-subconference-1",
+                shortName: "e2e-test-usage-and-quotas-subconference-1",
+                slug: "e2e-test-usage-and-quotas-subconference-1",
+            })
+        );
     });
 
     it("prevented insert returns useful error message", async () => {
         await updateQuota(conference.id, {
             maxSubconferences: 0,
         });
-        await expect(
+        await expectError(
+            "Quota limit reached",
             insertSubconference({
                 conferenceId: conference.id,
                 name: "e2e-test-usage-and-quotas-subconference-1",
                 shortName: "e2e-test-usage-and-quotas-subconference-1",
                 slug: "e2e-test-usage-and-quotas-subconference-1",
-            }).catch((err) => {
-                throw extractActualError(err);
             })
-        ).rejects.toThrowError("Quota limit reached");
+        );
     });
 });

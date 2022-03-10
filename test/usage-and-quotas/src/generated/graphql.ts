@@ -39365,6 +39365,109 @@ export type CreateConferenceMutation = {
     } | null;
 };
 
+export type ElementFragment = {
+    readonly __typename?: "content_Element";
+    readonly id: any;
+    readonly createdAt: any;
+    readonly updatedAt: any;
+    readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
+    readonly itemId: any;
+    readonly typeName: Content_ElementType_Enum;
+    readonly name: string;
+    readonly data: any;
+    readonly isHidden: boolean;
+    readonly layoutData?: any | null;
+    readonly uploadsRemaining?: number | null;
+    readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+    readonly source?: any | null;
+};
+
+export type GetElementQueryVariables = Exact<{
+    elementId: Scalars["uuid"];
+}>;
+
+export type GetElementQuery = {
+    readonly __typename?: "query_root";
+    readonly content_Element_by_pk?: {
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly itemId: any;
+        readonly typeName: Content_ElementType_Enum;
+        readonly name: string;
+        readonly data: any;
+        readonly isHidden: boolean;
+        readonly layoutData?: any | null;
+        readonly uploadsRemaining?: number | null;
+        readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly source?: any | null;
+    } | null;
+};
+
+export type InsertElementMutationVariables = Exact<{
+    object: Content_Element_Insert_Input;
+}>;
+
+export type InsertElementMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_content_Element_one?: {
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly itemId: any;
+        readonly typeName: Content_ElementType_Enum;
+        readonly name: string;
+        readonly data: any;
+        readonly isHidden: boolean;
+        readonly layoutData?: any | null;
+        readonly uploadsRemaining?: number | null;
+        readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly source?: any | null;
+    } | null;
+};
+
+export type UpdateElementMutationVariables = Exact<{
+    elementId: Scalars["uuid"];
+    set: Content_Element_Set_Input;
+}>;
+
+export type UpdateElementMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_content_Element_by_pk?: {
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly createdAt: any;
+        readonly updatedAt: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly itemId: any;
+        readonly typeName: Content_ElementType_Enum;
+        readonly name: string;
+        readonly data: any;
+        readonly isHidden: boolean;
+        readonly layoutData?: any | null;
+        readonly uploadsRemaining?: number | null;
+        readonly visibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly source?: any | null;
+    } | null;
+};
+
+export type DeleteElementMutationVariables = Exact<{
+    elementId: Scalars["uuid"];
+}>;
+
+export type DeleteElementMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_content_Element_by_pk?: { readonly __typename?: "content_Element"; readonly id: any } | null;
+};
+
 export type EventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
@@ -40065,6 +40168,24 @@ export const TestConferenceFragmentDoc = gql`
         }
     }
 `;
+export const ElementFragmentDoc = gql`
+    fragment Element on content_Element {
+        id
+        createdAt
+        updatedAt
+        conferenceId
+        subconferenceId
+        itemId
+        typeName
+        name
+        data
+        isHidden
+        layoutData
+        uploadsRemaining
+        visibilityLevel
+        source
+    }
+`;
 export const EventFragmentDoc = gql`
     fragment Event on schedule_Event {
         id
@@ -40254,6 +40375,53 @@ export const CreateConferenceDocument = gql`
 
 export function useCreateConferenceMutation() {
     return Urql.useMutation<CreateConferenceMutation, CreateConferenceMutationVariables>(CreateConferenceDocument);
+}
+export const GetElementDocument = gql`
+    query GetElement($elementId: uuid!) {
+        content_Element_by_pk(id: $elementId) {
+            ...Element
+        }
+    }
+    ${ElementFragmentDoc}
+`;
+
+export function useGetElementQuery(options: Omit<Urql.UseQueryArgs<GetElementQueryVariables>, "query">) {
+    return Urql.useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
+}
+export const InsertElementDocument = gql`
+    mutation InsertElement($object: content_Element_insert_input!) {
+        insert_content_Element_one(object: $object) {
+            ...Element
+        }
+    }
+    ${ElementFragmentDoc}
+`;
+
+export function useInsertElementMutation() {
+    return Urql.useMutation<InsertElementMutation, InsertElementMutationVariables>(InsertElementDocument);
+}
+export const UpdateElementDocument = gql`
+    mutation UpdateElement($elementId: uuid!, $set: content_Element_set_input!) {
+        update_content_Element_by_pk(pk_columns: { id: $elementId }, _set: $set) {
+            ...Element
+        }
+    }
+    ${ElementFragmentDoc}
+`;
+
+export function useUpdateElementMutation() {
+    return Urql.useMutation<UpdateElementMutation, UpdateElementMutationVariables>(UpdateElementDocument);
+}
+export const DeleteElementDocument = gql`
+    mutation DeleteElement($elementId: uuid!) {
+        delete_content_Element_by_pk(id: $elementId) {
+            id
+        }
+    }
+`;
+
+export function useDeleteElementMutation() {
+    return Urql.useMutation<DeleteElementMutation, DeleteElementMutationVariables>(DeleteElementDocument);
 }
 export const GetEventDocument = gql`
     query GetEvent($eventId: uuid!) {

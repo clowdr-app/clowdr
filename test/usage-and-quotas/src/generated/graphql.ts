@@ -40150,6 +40150,27 @@ export type UpdateUsageMutation = {
     } | null;
 };
 
+export type CallUpdateUsageMutationVariables = Exact<{ [key: string]: never }>;
+
+export type CallUpdateUsageMutation = {
+    readonly __typename?: "mutation_root";
+    readonly conference_updateEventUsage: ReadonlyArray<{
+        readonly __typename?: "conference_Usage";
+        readonly id: any;
+        readonly created_at: any;
+        readonly updated_at: any;
+        readonly conferenceId: any;
+        readonly consumedStreamingEventTotalMinutes: number;
+        readonly consumedVideoChatEventTotalMinutes: number;
+        readonly consumedVideoChatNonEventTotalMinutes: number;
+        readonly consumedSupportMeetingMinutes: number;
+        readonly lastUpdatedConsumedStreamingEventTotalMinutes: any;
+        readonly lastUpdatedConsumedVideoChatEventTotalMinutes: any;
+        readonly lastUpdatedConsumedVideoChatNonEventTotalMinutes: any;
+        readonly lastUpdatedConsumedSupportMeetingMinutes: any;
+    }>;
+};
+
 export type BasicQueryVariables = Exact<{ [key: string]: never }>;
 
 export type BasicQuery = {
@@ -40729,6 +40750,18 @@ export const UpdateUsageDocument = gql`
 
 export function useUpdateUsageMutation() {
     return Urql.useMutation<UpdateUsageMutation, UpdateUsageMutationVariables>(UpdateUsageDocument);
+}
+export const CallUpdateUsageDocument = gql`
+    mutation CallUpdateUsage {
+        conference_updateEventUsage {
+            ...Usage
+        }
+    }
+    ${UsageFragmentDoc}
+`;
+
+export function useCallUpdateUsageMutation() {
+    return Urql.useMutation<CallUpdateUsageMutation, CallUpdateUsageMutationVariables>(CallUpdateUsageDocument);
 }
 export const BasicDocument = gql`
     query Basic {

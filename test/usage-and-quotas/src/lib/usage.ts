@@ -1,6 +1,8 @@
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import gql from "graphql-tag";
 import type {
+    CallUpdateUsageMutation,
+    CallUpdateUsageMutationVariables,
     Conference_Usage_Set_Input,
     GetUsageQuery,
     GetUsageQueryVariables,
@@ -8,7 +10,7 @@ import type {
     UpdateUsageMutationVariables,
     UsageFragment,
 } from "../generated/graphql";
-import { GetUsageDocument, UpdateUsageDocument } from "../generated/graphql";
+import { CallUpdateUsageDocument, GetUsageDocument, UpdateUsageDocument } from "../generated/graphql";
 
 gql`
     fragment Usage on conference_Usage {
@@ -38,6 +40,12 @@ gql`
             returning {
                 ...Usage
             }
+        }
+    }
+
+    mutation CallUpdateUsage {
+        conference_updateEventUsage {
+            ...Usage
         }
     }
 `;
@@ -80,4 +88,20 @@ export async function updateUsage(conferenceId: string, set: Conference_Usage_Se
         throw new Error("No rows affected");
     }
     return response.data.update_conference_Usage.returning[0];
+}
+
+export async function callUpdateUsage(): Promise<readonly UsageFragment[]> {
+    if (!gqlClient) {
+        throw new Error("No GQL client");
+    }
+    const response = await gqlClient
+        .mutation<CallUpdateUsageMutation, CallUpdateUsageMutationVariables>(CallUpdateUsageDocument)
+        .toPromise();
+    if (response.error) {
+        throw response.error;
+    }
+    if (!response.data?.conference_updateEventUsage) {
+        throw new Error("No update response");
+    }
+    return response.data.conference_updateEventUsage;
 }

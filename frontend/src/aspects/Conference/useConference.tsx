@@ -1,4 +1,4 @@
-import { VStack } from "@chakra-ui/react";
+import { Text, VStack } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { RequestPolicy } from "@urql/core";
@@ -8,7 +8,10 @@ import type { AuthdConferenceInfoFragment, PublicConferenceInfoFragment } from "
 import { useConferenceById_WithoutUserQuery, useConferenceById_WithUserQuery } from "../../generated/graphql";
 import { AppError } from "../App";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
+import { LinkButton } from "../Chakra/LinkButton";
+import GenericErrorPage from "../Errors/GenericErrorPage";
 import PageNotFound from "../Errors/PageNotFound";
+import extractActualError from "../GQL/ExtractActualError";
 import { makeContext } from "../GQL/make-context";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
@@ -157,7 +160,7 @@ function ConferenceProvider_WithoutUser({
     children,
     conferenceId,
 }: {
-    children: string | JSX.Element | JSX.Element[];
+    children: (error?: JSX.Element) => JSX.Element;
     conferenceId: string;
 }): JSX.Element {
     const context = useMemo(
@@ -182,26 +185,40 @@ function ConferenceProvider_WithoutUser({
     }, [data?.conference_Conference_by_pk]);
 
     if ((loading || stale) && !data?.conference_Conference_by_pk) {
-        return <CenteredSpinner caller="useConference:175" />;
+        return (
+            <ConferenceContext.Provider value={undefined}>
+                {children(<CenteredSpinner caller="useConference:175" />)}
+            </ConferenceContext.Provider>
+        );
     }
 
     if (error) {
         return (
-            <VStack>
-                <PageNotFound />
-            </VStack>
+            <ConferenceContext.Provider value={undefined}>
+                {children(
+                    <VStack>
+                        <PageNotFound />
+                    </VStack>
+                )}
+            </ConferenceContext.Provider>
         );
     }
 
     if (!data?.conference_Conference_by_pk) {
         return (
-            <VStack>
-                <PageNotFound />
-            </VStack>
+            <ConferenceContext.Provider value={undefined}>
+                {children(
+                    <VStack>
+                        <PageNotFound />
+                    </VStack>
+                )}
+            </ConferenceContext.Provider>
         );
     }
 
-    return <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children}</ConferenceContext.Provider>;
+    return (
+        <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children()}</ConferenceContext.Provider>
+    );
 }
 
 function ConferenceProvider_WithUser({
@@ -209,7 +226,7 @@ function ConferenceProvider_WithUser({
     userId,
     conferenceId,
 }: {
-    children: string | JSX.Element | JSX.Element[];
+    children: (error?: JSX.Element) => JSX.Element;
     userId: string;
     conferenceId: string;
 }): JSX.Element {
@@ -236,44 +253,85 @@ function ConferenceProvider_WithUser({
     }, [data?.conference_Conference_by_pk]);
 
     if ((loading || stale) && !data?.conference_Conference_by_pk) {
-        return <CenteredSpinner caller="useConference:222" />;
+        return (
+            <ConferenceContext.Provider value={undefined}>
+                {children(<CenteredSpinner caller="useConference:222" />)}
+            </ConferenceContext.Provider>
+        );
     }
 
     if (error) {
-        return (
-            <VStack>
-                <AppError
-                    error={error}
-                    resetErrorBoundary={() => {
-                        //
-                    }}
-                />
-            </VStack>
-        );
+        const actualError = extractActualError(error);
+        if (actualError?.includes("Authentication hook unauthorized this request")) {
+            return (
+                <ConferenceContext.Provider value={undefined}>
+                    {children(
+                        <VStack spacing={4}>
+                            <GenericErrorPage heading="Conference unavailable">
+                                <Text>
+                                    You are logged in and registered for this conference but it could not be accessed.
+                                    The most likely reason is the conference is not yet open to attendees.
+                                </Text>
+                                <LinkButton to="/"> Back to home page</LinkButton>
+                            </GenericErrorPage>
+                        </VStack>
+                    )}
+                </ConferenceContext.Provider>
+            );
+        } else {
+            return (
+                <ConferenceContext.Provider value={undefined}>
+                    {children(
+                        <VStack>
+                            <AppError
+                                error={new Error(actualError)}
+                                resetErrorBoundary={() => {
+                                    //
+                                }}
+                            />
+                        </VStack>
+                    )}
+                </ConferenceContext.Provider>
+            );
+        }
     }
 
     if (!data?.conference_Conference_by_pk) {
         return (
-            <VStack>
-                <PageNotFound />
-            </VStack>
+            <ConferenceContext.Provider value={undefined}>
+                {children(
+                    <VStack>
+                        <PageNotFound />
+                    </VStack>
+                )}
+            </ConferenceContext.Provider>
         );
     }
 
-    return <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children}</ConferenceContext.Provider>;
+    return (
+        <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children()}</ConferenceContext.Provider>
+    );
 }
 
 export default function ConferenceProvider({
     children,
     conferenceId,
 }: {
-    children: string | JSX.Element | JSX.Element[];
-    conferenceId: string;
+    children: (error?: JSX.Element) => JSX.Element;
+    conferenceId?: string | null;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
 
+    if (!conferenceId) {
+        return <ConferenceContext.Provider value={undefined}>{children()}</ConferenceContext.Provider>;
+    }
+
     if (user.loading) {
-        return <CenteredSpinner caller="useConference:259" />;
+        return (
+            <ConferenceContext.Provider value={undefined}>
+                {children(<CenteredSpinner caller="useConference:259" />)}
+            </ConferenceContext.Provider>
+        );
     }
 
     if (user.user) {

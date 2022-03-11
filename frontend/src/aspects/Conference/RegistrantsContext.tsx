@@ -10,9 +10,9 @@ import type {
     RegistrantsByUserIdQueryVariables,
 } from "../../generated/graphql";
 import { RegistrantsByIdDocument, RegistrantsByUserIdDocument } from "../../generated/graphql";
+import { useAuthParameters } from "../GQL/AuthParameters";
 import usePolling from "../Hooks/usePolling";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import { useConference } from "./useConference";
 
 gql`
     query RegistrantsById($conferenceId: uuid!, $registrantIds: [uuid!]!) @cached {
@@ -153,7 +153,7 @@ export default function RegistrantsContextProvider({
 }): JSX.Element {
     const fullRefetchInterval = 60 * 60 * 1000; // 1 hour
     const [checkInterval, setCheckInterval] = useState<number>(1000);
-    const conference = useConference();
+    const { conferenceId } = useAuthParameters();
     const currentUser = useMaybeCurrentUser();
     const client = useClient();
     const registrants = React.useRef<Map<string, RegistrantCacheEntry>>(new Map());
@@ -186,13 +186,14 @@ export default function RegistrantsContextProvider({
 
     useEffect(() => {
         usersToRegistrantIds.current = new Map();
-    }, [conference.id]);
+    }, [conferenceId]);
 
     useEffect(() => {
-        if (!currentUser.user) {
+        if (!currentUser.user || !conferenceId) {
             return;
         }
 
+        const _conferenceId = conferenceId;
         const tId = setInterval(async () => {
             const requiredRegistrant_Ids = new Set<string>();
             const requiredRegistrant_SubIds = new Set<number>();
@@ -232,7 +233,7 @@ export default function RegistrantsContextProvider({
                                 RegistrantsByIdDocument,
                                 {
                                     registrantIds: filteredIds,
-                                    conferenceId: conference.id,
+                                    conferenceId: _conferenceId,
                                 },
                                 {
                                     fetchOptions: {
@@ -277,7 +278,7 @@ export default function RegistrantsContextProvider({
                                 RegistrantsByUserIdDocument,
                                 {
                                     userIds: filteredIds,
-                                    conferenceId: conference.id,
+                                    conferenceId: _conferenceId,
                                 },
                                 {
                                     fetchOptions: {
@@ -345,7 +346,7 @@ export default function RegistrantsContextProvider({
         return () => {
             clearInterval(tId);
         };
-    }, [client, checkInterval, conference.id, fullRefetchInterval, currentUser]);
+    }, [client, checkInterval, conferenceId, fullRefetchInterval, currentUser]);
 
     const ctx = useMemo(
         () => ({

@@ -2,8 +2,8 @@ import { useDisclosure } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
 import { gql } from "@urql/core";
 import React, { Suspense, useCallback, useMemo, useRef } from "react";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRestorableState } from "../../../Hooks/useRestorableState";
-import { useConference } from "../../useConference";
 
 const ScheduleModal = React.lazy(() => import("./ScheduleModal"));
 
@@ -47,6 +47,10 @@ interface ScheduleModalContext {
     onOpen: (tagId?: string, tab?: ProgramModalTab) => void;
     onClose: () => void;
     finalFocusRef: React.RefObject<FocusableElement>;
+    selectedTab: ProgramModalTab;
+    setSelectedTab: (value: ProgramModalTab) => void;
+    selectedTagId: string | null;
+    setSelectedTag: (value: string | null) => void;
 }
 
 const ScheduleModalContext = React.createContext<ScheduleModalContext | undefined>(undefined);
@@ -59,18 +63,18 @@ export function useScheduleModal(): ScheduleModalContext {
     return ctx;
 }
 
-export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
-    const conference = useConference();
+export function ScheduleModalStateProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
+    const { conferenceId } = useAuthParameters();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const scheduleButtonRef = useRef<FocusableElement>(null);
     const [selectedTab, setSelectedTab] = useRestorableState<ProgramModalTab>(
-        "ProgramModal_SelectedTab" + conference.id,
+        "ProgramModal_SelectedTab:" + conferenceId,
         ProgramModalTab.HappeningSoon,
         (x) => x,
         (x) => x as ProgramModalTab
     );
     const [selectedTagId, setSelectedTag] = useRestorableState<string | null>(
-        "ProgramModal_ItemList_OpenPanelId" + conference.id,
+        "ProgramModal_ItemList_OpenPanelId:" + conferenceId,
         null,
         (s) => (s === null ? "null" : s),
         (s) => (s === "null" ? null : s)
@@ -98,12 +102,30 @@ export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>
             isOpen,
             onOpen: doOnOpen,
             onClose,
+            selectedTab,
+            setSelectedTab,
+            selectedTagId,
+            setSelectedTag,
         }),
-        [doOnOpen, isOpen, onClose]
+        [doOnOpen, isOpen, onClose, selectedTab, selectedTagId, setSelectedTab, setSelectedTag]
     );
 
+    return <ScheduleModalContext.Provider value={ctx}>{children}</ScheduleModalContext.Provider>;
+}
+
+export function ProgramModal({ children }: React.PropsWithChildren<any>): JSX.Element {
+    const {
+        finalFocusRef: scheduleButtonRef,
+        isOpen,
+        onClose,
+        selectedTab,
+        setSelectedTab,
+        selectedTagId,
+        setSelectedTag,
+    } = useScheduleModal();
+
     return (
-        <ScheduleModalContext.Provider value={ctx}>
+        <>
             {children}
             <Suspense fallback={null}>
                 <ScheduleModal
@@ -116,6 +138,6 @@ export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>
                     setSelectedTag={setSelectedTag}
                 />
             </Suspense>
-        </ScheduleModalContext.Provider>
+        </>
     );
 }

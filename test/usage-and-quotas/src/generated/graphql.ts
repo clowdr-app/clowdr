@@ -7005,6 +7005,7 @@ export type Conference_Conference = {
     readonly items: ReadonlyArray<Content_Item>;
     /** An aggregate relationship */
     readonly items_aggregate: Content_Item_Aggregate;
+    readonly lowestRoleWithAccess?: Maybe<Registrant_RegistrantRole_Enum>;
     readonly name: Scalars["String"];
     /** An array relationship */
     readonly programPeople: ReadonlyArray<Collection_ProgramPerson>;
@@ -7317,6 +7318,7 @@ export type Conference_Conference_Bool_Exp = {
     readonly globalInviteCode?: InputMaybe<Uuid_Comparison_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly items?: InputMaybe<Content_Item_Bool_Exp>;
+    readonly lowestRoleWithAccess?: InputMaybe<Registrant_RegistrantRole_Enum_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
     readonly quota?: InputMaybe<Conference_Quota_Bool_Exp>;
@@ -7367,6 +7369,7 @@ export type Conference_Conference_Insert_Input = {
     readonly globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
+    readonly lowestRoleWithAccess?: InputMaybe<Registrant_RegistrantRole_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
     readonly quota?: InputMaybe<Conference_Quota_Obj_Rel_Insert_Input>;
@@ -7486,6 +7489,7 @@ export type Conference_Conference_Order_By = {
     readonly globalInviteCode?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
+    readonly lowestRoleWithAccess?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     readonly quota?: InputMaybe<Conference_Quota_Order_By>;
@@ -7526,6 +7530,8 @@ export enum Conference_Conference_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
+    LowestRoleWithAccess = "lowestRoleWithAccess",
+    /** column name */
     Name = "name",
     /** column name */
     ShortName = "shortName",
@@ -7545,6 +7551,7 @@ export type Conference_Conference_Set_Input = {
     readonly demoCodeId?: InputMaybe<Scalars["uuid"]>;
     readonly globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly lowestRoleWithAccess?: InputMaybe<Registrant_RegistrantRole_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly shortName?: InputMaybe<Scalars["String"]>;
     readonly slug?: InputMaybe<Scalars["String"]>;
@@ -7569,6 +7576,8 @@ export enum Conference_Conference_Update_Column {
     GlobalInviteCode = "globalInviteCode",
     /** column name */
     Id = "id",
+    /** column name */
+    LowestRoleWithAccess = "lowestRoleWithAccess",
     /** column name */
     Name = "name",
     /** column name */

@@ -1,19 +1,12 @@
-import { chakra, Link, Spinner, Text } from "@chakra-ui/react";
-import { assert } from "@midspace/assert";
-import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
-import { gql } from "@urql/core";
-import React, { Suspense, useEffect, useMemo } from "react";
+import { chakra, Link, Text } from "@chakra-ui/react";
+import React, { Suspense } from "react";
 import type { RouteComponentProps } from "react-router-dom";
-import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-import { useGetSlugForUrlQuery } from "../../generated/graphql";
+import { Redirect, Route, Switch } from "react-router-dom";
 import ProtectedRoute from "../Auth/ProtectedRoute";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
-import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
 import { LinkButton } from "../Chakra/LinkButton";
 import ConferenceRoutes from "../Conference/ConferenceRoutes";
 import { useAuthParameters } from "../GQL/AuthParameters";
-import { makeContext } from "../GQL/make-context";
-import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 const EmailVerificationRequiredPage = React.lazy(() => import("../Auth/EmailVerificationRequiredPage"));
 const LoggedOutPage = React.lazy(() => import("../Auth/LoggedOutPage"));
@@ -39,123 +32,11 @@ const VideoTestPage = React.lazy(() =>
     import("../Conference/Attend/Room/Video/VideoTestPage").then((x) => ({ default: x.VideoTestPage }))
 );
 
-gql`
-    query GetSlugForUrl($url: String!) @cached {
-        getSlug(url: $url) {
-            slug
-        }
-    }
-`;
-
-export default function DetectSlug(): JSX.Element {
-    return (
-        <Switch>
-            <Route
-                path={["/conference/:confSlug", "/c/:confSlug"]}
-                component={(
-                    props: RouteComponentProps<{
-                        confSlug: string;
-                    }>
-                ) => <Routing confSlug={props.match.params.confSlug} />}
-            />
-            <Route path="/">
-                <CheckSlug />
-            </Route>
-        </Switch>
-    );
-}
-
-function CheckSlug(): JSX.Element {
-    const slugCache = useMemo(() => {
-        const str = window.localStorage.getItem("SLUG_CACHE");
-        if (str) {
-            return JSON.parse(str);
-        }
-        return null;
-    }, []);
-    const origin = useMemo(() => window.location.origin, []);
-    const existingMapping = useMemo(() => {
-        const entry = slugCache?.[origin];
-        if (entry) {
-            try {
-                assert.truthy(entry.expiry && typeof entry.expiry === "number");
-                assert.truthy(entry.value && typeof entry.expiry === "string");
-                if (entry.expiry > Date.now()) {
-                    return entry.value as string;
-                } else {
-                    delete slugCache[origin];
-                    window.localStorage.setItem("SLUG_CACHE", slugCache);
-                }
-            } catch {
-                window.localStorage.removeItem("SLUG_CACHE");
-            }
-        }
-        return undefined;
-    }, [origin, slugCache]);
-    if (!existingMapping) {
-        return <CheckSlugInner />;
-    } else {
-        return <Routing confSlug={existingMapping} />;
-    }
-}
-
-function CheckSlugInner(): JSX.Element {
-    const origin = useMemo(() => window.location.origin, []);
-    const mUser = useMaybeCurrentUser();
-    const context = useMemo(
-        () =>
-            makeContext({
-                [AuthHeader.Role]: mUser ? HasuraRoleName.User : HasuraRoleName.Unauthenticated,
-            }),
-        [mUser]
-    );
-    const [response] = useGetSlugForUrlQuery({
-        variables: {
-            url: origin,
-        },
-        context,
-    });
-    useEffect(() => {
-        if (response.data?.getSlug?.slug) {
-            const cacheStr = window.localStorage.getItem("SLUG_CACHE");
-            let cache;
-            if (cacheStr) {
-                cache = JSON.parse(cacheStr);
-            } else {
-                cache = {};
-            }
-            cache[origin] = { value: response.data.getSlug.slug, expiry: Date.now() + 7 * 24 * 60 * 60 * 1000 };
-            window.localStorage.setItem("SLUG_CACHE", JSON.stringify(cache));
-        }
-    }, [origin, response.data?.getSlug?.slug]);
-    if (!response.fetching) {
-        if (!response.data?.getSlug?.slug) {
-            return <Routing />;
-        } else {
-            return <Routing confSlug={response.data.getSlug.slug} />;
-        }
-    }
-
-    return <CenteredSpinner caller="AppRouting:139" />;
-}
-
-function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
-    const { url } = useRouteMatch();
-    const { setConferenceSlug, setConferencePath } = useAuthParameters();
-    const { setTheme } = useConferenceTheme();
-    useEffect(() => {
-        if (!confSlug) {
-            setTheme(undefined);
-        }
-
-        setConferenceSlug(confSlug ?? null);
-        setConferencePath(confSlug ? (url.endsWith("/") ? url.substring(0, url.length - 1) : url) : null);
-    }, [confSlug, setTheme, setConferenceSlug, setConferencePath, url]);
-
-    const { conferenceId } = useAuthParameters();
+export default function AppRouting(): JSX.Element {
+    const { conferenceSlug: confSlug, conferenceId } = useAuthParameters();
 
     return (
-        <Suspense fallback={<Spinner />}>
+        <Suspense fallback={<CenteredSpinner caller="AppRouting:39" />}>
             <Switch>
                 <ProtectedRoute component={PushNotificationSettings} exact path="/user/pushNotifications" />
                 <ProtectedRoute component={SuperUserLandingPage} exact path="/su" />

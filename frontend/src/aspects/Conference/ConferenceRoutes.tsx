@@ -1,4 +1,3 @@
-import { Spinner } from "@chakra-ui/react";
 import React, { Suspense, useEffect } from "react";
 import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
@@ -46,8 +45,14 @@ export default function ConferenceRoutes(): JSX.Element {
         setTheme(conference.themeComponentColors?.[0]?.value);
     }, [conference.themeComponentColors, setTheme]);
 
+    const isOnManagementPage = useRouteMatch(`${path}/manage`);
+    const { setIsOnManagementPage } = useAuthParameters();
+    useEffect(() => {
+        setIsOnManagementPage(Boolean(isOnManagementPage));
+    }, [setIsOnManagementPage, isOnManagementPage]);
+
     return (
-        <Suspense fallback={<Spinner />}>
+        <Suspense fallback={<CenteredSpinner caller="ConferenceRoutes:56" />}>
             <Switch>
                 <Route exact path={`${path}/profile/edit`} component={EditProfilePage} />
 
@@ -226,17 +231,10 @@ const PageNotImplemented = React.lazy(() => import("../Errors/PageNotImplemented
 
 function ManageConferenceRoutes(): JSX.Element {
     const { path } = useRouteMatch();
-    const { isOnManagementPage, setIsOnManagementPage } = useAuthParameters();
 
-    useEffect(() => {
-        setIsOnManagementPage(true);
-        return () => {
-            setIsOnManagementPage(false);
-        };
-    }, [setIsOnManagementPage]);
-
+    const { isOnManagementPage } = useAuthParameters();
     return isOnManagementPage ? (
-        <Suspense fallback={<Spinner />}>
+        <Suspense fallback={<CenteredSpinner caller="ConferenceRoutes:238" />}>
             <Switch>
                 <Route exact path={path}>
                     <ManagerLanding />

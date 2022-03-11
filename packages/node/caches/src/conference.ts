@@ -9,6 +9,7 @@ import type {
     GetConferenceQueryVariables,
     GetConferencesForHydrationQuery,
     GetConferencesForHydrationQueryVariables,
+    Registrant_RegistrantRole_Enum,
 } from "./generated/graphql";
 import { GetConferenceDocument, GetConferencesForHydrationDocument } from "./generated/graphql";
 import type { CacheRecord } from "./generic/table";
@@ -21,6 +22,7 @@ gql`
         slug
         conferenceVisibilityLevel
         createdBy
+        lowestRoleWithAccess
         subconferences {
             id
         }
@@ -46,6 +48,7 @@ export interface ConferenceEntity {
     slug: string;
     conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
     subconferenceIds: string[];
+    lowestRoleWithAccess?: Registrant_RegistrantRole_Enum | null;
 }
 
 interface ConferenceCacheRecord {
@@ -55,6 +58,7 @@ interface ConferenceCacheRecord {
     slug: string;
     conferenceVisibilityLevel: string;
     subconferenceIds: string;
+    lowestRoleWithAccess: Registrant_RegistrantRole_Enum | "null";
 }
 
 export type ConferenceHydrationFilters =
@@ -124,6 +128,7 @@ export class ConferenceCache {
             slug: data.slug,
             conferenceVisibilityLevel: data.conferenceVisibilityLevel,
             subconferenceIds: JSON.stringify(data.subconferences.map((x) => x.id)),
+            lowestRoleWithAccess: data.lowestRoleWithAccess ?? "null",
         };
     }
 
@@ -137,6 +142,10 @@ export class ConferenceCache {
                 conferenceVisibilityLevel: rawEntity.conferenceVisibilityLevel as Conference_VisibilityLevel_Enum,
                 createdBy: rawEntity.createdBy,
                 subconferenceIds: JSON.parse(rawEntity.subconferenceIds) as string[],
+                lowestRoleWithAccess:
+                    rawEntity.lowestRoleWithAccess === "null"
+                        ? null
+                        : (rawEntity.lowestRoleWithAccess as Registrant_RegistrantRole_Enum),
             };
         }
         return undefined;
@@ -159,6 +168,8 @@ export class ConferenceCache {
                 return rawField as ConferenceEntity[FieldKey];
             } else if (field === "subconferenceIds") {
                 return JSON.parse(rawField) as ConferenceEntity[FieldKey];
+            } else if (field === "lowestRoleWithAccess") {
+                return (rawField === "null" ? null : rawField) as ConferenceEntity[FieldKey];
             }
         }
         return undefined;
@@ -174,6 +185,7 @@ export class ConferenceCache {
                 slug: value.slug,
                 conferenceVisibilityLevel: value.conferenceVisibilityLevel,
                 subconferenceIds: JSON.stringify(value.subconferenceIds),
+                lowestRoleWithAccess: value.lowestRoleWithAccess ?? "null",
             }
         );
     }
@@ -191,7 +203,8 @@ export class ConferenceCache {
                 field === "conferenceVisibilityLevel" ||
                 field === "createdBy" ||
                 field === "shortName" ||
-                field === "slug"
+                field === "slug" ||
+                field === "lowestRoleWithAccess"
             ) {
                 await this.cache.setField(id, field, value as string);
             } else if (field === "subconferenceIds") {

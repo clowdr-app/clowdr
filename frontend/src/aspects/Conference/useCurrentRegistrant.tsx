@@ -1,6 +1,5 @@
 import { assert } from "@midspace/assert";
-import type { ReactNode, ReactNodeArray } from "react";
-import React, { useMemo } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import type { Maybe, Registrant_RegistrantRole_Enum } from "../../generated/graphql";
 import type { BadgeData } from "../Badges/ProfileBadge";
 import { useConference } from "./useConference";
@@ -34,6 +33,9 @@ export type Registrant = {
 export type RegistrantContextT = Registrant;
 
 const CurrentRegistrantContext = React.createContext<RegistrantContextT | undefined>(undefined);
+const CurrentRegistrantUpdateContext = React.createContext<
+    undefined | ((value: RegistrantContextT | undefined) => void)
+>(undefined);
 
 export default function useCurrentRegistrant(): RegistrantContextT {
     const ctx = React.useContext(CurrentRegistrantContext);
@@ -45,15 +47,27 @@ export function useMaybeCurrentRegistrant(): RegistrantContextT | undefined {
     return React.useContext(CurrentRegistrantContext);
 }
 
-export function CurrentRegistrantProvider({ children }: { children: ReactNode | ReactNodeArray }): JSX.Element {
+export function CurrentRegistrantProvider({ children }: { children: React.ReactChild }): JSX.Element {
+    const [ctx, setCtx] = useState<Registrant | undefined>(undefined);
+    return (
+        <CurrentRegistrantUpdateContext.Provider value={setCtx}>
+            <CurrentRegistrantContext.Provider value={ctx}>{children}</CurrentRegistrantContext.Provider>
+        </CurrentRegistrantUpdateContext.Provider>
+    );
+}
+
+export function CurrentRegistrantUpdater(): JSX.Element {
     const conference = useConference();
+    const setCtx = useContext(CurrentRegistrantUpdateContext);
 
-    const ctx = useMemo(() => {
+    useEffect(() => {
         if (!("registrants" in conference)) {
-            return undefined;
+            setCtx?.(undefined);
+            return;
         }
-        return conference.registrants.length > 0 ? (conference.registrants[0] as Registrant) : undefined;
-    }, [conference]);
+        const registrants = conference.registrants;
+        setCtx?.(registrants.length > 0 ? (registrants[0] as Registrant) : undefined);
+    }, [conference, setCtx]);
 
-    return <CurrentRegistrantContext.Provider value={ctx}>{children}</CurrentRegistrantContext.Provider>;
+    return <></>;
 }

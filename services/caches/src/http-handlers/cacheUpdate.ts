@@ -22,14 +22,30 @@ export async function handleConferenceCacheUpdate(
 ): Promise<void> {
     switch (payload.event.op) {
         case "INSERT":
-            // TODO
+            {
+                const newEntity = payload.event.data.new;
+                await new ConferenceCache(logger).setEntity(newEntity.id, {
+                    id: newEntity.id,
+                    shortName: newEntity.shortName,
+                    createdBy: newEntity.createdBy,
+                    slug: newEntity.slug,
+                    conferenceVisibilityLevel: newEntity.conferenceVisibilityLevel,
+                    subconferenceIds: [],
+                    lowestRoleWithAccess: newEntity.lowestRoleWithAccess,
+                });
+            }
             break;
         case "UPDATE":
             {
                 const newEntity = payload.event.data.new;
                 await new ConferenceCache(logger).updateEntity(newEntity.id, (old) => ({
                     ...old,
-                    ...newEntity,
+                    id: newEntity.id,
+                    shortName: newEntity.shortName,
+                    createdBy: newEntity.createdBy,
+                    slug: newEntity.slug,
+                    conferenceVisibilityLevel: newEntity.conferenceVisibilityLevel,
+                    lowestRoleWithAccess: newEntity.lowestRoleWithAccess,
                 }));
             }
             break;

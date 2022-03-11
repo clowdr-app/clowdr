@@ -3,7 +3,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import type { MinimalEventInfoFragment } from "../../generated/graphql";
 import { useGetEventsInNextHourQuery } from "../../generated/graphql";
-import { useConference } from "../Conference/useConference";
+import { useAuthParameters } from "../GQL/AuthParameters";
 import { useRealTime } from "../Hooks/useRealTime";
 import { roundDownToNearest, roundUpToNearest } from "../Utils/MathUtils";
 
@@ -46,7 +46,7 @@ export function useLiveEvents(): LiveEventsContext {
 
 const refetchEventsInterval = 30 * 60 * 1000;
 export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
-    const conference = useConference();
+    const { conferenceId } = useAuthParameters();
 
     const nowSlow = useRealTime(refetchEventsInterval);
     // Load events from the nearest N-minute boundary onwards
@@ -68,10 +68,11 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
 
     const [response] = useGetEventsInNextHourQuery({
         variables: {
-            conferenceId: conference.id,
+            conferenceId,
             now: nowStr,
             cutoff: nowCutoffStr,
         },
+        pause: !conferenceId,
     });
 
     const nowQuick = useRealTime(60 * 1000);

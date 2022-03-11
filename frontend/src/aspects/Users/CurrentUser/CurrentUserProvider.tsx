@@ -46,7 +46,7 @@ gql`
 export default function CurrentUserProvider({
     children,
 }: {
-    children: string | JSX.Element | Array<JSX.Element>;
+    children: (children?: JSX.Element) => JSX.Element;
 }): JSX.Element {
     const userId = useUserId();
 
@@ -57,7 +57,7 @@ export default function CurrentUserProvider({
     }
 }
 
-function CurrentUserProvider_NotAuthenticated({ children }: { children: string | JSX.Element | Array<JSX.Element> }) {
+function CurrentUserProvider_NotAuthenticated({ children }: { children: (children: JSX.Element) => JSX.Element }) {
     const ctx = useMemo(
         () => ({
             ...defaultCurrentUserContext,
@@ -112,7 +112,7 @@ function CurrentUserProvider_IsAuthenticated({
     children,
     userId,
 }: {
-    children: string | JSX.Element | Array<JSX.Element>;
+    children: (children?: JSX.Element) => JSX.Element;
     userId: string;
 }) {
     const context = useMemo(
@@ -160,7 +160,14 @@ function CurrentUserProvider_IsAuthenticated({
 
     if (termsLoading || loading) {
         return (
-            <CenteredSpinner caller="CurrentUserProvider:179" spinnerProps={{ label: "Loading terms configuration" }} />
+            <CurrentUserContext.Provider value={ctx}>
+                {children(
+                    <CenteredSpinner
+                        caller="CurrentUserProvider:179"
+                        spinnerProps={{ label: "Loading terms configuration" }}
+                    />
+                )}
+            </CurrentUserContext.Provider>
         );
     }
 
@@ -170,12 +177,16 @@ function CurrentUserProvider_IsAuthenticated({
             const cookiesURL: string = termsData.cookiesURL.value;
             if (!acceptedCookiesAt || cookiesTimestamp > acceptedCookiesAt) {
                 return (
-                    <CookiePolicyCompliance
-                        cookiesURL={cookiesURL}
-                        setAcceptedCookiesAt={setAcceptedCookiesAt}
-                        hostOrganisationName={termsData.hostOrganisationName.value}
-                        policyChanged={!!acceptedCookiesAt && cookiesTimestamp > acceptedCookiesAt}
-                    />
+                    <CurrentUserContext.Provider value={ctx}>
+                        {children(
+                            <CookiePolicyCompliance
+                                cookiesURL={cookiesURL}
+                                setAcceptedCookiesAt={setAcceptedCookiesAt}
+                                hostOrganisationName={termsData.hostOrganisationName.value}
+                                policyChanged={!!acceptedCookiesAt && cookiesTimestamp > acceptedCookiesAt}
+                            />
+                        )}
+                    </CurrentUserContext.Provider>
                 );
             }
         }
@@ -186,23 +197,33 @@ function CurrentUserProvider_IsAuthenticated({
 
             if (!acceptedPPAt || !acceptedTermsAt || ppTimestamp > acceptedPPAt || termsTimestamp > acceptedTermsAt) {
                 return (
-                    <TermsAndPPCompliance
-                        hostOrganisationName={termsData.hostOrganisationName.value}
-                        ppURL={termsData.ppURL.value}
-                        termsURL={termsData.termsURL.value}
-                        userId={userId}
-                        ppAcceptance={!acceptedPPAt ? "never" : ppTimestamp > acceptedPPAt ? "outdated" : "current"}
-                        termsAcceptance={
-                            !acceptedTermsAt ? "never" : termsTimestamp > acceptedTermsAt ? "outdated" : "current"
-                        }
-                        forceRefresh={forceRefresh}
-                    />
+                    <CurrentUserContext.Provider value={ctx}>
+                        {children(
+                            <TermsAndPPCompliance
+                                hostOrganisationName={termsData.hostOrganisationName.value}
+                                ppURL={termsData.ppURL.value}
+                                termsURL={termsData.termsURL.value}
+                                userId={userId}
+                                ppAcceptance={
+                                    !acceptedPPAt ? "never" : ppTimestamp > acceptedPPAt ? "outdated" : "current"
+                                }
+                                termsAcceptance={
+                                    !acceptedTermsAt
+                                        ? "never"
+                                        : termsTimestamp > acceptedTermsAt
+                                        ? "outdated"
+                                        : "current"
+                                }
+                                forceRefresh={forceRefresh}
+                            />
+                        )}
+                    </CurrentUserContext.Provider>
                 );
             }
         }
     }
 
-    return <CurrentUserContext.Provider value={ctx}>{children}</CurrentUserContext.Provider>;
+    return <CurrentUserContext.Provider value={ctx}>{children()}</CurrentUserContext.Provider>;
 }
 
 function CookiePolicyCompliance({

@@ -9613,6 +9613,7 @@ type conference_Conference {
         """
         where: content_Item_bool_exp
     ): content_Item_aggregate!
+    lowestRoleWithAccess: registrant_RegistrantRole_enum
     name: String!
     """
     An array relationship
@@ -10041,6 +10042,7 @@ input conference_Conference_bool_exp {
     globalInviteCode: uuid_comparison_exp
     id: uuid_comparison_exp
     items: content_Item_bool_exp
+    lowestRoleWithAccess: registrant_RegistrantRole_enum_comparison_exp
     name: String_comparison_exp
     programPeople: collection_ProgramPerson_bool_exp
     quota: conference_Quota_bool_exp
@@ -10107,6 +10109,7 @@ input conference_Conference_insert_input {
     globalInviteCode: uuid
     id: uuid
     items: content_Item_arr_rel_insert_input
+    lowestRoleWithAccess: registrant_RegistrantRole_enum
     name: String
     programPeople: collection_ProgramPerson_arr_rel_insert_input
     quota: conference_Quota_obj_rel_insert_input
@@ -10245,6 +10248,7 @@ input conference_Conference_order_by {
     globalInviteCode: order_by
     id: order_by
     items_aggregate: content_Item_aggregate_order_by
+    lowestRoleWithAccess: order_by
     name: order_by
     programPeople_aggregate: collection_ProgramPerson_aggregate_order_by
     quota: conference_Quota_order_by
@@ -10307,6 +10311,10 @@ enum conference_Conference_select_column {
     """
     column name
     """
+    lowestRoleWithAccess
+    """
+    column name
+    """
     name
     """
     column name
@@ -10334,6 +10342,7 @@ input conference_Conference_set_input {
     demoCodeId: uuid
     globalInviteCode: uuid
     id: uuid
+    lowestRoleWithAccess: registrant_RegistrantRole_enum
     name: String
     shortName: String
     slug: String
@@ -10376,6 +10385,10 @@ enum conference_Conference_update_column {
     column name
     """
     id
+    """
+    column name
+    """
+    lowestRoleWithAccess
     """
     column name
     """

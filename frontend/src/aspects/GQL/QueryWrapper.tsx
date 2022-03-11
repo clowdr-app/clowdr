@@ -1,6 +1,7 @@
-import { Spinner, Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { OperationResult, UseQueryState } from "urql";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
 import useQueryErrorToast from "./useQueryErrorToast";
 
 export default function QueryWrapper<TData, TVariables, TInnerData>({
@@ -32,7 +33,7 @@ export default function QueryWrapper<TData, TVariables, TInnerData>({
         <>
             {queryResult.fetching || (queryResult.stale && !innerData) ? (
                 noSpinner ? undefined : (
-                    <Spinner />
+                    <CenteredSpinner caller="QueryWrapper:35" />
                 )
             ) : queryResult && "error" in queryResult && queryResult.error ? (
                 <Text>An error occurred loading in data - please see further information in notifications.</Text>

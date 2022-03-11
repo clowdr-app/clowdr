@@ -12,7 +12,6 @@ import {
 } from "../../../../generated/graphql";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRealTime } from "../../../Hooks/useRealTime";
-import { useMyBackstagesModal } from "../Profile/MyBackstages";
 import { SocialiseModalTab, useSocialiseModal } from "../Rooms/SocialiseModalProvider";
 import { useLiveProgramRooms } from "../Rooms/useLiveProgramRooms";
 import { ProgramModalTab, useScheduleModal } from "../Schedule/ProgramModal";
@@ -268,7 +267,6 @@ function ContinuationChoices_Inner({
     const history = useHistory();
     const scheduleModal = useScheduleModal();
     const socialiseModal = useSocialiseModal();
-    const myBackstages = useMyBackstagesModal();
     const liveProgramRooms = useLiveProgramRooms();
     useEffect(() => {
         if (activateChoice && !activatedChoice) {
@@ -389,7 +387,7 @@ function ContinuationChoices_Inner({
                                         socialiseModal.onOpen(SocialiseModalTab.Networking);
                                         break;
                                     case NavigationView.MyBackstages:
-                                        myBackstages.onOpen();
+                                        // Deprecated
                                         break;
                                 }
                                 break;

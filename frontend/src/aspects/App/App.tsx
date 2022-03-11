@@ -6,20 +6,18 @@ import { BrowserRouter } from "react-router-dom";
 import "reflect-metadata";
 import { ThemeProvider as ChimeThemeProvider } from "styled-components";
 import { AppSettingsProvider } from "../App";
-import AppPage from "../App/AppPage";
 import { Auth0Provider } from "../Auth";
 import ChakraCustomProvider from "../Chakra/ChakraCustomProvider";
 import { GlobalChatStateProvider } from "../Chat/GlobalChatStateProvider";
-import { MyBackstagesModalProvider } from "../Conference/Attend/Profile/MyBackstages";
 import { PermissionInstructionsProvider } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 import { VonageGlobalStateProvider } from "../Conference/Attend/Room/Vonage/State/VonageGlobalStateProvider";
-import { SocialiseModalProvider } from "../Conference/Attend/Rooms/SocialiseModalProvider";
+import { SocialiseModalInstance, SocialiseModalProvider } from "../Conference/Attend/Rooms/SocialiseModalProvider";
 import { LiveProgramRoomsProvider } from "../Conference/Attend/Rooms/useLiveProgramRooms";
-import { ScheduleModalProvider } from "../Conference/Attend/Schedule/ProgramModal";
+import { ProgramModal, ScheduleModalStateProvider } from "../Conference/Attend/Schedule/ProgramModal";
 import useConferenceIdUpdater from "../Conference/ConferenceIdUpdater";
-import AttendeesContextProvider from "../Conference/RegistrantsContext";
+import RegistrantsContextProvider from "../Conference/RegistrantsContext";
 import ConferenceProvider from "../Conference/useConference";
-import { CurrentRegistrantProvider } from "../Conference/useCurrentRegistrant";
+import { CurrentRegistrantProvider, CurrentRegistrantUpdater } from "../Conference/useCurrentRegistrant";
 import { EmojiFloatProvider } from "../Emoji/EmojiFloat";
 import ForceUserRefresh from "../ForceUserRefresh/ForceUserRefresh";
 import { AuthParametersProvider, useAuthParameters } from "../GQL/AuthParameters";
@@ -32,6 +30,9 @@ import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
 import CurrentUserProvider from "../Users/CurrentUser/CurrentUserProvider";
 import "./App.css";
 import { AppLayoutProvider } from "./AppLayoutContext";
+import AppPage from "./AppPage";
+import AppRouting from "./AppRouting";
+import DetectSlug from "./DetectSlug";
 
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
@@ -68,68 +69,95 @@ function AppInner(): JSX.Element {
     //     return <DownForMaintenancePage />;
     // }
 
+    const { conferenceId } = useAuthParameters();
     useConferenceIdUpdater();
 
     return (
-        <CurrentUserProvider>
-            <AppSettingsProvider>
-                <NavigationStateProvider>
-                    <ChimeThemeProvider theme={chimeTheme}>
-                        <MeetingProvider>
-                            <AppInner2 />
-                        </MeetingProvider>
-                    </ChimeThemeProvider>
-                </NavigationStateProvider>
-            </AppSettingsProvider>
-        </CurrentUserProvider>
+        <EmojiFloatProvider>
+            <CurrentUserProvider>
+                {(currentUserChildren) => (
+                    <DetectSlug>
+                        {(detectSlugChildren) => (
+                            <AppSettingsProvider>
+                                <NavigationStateProvider>
+                                    <ConferenceProvider
+                                        conferenceId={
+                                            conferenceId && conferenceId !== "NONE" ? conferenceId : undefined
+                                        }
+                                    >
+                                        {(conferenceChildren) => (
+                                            <RightSidebarCurrentTabProvider>
+                                                <CurrentRegistrantProvider>
+                                                    <ScheduleModalStateProvider>
+                                                        <SocialiseModalProvider>
+                                                            <LiveEventsProvider>
+                                                                <LiveProgramRoomsProvider>
+                                                                    <RegistrantsContextProvider>
+                                                                        <GlobalChatStateProvider>
+                                                                            <RaiseHandProvider>
+                                                                                <AppPage>
+                                                                                    {currentUserChildren ??
+                                                                                        detectSlugChildren ??
+                                                                                        conferenceChildren ?? (
+                                                                                            <ChimeThemeProvider
+                                                                                                theme={chimeTheme}
+                                                                                            >
+                                                                                                <MeetingProvider>
+                                                                                                    <AppInner2 />
+                                                                                                </MeetingProvider>
+                                                                                            </ChimeThemeProvider>
+                                                                                        )}
+                                                                                </AppPage>
+                                                                            </RaiseHandProvider>
+                                                                        </GlobalChatStateProvider>
+                                                                    </RegistrantsContextProvider>
+                                                                </LiveProgramRoomsProvider>
+                                                            </LiveEventsProvider>
+                                                        </SocialiseModalProvider>
+                                                    </ScheduleModalStateProvider>
+                                                </CurrentRegistrantProvider>
+                                            </RightSidebarCurrentTabProvider>
+                                        )}
+                                    </ConferenceProvider>
+                                </NavigationStateProvider>
+                            </AppSettingsProvider>
+                        )}
+                    </DetectSlug>
+                )}
+            </CurrentUserProvider>
+        </EmojiFloatProvider>
     );
 }
 
 function AppInner2(): JSX.Element {
     const { conferenceId } = useAuthParameters();
+
     const page = (
         <Suspense fallback={<></>}>
-            <AppPage />
+            <AppRouting />
         </Suspense>
     );
 
     return (
-        <EmojiFloatProvider>
-            <RightSidebarCurrentTabProvider>
-                {conferenceId && conferenceId !== "NONE" ? (
-                    <ConferenceProvider conferenceId={conferenceId}>
-                        <ForceUserRefresh />
-                        <CurrentRegistrantProvider>
-                            <GlobalChatStateProvider>
-                                <RaiseHandProvider>
-                                    <AttendeesContextProvider>
-                                        <LiveEventsProvider>
-                                            <ScheduleModalProvider>
-                                                <LiveProgramRoomsProvider>
-                                                    <MyBackstagesModalProvider>
-                                                        <SocialiseModalProvider>
-                                                            {/* <ShuffleRoomsQueueMonitor /> */}
-                                                            <PermissionInstructionsProvider>
-                                                                <AppLayoutProvider>
-                                                                    <SharedRoomContextProvider>
-                                                                        {page}
-                                                                    </SharedRoomContextProvider>
-                                                                </AppLayoutProvider>
-                                                            </PermissionInstructionsProvider>
-                                                        </SocialiseModalProvider>
-                                                    </MyBackstagesModalProvider>
-                                                </LiveProgramRoomsProvider>
-                                            </ScheduleModalProvider>
-                                        </LiveEventsProvider>
-                                    </AttendeesContextProvider>
-                                </RaiseHandProvider>
-                            </GlobalChatStateProvider>
-                        </CurrentRegistrantProvider>
-                    </ConferenceProvider>
-                ) : (
-                    page
-                )}
-            </RightSidebarCurrentTabProvider>
-        </EmojiFloatProvider>
+        <>
+            {conferenceId && conferenceId !== "NONE" ? (
+                <>
+                    <CurrentRegistrantUpdater />
+
+                    <ForceUserRefresh />
+                    <ProgramModal />
+                    <SocialiseModalInstance />
+
+                    {/* <ShuffleRoomsQueueMonitor /> */}
+                    <PermissionInstructionsProvider>
+                        <AppLayoutProvider>
+                            <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                        </AppLayoutProvider>
+                    </PermissionInstructionsProvider>
+                </>
+            ) : (
+                page
+            )}
+        </>
     );
 }

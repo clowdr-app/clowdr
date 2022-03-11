@@ -141,7 +141,6 @@ gql`
                 capacity: $capacity
                 conferenceId: $conferenceId
                 subconferenceId: $subconferenceId
-                currentModeName: VIDEO_CHAT
                 name: $name
                 managementModeName: MANAGED
             }

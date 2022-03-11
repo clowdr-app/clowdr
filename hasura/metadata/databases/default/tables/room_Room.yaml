@@ -26,9 +26,6 @@ object_relationships:
 - name: conference
   using:
     foreign_key_constraint_on: conferenceId
-- name: currentMode
-  using:
-    foreign_key_constraint_on: currentModeName
 - name: item
   using:
     foreign_key_constraint_on: itemId
@@ -178,7 +175,6 @@ insert_permissions:
     - capacity
     - colour
     - conferenceId
-    - currentModeName
     - managementModeName
     - name
     - priority
@@ -197,7 +193,6 @@ insert_permissions:
     - capacity
     - colour
     - conferenceId
-    - currentModeName
     - id
     - managementModeName
     - name
@@ -225,7 +220,6 @@ insert_permissions:
     - capacity
     - colour
     - conferenceId
-    - currentModeName
     - managementModeName
     - name
     - priority
@@ -246,7 +240,6 @@ insert_permissions:
     - capacity
     - colour
     - conferenceId
-    - currentModeName
     - id
     - managementModeName
     - name
@@ -263,7 +256,6 @@ select_permissions:
     - colour
     - conferenceId
     - created_at
-    - currentModeName
     - id
     - managementModeName
     - name
@@ -302,7 +294,6 @@ select_permissions:
     - priority
     - backendName
     - colour
-    - currentModeName
     - managementModeName
     - name
     - publicVonageSessionId
@@ -330,7 +321,6 @@ select_permissions:
     - priority
     - backendName
     - colour
-    - currentModeName
     - managementModeName
     - name
     - publicVonageSessionId
@@ -371,7 +361,6 @@ select_permissions:
     - priority
     - backendName
     - colour
-    - currentModeName
     - managementModeName
     - name
     - publicVonageSessionId
@@ -412,7 +401,6 @@ select_permissions:
     - priority
     - backendName
     - colour
-    - currentModeName
     - managementModeName
     - name
     - publicVonageSessionId
@@ -461,7 +449,6 @@ update_permissions:
     columns:
     - capacity
     - colour
-    - currentModeName
     - managementModeName
     - name
     - priority

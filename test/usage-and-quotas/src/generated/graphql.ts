@@ -26106,10 +26106,6 @@ export type Room_Mode = {
     /** An aggregate relationship */
     readonly events_aggregate: Schedule_Event_Aggregate;
     readonly name: Scalars["String"];
-    /** An array relationship */
-    readonly rooms: ReadonlyArray<Room_Room>;
-    /** An aggregate relationship */
-    readonly rooms_aggregate: Room_Room_Aggregate;
 };
 
 /** columns and relationships of "room.Mode" */
@@ -26128,24 +26124,6 @@ export type Room_ModeEvents_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
     where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeRoomsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeRooms_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
 };
 
 /** aggregated selection of "room.Mode" */
@@ -26177,7 +26155,6 @@ export type Room_Mode_Bool_Exp = {
     readonly description?: InputMaybe<String_Comparison_Exp>;
     readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
-    readonly rooms?: InputMaybe<Room_Room_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "room.Mode" */
@@ -26221,7 +26198,6 @@ export type Room_Mode_Insert_Input = {
     readonly description?: InputMaybe<Scalars["String"]>;
     readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -26266,7 +26242,6 @@ export type Room_Mode_Order_By = {
     readonly description?: InputMaybe<Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: room_Mode */
@@ -26456,9 +26431,6 @@ export type Room_Room = {
     readonly currentEvents: ReadonlyArray<Schedule_CurrentEvents>;
     /** An aggregate relationship */
     readonly currentEvents_aggregate: Schedule_CurrentEvents_Aggregate;
-    /** An object relationship */
-    readonly currentMode: Room_Mode;
-    readonly currentModeName: Room_Mode_Enum;
     /** An array relationship */
     readonly events: ReadonlyArray<Schedule_Event>;
     /** An aggregate relationship */
@@ -27116,8 +27088,6 @@ export type Room_Room_Bool_Exp = {
     readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly currentEvents?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
-    readonly currentMode?: InputMaybe<Room_Mode_Bool_Exp>;
-    readonly currentModeName?: InputMaybe<Room_Mode_Enum_Comparison_Exp>;
     readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly isProgramRoom?: InputMaybe<Boolean_Comparison_Exp>;
@@ -27173,8 +27143,6 @@ export type Room_Room_Insert_Input = {
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
     readonly currentEvents?: InputMaybe<Schedule_CurrentEvents_Arr_Rel_Insert_Input>;
-    readonly currentMode?: InputMaybe<Room_Mode_Obj_Rel_Insert_Input>;
-    readonly currentModeName?: InputMaybe<Room_Mode_Enum>;
     readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
@@ -27301,8 +27269,6 @@ export type Room_Room_Order_By = {
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
     readonly currentEvents_aggregate?: InputMaybe<Schedule_CurrentEvents_Aggregate_Order_By>;
-    readonly currentMode?: InputMaybe<Room_Mode_Order_By>;
-    readonly currentModeName?: InputMaybe<Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly isProgramRoom?: InputMaybe<Order_By>;
@@ -27348,8 +27314,6 @@ export enum Room_Room_Select_Column {
     /** column name */
     CreatedAt = "created_at",
     /** column name */
-    CurrentModeName = "currentModeName",
-    /** column name */
     Id = "id",
     /** column name */
     ItemId = "itemId",
@@ -27375,7 +27339,6 @@ export type Room_Room_Set_Input = {
     readonly colour?: InputMaybe<Scalars["String"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
-    readonly currentModeName?: InputMaybe<Room_Mode_Enum>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
     readonly managementModeName?: InputMaybe<Room_ManagementMode_Enum>;
@@ -27452,8 +27415,6 @@ export enum Room_Room_Update_Column {
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "created_at",
-    /** column name */
-    CurrentModeName = "currentModeName",
     /** column name */
     Id = "id",
     /** column name */
@@ -39897,7 +39858,6 @@ export type RoomFragment = {
     readonly updated_at: any;
     readonly conferenceId: any;
     readonly name: string;
-    readonly currentModeName: Room_Mode_Enum;
     readonly capacity?: number | null;
     readonly publicVonageSessionId?: string | null;
     readonly priority: number;
@@ -39922,7 +39882,6 @@ export type GetRoomQuery = {
         readonly updated_at: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
         readonly capacity?: number | null;
         readonly publicVonageSessionId?: string | null;
         readonly priority: number;
@@ -39948,7 +39907,6 @@ export type InsertRoomMutation = {
         readonly updated_at: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
         readonly capacity?: number | null;
         readonly publicVonageSessionId?: string | null;
         readonly priority: number;
@@ -39975,7 +39933,6 @@ export type UpdateRoomMutation = {
         readonly updated_at: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
         readonly capacity?: number | null;
         readonly publicVonageSessionId?: string | null;
         readonly priority: number;
@@ -40303,7 +40260,6 @@ export const RoomFragmentDoc = gql`
         updated_at
         conferenceId
         name
-        currentModeName
         capacity
         publicVonageSessionId
         priority

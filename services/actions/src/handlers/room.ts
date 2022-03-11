@@ -220,7 +220,6 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
                     capacity: $capacity
                     conferenceId: $conferenceId
                     subconferenceId: null
-                    currentModeName: VIDEO_CHAT
                     name: $name
                     managementModeName: DM
                     roomMemberships: { data: $data }

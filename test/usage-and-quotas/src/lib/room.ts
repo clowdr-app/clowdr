@@ -22,7 +22,6 @@ gql`
         updated_at
         conferenceId
         name
-        currentModeName
         capacity
         publicVonageSessionId
         priority

@@ -126,7 +126,6 @@ gql`
     fragment Schedule_RoomSummary on room_Room {
         id
         name
-        currentModeName
         priority
         managementModeName
         conferenceId

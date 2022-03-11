@@ -38183,56 +38183,6 @@ type room_Mode {
         where: schedule_Event_bool_exp
     ): schedule_Event_aggregate!
     name: String!
-    """
-    An array relationship
-    """
-    rooms(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Room_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Room_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Room_bool_exp
-    ): [room_Room!]!
-    """
-    An aggregate relationship
-    """
-    rooms_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Room_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Room_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Room_bool_exp
-    ): room_Room_aggregate!
 }
 
 """
@@ -38262,7 +38212,6 @@ input room_Mode_bool_exp {
     description: String_comparison_exp
     events: schedule_Event_bool_exp
     name: String_comparison_exp
-    rooms: room_Room_bool_exp
 }
 
 """
@@ -38332,7 +38281,6 @@ input room_Mode_insert_input {
     description: String
     events: schedule_Event_arr_rel_insert_input
     name: String
-    rooms: room_Room_arr_rel_insert_input
 }
 
 """
@@ -38392,7 +38340,6 @@ input room_Mode_order_by {
     description: order_by
     events_aggregate: schedule_Event_aggregate_order_by
     name: order_by
-    rooms_aggregate: room_Room_aggregate_order_by
 }
 
 """
@@ -38741,11 +38688,6 @@ type room_Room {
         """
         where: schedule_CurrentEvents_bool_exp
     ): schedule_CurrentEvents_aggregate!
-    """
-    An object relationship
-    """
-    currentMode: room_Mode!
-    currentModeName: room_Mode_enum!
     """
     An array relationship
     """
@@ -39702,8 +39644,6 @@ input room_Room_bool_exp {
     conferenceId: uuid_comparison_exp
     created_at: timestamptz_comparison_exp
     currentEvents: schedule_CurrentEvents_bool_exp
-    currentMode: room_Mode_bool_exp
-    currentModeName: room_Mode_enum_comparison_exp
     events: schedule_Event_bool_exp
     id: uuid_comparison_exp
     isProgramRoom: Boolean_comparison_exp
@@ -39771,8 +39711,6 @@ input room_Room_insert_input {
     conferenceId: uuid
     created_at: timestamptz
     currentEvents: schedule_CurrentEvents_arr_rel_insert_input
-    currentMode: room_Mode_obj_rel_insert_input
-    currentModeName: room_Mode_enum
     events: schedule_Event_arr_rel_insert_input
     id: uuid
     item: content_Item_obj_rel_insert_input
@@ -39918,8 +39856,6 @@ input room_Room_order_by {
     conferenceId: order_by
     created_at: order_by
     currentEvents_aggregate: schedule_CurrentEvents_aggregate_order_by
-    currentMode: room_Mode_order_by
-    currentModeName: order_by
     events_aggregate: schedule_Event_aggregate_order_by
     id: order_by
     isProgramRoom: order_by
@@ -39983,10 +39919,6 @@ enum room_Room_select_column {
     """
     column name
     """
-    currentModeName
-    """
-    column name
-    """
     id
     """
     column name
@@ -40028,7 +39960,6 @@ input room_Room_set_input {
     colour: String
     conferenceId: uuid
     created_at: timestamptz
-    currentModeName: room_Mode_enum
     id: uuid
     itemId: uuid
     managementModeName: room_ManagementMode_enum
@@ -40131,10 +40062,6 @@ enum room_Room_update_column {
     column name
     """
     created_at
-    """
-    column name
-    """
-    currentModeName
     """
     column name
     """

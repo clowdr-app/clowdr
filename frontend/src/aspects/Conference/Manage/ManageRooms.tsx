@@ -55,7 +55,6 @@ import type {
 import {
     ManageRooms_SelectGroupRegistrantsDocument,
     Room_ManagementMode_Enum,
-    Room_Mode_Enum,
     Room_PersonRole_Enum,
     useCreateRoomMutation,
     useDeleteRoomPersonMutation,
@@ -104,7 +103,6 @@ gql`
         created_at
         conferenceId
         name
-        currentModeName
         capacity
         priority
         itemId
@@ -1295,7 +1293,6 @@ function EditableRoomsCRUDTable() {
                                 "Associated Content Id": room.itemId ?? "",
 
                                 "Created At": room.created_at,
-                                "Current Mode Name": room.currentModeName,
                                 Capacity: room.capacity ?? "Not set",
 
                                 "Chat - Id": room.chat?.id ?? "",
@@ -1478,7 +1475,6 @@ function EditableRoomsCRUDTable() {
                         conferenceId: conference.id,
                         capacity: 350,
                         priority: 10,
-                        currentModeName: Room_Mode_Enum.VideoChat,
                         name: "New room " + (data.length + 1),
                         participants: [],
                         managementModeName: Room_ManagementMode_Enum.Public,
@@ -1492,7 +1488,6 @@ function EditableRoomsCRUDTable() {
                                     conferenceId: record.conferenceId,
                                     capacity: record.capacity,
                                     priority: record.priority,
-                                    currentModeName: record.currentModeName,
                                     name: record.name,
                                     managementModeName: record.managementModeName,
                                     itemId: record.itemId,

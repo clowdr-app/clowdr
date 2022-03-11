@@ -21,7 +21,6 @@ gql`
     fragment RoomPage_RoomDetails on room_Room {
         id
         name
-        currentModeName
         isProgramRoom
         isStreamingProgramRoom
         publicVonageSessionId

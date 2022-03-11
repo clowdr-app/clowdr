@@ -63,7 +63,6 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
                     capacity: 50
                     chatId: $chatId
                     conferenceId: $conferenceId
-                    currentModeName: VIDEO_CHAT
                     name: $name
                     itemId: $itemId
                     managementModeName: PUBLIC

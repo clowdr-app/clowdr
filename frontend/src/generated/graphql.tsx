@@ -26113,10 +26113,6 @@ export type Room_Mode = {
     /** An aggregate relationship */
     readonly events_aggregate: Schedule_Event_Aggregate;
     readonly name: Scalars["String"];
-    /** An array relationship */
-    readonly rooms: ReadonlyArray<Room_Room>;
-    /** An aggregate relationship */
-    readonly rooms_aggregate: Room_Room_Aggregate;
 };
 
 /** columns and relationships of "room.Mode" */
@@ -26135,24 +26131,6 @@ export type Room_ModeEvents_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
     where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeRoomsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeRooms_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
 };
 
 /** aggregated selection of "room.Mode" */
@@ -26184,7 +26162,6 @@ export type Room_Mode_Bool_Exp = {
     readonly description?: InputMaybe<String_Comparison_Exp>;
     readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
-    readonly rooms?: InputMaybe<Room_Room_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "room.Mode" */
@@ -26228,7 +26205,6 @@ export type Room_Mode_Insert_Input = {
     readonly description?: InputMaybe<Scalars["String"]>;
     readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     readonly name?: InputMaybe<Scalars["String"]>;
-    readonly rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -26273,7 +26249,6 @@ export type Room_Mode_Order_By = {
     readonly description?: InputMaybe<Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     readonly name?: InputMaybe<Order_By>;
-    readonly rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: room_Mode */
@@ -26463,9 +26438,6 @@ export type Room_Room = {
     readonly currentEvents: ReadonlyArray<Schedule_CurrentEvents>;
     /** An aggregate relationship */
     readonly currentEvents_aggregate: Schedule_CurrentEvents_Aggregate;
-    /** An object relationship */
-    readonly currentMode: Room_Mode;
-    readonly currentModeName: Room_Mode_Enum;
     /** An array relationship */
     readonly events: ReadonlyArray<Schedule_Event>;
     /** An aggregate relationship */
@@ -27123,8 +27095,6 @@ export type Room_Room_Bool_Exp = {
     readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly currentEvents?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
-    readonly currentMode?: InputMaybe<Room_Mode_Bool_Exp>;
-    readonly currentModeName?: InputMaybe<Room_Mode_Enum_Comparison_Exp>;
     readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
     readonly isProgramRoom?: InputMaybe<Boolean_Comparison_Exp>;
@@ -27180,8 +27150,6 @@ export type Room_Room_Insert_Input = {
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
     readonly currentEvents?: InputMaybe<Schedule_CurrentEvents_Arr_Rel_Insert_Input>;
-    readonly currentMode?: InputMaybe<Room_Mode_Obj_Rel_Insert_Input>;
-    readonly currentModeName?: InputMaybe<Room_Mode_Enum>;
     readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
@@ -27308,8 +27276,6 @@ export type Room_Room_Order_By = {
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
     readonly currentEvents_aggregate?: InputMaybe<Schedule_CurrentEvents_Aggregate_Order_By>;
-    readonly currentMode?: InputMaybe<Room_Mode_Order_By>;
-    readonly currentModeName?: InputMaybe<Order_By>;
     readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly isProgramRoom?: InputMaybe<Order_By>;
@@ -27355,8 +27321,6 @@ export enum Room_Room_Select_Column {
     /** column name */
     CreatedAt = "created_at",
     /** column name */
-    CurrentModeName = "currentModeName",
-    /** column name */
     Id = "id",
     /** column name */
     ItemId = "itemId",
@@ -27382,7 +27346,6 @@ export type Room_Room_Set_Input = {
     readonly colour?: InputMaybe<Scalars["String"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
-    readonly currentModeName?: InputMaybe<Room_Mode_Enum>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
     readonly managementModeName?: InputMaybe<Room_ManagementMode_Enum>;
@@ -27459,8 +27422,6 @@ export enum Room_Room_Update_Column {
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "created_at",
-    /** column name */
-    CurrentModeName = "currentModeName",
     /** column name */
     Id = "id",
     /** column name */
@@ -41283,7 +41244,6 @@ export type RoomPage_GetRoomDetailsQuery = {
         readonly __typename?: "room_Room";
         readonly id: any;
         readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
         readonly isProgramRoom?: boolean | null;
         readonly isStreamingProgramRoom?: boolean | null;
         readonly publicVonageSessionId?: string | null;
@@ -41331,7 +41291,6 @@ export type RoomPage_RoomDetailsFragment = {
     readonly __typename?: "room_Room";
     readonly id: any;
     readonly name: string;
-    readonly currentModeName: Room_Mode_Enum;
     readonly isProgramRoom?: boolean | null;
     readonly isStreamingProgramRoom?: boolean | null;
     readonly publicVonageSessionId?: string | null;
@@ -42202,7 +42161,6 @@ export type Schedule_HappeningSoonQuery = {
             readonly __typename?: "room_Room";
             readonly id: any;
             readonly name: string;
-            readonly currentModeName: Room_Mode_Enum;
             readonly priority: number;
             readonly managementModeName: Room_ManagementMode_Enum;
             readonly conferenceId: any;
@@ -42435,7 +42393,6 @@ export type Schedule_RoomSummaryFragment = {
     readonly __typename?: "room_Room";
     readonly id: any;
     readonly name: string;
-    readonly currentModeName: Room_Mode_Enum;
     readonly priority: number;
     readonly managementModeName: Room_ManagementMode_Enum;
     readonly conferenceId: any;
@@ -42460,7 +42417,6 @@ export type Schedule_SelectSummariesQuery = {
         readonly __typename?: "room_Room";
         readonly id: any;
         readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
         readonly priority: number;
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly conferenceId: any;
@@ -45385,7 +45341,6 @@ export type RoomWithParticipantInfoFragment = {
     readonly created_at: any;
     readonly conferenceId: any;
     readonly name: string;
-    readonly currentModeName: Room_Mode_Enum;
     readonly capacity?: number | null;
     readonly priority: number;
     readonly itemId?: any | null;
@@ -45415,7 +45370,6 @@ export type SelectAllRoomsWithParticipantsQuery = {
         readonly created_at: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
         readonly capacity?: number | null;
         readonly priority: number;
         readonly itemId?: any | null;
@@ -45519,7 +45473,6 @@ export type CreateRoomMutation = {
         readonly created_at: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
         readonly capacity?: number | null;
         readonly priority: number;
         readonly itemId?: any | null;
@@ -45560,7 +45513,6 @@ export type UpdateRoomsWithParticipantsMutation = {
         readonly created_at: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly currentModeName: Room_Mode_Enum;
         readonly capacity?: number | null;
         readonly priority: number;
         readonly itemId?: any | null;
@@ -46612,7 +46564,6 @@ export type RoomInfoFragment = {
     readonly __typename?: "room_Room";
     readonly capacity?: number | null;
     readonly conferenceId: any;
-    readonly currentModeName: Room_Mode_Enum;
     readonly id: any;
     readonly name: string;
     readonly priority: number;
@@ -46742,7 +46693,6 @@ export type SelectWholeScheduleQuery = {
         readonly __typename?: "room_Room";
         readonly capacity?: number | null;
         readonly conferenceId: any;
-        readonly currentModeName: Room_Mode_Enum;
         readonly id: any;
         readonly name: string;
         readonly priority: number;
@@ -49202,7 +49152,6 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     fragment RoomPage_RoomDetails on room_Room {
         id
         name
-        currentModeName
         isProgramRoom
         isStreamingProgramRoom
         publicVonageSessionId
@@ -49484,7 +49433,6 @@ export const Schedule_RoomSummaryFragmentDoc = gql`
     fragment Schedule_RoomSummary on room_Room {
         id
         name
-        currentModeName
         priority
         managementModeName
         conferenceId
@@ -50064,7 +50012,6 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
         created_at
         conferenceId
         name
-        currentModeName
         capacity
         priority
         itemId
@@ -50227,7 +50174,6 @@ export const RoomInfoFragmentDoc = gql`
     fragment RoomInfo on room_Room {
         capacity
         conferenceId
-        currentModeName
         id
         name
         priority
@@ -51127,13 +51073,7 @@ export const Registrant_RegistrantCreateRoomDocument = gql`
         $managementModeName: room_ManagementMode_enum!
     ) {
         insert_room_Room_one(
-            object: {
-                capacity: 50
-                conferenceId: $conferenceId
-                currentModeName: VIDEO_CHAT
-                name: $name
-                managementModeName: $managementModeName
-            }
+            object: { capacity: 50, conferenceId: $conferenceId, name: $name, managementModeName: $managementModeName }
         ) {
             ...SocialRoom
         }
@@ -73524,16 +73464,6 @@ export type GraphCacheResolvers = {
             WithTypename<Schedule_Event_Aggregate> | string
         >;
         name?: GraphCacheResolver<WithTypename<Room_Mode>, Record<string, never>, Scalars["String"] | string>;
-        rooms?: GraphCacheResolver<
-            WithTypename<Room_Mode>,
-            Room_ModeRoomsArgs,
-            Array<WithTypename<Room_Room> | string>
-        >;
-        rooms_aggregate?: GraphCacheResolver<
-            WithTypename<Room_Mode>,
-            Room_ModeRooms_AggregateArgs,
-            WithTypename<Room_Room_Aggregate> | string
-        >;
     };
     room_Mode_aggregate?: {
         aggregate?: GraphCacheResolver<
@@ -73720,12 +73650,6 @@ export type GraphCacheResolvers = {
             Room_RoomCurrentEvents_AggregateArgs,
             WithTypename<Schedule_CurrentEvents_Aggregate> | string
         >;
-        currentMode?: GraphCacheResolver<
-            WithTypename<Room_Room>,
-            Record<string, never>,
-            WithTypename<Room_Mode> | string
-        >;
-        currentModeName?: GraphCacheResolver<WithTypename<Room_Room>, Record<string, never>, Room_Mode_Enum | string>;
         events?: GraphCacheResolver<
             WithTypename<Room_Room>,
             Room_RoomEventsArgs,

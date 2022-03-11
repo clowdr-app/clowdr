@@ -30,13 +30,7 @@ gql`
         $managementModeName: room_ManagementMode_enum!
     ) {
         insert_room_Room_one(
-            object: {
-                capacity: 50
-                conferenceId: $conferenceId
-                currentModeName: VIDEO_CHAT
-                name: $name
-                managementModeName: $managementModeName
-            }
+            object: { capacity: 50, conferenceId: $conferenceId, name: $name, managementModeName: $managementModeName }
         ) {
             ...SocialRoom
         }

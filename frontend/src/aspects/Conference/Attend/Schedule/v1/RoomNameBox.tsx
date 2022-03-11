@@ -22,25 +22,6 @@ export default function RoomNameBox({
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const registrant = useMaybeCurrentRegistrant();
-    // let roomIcon: JSX.Element | undefined;
-    // if (typeof room !== "string") {
-    //     switch (room.currentModeName) {
-    //         case Room_Mode_Enum.Zoom:
-    //         case Room_Mode_Enum.VideoChat:
-    //             roomIcon = <FAIcon iconStyle="s" icon="users" />;
-    //             break;
-    //         case Room_Mode_Enum.Prerecorded:
-    //             roomIcon = <FAIcon iconStyle="s" icon="film" />;
-    //             break;
-    //         case Room_Mode_Enum.Presentation:
-    //             roomIcon = <FAIcon iconStyle="s" icon="chalkboard-teacher" />;
-    //             break;
-    //         case Room_Mode_Enum.QAndA:
-    //             roomIcon = <FAIcon iconStyle="s" icon="comments" />;
-    //             break;
-    //     }
-    // }
-
     const shouldLink = !!registrant;
 
     return (

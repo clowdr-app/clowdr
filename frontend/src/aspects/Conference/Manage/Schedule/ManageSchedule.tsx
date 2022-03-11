@@ -99,7 +99,6 @@ gql`
     fragment RoomInfo on room_Room {
         capacity
         conferenceId
-        currentModeName
         id
         name
         priority

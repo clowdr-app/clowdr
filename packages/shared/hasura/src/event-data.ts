@@ -97,7 +97,6 @@ export interface EventData extends BaseData {
 export interface RoomData extends BaseData {
     conferenceId: string;
     name: string;
-    currentModeName: Room_Mode_Enum;
     capacity: number | null;
     publicVonageSessionId: string | null;
     priority: number;

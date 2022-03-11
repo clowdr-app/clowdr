@@ -10,13 +10,6 @@ array_relationships:
       table:
         name: Event
         schema: schedule
-- name: rooms
-  using:
-    foreign_key_constraint_on:
-      column: currentModeName
-      table:
-        name: Room
-        schema: room
 select_permissions:
 - permission:
     columns:

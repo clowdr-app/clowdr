@@ -26103,10 +26103,6 @@ export type Room_Mode = {
     /** An aggregate relationship */
     events_aggregate: Schedule_Event_Aggregate;
     name: Scalars["String"];
-    /** An array relationship */
-    rooms: Array<Room_Room>;
-    /** An aggregate relationship */
-    rooms_aggregate: Room_Room_Aggregate;
 };
 
 /** columns and relationships of "room.Mode" */
@@ -26125,24 +26121,6 @@ export type Room_ModeEvents_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
     where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeRoomsArgs = {
-    distinct_on?: InputMaybe<Array<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeRooms_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Room_Room_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Room_Order_By>>;
-    where?: InputMaybe<Room_Room_Bool_Exp>;
 };
 
 /** aggregated selection of "room.Mode" */
@@ -26174,7 +26152,6 @@ export type Room_Mode_Bool_Exp = {
     description?: InputMaybe<String_Comparison_Exp>;
     events?: InputMaybe<Schedule_Event_Bool_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
-    rooms?: InputMaybe<Room_Room_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "room.Mode" */
@@ -26218,7 +26195,6 @@ export type Room_Mode_Insert_Input = {
     description?: InputMaybe<Scalars["String"]>;
     events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     name?: InputMaybe<Scalars["String"]>;
-    rooms?: InputMaybe<Room_Room_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -26263,7 +26239,6 @@ export type Room_Mode_Order_By = {
     description?: InputMaybe<Order_By>;
     events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     name?: InputMaybe<Order_By>;
-    rooms_aggregate?: InputMaybe<Room_Room_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: room_Mode */
@@ -26453,9 +26428,6 @@ export type Room_Room = {
     currentEvents: Array<Schedule_CurrentEvents>;
     /** An aggregate relationship */
     currentEvents_aggregate: Schedule_CurrentEvents_Aggregate;
-    /** An object relationship */
-    currentMode: Room_Mode;
-    currentModeName: Room_Mode_Enum;
     /** An array relationship */
     events: Array<Schedule_Event>;
     /** An aggregate relationship */
@@ -27113,8 +27085,6 @@ export type Room_Room_Bool_Exp = {
     conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
     currentEvents?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
-    currentMode?: InputMaybe<Room_Mode_Bool_Exp>;
-    currentModeName?: InputMaybe<Room_Mode_Enum_Comparison_Exp>;
     events?: InputMaybe<Schedule_Event_Bool_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
     isProgramRoom?: InputMaybe<Boolean_Comparison_Exp>;
@@ -27170,8 +27140,6 @@ export type Room_Room_Insert_Input = {
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     created_at?: InputMaybe<Scalars["timestamptz"]>;
     currentEvents?: InputMaybe<Schedule_CurrentEvents_Arr_Rel_Insert_Input>;
-    currentMode?: InputMaybe<Room_Mode_Obj_Rel_Insert_Input>;
-    currentModeName?: InputMaybe<Room_Mode_Enum>;
     events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     id?: InputMaybe<Scalars["uuid"]>;
     item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
@@ -27298,8 +27266,6 @@ export type Room_Room_Order_By = {
     conferenceId?: InputMaybe<Order_By>;
     created_at?: InputMaybe<Order_By>;
     currentEvents_aggregate?: InputMaybe<Schedule_CurrentEvents_Aggregate_Order_By>;
-    currentMode?: InputMaybe<Room_Mode_Order_By>;
-    currentModeName?: InputMaybe<Order_By>;
     events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     id?: InputMaybe<Order_By>;
     isProgramRoom?: InputMaybe<Order_By>;
@@ -27345,8 +27311,6 @@ export enum Room_Room_Select_Column {
     /** column name */
     CreatedAt = "created_at",
     /** column name */
-    CurrentModeName = "currentModeName",
-    /** column name */
     Id = "id",
     /** column name */
     ItemId = "itemId",
@@ -27372,7 +27336,6 @@ export type Room_Room_Set_Input = {
     colour?: InputMaybe<Scalars["String"]>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     created_at?: InputMaybe<Scalars["timestamptz"]>;
-    currentModeName?: InputMaybe<Room_Mode_Enum>;
     id?: InputMaybe<Scalars["uuid"]>;
     itemId?: InputMaybe<Scalars["uuid"]>;
     managementModeName?: InputMaybe<Room_ManagementMode_Enum>;
@@ -27449,8 +27412,6 @@ export enum Room_Room_Update_Column {
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "created_at",
-    /** column name */
-    CurrentModeName = "currentModeName",
     /** column name */
     Id = "id",
     /** column name */
